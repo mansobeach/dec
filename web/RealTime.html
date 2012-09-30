@@ -1,0 +1,65 @@
+<html>
+ <link rel="Shortcut icon" href="http://meteomonteporzio.altervista.org/favicon2.png">
+ <head>
+   <title>Casale Beach 2012 Real Time Weather</title>
+   <META HTTP-EQUIV="Refresh" CONTENT="3600">
+   <META HTTP-EQUIV="Expires" CONTENT="0">
+   <META HTTP-EQUIV="Pragma"  CONTENT="no-cache">
+ </head>
+ 
+ <body bgcolor="darkblue">
+
+   Casale Beach - Real Time Weather
+
+   <marquee>Meteo Casale</marquee>
+
+<!-- ================================================================================ -->
+
+<div id="divMeteoData"></div> 
+
+<!-- ================================================================================ -->
+
+
+
+   <script type="text/javascript">
+
+      var retrieveMeteoData = function() 
+      {
+         var xmlhttp = new XMLHttpRequest() ;
+
+         xmlhttp.open("GET", "METEO_CASALE.xml", true) ;
+
+         xmlhttp.onreadystatechange=function()
+         {
+            if (xmlhttp.readyState == 4)
+            {
+               if (xmlhttp.status == 200)
+               {
+                 // alert(xmlhttp.responseText) ;
+                  document.getElementById("divMeteoData").innerHTML = xmlhttp.responseText ;
+               }
+               else
+               {
+                  alert("Error KAKA " + xmlhttp.status) ;
+               }
+         
+            
+            }
+         }
+
+         xmlhttp.send(null) ;
+  
+         var serverResponse = xmlhttp.responseText;
+
+      }
+
+      retrieveMeteoData() ;
+      setInterval(retrieveMeteoData, 20000) ;
+  
+ //     document.onload = retrieveMeteoData ;
+
+   </script>
+
+ 
+ </body>
+</html>
