@@ -26,7 +26,7 @@ class WS_PlugIn_rain_1hour
    def initialize(debug = false)
       @isDebugMode      = debug
       @variable         = "rain_1hour"
-      @unit             = "mm"
+      @unit             = "mm/h"
       @failedThreshold  = ""     
 
       # ------------------------------------------
