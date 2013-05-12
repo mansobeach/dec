@@ -1,0 +1,16 @@
+/CheckerServiceConfig.rb/1.1/Tue Sep 12 07:59:26 2006//
+/EntityContentWriter.rb/1.2/Thu Oct  5 14:53:57 2006//
+/InterfaceListWriter.rb/1.1/Thu Dec 21 15:53:35 2006//
+/ReadServiceConfig.rb/1.1/Tue Sep 12 07:59:26 2006//
+/checkDCCConfigFiles.rb/1.6/Fri Nov 30 10:11:39 2007//
+/ReadConfigDCC.rb/1.8/Wed Dec  5 15:17:03 2007//
+/checkConfigDCC.rb/1.7/Tue Dec 18 18:21:36 2007//
+/ReadInTrayConfig.rb/1.6/Fri Apr  4 14:01:51 2008//
+/DCC_MailProcessor.rb/1.3/Thu Jul  3 11:38:07 2008//
+/FileDeliverer2InTrays.rb/1.16/Thu Jul  3 11:38:07 2008//
+/getMailNotification.rb/1.3/Thu Jul  3 11:38:07 2008//
+/listenerFT.rb/1.8/Thu Jul  3 11:38:07 2008//
+/CheckerInTrayConfig.rb/1.3/Fri Apr 11 10:47:15 2008//
+/getFromInterface.rb/1.15/Tue Nov 25 16:55:04 2008//
+/DCC_ReceiverFromInterface.rb/1.29/Thu Nov 27 13:59:32 2008//
+D

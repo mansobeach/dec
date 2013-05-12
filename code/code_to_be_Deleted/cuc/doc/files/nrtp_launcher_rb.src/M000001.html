@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>main (nrtp_launcher.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File nrtp_launcher.rb, line 52</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">main</span>
+   <span class="ruby-ivar">@isDebugMode</span> = <span class="ruby-keyword kw">false</span>
+   <span class="ruby-ivar">@commandNRTP</span> = <span class="ruby-value str">&quot;&quot;</span>
+   <span class="ruby-ivar">@hostFile</span>    = <span class="ruby-value str">&quot;&quot;</span>
+   
+   <span class="ruby-identifier">opts</span> = <span class="ruby-constant">GetoptLong</span>.<span class="ruby-identifier">new</span>(
+     [<span class="ruby-value str">&quot;--command&quot;</span>, <span class="ruby-value str">&quot;-c&quot;</span>,        <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--Show&quot;</span>, <span class="ruby-value str">&quot;-S&quot;</span>,           <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--Verbose&quot;</span>, <span class="ruby-value str">&quot;-V&quot;</span>,        <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--Debug&quot;</span>, <span class="ruby-value str">&quot;-D&quot;</span>,          <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--version&quot;</span>, <span class="ruby-value str">&quot;-v&quot;</span>,        <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--help&quot;</span>, <span class="ruby-value str">&quot;-h&quot;</span>,           <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--usage&quot;</span>, <span class="ruby-value str">&quot;-u&quot;</span>,          <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--scenes&quot;</span>, <span class="ruby-value str">&quot;-s&quot;</span>,         <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--processes&quot;</span>, <span class="ruby-value str">&quot;-p&quot;</span>,      <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--Host&quot;</span>, <span class="ruby-value str">&quot;-H&quot;</span>,           <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span>],
+     [<span class="ruby-value str">&quot;--PID&quot;</span>, <span class="ruby-value str">&quot;-P&quot;</span>,            <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span>]
+     )
+    
+   <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span>, <span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">opt</span>      
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--Verbose&quot;</span>       <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@@verboseMode</span> = <span class="ruby-value">1</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--Debug&quot;</span>         <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@isDebugMode</span> = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--version&quot;</span> <span class="ruby-keyword kw">then</span>
+               <span class="ruby-identifier">print</span>(<span class="ruby-value str">&quot;\nESA - Deimos-Space S.L.  &quot;</span>, <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">$0</span>), <span class="ruby-value str">&quot; $Revision: 1.5 $  [&quot;</span>, <span class="ruby-ivar">@@dateLastModification</span>, <span class="ruby-value str">&quot;]\n\n\n&quot;</span>)
+               <span class="ruby-identifier">exit</span> (<span class="ruby-value">0</span>)
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--command&quot;</span> <span class="ruby-keyword kw">then</span>
+               <span class="ruby-ivar">@commandNRTP</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_s</span>        
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--processes&quot;</span> <span class="ruby-keyword kw">then</span>
+               <span class="ruby-ivar">@@numProcesses</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--PID&quot;</span> <span class="ruby-keyword kw">then</span>
+               <span class="ruby-ivar">@@targetPID</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--scenes&quot;</span>    <span class="ruby-keyword kw">then</span> 
+               <span class="ruby-ivar">@@numScenes</span>    = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--Host&quot;</span>          <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@hostFile</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_s</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--help&quot;</span>          <span class="ruby-keyword kw">then</span> <span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-identifier">usage</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--usage&quot;</span>         <span class="ruby-keyword kw">then</span> <span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-identifier">usage</span>(<span class="ruby-value str">&quot;usage&quot;</span>)
+            <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;--Show&quot;</span>          <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@@bShowMnemonics</span> = <span class="ruby-keyword kw">true</span>
+         <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span>
+      <span class="ruby-identifier">exit</span>(<span class="ruby-value">99</span>)
+   <span class="ruby-keyword kw">end</span>
+
+
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@hostFile</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@@numProcesses</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span>  <span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-identifier">usage</span> <span class="ruby-keyword kw">end</span>
+
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@@numProcesses</span><span class="ruby-operator">==</span><span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@hostFile</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-keyword kw">and</span> <span class="ruby-ivar">@commandNRTP</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-constant">RDoc</span><span class="ruby-operator">::</span><span class="ruby-identifier">usage</span> <span class="ruby-keyword kw">end</span>
+   
+   <span class="ruby-identifier">cmd</span> = <span class="ruby-value str">&quot;&quot;</span>
+   
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@@numProcesses</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-node">&quot;mpirun -np #{@@numProcesses} omp_mpi&quot;</span>
+   <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-node">&quot;mpirun --hostfile #{@hostFile} omp_mpi&quot;</span>
+   <span class="ruby-keyword kw">end</span>
+      
+   <span class="ruby-comment cmt"># Pass number of scenes to be processed</span>
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@@numScenes</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-node">&quot;#{cmd} -s #{@@numScenes}&quot;</span>
+   <span class="ruby-keyword kw">end</span>
+   
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@isDebugMode</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-identifier">cmd</span> = <span class="ruby-node">&quot;#{cmd} -D&quot;</span>
+   <span class="ruby-keyword kw">end</span>
+      
+   <span class="ruby-ivar">@pHandler</span> = <span class="ruby-constant">NRTProcessHandler</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;nrtp_launcher.rb&quot;</span>, <span class="ruby-identifier">cmd</span>, <span class="ruby-ivar">@@targetPID</span>)
+
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@isDebugMode</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-ivar">@pHandler</span>.<span class="ruby-identifier">setDebugMode</span>
+   <span class="ruby-keyword kw">end</span>
+   
+   <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@commandNRTP</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-identifier">processCommand</span>
+      <span class="ruby-identifier">exit</span>
+   <span class="ruby-keyword kw">end</span>
+   
+   <span class="ruby-identifier">ret</span> = <span class="ruby-ivar">@pHandler</span>.<span class="ruby-identifier">run</span>
+      
+   <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ret</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;NRTP is already runnning&quot;</span>
+      <span class="ruby-identifier">exit</span>(<span class="ruby-value">0</span>)
+   <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">puts</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;NRTP Execution ended&quot;</span>
+      <span class="ruby-identifier">puts</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Bye ! ;-)&quot;</span>
+      <span class="ruby-identifier">puts</span>
+   <span class="ruby-keyword kw">end</span>
+   
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

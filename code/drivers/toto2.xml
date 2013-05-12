@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+<MINARC_Report>
+  <List_of_Files>
+    <Name>
+      SM_TEST_TLM_MIRA0__20090909T090909_20090909T090909_000_001_0.EEF
+    </Name>
+  </List_of_Files>
+  <List_of_CoverageSegments>
+    <CoverageSegment number='1' stop='20090909T090909' start='20090909T090909'>
+      <Name>
+        SM_TEST_TLM_MIRA0__20090909T090909_20090909T090909_000_001_0.EEF
+      </Name>
+    </CoverageSegment>
+  </List_of_CoverageSegments>
+</MINARC_Report>
