@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <link rel="Shortcut icon" href="http://meteomonteporzio.altervista.org/favicon2.png">
+
+<head>
+   
+   <link href="RealTime.css"  rel="stylesheet" type="text/css"> 
+
+   <meta charset="utf-8" />
+
+   <meta name="viewport" content="width=device-width; initial-scale=1.0; maximumscale=1.0; user-scalable=no; target-densitydpi=device-dpi;"/>
+   
+   <meta name="description" content="Meteo Casale Real Time weather">
+   
+   <meta name="keywords"    content="Meteo, Weather, Realtime, Real-Time">
+   <meta HTTP-EQUIV="Refresh" CONTENT="3600">
+   <meta HTTP-EQUIV="Expires" CONTENT="0">
+   <meta HTTP-EQUIV="Pragma"  CONTENT="no-cache">
+
+
+
+
+   <script type="text/JavaScript" src="jquery.js"></script> 
+   <script type="text/JavaScript" src="OOMeteoCasaleComm.js"></script> 
+
+  
+   <title>Casale Beach 2012 - Real Time Weather</title>
+
+ </head>
+ 
+ <body bgcolor="darkblue">
+   
+   <header>
+      Casale Beach - Real Time Weather v0.05
+
+      <marquee>Meteo Casale</marquee>
+
+   </header>
+
+<!-- ================================================================================ -->
+
+
+<div id="divMeteoData"></div> 
+
+<div id="divMeteoDate"></div> <div id="divMeteoTime"></div>
+
+<div id="divMeteoTemp"></div>
+
+<div id="divMeteoHumidity"></div>
+
+<div id="divMeteoPressure"></div>
+
+<div id="divMeteoWindDirection"></div>
+
+<div id="divMeteoWindSpeed"></div>
+
+<div id="divMeteoRain1h"></div>
+
+<!-- ================================================================================ -->
+
+
+
+   <script type="text/javascript">
+
+      var handler = new MeteoCasaleComm() ;
+      handler.retrieveMeteoData() ;
+      setInterval(handler.retrieveMeteoData, 15000) ;
+
+   </script>
+
+
+   <footer>
+      Casale Beach 2013 
+   </footer>
+
+ 
+ </body>
+</html>

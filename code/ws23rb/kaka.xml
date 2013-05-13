@@ -1,0 +1,37 @@
+<ws2300>
+  <Date>2012-11-14</Date>
+  <Time>20:13:34</Time>
+  <Temperature>
+    <Indoor>
+      <Value>N/A</Value>
+    </Indoor>
+    <Outdoor>
+      <Value>14.3</Value>
+    </Outdoor>
+  </Temperature>
+  <Humidity>
+    <Indoor>
+      <Value>N/A</Value>
+    </Indoor>
+    <Outdoor>
+      <Value>78</Value>
+    </Outdoor>
+  </Humidity>
+  <Wind>
+    <Value>135.0</Value>
+    <Direction>
+      <Text>SE</Text>
+    </Direction>
+  </Wind>
+  <Rain>
+    <OneHour>
+      <Value>0.0</Value>
+    </OneHour>
+    <TwentyFourHour>
+      <Value>0.0</Value>
+    </TwentyFourHour>
+  </Rain>
+  <Pressure>
+    <Value>1002.5</Value>
+  </Pressure>
+</ws2300>

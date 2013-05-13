@@ -1,0 +1,39 @@
+/**
+    
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+*/
+
+
+#divMeteoDate{
+   color:         #00FF00 ; 
+   font-family:   arial ;  
+   font-size:     18pt ;
+   line-height:   200% ;
+}
+
+#divMeteoTime{
+   color:         #00FF00 ; 
+   font-family:   arial ;  
+   font-size:     18pt ;
+   line-height:   200% ;
+}
+
+#divMeteoTemp,#divMeteoWindSpeed,#divMeteoHumidity,#divMeteoRain1h,#divMeteoPressure{
+   color:         #00FF00 ; 
+   font-family:   arial ;  
+   font-size:     18pt ;
+   line-height:   200% ;
+}
+
+
