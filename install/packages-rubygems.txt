@@ -1,0 +1,8 @@
+activerecord
+net-ssh
+net-sftp
+log4r
+pg
+rubymagick
+gruff
+spreadsheet

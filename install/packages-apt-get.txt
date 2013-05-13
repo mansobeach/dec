@@ -1,0 +1,11 @@
+chkconfig
+makeself
+ncftp
+zip
+compress
+sqlite3
+ruby1.8
+rubygems
+fortune
+libpg-dev
+
