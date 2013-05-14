@@ -1,0 +1,37 @@
+# ------------------------------------------------------------------------------
+#
+# Creating a Database Cluster
+#
+# Alternative location given by $PGDATA
+
+$> initdb -D /usr/local/pgsql/data
+
+# alternatively
+
+$> pg_ctl -D /usr/local/pgsql/data initdb
+
+# ------------------------------------------------------------------------------
+#
+# Creating the Database
+
+$> createdb dbname
+
+
+# ------------------------------------------------------------------------------
+#
+# Creating database users / roles
+# su postgres
+
+$> createuser name
+$> dropuser name
+
+
+# ------------------------------------------------------------------------------
+# Edit pg_hba.conf
+
+# /etc/postgresql/9.2/main/pg_hba.conf
+
+
+# Restart the server
+
+#> sudo /etc/init.d/postgresql restart
