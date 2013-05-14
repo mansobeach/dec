@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:complexType name="ToListType">
+  <xs:sequence>
+   <xs:element name="DIM" type="xs:string" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="DIMType">
+  <xs:sequence>
+   <xs:element name="Name" type="xs:string"/>
+   <xs:element name="IntrayDir" type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileType">
+  <xs:sequence>
+   <xs:element name="HardLink" type="BooleanType"/>
+   <xs:element name="ToList" type="ToListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="xs:string" use="required"/>
+ </xs:complexType>
+
+
+ <xs:complexType name="DIM_ListType">
+  <xs:sequence>
+   <xs:element name="DIM" type="DIMType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileListType">
+  <xs:sequence>
+   <xs:element name="File" type="FileType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:element name="DisseminationParams">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="DIM_List" type="DIM_ListType"/>
+    <xs:element name="FileList" type="FileListType"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

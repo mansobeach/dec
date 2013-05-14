@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:simpleType name="compressType">
+   <xs:restriction base="xs:string">
+     <xs:enumeration value="TAR"/>
+     <xs:enumeration value="ZIP"/>
+     <xs:enumeration value="TGZ"/>
+     <xs:enumeration value="GZIP"/>
+     <xs:enumeration value="COMPRESS"/>
+     <xs:enumeration value="UNPACK"/>
+     <xs:enumeration value="UNPACK_HDR"/>
+     <xs:enumeration value="UNPACK_DBL"/>
+     <xs:enumeration value="NONE"/>
+   </xs:restriction>
+ </xs:simpleType>
+
+ <xs:simpleType name="DeliveryMethodsType">
+  <xs:restriction base="xs:string">
+   <xs:pattern value="[(EMAIL)|(FTP)|(MAILBODY)]+(;EMAIL|;FTP|;MAILBODY)*"/>
+  </xs:restriction>
+ </xs:simpleType>
+
+ <xs:complexType name="InterfaceType">
+   <xs:attribute name="Name" type="SimpleAcronymType" use="required"/>
+   <xs:attribute name="Compress" type="compressType" use="required"/>
+   <xs:attribute name="DeliveryMethods" type="DeliveryMethodsType" use="required"/>
+   <xs:attribute name="CleanUpAge" type="xs:positiveInteger"/>
+ </xs:complexType> 
+
+ <xs:complexType name="ToListType">
+  <xs:sequence>
+   <xs:element name="Interface" type="InterfaceType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileType">
+  <xs:sequence>
+   <xs:element name="Description" type="xs:string"/>
+   <xs:element name="ToList" type="ToListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="EarthExplorerFileType" use="required"/>
+ </xs:complexType>
+
+ <xs:element name="FileList">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="File" type="FileType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

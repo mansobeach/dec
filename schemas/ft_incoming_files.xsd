@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:complexType name="FromListType">
+  <xs:sequence>
+   <xs:element name="Interface" type="SimpleAcronymType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileType">
+  <xs:sequence>
+   <xs:element name="Description" type="xs:string"/>
+   <xs:element name="FromList" type="FromListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="xs:string" use="required"/>
+ </xs:complexType>
+
+ <xs:element name="FileList">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="File" type="FileType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

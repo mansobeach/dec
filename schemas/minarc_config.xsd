@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:simpleType name="DateValType">
+   <xs:restriction base="xs:string">
+     <xs:enumeration value="archive_date"/>
+     <xs:enumeration value="validity_start"/>
+     <xs:enumeration value="validity_stop"/>
+   </xs:restriction>
+ </xs:simpleType>
+
+ <xs:simpleType name="RuleValType">
+   <xs:restriction base="xs:string">
+     <xs:enumeration value="Older"/>
+     <xs:enumeration value="Newer"/>
+     <xs:enumeration value="Is"/>
+   </xs:restriction>
+ </xs:simpleType>
+
+ <xs:complexType name="CleanUpRuleType">
+   <xs:attribute name="Filetype" type="xs:string" use="required"/>
+   <xs:attribute name="Rule" type="RuleValType" use="required"/>
+   <xs:attribute name="Date" type="DateValType" use="required"/>
+   <xs:attribute name="Age" type="posIntType" use="required"/>
+   <xs:attribute name="Unit" type="timeUnitType" use="required"/>
+ </xs:complexType> 
+
+ <xs:complexType name="List_of_CleanUpRulesType">
+  <xs:sequence>
+   <xs:element name="CleanUpRule" type="CleanUpRuleType" maxOccurs="unbounded" minOccurs="1"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="CleanUpType">
+  <xs:sequence>
+   <xs:element name="List_of_CleanUpRules" type="List_of_CleanUpRulesType" maxOccurs="1" minOccurs="1"/>
+  </xs:sequence>
+  <xs:attribute name="Frequency" type="posIntType" use="required"/>
+  <xs:attribute name="Unit" type="timeUnitType" use="required"/>
+ </xs:complexType>
+
+ <xs:element name="MINARC_CONFIG">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="CleanUp" type="CleanUpType" maxOccurs="unbounded" minOccurs="1"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

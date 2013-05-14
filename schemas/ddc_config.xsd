@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:simpleType name="ReportNameType">
+  <xs:restriction base="xs:string">
+   <xs:enumeration value="DeliveredFiles"/>
+   <xs:enumeration value="EmergencyDeliveredFiles"/>
+  </xs:restriction>
+ </xs:simpleType>
+
+ <xs:complexType name="OptionsType">
+  <xs:sequence>
+   <xs:element name="DeleteSourceFiles" type="BooleanType"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="OutgoingFiltersType">
+  <xs:sequence>
+   <xs:element name="Filter" type="xs:string" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="ReportType">
+  <xs:sequence>
+   <xs:element name="Enabled" type="BooleanType"/>
+   <xs:element name="Desc" type="xs:string"/>
+   <xs:element name="FileType" type="xs:string"/>
+  </xs:sequence>
+  <xs:attribute name="Name" type="ReportNameType" use="required"/>
+ </xs:complexType>
+
+ <xs:complexType name="ReportsType">
+  <xs:sequence>
+   <xs:element name="Report" type="ReportType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="ProjectType">
+  <xs:sequence>
+   <xs:element name="Name" type="xs:string"/>
+   <xs:element name="Id" type="xs:string"/>
+   <xs:element name="Mission" type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FiltersType">
+  <xs:sequence>
+   <xs:element name="OutgoingFilters" type="OutgoingFiltersType"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:element name="Configuration">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="Project" type="ProjectType"/>
+    <xs:element name="Filters" type="FiltersType"/>
+    <xs:element name="Options" type="OptionsType"/>
+    <xs:element name="GlobalOutbox" type="xs:string"/>
+    <xs:element name="SatPrefix" type="SimpleAcronymType"/>
+    <xs:element name="ReportDir" type="xs:string"/>
+    <xs:element name="Reports" type="ReportsType"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>
