@@ -104,9 +104,14 @@ def main
       system(cmd)
    end
 
-   cmd = "curl http://meteomonteporzio.altervista.org/METEO_CASALE.xml > METEO_CASALE.xml"
+   cmd = "curl --connect-timeout 60 --max-time 60 http://meteomonteporzio.altervista.org/METEO_CASALE.xml > METEO_CASALE.xml"
    @logger.debug(cmd)
-   system(cmd)
+   ret = system(cmd)
+
+   if ret == false then
+      @logger.error("Could not retrieve METEO_CASALE.xml")
+      exit(99)
+   end
 
    if File.exist?("METEO_CASALE.xml.old") == true then
       cmd = "diff METEO_CASALE.xml.old METEO_CASALE.xml"
