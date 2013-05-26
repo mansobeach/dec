@@ -143,7 +143,7 @@ class FileArchiver
          end
       end
 
-      return store(full_path_file, fileType[0..19], start, stop, bDelete, bUnPack, arrAddFields, path)
+      return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path)
 
    end
    #------------------------------------------------

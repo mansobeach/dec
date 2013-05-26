@@ -59,7 +59,7 @@ class FileDeleter
    # Main method of the class.
    def delete_by_type(fileType, start = nil, stop = nil, bIncStart=false, bIncStop=false)
 
-      arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase[0..19], start, stop, bIncStart, bIncStop)
+      arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase, start, stop, bIncStart, bIncStop)
 
       if @bReport then
          editor = MINARC::ReportEditor.new(arrFiles)

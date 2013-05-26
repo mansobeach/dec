@@ -71,7 +71,7 @@ class FileRetriever
       if @rule == "NEWEST" then
          arrFiles = ArchivedFile.last(1)
       else
-         arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase[0..19], start, stop, bIncStart, bIncStop)
+         arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase, start, stop, bIncStart, bIncStop)
       end
 
       retVal = true
