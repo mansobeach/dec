@@ -232,10 +232,11 @@ def main
  
    if bShowFileTypes == true then
       arrFiles = ArchivedFile.getFileTypes()
-
+      arrTypes = Array.new
       arrFiles.each{|aFile|
-         puts aFile.filetype
+         arrTypes << aFile.filetype
       }
+      puts arrTypes.sort
       exit(0)
    end
 
