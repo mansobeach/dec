@@ -34,9 +34,9 @@ module FTPClientCommands
    # * Returns the ncftpls command line statement created.
    def createNcFtpLs(host,port,user,pass,dir,filter = nil)
       if filter == nil then
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"ls -1" ftp://#{host}/#{dir}/}      
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"-1" ftp://#{host}/#{dir}/}      
       else
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"ls -1 #{filter}\" ftp://#{host}/#{dir}/}
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"-1 #{filter}\" ftp://#{host}/#{dir}/}
       end
       return command         
    end
