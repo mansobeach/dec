@@ -204,7 +204,7 @@ private
          puts "File-Type      -> #{type}"
          puts "Validity Start -> #{start}"
          puts "Validity Stop  -> #{stop}"
-         puts "Archival date  -> #{archival_date}"
+         puts "Archiving date -> #{archival_date}"
          puts "==================================="
       end
 
@@ -342,7 +342,7 @@ private
       elsif bIsDir then
          cmd = "\\chmod 555 #{destDir}/#{File.basename(full_path_filename)}; chmod 444 #{destDir}/#{File.basename(full_path_filename)}/*"
       else
-         cmd = "\\chmod 444 #{destDir}/" << File.basename(full_path_filename)
+         cmd = "chmod 744 #{destDir}; \\chmod 444 #{destDir}/" << File.basename(full_path_filename)
       end
 
       if @isDebugMode then
