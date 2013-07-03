@@ -121,6 +121,15 @@ class ArchivedFile < ActiveRecord::Base
    end
    #--------------------------------------------------------
 
+   def ArchivedFile.deleteAll(condition = "")
+      puts ArchivedFile.delete_all(condition)
+      if condition == "" then
+         puts "\nMINARC::ArchivedFile.deleteAll missing condition ! :-( \n\n"
+         return false
+      end
+   end
+   #--------------------------------------------------------
+
 private
 
    def ArchivedFile.convertWildCards(filename)
@@ -158,6 +167,8 @@ private
 
       return arrFiles
    end
+   #-------------------------------------------------------------
+
    #-------------------------------------------------------------
 
 end
