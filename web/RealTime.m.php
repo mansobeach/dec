@@ -2,7 +2,7 @@
 
 <html>
    <head>
-      <title>Meteo Monteporzio</title>
+      <title>Meteo Monteporzio Casale</title>
       <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
       <link rel="Shortcut icon" href="http://meteomonteporzio.altervista.org/favicon2.png">
       <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
@@ -83,7 +83,7 @@
 
    <section id="page-config" data-role="page">
       <header data-role="header"><h1>Meteo Monteporzio</h1></header>
-      <div class="content" data-role="content"><p>Configuration page!</p></div>
+      <div class="content" data-role="content"><p>Configuration page</p></div>
       <footer data-role="footer"><h1>Casale & Beach</h1></footer>
    </section>
 
