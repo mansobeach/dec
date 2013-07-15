@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:complexType name="SendMailParamsType">
+  <xs:sequence>
+   <xs:element name="SMTPServer" type="xs:string"/>
+   <xs:element name="Port" type="posIntType"/>
+   <xs:element name="User" type="xs:string"/>
+   <xs:element name="Pass" type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="ReceiveMailParamsType">
+  <xs:sequence>
+   <xs:element name="POPServer" type="xs:string"/>
+   <xs:element name="Port" type="posIntType"/>
+   <xs:element name="EMail" type="xs:string"/>
+   <xs:element name="User" type="xs:string"/>
+   <xs:element name="Pass" type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:element name="MailParams">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="SendMailParams" type="SendMailParamsType"/>
+    <xs:element name="ReceiveMailParams" type="ReceiveMailParamsType"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

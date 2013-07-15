@@ -1,0 +1,24 @@
+su postgres
+
+pg_ctl -D /var/lib/postgresql/9.2/main status
+
+/var/lib/postgresql/9.2/main/postmaster.pid
+
+
+psql -p 5433 -h localhost
+
+
+# ---------------------------------------------
+# RESTART
+
+pg_ctl restart -D /var/lib/postgresql/9.2/main
+
+# ---------------------------------------------
+# Default database template1
+#
+psql template1
+
+template1=# ALTER USER postgres WITH PASSWORD 'password';
+template1=# \q
+
+# ---------------------------------------------

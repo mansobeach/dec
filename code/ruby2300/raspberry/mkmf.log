@@ -1,0 +1,26 @@
+have_library: checking for main() in -lopen2300... -------------------- no
+
+"gcc-4.6  -o conftest -I. -I/usr/lib/ruby/1.8/arm-linux-eabihf -I. -D_FORTIFY_SOURCE=2 -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2 -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wall -fno-strict-aliasing -g -g -O2  -fPIC   conftest.c  -L. -L/usr/lib -L. -Wl,-z,relro -rdynamic -Wl,-export-dynamic     -lruby1.8-static -lopen2300  -lpthread -lrt -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:3:28: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+/usr/bin/ld: cannot find -lopen2300
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: /*top*/
+2: int main() { return 0; }
+3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+"gcc-4.6  -o conftest -I. -I/usr/lib/ruby/1.8/arm-linux-eabihf -I. -D_FORTIFY_SOURCE=2 -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2 -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wall -fno-strict-aliasing -g -g -O2  -fPIC   conftest.c  -L. -L/usr/lib -L. -Wl,-z,relro -rdynamic -Wl,-export-dynamic     -lruby1.8-static -lopen2300  -lpthread -lrt -ldl -lcrypt -lm   -lc"
+/usr/bin/ld: cannot find -lopen2300
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: /*top*/
+2: int main() { return 0; }
+3: int t() { main(); return 0; }
+/* end */
+
+--------------------
+

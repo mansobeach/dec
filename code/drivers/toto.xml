@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<MINARC_Report>
+  <List_of_Files>
+    <Name>
+      SM_TEST_TLM_MIRA0__20070601T130315_20070601T130933_000_001_0
+    </Name>
+    <Name>
+      SM_TEST_TLM_MIRA0__20070601T130315_20070601T130933_000_002_0
+    </Name>
+  </List_of_Files>
+  <List_of_CoverageSegments>
+    <CoverageSegment number='1' stop='20070601T130933' start='20070601T130315'>
+      <Name>
+        SM_TEST_TLM_MIRA0__20070601T130315_20070601T130933_000_001_0
+      </Name>
+      <Name>
+        SM_TEST_TLM_MIRA0__20070601T130315_20070601T130933_000_002_0
+      </Name>
+    </CoverageSegment>
+  </List_of_CoverageSegments>
+</MINARC_Report>

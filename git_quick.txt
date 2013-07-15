@@ -1,0 +1,36 @@
+# Login
+
+git config --global user.name "Your Name"
+git config --global user.email you@example.com
+
+# Set editor
+git config --global core.editor vim
+
+
+# Retrieve <master> branch from repository
+
+git pull origin master
+
+
+# List all branches
+
+git branch -a
+
+
+git remote set-url origin root@casale-redmine:/var/cache/git/dec.git
+
+git config receive.denyCurrentBranch ignore
+
+git push origin master -f
+
+git config core.bare false
+
+git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
+
+# Delete a file 
+git rm <file>
+
+
+# Delete submodule <cache>
+
+git rm --cached code/ws23rb

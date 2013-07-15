@@ -1,0 +1,15 @@
+MINARC - Change Log
+
+MINARC - 1.2
+============
+- 0000228: [SPR] crash when rules are applied on empty result sets [FIXED].
+- 0000222: [Action] change_log.txt addition to the MINARC delivery.
+- 0000224: [CR] MINARC oracle specific installer has been tested.
+- 0000205: [CR] minArcRetrieve.rb - "-r" selection rules have been implemented.
+
+MINARC - 1.1
+============
+
+Validated as part of SMOS NRTP project.
+
+- 0000206: [CR] MINARC commands versioning has been updated.
