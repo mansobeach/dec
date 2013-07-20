@@ -7,6 +7,7 @@
       <link rel="Shortcut icon" href="http://meteomonteporzio.altervista.org/favicon2.png">
       <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
       <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+      <link rel="stylesheet" href="RealTime.m.css" />
       <script type="text/JavaScript" src="OOMeteoCasaleComm.js"></script> 
    </head>
    
@@ -55,26 +56,25 @@
 
 
    <script>
-   <!--   $("#page-realtime").live("pagecreate", function() {$.mobile.addResolutionBreakpoints([400, 600]);}) -->
-
-      console.debug("HOLA") ;
-
-      <!--
-
-      $.ajax({url: 'http://localhost/METEO_CASALE.xml',dataType: 'json',success: function(data) {},error: function() {}});
-
-
       var handler = new MeteoCasaleComm() ;
-      
-
-      console.debug("HOLA2") ;
-
       handler.retrieveMeteoData() ;
       
-      setInterval(handler.retrieveMeteoData, 15000) ;
+      <!-- ================================================================= -->
+      <!-- Page page-realtime retrieval for meteo data -->
+
+      $("#page-realtime").bind("pagebeforeshow", function(event, ui) {
+            timerRetrieve = setInterval(handler.retrieveMeteoData, 15000) ;
+         });
+
+      <!-- Page page-realtime stop retrieval for meteo data -->
+      
+      $("#page-realtime").bind("pagehide", function(event, ui) {
+            clearInterval(timerRetrieve) ;
+         });
 
 
-      -->
+      <!-- ================================================================= -->
+
 
    </script>
 
