@@ -1,0 +1,32 @@
+/**
+    
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+*/
+
+
+.TemperatureWarm {
+   color:         goldenrod ;
+}
+
+.TemperatureVeryWarm {
+   color:         goldenrod ;
+}
+
+.TemperatureHot {
+   color:         orange ;
+}
+
+.TemperatureVeryHot {
+   color:         orangered ;
+}
