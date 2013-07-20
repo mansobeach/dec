@@ -65,6 +65,14 @@ MeteoCasaleComm.prototype.parseMeteoData = function(xmlResp)
    aMeteoGauge.rain1h         = rain1h ;
    aMeteoGauge.rain24h        = rain24h ;
 
+   // Classify DOM element divMeteoTemp for CSS format
+
+   console.debug("pedo") ;
+
+   this.classFormatTemperature(temp) ;
+
+   console.debug("pis") ;
+
    // add units
    temp        = temp + " \u00BA" + "C" ;
    windspeed   = windspeed + " Km/h" ;
@@ -195,5 +203,68 @@ MeteoCasaleComm.prototype.retrieveMeteoData = function()
       }
    }
    xmlhttp.send(null) ;
+}
+//==============================================================================
+
+/**
+   Function format   
+*/
+   
+MeteoCasaleComm.prototype.classFormatTemperature = function(temperature)    
+{
+   var VHot    = 40,
+       Hot     = 30,
+       VWarm   = 25,
+       Warm    = 20,
+       Cold    = 0 ;
+
+   iTemp = parseInt(temperature) ;
+
+   console.debug(iTemp) ;
+   console.debug(document.getElementById("divMeteoTemp").className) ;
+
+   document.getElementById("divMeteoTemp").className.replace("TemperatureVeryHot", "") ;
+   document.getElementById("divMeteoTemp").className.replace("TemperatureHot", "") ;
+   document.getElementById("divMeteoTemp").className.replace("TemperatureVeryWarm", "") ;
+   document.getElementById("divMeteoTemp").className.replace("TemperatureWarm", "") ;
+   
+   if (iTemp >= VHot)
+   {
+      console.debug("very hot") ;
+
+      if (document.getElementById("divMeteoTemp").className.indexOf("TemperatureVeryHot") == -1)
+      {
+         document.getElementById("divMeteoTemp").className += " TemperatureVeryHot" ;
+      }
+   }
+   else if(iTemp >= Hot)
+   {
+      console.debug("hot") ;
+
+      if (document.getElementById("divMeteoTemp").className.indexOf("TemperatureHot") == -1)
+      {
+         document.getElementById("divMeteoTemp").className += " TemperatureHot" ;
+      }
+   } 
+   else if(iTemp >= VWarm)
+   {
+      console.debug("very warm") ;
+
+      if (document.getElementById("divMeteoTemp").className.indexOf("TemperatureVeryWarm") == -1)
+      {
+         document.getElementById("divMeteoTemp").className += " TemperatureVeryWarm" ;
+      }
+   } 
+   else if(iTemp >= Warm)
+   {
+      console.debug("warm") ;
+
+      if (document.getElementById("divMeteoTemp").className.indexOf("TemperatureWarm") == -1)
+      {
+         document.getElementById("divMeteoTemp").className += " TemperatureWarm" ;
+      }
+   } 
+
+
 }
 //==============================================================================
