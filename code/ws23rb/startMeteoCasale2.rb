@@ -127,7 +127,7 @@ def startMeteoCasale
 
    # -------------------------------------------------------
 
-   cmd = "daemonME.rb -F -i 600 -m \"genDailyMeteoFile2.rb -F\" "
+   cmd = "daemonME.rb -F -i 600 -m \"genDailyMeteoFile2.rb -F\" -D"
 
 #    if @isDebugMode == true then
 #       cmd = "#{cmd} -D"
@@ -140,7 +140,7 @@ def startMeteoCasale
    sleep(1)
    # -------------------------------------------------------
 
-   cmd = "daemonME.rb -F -i 86400 -m \"genYesterdayMeteoFiles2.rb\" -D"
+   cmd = "daemonME.rb -F -i 00:10,86400 -m \"genYesterdayMeteoFiles2.rb\" -D"
 
     if @isDebugMode == true then
        cmd = "#{cmd} -D"
@@ -153,15 +153,15 @@ def startMeteoCasale
    sleep(1)
    # -------------------------------------------------------
 
-   cmd = "daemonME.rb -F -i 86400 -m \"genMonthlyStats.rb\" -D"
+   cmd = "daemonME.rb -F -i 01:00,86400 -m \"genMonthlyStats.rb\" -D"
 
-#    if @isDebugMode == true then
-#       cmd = "#{cmd} -D"
-#       puts cmd
-#       puts
-#    end
+   if @isDebugMode == true then
+      cmd = "#{cmd} -D"
+      puts cmd
+      puts
+   end
 
- #  system(cmd)
+   system(cmd)
 
    sleep(1)
 
