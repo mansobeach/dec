@@ -13,7 +13,7 @@
 #     --Stop                it stops of all  daemons
 #     --check  <COMMAND>    it checks whether the daemons are running
 #     --mnemonic <COMMAND>  
-#     --interval [20:00,]10 the frequency it is polled  given by MNEMONIC (in seconds)
+#     --interval [20:00,]10 the frequency it is executed the COMMAND (in seconds)
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
