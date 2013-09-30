@@ -13,7 +13,7 @@
 #     --Stop                it stops of all  daemons
 #     --check  <COMMAND>    it checks whether the daemons are running
 #     --mnemonic <COMMAND>  
-#     --interval            the frequency it is polled  given by MNEMONIC (in seconds)
+#     --interval [20:00,]10 the frequency it is polled  given by MNEMONIC (in seconds)
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -91,7 +91,7 @@ def main
                @mnemonic = arg            
             when "--help"     then RDoc::usage
             when "--interval" then
-               @intervalSeconds = arg.to_i
+               decodeIntervalTime(arg.to_s)
 	         when "--stop"     then
                stopListener(arg.to_s)
                stopGetFromEntity(arg.to_s)
@@ -144,7 +144,7 @@ def main
       # Register a listener for this .
       # Create our lovely listener and start it.
       listener = CUC::Listener.new(File.basename($0), @mnemonic, @intervalSeconds,
-                              self.method("triggerCommand").to_proc)
+                              self.method("triggerCommand").to_proc, @intervalStartTime)
 
       trap("SIGHUP") {  
                         puts "\n requested for #{@mnemonic}  ...\n"
@@ -165,6 +165,18 @@ def main
 		   
    end
 end
+#-------------------------------------------------------------
+
+def decodeIntervalTime(interval)
+   if interval.include?(",") == true then
+      @intervalStartTime   = interval.split(",")[0]
+      @intervalSeconds     = interval.split(",")[1].to_i
+   else
+      @intervalStartTime   = nil
+      @intervalSeconds     = interval.to_i
+   end
+end
+
 #-------------------------------------------------------------
 
 # By requirements it is needed one listener per  with an
