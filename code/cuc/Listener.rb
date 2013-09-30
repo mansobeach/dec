@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #########################################################################
 #
@@ -32,7 +32,7 @@ class Listener
    # * proc: an object Proc which is the action to be performed in the body of the run.
    # First of all check if it is already running.
    # Only one process Listener is allowed.
-   def initialize(name, param, interval, action)
+   def initialize(name, param, interval, action, startTime = nil)
      checkModuleIntegrity
      @locker = CheckerProcessUniqueness.new(name, param, true)
      if @locker.isRunning == true then
@@ -41,9 +41,11 @@ class Listener
      end
      @param       = param
      @interval    = interval
+     @startTime   = startTime
      @action      = action
      @isDebugMode = false
      @isForceMode = false
+     @waitSecs    = calculateWaitSeconds
    end   
    #-------------------------------------------------------------
    
@@ -67,6 +69,7 @@ class Listener
    # the @action performed.
    def run
       daemonize
+      wait4StartTime
       while true
          interval = @action.call()
          sleep(interval)
@@ -76,6 +79,8 @@ class Listener
 
    def exec(cmd)
       daemonize
+      wait4StartTime
+
       while true
         if @isDebugMode == true then
            puts "Executing #{cmd} with forced Interval #{@interval}"
@@ -133,6 +138,7 @@ class Listener
    #-------------------------------------------------------------
    def exec2(cmd)
       daemonize
+      wait4StartTime
       while true
         if @isDebugMode == true then
            puts "Executing #{cmd} with forced Interval #{@interval}"
@@ -223,7 +229,41 @@ private
       # Register in lock file the daemon
       @locker.setRunning      
    end
-#-------------------------------------------------------------
+   #-------------------------------------------------------------
+
+   def calculateWaitSeconds
+      waitSecs    = 0
+      if @startTime != nil then
+         currentTime = Time.now
+         @startHour  = @startTime.split(":")[0].to_i
+         @startMin   = @startTime.split(":")[1].to_i
+         currentHour = currentTime.hour.to_i
+         currentMin  = currentTime.min.to_i
+         currentSec  = currentTime.sec.to_i
+
+         currentSecs = currentMin*60 + currentHour*60*60 + currentSec
+         startSecs   = @startMin*60 + @startHour*60*60
+
+         if startSecs > currentSecs then
+            waitSecs = startSecs - currentSecs
+         else
+            waitSecs = 86400 - currentSecs + startSecs
+         end         
+      end      
+      return waitSecs
+   end
+   #-------------------------------------------------------------
+
+   def wait4StartTime
+      if @waitSecs > 0 then
+         if @isDebugMode == true then
+            puts "Waiting #{@waitSecs} to meet start time #{@startTime}"
+            puts
+         end
+         sleep(@waitSecs)
+      end
+   end
+   #-------------------------------------------------------------
 
 end # class
 
