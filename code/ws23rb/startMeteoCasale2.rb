@@ -153,7 +153,7 @@ def startMeteoCasale
    sleep(1)
    # -------------------------------------------------------
 
-   cmd = "daemonME.rb -F -i 01:00,86400 -m \"genMonthlyStats.rb\" -D"
+   cmd = "daemonME.rb -F -i 23:50,86400 -m \"genMonthlyStats.rb\" -D"
 
    if @isDebugMode == true then
       cmd = "#{cmd} -D"
