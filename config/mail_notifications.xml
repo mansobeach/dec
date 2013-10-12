@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MailNotifications>
+   
+   <Notify2 Name="RPF_R">
+   
+      <Event Name="SuccessDelivery">
+         <NotifyFlag>true</NotifyFlag>
+         <Recipients>
+            <Address>borja.lopez@deimos-space.com</Address>
+            <Address>jaga@deimos-space.com</Address>
+         </Recipients>
+      </Event>
+
+      <Event Name="ErrorDelivery">
+         <NotifyFlag>true</NotifyFlag>
+         <Recipients>
+            <Address>borja.lopez@deimos-space.com</Address>
+            <Address>jaga@deimos-space.com</Address>
+         </Recipients>
+      </Event>
+
+      <Event Name="OnDetection">
+         <NotifyFlag>false</NotifyFlag>
+         <Recipients>
+            <Address>borja.lopez@deimos-space.com</Address>
+            <Address>jaga@deimos-space.com</Address>
+         </Recipients>
+      </Event>
+
+      <Event Name="OnReception">
+         <NotifyFlag>false</NotifyFlag>
+         <Recipients>
+            <Address>borja.lopez@deimos-space.com</Address>
+            <Address>jaga@deimos-space.com</Address>
+         </Recipients>
+      </Event>
+      
+   </Notify2>
+
+   <Notify2 Name="FOS_TM_R">
+   
+      <Event Name="OnReception">
+         <NotifyFlag>false</NotifyFlag>
+         <Recipients>
+            <Address>borja.lopez@deimos-space.com</Address>
+            <Address>jaga@deimos-space.com</Address>
+         </Recipients>
+      </Event>
+      
+   </Notify2>
+
+   
+</MailNotifications>

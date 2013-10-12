@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <File Type="METEO_CASALE_2*.xml">
+      <Description></Description>
+      <FromList>
+         <Interface>METEO</Interface>
+      </FromList>
+   </File>
+
+
+</FileList>

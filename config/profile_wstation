@@ -1,0 +1,17 @@
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+export PATH=$PATH:$HOME/Projects/weather/wstation
+
+export METEO_ARCHIVE=$HOME/Projects/weather/data/archive
+export METEO_TOOLS=$HOME/Projects/weather/wstation
+export METEO_CONFIG=$HOME/Projects/weather/config

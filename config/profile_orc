@@ -1,0 +1,47 @@
+
+# -------------------------------------------------------------------------
+# Project     : NRTP Orchestrator
+# Module Name : profile_orc
+# Author      : Borja López Fernández - Rémi Lavergne
+# Company     : DEIMOS
+# Shell	      : bash
+# Date        : 23/04/2008
+# ------------------------------------------------------------------------- 
+# $Source: /home/cvs/dec/cvsroot/data/conf/profile_orc,v $
+# $Revision: 1.3 $ 
+# $Date: 2008/12/18 12:48:28 $ 
+# $Author: algs $
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+#               Copyright (C) 2008 Deimos-Space
+# -------------------------------------------------------------------------
+
+# Here are defined all the environment variables required for
+# the NRTP Orchestrator
+
+export ORC_BASE=$HOME/trabajo/dec
+
+export ORC_DB_ADAPTER=mysql
+
+export ORC_DATABASE_NAME=test
+
+export ORC_DATABASE_USER=root
+
+export ORC_DATABASE_PASSWORD=1mysql
+
+export ORC_CONFIG=$ORC_BASE/config
+
+export ORC_TMP=/tmp/orc
+
+export PATH=$PATH:$ORC_BASE/code/orc
+
+export RUBYLIB=$ORC_BASE/code
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/pds_bin/oracle/product/9204/lib
+
+export ORACLE_HOME=/pds_bin/oracle/product/9204
+
+export PATH=$ORACLE_HOME/bin:$PATH
+
+unset USERNAME
+

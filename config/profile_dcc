@@ -1,0 +1,22 @@
+# -------------------------------------------------------------------------
+# Project     : DEC
+# Module Name : profile_dcc
+# Author      : Borja López Fernández
+# Company     : DEIMOS
+# Shell	      : bash
+# Date        : 06/08/2006
+# ------------------------------------------------------------------------- 
+# $Source: /home/cvs/dec/cvsroot/data/conf/profile_dcc,v $
+# $Revision: 1.1 $ 
+# $Date: 2007/02/05 13:32:29 $ 
+# $Author: decdev $
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+#               Copyright (C) 2006 Deimos-Space
+# -------------------------------------------------------------------------
+
+# Here they are defined all the environment variables required for
+# the Data Distributor Component
+source $HOME/Projects/weather/config/profile_common
+
+export PATH=$PATH:$DEC_BASE/code/dcc

@@ -1,0 +1,21 @@
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+export METEO_BASE=$HOME/Projects/weather
+export METEO_TEMP=$HOME/Projects/weather/data/temp
+
+source profile_common
+source profile_ddc
+source profile_dcc
+source profile_ws23rb
+source profile_wstation
+source profile_minarc

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>METEO CASALE BEACH</Name>
+      <Id>METEO</Id>
+      <Mission>METEO-CASALE</Mission>
+   </Project>
+   <Filters>
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+   </Filters>
+   <Options>
+      <DeleteSourceFiles>true</DeleteSourceFiles>
+   </Options>
+   <GlobalOutbox>$HOME/Projects/weather/data/archive</GlobalOutbox>
+   <SatPrefix>AE</SatPrefix>
+   <ReportDir>$HOME/Projects/weather/data/archive</ReportDir>
+   <Reports>
+      
+      <Report Name="DeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered</Desc>
+         <FileType>MMPF_FTOUT</FileType>
+      </Report>
+
+      <Report Name="EmergencyDeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered in Emergency Mode</Desc>
+         <FileType>MMPF_FT_EM</FileType>
+      </Report>
+
+   </Reports>
+</Configuration>

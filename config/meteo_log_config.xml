@@ -1,0 +1,20 @@
+<log4r_config>
+ 
+ <pre_config>
+  <parameter name="mainLoggerName" value="METEO" level="INFO"/>
+ </pre_config>
+ 
+ <outputter name="meteo_casale_log" level="INFO">
+  <type>FileOutputter</type>
+  <filename>/home/meteo/Projects/weather/data/log/MeteoCasale.log</filename>
+  <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+   <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+  </formatter>
+  <trunc>false</trunc>
+ </outputter>
+
+ <logger name="METEO" level="INFO" trace="false">
+  <outputters>meteo_casale_log</outputters>
+ </logger>
+ 
+</log4r_config>

@@ -1,0 +1,32 @@
+
+# Here are defined all the environment variables required for
+# the Data Exchange Component (both DDC & DCC)
+
+export MINARC_BASE=$DEC_BASE
+
+# export MINARC_DB_ADAPTER=mysql
+
+export MINARC_DB_ADAPTER=sqlite3
+
+export MINARC_DATABASE_NAME=$METEO_BASE/data/inventory/meteo_minarc
+
+export MINARC_DATABASE_USER=root
+
+export MINARC_DATABASE_PASSWORD=1mysql
+
+export MINARC_ARCHIVE_ROOT=$METEO_ARCHIVE/minarc_root
+
+export MINARC_CONFIG=$MINARC_BASE/config
+
+export PATH=$PATH:$MINARC_BASE/code/minarc
+
+export RUBYLIB=$DEC_BASE/code
+
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/pds_bin/oracle/product/9204/lib
+
+# export ORACLE_HOME=/pds_bin/oracle/product/9204
+
+# export PATH=$ORACLE_HOME/bin:$PATH
+
+unset USERNAME
+

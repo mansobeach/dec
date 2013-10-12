@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <File Type="METEO">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+
+   <File Type="METEO_CASALE">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO2"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+
+   <File Type="METEO_HISTORIC">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+   <File Type="*stats*png">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+
+   <File Type="METEO_PNG">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" CleanUpAge="86400" />
+      </ToList>
+   </File>
+
+</FileList>

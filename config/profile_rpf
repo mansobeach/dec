@@ -1,0 +1,39 @@
+# -------------------------------------------------------------------------
+# Project     : DEC
+# Module Name : profile_rpf
+# Author      : Borja López Fernández
+# Company     : DEIMOS
+# Shell	      : bash
+# Date        : 06/08/2006
+# ------------------------------------------------------------------------- 
+# $Source: /home/cvs/dec/cvsroot/data/conf/profile_rpf,v $
+# $Revision: 1.3 $ 
+# $Date: 2007/02/07 14:33:24 $ 
+# $Author: decdev $
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+#               Copyright (C) 2006 Deimos-Space
+# -------------------------------------------------------------------------
+
+# Here they are defined all the environment variables required for
+# the Data Distributor Component
+source $HOME/local/dec/data/conf/profile_common
+source $HOME/local/dec/data/conf/profile_ddc
+source $HOME/local/dec/data/conf/profile_dcc
+
+# Here they are defined all the environment variables required for
+# the RPF File Transfer Component
+export PATH=$PATH:$DEC_BASE/code/rpf
+
+export RPF_ARCHIVE_ROOT=/home/projects/decdev/rpf/archiveRoot
+export FTPROOT=/home/projects/decdev/rpf/ftpRoot
+
+# Additional variables for RPF backup tool
+
+export DATABASE_USER=$DCC_DATABASE_USER
+export DATABASE_PASSWORD=$DCC_DATABASE_PASSWORD
+
+export RPFROOT=/home/projects/decdev/rpf
+export RPFTMPDIR=/home/projects/decdev/rpf/tmp
+export RPFCONFIG=/home/projects/decdev/rpf/config
+export RPFDEV=/home/projects/decdev/rpf

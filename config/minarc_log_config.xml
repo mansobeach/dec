@@ -1,0 +1,20 @@
+  <log4r_config>
+ 
+   <pre_config>
+    <parameter name="mainLoggerName" value="MINARC"/>
+   </pre_config>
+ 
+   <outputter name="minarc_log">
+    <type>RollingFileOutputter</type>
+    <filename>/tmp/minarc_log_file.log</filename>
+    <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+     <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+    </formatter>
+    <trunc>false</trunc>
+   </outputter>
+
+   <logger name="MINARC" level="ERROR" trace="false">
+    <outputters>minarc_log</outputters>
+   </logger>
+ 
+  </log4r_config>

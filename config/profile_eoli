@@ -1,0 +1,25 @@
+
+# -------------------------------------------------------------------------
+# Project     : DEC
+# Module Name : profile_common
+# Author      : Borja López Fernández
+# Company     : DEIMOS
+# Shell	      : bash
+# Date        : 06/08/2006
+# ------------------------------------------------------------------------- 
+# $Source: /home/cvs/dec/cvsroot/data/conf/profile_eoli,v $
+# $Revision: 1.1 $ 
+# $Date: 2006/09/28 12:46:56 $ 
+# $Author: decdev $
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+#               Copyright (C) 2006 Deimos-Space
+# -------------------------------------------------------------------------
+
+# Here they are defined all the environment variables required for
+# eoliClient.rb configuration tool.
+
+DEC_BASE=$HOME/local/dec
+
+export EOLI_CLIENT_CONFIG=$DEC_BASE/config
+export RUBYLIB=$DEC_BASE/code

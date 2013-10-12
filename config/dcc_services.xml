@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="dcc_services.xsd">
+
+   <Service>
+      <Name>MAIL</Name>
+      <Desc>DCC Mail Notification processor</Desc>
+      <Command>getMailNotification.rb</Command>
+      <Interval unit="s">600</Interval>
+   </Service>
+
+<!--
+   <Service>
+      <Name>DISSEMINATION</Name>
+      <Desc>DCC Data Dissemination</Desc>
+      <Command>mv2DimsInTray.rb -a</Command>
+      <Interval unit="s">120</Interval>
+   </Service>
+-->
+
+<!-- Desc & Config of the ext I/Fs -->
+ 
+ <!--
+   <Service>
+      <Name>IGSList-IGN</Name>
+      <Desc>IGS Service Polling - IGN Center 10 days data</Desc>
+      <Command>igsFileList.rb -c IGN -d 10</Command>
+      <Interval unit="s">86400</Interval>
+   </Service>
+
+   <Service>
+      <Name>IGSList-CDDIS</Name>
+      <Desc>IGS Service Polling - CDDIS Center 10 days data</Desc>
+      <Command>igsFileList.rb -c CDDIS -d 10</Command>
+      <Interval unit="s">86400</Interval>
+   </Service>
+
+
+   <Service>
+      <Name>IGSList-CODE</Name>
+      <Desc>IGS Service Polling - CODE Center 100 days data</Desc>
+      <Command>igsFileList.rb -c CODE -d 100</Command>
+      <Interval unit="s">86400</Interval>
+   </Service>
+-->   
+</Services>
