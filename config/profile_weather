@@ -13,9 +13,9 @@
 export METEO_BASE=$HOME/Projects/weather
 export METEO_TEMP=$HOME/Projects/weather/data/temp
 
-source profile_common
-source profile_ddc
-source profile_dcc
-source profile_ws23rb
-source profile_wstation
-source profile_minarc
+source $HOME/Projects/dec/config/profile_common
+source $HOME/Projects/dec/config/profile_ddc
+source $HOME/Projects/dec/config/profile_dcc
+source $HOME/Projects/dec/config/profile_ws23rb
+source $HOME/Projects/dec/config/profile_wstation
+source $HOME/Projects/dec/config/profile_minarc
