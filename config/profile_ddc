@@ -10,7 +10,7 @@
 #
 #########################################################################
 
-source $HOME/Projects/weather/config/profile_common
+source $HOME/Projects/dec/config/profile_common
 
 export DDC_ARCHIVE_ROOT=$HOME/Projects/weather/data/outbox
 

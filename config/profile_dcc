@@ -17,6 +17,6 @@
 
 # Here they are defined all the environment variables required for
 # the Data Distributor Component
-source $HOME/Projects/weather/config/profile_common
+source $HOME/Projects/dec/config/profile_common
 
 export PATH=$PATH:$DEC_BASE/code/dcc

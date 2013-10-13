@@ -5,7 +5,7 @@
 
 export DEC_BASE=$HOME/Projects/dec
 
-export DCC_CONFIG=$HOME/Projects/weather/config
+export DCC_CONFIG=$HOME/Projects/dec/config
 
 export DEC_DB_ADAPTER=postgresql
 
@@ -21,10 +21,10 @@ export DCC_DATABASE_NAME=meteo
 export DCC_TMP=$HOME/tmp
 
 
-export DEC_COTS_HOME=/home/projects/decdev/cots
+# export DEC_COTS_HOME=/home/projects/decdev/cots
 
 export RUBYLIB=$DEC_BASE/code
 
 unset USERNAME
 
-export HOSTNAME=MacBook-Barone.local
+# export HOSTNAME=MacBook-Barone.local
