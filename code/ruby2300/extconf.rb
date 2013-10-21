@@ -9,9 +9,10 @@ dir_config(extension_name)
 
 have_library("open2300")
 
-dir_config('open2300', '/Users/borja/Projects/dec/code/ruby2300', '/Users/borja/Projects/dec/code/ruby2300')
+dir_config('open2300', '/home/meteo/Projects/dec/code/ruby2300', '/home/meteo/Projects/dec/code/ruby2300')
 
-$LDFLAGS << " -Wl,-rpath,/Users/borja/Projects/dec/code/ruby2300"
+
+$LDFLAGS << " -Wl,-rpath,/home/meteo/Projects/dec/code/ruby2300"
 
 # Do the work
 create_makefile(extension_name)
