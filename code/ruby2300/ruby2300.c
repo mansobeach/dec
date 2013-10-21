@@ -87,7 +87,7 @@ void Init_ruby2300()
 
 VALUE method_open_weatherstation(VALUE self, VALUE config_file) 
 {
-   get_configuration(&config, STR2CSTR(config_file)) ;
+   get_configuration(&config, StringValuePtr(config_file)) ;
    ws2300 = open_weatherstation(config.serial_device_name) ;
 	return INT2NUM(ws2300) ;
 }
