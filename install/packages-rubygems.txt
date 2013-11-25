@@ -6,3 +6,4 @@ pg
 rubymagick
 gruff
 spreadsheet
+gmail
