@@ -25,11 +25,8 @@
 # Borja Lopez Fernandez
 #
 
-
-
-
-require 'getoptlong'
-require 'rdoc/usage'
+require 'rubygems'
+require 'optparse'
 
 require 'cuc/Listener'
 require 'cuc/Log4rLoggerFactory'
@@ -40,7 +37,7 @@ require 'ctc/ReadInterfaceConfig'
 require 'dcc/ReadConfigDCC'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/07/03 11:38:26 $"   
+@dateLastModification = "$Date: 2013/10/28 11:38:26 $"   
 
 
 # MAIN script function
@@ -58,72 +55,104 @@ def main
    @mnemonic           = "" 
    @intervalSeconds    = 0
    
-   
-   opts = GetoptLong.new(
-      ["--mnemonic", "-m",       GetoptLong::REQUIRED_ARGUMENT],     
-      ["--interval", "-i",       GetoptLong::REQUIRED_ARGUMENT],
-      ["--stop", "-s",           GetoptLong::REQUIRED_ARGUMENT],
-      ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
-      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
-      ["--Force", "-F",          GetoptLong::NO_ARGUMENT],
-      ["--Stop", "-S",           GetoptLong::NO_ARGUMENT],
-      ["--List", "-L",           GetoptLong::NO_ARGUMENT],
-      ["--check", "-c",          GetoptLong::REQUIRED_ARGUMENT],     
-      ["--Reload", "-R",         GetoptLong::NO_ARGUMENT],
-      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
-      ["--help", "-h",           GetoptLong::NO_ARGUMENT]
-      )
+   cmdOptions = {}
+
 
    begin
-      opts.each do |opt, arg|
-         case opt
-	         when "--check"    then  @mnemonic = arg    
-                                    @bCheckListeners    = true
-            when "--Debug"    then @isDebugMode = true
-            when "--Force"    then @isForceMode = true
-            when "--Reload"   then @isReload = true
-            when "--List"     then @bList = true
-            when "--version"  then
-               print("\nCasale Beach ", File.basename($0))
-               print("    $Revision: 1.0 $\n  [", @@dateLastModification, "]\n\n\n")
-               exit(0)
-            when "--mnemonic" then
-               @mnemonic = arg            
-            when "--help"     then RDoc::usage
-            when "--interval" then
-               decodeIntervalTime(arg.to_s)
-	         when "--stop"     then
-               stopListener(arg.to_s)
-               stopGetFromEntity(arg.to_s)
-               exit(0)
-            when "--Stop"     then 
-	            stopListeners
-	            puts "\nAll Daemons have been killed ! }=-) \n\n"
-	            exit(0)
-            when "--usage"    then RDoc::usage("usage")
+      cmdParser = OptionParser.new do |opts|
+
+         opts.banner = "daemonME.rb  --all [-R]| --mnemonic <COMMAND> --interval <seconds>"
+
+         opts.on("-m s", "--mnemonic=s", String, "command to be launched") do |arg|
+            cmdOptions[:mnemonic] = arg.to_s
+            @mnemonic = arg.to_s
          end
-      end
-   rescue Exception
+
+         opts.on("-i s", "--interval=s", String, "[20:00,]10 the frequency it is executed the COMMAND (in seconds)") do |arg|
+            cmdOptions[:interval] = arg.to_s
+            decodeIntervalTime(arg.to_s)
+         end
+
+         opts.on("-c s", "--check=s", String, "it checks if <COMMAND> is running as daemon") do |arg|
+            cmdOptions[:check] = true
+            @mnemonic = arg.to_s
+         end
+
+         opts.on("-s c", "--stop=c", "it stops <COMMAND> running as daemon") do |arg|
+            cmdOptions[:stop] = arg.to_s
+            stopDaemon(arg.to_s)
+            return
+         end
+
+         opts.on("-F", "--Force", "it forces the execution of the command") do
+            cmdOptions[:force] = true
+            @isForceMode       = true
+         end
+
+         opts.on("-L", "--List", "it lists all commands running as daemons") do
+            cmdOptions[:list] = true
+         end
+
+         opts.separator ""
+         opts.separator "Common options:"
+         opts.separator ""
+         
+         opts.on("-D", "--Debug", "Run in debug mode") do
+            cmdOptions[:debug] = true
+            @isDebugMode = true
+         end
+
+         opts.on_tail("-v", "--version", "shows version number") do
+            print("\nCasale & Beach ", File.basename($0))
+            print("    $Revision: 1.0 $\n  [", @dateLastModification, "]\n\n\n")
+            return
+         end
+
+         opts.on_tail("-h", "--help", "Show this message") do
+            puts opts
+            return
+         end
+
+      end.parse!
+   rescue Exception => e
+      puts e.to_s
       exit(99)
-   end 
-   
-   if @bCheckListeners == true then
-      checkListeners(@mnemonic)
-      exit(0)
    end
 
-   if @bList == true then
+#    p cmdOptions
+#    p ARGV
+
+   if cmdOptions[:list] == true then
       listAllListeners
       exit(0)
    end
 
+   if cmdOptions[:check] == true then
+      checkDaemons(@mnemonic)
+      exit(0)
+   end
 
-   if @isReload == true and @launchAllListeners == false then
-      RDoc::usage("usage")
+   begin
+      cmdParser.parse!
+      
+      mandatory = [:mnemonic, :interval]
+      
+      missing = mandatory.select{ |param| cmdOptions[param].nil? }
+  
+      if not missing.empty?
+         puts "Missing options: #{missing.join(', ')}"
+         puts cmdParser
+         exit
+      end
+   rescue OptionParser::InvalidOption, OptionParser::MissingArgument
+      puts $!.to_s
+      puts cmdParser
+      exit
    end
  
-   if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) then
-      RDoc::usage("usage")
+   if @mnemonic == "" or @intervalSeconds == 0 then
+      puts cmdParser
+      exit(99)
    end
  
    # CheckModuleIntegrity
@@ -269,7 +298,7 @@ end
 #-------------------------------------------------------------
 
 # It stops the listener for the given 
-def stopListener(mnemonic)
+def stopDaemon(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
    pid     = checker.getRunningPID
    if pid == false then
@@ -288,7 +317,7 @@ end
 # * 1 -> All listeners are not running
 # * 2 -> Some of them are not running
 #
-def checkListeners(mnemonic)
+def checkDaemons(mnemonic)
 
        checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
        if @isDebugMode == true then
