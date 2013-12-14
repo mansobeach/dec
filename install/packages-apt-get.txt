@@ -5,7 +5,7 @@ zip
 p7zip
 compress
 sqlite3
-ruby1.8
+ruby-dev
 rubygems
 fortune
 libpg-dev
