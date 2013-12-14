@@ -32,8 +32,8 @@
 #########################################################################
 
 
+require 'optparse'
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Log4rLoggerFactory'
@@ -48,7 +48,7 @@ def main
    opts = GetoptLong.new(
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
      ["--Force", "-F",          GetoptLong::NO_ARGUMENT],
-     ["--Historic", "-H",          GetoptLong::NO_ARGUMENT],
+     ["--Historic", "-H",       GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--help", "-h",           GetoptLong::NO_ARGUMENT]
      )
@@ -62,8 +62,8 @@ def main
             when "--version" then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
-            when "--usage"   then RDoc::usage("usage")
-            when "--help"    then RDoc::usage                         
+            when "--usage"   then exit # RDoc::usage("usage")
+            when "--help"    then exit # RDoc::usage                         
          end
       end
    rescue Exception
@@ -88,20 +88,21 @@ def main
 		exit(99)
    end
 
-   time           = Time.now
-   now            = time.strftime("%Y%m%dT%H%M%S")   
-   meteoFilename  = %Q{METEO_CASALE_#{now}.xml}
-
    prevDir     = Dir.pwd
    toolsDir    = ENV['METEO_TOOLS']
    archiveDir  = ENV['METEO_ARCHIVE']
-   
+   stationName = ENV['METEO_STATION']
+
+   time           = Time.now
+   now            = time.strftime("%Y%m%dT%H%M%S")   
+   meteoFilename  = %Q{METEO_#{stationName}_#{now}.xml}
+
    Dir.chdir(toolsDir)
 
    cmd = "triggerRTMeteoData.rb -a -F #{meteoFilename}"
 
    if @bHistoric == true then
-      meteoFilename = %Q{METEO_HISTORIC_#{now}.xml}
+      meteoFilename = %Q{METEO_HISTORIC_#{stationName}_#{now}.xml}
       cmd = "./xml2300 #{meteoFilename}"
    end
 

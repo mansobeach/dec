@@ -20,7 +20,7 @@
 
 
 require 'getoptlong'
-require 'rdoc/usage'
+#require 'rdoc/usage'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'ws23rb/ReadWSXMLFile'
@@ -50,17 +50,17 @@ def main
             when "--version" then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
-            when "--usage"   then RDoc::usage("usage")
-            when "--help"    then RDoc::usage                         
+            when "--usage"   then exit # RDoc::usage("usage")
+            when "--help"    then exit # RDoc::usage                         
          end
       end
    rescue Exception
       exit(99)
    end
 
-   if @filename == "" then
-      RDoc::usage("usage")
-   end
+#    if @filename == "" then
+#       RDoc::usage("usage")
+#    end
 
    init
 
