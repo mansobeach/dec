@@ -26,8 +26,7 @@
 #
 #########################################################################
 
-require 'getoptlong'
-require 'rdoc/usage'
+require 'optparse'
 
 require 'ruby2300/ruby2300'
 require 'ws23rb/WriteWSXMLFile'
@@ -36,7 +35,7 @@ include Ruby2300
 
 # MAIN script function
 def main
-
+   cmdParser      = nil
    @filename      = ""
    @isDebugMode   = false
    @fields        = Array.new
@@ -44,41 +43,68 @@ def main
                      "rel_pressure", "abs_pressure", "wind_pointing_degrees", 
                      "wind_direction", "wind_speed", "dewpoint"]
 
-   opts = GetoptLong.new(
-     ["--fields", "-f",         GetoptLong::REQUIRED_ARGUMENT],
-     ["--File", "-F",           GetoptLong::REQUIRED_ARGUMENT],
-     ["--all", "-a",            GetoptLong::NO_ARGUMENT],
-     ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
-     ["--List", "-L",           GetoptLong::NO_ARGUMENT],
-     ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
-     ["--version", "-v",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT]
-     )
-   
-   begin 
-      opts.each do |opt, arg|
-         case opt
-            when "--List"     then 
-               puts @variables
-               exit(0)
-	         when "--File"     then @filename = arg.to_s
-            when "--Debug"    then @isDebugMode = true
-            when "--version"  then
-               print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
-               exit (0)
-            when "--usage"    then RDoc::usage("usage")
-            when "--help"     then RDoc::usage
-	         when "--fields"   then @fields = arg.to_s.split(",")
-            when "--all"      then @fields = @variables
 
+   cmdOptions = {}
+
+   begin
+      cmdParser = OptionParser.new do |opts|
+
+         opts.banner = "triggerRTMeteoData.rb -f f1,f2,...fn | -a [-F <filename>]"
+
+         opts.on("-D", "--Debug", "Run in debug mode") do
+            cmdOptions[:debug] = true
+            @isDebugMode = true
          end
-      end
-   rescue Exception
+
+         opts.on("-f s", "--fields=s", String, "retrieves specified variables") do |arg|
+            cmdOptions[:fields] = arg.to_s.split(",")
+            @fields = arg.to_s.split(",")
+         end
+
+         opts.on("-a", "--all", "retrieves all variables") do |v|
+            cmdOptions[:all] = true
+            @fields = @variables
+         end
+
+         opts.on("-F s", "--File=s", String, "filename to keep the information") do |arg|
+            cmdOptions[:filename] = arg.to_s
+            @filename = arg.to_s
+         end
+
+         opts.on("-L", "--List", "list all meteo-station variables") do |v|
+            cmdOptions[:list] = v
+         end
+
+         opts.separator ""
+         opts.separator "Common options:"
+         opts.separator ""
+         
+         opts.on_tail("-h", "--help", "Show this message") do
+            puts opts
+            return
+         end
+
+      end.parse!
+   
+   rescue Exception => e
+      puts e.to_s
       exit(99)
    end
 
-   if @fields.empty? == true then
-      RDoc::usage
+   if @isDebugMode == true then
+      p cmdOptions
+      p ARGV
+   end
+
+   if cmdOptions[:list] == true then
+      puts @variables
+      exit(0)
+   end
+
+   if cmdOptions[:all].nil? and cmdOptions[:fields].nil?
+      puts "Run #{File.basename($0)} -h for help"
+      puts
+      exit(99)
    end
 
    configFile = "#{ENV['METEO_CONFIG']}/open2300.conf"
