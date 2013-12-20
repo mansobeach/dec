@@ -17,6 +17,8 @@
 #
 #########################################################################
 
+require 'rubygems'
+
 require 'ddc/ReadConfigDDC'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadMailConfig'

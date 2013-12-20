@@ -40,6 +40,7 @@
 #     -e    checks entities configuration in interfaces.xml
 #     -o    checks the outgoing file types in ft_outgoing_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
+#    --nodb no Inventory checks
 #     -h    it shows the help of the tool
 #     -u    it shows the usage of the tool
 #     -v    it shows the version number
@@ -62,21 +63,20 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 require 'ctc/CheckerMailConfig'
 require 'ctc/CheckerInterfaceConfig'
 require 'ctc/CheckerOutgoingFileConfig'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileDestination'
-require 'ctc/CheckerInventoryConfig'
 
 
 # checkSent2Entity checks what it has been sent to a given entity.
 # It checks in the UploadDir and UploadTemp directories 
 
 # Global variables
-@@dateLastModification = "$Date: 2007/12/19 05:34:15 $" 
+@dateLastModification = "$Date: 2007/12/19 05:34:15 $" 
                                     # to keep control of the last modification
                                     # of this script
 @isDebugMode      = false               # execution showing Debug Info
@@ -91,6 +91,7 @@ require 'ctc/CheckerInventoryConfig'
 @bAll             = false
 @bServices        = false
 @bTrays           = false
+@isNoDB           = false
 
 # MAIN script function
 def main
@@ -108,7 +109,8 @@ def main
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--Verbose", "-V",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT]
+     ["--help", "-h",           GetoptLong::NO_ARGUMENT],
+     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
      )
     
    begin
@@ -128,8 +130,11 @@ def main
             when "--services" then @bServices = true
 	         when "--mail"     then @bMail     = true
             when "--all"      then @bAll      = true
+            when "--nodb"    then @isNoDB = true
 #            when "--tray"     then @bTrays    = true
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then fullpathFile = `which #{File.basename($0)}` 
+                                   system("head -52 #{fullpathFile}")
+                                   exit
 
          end
 
@@ -141,12 +146,14 @@ def main
    if @bIncoming == false and @bOutgoing == false and @bClients == false and
       @bEntities == false and @bAll == false and @bMail == false and 
       @bServices == false and @bTrays == false then
-      RDoc::usage("usage")
+      fullpathFile = `which #{File.basename($0)}` 
+      system("head -52 #{fullpathFile}")
+      exit
    end
    
    # Check Module Integrity
    checkModuleIntegrity
-   
+
    ftConfig = CTC::ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllExternalMnemonics
 
@@ -182,14 +189,18 @@ def main
       }      
       puts "================================================"
       
-      # Perform the check against the Inventory
-      puts "Checking DDC/Inventory entries ..."
-      checkerInventory = CTC::CheckerInventoryConfig.new
-      ret = checkerInventory.check
-      puts "================================================"
-      if ret == false then
-         puts "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
-      end
+      if @isNoDB == false then
+         require 'ctc/CheckerInventoryConfig'
+         
+         # Perform the check against the Inventory
+         puts "Checking DDC/Inventory entries ..."
+         checkerInventory = CTC::CheckerInventoryConfig.new
+         ret = checkerInventory.check
+         puts "================================================"
+         if ret == false then
+            puts "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
+         end
+      end 
       
    end
 
@@ -253,9 +264,6 @@ def main
    end
    
    # Check that dcc_services.xml is correctly configured
-
-
-   
    
 end
 

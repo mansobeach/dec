@@ -35,7 +35,7 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 require 'ddc/RetrieverFromArchive'
 require 'ctc/ReadInterfaceConfig'
 require 'cuc/Logger.rb'

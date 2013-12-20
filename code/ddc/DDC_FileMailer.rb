@@ -24,7 +24,7 @@ require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadMailConfig'
 require 'ctc/CheckerMailConfig'
 require 'ctc/FileMailer'
-require 'dbm/DatabaseModel'
+# require 'dbm/DatabaseModel'
 require 'ddc/ReadConfigDDC'
 
 
@@ -95,6 +95,7 @@ class DDC_FileMailer
       loadFileList
 
       if @isNoDB == false then
+         require 'dbm/DatabaseModel'
          @interface   = Interface.find_by_name(@entity)
       else
          @interface   = @entity

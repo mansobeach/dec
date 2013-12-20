@@ -24,7 +24,7 @@ require 'cuc/EE_ReadFileName'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/FileSender'
 require 'ctc/DeliveryListWriter'
-require 'dbm/DatabaseModel'
+# require 'dbm/DatabaseModel'
 require 'ddc/ReadConfigDDC'
 
 
@@ -77,11 +77,14 @@ class DDC_FileSender
       @arrFiles    = Array.new
       loadFileList
       @sender.setFileList(@arrFiles, @outboxDir)
+
       if @isNoDB == false then
+         require 'dbm/DatabaseModel'
          @interface   = Interface.find_by_name(@entity)
       else
          @interface   = @entity
       end
+
       @satPrefix   = DDC::ReadConfigDDC.instance.getSatPrefix
       @prjName     = DDC::ReadConfigDDC.instance.getProjectName
       @prjID       = DDC::ReadConfigDDC.instance.getProjectID

@@ -57,10 +57,10 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 # Global variables
-@@dateLastModification = "$Date: 2007/11/30 10:10:11 $" 
+@dateLastModification = "$Date: 2007/11/30 10:10:11 $" 
                                     # to keep control of the last modification
                                     # of this script
 @bOutgoing        = false
@@ -95,7 +95,9 @@ def main
 	         when "--mail"     then @bMail     = true
 	         when "--general"  then @bGeneral  = true
             when "--all"      then @bAll      = true
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then fullpathFile = `which #{File.basename($0)}` 
+                                   system("head -50 #{fullpathFile}")
+                                   exit
          end
       end
    rescue Exception
@@ -103,7 +105,9 @@ def main
    end
  
    if @bOutgoing == false and @bEntities == false and @bAll == false and @bMail == false and @bGeneral == false then
-      RDoc::usage
+      fullpathFile = `which #{File.basename($0)}` 
+      system("head -50 #{fullpathFile}")
+      exit
    end
 
    # Check DDC's general configuration files ddc_config.xml

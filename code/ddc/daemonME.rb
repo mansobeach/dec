@@ -110,6 +110,10 @@ def main
 
          opts.on_tail("-h", "--help", "Show this message") do
             puts opts
+            puts
+            fullpathFile = `which #{File.basename($0)}` 
+            system("head -45 #{fullpathFile}")
+            exit
             return
          end
 
@@ -141,7 +145,10 @@ def main
   
       if not missing.empty?
          puts "Missing options: #{missing.join(', ')}"
+         puts
          puts cmdParser
+         fullpathFile = `which #{File.basename($0)}` 
+         system("head -27 #{fullpathFile}")
          exit
       end
    rescue OptionParser::InvalidOption, OptionParser::MissingArgument

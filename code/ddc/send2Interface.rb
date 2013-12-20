@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 # == Synopsis
 #
 # This is a Data Distributor Ccmponent command line tool that deliver files to a given I/F.
@@ -18,7 +17,7 @@
 #
 #
 # == Usage
-# send2Interface.rb -m <MNEMONIC> [-O]
+# send2Interface.rb -m <MNEMONIC> [-O] [--nodb]
 #        --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
 #        --ONCE      The file is just sent once for that I/F
 #        --AUTO      local outbox Automatic management 
@@ -57,8 +56,10 @@
 #
 #########################################################################
 
+require 'rubygems'
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
+# require 'rdoc/usage'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
@@ -71,7 +72,7 @@ require 'ddc/DDC_BodyMailer'
 require 'ddc/ReadConfigDDC'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/07/03 11:38:26 $"     # to keep control of the last modification
+@dateLastModification = "$Date: 2008/07/03 11:38:26 $"     # to keep control of the last modification
                                                             # of this script
                                                             # execution showing Debug Info
 @isDebugMode      = false                  
@@ -119,11 +120,9 @@ def main
    @isDebugMode      = false 
    @isDeliveredOnce  = false
    @isNoDB           = false 
-   @@retries         = 1
-   @@loops           = 1
-   @@delay           = 60
-   @@nROP            = 0
-   @@bResult         = false
+   @retries         = 1
+   @loops           = 1
+   @delay           = 60
    sent              = false
    @bShowMnemonics   = false           
    @bNotify          = true
@@ -160,13 +159,15 @@ def main
             when "--mnemonic" then
                @entity = arg         
             when "--help"    then RDoc::usage
-            when "--usage"   then RDoc::usage("usage")
+            when "--usage"   then fullpathFile = `which #{File.basename($0)}` 
+                                  system("head -45 #{fullpathFile}")
+                                  exit
             when "--retries" then 
-               @@retries = arg.to_i
+               @retries = arg.to_i
             when "--loops" then
-               @@loops   = arg.to_i
+               @loops   = arg.to_i
             when "--delay" then
-               @@delay   = arg.to_i
+               @delay   = arg.to_i
             when "--params"   then  @strParams = arg.to_s
             when "--nodb"     then  @isNoDB = true
             when "--Nomail" then
@@ -206,7 +207,8 @@ def main
    end
 
    if @entity == "" then
-      RDoc::usage("usage")
+      system("head -45 #{File.basename($0)}") 
+      exit
    end
    
    if @strParams != "" then

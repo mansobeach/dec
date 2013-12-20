@@ -67,13 +67,13 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'ctc/ReadInterfaceConfig'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/06/09 12:55:34 $"     # to keep control of the last modification
+@dateLastModification = "$Date: 2008/06/09 12:55:34 $"     # to keep control of the last modification
                                                             # of this script
                                                             # execution showing Debug Info
 @isDebugMode      = false                  
