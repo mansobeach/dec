@@ -17,13 +17,12 @@
 
 require 'getoptlong'
 
-require 'dbm/DatabaseModel'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/FTPClientCommands'
 
 
 # Global variables
-@@dateLastModification = "$Date: 2007/06/26 15:53:35 $" 
+@dateLastModification = "$Date: 2007/06/26 15:53:35 $" 
                                     # to keep control of the last modification
                                     # of this script
 @isDebugMode      = false               # execution showing Debug Info
