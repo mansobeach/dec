@@ -207,7 +207,8 @@ def main
    end
 
    if @entity == "" then
-      system("head -45 #{File.basename($0)}") 
+      fullpathFile = `which #{File.basename($0)}` 
+      system("head -45 #{fullpathFile}")
       exit
    end
    
