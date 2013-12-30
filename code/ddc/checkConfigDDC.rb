@@ -130,7 +130,7 @@ def main
             when "--services" then @bServices = true
 	         when "--mail"     then @bMail     = true
             when "--all"      then @bAll      = true
-            when "--nodb"    then @isNoDB = true
+            when "--nodb"     then @isNoDB    = true
 #            when "--tray"     then @bTrays    = true
             when "--usage"    then fullpathFile = `which #{File.basename($0)}` 
                                    system("head -52 #{fullpathFile}")
