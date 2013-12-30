@@ -56,7 +56,7 @@
 
   <!-- ================================================================ -->
 
-  <Interface Name="METEOLEON">
+  <Interface Name="METEO_LEON">
     <Desc>Meteo Leon Interface</Desc>
     <IncomingDir>$HOME/Projects/weather/data/leon/intray</IncomingDir>
     <OutgoingDir>$HOME/Projects/weather/data/leon/outtray</OutgoingDir>

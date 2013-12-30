@@ -3,10 +3,17 @@
    <File Type="METEO">
       <Description></Description>
       <ToList>
-         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="METEO"       Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="METEO_LEON"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 
+   <File Type="METEO_LEON">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO_LEON"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
 
    <File Type="METEO_CASALE">
       <Description></Description>
