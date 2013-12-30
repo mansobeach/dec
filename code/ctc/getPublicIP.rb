@@ -21,8 +21,8 @@
 #
 #########################################################################
 
+require 'rubygems'
 require 'optparse'
-
 require 'gmail'
 
 # MAIN script function
@@ -147,6 +147,9 @@ end
 #-------------------------------------------------------------
 
 def notify_by_gmail(publicIP)
+
+   sourceHostname = `hostname`
+
    email_to_address = "borja.lopez.fernandez@gmail.com"
 
    gmail = Gmail.connect!("borja.esa@gmail.com", "perrillo.pwd")
@@ -159,12 +162,12 @@ def notify_by_gmail(publicIP)
 
    gmail.deliver do
       to email_to_address
-      subject "Casale & Beach ip address"
+      subject "Casale & Beach - #{sourceHostname} ip address"
       text_part do
          body "#{publicIP}"
       end
       html_part do
-         body "<p>casale ip address is now #{publicIP}</p>"
+         body "<p>casale & beach #{sourceHostname} ip address is now #{publicIP}</p>"
       end
       # add_file "/path/to/some_image.jpg"
    end

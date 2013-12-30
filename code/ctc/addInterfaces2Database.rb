@@ -34,11 +34,10 @@
 #
 #########################################################################
 
-require "rubygems"
+require 'rubygems'
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
-require 'dbm/DatabaseModel'
 require 'ctc/ReadInterfaceConfig'
 
 # Global variables
@@ -76,14 +75,26 @@ def main
             when "--process" then
                process = 1
                @process = arg
-            when "--help"          then RDoc::usage
-            when "--usage"         then RDoc::usage("usage")
+            when "--help"          then   fullpathFile = `which #{File.basename($0)}` 
+                                          system("head -28 #{fullpathFile}")
+                                          exit
+            when "--usage"         then   fullpathFile = `which #{File.basename($0)}` 
+                                          system("head -28 #{fullpathFile}")
+                                          exit
             when "--Show"          then @@bShowMnemonics = true
          end
       end
    rescue Exception
       exit(99)
    end
+
+   begin
+      require 'dbm/DatabaseModel'
+    rescue Exception => e
+      puts e.to_s
+      exit(99)
+   end
+  
 
    arrInterfaces = Interface.find(:all)
  
