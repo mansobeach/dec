@@ -16,7 +16,7 @@
  # Module Common Utils Component
  # This class implements a wrapper to the log4r library.
 
-require "rubygems"
+require 'rubygems'
 
 require "log4r"
 require "log4r/configurator"
