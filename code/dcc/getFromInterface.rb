@@ -20,9 +20,10 @@
 #
 #
 # == Usage
-# getFromInterface.rb -m <MNEMONIC>  [-l]
+# getFromInterface.rb -m <MNEMONIC>  [-l] [--nodb]
 #     --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
 #     --list      list only (not downloading and no ingestion)
+#     --nodb      no Inventory recording
 #     --receipt   create only receipt file-list with the content available
 #     --Report    create a Report when new files have been retrieved
 #     --Show      it shows all available I/Fs registered in the DCC Inventory
@@ -49,7 +50,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
@@ -62,7 +62,7 @@ require 'dcc/FileDeliverer2InTrays'
 require 'dcc/ReadConfigDCC'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/11/25 16:55:04 $"   # to keep control of the last modification
+@dateLastModification = "$Date: 2008/11/25 16:55:04 $"   # to keep control of the last modification
                                        # of this script
                                        # execution showing Debug Info
 @entity          = ""
@@ -79,6 +79,7 @@ def main
 	@createReceipt = false
    @createReport  = false
    @bShowMnemonics = false
+   @isNoDB        = false
    
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("getFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
@@ -107,7 +108,8 @@ def main
 	  ["--receipt", "-r",        GetoptLong::NO_ARGUMENT],
      ["--Show", "-S",           GetoptLong::NO_ARGUMENT],
      ["--Unknown", "-U",        GetoptLong::NO_ARGUMENT],
-     ["--list", "-l",           GetoptLong::NO_ARGUMENT]
+     ["--list", "-l",           GetoptLong::NO_ARGUMENT],
+     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
      )
     
    begin
@@ -116,14 +118,15 @@ def main
             when "--Debug"     then @isDebugMode = true
             when "--Benchmark" then @isBenchMark = true
             when "--version" then	    
-               print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " $Revision: 1.15 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " $Revision: 1.15 $  [", @dateLastModification, "]\n\n\n")
                exit(0)
 	         when "--mnemonic" then
                @entity = arg
             when "--list" then
                 @listOnly = true
-			   when "--help"          then RDoc::usage
-	         when "--usage"         then RDoc::usage("usage")
+            when "--nodb"          then @isNoDB    = true
+			   when "--help"          then usage
+	         when "--usage"         then usage
 				when "--receipt"       then @createReceipt = true
             when "--Report"        then @createReport = true
             when "--Unknown"       then @listUnknown  = true
@@ -146,9 +149,23 @@ def main
       exit(99)
    end
 
- 
-   @dbEntity   = Interface.new 
-   
+   if @entity == "" and @bShowMnemonics == false then
+      usage
+   end
+
+   if @isNoDB == false then
+      require 'dbm/DatabaseModel'
+      @dbEntity   = Interface.new
+
+      interface = Interface.find_by_name(@entity)
+      
+      if interface == nil then
+         puts "\n#{@entity} is not a registered I/F ! :-("
+         puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
+         exit(99)
+      end
+   end   
+
    if @bShowMnemonics == true then
       arrInterfaces = Interface.find(:all)
       if arrInterfaces == nil then
@@ -174,10 +191,6 @@ def main
       end
       exit(0)
    end
- 
-   if @entity == "" then
-      RDoc::usage("usage")
-   end
 
    cnf = CTC::ReadInterfaceConfig.instance
 
@@ -186,21 +199,15 @@ def main
       puts "\nConfigure it in interfaces.xml config file !  ;-) \n\n"
       exit(99)      
    end 
-
-   interface = Interface.find_by_name(@entity)
-      
-   if interface == nil then
-      puts "\n#{@entity} is not a registered I/F ! :-("
-      puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
-      exit(99)
-   end
       
    init
    
    begin
-   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity)
+   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB)
    rescue Exception => e
+      puts "ERROR in DCC::DCC_ReceiverFromInterface.new(@entity)"
    	puts e.to_s
+      puts
    	exit(99)
    end
       
@@ -366,6 +373,15 @@ def body
    
 end
 #-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -42 #{fullpathFile}")
+   exit
+end
+#-------------------------------------------------------------
+
 
 #===============================================================================
 # Start of the main body

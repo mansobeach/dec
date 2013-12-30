@@ -50,9 +50,10 @@
 #
 #
 # == Usage
-# checkConfigDCC.rb
+# checkConfigDCC.rb [--nodb]
 #     -a    checks all DCC configuration
 #     -e    checks entities configuration in interfaces.xml
+#    --nodb no Inventory checks
 #     -i    checks incoming file-types configured in ft_incoming_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
 #     -t    checks the In-Trays configuration placed in files2InTrays.xml
@@ -77,25 +78,28 @@
 #
 #########################################################################
 
+require 'rubygems'
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileSource'
 require 'ctc/CheckerMailConfig'
 require 'ctc/CheckerInterfaceConfig'
-require 'ctc/CheckerInventoryConfig'
 require 'ctc/CheckerIncomingFileConfig'
 require 'dcc/ReadInTrayConfig'
 require 'dcc/ReadConfigDCC'
 require 'dcc/CheckerInTrayConfig'
 require 'dcc/CheckerServiceConfig'
 
+# Conditional require driven by --nodb flag
+# require 'ctc/CheckerInventoryConfig'
+
 # checkSent2Entity checks what it has been sent to a given entity.
 # It checks in the UploadDir and UploadTemp directories 
 
 # Global variables
-@@dateLastModification = "$Date: 2007/12/18 18:21:36 $" 
+@dateLastModification = "$Date: 2007/12/18 18:21:36 $" 
                                     # to keep control of the last modification
                                     # of this script
 @isDebugMode      = false               # execution showing Debug Info
@@ -110,6 +114,7 @@ require 'dcc/CheckerServiceConfig'
 @bAll             = false
 @bServices        = false
 @bTrays           = false
+@isNoDB           = false
 
 # MAIN script function
 def main
@@ -125,7 +130,8 @@ def main
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--Verbose", "-V",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT]
+     ["--help", "-h",           GetoptLong::NO_ARGUMENT],
+     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
      )
     
    begin
@@ -134,16 +140,17 @@ def main
             when "--Debug"   then @isDebugMode   = true
             when "--Verbose" then @isVerboseMode = true
             when "--version" then
-               print("\nESA - DEIMOS-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.7 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - DEIMOS-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.7 $  [", @dateLastModification, "]\n\n\n")
                exit(0)
-            when "--help"     then RDoc::usage
+            when "--help"     then usage
+            when "--nodb"     then @isNoDB    = true
             when "--incoming" then @bIncoming = true
             when "--entities" then @bEntities = true
             when "--services" then @bServices = true
 	         when "--mail"     then @bMail     = true
             when "--all"      then @bAll      = true
             when "--tray"     then @bTrays    = true
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then usage
          end
       end
    rescue Exception
@@ -153,7 +160,7 @@ def main
    if @bIncoming == false and @bOutgoing == false and @bClients == false and
       @bEntities == false and @bAll == false and @bMail == false and 
       @bServices == false and @bTrays == false then
-      RDoc::usage("usage")
+      usage
    end
    
    # Check Module Integrity
@@ -196,14 +203,18 @@ def main
                  end
       }      
       puts "================================================"
+
+      if @isNoDB == false then
+         require 'ctc/CheckerInventoryConfig'
       
-      # Perform the check against the Inventory
-      puts "Checking DCC/Inventory entries ..."
-      checkerInventory = CTC::CheckerInventoryConfig.new
-      ret = checkerInventory.check
-      puts "================================================"
-      if ret == false then
-         puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
+         # Perform the check against the Inventory
+         puts "Checking DCC/Inventory entries ..."
+         checkerInventory = CTC::CheckerInventoryConfig.new
+         ret = checkerInventory.check
+         puts "================================================"
+         if ret == false then
+            puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
+         end
       end
       
    end
@@ -340,18 +351,8 @@ end
 
 # Print command line help
 def usage
-   print "\nUsage: ", File.basename($0), "\n\n"
-   print "\t\t   -a     checks all DCC configuration\n"
-   print "\t\t   -e     checks entities config\n"
-   print "\t\t   -m     checks mail config\n"   
-   print "\t\t   -i     checks incoming files config\n"
-   print "\t\t   -s     checks services config\n"
-#   print "\t\t   -o     checks outgoing files config\n"
-   print "\t\t   -h     shows this help\n"
-   print "\t\t   -D     shows Debug info during the execution\n"
-   print "\t\t   -V     execution in Verbose mode\n"
-   print "\t\t   -v     shows version number\n"
-   print "\n\n"      
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -70 #{fullpathFile}")
    exit
 end
 #-------------------------------------------------------------

@@ -41,8 +41,8 @@
  # It agregates #DCC_Listener to implement a daemon.
 
 
+require 'rubygems'
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/Listener'
 require 'cuc/Log4rLoggerFactory'
@@ -129,7 +129,7 @@ def main
 	            stopListeners
 	            puts "\nlisteners to the I/Fs have been killed ! }=-) \n\n"
 	            exit(0)
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then usage
          end
       end
    rescue Exception
@@ -142,11 +142,11 @@ def main
    end
 
    if @isReload == true and @launchAllListeners == false then
-      RDoc::usage("usage")
+      usage
    end
  
    if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) then
-      RDoc::usage("usage")
+      usage
    end
  
    # CheckModuleIntegrity
@@ -459,6 +459,15 @@ def checkModuleIntegrity
    end                             
 end
 #-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -25 #{fullpathFile}")
+   exit
+end
+#-------------------------------------------------------------
+
 
 #===============================================================================
 # Start of the main body

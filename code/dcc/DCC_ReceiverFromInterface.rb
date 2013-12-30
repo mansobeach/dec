@@ -31,10 +31,11 @@ require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerInterfaceConfig'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileSource'
-require 'dbm/DatabaseModel'
 require 'dcc/EntityContentWriter'
 require 'dcc/FileDeliverer2InTrays'
 require 'dcc/ReadConfigDCC'
+# Conditional require driven by --nodb flag
+# require 'dbm/DatabaseModel'
 
 
 module DCC
@@ -51,9 +52,10 @@ class DCC_ReceiverFromInterface
 
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, drivenByDB = true)
+   def initialize(entity, drivenByDB = true, isNoDB = false)
       @entity     = entity
       @drivenByDB = drivenByDB
+      @isNoDB     = isNoDB
       checkModuleIntegrity
       @isBenchmarkMode = false
 
@@ -90,9 +92,13 @@ class DCC_ReceiverFromInterface
       checkDirectory(@finalDir)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
       @fileSource       = CTC::ReadFileSource.instance
-      @interface        = Interface.find_by_name(@entity)
-      if @interface == nil then
-         raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
+
+      if @isNoDB == false then
+         require 'dbm/DatabaseModel'
+         @interface        = Interface.find_by_name(@entity)
+         if @interface == nil then
+            raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
+         end
       end
 
       removePreviousTempDirs
@@ -963,6 +969,8 @@ private
 
       # - Remove files that have already been retrieved/tracked
 
+      if @isNoDB == false then
+
       perf = measure{
 
       arrDelete = Array.new
@@ -992,6 +1000,8 @@ private
       @fileListError << arrDelete
 
       } # end of measure
+
+      end # end of if @isNoDB
 
       if @isBenchmarkMode == true then
          puts
