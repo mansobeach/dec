@@ -1,3 +1,16 @@
+#!/usr/bin/env bash
+
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
 
 
 # Here are defined all the environment variables required for
@@ -8,22 +21,24 @@ export DEC_BASE=$HOME/Projects/dec
 export DCC_CONFIG=$HOME/Projects/dec/config
 
 export DEC_DB_ADAPTER=postgresql
+export DEC_DB_ADAPTER=sqlite3
 
 # export DCC_DATABASE_NAME=$HOME/Projects/weather/data/inventory/weather_sqlite3
 
-export PATH=$PATH:$DEC_BASE/code/ctc
-
 export DCC_DB_ADAPTER=postgresql
+export DCC_DB_ADAPTER=sqlite3
+
 export DCC_DATABASE_USER=meteo
 export DCC_DATABASE_PASSWORD=meteo
 export DCC_DATABASE_NAME=meteo
 
 export DCC_TMP=$HOME/tmp
 
-
 # export DEC_COTS_HOME=/home/projects/decdev/cots
 
 export RUBYLIB=$DEC_BASE/code
+
+export PATH=$PATH:/usr/bin:/usr/local/bin:$DEC_BASE/code/ctc
 
 unset USERNAME
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #########################################################################
 #
 # ===       
@@ -13,9 +15,9 @@
 export METEO_BASE=$HOME/Projects/weather
 export METEO_TEMP=$HOME/Projects/weather/data/temp
 
-source $HOME/Projects/dec/config/profile_common
-source $HOME/Projects/dec/config/profile_ddc
-source $HOME/Projects/dec/config/profile_dcc
-source $HOME/Projects/dec/config/profile_ws23rb
-source $HOME/Projects/dec/config/profile_wstation
-source $HOME/Projects/dec/config/profile_minarc
+. $HOME/Projects/dec/config/./profile_common
+. $HOME/Projects/dec/config/./profile_ddc
+. $HOME/Projects/dec/config/./profile_dcc
+. $HOME/Projects/dec/config/./profile_ws23rb
+. $HOME/Projects/dec/config/./profile_wstation
+. $HOME/Projects/dec/config/./profile_minarc

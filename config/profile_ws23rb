@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #########################################################################
 #
 # ===       
@@ -10,7 +12,7 @@
 #
 #########################################################################
 
-source $HOME/Projects/dec/config/profile_common
+. $HOME/Projects/dec/config/./profile_common
 
 export METEO_CONFIG=$HOME/Projects/weather/config
 export METEO_ARCHIVE=$HOME/Projects/weather/data/archive
