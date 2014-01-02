@@ -15,6 +15,9 @@
 export METEO_BASE=$HOME/Projects/weather
 export METEO_TEMP=$HOME/Projects/weather/data/temp
 
+# Define HOME to startup meteo station with root at boot time
+# export HOME=/home/meteo
+
 . $HOME/Projects/dec/config/./profile_common
 . $HOME/Projects/dec/config/./profile_ddc
 . $HOME/Projects/dec/config/./profile_dcc
