@@ -111,7 +111,7 @@
       <div data-role=content>
          <p>LEÓN Station</p>
          
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_TEMPERATURE-OUTDOOR_LEON_TODAY.png")); ?>'>
+         <img src="DAILY_TEMPERATURE-OUTDOOR_LEON_TODAY.png?=<?php echo filemtime("DAILY_TEMPERATURE-OUTDOOR_LEON_TODAY.png")?>"/>
          
       </div>
    </div>
@@ -126,7 +126,7 @@
       <div data-role=content>
          <p>LEÓN Station</p>
          
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_HUMIDITY-OUTDOOR_LEON_TODAY.png")); ?>'>
+         <img src="DAILY_HUMIDITY-OUTDOOR_LEON_TODAY.png?=<?php echo filemtime("DAILY_HUMIDITY-OUTDOOR_LEON_TODAY.png")?>"/>
          
       </div>
    </div>
@@ -141,7 +141,7 @@
       <div data-role=content>
          <p>LEÓN Station</p>
          
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_PRESSURE_LEON_TODAY.png")); ?>'>
+         <img src="DAILY_PRESSURE_LEON_TODAY.png?=<?php echo filemtime("DAILY_PRESSURE_LEON_TODAY.png")?>"/>
          
       </div>
    </div>
@@ -155,8 +155,8 @@
 
       <div data-role=content>
          <p>LEÓN Station</p>
-         
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_WIND-SPEED_LEON_TODAY.png")); ?>'>
+ 
+         <img src="DAILY_WIND-SPEED_LEON_TODAY.png?=<?php echo filemtime("DAILY_WIND-SPEED_LEON_TODAY.png")?>"/>
          
       </div>
    </div>
@@ -170,8 +170,8 @@
 
       <div data-role=content>
          <p>LEÓN Station</p>
-         
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_WIND-DIRECTION_LEON_TODAY.png")); ?>'>
+                  
+         <img src="DAILY_WIND-DIRECTION_LEON_TODAY.png?=<?php echo filemtime("DAILY_WIND-DIRECTION_LEON_TODAY.png")?>"/>
          
       </div>
    </div>
@@ -186,8 +186,8 @@
       <div data-role=content>
          <p>LEÓN Station</p>
          
-         <img src='data:image/png;base64,<?php echo base64_encode(file_get_contents("DAILY_RAIN-1HOUR_LEON_TODAY.png")); ?>'>
-         
+         <img src="DAILY_RAIN-1HOUR_LEON_TODAY.png?=<?php echo filemtime("DAILY_RAIN-1HOUR_LEON_TODAY.png")?>"/>
+                  
       </div>
    </div>
 
