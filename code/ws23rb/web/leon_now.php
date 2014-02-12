@@ -3,9 +3,15 @@
 <html>
    <head>
       <title>Meteo León</title>
+      
+      <link rel="Shortcut icon" href="http://meteoleon.altervista.org/favicon2.png">
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, usr-scalable=no">
+      
       <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css">
       <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
       <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+      
       <script src="prototype.js"          type="text/javascript"></script>
       <script src="OOMeteoCasaleComm.js"  type="text/JavaScript"></script>
       <script type="text/javascript">
