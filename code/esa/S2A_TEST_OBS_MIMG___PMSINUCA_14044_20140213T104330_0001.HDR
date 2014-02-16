@@ -1,0 +1,22 @@
+<Earth_Explorer_Header>
+  <Fixed_Header>
+    <File_Name>S2A_TEST_OBS_MIMG___PMSINUCA_14044_20140213T104330_0001</File_Name>
+    <File_Description></File_Description>
+    <Notes></Notes>
+    <Mission>Sentinel-2A</Mission>
+    <File_Class>TEST</File_Class>
+    <File_Type>OBS_MIMG__</File_Type>
+    <Validity_Period>
+      <Validity_Start>UTC=2014-02-13T10:43:30</Validity_Start>
+      <Validity_Stop>UTC=9999-99-99T99:99:99</Validity_Stop>
+    </Validity_Period>
+    <File_Version>0001</File_Version>
+    <Source>
+      <System>MPC_</System>
+      <Creator>QCC_</Creator>
+      <Creator_Version>0001</Creator_Version>
+      <Creation_Date>UTC=2014-02-13T10:43:30</Creation_Date>
+    </Source>
+  </Fixed_Header>
+  <Variable_Header></Variable_Header>
+</Earth_Explorer_Header>
