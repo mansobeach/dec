@@ -89,14 +89,7 @@ def main
 
    init
 
-   @nucFile = File.open(@filename, "r")
-
-   if @isDebugMode == true then
-      puts "Processing #{@filename}"
-      puts
-   end
-
-   processNUC
+   parseNUCFile
 
    exit(0)
 
@@ -112,10 +105,11 @@ def init
    @sheet               = @book.worksheet 0
 
    bFirst            = true
-   iSubTable         = 0
-   @currentISubTable = 0
+   @iSubTable         = 0
+   @counterST = 0
 
-   @hSubTableAddr = Hash.new
+   @hSubTables       = Hash.new
+   @hSubTableAddr    = Hash.new
 
    @sheet.each{|row|  
             if bFirst == true then
@@ -130,24 +124,30 @@ def init
             arrAddr[0]  = valBase
             arrAddr[1]  = valLength
 
-            @hSubTableAddr[iSubTable] = arrAddr
+            @hSubTableAddr[@iSubTable] = arrAddr
 
 #             if @isDebugMode == true then
-#                puts "#{iSubTable} - #{valBase} - #{valLength}"
+#                puts "#{@iSubTable} - #{valBase} - #{valLength}"
 #             end
             
-            iSubTable = iSubTable + 1
+            @iSubTable = @iSubTable + 1
          }
+         
+   @iSubTable         = 0
 end
 
 #-------------------------------------------------------------
 
 def initSubTable
-   @iCurrentPixel          = 0
-   @iSubTableLength        = 0
-   @iCurrentStart          = @hSubTableAddr[@iCurrentSubTable][0]
-   @iCurrentSubTableLength = @hSubTableAddr[@iCurrentSubTable][1]
-   @isStartSubTable  = true
+
+   puts "New Subtable #{@iCurrentSubTable}"
+   
+   @isEndSubTable                   = false
+   @iCurrentPixel                   = 0
+   @iSTLength                       = 0
+   @iCurrentStart                   = @hSubTableAddr[@iCurrentSubTable][0]
+   @iCurrentSubTableLength          = @hSubTableAddr[@iCurrentSubTable][1]
+   @hSubTables[@iCurrentSubTable]   = Array.new
    
    if @hSubTableAddr[@iCurrentSubTable][1] == @LENGTH_SUBTABLE_SHORT then
       @numPixels = @NUM_PIXEL_SHORT
@@ -160,19 +160,28 @@ def initSubTable
       end
    end
    
-   puts "==============================================="
-   puts "SubTable #{@iCurrentSubTable} - #{@iCurrentSubTableLength}"
-   puts 
-   
+   if @isDebugMode == true then
+      puts "==============================================="
+      puts "SubTable #{@iCurrentSubTable} - #{@iCurrentSubTableLength}"
+      puts
+   end 
+   @iSubTable = @iSubTable + 1
 end
 #-------------------------------------------------------------
 
-def processNUC
+def parseNUCFile
+
+   @nucFile = File.open(@filename, "r")
+
+   if @isDebugMode == true then
+      puts "Processing #{@filename}"
+      puts
+   end
 
    @iCurrentSubTable = 0
    @iCurrentDataLine = 0
    @iTotalLength     = 0
-   
+      
    initSubTable
 
    # -------------------------------------------------------
@@ -180,7 +189,12 @@ def processNUC
       processLine(line)
    end
    # -------------------------------------------------------
-
+  
+   puts @hSubTables[0].length
+   puts
+   puts "PEDO"
+   puts  
+   puts @hSubTables[155].length
 
 end
 
@@ -193,13 +207,9 @@ def processLine(line)
       if @isDebugMode == true then
          puts "Field #{arr[0]} is equal to #{arr[1]}"
       end
-      verifyHeaderValue(arr[0], arr[1].chop)
+      # verifyHeaderValue(arr[0], arr[1].chop)
    else
       processDataLine(line)
-      
-#       if @iCurrentDataLine == 3 then
-#          exit
-#       end
    end
    
 end
@@ -250,12 +260,18 @@ def processDataLine(line)
    decodeFieldStart(fields[0])
    decodeFieldCount(fields[1])
    decodeFieldData(fields[2])
-   
-   if @isStartSubTable == true then
-      @isStartSubTable == false
-   end
-   
+         
    @iCurrentDataLine = @iCurrentDataLine + 1
+   
+   if @isEndSubTable == true then
+      if @iCurrentSubTable == @LAST_SUBTABLE then
+         return
+      end
+      # exit
+      @iCurrentSubTable = @iCurrentSubTable + 1
+      initSubTable
+   end
+
    
 end
 #-------------------------------------------------------------
@@ -270,20 +286,12 @@ end
 def decodeFieldCount(field)
 #   puts field
    val = field.split("=")[1]
-   @iSubTableLength  = @iSubTableLength + val.hex
+   @iSTLength  = @iSTLength + val.hex
    @iTotalLength     = @iTotalLength + val.hex
 #   puts @iTotalLength.to_s(16)
    
-   if @iSubTableLength == @iCurrentSubTableLength then
-      puts "END OF TABLE"
-      
-      if @iCurrentSubTable == @LAST_SUBTABLE then
-         exit
-      end
-      
-      @iCurrentSubTable = @iCurrentSubTable + 1
-      initSubTable
-    #  exit
+   if @iSTLength == @iCurrentSubTableLength then
+      @isEndSubTable = true
    end
    
 end
@@ -299,7 +307,11 @@ def decodeFieldData(field)
       end
       arrData << element
    }
-   return arrData
+   arrData.each{|word|
+      # puts word
+      @hSubTables[@iCurrentSubTable] << word
+   }
+   # puts arrData.length
 end
 #-------------------------------------------------------------
 
