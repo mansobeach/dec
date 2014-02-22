@@ -24,3 +24,5 @@ export METEO_TEMP=$HOME/Projects/weather/data/temp
 . $HOME/Projects/dec/config/./profile_ws23rb
 . $HOME/Projects/dec/config/./profile_wstation
 . $HOME/Projects/dec/config/./profile_minarc
+. $HOME/Projects/dec/config/./profile_esa
+. $HOME/Projects/dec/config/./profile_jenkins
