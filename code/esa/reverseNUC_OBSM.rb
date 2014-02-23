@@ -50,6 +50,11 @@ require 'spreadsheet'
 
 @LAST_SUBTABLE          = 155
 
+@LAST_WORD_CKSUM        = "0005"
+
+@LAST_NUC_ADDR = 1052507
+
+
 # MAIN script function
 def main
 
@@ -91,9 +96,114 @@ def main
 
    parseNUCFile
 
+   exit
+
+
+
+   totalwords = (@LENGTH_SUBTABLE_LONG * 4) + (@LENGTH_SUBTABLE_LONG * 9)*12
+   puts totalwords
+   puts totalwords.to_s(16)
+
+   puts
+
+   puts @LENGTH_SUBTABLE_LONG
+   puts (@NUM_PIXEL_SHORT * 4) + 1
+
+   puts
+   puts @LAST_NUC_ADDR
+   puts @LAST_NUC_ADDR + @LENGTH_SUBTABLE_LONG
+
+   exit
+
+
+   puts @cksum_nuc 
+   puts @iTotalLength
+
+   exit
+
+   processNUCFile
+
    exit(0)
 
 end
+
+#-------------------------------------------------------------
+
+def parseNUCFile
+
+   @nucFile = File.open(@filename, "r")
+
+   if @isDebugMode == true then
+      puts "Processing #{@filename}"
+      puts
+   end
+
+   @iCurrentSubTable = 0
+   @iCurrentDataLine = 0
+   @iTotalLength     = 0
+   @cksum_nuc        = "0000"
+   @iCurrentWord     = 0
+   @iCounter         = 0
+      
+   initSubTable
+
+   # -------------------------------------------------------
+   File.readlines(@filename).each do |line|
+      processLine(line)
+   end
+   # -------------------------------------------------------
+  
+end
+
+#---------------------------------------------------------------------
+
+def processNUCFile
+
+   length = @hSubTableAddr[0][1]
+
+   # puts @hSubTables[0].length
+   puts @hSubTables[0][0]
+   puts @hSubTables[0][1]
+   
+   arrA1 = Array.new
+   arrZS = Array.new
+   arrA2 = Array.new
+   arrC  = Array.new
+   
+   idx = 0
+   
+   (0..length/16).each do |i|
+   
+      (1..4).each do |j|
+          arrA1 << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+      
+      (1..4).each do |j|
+          arrZS << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+      (1..4).each do |j|
+          arrA2 << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+      (1..4).each do |j|
+          arrC << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+   end
+
+   pixel = 1
+   arrA1.each{|value|
+      puts "pixel # #{pixel} - #{value}"
+      pixel = pixel + 1
+   }
+      
+end
+
 #---------------------------------------------------------------------
 
 def init
@@ -140,11 +250,12 @@ end
 
 def initSubTable
 
-   puts "New Subtable #{@iCurrentSubTable}"
+   # puts "New Subtable #{@iCurrentSubTable}"
    
    @isEndSubTable                   = false
    @iCurrentPixel                   = 0
    @iSTLength                       = 0
+   @iCounter                        = 0
    @iCurrentStart                   = @hSubTableAddr[@iCurrentSubTable][0]
    @iCurrentSubTableLength          = @hSubTableAddr[@iCurrentSubTable][1]
    @hSubTables[@iCurrentSubTable]   = Array.new
@@ -166,36 +277,6 @@ def initSubTable
       puts
    end 
    @iSubTable = @iSubTable + 1
-end
-#-------------------------------------------------------------
-
-def parseNUCFile
-
-   @nucFile = File.open(@filename, "r")
-
-   if @isDebugMode == true then
-      puts "Processing #{@filename}"
-      puts
-   end
-
-   @iCurrentSubTable = 0
-   @iCurrentDataLine = 0
-   @iTotalLength     = 0
-      
-   initSubTable
-
-   # -------------------------------------------------------
-   File.readlines(@filename).each do |line|
-      processLine(line)
-   end
-   # -------------------------------------------------------
-  
-   puts @hSubTables[0].length
-   puts
-   puts "PEDO"
-   puts  
-   puts @hSubTables[155].length
-
 end
 
 #-------------------------------------------------------------
@@ -302,14 +383,26 @@ def decodeFieldData(field)
    arr = field.split("=")[1].split(/^[A-Z0-9]{4}$/)
    arr = field.split("=")[1].split(/(....)/)
    arr.each{|element|
+      if element.length == 0 or element.chop == "" then
+         next
+      end
       if element.to_s.length != @NUM_NIBBLE then
+         puts element.length
+         puts element
+         puts "Error decodeFieldData ! :-("
+         exit
          next
       end
       arrData << element
    }
+      
    arrData.each{|word|
-      # puts word
+      @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
+      puts "#{@iCurrentWord} => #{@iCounter} => #{word}"
+      # puts @cksum_nuc
       @hSubTables[@iCurrentSubTable] << word
+      @iCounter      = @iCounter + 1
+      @iCurrentWord  = @iCurrentWord + 1
    }
    # puts arrData.length
 end
