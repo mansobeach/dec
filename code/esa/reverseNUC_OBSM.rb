@@ -49,10 +49,8 @@ require 'spreadsheet'
 @LENGTH_SUBTABLE_LONG   = 10369
 
 @LAST_SUBTABLE          = 155
-
 @LAST_WORD_CKSUM        = "0005"
-
-@LAST_NUC_ADDR = 1052507
+@LAST_NUC_ADDR          = 1052507
 
 
 # MAIN script function
@@ -152,6 +150,14 @@ def parseNUCFile
       processLine(line)
    end
    # -------------------------------------------------------
+  
+   # Comeplete NUC computation  
+
+   @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
+  
+   if @isDebugMode == true then
+      puts "OBSM CHECKSUM=#{@cksum_nuc}"
+   end  
   
 end
 
@@ -398,7 +404,7 @@ def decodeFieldData(field)
       
    arrData.each{|word|
       @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
-      puts "#{@iCurrentWord} => #{@iCounter} => #{word}"
+      puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
       # puts @cksum_nuc
       @hSubTables[@iCurrentSubTable] << word
       @iCounter      = @iCounter + 1
