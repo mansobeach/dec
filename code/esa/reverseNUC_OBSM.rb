@@ -15,8 +15,8 @@
 # == Author
 # Borja Lopez Fernandez
 #
-# == Copyright
-# Casale Beach
+# == Copyleft
+# ESA (Casale & Beach)
 
 
 #########################################################################
@@ -30,6 +30,23 @@
 #
 #
 #########################################################################
+
+# ------------------------------------------------------------------------------
+#
+# FOM-MSI Issue 5.0
+#
+# FS-MSI-96 (Long Table)
+#
+# FS-MSI-97 (Short Table)
+#
+# FS-MSI-98 (For the complete NUC table transfer verification, 
+#            a dedicated EEPROM check sum test can be commanded)
+#
+# This option allows to cumulate the checksum calculation results of each 156 sub-tables
+#
+# FS-MSI-54 allows to load a new NUC without without verification or
+#            without correction after triggered error
+# ------------------------------------------------------------------------------
 
 require 'rubygems'
 require 'getoptlong'
@@ -51,6 +68,7 @@ require 'spreadsheet'
 @LAST_SUBTABLE          = 155
 @LAST_WORD_CKSUM        = "0005"
 @LAST_NUC_ADDR          = 1052507
+
 
 
 # MAIN script function
@@ -95,8 +113,6 @@ def main
    parseNUCFile
 
    exit
-
-
 
    totalwords = (@LENGTH_SUBTABLE_LONG * 4) + (@LENGTH_SUBTABLE_LONG * 9)*12
    puts totalwords
@@ -220,12 +236,15 @@ def init
    @book                = Spreadsheet.open(@nucMapFile, 'r')
    @sheet               = @book.worksheet 0
 
-   bFirst            = true
+   bFirst             = true
    @iSubTable         = 0
-   @counterST = 0
+   @counterST         = 0
 
    @hSubTables       = Hash.new
    @hSubTableAddr    = Hash.new
+
+   @arrChksmComputed    = Array.new
+   @arrChksmParsed      = Array.new
 
    @sheet.each{|row|  
             if bFirst == true then
@@ -249,7 +268,7 @@ def init
             @iSubTable = @iSubTable + 1
          }
          
-   @iSubTable         = 0
+   @iSubTable         = -1
 end
 
 #-------------------------------------------------------------
@@ -277,12 +296,18 @@ def initSubTable
       end
    end
    
+#    if @iSubTable == 0 then
+#       exit
+#    end   
+   
    if @isDebugMode == true then
       puts "==============================================="
       puts "SubTable #{@iCurrentSubTable} - #{@iCurrentSubTableLength}"
       puts
    end 
    @iSubTable = @iSubTable + 1
+   
+   
 end
 
 #-------------------------------------------------------------
@@ -358,8 +383,6 @@ def processDataLine(line)
       @iCurrentSubTable = @iCurrentSubTable + 1
       initSubTable
    end
-
-   
 end
 #-------------------------------------------------------------
 
@@ -384,9 +407,10 @@ def decodeFieldCount(field)
 end
 #-------------------------------------------------------------
 
+# Decode OBSM NUC data field
 def decodeFieldData(field)
    arrData = Array.new
-   arr = field.split("=")[1].split(/^[A-Z0-9]{4}$/)
+   # arr = field.split("=")[1].split(/^[A-Z0-9]{4}$/)
    arr = field.split("=")[1].split(/(....)/)
    arr.each{|element|
       if element.length == 0 or element.chop == "" then
@@ -403,12 +427,37 @@ def decodeFieldData(field)
    }
       
    arrData.each{|word|
+   
+      if @iCounter == @iCurrentSubTableLength -1 then
+         if @isDebugMode == true then
+            puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{word}"
+         end
+
+         @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
+
+         if @cksum_nuc != word then
+            puts "Wrong checksum subtable #{@iSubTable} / got #{word} - expected #{@cksum_nuc}"
+         end
+
+         @arrChksmParsed      << word
+         @arrChksmComputed    << @cksum_nuc
+         
+         @cksum_nuc = "0000"
+         
+         next
+         
+      end
+
       @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
-      puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
+      
+      if @isDebugMode == true then
+         puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
+      end
       # puts @cksum_nuc
       @hSubTables[@iCurrentSubTable] << word
       @iCounter      = @iCounter + 1
       @iCurrentWord  = @iCurrentWord + 1
+            
    }
    # puts arrData.length
 end
