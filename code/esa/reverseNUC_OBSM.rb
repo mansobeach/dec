@@ -2,7 +2,8 @@
 
 # == Synopsis
 #
-# This is the command line tool to generate the daily meteo files
+# This is the command line tool to reverse FOS OBSM NUC File
+# into engineering coefficients
 
 # == Usage
 #  reverseNUC.rb  -f <nuc_file>
@@ -31,6 +32,11 @@
 #
 #########################################################################
 
+require 'rubygems'
+require 'getoptlong'
+require 'spreadsheet'
+require 'writeexcel'
+
 # ------------------------------------------------------------------------------
 #
 # FOM-MSI Issue 5.0
@@ -48,9 +54,39 @@
 #            without correction after triggered error
 # ------------------------------------------------------------------------------
 
-require 'rubygems'
-require 'getoptlong'
-require 'spreadsheet'
+# Detector & Band ordering is driven by
+# [S2GICD-MSI] Issue 8.0  
+# Table 3.4-2: Detector Number Coding / page 349 [FOM-MSI]:
+#
+#  Detector | VCM (1bit)| WICOM Id (2bits) | Detector(1bit) - odd / even -
+#  12       |     0     |     00        |  0
+#  11       |     0     |     00        |  1
+#  10       |     0     |     01        |  0
+#  09       |     0     |     01        |  1
+#  08       |     0     |     10        |  0
+#  07       |     0     |     10        |  1
+#  06       |     1     |     00        |  0
+#  05       |     1     |     00        |  1
+#  04       |     1     |     01        |  0
+#  03       |     1     |     01        |  1
+#  02       |     1     |     10        |  0
+#  01       |     1     |     10        |  1
+#
+
+@arrDetectors = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+@arrBands     = ["01", "02", "03", "04", "05", "06", "07", "08", "8A", "09", "10", "11", "12"]
+
+@NUM_DETECTORS = 12
+@NUM_BANDS     = 13
+
+# ------------------------------------------------------------------------------
+
+# Coefficients order
+# 
+# A1, ZS, A2, C
+
+# ------------------------------------------------------------------------------
 
 @arrHeaderFields = ["DOMAIN", "ID", "VERSION", "TYPE", "DESCRIPTION",
       "CREATIONDATE", "DEVICE", "STARTADDR", "ENDADDR", "LENGTH", "CHECKSUM", "UNIT"]
@@ -69,6 +105,7 @@ require 'spreadsheet'
 @LAST_WORD_CKSUM        = "0005"
 @LAST_NUC_ADDR          = 1052507
 
+# ------------------------------------------------------------------------------
 
 
 # MAIN script function
@@ -112,34 +149,75 @@ def main
 
    parseNUCFile
 
-   exit
+#    puts @cksum_nuc 
+#    puts @iTotalLength
 
-   totalwords = (@LENGTH_SUBTABLE_LONG * 4) + (@LENGTH_SUBTABLE_LONG * 9)*12
-   puts totalwords
-   puts totalwords.to_s(16)
+   createOutputDir
 
-   puts
+   @iSubTable = 0
 
-   puts @LENGTH_SUBTABLE_LONG
-   puts (@NUM_PIXEL_SHORT * 4) + 1
-
-   puts
-   puts @LAST_NUC_ADDR
-   puts @LAST_NUC_ADDR + @LENGTH_SUBTABLE_LONG
-
-   exit
+   createReversedNUC
 
 
-   puts @cksum_nuc 
-   puts @iTotalLength
-
-   exit
-
-   processNUCFile
-
+   Dir.chdir(@prevDir)
    exit(0)
 
 end
+
+
+#---------------------------------------------------------------------
+
+def init
+   
+   @confDir    = File.dirname(__FILE__)
+   @nucMapFile = "#{@confDir}/NUC_RAM_MAP.xls"
+      
+   # ---------------------------------------------
+   # Read detector and bands mapping offset
+    
+   @book                = Spreadsheet.open(@nucMapFile, 'r')
+   @sheet               = @book.worksheet 0
+  
+   # ---------------------------------------------
+  
+   bFirst             = true
+   @iSubTable         = 0
+   @counterST         = 0
+
+   @hSubTables       = Hash.new
+   @hSubTableAddr    = Hash.new
+
+   @arrChksmComputed    = Array.new
+   @arrChksmParsed      = Array.new
+
+   @sheet.each{|row|  
+            if bFirst == true then
+               bFirst = false
+               next
+            end
+
+            valBase     = row[@COLUMN_BASE].to_i
+            valLength   = row[@COLUMN_LENGTH].to_i
+
+            arrAddr     = Array.new
+            arrAddr[0]  = valBase
+            arrAddr[1]  = valLength
+
+            @hSubTableAddr[@iSubTable] = arrAddr
+
+#             if @isDebugMode == true then
+#                puts "#{@iSubTable} - #{valBase} - #{valLength}"
+#             end
+            
+            @iSubTable = @iSubTable + 1
+         }
+         
+   @iSubTable         = -1
+   
+end
+
+#-------------------------------------------------------------
+
 
 #-------------------------------------------------------------
 
@@ -175,100 +253,6 @@ def parseNUCFile
       puts "OBSM CHECKSUM=#{@cksum_nuc}"
    end  
   
-end
-
-#---------------------------------------------------------------------
-
-def processNUCFile
-
-   length = @hSubTableAddr[0][1]
-
-   # puts @hSubTables[0].length
-   puts @hSubTables[0][0]
-   puts @hSubTables[0][1]
-   
-   arrA1 = Array.new
-   arrZS = Array.new
-   arrA2 = Array.new
-   arrC  = Array.new
-   
-   idx = 0
-   
-   (0..length/16).each do |i|
-   
-      (1..4).each do |j|
-          arrA1 << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-      
-      (1..4).each do |j|
-          arrZS << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-      (1..4).each do |j|
-          arrA2 << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-      (1..4).each do |j|
-          arrC << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-   end
-
-   pixel = 1
-   arrA1.each{|value|
-      puts "pixel # #{pixel} - #{value}"
-      pixel = pixel + 1
-   }
-      
-end
-
-#---------------------------------------------------------------------
-
-def init
-   
-   @confDir    = File.dirname(__FILE__)
-   @nucMapFile = "#{@confDir}/NUC_RAM_MAP.xls"
-   
-   @book                = Spreadsheet.open(@nucMapFile, 'r')
-   @sheet               = @book.worksheet 0
-
-   bFirst             = true
-   @iSubTable         = 0
-   @counterST         = 0
-
-   @hSubTables       = Hash.new
-   @hSubTableAddr    = Hash.new
-
-   @arrChksmComputed    = Array.new
-   @arrChksmParsed      = Array.new
-
-   @sheet.each{|row|  
-            if bFirst == true then
-               bFirst = false
-               next
-            end
-
-            valBase     = row[@COLUMN_BASE].to_i
-            valLength   = row[@COLUMN_LENGTH].to_i
-
-            arrAddr     = Array.new
-            arrAddr[0]  = valBase
-            arrAddr[1]  = valLength
-
-            @hSubTableAddr[@iSubTable] = arrAddr
-
-#             if @isDebugMode == true then
-#                puts "#{@iSubTable} - #{valBase} - #{valLength}"
-#             end
-            
-            @iSubTable = @iSubTable + 1
-         }
-         
-   @iSubTable         = -1
 end
 
 #-------------------------------------------------------------
@@ -436,16 +420,15 @@ def decodeFieldData(field)
          @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
 
          if @cksum_nuc != word then
-            puts "Wrong checksum subtable #{@iSubTable} / got #{word} - expected #{@cksum_nuc}"
+            puts "Wrong chksum ST #{@iSubTable} - \
+D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} / got #{word} - expected #{@cksum_nuc}"
          end
 
          @arrChksmParsed      << word
          @arrChksmComputed    << @cksum_nuc
          
-         @cksum_nuc = "0000"
-         
+         @cksum_nuc = "0000"         
          next
-         
       end
 
       @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
@@ -463,6 +446,102 @@ def decodeFieldData(field)
 end
 #-------------------------------------------------------------
 
+def createNewExcel(iST)
+   @workbook   = WriteExcel.new("nuc_reversed_#{iST}.xls")
+   @worksheet  = @workbook.add_worksheet
+   return 
+end
+#-------------------------------------------------------------
+
+def createOutputDir
+   now            = Time.now.strftime("%Y%m%dT%H%M%S") 
+   @dirReversed   = "#{now}_nuc_reversed"
+   cmd            = "mkdir -p #{@dirReversed}"
+   system(cmd)
+   @prevDir       = Dir.pwd
+   Dir.chdir(@dirReversed)
+end
+#---------------------------------------------------------------------
+
+def createReversedNUC
+   (0..155).each do |i|
+      processNUCFile(i)
+   end
+end
+
+#---------------------------------------------------------------------
+
+def processNUCFile(iST)
+
+   length = @hSubTableAddr[0][1] - 2
+   length = @hSubTables[iST].length - 1
+   
+   puts length
+      
+   arrA1 = Array.new
+   arrZS = Array.new
+   arrA2 = Array.new
+   arrC  = Array.new
+   
+   idx = 0
+   
+   (0..length/16).each do |i|
+   
+      (1..4).each do |j|
+          arrA1 << @hSubTables[0][idx]
+          idx = idx + 1
+      end
+      
+      (1..4).each do |j|
+          arrZS << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+      (1..4).each do |j|
+          arrA2 << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+      (1..4).each do |j|
+          arrC << @hSubTables[0][idx]
+          idx = idx + 1 
+      end
+
+   end
+
+   createNewExcel(iST)
+
+   row = 0
+   arrA1.each{|value|
+      puts "A1 - pixel #{row+1} - #{value}"
+      @worksheet.write(row, 0, value)
+      row = row + 1
+   }
+  
+   row = 0
+   arrZS.each{|value|
+      puts "ZS - pixel #{row+1} - #{value}"
+      @worksheet.write(row, 1, value)
+      row      = row + 1
+   }
+
+   row = 0
+   arrA2.each{|value|
+      puts "A2 - pixel #{row+1} - #{value}"
+      @worksheet.write(row, 2, value)
+      row      = row + 1
+   }
+
+   row = 0
+   arrC.each{|value|
+      puts "C - pixel #{row+1} - #{value}"
+      @worksheet.write(row, 3, value)
+      row      = row + 1
+   }
+
+   @workbook.close
+  
+end
 
 #-------------------------------------------------------------
 
