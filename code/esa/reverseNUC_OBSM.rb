@@ -169,8 +169,10 @@ end
 
 def init
    
-   @confDir    = File.dirname(__FILE__)
-   @nucMapFile = "#{@confDir}/NUC_RAM_MAP.xls"
+   @confDir       = File.dirname(__FILE__)
+   @nucMapFile    = "#{@confDir}/NUC_RAM_MAP.xls"
+   
+   @targetDirName = "#{@filename.split("_")[8]}_REVERSED_NUC"
       
    # ---------------------------------------------
    # Read detector and bands mapping offset
@@ -179,7 +181,9 @@ def init
    @sheet               = @book.worksheet 0
   
    # ---------------------------------------------
-  
+     
+
+
    bFirst             = true
    @iSubTable         = 0
    @counterST         = 0
@@ -447,19 +451,19 @@ end
 #-------------------------------------------------------------
 
 def createNewExcel(iST)
-   @workbook   = WriteExcel.new("nuc_reversed_#{iST}.xls")
+   @workbook   = WriteExcel.new("nuc_reversed_#{iST.to_s.rjust(3, '0')}.xls")
    @worksheet  = @workbook.add_worksheet
    return 
 end
 #-------------------------------------------------------------
 
 def createOutputDir
-   now            = Time.now.strftime("%Y%m%dT%H%M%S") 
-   @dirReversed   = "#{now}_nuc_reversed"
-   cmd            = "mkdir -p #{@dirReversed}"
+   cmd            = "rm -rf #{@targetDirName}"
+   system(cmd)
+   cmd            = "mkdir -p #{@targetDirName}"
    system(cmd)
    @prevDir       = Dir.pwd
-   Dir.chdir(@dirReversed)
+   Dir.chdir(@targetDirName)
 end
 #---------------------------------------------------------------------
 
@@ -513,13 +517,21 @@ def processNUCFile(iST)
 
    row = 0
    arrA1.each{|value|
-      puts "A1 - pixel #{row+1} - #{value}"
+      if value == nil then
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
+      puts "A1 - pixel #{row+1} - #{value} - #{binValue}"
       @worksheet.write(row, 0, value)
       row = row + 1
    }
   
    row = 0
    arrZS.each{|value|
+      if value == nil then
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
       puts "ZS - pixel #{row+1} - #{value}"
       @worksheet.write(row, 1, value)
       row      = row + 1
@@ -527,6 +539,10 @@ def processNUCFile(iST)
 
    row = 0
    arrA2.each{|value|
+      if value == nil then
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
       puts "A2 - pixel #{row+1} - #{value}"
       @worksheet.write(row, 2, value)
       row      = row + 1
@@ -534,7 +550,11 @@ def processNUCFile(iST)
 
    row = 0
    arrC.each{|value|
-      puts "C - pixel #{row+1} - #{value}"
+      if value == nil then
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
+      puts "C - pixel #{row+1} - #{value} - #{binValue}"
       @worksheet.write(row, 3, value)
       row      = row + 1
    }
