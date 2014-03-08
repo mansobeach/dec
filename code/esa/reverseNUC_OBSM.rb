@@ -6,7 +6,7 @@
 # into engineering coefficients
 
 # == Usage
-#  reverseNUC.rb  -f <nuc_file>
+#  reverseNUC.rb  -f <nuc_file> --Subtable <st>
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --Force               force mode
@@ -85,7 +85,13 @@ require 'writeexcel'
 # Coefficients order
 # 
 # A1, ZS, A2, C
-
+#
+# Parameters A1 and A2: are coded on 16 bits : 6 bits integer part et 10 bits decimal part
+#
+# Parameters C and Zs: are coded on 16 bits : 12 bits integer part et 4 bits decimal part 
+#
+# MSB is on the left_side : Big-Endian
+#
 # ------------------------------------------------------------------------------
 
 @arrHeaderFields = ["DOMAIN", "ID", "VERSION", "TYPE", "DESCRIPTION",
@@ -115,19 +121,22 @@ def main
    @filename      = nil
    @isDebugMode   = false
    @isForceMode   = false
+   @reqST         = nil
 
    opts = GetoptLong.new(
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--Force", "-F",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT],
-     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT]
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--SubTable", "-S",        GetoptLong::REQUIRED_ARGUMENT]
      )
    
    begin 
       opts.each do |opt, arg|
          case opt
-            when "--file"     then @filename    = arg.to_s.upcase          
+            when "--file"     then @filename    = arg.to_s.upcase
+            when "--SubTable" then @reqST       = arg.to_i           
             when "--Debug"    then @isDebugMode = true
             when "--Force"    then @isForceMode = true
             when "--version"  then
@@ -149,29 +158,23 @@ def main
 
    parseNUCFile
 
-#    puts @cksum_nuc 
-#    puts @iTotalLength
-
    createOutputDir
 
    @iSubTable = 0
 
    createReversedNUC
 
-
    Dir.chdir(@prevDir)
    exit(0)
 
 end
-
 
 #---------------------------------------------------------------------
 
 def init
    
    @confDir       = File.dirname(__FILE__)
-   @nucMapFile    = "#{@confDir}/NUC_RAM_MAP.xls"
-   
+   @nucMapFile    = "#{@confDir}/NUC_RAM_MAP.xls" 
    @targetDirName = "#{@filename.split("_")[8]}_REVERSED_NUC"
       
    # ---------------------------------------------
@@ -182,17 +185,24 @@ def init
   
    # ---------------------------------------------
      
-
-
-   bFirst             = true
-   @iSubTable         = 0
-   @counterST         = 0
-
-   @hSubTables       = Hash.new
-   @hSubTableAddr    = Hash.new
-
+   bFirst               = true
+   @iSubTable           = 0
+   @counterST           = 0
+   @hSubTables          = Hash.new
+   @hSubTableAddr       = Hash.new
+   @arrSTName           = Array.new
    @arrChksmComputed    = Array.new
    @arrChksmParsed      = Array.new
+
+   # ---------------------------------------------
+
+   12.downto(1){|detector| 
+      @arrBands.each do |band|
+         @arrSTName << "D#{detector.to_s.rjust(2,'0')}B#{band}"
+      end
+   }
+
+   # ---------------------------------------------
 
    @sheet.each{|row|  
             if bFirst == true then
@@ -216,10 +226,8 @@ def init
             @iSubTable = @iSubTable + 1
          }
          
-   @iSubTable         = -1
-   
+   @iSubTable = -1   
 end
-
 #-------------------------------------------------------------
 
 
@@ -235,7 +243,6 @@ def parseNUCFile
    end
 
    @iCurrentSubTable = 0
-   @iCurrentDataLine = 0
    @iTotalLength     = 0
    @cksum_nuc        = "0000"
    @iCurrentWord     = 0
@@ -245,7 +252,10 @@ def parseNUCFile
 
    # -------------------------------------------------------
    File.readlines(@filename).each do |line|
-      processLine(line)
+      ret = processLine(line)
+      if ret == false then
+         return
+      end
    end
    # -------------------------------------------------------
   
@@ -263,11 +273,14 @@ end
 
 def initSubTable
 
-   # puts "New Subtable #{@iCurrentSubTable}"
-   
+   if @isDebugMode == true then
+      puts "New Subtable #{@iCurrentSubTable}"
+   end
+
    @isEndSubTable                   = false
    @iCurrentPixel                   = 0
    @iSTLength                       = 0
+   @iSTRealLength                   = 0
    @iCounter                        = 0
    @iCurrentStart                   = @hSubTableAddr[@iCurrentSubTable][0]
    @iCurrentSubTableLength          = @hSubTableAddr[@iCurrentSubTable][1]
@@ -284,18 +297,13 @@ def initSubTable
       end
    end
    
-#    if @iSubTable == 0 then
-#       exit
-#    end   
-   
    if @isDebugMode == true then
       puts "==============================================="
       puts "SubTable #{@iCurrentSubTable} - #{@iCurrentSubTableLength}"
       puts
    end 
    @iSubTable = @iSubTable + 1
-   
-   
+      
 end
 
 #-------------------------------------------------------------
@@ -309,12 +317,253 @@ def processLine(line)
       end
       # verifyHeaderValue(arr[0], arr[1].chop)
    else
-      processDataLine(line)
+      return processDataLine(line)
    end
-   
+   return true
 end
 
 #-------------------------------------------------------------
+
+def processDataLine(line)
+   fields = line.split(",")
+   decodeFieldStart(fields[0])
+   decodeFieldCount(fields[1])
+   decodeFieldData(fields[2])
+   
+   if @isEndSubTable == true then
+      if @iCurrentSubTable == @LAST_SUBTABLE then
+         return # false
+      end
+      @iCurrentSubTable = @iCurrentSubTable + 1
+      if @reqST != nil and @reqST < @iCurrentSubTable then
+         return false
+      end
+      initSubTable
+   end
+   return true
+end
+#-------------------------------------------------------------
+
+def decodeFieldStart(field)
+   val = field.split("=")[1]
+end
+#-------------------------------------------------------------
+
+def decodeFieldCount(field)
+   val = field.split("=")[1]
+   @iSTLength        = @iSTLength      + val.hex
+   @iTotalLength     = @iTotalLength   + val.hex
+
+   if @iSTLength == @iCurrentSubTableLength then
+#      puts "NEW TABLE DETECTED !!!!!!!!!!!!!!!"
+#      puts @iCurrentSubTableLength
+#      puts @iSTLength
+#      puts @iSTRealLength
+      @isEndSubTable = true
+   end
+   
+end
+#-------------------------------------------------------------
+
+# Decode OBSM NUC data field
+def decodeFieldData(field)
+   arrData = Array.new
+   # arr = field.split("=")[1].split(/^[A-Z0-9]{4}$/)
+   arr = field.split("=")[1].split(/(....)/)
+   arr.each{|element|
+      if element.length == 0 or element == nil or element.chop == '' then
+         next
+      end
+      if element.to_s.length != @NUM_NIBBLE then
+         puts element.length
+         puts element
+         puts "Error decodeFieldData ! :-("
+         exit
+         next
+      end
+      arrData << element
+   }
+      
+   arrData.each{|word|
+   
+      @iSTRealLength = @iSTRealLength + 1
+   
+      if @iCounter == @iCurrentSubTableLength -1 then
+         if @isDebugMode == true or (@reqST == @iSubTable) then
+            puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{word}"
+         end
+
+         @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
+
+         if @cksum_nuc != word then
+            puts "Wrong chksum ST #{@iSubTable} - \
+D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} / got #{word} - expected #{@cksum_nuc}"
+         end
+
+         @arrChksmParsed      << word
+         @arrChksmComputed    << @cksum_nuc
+         
+         @cksum_nuc = "0000"         
+         next
+      end
+
+      @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
+      
+      if @isDebugMode == true or (@reqST == @iSubTable) then
+         puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
+      end
+      # puts @cksum_nuc
+      @hSubTables[@iCurrentSubTable] << word
+      @iCounter      = @iCounter + 1
+      @iCurrentWord  = @iCurrentWord + 1
+            
+   }
+   # puts arrData.length
+end
+#-------------------------------------------------------------
+
+def createNewExcel(iST)
+   @workbook   = WriteExcel.new("nuc_reversed_#{iST.to_s.rjust(3, '0')}_#{@arrSTName[iST]}.xls")
+   @worksheet  = @workbook.add_worksheet
+   format      = @workbook.add_format
+   format.set_bold
+   @worksheet.write(0, 0, "Pixel", format)
+   @worksheet.write(0, 1, "A1 (Hex)", format)
+   @worksheet.write(0, 2, "ZS (Hex)", format)
+   @worksheet.write(0, 3, "A2 (Hex)", format)
+   @worksheet.write(0, 4, "C  (Hex)", format)      
+   return 
+end
+#-------------------------------------------------------------
+
+def createOutputDir
+   cmd            = "rm -rf #{@targetDirName}"
+   system(cmd)
+   cmd            = "mkdir -p #{@targetDirName}"
+   system(cmd)
+   @prevDir       = Dir.pwd
+   Dir.chdir(@targetDirName)
+end
+#---------------------------------------------------------------------
+
+def createReversedNUC
+   (0..155).each do |i|
+      processNUCFile(i)
+   end
+end
+
+#---------------------------------------------------------------------
+
+def processNUCFile(iST)
+
+   length = @hSubTables[iST].length - 1
+      
+   arrA1 = Array.new
+   arrZS = Array.new
+   arrA2 = Array.new
+   arrC  = Array.new
+   
+   idx   = 0
+   
+   (0..length/16).each do |i|
+      (1..4).each do |j|
+          arrA1 << @hSubTables[iST][idx]
+          idx = idx + 1
+      end
+      
+      (1..4).each do |j|
+          arrZS << @hSubTables[iST][idx]
+          idx = idx + 1
+      end
+
+      (1..4).each do |j|
+          arrA2 << @hSubTables[iST][idx]
+          idx = idx + 1 
+      end
+
+      (1..4).each do |j|
+          arrC << @hSubTables[iST][idx]
+          idx = idx + 1
+      end
+   end
+
+   createNewExcel(iST)
+
+   row = 1
+   
+   arrA1.each{|value|
+      if value == nil then
+         puts "A1 NIL VALUE"
+         next
+      end
+      binValue       = value.to_i(16).to_s(2).rjust(16, '0')
+      binValueInt    = binValue.slice(0,6)
+      binValueFrac   = binValue.slice(6,16)
+      if iST == @reqST or @reqST == nil then
+         # puts "A1 - pixel #{row+1} - #{value} - #{binValueInt} - #{binValueFrac}"
+      end
+      @worksheet.write(row, 0, row)
+      @worksheet.write(row, 1, value)
+      @worksheet.write(row, 5, "=MID(B#{row+1},1,1)")
+      form = "HEX2BIN(MID(B#{row+1},1,1),4)"
+      puts form
+      @worksheet.write(row, 5, form)
+#      @worksheet.write(row, 5, "=HEX2BIN( MID (B#{row+1},1,1) ,4) " ) # &HEX2BIN(MID(B1,2,1),4)&HEX2BIN(MID(B1,3,1),4)&HEX2BIN(MID(B1,4,1),4)')
+      row = row + 1
+      puts row
+   }
+  
+   row = 1
+   arrZS.each{|value|
+      if value == nil then
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
+      if iST == @reqST or @reqST == nil then
+         # puts "ZS - pixel #{row+1} - #{value}"
+      end
+      @worksheet.write(row, 2, value)
+      row      = row + 1
+   }
+
+   row = 1
+   arrA2.each{|value|
+      if value == nil then
+         next
+      end
+      binValue       = value.to_i(16).to_s(2).rjust(16, '0')
+      binValueInt    = binValue.slice(0,6)
+      binValueFrac   = binValue.slice(6,16)
+      if iST == @reqST or @reqST == nil then
+         # puts "A2 - pixel #{row+1} - #{value} - #{binValueInt} - #{binValueFrac}"
+      end
+      @worksheet.write(row, 3, value)
+      row      = row + 1
+   }
+
+   row = 1
+   arrC.each{|value|
+      if value == nil then
+         puts "C - pixel #{row+1} - NIL VALUE"
+         row = row + 1
+         next
+      end
+      binValue = value.to_i(16).to_s(2).rjust(16, '0')
+      if iST == @reqST or @reqST == nil then
+         puts "C - pixel #{row+1} - #{value} - #{binValue}"
+      end
+      @worksheet.write(row, 4, value)
+      row      = row + 1
+   }
+
+   @workbook.close
+  
+   if iST == @reqST then
+      exit
+   end
+  
+end
+
 
 #-------------------------------------------------------------
 
@@ -354,214 +603,6 @@ def verifyHeaderValue(field, value)
    
 end
 #-------------------------------------------------------------
-
-def processDataLine(line)
-   fields = line.split(",")
-   decodeFieldStart(fields[0])
-   decodeFieldCount(fields[1])
-   decodeFieldData(fields[2])
-         
-   @iCurrentDataLine = @iCurrentDataLine + 1
-   
-   if @isEndSubTable == true then
-      if @iCurrentSubTable == @LAST_SUBTABLE then
-         return
-      end
-      # exit
-      @iCurrentSubTable = @iCurrentSubTable + 1
-      initSubTable
-   end
-end
-#-------------------------------------------------------------
-
-def decodeFieldStart(field)
-   val = field.split("=")[1]
-#    puts val
-#    puts val.hex
-end
-#-------------------------------------------------------------
-
-def decodeFieldCount(field)
-#   puts field
-   val = field.split("=")[1]
-   @iSTLength  = @iSTLength + val.hex
-   @iTotalLength     = @iTotalLength + val.hex
-#   puts @iTotalLength.to_s(16)
-   
-   if @iSTLength == @iCurrentSubTableLength then
-      @isEndSubTable = true
-   end
-   
-end
-#-------------------------------------------------------------
-
-# Decode OBSM NUC data field
-def decodeFieldData(field)
-   arrData = Array.new
-   # arr = field.split("=")[1].split(/^[A-Z0-9]{4}$/)
-   arr = field.split("=")[1].split(/(....)/)
-   arr.each{|element|
-      if element.length == 0 or element.chop == "" then
-         next
-      end
-      if element.to_s.length != @NUM_NIBBLE then
-         puts element.length
-         puts element
-         puts "Error decodeFieldData ! :-("
-         exit
-         next
-      end
-      arrData << element
-   }
-      
-   arrData.each{|word|
-   
-      if @iCounter == @iCurrentSubTableLength -1 then
-         if @isDebugMode == true then
-            puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{word}"
-         end
-
-         @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
-
-         if @cksum_nuc != word then
-            puts "Wrong chksum ST #{@iSubTable} - \
-D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} / got #{word} - expected #{@cksum_nuc}"
-         end
-
-         @arrChksmParsed      << word
-         @arrChksmComputed    << @cksum_nuc
-         
-         @cksum_nuc = "0000"         
-         next
-      end
-
-      @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
-      
-      if @isDebugMode == true then
-         puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
-      end
-      # puts @cksum_nuc
-      @hSubTables[@iCurrentSubTable] << word
-      @iCounter      = @iCounter + 1
-      @iCurrentWord  = @iCurrentWord + 1
-            
-   }
-   # puts arrData.length
-end
-#-------------------------------------------------------------
-
-def createNewExcel(iST)
-   @workbook   = WriteExcel.new("nuc_reversed_#{iST.to_s.rjust(3, '0')}.xls")
-   @worksheet  = @workbook.add_worksheet
-   return 
-end
-#-------------------------------------------------------------
-
-def createOutputDir
-   cmd            = "rm -rf #{@targetDirName}"
-   system(cmd)
-   cmd            = "mkdir -p #{@targetDirName}"
-   system(cmd)
-   @prevDir       = Dir.pwd
-   Dir.chdir(@targetDirName)
-end
-#---------------------------------------------------------------------
-
-def createReversedNUC
-   (0..155).each do |i|
-      processNUCFile(i)
-   end
-end
-
-#---------------------------------------------------------------------
-
-def processNUCFile(iST)
-
-   length = @hSubTableAddr[0][1] - 2
-   length = @hSubTables[iST].length - 1
-   
-   puts length
-      
-   arrA1 = Array.new
-   arrZS = Array.new
-   arrA2 = Array.new
-   arrC  = Array.new
-   
-   idx = 0
-   
-   (0..length/16).each do |i|
-   
-      (1..4).each do |j|
-          arrA1 << @hSubTables[0][idx]
-          idx = idx + 1
-      end
-      
-      (1..4).each do |j|
-          arrZS << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-      (1..4).each do |j|
-          arrA2 << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-      (1..4).each do |j|
-          arrC << @hSubTables[0][idx]
-          idx = idx + 1 
-      end
-
-   end
-
-   createNewExcel(iST)
-
-   row = 0
-   arrA1.each{|value|
-      if value == nil then
-         next
-      end
-      binValue = value.to_i(16).to_s(2).rjust(16, '0')
-      puts "A1 - pixel #{row+1} - #{value} - #{binValue}"
-      @worksheet.write(row, 0, value)
-      row = row + 1
-   }
-  
-   row = 0
-   arrZS.each{|value|
-      if value == nil then
-         next
-      end
-      binValue = value.to_i(16).to_s(2).rjust(16, '0')
-      puts "ZS - pixel #{row+1} - #{value}"
-      @worksheet.write(row, 1, value)
-      row      = row + 1
-   }
-
-   row = 0
-   arrA2.each{|value|
-      if value == nil then
-         next
-      end
-      binValue = value.to_i(16).to_s(2).rjust(16, '0')
-      puts "A2 - pixel #{row+1} - #{value}"
-      @worksheet.write(row, 2, value)
-      row      = row + 1
-   }
-
-   row = 0
-   arrC.each{|value|
-      if value == nil then
-         next
-      end
-      binValue = value.to_i(16).to_s(2).rjust(16, '0')
-      puts "C - pixel #{row+1} - #{value} - #{binValue}"
-      @worksheet.write(row, 3, value)
-      row      = row + 1
-   }
-
-   @workbook.close
-  
-end
 
 #-------------------------------------------------------------
 
