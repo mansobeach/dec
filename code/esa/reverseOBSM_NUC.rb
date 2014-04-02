@@ -82,7 +82,7 @@ require 'writeexcel'
 
 # ------------------------------------------------------------------------------
 #
-# Coefficients order
+# Coefficients order grouped by 4 pixels (cf. [NUC-US-TN] GS2.TN.ASD.SY.00046 issue 3)
 # 
 # A1, ZS, A2, C
 #
@@ -90,7 +90,10 @@ require 'writeexcel'
 #
 # Parameters C and Zs: are coded on 16 bits : 12 bits integer part et 4 bits decimal part 
 #
-# MSB is on the left_side : Big-Endian
+# MSB is on the left_side : Big-Endian (source is [FOS-SCOSOBSM-NUC] issue 2.2)
+#
+# Refer to RID to FOM-MSI below for "official" feedback by ASF
+# https://eop.esa.int/pls/rid/ridRidDetail.RidDetailReport?cProjectid=16&cReview=S2_FOM_ISS_1.2&nRidID=93589&cCommand=View
 #
 # C   is Dark Signal
 # ZS  is the abscise of the break point of the bilinear model after Dark Signal correction
