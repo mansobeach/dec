@@ -35,7 +35,7 @@ class Handler_DAILY_RAW_XLS
    attr_reader :archive_path
 
    # Class constructor
-   def initialize (name)
+   def initialize (name, destination = nil)
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
       @filename      = name
       @archive_path  = ""

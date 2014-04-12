@@ -49,7 +49,7 @@ class FileArchiver
    #------------------------------------------------
 
    # Main method of the class.
-   def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false, arrAddFields = nil)
+   def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false, arrAddFields = nil, full_path_location = nil)
       path = ""
 
       # CHECK WHETHER SPECIFIED FILE EXISTS
@@ -127,13 +127,25 @@ class FileArchiver
          else
             require "minarc/plugins/#{handler}"
             nameDecoderKlass = eval(handler)
-            nameDecoder = nameDecoderKlass.new(fileName)
+            
+            # --------------------------------------------------------
+            # 2014-03-24
+            # New Interface with plug-ins
+            # Now the filename provided is full-path to allow 
+            # plug-ins process physically the file if needed
+            
+            # nameDecoder = nameDecoderKlass.new(fileName)
+            nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location)
+            
+            #
+            # --------------------------------------------------------
             
             if nameDecoder != nil and nameDecoder.isValid == true then
-               fileType = nameDecoder.fileType.upcase
-               start    = nameDecoder.start_as_dateTime
-               stop     = nameDecoder.stop_as_dateTime
-               path     = nameDecoder.archive_path
+               fileType       = nameDecoder.fileType.upcase
+               start          = nameDecoder.start_as_dateTime
+               stop           = nameDecoder.stop_as_dateTime
+               path           = nameDecoder.archive_path
+               full_path_file = nameDecoder.fileName
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -145,6 +157,36 @@ class FileArchiver
 
       return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path)
 
+   end
+   #------------------------------------------------
+
+   def reallocate(fp_file)
+      full_path_file = fp_file.dup
+      newpath        = File.dirname(full_path_file)
+      filename       = File.basename(full_path_file)
+                        
+      aFile = ArchivedFile.find_by_filename(filename)
+
+      if aFile == nil then
+         puts "File #{filename} is not in the Archive"
+         return false
+      end
+     
+      if File.exists?(full_path_file) == false then
+         puts "Error #{full_path_file} does not exist"
+         return false
+      end
+          
+      if aFile.path == newpath then
+         puts "#{filename} is already archived in #{newpath}"
+         return false
+      end
+     
+      aFile.path = newpath
+      
+      aFile.save!
+      
+      return true
    end
    #------------------------------------------------
 
@@ -174,8 +216,8 @@ private
       end
 
    end
-
-
+   #--------------------------------------------------------
+   
    #-------------------------------------------------------------
    # Performs the file archiving.
    # Copies/Moves the source file to the proper directory
@@ -284,9 +326,9 @@ private
          end
       else
          if @bMove then
-            cmd = "\\mv -f #{full_path_filename} #{destDir}"
+            cmd = "\\mv -f #{full_path_filename} #{destDir}/"
          else
-            cmd = "\\cp -Rf #{full_path_filename} #{destDir}"
+            cmd = "\\cp -Rf #{full_path_filename} #{destDir}/"
          end
 
          if @isDebugMode then
@@ -454,6 +496,8 @@ private
       return true
 
    end
+
+   #--------------------------------------------------------
 
 end # class
 

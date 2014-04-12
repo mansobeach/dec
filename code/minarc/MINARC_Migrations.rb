@@ -34,6 +34,7 @@ class CreateArchivedFiles < ActiveRecord::Migration
          t.column :filename,            :string,  :limit => 255
          t.column :filetype,            :string,  :limit => 64
          t.column :path,                :string,  :limit => 255
+         t.column :info,                :string,  :limit => 255
          t.column :detection_date,      :datetime
          t.column :validity_start,      :datetime
          t.column :validity_stop,       :datetime

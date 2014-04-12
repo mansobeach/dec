@@ -14,8 +14,8 @@
 #
 #########################################################################
 
-require "rubygems"
-require "active_record"
+require 'rubygems'
+require 'active_record'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']
@@ -46,7 +46,13 @@ class ArchivedFile < ActiveRecord::Base
       else
          # if no filetype is specified, retrieve everything
          if filetype != nil and filetype != "" then
-            arrFiles = ArchivedFile.find_all_by_filetype(filetype)
+            # ----------------------------------------------
+            # Rails 3 
+            # arrFiles = ArchivedFile.find_all_by_filetype(filetype)
+            # ----------------------------------------------
+            # Rails 4 
+            arrFiles = ArchivedFile.where(filetype: filetype).load
+            # ----------------------------------------------
          else
             arrFiles = ArchivedFile.find(:all)
          end

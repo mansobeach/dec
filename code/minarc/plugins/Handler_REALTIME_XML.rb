@@ -35,9 +35,11 @@ class Handler_REALTIME_XML
    attr_reader :archive_path
 
    # Class constructor
-   def initialize (name)
+   
+   # Name now must be a full_path one
+   def initialize (name, destination = nil)
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
-      @filename      = name
+      @filename      = File.basename(name)
       @archive_path  = ""
 
       if name.include?("REALTIME_") == true then

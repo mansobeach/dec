@@ -14,9 +14,10 @@
 # + Unit      : s - seconds | d - days
 #
 # == Usage
-# minArcCleanup.rb  --start | --stop
+# minArcCleanup.rb  --start --frequency <seconds> | --stop 
 #     --start               starts the cleanup deamon
 #     --stop                kills the cleanup deamon
+#     --frequency <seconds>
 #     --list                Activates the list-only mode
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
@@ -24,7 +25,7 @@
 # 
 #
 # == Author
-# DEIMOS-Space S.L. (bolf / rell)
+# DEIMOS-Space S.L.
 #
 #
 # == Copyright
@@ -45,7 +46,7 @@
 
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 require 'cuc/Listener'
 require 'cuc/Log4rLoggerFactory'
@@ -57,7 +58,7 @@ require 'minarc/ReadMinarcConfig'
 require 'minarc/MINARC_DatabaseModel'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   
+@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   
 
 
 # MAIN script function
@@ -66,19 +67,19 @@ def main
    include CUC::DirUtils
    include CUC::CommandLauncher
 
-   @listOnly           = false
-   @isDebugMode        = false
-   @action = nil
-   @id = nil
+   @listOnly            = false
+   @isDebugMode         = false
+   @action              = nil
+   @id                  = nil
 
    showVersion = false
 
    @intervalSeconds    = 0
    
    opts = GetoptLong.new(
-      ["--start",                GetoptLong::NO_ARGUMENT],
+      ["--start", "-s",          GetoptLong::NO_ARGUMENT],
       ["--stop",                 GetoptLong::NO_ARGUMENT],
-      ["--id",                   GetoptLong::REQUIRED_ARGUMENT],
+      ["--frequency", "-f",      GetoptLong::REQUIRED_ARGUMENT],
       ["--list", "-l",           GetoptLong::NO_ARGUMENT],
       ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
       ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
@@ -89,14 +90,14 @@ def main
    begin
       opts.each do |opt, arg|
          case opt
-            when "--Debug"    then @isDebugMode = true
-            when "--version"  then showVersion = true         
-            when "--help"     then RDoc::usage
-	         when "--start"    then @action = "start"
-	         when "--stop"     then @action = "stop"
-	         when "--list"     then @listOnly = true
-            when "--id"       then @id = arg.to_i
-            when "--usage"    then RDoc::usage("usage")
+            when "--Debug"       then @isDebugMode = true
+            when "--version"     then showVersion = true         
+            when "--help"        then usage
+	         when "--start"       then @action = "start"
+	         when "--stop"        then @action = "stop"
+	         when "--list"        then @listOnly = true
+            when "--frequency"   then @id = arg.to_i
+            when "--usage"       then usage
          end
       end
    rescue Exception
@@ -141,7 +142,7 @@ def main
       puts
       puts "No action defined, please specify --start or --stop"
       puts
-      RDoc::usage("usage")
+      usage
       exit(0)
    elsif @action == "start" and @id != nil
 
@@ -170,9 +171,9 @@ def main
       arrFreqs.each{|freq|
 
          if @isDebugMode == true then
-            command  = %Q{minArcCleanup.rb --start --id #{freq} -D #{listStr}}
+            command  = %Q{minArcCleanup.rb --start --frequency #{freq} -D #{listStr}}
          else
-            command  = %Q{minArcCleanup.rb --start --id #{freq} #{listStr}}
+            command  = %Q{minArcCleanup.rb --start --frequency #{freq} #{listStr}}
          end
 
          #---------------------------------------------
@@ -361,6 +362,15 @@ end
 
 #-------------------------------------------------------------
 
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -32 #{fullpathFile}")
+   exit
+end
+
+#-------------------------------------------------------------
 
 #-------------------------------------------------------------
 

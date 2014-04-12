@@ -13,12 +13,11 @@
 # == Copyright
 # Copyright (c) 2008 ESA - DEIMOS Space S.L.
 #
+require 'rubygems'
+require 'active_record'
 
 require 'getoptlong'
-require 'rdoc/usage'
-
-require "rubygems"
-require "active_record"
+require 'rdoc'
 
 require 'minarc/MINARC_Migrations'
 
@@ -49,7 +48,7 @@ def main
          case opt      
             when "--create-tables"    then @bUp   = true
             when "--drop-tables"      then @bDown = true
-			   when "--help"             then RDoc::usage
+			   when "--help"             then usage
          end
       end
    rescue Exception => e
@@ -58,7 +57,7 @@ def main
    end
 
    if @bDown and @bUp then
-      RDoc::usage("usage")
+      usage
    end
 
    if @bDown then
@@ -70,12 +69,21 @@ def main
       CreateArchivedFiles.up
       exit(0)
    end
-
-   RDoc::usage("usage")
  
    exit(0)
 
 end
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -15 #{fullpathFile}")
+   exit
+end
+
+#-------------------------------------------------------------
+
 
 #=====================================================================
 # Start of the main body

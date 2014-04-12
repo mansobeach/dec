@@ -31,19 +31,23 @@
 #
 #########################################################################
 
+require 'rubygems'
+require 'mini_exiftool'
 require 'getoptlong'
-require 'rdoc'
 
-require "minarc/MINARC_DatabaseModel"
-
+require 'cuc/WrapperExifTool'
 
 # MAIN script function
 
 def main
 
    @bConfirmed  = false
+   @filename    = ""
+
+
 
    opts = GetoptLong.new(
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--YES",   "-Y",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
@@ -56,6 +60,7 @@ def main
             when "--Debug"             then @isDebugMode = true
             when "--YES"               then @bConfirmed  = true
             when "--version"           then showVersion  = true
+            when "--file"              then @filename    = arg.to_s
 			   when "--help"              then usage
 	         when "--usage"             then usage
          end
@@ -64,33 +69,23 @@ def main
       exit(99)
    end
 
-   if @bConfirmed == false then
+   if @filename == "" then
       usage
    end
 
-   pwd = Dir.pwd
-
-   # Clean-up for CECProductionTimeline
-
-
-   #------------------------------------------------------------------
-   puts
-   puts "Clean up of the Archive"
-
-   archiveRoot = ENV["MINARC_ARCHIVE_ROOT"]
-
-   Dir.chdir(archiveRoot)
-
-   ArchivedFile.delete_all
-
-   cmd = "chmod -R a+x *"
-   system(cmd)
+   begin
+      mdata = MiniExiftool.new @filename
+      puts mdata.date_time_original
+      puts mdata.duration
+      puts mdata.mime_type
+   rescue MiniExiftool::Error => e
+      $stderr.puts e.message
+      exit -1
+   end
    
-   cmd = "chmod -R a+w *"
-   system(cmd)
-
-   cmd = "\\rm -rf *"
-   system(cmd)
+   parser = CUC::WrapperExifTool.new(@filename, false)
+   
+   puts parser.date_time_original
    
    exit(0)
 
@@ -100,7 +95,7 @@ end
 
 def usage
    fullpathFile = `which #{File.basename($0)}` 
-   system("head -24 #{fullpathFile}")
+   system("head -97 #{fullpathFile}")
    exit
 end
 

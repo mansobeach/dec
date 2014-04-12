@@ -29,8 +29,9 @@ class FileRetriever
    
    # Class contructor
    def initialize(bListOnly = false)
-      @bListOnly  = bListOnly
-      @rule       = "ALL"
+      @bListOnly     = bListOnly
+      @rule          = "ALL"
+      @arrInv        = Array.new
       checkModuleIntegrity
    end
    #-------------------------------------------------------------
@@ -53,8 +54,8 @@ class FileRetriever
    #-------------------------------------------------------------
 
    def enableReporting(filePath)
-      @bReport = true
-      @reportFullName = filePath
+      @bReport          = true
+      @reportFullName   = filePath
    end
    #-------------------------------------------------------------
 
@@ -66,6 +67,7 @@ class FileRetriever
    # Main method of the class.
    def retrieve_by_type(destination, fileType, start = nil, stop = nil, bDelete = false, bIncStart = false, bIncStop = false, bHardlink = false)
       
+      @arrInv  = Array.new
       arrFiles = Array.new
 
       if @rule == "NEWEST" then
@@ -74,7 +76,8 @@ class FileRetriever
          arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase, start, stop, bIncStart, bIncStop)
       end
 
-      retVal = true
+      @arrInv  = arrFiles.dup 
+      retVal   = true
 
       if arrFiles != nil and arrFiles.size > 0 then
          case @rule
@@ -89,10 +92,11 @@ class FileRetriever
          editor.generateReport(@reportFullName)
       end
 
+      arrFilenames = Array.new
       if arrFiles != nil then
          arrFiles.each{|aFile|
             if @bListOnly then
-               puts aFile.filename
+               arrFilenames << aFile.filename
                aRetVal = true
             else
                aRetVal = extractFromArchive(destination, aFile.filetype, aFile.filename,
@@ -115,17 +119,26 @@ class FileRetriever
          }
       end
 
+      if @bListOnly == true then
+         arrFilenames.sort.each{|name|
+            puts name
+         }
+      end
       return retVal
    end
    #-------------------------------------------------------------
 
    def retrieve_by_name(destination, filename, bDelete = false, bHardlink = false)
 
-      aFile = ArchivedFile.find_by_filename(filename)
+      @arrInv  = Array.new
+
+      aFile    = ArchivedFile.find_by_filename(filename)
 
       if !aFile then
          return false
       end
+
+      @arrInv << aFile
 
       if @bReport then
          editor = MINARC::ReportEditor.new(Array[aFile])
@@ -147,6 +160,27 @@ class FileRetriever
          return retVal
       end
 
+   end
+   #-------------------------------------------------------------
+
+   def retrieveAll
+      @arrInv  = Array.new
+      @arrInv  = ArchivedFile.all
+      @arrInv  = ArchivedFile.all.order('filename DESC')
+      
+      # @arrInv  = ArchivedFile.all.order('filename DESC').order('type DESC')
+      
+#       @arrInv.each{|item|
+#          puts item.filename
+#       }
+#       exit
+   end
+   #-------------------------------------------------------------
+
+   # Particularly useful when @bListOnly == true
+   
+   def getLastSearchResult
+      return @arrInv
    end
    #-------------------------------------------------------------
 
@@ -181,7 +215,7 @@ private
       arrEntries = Array.new
 
       # srcDir = "#{@archiveRoot}/#{path}"
-      srcDir = "#{path}"
+      srcDir = "#{path}".gsub!(' ', '\ ')
       
       srcPath = "#{srcDir}/" << fileName
 

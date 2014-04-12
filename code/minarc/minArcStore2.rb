@@ -73,9 +73,10 @@
 #
 #
 # == Usage
-# minArcStore.rb -f <full_path_file> [-t type-of-the-file] [-d]
+# minArcStore.rb -f <full_path_file> [-t type-of-the-file] [-d] [-L <full_path_location>
 #     --file <full_path_file>    it specifies the file to be archived
 #     --type <file-type>         it specifies the file-type of the file to be archived
+#     --Location <full_path>     it specifies the full_path desired archive location
 #     --delete                   enable delete flag
 #     --move                     it moves the file to the Archive
 #     --update                   it updates the Archive with new file if previously present
@@ -92,7 +93,7 @@
 # DEIMOS-Space S.L.
 #
 # == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+# Copyright (c) 2014 ESA - DEIMOS Space S.L.
 #
 
 #########################################################################
@@ -103,21 +104,22 @@
 #
 #########################################################################
 
+require 'rubygems'
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 require 'minarc/FileArchiver2'
-require "minarc/MINARC_DatabaseModel"
+require 'minarc/MINARC_DatabaseModel'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
+@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
                                        # of this script
                                        # execution showing Debug Info
 
 
 # MAIN script function
 def main
-
+   @full_path_location     = nil
    @full_path_filename     = ""
    @filename               = ""
    @filetype               = ""
@@ -134,6 +136,7 @@ def main
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--Location", "-L",           GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
      ["--Hardlink", "-H",           GetoptLong::NO_ARGUMENT],
      ["--Types", "-T",              GetoptLong::NO_ARGUMENT],
@@ -156,11 +159,12 @@ def main
             when "--update"            then @bUpdate     = true
             when "--version"           then showVersion  = true
 	         when "--file"              then @full_path_filename = arg.to_s
+            when "--Location"          then @full_path_location = arg.to_s
 	         when "--type"              then @filetype           = arg.to_s
             when "--additional-fields" then @arrAddFields       = arg.to_s.split(":")
             when "--Types"             then bShowFileTypes      = true
-			   when "--help"              then RDoc::usage
-	         when "--usage"             then RDoc::usage("usage")
+			   when "--help"              then usage
+	         when "--usage"             then usage
             when "--Unpack"            then @bUnpack = true
             when "--Hardlink"          then @bHardLink = true
          end
@@ -196,16 +200,16 @@ def main
    end  
 
    if @bDelete and @bMove then
-      RDoc::usage("usage")
+      usage
    end
 
    if @bHardLink and @bMove then
-      RDoc::usage("usage")
+      usage
    end
 
 
    if @full_path_filename == "" then
-      RDoc::usage("usage")
+      usage
    end
    
    if @full_path_filename.slice(0,1) != "/" then
@@ -255,7 +259,7 @@ def main
       archiver.setDebugMode
    end
 
-   ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields)
+   ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
    
    if ret == false then
       puts
@@ -275,6 +279,17 @@ def main
 end
 
 #-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -97 #{fullpathFile}")
+   exit
+end
+
+#-------------------------------------------------------------
+
 
 #===============================================================================
 # Start of the main body

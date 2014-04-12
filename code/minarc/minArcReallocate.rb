@@ -13,7 +13,9 @@
 # This option is used to specify the file to be archived. 
 # File must be specified with the full path location of the new storage directory.
 #
+# -d flag:
 #
+# Mandatory flag, stands for "--directory".
 #
 # -a flag:
 # Optional flag, stands for "--additional-fields".
@@ -25,6 +27,7 @@
 # == Usage
 # minArcReallocate.rb -f <full_path_file>
 #     --file <full_path_file>    it specifies the file to be archived
+#     --directory <full_path>    it specifies the directory containing files
 #     --update                   it updates the Archive with new file if previously present
 #     --Unpack                   enable file unpacking for supported extensions
 #     --additional-fields        allows to specify additional fields to fill in the archived_files table.
@@ -71,6 +74,7 @@ require 'minarc/MINARC_DatabaseModel'
 def main
 
    @full_path_filename     = ""
+   @full_path_dir          = ""
    @filename               = ""
    @filetype               = ""
    @isDebugMode            = false
@@ -85,6 +89,7 @@ def main
    
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--directory", "-d",          GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",               GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
@@ -99,6 +104,7 @@ def main
             when "--Debug"             then @isDebugMode = true
             when "--version"           then showVersion  = true
 	         when "--file"              then @full_path_filename = arg.to_s
+            when "--directory"         then @full_path_dir      = arg.to_s
 	         when "--type"              then @filetype           = arg.to_s
             when "--additional-fields" then @arrAddFields       = arg.to_s.split(":")
 			   when "--help"              then usage
@@ -130,8 +136,17 @@ def main
    end
  
 
-   if @full_path_filename == "" then
+   if @full_path_filename == "" and @full_path_dir == "" then
       usage
+   end
+   
+   if @full_path_filename != "" and @full_path_dir != "" then
+      usage
+   end
+
+   if @full_path_dir != "" then
+      reallocateDir
+      exit(0)
    end
    
    if @full_path_filename.slice(0,1) != "/" then
@@ -176,11 +191,44 @@ end
 
 #-------------------------------------------------------------
 
+def reallocateDir
+   pwd = Dir.pwd
+
+   archiver  = MINARC::FileArchiver.new
+   
+   if @isDebugMode then
+      archiver.setDebugMode
+   end
+
+
+   Dir.chdir(@full_path_dir)
+
+   arrFiles = Dir["*"]
+
+   arrFiles.each{|aFile|
+      
+   
+      strFile = "#{@full_path_dir}/#{aFile}"
+   
+      puts strFile
+   
+      ret = archiver.reallocate(strFile)
+   
+      if ret == false then
+         puts "MINARC could not reallocate #{@filename} in #{strFile}"
+         next
+      end
+   }
+
+   Dir.chdir(pwd)
+
+end
+
 #-------------------------------------------------------------
 
 def usage
    fullpathFile = `which #{File.basename($0)}` 
-   system("head -97 #{fullpathFile}")
+   system("head -43 #{fullpathFile}")
    exit
 end
 
