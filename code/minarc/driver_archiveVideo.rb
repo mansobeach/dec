@@ -139,6 +139,18 @@ def main
          newname = element
       end
       # ------------------------------------------   
+
+      # ----------------------------------------------------
+      # AVI files with name *.avi
+      if ext == "avi" then
+         cmd = "minArcStore2.rb -f #{@directory}/#{newname} -t AVI -L #{rootpath} -D -m"
+         puts cmd
+         system(cmd)
+         next
+      end
+      # ----------------------------------------------------
+
+      next
    
       # ----------------------------------------------------
       # JPEG files with name DSC01256.JPG

@@ -65,7 +65,7 @@ class Inventory2Excel
          @worksheet.write(row, 2, item.filetype)
          @worksheet.write(row, 3, File.extname(item.filename).to_s.downcase.gsub!('.', ''))
          
-         if item.filetype == "M2TS" then
+         if item.filetype == "M2TS" or item.filetype == "AVI" then
             @worksheet.write(row, 4, item.filename.split("_")[1].split(".")[0].to_i)
          else
             @worksheet.write(row, 4, 0)

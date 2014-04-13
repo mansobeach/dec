@@ -91,11 +91,6 @@ require 'rdoc'
 
 require 'minarc/FileDeleter'
 
-# Global variables
-@@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   # to keep control of the last modification
-                                       # of this script
-                                       # execution showing Debug Info
-
 
 # MAIN script function
 def main

@@ -118,7 +118,7 @@
 #     --end   <YYYYMMDDThhmmss>
 #     --Location <directory>     Directory in which retrieved file(s) will be copied
 #     --Hardlink                 It performs a Hardlink rather than a copy from Archive
-#     --Inv <full path filename> It generates an export of the inventory in excel format
+#     --inv <full path filename> It generates an export of the inventory in excel format
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --rule <filering-rule>     Enable result filtering
 #     --delete                   enable delete flag

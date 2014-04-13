@@ -3,7 +3,7 @@
 # == Synopsis
 #
 # This is a MINARC command line tool that reallocates a given file previosuly archived. 
-# Arcnive reallocation is meant by changing the directory location
+# Archive reallocation is meant by changing the directory location
 # If reallocated file is not already archived in the system, an error will be raised.
 # 
 # 
@@ -28,8 +28,7 @@
 # minArcReallocate.rb -f <full_path_file>
 #     --file <full_path_file>    it specifies the file to be archived
 #     --directory <full_path>    it specifies the directory containing files
-#     --update                   it updates the Archive with new file if previously present
-#     --Unpack                   enable file unpacking for supported extensions
+#     --Recursive                recursivity through directory
 #     --additional-fields        allows to specify additional fields to fill in the archived_files table.
 #     --Hardlink                 enables hardlinking the file to the archive.
 #     --Types                    it shows all file-types archived
@@ -84,7 +83,7 @@ def main
    bShowFileTypes          = false
    showVersion             = false
    @arrAddFields           = Array.new
-   @bHardLink              = false
+   @bRecursive             = true
    @bUpdate                = false
    
    opts = GetoptLong.new(
@@ -92,6 +91,7 @@ def main
      ["--directory", "-d",          GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",               GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
+     ["--Recursive", "-R",          GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
      ["--Usage", "-g",              GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
@@ -109,8 +109,7 @@ def main
             when "--additional-fields" then @arrAddFields       = arg.to_s.split(":")
 			   when "--help"              then usage
 	         when "--usage"             then usage
-            when "--Unpack"            then @bUnpack = true
-            when "--Hardlink"          then @bHardLink = true
+            when "--Recursive"         then @bRecursive  = true
          end
       end
    rescue Exception
@@ -145,7 +144,7 @@ def main
    end
 
    if @full_path_dir != "" then
-      reallocateDir
+      reallocateDir(@full_path_dir)
       exit(0)
    end
    
@@ -191,7 +190,7 @@ end
 
 #-------------------------------------------------------------
 
-def reallocateDir
+def reallocateDir(directory)
    pwd = Dir.pwd
 
    archiver  = MINARC::FileArchiver.new
@@ -200,22 +199,26 @@ def reallocateDir
       archiver.setDebugMode
    end
 
+   Dir.chdir(directory)
 
-   Dir.chdir(@full_path_dir)
+   fp  = Dir.pwd
 
    arrFiles = Dir["*"]
 
    arrFiles.each{|aFile|
       
-   
-      strFile = "#{@full_path_dir}/#{aFile}"
+      if File.directory?(aFile) == true and @bRecursive == true then
+         reallocateDir(aFile)
+      end
+      
+      strFile = "#{fp}/#{aFile}"
    
       puts strFile
    
       ret = archiver.reallocate(strFile)
    
       if ret == false then
-         puts "MINARC could not reallocate #{@filename} in #{strFile}"
+         puts "MINARC could not reallocate #{aFile} in #{strFile}"
          next
       end
    }
