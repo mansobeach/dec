@@ -107,6 +107,26 @@ require 'writeexcel'
 # Y = A2(X-C-ZS) + A1*ZS   / if X > (C + ZS)
 #
 # ------------------------------------------------------------------------------
+#
+#=> Examples:
+#     
+#     1.002 for A1 or A2
+#     Step 1: 1.002 * 1024 = 1026.048
+#     Step 2: 1026 (dec) = 0000010000000010 (binary)
+#     Step 3: 0000010000000010 (binary) = 0402 (hex)
+#     
+#     1.2 for A1 or A2:
+#     Step 1: 1.2 * 1024 = 1228.8
+#     Step 2: 1229 (dec) = 0000010011001101 (bin)
+#     Step 3: 0000010011001101 (bin) = 04CD (hex)
+# 
+#     466.179 for C and Zs
+#     Step 1: 466.179 * 16 = 7458.864
+#     Step 2: 7459 (dec) = 0001110100100011 (bin)
+#     Step 3: 0001110100100011 (bin) = 1D23 (hex)
+# 
+# ------------------------------------------------------------------------------
+
 
 @arrHeaderFields = ["DOMAIN", "ID", "VERSION", "TYPE", "DESCRIPTION",
       "CREATIONDATE", "DEVICE", "STARTADDR", "ENDADDR", "LENGTH", "CHECKSUM", "UNIT"]
@@ -190,7 +210,7 @@ def init
    @confDir       = File.dirname(__FILE__)
    @nucMapFile    = "#{@confDir}/NUC_RAM_MAP.xls" 
    @targetDirName = "#{@filename.split("_")[8]}_REVERSED_NUC"
-      
+         
    # ---------------------------------------------
    # Read detector and bands mapping offset
     
@@ -522,6 +542,7 @@ def processNUCFile(iST)
       binValueInt    = binValue.slice(0,6)
       binValueFrac   = binValue.slice(6,16)
       fValue         = "#{binValueInt.to_i(2)}.#{binValueFrac.to_i(2)}".to_f
+      fValue         = convertHex2Eng_A(value)
       if iST == @reqST or @reqST == nil and @isDebugMode == true then
          puts "A1 - pixel #{row+1} - #{value} - #{fValue}"
       end
@@ -541,6 +562,7 @@ def processNUCFile(iST)
       binValueInt    = binValue.slice(0,12)
       binValueFrac   = binValue.slice(12,16)
       fValue         = "#{binValueInt.to_i(2)}.#{binValueFrac.to_i(2)}".to_f
+      fValue         = convertHex2Eng_C(value)
       if iST == @reqST or @reqST == nil and @isDebugMode == true then
          puts "ZS - pixel #{row+1} - #{value} - #{fValue}"
       end
@@ -558,6 +580,7 @@ def processNUCFile(iST)
       binValueInt    = binValue.slice(0,6)
       binValueFrac   = binValue.slice(6,16)
       fValue         = "#{binValueInt.to_i(2)}.#{binValueFrac.to_i(2)}".to_f
+      fValue         = convertHex2Eng_A(value)
       if iST == @reqST or @reqST == nil and @isDebugMode == true then
          puts "A2 - pixel #{row+1} - #{value} - #{fValue}"
       end
@@ -576,6 +599,7 @@ def processNUCFile(iST)
       binValueInt    = binValue.slice(0,12)
       binValueFrac   = binValue.slice(12,16)
       fValue         = "#{binValueInt.to_i(2)}.#{binValueFrac.to_i(2)}".to_f
+      fValue         = convertHex2Eng_C(value)
       if iST == @reqST or @reqST == nil and @isDebugMode == true then
          puts "C  - pixel #{row+1} - #{value} - #{fValue}"
       end
@@ -631,6 +655,16 @@ def verifyHeaderValue(field, value)
 end
 #-------------------------------------------------------------
 
+def convertHex2Eng_A(value)
+   kk = value.to_i(10)/(1024.0).to_f
+   return kk.round(3)
+end
+#-------------------------------------------------------------
+
+def convertHex2Eng_C(value)
+   kk = value.to_i(10)/(16.0).to_f
+   return kk.round(3)
+end
 #-------------------------------------------------------------
 
 def usage
