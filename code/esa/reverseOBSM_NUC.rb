@@ -311,14 +311,17 @@ def initSubTable
    end
 
    @isEndSubTable                   = false
+   @getNextStart                    = true
    @iCurrentPixel                   = 0
    @iSTLength                       = 0
    @iSTRealLength                   = 0
    @iCounter                        = 0
-   @iCurrentStart                   = @hSubTableAddr[@iCurrentSubTable][0]
+   @iCurrentStart                   = @hSubTableAddr[@iCurrentSubTable][0].to_i.to_s(16).hex
    @iCurrentSubTableLength          = @hSubTableAddr[@iCurrentSubTable][1]
    @hSubTables[@iCurrentSubTable]   = Array.new
    
+   # ---------------------------------------------
+   # Check subtable length short / long 
    if @hSubTableAddr[@iCurrentSubTable][1] == @LENGTH_SUBTABLE_SHORT then
       @numPixels = @NUM_PIXEL_SHORT
    else
@@ -329,7 +332,8 @@ def initSubTable
          exit(99)
       end
    end
-   
+   # ---------------------------------------------
+      
    if @isDebugMode == true then
       puts "==============================================="
       puts "SubTable #{@iCurrentSubTable} - #{@iCurrentSubTableLength}"
@@ -359,6 +363,7 @@ end
 
 def processDataLine(line)
    fields = line.split(",")
+   
    decodeFieldStart(fields[0])
    decodeFieldCount(fields[1])
    decodeFieldData(fields[2])
@@ -378,7 +383,19 @@ end
 #-------------------------------------------------------------
 
 def decodeFieldStart(field)
-   val = field.split("=")[1]
+   val = field.split("=")[1].to_s.hex
+   
+   if @getNextStart == true then
+      if @iCurrentStart != val then
+         puts "Wrong start address ST #{@iSubTable} - #{val} should be #{@iCurrentStart}"
+      else
+         if @isDebugMode == true then
+            puts "ST #{@iSubTable} correct START address - #{val}"
+         end
+      end
+      @getNextStart = false
+   end
+   return val
 end
 #-------------------------------------------------------------
 
