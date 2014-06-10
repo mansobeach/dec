@@ -6,7 +6,8 @@
 # into engineering coefficients
 
 # == Usage
-#  reverseOBSM_NUC.rb  -f <nuc_file> --Subtable <st>
+#  reverseOBSM_NUC.rb  -f <nuc_file> --Subtable <st> [-P]
+#     --Parse               it parses only input OBSM NUC file
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --Force               force mode
@@ -156,12 +157,14 @@ def main
    @isDebugMode   = false
    @isForceMode   = false
    @reqST         = nil
+   @isParseOnly   = false
 
    opts = GetoptLong.new(
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--Force", "-F",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT],
+     ["--Parse", "-P",           GetoptLong::NO_ARGUMENT],
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--SubTable", "-S",        GetoptLong::REQUIRED_ARGUMENT]
      )
@@ -172,6 +175,7 @@ def main
             when "--file"     then @filename    = arg.to_s.upcase
             when "--SubTable" then @reqST       = arg.to_i           
             when "--Debug"    then @isDebugMode = true
+            when "--Parse"    then @isParseOnly = true
             when "--Force"    then @isForceMode = true
             when "--version"  then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
@@ -196,7 +200,9 @@ def main
 
    @iSubTable = 0
 
-   createReversedNUC
+   if @isParseOnly  == false then
+      createReversedNUC
+   end
 
    Dir.chdir(@prevDir)
    exit(0)
@@ -292,7 +298,7 @@ def parseNUCFile
    end
    # -------------------------------------------------------
   
-   # Comeplete NUC computation  
+   # Complete NUC computation  
 
    @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
   
@@ -306,9 +312,9 @@ end
 
 def initSubTable
 
-   if @isDebugMode == true then
-      puts "New Subtable #{@iCurrentSubTable}"
-   end
+#    if @isDebugMode == true then
+#       puts "New Subtable #{@iCurrentSubTable}"
+#    end
 
    @isEndSubTable                   = false
    @getNextStart                    = true
@@ -390,7 +396,8 @@ def decodeFieldStart(field)
          puts "Wrong start address ST #{@iSubTable} - #{val} should be #{@iCurrentStart}"
       else
          if @isDebugMode == true then
-            puts "ST #{@iSubTable} correct START address - #{val}"
+            puts "ST #{@iSubTable} - \
+D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} CORRECT START address - #{val}"
          end
       end
       @getNextStart = false
@@ -441,11 +448,16 @@ def decodeFieldData(field)
             puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{word}"
          end
 
-         @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16)
+         @cksum_nuc = (@cksum_nuc.hex ^ @LAST_WORD_CKSUM.hex).to_s(16).upcase.rjust(4, '0')
 
          if @cksum_nuc != word then
             puts "Wrong chksum ST #{@iSubTable} - \
 D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} / got #{word} - expected #{@cksum_nuc}"
+         else
+            if @isDebugMode == true then
+               puts "ST #{@iSubTable} - \
+D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} CORRECT CHKSUM - #{word}"
+            end
          end
 
          @arrChksmParsed      << word
@@ -455,7 +467,9 @@ D#{@arrDetectors[@iSubTable/@NUM_BANDS]}B#{@arrBands[@iSubTable%@NUM_BANDS]} / g
          next
       end
 
-      @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16)
+      @cksum_nuc     = (@cksum_nuc.hex ^ word.hex).to_s(16).upcase.rjust(4, '0')
+#       puts @cksum_nuc
+#       exit
       
       if @isDebugMode == true and (@reqST == @iSubTable) then
          puts "#{@iCurrentWord} => #{@iCurrentWord.to_s(16)} => #{@iCounter} => #{word} / CHKSUM => #{@cksum_nuc}"
