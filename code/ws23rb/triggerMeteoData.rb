@@ -55,15 +55,15 @@ def main
    
    begin 
       opts.each do |opt, arg|
-         case opt     
+         case opt
             when "--Debug"       then @isDebugMode = true
-            when "--Historic"    then @bHistoric = true
-            when "--Force"   then @bForce = true
+            when "--Historic"    then @bHistoric   = true
+            when "--Force"       then @bForce      = true
             when "--version" then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
-            when "--usage"   then exit # RDoc::usage("usage")
-            when "--help"    then exit # RDoc::usage                         
+            when "--usage"   then usage
+            when "--help"    then usage                 
          end
       end
    rescue Exception
@@ -72,25 +72,26 @@ def main
 
    init
 
-   # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("triggerMeteoData", "#{ENV['METEO_CONFIG']}/dec_log_config.xml")
-   if @isDebugMode then
-      loggerFactory.setDebugMode
-   end
-   @logger = loggerFactory.getLogger
-   if @logger == nil then
-      puts
-	   puts "Error in triggerMeteoData::main"
-		puts "Could not set up logging system !  :-("
-      puts "Check logs configuration under \"#{ENV['METEO_CONFIG']}/dec_log_config.xml\"" 
-		puts
-		puts
-		exit(99)
-   end
+#    # initialize logger
+#    loggerFactory = CUC::Log4rLoggerFactory.new("triggerMeteoData", "#{ENV['METEO_CONFIG']}/dec_log_config.xml")
+#    if @isDebugMode then
+#       loggerFactory.setDebugMode
+#    end
+#    @logger = loggerFactory.getLogger
+#    if @logger == nil then
+#       puts
+# 	   puts "Error in triggerMeteoData::main"
+# 		puts "Could not set up logging system !  :-("
+#       puts "Check logs configuration under \"#{ENV['METEO_CONFIG']}/dec_log_config.xml\"" 
+# 		puts
+# 		puts
+# 		exit(99)
+#    end
 
    prevDir     = Dir.pwd
    toolsDir    = ENV['METEO_TOOLS']
    archiveDir  = ENV['METEO_ARCHIVE']
+   cnfDir      = ENV['METEO_CONFIG']
    stationName = ENV['METEO_STATION']
 
    time           = Time.now
@@ -106,9 +107,10 @@ def main
       cmd = "./xml2300 #{meteoFilename}"
    end
 
-   @logger.debug(cmd)
+   # @logger.debug(cmd)
   
    if @isDebugMode == true then
+      cmd = "#{cmd} -D"
       puts
       puts Time.now
       puts
@@ -119,7 +121,12 @@ def main
    system(cmd)
 
    cmd = "verifyMeteoData.rb -f #{meteoFilename}"
-   @logger.debug(cmd)
+
+   if @isDebugMode == true then
+      cmd = "#{cmd} -D"
+   end
+
+   # @logger.debug(cmd)
 
    if @isDebugMode == true then
       puts
@@ -133,9 +140,9 @@ def main
 
    if retVal == false then
       puts "Error in #{meteoFilename}"
-      @logger.error("Error in #{meteoFilename}")
+      # @logger.error("Error in #{meteoFilename}")
  
-     cmd = "\\cp #{meteoFilename} ../data/archive/xml"
+      cmd = "\\cp #{meteoFilename} ../data/archive/xml"
       system(cmd)
  
       cmd = "\\mv #{meteoFilename} ../data/archive/error"
@@ -143,7 +150,8 @@ def main
       exit(99)
    end
 
-   cmd = "cp #{meteoFilename} METEO_CASALE.xml"
+   cmd = "cp #{meteoFilename} METEO_#{stationName}.xml"
+   cmd = "mv #{meteoFilename} METEO_#{stationName}.xml"
 
    if @bHistoric == true then
       cmd = "cp #{meteoFilename} METEO_HISTORIC.xml"
@@ -152,17 +160,16 @@ def main
 
    system(cmd)
 
-   cmd = "\\cp -f METEO_CASALE.xml ../data/outtray/ftp"
+   cmd = "\\cp -f METEO_#{stationName}.xml ../data/outtray/ftp"
 
    if @bHistoric == true then
       cmd = "\\cp -f METEO_HISTORIC.xml ../data/outbox/METEO"
    end
 
-
-   @logger.debug(cmd)
+   # @logger.debug(cmd)
    system(cmd)
 
-   cmd = "send2Interface.rb -m METEO --nodb"
+   cmd = "send2Interface.rb -m METEO_#{stationName} --nodb"
    puts cmd
    system(cmd)
 
@@ -186,7 +193,7 @@ def main
 
    exit(0)
 
-   cmd = "\\mv METEO_CASALE* ../data/archive/xml"
+   cmd = "\\mv METEO_#{stationName}* ../data/archive/xml"
 
    if @bHistoric == true then
       cmd = "\\mv METEO_HISTORIC* ../data/archive/xml"
@@ -326,7 +333,17 @@ def registerSignals
                   }
       
 end
-   #-------------------------------------------------------------
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -20 #{fullpathFile}")
+   exit
+end
+
+#-------------------------------------------------------------
 
 
 #===============================================================================
