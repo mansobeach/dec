@@ -166,7 +166,7 @@ class DDC_FileSender
       end
 
       until bSent == true or loop < 0
-         if @isDebugMode == true and loop != @@loops and i != 0 then
+         if @isDebugMode == true and loop != @loops and i != 0 then
             puts "\nRE-Sending Loop Retry(#{i}) files to #{@entity}\n\n"
          end 
      

@@ -6,4 +6,6 @@ pg
 rubymagick
 gruff
 spreadsheet
+writeexcel
+write_xlsx
 gmail

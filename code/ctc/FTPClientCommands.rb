@@ -30,13 +30,21 @@ module FTPClientCommands
    # - user (IN): string containing the user name.
    # - pass (IN): string containing the password.
    # - dir  (IN): string containing the dir required for the ls cmd.
+   # - passive (IN): boolean to switch between Passive or Port mode.
    # - filter (IN): optional filtering in the directory.
    # * Returns the ncftpls command line statement created.
-   def createNcFtpLs(host,port,user,pass,dir,filter = nil)
-      if filter == nil then
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"-1" ftp://#{host}/#{dir}/}      
+   def createNcFtpLs(host,port,user,pass,dir,passive = nil, filter = nil)
+      optionPassive = ""
+      # Switch between FTP passive or port mode
+      if passive == nil then
+         optionPassive = "-E"
       else
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} -F -x \"-1 #{filter}\" ftp://#{host}/#{dir}/}
+         optionPassive = "-F"
+      end
+      if filter == nil then
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1" ftp://#{host}/#{dir}/}      
+      else
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1 #{filter}\" ftp://#{host}/#{dir}/}
       end
       return command         
    end

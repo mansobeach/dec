@@ -125,7 +125,8 @@ def main
                               entConf[:port],
                               entConf[:user],
                               entConf[:password],
-                              entConf[:uploadDir],   
+                              entConf[:uploadDir],
+                              nil,   
                               nil)
    else
       cmd = self.createSftpCommand(entConf[:hostname],

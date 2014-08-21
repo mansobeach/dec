@@ -1,3 +1,4 @@
+libruby1.8
 chkconfig
 makeself
 ncftp
@@ -6,7 +7,12 @@ p7zip
 compress
 sqlite3
 ruby-dev
-rubygems
+# rubygems
 fortune
 libpg-dev
-
+puppet
+wget
+arp-scan
+nmap
+setserial
+hal

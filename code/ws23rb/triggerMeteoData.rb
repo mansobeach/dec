@@ -37,6 +37,7 @@ require 'getoptlong'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Log4rLoggerFactory'
+require 'ctc/ReadInterfaceConfig'
 
 # MAIN script function
 def main
@@ -88,11 +89,25 @@ def main
 # 		exit(99)
 #    end
 
-   prevDir     = Dir.pwd
-   toolsDir    = ENV['METEO_TOOLS']
-   archiveDir  = ENV['METEO_ARCHIVE']
-   cnfDir      = ENV['METEO_CONFIG']
-   stationName = ENV['METEO_STATION']
+   prevDir        = Dir.pwd
+   toolsDir       = ENV['METEO_TOOLS']
+#   archiveDir     = ENV['METEO_ARCHIVE']
+#   cnfDir         = ENV['METEO_CONFIG']
+   stationName    = ENV['METEO_STATION']
+   interfaceName  = "METEO_#{stationName}"
+
+   # -----------------------------------
+   # outgoing folder
+   #
+   @ftReadConf  = CTC::ReadInterfaceConfig.instance
+   @outboxDir   = @ftReadConf.getOutgoingDir(interfaceName)
+   @outboxDir   = "#{@outboxDir}/ftp"
+   
+#    puts @outboxDir
+#    exit
+   
+   #
+   # -----------------------------------
 
    time           = Time.now
    now            = time.strftime("%Y%m%dT%H%M%S")   
@@ -150,17 +165,23 @@ def main
       exit(99)
    end
 
-   cmd = "cp #{meteoFilename} METEO_#{stationName}.xml"
+#   cmd = "cp #{meteoFilename} METEO_#{stationName}.xml"
    cmd = "mv #{meteoFilename} METEO_#{stationName}.xml"
 
    if @bHistoric == true then
       cmd = "cp #{meteoFilename} METEO_HISTORIC.xml"
    end
 
-
    system(cmd)
 
-   cmd = "\\cp -f METEO_#{stationName}.xml ../data/outtray/ftp"
+   # ---------------------------------------------------------------------
+   #
+   # To be replaced by configuration directory specified in interfaces.xml
+   #
+   
+   # cmd = "\\cp -f METEO_#{stationName}.xml ../data/outtray/ftp"
+
+   cmd = "\\mv -f METEO_#{stationName}.xml #{@outboxDir}"
 
    if @bHistoric == true then
       cmd = "\\cp -f METEO_HISTORIC.xml ../data/outbox/METEO"

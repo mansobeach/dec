@@ -4,6 +4,7 @@
    <head>
       <title>Meteo Monteporzio Casale</title>
       <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+      <link rel="stylesheet" href="http://meteomonteporzio.altervista.org/RealTime.m.css" />
       <link rel="Shortcut icon" href="http://meteomonteporzio.altervista.org/favicon2.png">
       <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
       <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
@@ -34,15 +35,24 @@
 
 <!--      <h3>Real Time Measurements</h3> -->
          <ul data-role="listview">
+         
             <li data-role="divider" id="divMeteoDate">Measurement Date</li>
             <li data-role="divider" id="divMeteoTime">Measurement Time</li>
-            <li                     id="divMeteoTemp">Measurement Temperature Outdoor</li>
-            <li                     id="divMeteoHumidity">Measurement Humidity Outdoor</li>
-            <li                     id="divMeteoPressure">Measurement Pressure</li>
-            <li                     id="divMeteoWindSpeed">Measurement Wind Speed</li>
-            <li                     id="divMeteoWindDirection">Measurement Wind Direction</li>
-            <li                     id="divMeteoRain1h">Measurement Rain 1hour</li>
-            <li                     id="divMeteoRain24h">Measurement Rain 24hour</li>
+            
+            <li data-role="divider" ><a href="#win_evolution_temperature-outdoor" id="divMeteoTemp">Measurement Temperature Outdoor</a></li>
+            
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoHumidity">Measurement Humidity Outdoor</a></li>
+            
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoPressure">Measurement Pressure</a></li>
+            
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoWindSpeed">Measurement Wind Speed</a></li>
+            
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoWindDirection">Measurement Wind Direction</a></li>
+            
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoRain1h">Measurement Rain 1hour</a></li>
+                        
+            <li data-role="divider" ><a href="#win_evolution_humidity-outdoor" id="divMeteoRain24h">Measurement Rain 24hour</a></li>
+            
          </ul>
       <footer data-role="footer"><h1>Casale & Beach</h1></footer>
 

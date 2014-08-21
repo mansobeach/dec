@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-
+/**
+    
 #########################################################################
 #
 # ===       
@@ -12,5 +12,21 @@
 #
 #########################################################################
 
-export PATH=$PATH:$DEC_BASE/code/esa
-export PATH=$PATH:$DEC_BASE/code/esa/nuc
+*/
+
+
+.TemperatureWarm {
+   color:         goldenrod ;
+}
+
+.TemperatureVeryWarm {
+   color:         goldenrod ;
+}
+
+.TemperatureHot {
+   color:         orange ;
+}
+
+.TemperatureVeryHot {
+   color:         orangered ;
+}
