@@ -251,6 +251,15 @@ private
             @ftp.passive = true
             @ftp.chdir(dir)
          rescue Exception
+            # ---------------------
+            # 20140923 - BL
+            # If remote directory does not exist
+            # it is then created
+            
+            @ftp = Net::FTP.new(host)
+            @ftp.login(user, pass)
+            @ftp.mkdir(dir)
+            # ---------------------
             return false
          end
          return true
