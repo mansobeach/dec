@@ -16,12 +16,19 @@ git pull origin master
 
 git branch -a
 
+# ----------------------------------------------------------
+# Remote repositories
 
 git remote set-url origin root@casale-redmine:/var/cache/git/dec.git
+git remote add bitbucket https://borja_lopez_fernandez@bitbucket.org/borja_lopez_fernandez/dec.git
+
 
 git config receive.denyCurrentBranch ignore
 
 git push origin master -f
+git push -u bitbucket --all # pushes up the repo and its refs for the first time
+git push -u bitbucket --tags   # pushes up any tags
+
 
 git config core.bare false
 
