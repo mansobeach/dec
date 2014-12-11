@@ -6,7 +6,7 @@
 # into engineering coefficients
 
 # == Usage
-#  reverseOBSM_NUC.rb  -f <nuc_file> --Subtable <st> [-P]
+#  S2ReverseOBSM_NUC.rb  -f <nuc_file> --Subtable <st> [-P]
 #     --Parse               it parses only input OBSM NUC file
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
@@ -569,11 +569,19 @@ def processNUCFile(iST)
       if value == nil then
          next
       end
+      
       binValue       = value.to_i(16).to_s(2).rjust(16, '0')
       binValueInt    = binValue.slice(0,6)
       binValueFrac   = binValue.slice(6,16)
+      
+#       puts value
+#       puts binValue
+#       puts binValueInt
+#       puts binValueFrac
+            
       fValue         = "#{binValueInt.to_i(2)}.#{binValueFrac.to_i(2)}".to_f
       fValue         = convertHex2Eng_A(value)
+            
       if iST == @reqST or @reqST == nil and @isDebugMode == true then
          puts "A1 - pixel #{row+1} - #{value} - #{fValue}"
       end
@@ -687,14 +695,20 @@ end
 #-------------------------------------------------------------
 
 def convertHex2Eng_A(value)
-   kk = value.to_i(10)/(1024.0).to_f
-   return kk.round(3)
+   
+   binValue       = value.to_i(16).to_s(2).rjust(16, '0')
+   engValue       = binValue.to_i(2)/1024.0
+   
+   return engValue   
 end
 #-------------------------------------------------------------
 
 def convertHex2Eng_C(value)
-   kk = value.to_i(10)/(16.0).to_f
-   return kk.round(3)
+
+   binValue       = value.to_i(16).to_s(2).rjust(16, '0')
+   engValue       = binValue.to_i(2)/16.0
+
+   return engValue
 end
 #-------------------------------------------------------------
 
