@@ -15,6 +15,7 @@
 
 #include <ruby.h>
 #include <rw2300.h>
+#include <math.h>
 
 // Defining a space for information and references about the module to be stored internally
 
@@ -29,7 +30,7 @@ VALUE wind_direction_degrees ;
 VALUE wind_direction_pointing ;
 
 int wind_index ;
-double winddir[6];
+double winddir[6] ;
 
 /* Prototype for the initialization method - Ruby calls this, not you */
 
@@ -87,8 +88,10 @@ void Init_ruby2300()
 
 VALUE method_open_weatherstation(VALUE self, VALUE config_file) 
 {
+   /* printf("DEBUG: entry open_weatherstation") ;   */
    get_configuration(&config, StringValuePtr(config_file)) ;
    ws2300 = open_weatherstation(config.serial_device_name) ;
+   /* printf("DEBUG: exit open_weatherstation") ;     */
 	return INT2NUM(ws2300) ;
 }
 
@@ -101,7 +104,10 @@ VALUE method_close_weatherstation(VALUE self)
 
 VALUE method_temperature_outdoor(VALUE self) 
 {
-	return rb_float_new(temperature_outdoor(ws2300, config.temperature_conv)) ;
+	/* return rb_float_new(temperature_outdoor(ws2300, config.temperature_conv)) ; */
+   
+   return rb_float_new( round(temperature_outdoor(ws2300, config.temperature_conv) * 100.0) / 100.0 ) ;
+   
 }
 
 VALUE method_temperature_indoor(VALUE self) 
@@ -122,12 +128,14 @@ VALUE method_humidity_indoor(VALUE self)
 
 VALUE method_rain_24h(VALUE self) 
 {
-	return rb_float_new(rain_24h(ws2300, config.rain_conv_factor)) ;
+	/* return rb_float_new(rain_24h(ws2300, config.rain_conv_factor)) ;  */
+   return rb_float_new( round( rain_24h(ws2300, config.rain_conv_factor) * 100.0) / 100.0 ) ;
 }
 
 VALUE method_rain_1h(VALUE self) 
 {
-	return rb_float_new(rain_1h(ws2300, config.rain_conv_factor)) ;
+	/* return rb_float_new(rain_1h(ws2300, config.rain_conv_factor)) ; */
+   return rb_float_new( round( rain_1h(ws2300, config.rain_conv_factor) * 100.0) / 100.0 ) ;
 }
 
 VALUE method_rel_pressure(VALUE self) 
@@ -154,7 +162,10 @@ VALUE method_wind_speed(VALUE self)
 {
    double d = wind_current(ws2300, config.wind_speed_conv_factor, winddir) ;
    wind_direction_degrees = rb_float_new(winddir[0]) ;
-	return rb_float_new(d) ;
+   
+   return rb_float_new( round(d * 100.0) / 100.0 ) ;
+   
+	/* return rb_float_new(d) ; */
 }
 
 VALUE method_wind_all(VALUE self) 
