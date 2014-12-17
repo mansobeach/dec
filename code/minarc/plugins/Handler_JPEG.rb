@@ -63,14 +63,35 @@ class Handler_JPEG
       end  
             
       arr         = mdata.date_time_original.to_s.gsub!("-", "").gsub!(":", "").split(" ")
-      @filename   = "#{arr[0]}T#{arr[1]}#{extension}"
       year        = arr[0].slice(0, 4)
+      prevName    = @filename
+      @filename   = "#{arr[0]}T#{arr[1]}#{extension}"
+      
+      # ------------------------------------------
+      # Check whether such file has been previously archived      
+      
+      aFile = ArchivedFile.find_by_filename(@filename)
+      
+      if aFile != nil then
+         puts "File #{prevName} is already archived with name #{@filename}"
+         puts
+         exit(1)
+      end
+      
+      # ------------------------------------------
+      
       
       @full_path_filename = "#{full_path}/#{@filename}"
 
       # ------------------------------------------
       # Rename File      
-      cmd         = "mv #{full_path_name} #{@full_path_filename}"
+      cmd         = "mv \"#{full_path_name}\" \"#{@full_path_filename}\""
+      
+      # or
+      
+      # Copy File    
+      cmd         = "cp \"#{full_path_name}\" \"#{@full_path_filename}\""
+      
 #       puts
 #       puts cmd
 #       puts

@@ -49,21 +49,95 @@ class Handler_M2TS
       @filename   = File.basename(full_path_name)
       basename    = File.basename(full_path_name, ".*")
       extension   = File.extname(full_path_name).to_s.downcase
+      rev         = nil
       duration    = nil
       tStart      = nil
+      width       = nil
+      height      = nil
+      
+      
+               
+#                puts "PEDO"
+#       puts extension
+#       puts basename.slice(0,1)
+#       exit
+
+            
+      # ------------------------------------------
+      # Handle revised videos name
+      # Rx_20130730T174343.m2ts
+
+      if extension == ".m2ts" and basename.slice(0,1) == "R" then
+         rev            = basename.split("_")[0]
+        # basename       = basename.split("_")[1]
+        # full_path_name = "#{full_path}/#{basename}.m2ts"
+         
+         pwd      = Dir.pwd
+         Dir.chdir(full_path)
+               
+         # ------------------------------------------
+         # Check whether such file has been previously archived      
+      
+         aFile = ArchivedFile.find_by_filename(basename)
+      
+         if aFile != nil then
+            puts "File #{@filename} is already archived with name #{basename}"
+            puts
+            exit(1)
+         end
+      
+         # ------------------------------------------
+              
+               
+#          # -----------------------------
+#          # Rename File or Copy      
+#          cmd         = "mv \"#{@filename}\" \"#{basename}.m2ts\""
+#          cmd         = "cp \"#{@filename}\" \"#{basename}.m2ts\""
+#          puts
+#          puts cmd
+#          puts
+#          system(cmd)
+#          # -----------------------------
+         
+         Dir.chdir(pwd)
+        
+      end
+      # ------------------------------------------      
+      
+      # puts extension
       
       if extension == ".m2ts" then            
          begin
+         
+            puts
+            puts full_path_name
+            puts
+            
+            # exit
+                      
+            # Change to local directory to avoid full path names with spaces
+            # that makes fail MiniExiftool wrapper
                         
-            mdata    = MiniExiftool.new full_path_name
-            
-            # tStart   = mdata.date_time_original
-            
-            parser   = CUC::WrapperExifTool.new(full_path_name, false)
-            tStart   = parser.date_time_original
-
-            
+            mdata    = MiniExiftool.new "\"#{full_path_name}\""
+            width    = mdata.image_width
+            height   = mdata.image_height
             duration = mdata.duration
+
+            puts "KAKA"
+
+            if width == 720 and height == 576 then
+               @type  = "m2ts_sd"
+               tStart = Time.new(1980)
+            else
+               @type    = "m2ts"
+               parser   = CUC::WrapperExifTool.new("\"#{full_path_name}\"", false)
+               tStart   = parser.date_time_original
+            end
+            
+#             puts mdata.file_type
+#             puts mdata.date_time_original
+#             puts mdata.date
+            
             # puts mdata.mime_type
          rescue MiniExiftool::Error => e
             puts "Error in MINARC::Handler_M2TS"
@@ -81,16 +155,32 @@ class Handler_M2TS
    
          arr         = tStart.to_s.gsub!("-", "").gsub!(":", "").split(" ")         
          @filename   = "#{arr[0]}T#{arr[1]}_#{duration}#{extension}" # .m2ts"
+         
+         if rev == nil then
+            @filename   = "#{basename.slice(0,8)}T#{basename.slice(8,6)}_#{duration}#{extension}" # .m2ts"
+         else
+            @filename   = "#{basename}_#{duration}_#{rev}#{extension}" # .m2ts"         
+         end
+         
          year        = arr[0].slice(0, 4)
       
          @full_path_filename = "#{full_path}/#{@filename}"
 
-         # ------------------------------------------
-         # Rename File      
-         cmd         = "mv #{full_path_name} #{@full_path_filename}"
+         cmd         = "mv \"#{full_path_name}\" \"#{@full_path_filename}\""
+         cmd         = "cp \"#{full_path_name}\" \"#{@full_path_filename}\""
          puts
          puts cmd
          puts
+         
+#          puts arr[0]
+#          puts arr[1]
+#          
+#          puts tStart
+#          puts basename
+#          puts @filename
+#          
+          exit
+         
          ret         = system(cmd)
          
          # ------------------------------------------
@@ -99,7 +189,6 @@ class Handler_M2TS
          @start      = tStart
          @stop       = tEnd
          @generation_date  = @start
-         @type       = "m2ts"
          @validated  = true
 
       else
@@ -128,6 +217,8 @@ class Handler_M2TS
       if destination != nil then
          @archive_path = destination
       end
+      
+      # exit
       
    end
 
