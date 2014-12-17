@@ -248,6 +248,15 @@ private
          begin
             @ftp = Net::FTP.new(host)
             @ftp.login(user, pass)
+         rescue Exception
+            puts
+            puts "Error login at #{host} with #{user} / #{pass}"
+            return false
+         end
+
+         begin
+#             @ftp = Net::FTP.new(host)
+#             @ftp.login(user, pass)
             @ftp.passive = true
             @ftp.chdir(dir)
          rescue Exception

@@ -34,13 +34,17 @@ module FTPClientCommands
    # - filter (IN): optional filtering in the directory.
    # * Returns the ncftpls command line statement created.
    def createNcFtpLs(host,port,user,pass,dir,passive = nil, filter = nil)
-      optionPassive = ""
+      
+      # --------------------------------
       # Switch between FTP passive or port mode
+      optionPassive = ""
       if passive == nil then
          optionPassive = "-E"
       else
          optionPassive = "-F"
       end
+      # --------------------------------
+      
       if filter == nil then
          command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1" ftp://#{host}/#{dir}/}      
       else
@@ -90,11 +94,23 @@ module FTPClientCommands
    # - dir  (IN): string containing the dir where the file is placed.
    # - file (IN): string of the filename.
    # - verbose (IN): boolean for activating or not the verbose mode.
-   def createNcFtpPut(host,port,user,pass,dir,file,verbose)
-      if verbose == true then
-        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -v #{host} #{dir} #{file} }      
+   # - passive (IN): boolean to switch between Passive or Port mode.
+   def createNcFtpPut(host,port,user,pass,dir,file,verbose, passive = nil)
+      
+      # --------------------------------
+      # Switch between FTP passive or port mode
+      optionPassive = ""
+      if passive == nil then
+         optionPassive = "-E"
       else
-        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -V #{host} #{dir} #{file} }
+         optionPassive = "-F"
+      end
+      # --------------------------------
+
+      if verbose == true then
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -v #{host} #{dir} #{file} }      
+      else
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -V #{host} #{dir} #{file} }
       end
       return command
    end
