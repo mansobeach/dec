@@ -163,7 +163,9 @@ end
 # Check the given XML file using the corresponding XSD schema file
 def validate (fileName)
 
-   cmd = "#{ENV['DECDIR']}/cots/xmlStarlet/xml val -e --xsd #{ENV['DECDIR']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
+#   cmd = "#{ENV['DECDIR']}/cots/xmlStarlet/xml val -e --xsd #{ENV['DECDIR']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
+
+   cmd = "xmlstarlet val -e --xsd #{ENV['DEC_BASE']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
 
    output = `#{cmd} 2>&1`
 
@@ -178,7 +180,7 @@ def validate (fileName)
      print "XML Validity test : UNEXPECTED ERROR :-(\n"
      print "*** Environment was : ***\n"
      print "DCC Config path : #{ENV['DCC_CONFIG']}\n"
-     print "XMLStarlet path : #{ENV['DECDIR']}/cots/xmlStarlet/xml\n"
+     print "XMLStarlet path : #{ENV['DEC_BASE']}/cots/xmlStarlet/xml\n"
      print "***Command was : ***\n"
      print "#{cmd}\n"
      print "***Output is : ***\n"
