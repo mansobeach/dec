@@ -71,6 +71,8 @@ class FileArchiver
 
       aFile = ArchivedFile.find_by_filename(fileName)
 
+      # aFile = ArchivedFile.where(filename: fileName).load
+
       if aFile != nil then
          puts "#{fileName} was already archived !"
          @bIsAlreadyArchived = true
@@ -309,7 +311,7 @@ private
             end
 
          else
-            cmd = "\\ln -f #{full_path_filename} #{destDir}"
+            cmd = "\\ln -f \"#{full_path_filename}\" \"#{destDir}\""
         
             if @isDebugMode then
                puts cmd
@@ -326,9 +328,9 @@ private
          end
       else
          if @bMove then
-            cmd = "\\mv -f #{full_path_filename} #{destDir}/"
+            cmd = "\\mv -f \"#{full_path_filename}\" \"#{destDir}/\""
          else
-            cmd = "\\cp -Rf #{full_path_filename} #{destDir}/"
+            cmd = "\\cp -Rf \"#{full_path_filename}\" \"#{destDir}/\""
          end
 
          if @isDebugMode then
@@ -459,19 +461,21 @@ private
          puts "Could not inventory #{anArchivedFile.filename}, rolling back ! :-("
          puts
 
-         if bUnPack then
-            cmd = "\\rm -rf #{destDir}"
-         else
-            cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
-         end
-
-         ret = system(cmd)
-
-         if ret == false then
-            puts
-            puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
-            puts
-         end        
+# Commented 20140505 / It is not understood this snippet below
+#
+#          if bUnPack then
+#             cmd = "\\rm -rf #{destDir}"
+#          else
+#             cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
+#          end
+# 
+#          ret = system(cmd)
+# 
+#          if ret == false then
+#             puts
+#             puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
+#             puts
+#          end        
 
          return false
       end
