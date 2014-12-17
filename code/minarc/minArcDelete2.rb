@@ -97,6 +97,7 @@ def main
 
    @filename                  = ""
    @filetype                  = ""
+   @dirname                   = ""
    startVal                   = ""
    endVal                     = ""
 
@@ -112,6 +113,7 @@ def main
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
      ["--start", "-s",           GetoptLong::REQUIRED_ARGUMENT],
      ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
@@ -132,6 +134,8 @@ def main
             when "--list"              then @bListOnly   = true
             when "--version"           then showVersion  = true
             when "--file"              then @filename           = arg.to_s
+            when "--directory"         then @dirname            = arg.to_s
+                                            deleteDirectory
 	         when "--type"              then @filetype           = arg.to_s
             when "--start"             then startVal            = arg.to_s
             when "--end"               then endVal              = arg.to_s
@@ -232,6 +236,29 @@ end
 
 #-------------------------------------------------------------
 
+def deleteDirectory
+   pwd = Dir.pwd
+   
+   Dir.chdir(@dirname)
+   
+   arr = Dir['*']
+
+   arr.each{|element|
+   
+      if File.directory?(element) == true then
+         puts "skipping directory #{element}"
+         next
+      end
+
+      cmd = "minArcDelete2.rb -f #{element}"
+      puts cmd
+      system(cmd)
+   }
+   
+   Dir.chdir(pwd)
+   
+   exit(0)
+end
 #-------------------------------------------------------------
 
 def usage
