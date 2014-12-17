@@ -17,21 +17,12 @@
 #
 # Mandatory flag, stands for "--directory".
 #
-# -a flag:
-# Optional flag, stands for "--additional-fields".
-# Allows to specify additional fields to fill in the archived_files table and the values
-# to fill them with. Field names and values must be separated by ":".
-#
-#
 #
 # == Usage
-# minArcReallocate.rb -f <full_path_file>
+# minArcReallocate.rb -f <full_path_file> [-R]
 #     --file <full_path_file>    it specifies the file to be archived
 #     --directory <full_path>    it specifies the directory containing files
 #     --Recursive                recursivity through directory
-#     --additional-fields        allows to specify additional fields to fill in the archived_files table.
-#     --Hardlink                 enables hardlinking the file to the archive.
-#     --Types                    it shows all file-types archived
 #     --help                     shows this help
 #     --Usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
@@ -231,7 +222,7 @@ end
 
 def usage
    fullpathFile = `which #{File.basename($0)}` 
-   system("head -43 #{fullpathFile}")
+   system("head -36 #{fullpathFile}")
    exit
 end
 
