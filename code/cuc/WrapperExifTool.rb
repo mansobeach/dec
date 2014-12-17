@@ -47,7 +47,15 @@ class WrapperExifTool
 
    # 
    def date_time_original
-      str   = @result.split("Date/Time Original")[1].lines[0].strip
+      str = nil
+      
+      begin
+         str   = @result.split("Date/Time Original")[1].lines[0].strip
+      rescue Exception
+         puts "Error in WrapperExifTool / Could not retrieve metadata Date/Time Original"
+         return nil
+      end
+      
       str   = str.slice(2, str.length-1)
       year  = str.slice(0, 4)
       month = str.slice(5, 2)

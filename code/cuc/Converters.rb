@@ -13,7 +13,6 @@
 #########################################################################
 
 require 'rubygems'
-require 'active_record'
 
 module CUC
 
@@ -31,9 +30,6 @@ module Converters
          return DateTime.strptime(str,"%Y%m%d")
       end
 
-#      puts "--------------------------"
-#      puts str
-
       return DateTime.strptime(str,"%Y%m%dT%H%M%S")
 
       return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i, str.slice(6,2).to_i,
@@ -48,6 +44,14 @@ module Converters
 
    end
    #-------------------------------------------------------------
+
+   def str_to_bool(str)
+      return true   if str == true   || str =~ (/(true|t|yes|y|1)$/i)
+      return false  if str == false  || str.empty? || str =~ (/(false|f|no|n|0)$/i)
+      raise ArgumentError.new("Converters::str_to_bool invalid value for Boolean: \"#{str}\"")
+   end
+   #-------------------------------------------------------------
+
 
 end # module
 
