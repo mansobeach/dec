@@ -694,6 +694,7 @@ def verifyHeaderValue(field, value)
 end
 #-------------------------------------------------------------
 
+# 2^10 encoding for the integer part
 def convertHex2Eng_A(value)
    
    binValue       = value.to_i(16).to_s(2).rjust(16, '0')
@@ -703,10 +704,11 @@ def convertHex2Eng_A(value)
 end
 #-------------------------------------------------------------
 
+# 2^6 encoding for the integer part
 def convertHex2Eng_C(value)
 
    binValue       = value.to_i(16).to_s(2).rjust(16, '0')
-   engValue       = binValue.to_i(2)/16.0
+   engValue       = binValue.to_i(2)/64.0
 
    return engValue
 end
