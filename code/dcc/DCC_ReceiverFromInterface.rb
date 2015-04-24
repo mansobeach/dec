@@ -348,7 +348,7 @@ class DCC_ReceiverFromInterface
       @depthLevel = 0
 
       begin
-         @ftp     = Net::SFTP.start(host, user, :port => port)
+         @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 20)
          #@session = @ftp.connect
       rescue Exception => e
          puts
@@ -1099,6 +1099,9 @@ private
    #-------------------------------------------------------------
 
    def setReceivedFromEntity(filename)
+      if @isNoDB == true then
+         return
+      end
       receivedFile                = ReceivedFile.new
       receivedFile.filename       = filename
       receivedFile.interface      = @interface
