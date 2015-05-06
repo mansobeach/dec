@@ -126,7 +126,8 @@ class FileDeliverer2InTrays
                   @logger.info("#{file} is disseminated to #{dim}")
                }
             else
-               @logger.warn("#{file} has no In-Tray config")
+               # @logger.warn("#{file} has no In-Tray config")
+               @logger.debug("#{file} has no In-Tray config")
             end            
             
             
@@ -229,7 +230,8 @@ class FileDeliverer2InTrays
             @logger.info("#{file} is disseminated to #{dim}")
          }
       else
-         @logger.warn("#{file} has no In-Tray config")
+         # @logger.warn("#{file} has no In-Tray config")
+         @logger.debug("#{file} has no In-Tray config")
       end            
 
       if dimsDirs.empty? == false then
@@ -273,8 +275,10 @@ class FileDeliverer2InTrays
             puts "#{file} is still placed in #{directory}"
          end       
       else
-         @logger.warn("#{file} is not disseminated to any In-Tray")
-         @logger.warn("#{file} is still placed in #{directory}")
+         # @logger.warn("#{file} is not disseminated to any In-Tray")
+         @logger.debug("#{file} is not disseminated to any In-Tray")
+         # @logger.warn("#{file} is still placed in #{directory}")
+         @logger.debug("#{file} is still placed in #{directory}")
          puts "#{file} is not disseminated to any In-Tray"
       end
    end
