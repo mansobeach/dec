@@ -13,6 +13,7 @@
 #     --check               it checks whether the listeners are running
 #     --mnemonic <MNEMONIC> (mnemonic is case sensitive)
 #     --interval            the frequency it is polled I/F given by MNEMONIC (in seconds)
+#     --nodb                no Inventory recording
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -53,7 +54,7 @@ require 'ctc/ReadInterfaceConfig'
 require 'dcc/ReadConfigDCC'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/07/03 11:38:07 $"   
+@dateLastModification = "$Date: 2008/07/03 11:38:07 $"   
 
 
 # MAIN script function
@@ -66,6 +67,7 @@ def main
    @launchAllListeners = false
    @bCheckListeners    = false
    @isReload           = false
+   @isNoDB             = false
    @mnemonic           = "" 
    @intervalSeconds    = 0
    
@@ -96,7 +98,8 @@ def main
       ["--check", "-c",          GetoptLong::NO_ARGUMENT],
       ["--Reload", "-R",         GetoptLong::NO_ARGUMENT],
       ["--version", "-v",        GetoptLong::NO_ARGUMENT],
-      ["--help", "-h",           GetoptLong::NO_ARGUMENT]
+      ["--help", "-h",           GetoptLong::NO_ARGUMENT],
+      ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
       )
 
    begin
@@ -108,7 +111,7 @@ def main
             when "--Reload"   then @isReload = true
             when "--version"  then
                print("\nESA - DEIMOS-Space S.L.  DCC ", File.basename($0))
-               print("    $Revision: 1.8 $\n  [", @@dateLastModification, "]\n\n\n")
+               print("    $Revision: 1.8 $\n  [", @dateLastModification, "]\n\n\n")
                exit(0)
             when "--mnemonic" then
                @mnemonic = arg            
@@ -130,6 +133,7 @@ def main
 	            puts "\nlisteners to the I/Fs have been killed ! }=-) \n\n"
 	            exit(0)
             when "--usage"    then usage
+            when "--nodb"     then @isNoDB    = true
          end
       end
    rescue Exception
@@ -199,13 +203,19 @@ def pollInterface
    startTime = Time.new
    startTime.utc   
    puts "Polling #{@mnemonic} I/F ..."
-   @logger.info("Polling #{@mnemonic} I/F ...")
+   # @logger.info("Polling #{@mnemonic} I/F ...")
+   @logger.debug("Polling #{@mnemonic} I/F ...")
       
    if @isDebugMode == true then
       command  = %Q{getFromInterface.rb --mnemonic #{@mnemonic} -D}
    else
       command  = %Q{getFromInterface.rb --mnemonic #{@mnemonic}}
    end
+   
+   if @isNoDB == true then
+      command  = %Q{#{command} --nodb}
+   end
+
    if @isDebugMode == true then
       puts "#{command}"
    end
@@ -218,7 +228,8 @@ def pollInterface
       
    if retVal == true then
       puts "Success Polling #{@mnemonic} I/F !\n\n"
-      @logger.info("Success Polling #{@mnemonic} I/F !")
+      # @logger.info("Success Polling #{@mnemonic} I/F !")
+      @logger.debug("Success Polling #{@mnemonic} I/F !")
    else
       puts "ERROR Polling #{@mnemonic} I/F !\n\n"
       @logger.error("Could not Poll #{@mnemonic} I/F !")
