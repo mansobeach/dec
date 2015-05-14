@@ -120,11 +120,30 @@ private
             next
          end
 
-         if library == "DATA_CIRCULATION" then
+         if library == "DATA_CIRCULATION" or library == "CIRCULATED" then
             event = decodeCirculation(task)
             @arrEvents << event
             next
          end
+
+         if library == "Circulation" then
+            event = decodeCirculationBIS(task)
+            @arrEvents << event
+            next
+         end
+
+         if library == "ARCHIVED" then
+            event = decodeArchive(task)
+            @arrEvents << event
+            next
+         end
+  
+         if library.upcase == "INGESTION_ERROR_STAMPS" or library.upcase == "INGESTION_ERROR_VALIDITIES" then
+            event = decodeIngestionError(task)
+            @arrEvents << event
+            next
+         end
+
          
          puts "Gantt Library #{library} is NOT implemented yet !"
          exit
@@ -215,7 +234,7 @@ private
    #-------------------------------------------------------------
    # Telemetry Analysis
 
-   def decode(task)
+   def decodeTLM(task)
  
       library     = nil
       gauge       = nil
@@ -314,6 +333,7 @@ private
               system = centre.text    
            }
 
+
            XPath.each(param, "PRODUCT/"){
                |product|                
                explicit_reference = product.text
@@ -344,6 +364,70 @@ private
           
    end
    #-------------------------------------------------------------
+
+   # DATA_CIRCULATION
+   
+   def decodeCirculationBIS(task)
+      library     = nil
+      gauge       = nil
+      system      = nil
+      start       = nil
+      stop        = nil
+      value       = nil
+      explicit_reference = nil
+  
+      XPath.each(task, "Start/"){
+         |thestart|                
+         # puts thestart.text
+         start = thestart.text
+      }
+
+      XPath.each(task, "End/"){
+         |theend|                
+         # puts theend.text
+         stop = theend.text
+      }
+
+      XPath.each(task, "Parameters/"){
+         |param|                
+
+            XPath.each(param, "Library/"){
+               |lib|
+               library = lib.text
+           }    
+                           
+           XPath.each(param, "SourceCentre/"){
+              |centre|                
+              system = centre.text    
+           }
+
+           XPath.each(param, "PRODUCT/"){
+               |pdi|                
+               explicit_reference = pdi.text
+           }
+
+           gauge = "DATA-CIRCULATION"            
+
+#            XPath.each(param, "PARAM/"){
+#                  |param| 
+#                  
+#                  value = param.text               
+#            }
+
+           XPath.each(param, "DestinationCentre/"){
+                 |destination| 
+                 
+                 value = "Destination=#{destination.text}"               
+           }
+
+
+
+      }
+   
+      return Struct::Event.new(library, gauge, system, start, stop, value, explicit_reference)
+          
+   end
+
    
    #-------------------------------------------------------------
    # DATA_CIRCULATION
@@ -410,9 +494,142 @@ private
    end
    #-------------------------------------------------------------
 
+   # DATA_ARCHIVE
+   def decodeArchive(task)
+      library     = nil
+      gauge       = nil
+      system      = nil
+      start       = nil
+      stop        = nil
+      value       = nil
+      explicit_reference = nil
+  
+      XPath.each(task, "Start/"){
+         |thestart|                
+         # puts thestart.text
+         start = thestart.text
+      }
+
+      XPath.each(task, "End/"){
+         |theend|                
+         # puts theend.text
+         stop = theend.text
+      }
+
+      XPath.each(task, "Parameters/"){
+         |param|                
+
+            XPath.each(param, "Library/"){
+               |lib|
+               library = lib.text
+           }    
+                           
+           XPath.each(param, "CENTRE/"){
+              |centre|                
+              system = centre.text    
+           }
+
+           # system = "EMPTY!!"
+
+           XPath.each(param, "PRODUCT/"){
+               |pdi|                
+               explicit_reference = pdi.text
+           }
+
+           gauge = "DATA-ARCHIVED"            
+
+#            XPath.each(param, "PARAM/"){
+#                  |param| 
+#                  
+#                  value = param.text               
+#            }
+
+           XPath.each(param, "FILETYPE/"){
+                 |filetype|                 
+                 value = filetype.text              
+           }
+
+      }
+   
+      return Struct::Event.new(library, gauge, system, start, stop, value, explicit_reference)
+          
+
+   end
+
+   #-------------------------------------------------------------
+   
+
+   # DATA_ARCHIVE
+   def decodeIngestionError(task)
+      library     = nil
+      gauge       = nil
+      system      = nil
+      start       = nil
+      stop        = nil
+      value       = nil
+      explicit_reference = nil
+  
+      XPath.each(task, "Start/"){
+         |thestart|                
+         # puts thestart.text
+         start = thestart.text
+      }
+
+      XPath.each(task, "End/"){
+         |theend|                
+         # puts theend.text
+         stop = theend.text
+      }
+
+      XPath.each(task, "Parameters/"){
+         |param|                
+
+            XPath.each(param, "Library/"){
+               |lib|
+               library  = lib.text
+               gauge    = lib.text
+           }    
+                           
+           XPath.each(param, "CENTRE/"){
+              |centre|                
+              system = centre.text    
+           }
+
+           # system = "EMPTY!!"
+
+           XPath.each(param, "REPORT_NAME/"){
+               |pdi|                
+               explicit_reference = pdi.text
+           }
+
+           # gauge = "INGESTION_ERROR_STAMP"            
+
+#            XPath.each(param, "PARAM/"){
+#                  |param| 
+#                  
+#                  value = param.text               
+#            }
 
 
+           XPath.each(param, "REPORT_TYPE/"){
+               |pdi|                
+               value = pdi.text
+           }
 
+
+#            XPath.each(param, "JUSTIFICATION/"){
+#                  |filetype|                 
+#                  value = filetype.text              
+#            }
+
+      }
+   
+      return Struct::Event.new(library, gauge, system, start, stop, value, explicit_reference)
+          
+
+   end
+
+   
    #-------------------------------------------------------------
    
 end # class
