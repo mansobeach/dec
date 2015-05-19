@@ -13,6 +13,7 @@
 #########################################################################
 
 require 'rubygems'
+require 'date'
 
 module CUC
 
@@ -20,7 +21,10 @@ module Converters
 
    #-------------------------------------------------------------
    
-   # String format shall be: 20120325T154814
+   # String format shall be: 
+   # - 20120325                  => "%Y%m%d"
+   # - 20120325T154814           => "%Y%m%dT%H%M%S"
+   # - 21-MAY-2015 14:00:01.516  => "%e-%b-%Y %H:%M:%S.%L"
    def str2date(str)
       if str.length == 6 then
          return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i)
@@ -30,11 +34,26 @@ module Converters
          return DateTime.strptime(str,"%Y%m%d")
       end
 
-      return DateTime.strptime(str,"%Y%m%dT%H%M%S")
+      if str.include?("T") then
+         return DateTime.strptime(str,"%Y%m%dT%H%M%S")
+      end
+
+
+      if str.length == 24 and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
+         return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S.%L")
+      end
+
+      puts
+      puts "FATAL ERROR in CUC::Converters str2date(#{str})"
+      puts
+      puts
+      exit(99)
 
       return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i, str.slice(6,2).to_i,
                           str.slice(9,2).to_i,  str.slice(11,2).to_i, str.slice(13,2).to_i)
    end
+
+   #-------------------------------------------------------------
 
    #-------------------------------------------------------------
 
