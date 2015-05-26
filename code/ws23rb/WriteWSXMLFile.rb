@@ -56,10 +56,6 @@ private
    def checkModuleIntegrity
       bDefined = true
       bCheckOK = true
-      if bCheckOK == false then
-        puts "ReadWSXMLFile::checkModuleIntegrity FAILED !\n\n"
-        exit(99)
-      end
       @date                = ""
       @dewpoint            = ""
       @forecast            = ""
@@ -74,6 +70,39 @@ private
       @wind_direction      = ""
       @wind_speed          = ""
       @windchill           = ""
+      
+      # ---------------------------------------------
+      # check that external commands needed are available
+      
+      isToolPresent = `which curl`   
+      
+      if isToolPresent[0,1] != '/' then
+         puts "\n\ReadWSXMLFile::checkModuleIntegrity\n"
+         puts "Fatal Error: curl tool not present in PATH !!   :-(\n\n\n"
+         bDefined = false
+      end
+      # ---------------------------------------------
+
+      if bCheckOK == false or bDefined == false then
+        puts "ReadWSXMLFile::checkModuleIntegrity FAILED !\n\n"
+        exit(99)
+      end
+      
+      @urlService1   = "icanhazip.com"
+      cmd            = "curl -s #{@urlService1}"
+
+      if @isDebugMode == true then
+         puts cmd
+      end
+
+      @publicIP = `#{cmd}`
+      
+      @publicIP = @publicIP.to_s.chop
+      
+      if @isDebugMode == true then
+         puts @publicIP
+      end
+
    end
    #-------------------------------------------------------------
    
@@ -87,7 +116,7 @@ private
 
       root = @xmlFile.add_element("ws2300")
       root.add_attribute("simplified", "true")
-
+      root.add_attribute("ip", @publicIP)
 
       theDate = root.add_element("Date")
       theDate.text = Time.now.strftime("%Y-%m-%d")
