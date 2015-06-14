@@ -12,13 +12,16 @@
 #
 #########################################################################
 
+require 'date'
 require 'writeexcel'
+require 'write_xlsx'
+require 'e2e/ReadGanttXML'
+require 'e2e/ReadCSWResult'
 
 module E2E
 
 
 class WriteGanttXLS
-
 
    #-------------------------------------------------------------
   
@@ -66,11 +69,37 @@ class WriteGanttXLS
             writeRow(row, event)
             row = row + 1
          }
+      }
+      @workbook.close
+   end
+   #-------------------------------------------------------------
+   
+   def writeEventsCSWResult(analytics)
+      createNewExcel   
+      createSheetEvents
+   
+      row = 1
+
+      analytics.each{|element|
+      
+         if element.slice(0, 1) == "-" then
+            next
+         end
+      
+         puts element
+      
+         parser      = E2E::ReadCSWResult.new(element, @isDebugMode)    
+         events      = parser.getEvents
+
+         events.each{|event|
+            writeRow(row, event)
+            row = row + 1
+         }
 
       }
    
       @workbook.close
-  
+   
    end
    #-------------------------------------------------------------
    
@@ -91,6 +120,7 @@ private
    
    #-------------------------------------------------------------
    
+   # Creation of the Columns
    def initColumns
       @Column_Library               = 0
       @Column_Excel_Library         = 'A:A'
@@ -121,15 +151,32 @@ private
 
       @Column_Explicit_Ref          = 7
       @Column_Excel_Explicit_Ref    = 'H:H'
+      @Column_Letter_Explicit_Ref   = 'H'
+      
+      @Column_Creation_Date         = 8
+      @Column_Excel_Creation_Date   = 'I:I'
+      
+      
    end
    #-------------------------------------------------------------
 
    def createNewExcel
-      @workbook   = WriteExcel.new("#{Time.now.strftime("%Y%m%dT%H%M%S")}_e2e_events.xls")   
+      # @workbook   = WriteExcel.new("#{Time.now.strftime("%Y%m%dT%H%M%S")}_e2e_events.xls")
+      @workbook   = WriteXLSX.new("#{Time.now.strftime("%Y%m%dT%H%M%S")}_e2e_events.xlsx")    
+      writeExcelProperties
       return @workbook
    end
    #-------------------------------------------------------------
 
+   def writeExcelProperties
+      @workbook.set_properties(
+         :title    => 'Sentinel-2 PDGS Commissioning Report',
+         :author   => 'Borja Lopez Fernandez',
+         :manager  => 'Olivier Colin',
+         :company  => 'European Space Agency (ESA)',
+         :comments => 'Created with E2ESPM-ESRIN'
+      )
+   end
    #-------------------------------------------------------------
 
    def createSheetEvents
@@ -179,6 +226,9 @@ private
       @sheetGauges.write(0, @Column_Explicit_Ref, "Explicit_Reference", format)
       @sheetGauges.set_column(@Column_Excel_Explicit_Ref, 70)
       
+      @sheetGauges.write(0, @Column_Creation_Date, "Creation_Date", format)
+      @sheetGauges.set_column(@Column_Excel_Creation_Date, 20)
+      
    end
    #-------------------------------------------------------------
 
@@ -205,11 +255,25 @@ private
                            :align      => 'left'
                            )
       
-      strStart = event[:start].slice(0, 19)
-      strStop  = event[:stop].slice(0, 19)
+      strStart = ""
+      strStop  = ""
       
-      puts strStart
-      puts strStop
+      if event[:start].class.to_s == "DateTime" then
+         # Handle dates as DateTime
+         
+         strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S")
+         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S")
+      else
+         # Handle dates as string
+      
+         strStart = event[:start].slice(0, 19)
+         strStop  = event[:stop].slice(0, 19)      
+      end
+
+      if @isDebugMode == true then
+         puts strStart
+         puts strStop
+      end
       
       # @sheetGauges.write_date_time(row, 3, strStart, date_format)
       # @sheetGauges.write_date_time(row, 4, strStop, date_format)
@@ -238,10 +302,15 @@ private
       @sheetGauges.write(row, @Column_Value, event[:value])
       @sheetGauges.write(row, @Column_Explicit_Ref, event[:explicit_reference])
       
+      # -------------
+      
+      other_cell = %Q{#{@Column_Letter_Explicit_Ref}#{row+1}}
+      my_formula = %Q{MID(#{other_cell}, 26, 15)  }
 
+      @sheetGauges.write_formula(row, @Column_Creation_Date, my_formula)
+      
    end
    #-------------------------------------------------------------
-
 
    #-------------------------------------------------------------
    
