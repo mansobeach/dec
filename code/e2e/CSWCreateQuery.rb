@@ -113,13 +113,13 @@ private
       
       File.open(@filename,"w") {|file| file.puts formatter.write(@xmlFile,"") }
 
-      if @isDebugMode == true then 
-	      puts
-	      puts @filename
-         puts
-         puts formatter.write(@xmlFile,"")
-         puts
-      end
+#       if @isDebugMode == true then 
+# 	      puts
+# 	      puts @filename
+#          puts
+#          puts formatter.write(@xmlFile,"")
+#          puts
+#       end
 
       cmd = "xmllint --format #{@filename} > kako.xml"
       # puts cmd

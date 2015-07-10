@@ -36,7 +36,7 @@ class CSWExecuteQuery
       checkModuleIntegrity
       
       performQuery
-      
+            
    end
    #-------------------------------------------------------------
    
@@ -70,24 +70,33 @@ private
       cmd = "cp #{@queryFile} /tmp/#{@queryFile}"
       
       if @isDebugMode == true then
+         puts
          puts cmd
+         puts
       end
       
       system(cmd)
       
       # ------------------------------------   
    
-      cmd = "sudo -u e2espm -i sdm_process_query_file -m sdm_db_e2espm -f /tmp/#{@queryFile} -o #{@auxResult}"
+      cmd = "sudo -u e2espm -i sdm_process_query_file -m sdm_db_e2espm -f /tmp/#{@queryFile} -o /tmp/#{@auxResult}"
       
       if @isDebugMode == true then
+         puts
          puts cmd
+         puts
       end      
       
       retVal = system(cmd)
       
-      cmd = "sudo -u e2espm -i libxrep_xslt -I SAXON_8 -i #{@auxResult} -s /opt/facilities/common-function/application/libxrep/local/e2espm/code/Report_Tool/XSL/sdmData.xsl -o #{@resultFile}"
+      cmd = "sudo -u e2espm -i libxrep_xslt -I SAXON_8 -i /tmp/#{@auxResult} -s /opt/facilities/common-function/application/libxrep/local/e2espm/code/Report_Tool/XSL/sdmData.xsl -o #{@resultFile}"
+      
       if @isDebugMode == true then
+         puts
          puts cmd
+         puts
+         puts #{@resultFile}
+         puts
       end      
       retVal = system(cmd)
       
@@ -96,6 +105,8 @@ private
       system("rm -f #{@queryFile}")
       
    end   
+   #-------------------------------------------------------------
+   
    #-------------------------------------------------------------
    
 end # class

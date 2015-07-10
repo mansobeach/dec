@@ -60,11 +60,11 @@ class WriteGanttXLS
             next
          end
       
-         puts element
+         # puts element
       
-         parser      = E2E::ReadGanttXML.new(element, @isDebugMode)    
-         events      = parser.getEvents
-
+         parser         = E2E::ReadGanttXML.new(element, @isDebugMode)    
+         events         = parser.getEvents
+                  
          events.each{|event|
             writeRow(row, event)
             row = row + 1
@@ -74,10 +74,14 @@ class WriteGanttXLS
    end
    #-------------------------------------------------------------
    
+#    def writeExplicit_References
+#       return nil
+#    end 
+   #-------------------------------------------------------------
+   
    def writeEventsCSWResult(analytics)
       createNewExcel   
-      createSheetEvents
-   
+      createSheetEvents   
       row = 1
 
       analytics.each{|element|
@@ -86,17 +90,46 @@ class WriteGanttXLS
             next
          end
       
-         puts element
+         # puts element
       
-         parser      = E2E::ReadCSWResult.new(element, @isDebugMode)    
-         events      = parser.getEvents
-
+         parser         = E2E::ReadCSWResult.new(element, @isDebugMode)    
+         events         = parser.getEvents
+         
          events.each{|event|
             writeRow(row, event)
             row = row + 1
          }
 
       }
+
+#       @workbook.close
+#       return
+      
+      # ------------------------------------------
+      # second loop 
+      # this needs to be optimised sometime as the query results are looped twice
+
+      createSheetERs
+      row = 1
+
+      analytics.each{|element|
+           
+         if element.slice(0, 1) == "-" then
+            next
+         end
+      
+         # puts element
+ 
+         parser         = E2E::ReadCSWResult.new(element, @isDebugMode)
+         explicitRefs   = parser.getExplicitReferences
+                  
+         explicitRefs.each{|ref|
+            writeRowER(row, ref)
+            row = row + 1
+         }
+      }
+
+      # ------------------------------------------
    
       @workbook.close
    
@@ -174,14 +207,14 @@ private
          :author   => 'Borja Lopez Fernandez',
          :manager  => 'Olivier Colin',
          :company  => 'European Space Agency (ESA)',
-         :comments => 'Created with E2ESPM-ESRIN'
+         :comments => 'Created with E2ESPM @ ESRIN'
       )
    end
    #-------------------------------------------------------------
 
    def createSheetEvents
    
-      @sheetGauges  = @workbook.add_worksheet
+      @sheetGauges  = @workbook.add_worksheet("events")
       @sheetGauges.freeze_panes(1, 0)
       
       format      = @workbook.add_format
@@ -229,6 +262,44 @@ private
       @sheetGauges.write(0, @Column_Creation_Date, "Creation_Date", format)
       @sheetGauges.set_column(@Column_Excel_Creation_Date, 20)
       
+   end
+   #-------------------------------------------------------------
+
+   def createSheetERs
+      @sheetERs  = @workbook.add_worksheet("references")
+      @sheetERs.freeze_panes(1, 0)
+      
+      format      = @workbook.add_format
+      format.set_bold
+      format.set_text_wrap
+      format.set_align('vcenter')
+      format.set_bg_color('lime')
+      
+      # ------------------------------------------      
+            
+      @sheetERs.write(0, @Column_Library, "Annotation", format)
+      @sheetERs.set_column(@Column_Excel_Library, 30)
+      
+      # ------------------------------------------
+      
+      @sheetERs.write(0, @Column_Gauge, "Explicit_Reference", format)
+      @sheetERs.set_column(@Column_Excel_Gauge, 70)
+      
+      # ------------------------------------------
+      
+      @sheetERs.write(0, @Column_System, "Value", format)
+      @sheetERs.set_column(@Column_Excel_System, 10)
+      
+      # ------------------------------------------
+         
+   end
+   
+   #-------------------------------------------------------------
+   
+   def writeRowER(row, e_r)
+      @sheetERs.write(row, @Column_Library, e_r[:annotation])
+      @sheetERs.write(row, @Column_Gauge, e_r[:explicit_reference])
+      @sheetERs.write(row, @Column_System, e_r[:value])   
    end
    #-------------------------------------------------------------
 
@@ -309,9 +380,24 @@ private
 
       @sheetGauges.write_formula(row, @Column_Creation_Date, my_formula)
       
+      # ----------------------
+      # optional values in the result
+      writeValues(row, @Column_Creation_Date + 1, event[:values], event[:value])
+      # ----------------------
+      
    end
    #-------------------------------------------------------------
 
+   # Dirty-patch to write the optional array of values in the last columns 
+   def writeValues(row, column, values, value)
+      values.each{|a_value|
+         if a_value == value then
+            next
+         end
+         @sheetGauges.write(row, column, a_value)
+         column = column + 1
+      }
+   end
    #-------------------------------------------------------------
    
 end # class
