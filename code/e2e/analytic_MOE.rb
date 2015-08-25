@@ -5,11 +5,13 @@
 # This is a command line tool that blah blah blah
 #
 # == Usage
-# analytic_MOE.rb  -t --m MOE1,MOE2
+# analytic_MOE.rb  -t --m MOE1,MOE2   [-p "<par1=va1;par2=val2;parn=valn>"]
 #     --trigger             it triggers the execution of the analytics
 #     --moe <list_of_moe>   list of MOE to be analysed
 #     --list                shows all MOEs used
 #     --List                shows all MOEs available
+#     --parameters <params> it applies the following list of parameters
+#              -p "START_UTC=2000-07-07T00:00:00;STOP_UTC=2020-07-11T00:00:00"
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
