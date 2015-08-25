@@ -54,13 +54,28 @@ class ReadCSWResult
    
    # xdqi directive get timeline/events
    def getEvents
-      return @arrEvents
+   
+      # Array uniq call does not remove duplications as the duration
+      # field is always unique generated as an excel formula with references
+      # to the row and column   
+      return @arrEvents.uniq
+   
    end
    #-------------------------------------------------------------
    
    # xdqi directive getExplicitReferences
-   def getExplicitReferences
-      return @arrERs
+   #
+   # It removes annotation duplications associated to the same
+   # Explicit Reference derived from different Events of the original
+   # query
+   #
+   def getExplicitReferences   
+#       @arrERs.each{|element|
+#          puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+#          puts element
+#          puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+#       }   
+      return @arrERs.uniq
    end
    #-------------------------------------------------------------
    
