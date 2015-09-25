@@ -24,6 +24,7 @@
 #     --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
 #     --list      list only (not downloading and no ingestion)
 #     --nodb      no Inventory recording
+#     --no-intray skip step of delivery to intrays
 #     --receipt   create only receipt file-list with the content available
 #     --Report    create a Report when new files have been retrieved
 #     --Show      it shows all available I/Fs registered in the DCC Inventory
@@ -45,7 +46,7 @@
 #
 # === Data Collector Component
 #
-# CVS: $Id: getFromInterface.rb,v 1.15 2008/11/25 16:55:04 decdev Exp $
+# CVS: $Id: getFromInterface.rb,v 1.15 2015/09/25 16:55:04 decdev Exp $
 #
 #########################################################################
 
@@ -76,10 +77,11 @@ def main
    @isDebugMode   = false
    @listOnly      = false
    @listUnknown   = false
-	@createReceipt = false
+   @createReceipt = false
    @createReport  = false
    @bShowMnemonics = false
    @isNoDB        = false
+   @isNoIntray    = false
    
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("getFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
@@ -109,6 +111,7 @@ def main
      ["--Show", "-S",           GetoptLong::NO_ARGUMENT],
      ["--Unknown", "-U",        GetoptLong::NO_ARGUMENT],
      ["--list", "-l",           GetoptLong::NO_ARGUMENT],
+     ["--no-intray", "-N",      GetoptLong::NO_ARGUMENT],
      ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
      )
     
@@ -124,7 +127,8 @@ def main
                @entity = arg
             when "--list" then
                 @listOnly = true
-            when "--nodb"          then @isNoDB    = true
+            when "--nodb"          then @isNoDB     = true
+            when "--no-intray"     then @isNoIntray = true
 			   when "--help"          then usage
 	         when "--usage"         then usage
 				when "--receipt"       then @createReceipt = true
@@ -203,7 +207,7 @@ def main
    init
    
    begin
-   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB)
+   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray)
    rescue Exception => e
       puts "ERROR in DCC::DCC_ReceiverFromInterface.new(@entity)"
    	puts e.to_s
@@ -360,7 +364,7 @@ def body
 
       # Disseminate files retrieved to In-Trays
 #      if bNewFiles == true and @listOnly == false then
-      if @listOnly == false then
+      if @listOnly == false and @isNoIntray == false then
          deliverer = DCC::FileDeliverer2InTrays.new
 # 	      if @isDebugMode == true then
 # 	         deliverer.setDebugMode

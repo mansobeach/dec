@@ -19,6 +19,7 @@
 require 'rubygems'
 require 'net/ssh'
 require 'net/sftp'
+require 'timeout'
 require 'benchmark'
 
 require 'cuc/Log4rLoggerFactory'
@@ -52,10 +53,11 @@ class DCC_ReceiverFromInterface
 
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, drivenByDB = true, isNoDB = false)
-      @entity     = entity
-      @drivenByDB = drivenByDB
-      @isNoDB     = isNoDB
+   def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false)
+      @entity        = entity
+      @drivenByDB    = drivenByDB
+      @isNoDB        = isNoDB
+      @isNoInTray    = isNoInTray
       checkModuleIntegrity
       @isBenchmarkMode = false
 
@@ -143,6 +145,12 @@ class DCC_ReceiverFromInterface
          perf = measure { list = getNonSecureFileList }
 
       end
+
+#       puts "+++++++++++++++++++++++++++++++++"
+#       # puts list
+#       puts list.length
+#       puts "+++++++++++++++++++++++++++++++++"
+#       # exit
 
       if @isBenchmarkMode == true then
          puts
@@ -348,8 +356,10 @@ class DCC_ReceiverFromInterface
       @depthLevel = 0
 
       begin
-         @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 20)
-         #@session = @ftp.connect
+         Timeout.timeout(10) do
+            @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 5)
+            @session = @ftp.connect!
+         end
       rescue Exception => e
          puts
          puts e.to_s
@@ -376,6 +386,7 @@ class DCC_ReceiverFromInterface
             @logger.warn("#{e.class.to_s.upcase} : Unable to explore directory tree from : #{@remotePath}")
             puts "-> Skipping Directory.."
             puts "-> Error : #{e.message}"
+            puts e.backtrace
             puts
             next
          end
@@ -389,17 +400,29 @@ class DCC_ReceiverFromInterface
    
    # Method that recursively list the files in the directoy corresponding to the given handle.
    def exploreSecureTree(path, depth)
-
+      req = Array.new
       begin
-         handle = @ftp.opendir!(path)
-         req = @ftp.readdir!(handle)
-         @ftp.close!(handle)
-      rescue Net::SFTP::StatusException => status_e
-         @logger.warn("StatusException : Unable to list #{@remotePath} (#{status_e.description})")
+        Timeout.timeout(300) do
+            handle = @ftp.opendir!(path)
+            req = @ftp.readdir!(handle)
+            # req = @ftp.readdir(handle)
+            # @sleep(10)
+            # @puts "PEDO"
+            # puts req.length
+            @ftp.close!(handle)
+        end
+      # rescue Net::SFTP::StatusException => status_e
+      rescue Exception => status_e
+         # @logger.warn("StatusException : Unable to list #{@remotePath} (#{status_e.description})")
+         @logger.error("StatusException : Unable to list #{@remotePath} (#{status_e.message})")
+         puts status_e.backtrace
          puts "Could not Access to directory : #{path} :-("
          if @isDebugMode == true then
             puts "-> Skipping entry.."
             puts "-> Error : #{status_e.message}"
+            puts status_e.backtrace
+            puts "shit!"
+            # puts "-> Error : #{status_e.description}"
          end
          return
       end
@@ -426,6 +449,11 @@ class DCC_ReceiverFromInterface
          end
   
       }
+
+
+      # sleep(10)
+      # exit
+
 
    end
    #-------------------------------------------------------------
@@ -759,9 +787,12 @@ private
             disFile = File.basename(filename)
          end
 
-         # disseminate the file
-         disseminateFile(disFile)
-     
+         # disseminate the file to the In-Trays
+
+         if @isNoInTray == false then
+            disseminateFile(disFile)
+         end     
+
          return true
       end
    end	
