@@ -25,6 +25,7 @@
 #     --list      list only (not downloading and no ingestion)
 #     --nodb      no Inventory recording
 #     --no-intray skip step of delivery to intrays
+#     --del-unknown it deletes remote files not configured in ft_incoming_files.xmls
 #     --receipt   create only receipt file-list with the content available
 #     --Report    create a Report when new files have been retrieved
 #     --Show      it shows all available I/Fs registered in the DCC Inventory
@@ -82,6 +83,7 @@ def main
    @bShowMnemonics = false
    @isNoDB        = false
    @isNoIntray    = false
+   @isDelUnknown  = false
    
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("getFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
@@ -111,6 +113,7 @@ def main
      ["--Show", "-S",           GetoptLong::NO_ARGUMENT],
      ["--Unknown", "-U",        GetoptLong::NO_ARGUMENT],
      ["--list", "-l",           GetoptLong::NO_ARGUMENT],
+     ["--del-unknown", "-d",    GetoptLong::NO_ARGUMENT],
      ["--no-intray", "-N",      GetoptLong::NO_ARGUMENT],
      ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
      )
@@ -127,14 +130,15 @@ def main
                @entity = arg
             when "--list" then
                 @listOnly = true
-            when "--nodb"          then @isNoDB     = true
-            when "--no-intray"     then @isNoIntray = true
+            when "--nodb"          then @isNoDB          = true
+            when "--no-intray"     then @isNoIntray      = true
+            when "--del-unknown"   then @isDelUnknown    = true
 			   when "--help"          then usage
 	         when "--usage"         then usage
-				when "--receipt"       then @createReceipt = true
-            when "--Report"        then @createReport = true
-            when "--Unknown"       then @listUnknown  = true
-            when "--Show"          then @bShowMnemonics = true
+				when "--receipt"       then @createReceipt   = true
+            when "--Report"        then @createReport    = true
+            when "--Unknown"       then @listUnknown     = true
+            when "--Show"          then @bShowMnemonics  = true
          end
       end
    rescue Exception
@@ -207,7 +211,7 @@ def main
    init
    
    begin
-   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray)
+   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray, @isDelUnknown)
    rescue Exception => e
       puts "ERROR in DCC::DCC_ReceiverFromInterface.new(@entity)"
    	puts e.to_s

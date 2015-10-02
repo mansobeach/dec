@@ -53,11 +53,12 @@ class DCC_ReceiverFromInterface
 
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false)
+   def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false)
       @entity        = entity
       @drivenByDB    = drivenByDB
       @isNoDB        = isNoDB
       @isNoInTray    = isNoInTray
+      @isDelUnknown  = isDelUnknown
       checkModuleIntegrity
       @isBenchmarkMode = false
 
@@ -147,10 +148,11 @@ class DCC_ReceiverFromInterface
       end
 
 #       puts "+++++++++++++++++++++++++++++++++"
-#       # puts list
+#       puts list
 #       puts list.length
+#       puts list.uniq.length
 #       puts "+++++++++++++++++++++++++++++++++"
-#       # exit
+#       exit
 
       if @isBenchmarkMode == true then
          puts
@@ -984,6 +986,24 @@ private
       if @isDebugMode == true then
          puts
       end
+      
+      
+#       puts "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+#       puts "PEDO"
+#       puts arrDelete.length
+#       puts arrDelete.uniq.length
+#       puts
+      
+      if @isDelUnknown == true and arrDelete.uniq.length > 0 then
+         puts "Deleting unknown files ..."
+         arrDelete.uniq.each{|aFile|
+            puts "deleting #{File.basename(aFile)}"
+            @logger.info("deleting #{File.basename(aFile)}")
+            deleteFromEntity(aFile)
+         }
+      end
+
+      # exit
       
       arrDelete.each{|element| list.delete(element)}
       
