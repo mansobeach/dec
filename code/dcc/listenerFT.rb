@@ -212,9 +212,14 @@ def pollInterface
       command  = %Q{getFromInterface.rb --mnemonic #{@mnemonic}}
    end
    
+   # ----------------------------------------------------------
+   # getFromInterface.rb --del-unknown flag would need a cleaner approach
+
    if @isNoDB == true then
-      command  = %Q{#{command} --nodb}
+      command  = %Q{#{command} --nodb --no-intray --del-unknown}
    end
+
+   # ----------------------------------------------------------
 
    if @isDebugMode == true then
       puts "#{command}"
@@ -233,6 +238,8 @@ def pollInterface
    else
       puts "ERROR Polling #{@mnemonic} I/F !\n\n"
       @logger.error("Could not Poll #{@mnemonic} I/F !")
+      # if previous polling failed, retry again inmediately
+      return 1
    end 
 
    # calculate required time and new interval time.
