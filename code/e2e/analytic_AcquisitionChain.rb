@@ -45,7 +45,12 @@ require 'e2e/CSWExecuteQuery'
 def main
 
    @arrMOE = [ 
-               "REPORT-DUMP"
+               "MISSION_PLAN_MMFU_OPERATION",
+               "FOS_PLAN_MMFU_OPERATION",
+               "REPORT-DUMP",
+               "SAT_EXEC_MMFU_OPERATION",
+               "VC-VALIDITY",
+               "VC-GAPS"
              ]
 
 
