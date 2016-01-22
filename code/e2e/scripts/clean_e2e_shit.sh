@@ -7,6 +7,8 @@
 
 # clean wps temporal files older than 1 day
 
+source /home/e2espm/.bashrc
+
 find $WPS4EO_CLIENT_CONF_PATH/../tmp -depth -mindepth 1 -mtime +0 -print
 find $WPS4EO_CLIENT_CONF_PATH/../tmp -depth -mindepth 1 -mtime +0 -delete
 
@@ -59,4 +61,7 @@ find $MCF_DATA/tmp/mcf_triggering/.ok/20* -maxdepth 0 -mtime +0 -type d 2>/dev/n
 find $MCF_DATA/tmp/mcf_triggering/.ko/20* -maxdepth 0 -mtime +6 -type d 2>/dev/null | xargs ls -d
 find $MCF_DATA/tmp/mcf_triggering/.ko/20* -maxdepth 0 -mtime +6 -type d 2>/dev/null | xargs rm -rf
 
+# ------------------------------------------------------------------------------
+# CLEAN-UP FTPROOT intray
+e2espm_review_ftproot &> /tmp/e2espm_review_ftproot.log
 # ------------------------------------------------------------------------------
