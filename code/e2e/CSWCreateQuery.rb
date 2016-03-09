@@ -24,14 +24,20 @@ class CSWCreateQuery
    #-------------------------------------------------------------
   
    # Class constructor
-   def initialize(filename, query, arguments, debug = false)
+   def initialize(filename, query, arguments, bCorrectUTC, debug = false)
       @filename            = filename
       @query               = query
       @queryAttribute      = "@e2espm/#{@query}"
       @arguments           = arguments
+      @bCorrectUTC         = bCorrectUTC
       @isDebugMode         = debug
       if @isDebugMode == true then
          self.setDebugMode
+         puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+         puts @filename
+         puts @query
+         puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+         # exit
       end
      
       checkModuleIntegrity
@@ -108,6 +114,32 @@ private
 
       directive.add_element("xdei:data")
 
+      # --------------------------------------------------------------
+      
+      if @bCorrectUTC == true then
+      
+         if @isDebugMode == true then
+            puts "adding directive to request get_predicted_orbit" 
+         end
+      
+         directive = root.add_element("xdei:directive")
+      
+         request   = directive.add_element("xdei:request")
+      
+         events = request.add_element("getEvents")
+         events.add_attribute("query_file", "\@e2espm/get_predicted_orbit")
+      
+         @arguments.each_pair{|key, val|
+            arg = events.add_element("argument")
+            arg.add_attribute("name", key)
+            arg.text = val
+         }
+
+         directive.add_element("xdei:data")
+      end
+
+      # --------------------------------------------------------------
+
       formatter = REXML::Formatters::Pretty.new
       formatter.compact = true
       
@@ -131,7 +163,7 @@ private
       
    end   
    #-------------------------------------------------------------
-      
+   
    #-------------------------------------------------------------
    
 end # class
