@@ -24,12 +24,14 @@ module Converters
    # String formats supported: 
    # - 20120325                  => "%Y%m%d"
    # - 20120325T154814           => "%Y%m%dT%H%M%S"
-   # - 21-MAY-2015 14:00:01.516  => "%e-%b-%Y %H:%M:%S.%L"
+   # - 21-MAY-2015 14:00:01.516  => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
+   # - 01-FEB-2016 02:20:40.59   => "%e-%b-%Y %H:%M:%S.%L"  / length 23
    # - 2015-11-16T00:30:27       => "%Y-%m-%dT%H:%M:%S"
+   
    
    def str2date(str)
    
-      if str.length == 24 and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
+      if (str.length == 24 or str.length == 23) and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
          return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S.%L")
       end
 
