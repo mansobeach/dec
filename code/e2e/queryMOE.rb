@@ -8,6 +8,8 @@
 # queryMOE.rb  --query <get_MOE> --parameters par1=val1;par2=val2
 #     --file <output.xml>   filename of the result query
 #     --List                shows previously tested MOE
+#     --correctUTC          it corrects UTC times 
+#                             with latest predicted orbit ephemeris
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -44,9 +46,18 @@ def main
 
    @arrMOE = [ 
                "CIRCULATION-INVENTORY-LTA-ERROR",
+               "CORRECTED_FOS_DUMP_OPERATION",
+               "CORRECTED_FOS_PLAN_CSM_OPERATION",
+               "CORRECTED_FOS_PLAN_MMFU_OPERATION",
+               "CORRECTED_FOS_PLAN_MSI_IMAGING_MODE",
+               "CORRECTED_MISSION_DUMP_OPERATION",
+               "CORRECTED_MISSION_PLAN_MMFU_OPERATION",
+               "CORRECTED_MISSION_PLAN_MSI_IMAGING_MODE",
                "DATA-ARCHIVED",
                "DATA-VALIDITY",
                "DATA-VALIDITY.DS",
+               "DATA-SENSING",
+               "DATA-SENSING.DS",
                "FOS_DUMP_OPERATION",
                "FOS_PLAN_CSM_OPERATION",
                "FOS_PLAN_MMFU_OPERATION",
@@ -61,13 +72,22 @@ def main
                "MISSION_PLAN_MMFU_OPERATION",
                "MISSION_PLAN_MSI_IMAGING_MODE",
                "MISSION_PLAN_MSI_OPERATION",
+               "MSI-L0U",
+               "ORBIT-PRED",
+               "PDI-CIRCULATION",
+               "PDI-CIRCULATION.POD",
                "PLANNED-DFEP",
                "PLANNED-DUMP",
                "PLANNED-SIGNAL_CONTACT",
                "RAW-SCENE-VADILITY",
                "REPORT-DUMP",
+               "SAT_EXEC_MMFU_OPERATION",
+               "SAT_EXEC_MSI_IMAGING_MODE",
                "SATELLITE-UNAVAILABILITY",
-               "STATION-UNAVAILABILITY"
+               "STATION-UNAVAILABILITY",
+               "STEP-INFO",
+               "VC-GAPS",
+               "VC-VALIDITY"
             ]
 
    #=======================================================================
@@ -90,6 +110,7 @@ def main
    @bIsSilent        = false
    @bVerify          = false
    @plugIn           = false
+   @bCorrectUTC      = false
    
    @arrArgs          = Array.new(ARGV)
    
@@ -100,6 +121,7 @@ def main
      ["--parameters", "-p",      GetoptLong::REQUIRED_ARGUMENT],
      ["--time", "-t",            GetoptLong::REQUIRED_ARGUMENT],
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--correctUTC", "-U",      GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--Silent", "-S",          GetoptLong::NO_ARGUMENT],
@@ -125,6 +147,8 @@ def main
                @parameters = getParameters(arg)
             when "--Silent"    then 
                   @bIsSilent = true
+            when "--correctUTC" then 
+                  @bCorrectUTC  = true
             when "--List"    then list
             when "--usage"   then usage
             when "--help"    then usage                      
@@ -146,14 +170,21 @@ def main
 #       puts key, val
 #    }
 
-   query = E2E::CSWCreateQuery.new(@queryFile, @query, @parameters, @isDebugMode)
+   query = E2E::CSWCreateQuery.new(@queryFile, @query, @parameters, @bCorrectUTC, @isDebugMode)
 
    if @resultFile == "" then
       @resultFile = "result.xml"
    end
 
+
+#    puts "-------------------------"
+#    puts @parameters
+#    puts "-------------------------"
+# 
+#    exit
+
    perf = Benchmark.measure{
-      E2E::CSWExecuteQuery.new(@queryFile, @resultFile, @isDebugMode)
+      E2E::CSWExecuteQuery.new(@queryFile, @query, @resultFile, @bCorrectUTC, @isDebugMode)
    }
       
    printBenchmark(perf)
