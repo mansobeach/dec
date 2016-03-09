@@ -27,6 +27,7 @@ module Converters
    # - 21-MAY-2015 14:00:01.516  => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
    # - 01-FEB-2016 02:20:40.59   => "%e-%b-%Y %H:%M:%S.%L"  / length 23
    # - 01-FEB-2016 02:20:40.5    => "%e-%b-%Y %H:%M:%S.%L"  / length 22
+   # - 22-FEB-2016 15:13:08      => "%e-%b-%Y %H:%M:%S"     / length 20
    # - 2015-11-16T00:30:27       => "%Y-%m-%dT%H:%M:%S"
    
    
@@ -34,6 +35,14 @@ module Converters
    
       if (str.length == 24 or str.length == 23 or str.length ==22) and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
          return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S.%L")
+      end
+
+      if (str.length == 24 or str.length == 23 or str.length ==22) and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
+         return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S.%L")
+      end
+
+      if (str.length == 20) and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
+         return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S")
       end
 
       if str.length == 19 and str.include?("T") then
