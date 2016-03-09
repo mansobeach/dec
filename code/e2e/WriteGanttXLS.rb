@@ -33,6 +33,8 @@ class WriteGanttXLS
       end
       @arrAttrNonReader    = ["filename", "isDebugMode", "arrAttrNonReader"]
       
+      @bCorrected = false
+      
       checkModuleIntegrity
       
       initColumns
@@ -49,6 +51,7 @@ class WriteGanttXLS
    
    # Process 
    def writeEvents(analytics)
+            
       createNewExcel   
       createSheetEvents
    
@@ -64,6 +67,12 @@ class WriteGanttXLS
       
          parser         = E2E::ReadGanttXML.new(element, @isDebugMode)    
          events         = parser.getEvents
+         
+         if element.include?("CORRECTED") == true then
+            @bCorrected = true
+         else
+            @bCorrected = false
+         end
                   
          events.each{|event|
             writeRow(row, event)
@@ -80,6 +89,7 @@ class WriteGanttXLS
    #-------------------------------------------------------------
    
    def writeEventsCSWResult(analytics)
+   
       createNewExcel   
       createSheetEvents   
       row = 1
@@ -94,6 +104,12 @@ class WriteGanttXLS
       
          parser         = E2E::ReadCSWResult.new(element, @isDebugMode)    
          events         = parser.getEvents
+                  
+         if element.include?("CORRECTED") == true then
+            @bCorrected = true
+         else
+            @bCorrected = false
+         end
          
          events.each{|event|
             writeRow(row, event)
@@ -315,8 +331,14 @@ private
       #       puts "-------------------------------------------"
       
       @sheetGauges.write(row, @Column_Library, event[:library])
-      @sheetGauges.write(row, @Column_Gauge, event[:gauge_name])
       @sheetGauges.write(row, @Column_System, event[:system])
+      
+      if @bCorrected == true then
+         @sheetGauges.write(row, @Column_Gauge, "CORRECTED_#{event[:gauge_name]}")
+      else
+         @sheetGauges.write(row, @Column_Gauge, event[:gauge_name])
+      end
+      
 
       # -------------
       # date time cells
