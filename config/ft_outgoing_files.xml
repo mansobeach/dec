@@ -3,8 +3,10 @@
    <File Type="METEO">
       <Description></Description>
       <ToList>
-         <Interface Name="METEO"       Compress="NONE" DeliveryMethods="FTP" />
-         <Interface Name="METEO_LEON"  Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="METEO"             Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="METEO"             Compress="NONE" DeliveryMethods="LOCAL" />
+         <Interface Name="METEO_LEON"        Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="METEO_MONTEUALLA"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 
@@ -19,6 +21,14 @@
       <Description></Description>
       <ToList>
          <Interface Name="METEO2"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+
+   <File Type="METEO_MONTEUALLA">
+      <Description></Description>
+      <ToList>
+         <Interface Name="METEO_MONTEUALLA"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 
