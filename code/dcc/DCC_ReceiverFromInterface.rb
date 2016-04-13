@@ -51,6 +51,9 @@ class DCC_ReceiverFromInterface
    
    attr_accessor :isBenchmarkMode
 
+
+   #-------------------------------------------------------------
+   
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
    def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false)
@@ -143,7 +146,7 @@ class DCC_ReceiverFromInterface
             puts "I/F #{@entity} is non secure mode"
          end
 
-         perf = measure { list = getNonSecureFileList }
+         perf = measure { list = getNonSecureFileList( @ftpserver[:isPassive]) }
 
       end
 
@@ -232,7 +235,7 @@ class DCC_ReceiverFromInterface
    end
    #-------------------------------------------------------------
 
-   def getNonSecureFileList
+   def getNonSecureFileList(bPassive)
       @newArrFile    = Array.new
       @ftp           = nil
       host           = @ftpserver[:hostname]      
@@ -244,7 +247,7 @@ class DCC_ReceiverFromInterface
       begin
          @ftp = Net::FTP.new(host)
          @ftp.login(user, pass)
-         @ftp.passive = true
+         @ftp.passive = bPassive
       rescue Exception => e
          puts
          puts e.to_s

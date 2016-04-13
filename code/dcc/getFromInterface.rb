@@ -213,8 +213,11 @@ def main
    begin
    	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray, @isDelUnknown)
    rescue Exception => e
-      puts "ERROR in DCC::DCC_ReceiverFromInterface.new(@entity)"
+      puts "ERROR in DCC::DCC_ReceiverFromInterface.new(#{@entity})"
+      puts
    	puts e.to_s
+      puts
+      puts e.backtrace
       puts
    	exit(99)
    end
@@ -384,8 +387,10 @@ end
 
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -42 #{fullpathFile}")
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   system("head -42 #{fullpathFile}") |#  sh.system("awk -F \"# \" '{print $2}'")
+   
    exit
 end
 #-------------------------------------------------------------
