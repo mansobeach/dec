@@ -357,7 +357,7 @@ private
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
 		Struct.new("FTPServer", :mnemonic, :hostname, :port,
                    :user, :password, :isTracked, :isRetrieved, 
-                   :isSecure, :isCompressed, :isDeleted, :cleanUpFreq, :uploadDir,
+                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 		Struct.new("TXRXParams", :mnemonic, :enabled4Send, :enabled4Receive,
@@ -521,6 +521,8 @@ private
 		bCompress   = false
 		bDelete     = false      
       bErrorValue = false
+      bPassive    = true
+      
       nCleanUpFreq = 0
       
       arrDownloadDirs = Array.new
@@ -570,6 +572,20 @@ private
          end
       end
 
+      # ----------------------
+      # new flag for ftp passive or not (passive is by default)
+      
+      if xmlstruct.elements["PassiveFlag"].text.upcase == "FALSE" then
+         bPassive = false
+      else
+         if xmlstruct.elements["PassiveFlag"].text.upcase != "TRUE" then
+            puts "Error[#{mnemonic}] PassiveFlag field only accepts true|false value"
+            bErrorValue = true
+         end
+      end
+      # ----------------------
+
+
       if xmlstruct.elements["CleanUpFreq"].text.upcase == "NEVER" then
          nCleanUpFreq = 0
       else
@@ -611,6 +627,7 @@ private
                          bSecure,
                          bCompress,
 								 bDelete,
+                         bPassive,
                          nCleanUpFreq,
                          expandPathValue(xmlstruct.elements["UploadDir"].text),
                          expandPathValue(xmlstruct.elements["UploadTemp"].text),

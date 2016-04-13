@@ -259,7 +259,15 @@ private
 #             @ftp.login(user, pass)
             @ftp.passive = true
             @ftp.chdir(dir)
-         rescue Exception
+         rescue Exception => e
+         
+            puts "Directory => #{dir}"
+            puts
+            puts
+            puts e.to_s
+            puts
+            exit
+         
             # ---------------------
             # 20140923 - BL
             # If remote directory does not exist
