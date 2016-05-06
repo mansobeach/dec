@@ -35,7 +35,13 @@ find $WPS4EO_SERVER_CONF_PATH/../tmp/unlock* -depth -maxdepth 0 -mtime +6 -delet
 # ------------------------------------------------------------------------------
 # CLEAN-UP MCF_TRIGGERING TEMP SHIT
 
-# clean mcf temporal directories with name signature with a date such as 20151214*
+# Free Catalina lost jobs in the MCF temporal directories
+
+. /home/e2espm/scripts_e2e/wps_free_lostjobs.sh
+
+# ------------------------------------------------------------------------------
+
+# clean mcf temporal directories with name signature with a date such as 2016*
 
 find $MCF_DATA/tmp/20* -mtime +1 -type d 2>/dev/null | xargs ls -d
 find $MCF_DATA/tmp/20* -mtime +1 -type d 2>/dev/null | xargs rm -rf
