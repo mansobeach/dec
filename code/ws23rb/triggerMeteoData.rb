@@ -34,6 +34,7 @@
 
 require 'optparse'
 require 'getoptlong'
+require 'timeout'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Log4rLoggerFactory'
@@ -44,6 +45,7 @@ def main
    @locker        = nil
    @isDebugMode   = false
    @bForce        = false
+   @bVerify       = false
    @bHistoric     = false
 
    opts = GetoptLong.new(
@@ -51,6 +53,7 @@ def main
      ["--Force", "-F",          GetoptLong::NO_ARGUMENT],
      ["--Historic", "-H",       GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
+     ["--Verify", "-V",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",           GetoptLong::NO_ARGUMENT]
      )
    
@@ -60,6 +63,7 @@ def main
             when "--Debug"       then @isDebugMode = true
             when "--Historic"    then @bHistoric   = true
             when "--Force"       then @bForce      = true
+            when "--Verify"      then @bVerify     = true
             when "--version" then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
@@ -132,37 +136,57 @@ def main
       # cmd = "time #{cmd}"
       puts cmd
    end
+
+   # -------------------------------------------------------
    
-   system(cmd)
-
-   cmd = "verifyMeteoData.rb -f #{meteoFilename}"
-
-   if @isDebugMode == true then
-      cmd = "#{cmd} -D"
-   end
-
-   # @logger.debug(cmd)
-
-   if @isDebugMode == true then
+   # 20160611 Patch to restart if timeout arises
+   
+   begin
+      Timeout.timeout(100) do
+         system(cmd)
+      end
+   rescue Timeout::Error
       puts
-      puts Time.now
+      puts "Timeout when polling weather station"
       puts
-      # cmd = "time #{cmd}"
+      cmd = "sudo reboot"
       puts cmd
-   end
-
-   retVal = system(cmd)
-
-   if retVal == false then
-      puts "Error in #{meteoFilename}"
-      # @logger.error("Error in #{meteoFilename}")
- 
-      cmd = "\\cp #{meteoFilename} ../data/archive/xml"
-      system(cmd)
- 
-      cmd = "\\mv #{meteoFilename} ../data/archive/error"
       system(cmd)
       exit(99)
+   end
+
+   # -------------------------------------------------------
+
+   if @bVerify == true then
+      cmd = "verifyMeteoData.rb -f #{meteoFilename}"
+
+      if @isDebugMode == true then
+         cmd = "#{cmd} -D"
+      end
+
+      # @logger.debug(cmd)
+
+      if @isDebugMode == true then
+         puts
+         puts Time.now
+         puts
+         # cmd = "time #{cmd}"
+         puts cmd
+      end
+
+      retVal = system(cmd)
+
+      if retVal == false then
+         puts "Error in #{meteoFilename}"
+         # @logger.error("Error in #{meteoFilename}")
+ 
+         cmd = "\\cp #{meteoFilename} ../data/archive/xml"
+         system(cmd)
+ 
+         cmd = "\\mv #{meteoFilename} ../data/archive/error"
+         system(cmd)
+         exit(99)
+      end
    end
 
 #   cmd = "cp #{meteoFilename} METEO_#{stationName}.xml"

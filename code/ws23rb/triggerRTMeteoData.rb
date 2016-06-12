@@ -39,9 +39,18 @@ def main
    @filename      = ""
    @isDebugMode   = false
    @fields        = Array.new
-   @variables     = ["temperature_indoor","temperature_outdoor", "humidity_outdoor", "rain_1h", "rain_24h", 
-                     "rel_pressure", "abs_pressure", "wind_pointing_degrees", 
-                     "wind_direction", "wind_speed", "dewpoint"]
+   @variables     = [
+                     "temperature_indoor",
+                     "temperature_outdoor", 
+                     "humidity_outdoor", 
+                     "rain_1h", 
+                     "rain_24h", 
+                     "rel_pressure", 
+                     "abs_pressure",
+#                     "wind_pointing_degrees", 
+                     "wind_direction", 
+                     "wind_speed", 
+                     "dewpoint"]
 
 
    cmdOptions = {}
@@ -124,6 +133,10 @@ def main
          exit(99)
       end
 
+      if @isDebugMode == true then
+         puts "Reading #{field} ..."
+      end
+
       val = Ruby2300.send(field)
 
       hFields[field] = val
@@ -150,6 +163,14 @@ def main
 end
 #-------------------------------------------------------------
 
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}` 
+   system("head -25 #{fullpathFile}")
+   exit
+end
+#-------------------------------------------------------------
 
 #===============================================================================
 # Start of the main body
