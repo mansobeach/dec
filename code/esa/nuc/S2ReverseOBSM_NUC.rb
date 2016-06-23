@@ -8,6 +8,7 @@
 # == Usage
 #  S2ReverseOBSM_NUC.rb  -f <nuc_file> --Subtable <st> [-P]
 #     --Parse               it parses only input OBSM NUC file
+#     --Header              it parses only the Header part
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --Force               force mode
@@ -158,6 +159,7 @@ def main
    @isForceMode   = false
    @reqST         = nil
    @isParseOnly   = false
+   @isHeaderOnly  = false
 
    opts = GetoptLong.new(
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
@@ -165,6 +167,7 @@ def main
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT],
      ["--Parse", "-P",           GetoptLong::NO_ARGUMENT],
+     ["--Header", "-H",          GetoptLong::NO_ARGUMENT],
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--SubTable", "-S",        GetoptLong::REQUIRED_ARGUMENT]
      )
@@ -172,11 +175,12 @@ def main
    begin 
       opts.each do |opt, arg|
          case opt
-            when "--file"     then @filename    = arg.to_s.upcase
-            when "--SubTable" then @reqST       = arg.to_i           
-            when "--Debug"    then @isDebugMode = true
-            when "--Parse"    then @isParseOnly = true
-            when "--Force"    then @isForceMode = true
+            when "--file"     then @filename       = arg.to_s.upcase
+            when "--SubTable" then @reqST          = arg.to_i           
+            when "--Debug"    then @isDebugMode    = true
+            when "--Parse"    then @isParseOnly    = true
+            when "--Header"   then @isHeaderOnly   = true
+            when "--Force"    then @isForceMode    = true
             when "--version"  then
                print("\nESA - ESRIN ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
@@ -193,6 +197,11 @@ def main
    end
 
    init
+
+   @bEndOfHeader = false
+   @addrStart     = 0
+   @addrStop      = 0
+   @length        = 0
 
    parseNUCFile
 
@@ -295,6 +304,9 @@ def parseNUCFile
       if ret == false then
          return
       end
+      if @isHeaderOnly == true and @bEndOfHeader == true then
+         exit(0)
+      end
    end
    # -------------------------------------------------------
   
@@ -358,10 +370,11 @@ def processLine(line)
       if @isDebugMode == true then
          puts "Field #{arr[0]} is equal to #{arr[1]}"
       end
-      # verifyHeaderValue(arr[0], arr[1].chop)
+      verifyHeaderValue(arr[0], arr[1].chop)
    else
       return processDataLine(line)
    end
+   
    return true
 end
 
@@ -662,8 +675,8 @@ def verifyHeaderValue(field, value)
    bVerified = false
    
    if field == "DOMAIN" then
-      if value != "0" then
-         puts "ERROR: DOMAIN=#{value} and should be 0"
+      if value != "1" then
+         puts "ERROR: DOMAIN=#{value} and should be 1"
       end
    end
    
@@ -685,10 +698,25 @@ def verifyHeaderValue(field, value)
       end
    end
 
+   if field == "STARTADDR" then
+      @addrStart = value
+   end
+
+   if field == "ENDADDR" then
+      @addrStop = value
+   end
+
+   if field == "LENGTH" then
+      @length = value
+   end
+
+
+
    if field == "UNIT" then
       if value != "2" then
          puts "ERROR: UNIT=#{value} and should be 2"
       end
+      @bEndOfHeader = true
    end
    
 end
