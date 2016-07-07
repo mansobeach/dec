@@ -158,10 +158,8 @@ def main
                                   exit(0)
             when "--mnemonic" then
                @entity = arg         
-            when "--help"    then RDoc::usage
-            when "--usage"   then fullpathFile = `which #{File.basename($0)}` 
-                                  system("head -45 #{fullpathFile}")
-                                  exit
+            when "--help"    then usage
+            when "--usage"   then usage
             when "--retries" then 
                @retries = arg.to_i
             when "--loops" then
@@ -207,9 +205,7 @@ def main
    end
 
    if @entity == "" then
-      fullpathFile = `which #{File.basename($0)}` 
-      system("head -45 #{fullpathFile}")
-      exit
+      usage
    end
    
    if @strParams != "" then
@@ -532,6 +528,23 @@ def deliverByFTP
    return bSent
 end
 #---------------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -45 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
 
 #===============================================================================
 # Start of the main body
