@@ -351,9 +351,16 @@ end
 
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -70 #{fullpathFile}")
-   exit
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -70 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 #-------------------------------------------------------------
 
