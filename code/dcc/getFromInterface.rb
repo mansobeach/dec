@@ -162,8 +162,29 @@ def main
    end
 
    if @isNoDB == false then
+      
       require 'dbm/DatabaseModel'
-      @dbEntity   = Interface.new
+      
+      begin
+         @dbEntity   = Interface.new
+      rescue Exception => e
+
+         if @isDebugMode == true then
+            puts
+            puts e.to_s
+            puts
+            puts e.backtrace
+         end
+
+         puts
+         puts "db inventory is not configured"
+         puts
+         puts "you may try with \"--nodb\" flag"
+         puts
+         
+         exit(99)
+      end
+
 
       interface = Interface.find_by_name(@entity)
       
@@ -264,7 +285,7 @@ def body
    bRetrieveFiles = @entityConfig.retrieveDirContent?(@entity)
    
    #----------------------------------------------
-   if bRegisterDir == false or @listOnly == true then
+   if bRegisterDir == false or @listOnly == true and @isNoDB == false then
       puts
       puts "File Tracking  is disabled"
    end
@@ -294,16 +315,23 @@ def body
       bNewFiles = @receiver.check4NewFiles(true)
 
       if bNewFiles == false then
-		   puts "\nNo file(s) available from #{@entity} I/F for tracking\n"
-         @logger.info("No file(s) available from #{@entity} I/F for tracking")
+		   if @isNoDB == false then   
+            puts "\nNo file(s) available from #{@entity} I/F for tracking\n"
+            @logger.info("No file(s) available from #{@entity} I/F for tracking")
+         end
       else
-         puts "\nNew file(s) available from #{@entity} I/F for tracking\n"
-         @logger.info("New file(s) available from #{@entity} I/F for tracking")            
+         
          listOfFiles = @receiver.getAvailablesFiles
-         listOfFiles.each{|fullpath|
-            puts File.basename(fullpath)
-         }
-         puts
+         
+         if @isNoDB == false then
+            puts "\nNew file(s) available from #{@entity} I/F for tracking\n"
+            @logger.info("New file(s) available from #{@entity} I/F for tracking")            
+         
+            listOfFiles.each{|fullpath|
+               puts File.basename(fullpath)
+            }
+            puts
+         end
 
          if @listUnknown == true then
             exit(0)
@@ -389,9 +417,14 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   system("head -42 #{fullpathFile}") |#  sh.system("awk -F \"# \" '{print $2}'")
-   
-   exit
+   value = `#{"head -45 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 #-------------------------------------------------------------
 
