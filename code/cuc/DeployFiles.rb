@@ -77,7 +77,7 @@ private
       arrLines = file.readlines
 
       arrLines.each{|line|
-         if line.to_s.slice(0,1) == "#" then
+         if line.to_s.slice(0,1) == "#" or line.to_s.strip.length == 0 then
             if @isDebugMode == true then
                puts "skip line #{line}"
             end
