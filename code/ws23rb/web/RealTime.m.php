@@ -96,8 +96,8 @@ $meteo_url      = $ini_array['meteo_url'] ;
             <li data-role="divider" ><a href="#win_evolution_pressure" id="divMeteoPressure" onclick="return clickDailyValue('pressure');">Measurement Pressure</a></li>
             <li data-role="divider" ><a href="#win_evolution_wind_speed" id="divMeteoWindSpeed" onclick="return clickDailyValue('wind_speed');">Measurement Wind Speed</a></li>            
             <li data-role="divider" id="divMeteoWindDirection">Measurement Wind Direction</li>       
-            <li data-role="divider" ><a href="#win_evolution_rain_1h" id="divMeteoRain1h" onclick="return clickDailyValue('rain_1hour');">Measurement Rain 1hour</a></li>                        
-            <li data-role="divider" id="divMeteoRain24h">Measurement Rain 24hour</li>          
+            <li data-role="divider" ><a href="#win_evolution_rain_1h" id="divMeteoRain1h" onclick="return clickDailyValue('rain_1hour');">Measurement Rain 1hour</a></li>
+            <li data-role="divider" ><a href="#win_evolution_rain_24h" id="divMeteoRain24h" onclick="return clickDailyValue('rain_24hour');">Measurement Rain 24hour</a></li>
          </ul>
       <footer data-role="footer"><h1>Casale & Beach</h1></footer>
    </section>
@@ -201,6 +201,27 @@ $meteo_url      = $ini_array['meteo_url'] ;
       
    </div>
    <!-- === END Daily Evolution - rain_1h ============================================== -->
+
+   <!-- === BEGIN Daily Evolution - rain_24h ============================================== -->
+   <div data-role=page id=win_evolution_rain_24h data-add-back-btn=true>
+      
+      <div data-role=header>
+         <h1>Rain 24hour Evolution</h1>
+      </div>
+
+      <div data-role=content>
+         <p><?php echo $meteo_station ; ?> Station</p>      
+         <div id="chart_line_rain_24hour" style="height: 300px; text-align: center; color: #999; line-height: 100px; font-size: 10px; font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif;">Loading...</div>
+      </div>
+      
+      <script>
+         var handler = new MeteoCasaleComm() ;
+         handler.getDailyValues("rain_24hour") ;
+      </script>      
+      
+      
+   </div>
+   <!-- === END Daily Evolution - rain_24h ============================================== -->
 
 
 
