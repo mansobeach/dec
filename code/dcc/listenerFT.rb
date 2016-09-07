@@ -213,10 +213,16 @@ def pollInterface
    end
    
    # ----------------------------------------------------------
+   # 20160907
    # getFromInterface.rb --del-unknown flag would need a cleaner approach
+   # New attribute in configuration file is needed
 
+   command  = %Q{#{command} --del-unknown} 
+
+   # ----------------------------------------------------------
+   
    if @isNoDB == true then
-      command  = %Q{#{command} --nodb --no-intray --del-unknown}
+      command  = %Q{#{command} --nodb --no-intray}
    end
 
    # ----------------------------------------------------------
