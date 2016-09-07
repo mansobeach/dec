@@ -162,9 +162,8 @@ def main
    end
 
    if @isNoDB == false then
-      
       require 'dbm/DatabaseModel'
-      
+
       begin
          @dbEntity   = Interface.new
       rescue Exception => e
@@ -358,6 +357,8 @@ def body
       event.setDebugMode
    end
 
+   bNewFiles = false
+
    if bRetrieveFiles == true or @listOnly == true then
       bNewFiles     = @receiver.check4NewFiles
       if bNewFiles == false then
@@ -397,9 +398,10 @@ def body
       # for each file received. But we want the possibility to try again the inbox
       # in case some files are placed there from previous polling
 
+      # 20160907 - dissemination is only activated if new files have been downloaded
       # Disseminate files retrieved to In-Trays
 #      if bNewFiles == true and @listOnly == false then
-      if @listOnly == false and @isNoIntray == false then
+      if @listOnly == false and @isNoIntray == false and bNewFiles == true then
          deliverer = DCC::FileDeliverer2InTrays.new
 # 	      if @isDebugMode == true then
 # 	         deliverer.setDebugMode
