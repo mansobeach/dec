@@ -51,9 +51,6 @@ class DCC_ReceiverFromInterface
    
    attr_accessor :isBenchmarkMode
 
-
-   #-------------------------------------------------------------
-   
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
    def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false)
@@ -1039,6 +1036,11 @@ private
                if @isDebugMode == true then
                   puts "#{File.basename(filename)} already received from #{@entity}"
                end
+ 
+               puts "removing duplicated #{File.basename(filename)} previously received from #{@entity}"
+               @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
+               deleteFromEntity(fullpath)
+
             end
          else
             if hasBeenAlreadyTracked(filename) == true then
@@ -1122,32 +1124,32 @@ private
    
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
-      arrFiles = ReceivedFile.find_all_by_filename(filename) 
+      arrFiles = ReceivedFile.find_by filename: filename 
       if arrFiles == nil then
          return false
       end
 
-      arrFiles.each{|file|
-         if file.interface_id == @interface.id then
+      # arrFiles.each{|file|
+         if arrFiles.interface_id == @interface.id then
             return true
          end
-      }
+      # }
       return false
    end
    #-------------------------------------------------------------
 
 	# It invokes the method DCC_InventoryInfo::isFileChecked? 
    def hasBeenAlreadyTracked(filename)
-      arrFiles = TrackedFile.find_all_by_filename(filename) 
+      arrFiles = TrackedFile.find_by filename: filename 
       if arrFiles == nil then
          return false
       end
 
-      arrFiles.each{|file|
-         if file.interface_id == @interface.id then
+      # arrFiles.each{|file|
+         if arrFiles.interface_id == @interface.id then
             return true
          end
-      }
+      # }
       return false
    end
    #-------------------------------------------------------------
