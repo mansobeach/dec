@@ -987,16 +987,27 @@ private
          puts
       end
       
-      
-#       puts "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
-#       puts "PEDO"
-#       puts arrDelete.length
-#       puts arrDelete.uniq.length
-#       puts
-      
+      # ------------------------------------------
+      #
+      # delete undesired files
+      #
+      # 2016 patch
+             
       if @isDelUnknown == true and arrDelete.uniq.length > 0 then
          puts "Deleting unknown files ..."
          arrDelete.uniq.each{|aFile|
+         
+            # ----------------------------------------------
+            # 20160927
+            # Avoid "strange" case of temporal files which in principle should not be listed
+            # [ INFO] deleting .S2A_OPER_REP_METARC_PDMC_20160922T140422_V20160922T085940_20160922T091131.xml
+            
+            if File.basename(aFile).to_s.slice(0,1) == "." then
+               next
+            end
+         
+            # ----------------------------------------------
+            
             puts "deleting #{File.basename(aFile)}"
             @logger.info("deleting #{File.basename(aFile)}")
             deleteFromEntity(aFile)
