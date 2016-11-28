@@ -32,6 +32,7 @@ require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerInterfaceConfig'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileSource'
+require 'ctc/EventManager'
 require 'dcc/EntityContentWriter'
 require 'dcc/FileDeliverer2InTrays'
 require 'dcc/ReadConfigDCC'
@@ -50,6 +51,8 @@ class DCC_ReceiverFromInterface
    include CUC::CommandLauncher
    
    attr_accessor :isBenchmarkMode
+
+   #-------------------------------------------------------------
 
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
@@ -94,6 +97,13 @@ class DCC_ReceiverFromInterface
       @finalDir         = @entityConfig.getIncomingDir(@entity)
       checkDirectory(@finalDir)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
+      
+      # @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
+      
+      # 2016 currently hardcoded number of files handled on each iteration
+      @pollingSize      = 150
+      
+      
       @fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
@@ -779,6 +789,27 @@ private
          
          @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F")
 
+         event  = CTC::EventManager.new
+         
+         if @isDebugMode == true then
+            event.setDebugMode
+         end
+
+         arrParam             = Array.new
+         hParam1              = Hash.new
+         hParam1["filename"]  = File.basename(filename) 
+
+         hParam2              = Hash.new
+         hParam2["directory"] = @finalDir 
+      
+         arrParam << hParam1
+         arrParam << hParam2
+         
+         @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+
+         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam)
+
          # rename the file if AddMnemonic2Name enabled
          ret = renameFile(File.basename(filename))
 
@@ -845,7 +876,9 @@ private
 	   if @isDebugMode == true then
 	      deliverer.setDebugMode
 	   end
-	   deliverer.deliverFile(@finalDir, file)
+	   
+      deliverer.deliverFile(@finalDir, file)
+               
    end
    #-------------------------------------------------------------
 
@@ -909,12 +942,12 @@ private
    #-------------------------------------------------------------
    
    def filterFullPathFileList(list, forTracking)
-      arrTemp  = Array.new
-      arrFiles = Array.new
-      tmpList  = Array.new(list)
+      arrTemp        = Array.new
+      arrFiles       = Array.new
+      tmpList        = Array.new(list)
       @fileListError = Array.new
-
-      nStart   = list.length
+      nStart         = list.length
+      
       # Remove Repeated files found in different directories
       # and extract filename from the full path
 
@@ -931,18 +964,20 @@ private
 
       } # end of measure
 # 
-#       if @isBenchmarkMode == true then
-#          puts
-#          puts "File Filter Step 1 - Remove repeated files (#{arrFiles.length} elements) of #{nStart}:"
-#          puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-#          puts
-#          puts "Retrieved #{nStart} files"
-#          puts
-#       end
+
+      if @isBenchmarkMode == true then
+         puts
+         puts "File Filter Step 1 - Remove repeated files (#{arrFiles.length} elements) of #{nStart}:"
+         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+         puts
+         puts "Retrieved #{nStart} files"
+         puts
+      end
 
 
       # - Remove files which do not match with filters defined in dcc_config.xml
       # - Remove files which file-type are not defined in the ft_incoming_files.xml
+      
       arrDelete = Array.new
       tmpList   = list
       
@@ -976,16 +1011,26 @@ private
                break
             end
 		   }
-#         if @isDebugMode == true then
-#            puts
-#         end
+
          if bFound == false then
             arrDelete << fullpath
          end
+
       }
       if @isDebugMode == true then
          puts
       end
+      
+      if @isBenchmarkMode == true then
+         puts
+         puts "File Filter Step 2 - Remove files not matching configuration filters (#{tmpList.length} elements) of #{nStart}:"
+         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+         puts
+         puts "Retrieved #{nStart} files"
+         puts
+      end
+      
+      
       
       # ------------------------------------------
       #
@@ -1003,6 +1048,7 @@ private
             # [ INFO] deleting .S2A_OPER_REP_METARC_PDMC_20160922T140422_V20160922T085940_20160922T091131.xml
             
             if File.basename(aFile).to_s.slice(0,1) == "." then
+               @logger.info("detected temporal file #{File.basename(aFile)} ?!")
                next
             end
          
@@ -1036,22 +1082,26 @@ private
       perf = measure{
 
       arrDelete = Array.new
+      arrPolled = Array.new
       tmpList   = list
       nStart    = list.length
-
+      numFilesToBeRetrieved = 0
+      
       tmpList.each{|fullpath|
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
                arrDelete << fullpath
-               if @isDebugMode == true then
-                  puts "#{File.basename(filename)} already received from #{@entity}"
+               if @isDebugMode == true or true then
+                  @logger.info("#{File.basename(filename)} already received from #{@entity}")
                end
  
                puts "removing duplicated #{File.basename(filename)} previously received from #{@entity}"
                @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
                deleteFromEntity(fullpath)
-
+            else
+               numFilesToBeRetrieved += 1
+               arrPolled << fullpath
             end
          else
             if hasBeenAlreadyTracked(filename) == true then
@@ -1059,12 +1109,21 @@ private
                if @isDebugMode == true then
                   puts "#{getFilenameFromFullPath(filename)} already tracked from #{@entity}"
                end
+            else
+               numFilesToBeRetrieved += 1
+               arrPolled << fullpath
             end                     
          end
+
+         if @pollingSize != nil and numFilesToBeRetrieved >= @pollingSize.to_i then
+         	break
+         end         
       }
       arrDelete.each{|element| list.delete(element)}
       
       @fileListError << arrDelete
+
+      list.replace(arrPolled)
 
       } # end of measure
 
@@ -1116,6 +1175,9 @@ private
                if @isDebugMode == true then
                   puts "#{getFilenameFromFullPath(fileName)} already received from #{@entity}"
                end
+               #2016 patch
+               @logger.info("removing duplicated #{File.basename(fileName)} previously received from #{@entity}")
+               deleteFromEntity(fileName)
             end
          else
             if hasBeenAlreadyTracked(fileName) == false then
@@ -1135,13 +1197,18 @@ private
    
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
+      puts "checking previous reception of #{filename}"
       arrFiles = ReceivedFile.find_by filename: filename 
       if arrFiles == nil then
+         #@logger.info("not prev received #{filename}")
+         @logger.debug("not prev received #{filename}")
          return false
       end
 
       # arrFiles.each{|file|
          if arrFiles.interface_id == @interface.id then
+            #@logger.info("hasBeenAlreadyReceived: #{filename}")
+            @logger.debug("hasBeenAlreadyReceived: #{filename}")
             return true
          end
       # }
