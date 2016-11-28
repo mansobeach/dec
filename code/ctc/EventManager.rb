@@ -23,7 +23,17 @@ require 'ctc/CheckerFTPConfig'
 
 module CTC
 
-Events = ["ONSENDOK", "ONSENDNEWFILESOK", "ONSENDERROR", "ONRECEIVEOK", "ONRECEIVENEWFILESOK", "ONRECEIVEERROR", "ONTRACKOK" ]
+Events = [
+            "ONSENDOK",
+            "ONSENDNEWFILESOK",
+            "ONSENDERROR",
+            "ONRECEIVEOK",
+            "ONRECEIVENEWFILESOK",
+            "ONRECEIVENEWFILE",
+            "ONRECEIVEERROR",
+            "ONTRACKOK",
+            "NEWFILE2INTRAY" 
+            ]
 
 class EventManager
    
@@ -41,12 +51,13 @@ class EventManager
    end
    #-------------------------------------------------------------
    
-   def trigger(interface, eventName)
+   def trigger(interface, eventName, params = nil)
       eventMgr  = @ftReadConf.getEvents(interface)
       if eventMgr == nil then
          return
       end
       events = eventMgr[:arrEvents]
+      
       events.each{|event|
          if eventName == event["name"] then
             cmd = event["cmd"]
