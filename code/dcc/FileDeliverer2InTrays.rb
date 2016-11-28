@@ -17,6 +17,7 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/CommandLauncher'
 require 'cuc/DirUtils'
 require 'ctc/ReadInterfaceConfig'
+require 'ctc/EventManager'
 require 'cuc/EE_ReadFileName'
 require 'dcc/ReadInTrayConfig'
 require 'dcc/ReadConfigDCC'
@@ -201,6 +202,7 @@ class FileDeliverer2InTrays
    
    # It delivers a given file
    def deliverFile(directory, file)
+      
       bIsEEFile = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
       fileType  = CUC::EE_ReadFileName.new(file).fileType
 				
@@ -311,7 +313,8 @@ private
    # GOCEPMF-SPR-005
    # First at all it copies the file hidden in the In-Tray
    # Once it has been completely copied, it renames it to the operational name
-	def disseminate(file, fromDir, arrToDir, hardlinked = false)
+	
+   def disseminate(file, fromDir, arrToDir, hardlinked = false)
       bReturn = true
       if hardlinked == true and arrToDir.length <2
 		   if @isDebugMode == true then
@@ -355,10 +358,33 @@ private
             if bRet == false then
                if @isDebugMode == true then
                   puts "Could not place final File in Target Directory ! :-("
+                  @logger.error("FileDeliverer2InTrays::disseminate Could not place final File in Target Directory ! :-(")
                end
                bReturn = false
             else
                @logger.info("#{file} has been disseminated into #{targetDir}")
+               
+               arrParam             = Array.new
+               hParam1              = Hash.new
+               hParam1["filename"]  = file 
+
+               hParam2              = Hash.new
+               hParam2["directory"] = targetDir
+      
+               arrParam << hParam1
+               arrParam << hParam2
+               
+               event  = CTC::EventManager.new
+      
+               if @isDebugMode == true then
+                  event.setDebugMode
+               end
+      
+               event.trigger(@entity, "NEWFILE2INTRAY", arrParam)
+   
+               @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
+               #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+
             end
                                    
 			   bFirst = false
@@ -382,6 +408,18 @@ private
                   bReturn = false
                else
                   @logger.info("#{file} has been disseminated into #{targetDir}")
+                  
+                  event  = CTC::EventManager.new
+      
+                  if @isDebugMode == true then
+                     event.setDebugMode
+                  end
+      
+                  event.trigger(@entity, "NEWFILE2INTRAY")
+   
+                  @logger.info("Event NEWFILE2INTRAY #{file} => #{@targetDir}")
+                  #@logger.debug("Event NEWFILE2INTRAY #{file} => #{@targetDir}")            
+
                end
 				else
 			      cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
@@ -410,6 +448,18 @@ private
                   bReturn = false
                else
                   @logger.info("#{file} has been disseminated into #{targetDir}")
+                  
+                  event  = CTC::EventManager.new
+      
+                  if @isDebugMode == true then
+                     event.setDebugMode
+                  end
+      
+                  event.trigger(@entity, "NEWFILE2INTRAY")
+   
+                  @logger.info("Event NEWFILE2INTRAY #{file} => #{@targetDir}")
+                  #@logger.debug("Event NEWFILE2INTRAY #{file} => #{@targetDir}")            
+                  
                end
 				end
 			end
