@@ -417,8 +417,8 @@ private
       
                   event.trigger(@entity, "NEWFILE2INTRAY")
    
-                  @logger.info("Event NEWFILE2INTRAY #{file} => #{@targetDir}")
-                  #@logger.debug("Event NEWFILE2INTRAY #{file} => #{@targetDir}")            
+                  #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
+                  @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
 
                end
 				else
@@ -457,8 +457,8 @@ private
       
                   event.trigger(@entity, "NEWFILE2INTRAY")
    
-                  @logger.info("Event NEWFILE2INTRAY #{file} => #{@targetDir}")
-                  #@logger.debug("Event NEWFILE2INTRAY #{file} => #{@targetDir}")            
+                  #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
+                  @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
                   
                end
 				end
