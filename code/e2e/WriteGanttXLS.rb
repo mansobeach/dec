@@ -257,10 +257,10 @@ private
       # ------------------------------------------
       
       @sheetGauges.write(0, @Column_Start , "Start", format)
-      @sheetGauges.set_column(@Column_Excel_Start , 18)
+      @sheetGauges.set_column(@Column_Excel_Start , 20)
             
       @sheetGauges.write(0, @Column_End , "End", format)
-      @sheetGauges.set_column(@Column_Excel_End , 18)
+      @sheetGauges.set_column(@Column_Excel_End , 20)
       
       # ------------------------------------------
       
@@ -344,7 +344,8 @@ private
       # date time cells
       
       date_format = @workbook.add_format(
-                           :num_format => 'dd/mm/yy hh:mm:ss',
+                     #      :num_format => 'dd/mm/yy hh:mm:ss',
+                           :num_format => 'dd/mm/yy hh:mm:ss.000',
                            :align      => 'left'
                            )
       
@@ -354,13 +355,24 @@ private
       if event[:start].class.to_s == "DateTime" then
          # Handle dates as DateTime
          
-         strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S")
-         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S")
+#         strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S")
+#         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S")
+         
+         strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S.%L")
+         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")
+
+         
       else
          # Handle dates as string
       
-         strStart = event[:start].slice(0, 19)
-         strStop  = event[:stop].slice(0, 19)      
+#          strStart = event[:start].slice(0, 19)
+#          strStop  = event[:stop].slice(0, 19)
+         
+         # miliseconds format
+         strStart = event[:start].slice(0, 23)
+         strStop  = event[:stop].slice(0, 23)      
+
+               
       end
 
       if @isDebugMode == true then
@@ -379,8 +391,20 @@ private
       my_cell    = %Q{#{@Column_Letter_End}#{row+1}}
       other_cell = %Q{#{@Column_Letter_Start}#{row+1}}
       
-      my_formula = %Q{(TIME( MID(#{my_cell},12,2), MID(#{my_cell}, 15, 2), MID(#{my_cell}, 18, 2) ) - TIME( MID(#{other_cell},12,2), MID(#{other_cell}, 15, 2), MID(#{other_cell}, 18, 2) ) )*24*60*60  }
+      # my_formula = %Q{(TIME( MID(#{my_cell},12,2), MID(#{my_cell}, 15, 2), MID(#{my_cell}, 18, 2) ) - TIME( MID(#{other_cell},12,2), MID(#{other_cell}, 15, 2), MID(#{other_cell}, 18, 2) ) )*24*60*60  }
       
+      # formula for to understak miliseconds accuracy of start & stop fields
+      # and report duration in seconds with 2 decimals
+      
+      my_formula = %Q{( (  VALUE( MID(#{my_cell},12,2) )*3600000 + \
+                           VALUE( MID(#{my_cell}, 15, 2) )*60000 + \
+                           VALUE( MID(#{my_cell}, 18, 2) )*1000 + \
+                           VALUE( RIGHT(#{my_cell}, 3) )  ) - \
+                        (  VALUE( MID(#{other_cell},12,2) ) *3600000 + \
+                           VALUE( MID(#{other_cell}, 15, 2) )*60000 + \
+                           VALUE( MID(#{other_cell}, 18, 2) )*1000 + \
+                           VALUE( RIGHT(#{other_cell}, 3) ) ) )/1000 }
+
       numformat   = @workbook.add_format
       # numformat.set_bold
       numformat.set_text_wrap
