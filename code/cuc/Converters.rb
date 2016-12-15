@@ -87,6 +87,8 @@ module Converters
    # - 2015-06-19T21:14:10Z
    # - 2015-06-27T09:07:06Z;DET=123456789ABC       / More rubbish from E2ESPM
    # - 2015-06-27T14:24:34.000000;DET=123456789ABC / More rubbish from E2ESPM
+   # - 2015-04-02T16:36:14.339Z / Another one from E2ESPM
+   # - 2015-04-02T16:36:14.3Z   / Another one from E2ESPM
    def str2strexceldate(str)
 #       puts str
 #       puts str.length
@@ -136,7 +138,19 @@ module Converters
           str.slice(7,1) == "-" and str.slice(10,1) == "T" then
          return str.slice(0, 19)
       end
-     
+
+      # - 2015-04-02T16:36:14.339Z
+      if str.length == 24 and str.slice(19,1) == "." and str.slice(4,1) == "-" and
+          str.slice(7,1) == "-" and str.slice(10,1) == "T" and str.slice(23,1) == "Z" then
+         return str.slice(0, 19)
+      end
+ 
+       # - 2015-04-02T16:36:14.3Z
+      if str.length == 22 and str.slice(19,1) == "." and str.slice(4,1) == "-" and
+          str.slice(7,1) == "-" and str.slice(10,1) == "T" and str.slice(21,1) == "Z" then
+         return str.slice(0, 19)
+      end
+    
       
       puts
       puts "FATAL ERROR in CUC::Converters str2strexceldate(#{str} / length #{str.length}  )"
