@@ -57,6 +57,7 @@
 #     -i    checks incoming file-types configured in ft_incoming_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
 #     -t    checks the In-Trays configuration placed in files2InTrays.xml
+#     -l    checks the log configuration
 #     -h    it shows the help of the tool
 #     -u    it shows the usage of the tool
 #     -v    it shows the version number
@@ -82,6 +83,7 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
+require 'cuc/Log4rLoggerFactory'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileSource'
 require 'ctc/CheckerMailConfig'
@@ -115,12 +117,14 @@ require 'dcc/CheckerServiceConfig'
 @bServices        = false
 @bTrays           = false
 @isNoDB           = false
+@bLog             = false
 
 # MAIN script function
 def main
 
    opts = GetoptLong.new(     
      ["--all", "-a",            GetoptLong::NO_ARGUMENT],
+	  ["--log", "-l",            GetoptLong::NO_ARGUMENT],
      ["--incoming", "-i",       GetoptLong::NO_ARGUMENT],
      ["--tray", "-t",           GetoptLong::NO_ARGUMENT],
      ["--entities", "-e",       GetoptLong::NO_ARGUMENT],
@@ -150,6 +154,7 @@ def main
 	         when "--mail"     then @bMail     = true
             when "--all"      then @bAll      = true
             when "--tray"     then @bTrays    = true
+				when "--log"      then @bLog      = true
             when "--usage"    then usage
          end
       end
@@ -159,7 +164,7 @@ def main
  
    if @bIncoming == false and @bOutgoing == false and @bClients == false and
       @bEntities == false and @bAll == false and @bMail == false and 
-      @bServices == false and @bTrays == false then
+      @bServices == false and @bTrays == false and @bLog == false then
       usage
    end
    
@@ -319,6 +324,18 @@ def main
       end
       puts "================================================"         
    end
+	
+	
+	if @bAll == true or @bLog == true then
+		begin
+	   # initialize logger
+   	loggerFactory = CUC::Log4rLoggerFactory.new("getFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+		rescue Exception => e
+		   puts
+      	puts e.to_s
+			puts
+   	end
+	end
    
 #    # Check that dcc_services.xml is correctly configured
 # 
