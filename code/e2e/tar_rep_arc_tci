@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Script to review inputs from the PDGS
+# Author: Daniel Brosnan Blazquez
+
+# Intray of the E2ESPM
+
+INGESTION_TIME=`date +%Y%m%dT%H%M%S`
+
+TARFILE="S2__REP_ARC_TCI_$INGESTION_TIME.tar"
+
+tar -cvf $TARFILE  /home/e2edc/data/intray/REP_ARC_TCI/S2* --remove-files
+
+mv $TARFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
+
