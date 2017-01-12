@@ -7,7 +7,11 @@
 
 INGESTION_TIME=`date +%Y%m%dT%H%M%S`
 
-XMLFILE="S2__REP_ARC_TCI_$INGESTION_TIME.xml"
+XMLFILE="S2__OPER_REP_ARCTCI_ESA__"$INGESTION_TIME"_V"$INGESTION_TIME"_"$INGESTION_TIME".xml"
+
+# echo $XMLFILE
+
+# XMLFILE="S2__REP_ARC_TCI_$INGESTION_TIME.xml"
 
 FILES=/home/e2edc/data/intray/REP_ARC_TCI/*.EOF
 
@@ -18,8 +22,9 @@ do
    # echo "processing $file"
    tci_name=$(xml_grep --text_only 'archive:Pdi-id' $file)
    tci_size=$(xml_grep --text_only 'Data_Size' $file)
-   # echo $tci_name, $tci_size
-   echo '<tci><name>'"$tci_name"'</name><size>'"$tci_size"'</size></tci>' >> $XMLFILE
+   tci_centre=$(xml_grep --text_only 'Centre' $file)
+   tci_date=$(xml_grep --text_only 'Creation_Date' $file)
+   echo '<tci><name>'"$tci_name"'</name><size>'"$tci_size"'</size><centre>'"$tci_centre"'</centre><date>'"$tci_date"'</date></tci>' >> $XMLFILE
    # mv $file "$file.bckp"
    rm $file
 done
