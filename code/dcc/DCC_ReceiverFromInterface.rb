@@ -775,14 +775,21 @@ private
          @logger.error("Could not download #{filename} from #{@entity} I/F")
          return false
       else
-		   # copy it to the final destination			
+		   # copy it to the final destination
+         
+         size = File.size("#{@localDir}/#{File.basename(filename)}")
+         @logger.debug("#{File.basename(filename)} with size #{size} bytes")
+
 			copyFileToInBox(File.basename(filename))
 			
          # delete file in the temp directory
          #deleteFileFromTemp(File.basename(filename))
 			
+         # @logger.info("RECEIVED #{File.size(filename)}")
+         
+         
 			# update DCC Inventory
-			setReceivedFromEntity(File.basename(filename))
+			setReceivedFromEntity(File.basename(filename), size)
 			
 			# if deleteFlag is enable delete it from remote directory
 			deleteFromEntity(filename)
@@ -1232,14 +1239,18 @@ private
    end
    #-------------------------------------------------------------
 
-   def setReceivedFromEntity(filename)
+   def setReceivedFromEntity(filename, size = nil)
       if @isNoDB == true then
          return
       end
+            
       receivedFile                = ReceivedFile.new
+      
       receivedFile.filename       = filename
+      receivedFile.size           = size
       receivedFile.interface      = @interface
       receivedFile.reception_date = Time.now
+            
       begin
          receivedFile.save!
       rescue Exception => e
@@ -1275,6 +1286,8 @@ private
          end
          @logger.error("Could not copy #{filename} into #{@entity} local Inbox")
          @logger.warn("#{filename} is still placed in #{@localDir}")
+         size = File.size("#{@localDir}/#{filename}")
+         @logger.info("#{size}")
 			puts "Could not copy #{filename} into #{@finalDir}"
 			puts
 			exit(99)

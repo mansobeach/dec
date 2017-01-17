@@ -48,8 +48,9 @@ class CreateReceivedFiles < ActiveRecord::Migration
    def self.up
       create_table(:received_files) do |t|
          t.column :filename,            :string,  :limit => 255
+         t.column :size,                :integer
          t.column :interface_id,        :integer
-         t.column :reception_date,       :datetime
+         t.column :reception_date,      :datetime
          t.column :delivered_using,     :string,  :limit => 64
       end
    end
@@ -59,6 +60,14 @@ class CreateReceivedFiles < ActiveRecord::Migration
    end
 end
 
+#=====================================================================
+
+class AddSizeToReceivedFiles < ActiveRecord::Migration
+  def change
+     # size of the file in bytes
+     add_column :received_files, :size, :integer, {:default=>0, :null=>true}
+  end
+end
 
 #=====================================================================
 
@@ -76,3 +85,5 @@ class CreateInterfaces < ActiveRecord::Migration
 end
 
 #=====================================================================
+
+

@@ -43,12 +43,14 @@ def main
    dbUser      = ENV['DCC_DATABASE_USER']
    dbPass      = ENV['DCC_DATABASE_PASSWORD']
 
-   bUp   = false
-   bDown = false
+   bUp            = false
+   bDown          = false
+   @bUpdate       = true
    
    opts = GetoptLong.new(
      ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
      ["--create-tables", "-c",    GetoptLong::NO_ARGUMENT],
+     ["--update-tables", "-u",    GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",            GetoptLong::NO_ARGUMENT],
      ["--help", "-h",             GetoptLong::NO_ARGUMENT]
      )
@@ -57,8 +59,9 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--Debug"             then @isDebugMode = true      
-            when "--create-tables"     then @bUp   = true
-            when "--drop-tables"       then @bDown = true
+            when "--create-tables"     then @bUp         = true
+            when "--drop-tables"       then @bDown       = true
+            when "--update-tables"     then @bUpdate     = true
 			   when "--help"              then usage
          end
       end
@@ -78,6 +81,12 @@ def main
       puts dbUser
       puts dbPass
       puts "----------------"
+   end
+
+   if @bUpdate then
+      migration = AddSizeToReceivedFiles.new
+      migration.change
+      exit(0)
    end
 
    if @bDown then
