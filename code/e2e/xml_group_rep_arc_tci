@@ -15,20 +15,36 @@ XMLFILE="S2__OPER_REP_ARCTCI_ESA__"$INGESTION_TIME"_V"$INGESTION_TIME"_"$INGESTI
 
 FILES=/home/e2edc/data/intray/REP_ARC_TCI/*.EOF
 
-echo '<list_of_tci>' >> $XMLFILE
+echo '<list_of_tci>' > $XMLFILE
+
+varEmpty=true
 
 for file in $FILES
 do
+   [ -f "$file" ] || continue
+   
    # echo "processing $file"
+
+   varEmpty=false   
+
    tci_name=$(xml_grep --text_only 'archive:Pdi-id' $file)
    tci_size=$(xml_grep --text_only 'Data_Size' $file)
    tci_centre=$(xml_grep --text_only 'Centre' $file)
    tci_date=$(xml_grep --text_only 'Creation_Date' $file)
    echo '<tci><name>'"$tci_name"'</name><size>'"$tci_size"'</size><centre>'"$tci_centre"'</centre><date>'"$tci_date"'</date></tci>' >> $XMLFILE
    # mv $file "$file.bckp"
+
    rm $file
+
 done
 
 echo '</list_of_tci>' >> $XMLFILE
 
-mv $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
+
+if [ "$varEmpty" = false ] ; then
+   mv $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
+else
+   rm $XMLFILE
+fi
+
+# mv $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
