@@ -41,11 +41,11 @@ require 'rdoc'
 require 'ctc/ReadInterfaceConfig'
 
 # Global variables
-@@dateLastModification = "$Date: 2007/02/06 13:38:56 $"   # to keep control of the last modification
+@dateLastModification = "$Date: 2007/02/06 13:38:56 $"   # to keep control of the last modification
                                      # of this script
-@@verboseMode     = 0                # execution in verbose mode
-@@mnemonic        = ""
-@@bShowMnemonics  = false
+@verboseMode      = 0                # execution in verbose mode
+@mnemonic         = ""
+@bShowMnemonics   = false
 
 # MAIN script function
 def main   
@@ -65,23 +65,25 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Verbose"       then @@verboseMode = 1
+            when "--Verbose"       then @verboseMode = 1
+   
             when "--version" then
-               print("\nESA - Deimos-Space S.L.  DEC ", File.basename($0), " $Revision: 1.5 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - Deimos-Space S.L.  DEC ", File.basename($0), " $Revision: 1.5 $  [", @dateLastModification, "]\n\n\n")
                exit (0)
+   
             when "--add" then
                add = 1
-               @@mnemonic = arg         
+               @mnemonic = arg         
+   
             when "--process" then
                process = 1
                @process = arg
-            when "--help"          then   fullpathFile = `which #{File.basename($0)}` 
-                                          system("head -28 #{fullpathFile}")
-                                          exit
-            when "--usage"         then   fullpathFile = `which #{File.basename($0)}` 
-                                          system("head -28 #{fullpathFile}")
-                                          exit
-            when "--Show"          then @@bShowMnemonics = true
+   
+            when "--help"          then   usage
+                                
+            when "--usage"         then   usage
+            
+            when "--Show"          then @bShowMnemonics = true
          end
       end
    rescue Exception
@@ -95,12 +97,21 @@ def main
       exit(99)
    end
   
-
-   arrInterfaces = Interface.find(:all)
+   begin
+      arrInterfaces = Interface.all
+   rescue ActiveRecord::RecordNotFound => e
+      arrInterfaces = Array.new
+      puts e.to_s
+   end
  
-   if @@bShowMnemonics == true then
+   if @bShowMnemonics == true then
       puts
       puts "=== DEC Inventory Registered I/Fs ==="
+      
+      if arrInterfaces.empty? == true then
+         puts "no interfaces declared in the database"
+      end
+      
       arrInterfaces.each{|interface|
          puts interface.name
       }
@@ -119,17 +130,17 @@ def main
    
    # add command line mnemonic to the database
    if add==1 and @mnemonic != "" then
-      print "\nAdding ", @@mnemonic, " to the DEC Inventory/Interfaces ...\n"
+      print "\nAdding ", @mnemonic, " to the DEC Inventory/Interfaces ...\n"
       
       anInterface = Interface.new
-      anInterface.name = @@mnemonic
+      anInterface.name = @mnemonic
       res = anInterface.save
 
       if res == true then
-         print "\n", @@mnemonic, " added succesfully !\n\n"
+         print "\n", @mnemonic, " added succesfully !\n\n"
          exit(0) 
       else
-         print "\n", @@mnemonic, " was already present in the DEC Inventory/Interfaces !\n\n"
+         print "\n", @mnemonic, " was already present in the DEC Inventory/Interfaces !\n\n"
          exit(99)
       end
    end
@@ -161,8 +172,26 @@ def main
    
 end
 
+#-------------------------------------------------------------
+
 # Print command line help
 def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -27 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+
+
+# Print command line help
+def usage_old
    print "\nUsage:\n\t", File.basename($0),    "  --add <mnemonic> | --process EXTERNAL \n\n"
    print "\t--add <mnemonic>     (mnemonic is case sensitive) add the specified Entity\n"  
    print "\t--help               shows this help\n"
