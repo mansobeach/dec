@@ -57,7 +57,7 @@ require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Log4rLoggerFactory'
 require 'ctc/ReadInterfaceConfig'
-require 'ctc/DeliveryListWriter'
+require 'ctc/ListWriterDelivery'
 require 'ctc/EventManager'
 require 'dcc/DCC_ReceiverFromInterface'
 require 'dcc/FileDeliverer2InTrays'
@@ -185,7 +185,7 @@ def main
       end
 
 
-      interface = Interface.find_by_name(@entity)
+      interface = Interface.find_by(name: @entity)
       
       if interface == nil then
          puts "\n#{@entity} is not a registered I/F ! :-("
@@ -406,7 +406,7 @@ def body
 # 	      if @isDebugMode == true then
 # 	         deliverer.setDebugMode
 # 	      end
-	      deliverer.deliver(@entity)
+	      deliverer.deliver(@entity)         
       end	
    end
    #----------------------------------------------
