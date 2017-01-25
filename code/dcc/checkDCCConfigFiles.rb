@@ -64,7 +64,7 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
+require 'rdoc'
 
 # Global variables
 @@dateLastModification = "$Date: 2007/11/30 10:11:39 $" 
@@ -204,6 +204,23 @@ def validate (fileName)
 end
 #-------------------------------------------------------------
 
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -70 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
 #-------------------------------------------------------------
 
 
