@@ -45,7 +45,7 @@ def main
 
    bUp            = false
    bDown          = false
-   @bUpdate       = true
+   @bUpdate       = false
    
    opts = GetoptLong.new(
      ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
