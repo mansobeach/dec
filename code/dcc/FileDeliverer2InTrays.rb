@@ -124,7 +124,7 @@ class FileDeliverer2InTrays
             
             if dimsName != false then
                dimsName.each{|dim|
-                  @logger.info("#{file} is disseminated to #{dim}")
+                  @logger.debug("#{file} is disseminated to #{dim}")
                }
             else
                # @logger.warn("#{file} has no In-Tray config")
@@ -229,7 +229,7 @@ class FileDeliverer2InTrays
                
       if dimsName != false then
          dimsName.each{|dim|
-            @logger.info("#{file} is disseminated to #{dim}")
+            @logger.debug("#{file} is disseminated to #{dim}")
          }
       else
          # @logger.warn("#{file} has no In-Tray config")
