@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# CVS: $Id: ReadConfigDCC.rb,v 1.8 2007/12/05 15:17:03 decdev Exp $
+# CVS: $Id: ReadConfigDCC.rb,v 1.12 2014/05/16 00:19:53 algs Exp $
 #
 # Module Data Distributor Component
 # This class processes dcc_config.xml configuration file.
@@ -91,12 +91,44 @@ class ReadConfigDCC
       return @satPrefix
    end
    #-------------------------------------------------------------
+
+   def getDeleteDuplicated
+      if @deleteDuplicated == 'true' then
+         return true
+      else
+         return false
+      end
+   end
+   #-------------------------------------------------------------
+
+   def getDownloadDirs
+      if @downloadDirs == 'true' then
+         return true
+      else
+         return false
+      end
+   end
+   #-------------------------------------------------------------   
    
    def getReports
       return @arrReports
    end
    #-------------------------------------------------------------
-
+   
+   def getReportConfig(reportName)
+      @arrReports.each{|aReport|
+            if aReport[:name] == reportName then
+               return aReport
+            end
+      }
+      return nil
+   end
+   #-------------------------------------------------------------
+   
+   def getUnknownDestDir
+      return @UnknownDestDir
+   end
+   #-------------------------------------------------------------
 private
 
    @@isModuleOK        = false
@@ -138,7 +170,7 @@ private
 	# This method defines all the structs used
 	def defineStructs
 	   Struct.new("Project", :name, :id)
-      Struct.new("Report", :name, :enabled, :desc, :fileType)
+      Struct.new("Report", :name, :enabled, :desc, :fileClass, :fileType)
 	end
 	#-------------------------------------------------------------   
    
@@ -172,8 +204,12 @@ private
       @satPrefix          = ""
       @mission            = ""
       @arrReports         = Array.new
+      @UnknownDestDir     = ""
+      @DownloadDirs       = ""
+      @DeleteDuplicated   = ""
       enabled             = ""
       desc                = ""
+      fileClass           = "" 
       fileType            = ""
       
       XPath.each(xmlFile, "Configuration/Project/Name"){      
@@ -201,7 +237,21 @@ private
          }           
       }
       @arrFilters = arrFilters.uniq
-      
+
+      # Process the Configuration Options
+      XPath.each(xmlFile, "Configuration/Options"){      
+         |option|  
+
+         XPath.each(option, "DownloadDirs"){
+            |option_1|
+            @downloadDirs = option_1.text.downcase
+         }
+         XPath.each(option, "DeleteDuplicated"){
+            |option_1|
+            @deleteDuplicated = option_1.text.downcase
+         }
+      }     
+ 
       XPath.each(xmlFile, "Configuration/SatPrefix"){      
          |prefix|
          @satPrefix = prefix.text
@@ -213,25 +263,36 @@ private
          XPath.each(reports, "Report"){
             |report|
             
-            XPath.each(report, "Enabled"){      
-               |isEnabled|
-               enabled = isEnabled.text.to_s.downcase
-            }
+#             XPath.each(report, "Enabled"){      
+#                |isEnabled|
+#                enabled = isEnabled.text.to_s.downcase
+#             }
+# 
+#             XPath.each(report, "Desc"){      
+#                |aDesc|
+#                desc = aDesc.text
+#             }
+# 
 
-            XPath.each(report, "Desc"){      
-               |aDesc|
-               desc = aDesc.text
-            }
+            enabled     = report.elements[1].text
+            desc        = report.elements[2].text
 
+            fileClass = ""
+            XPath.each(report, "FileClass"){      
+                |aFileClass|
+                fileClass = aFileClass.text.to_s
+             }
+ 
             XPath.each(report, "FileType"){      
-               |aFileType|
-               fileType = aFileType.text.to_s.upcase
-            }
+                |aFileType|
+                fileType = aFileType.text.to_s.upcase
+             }
       
-            @arrReports << fillReportStruct(report.attributes["Name"], enabled, desc, fileType)
+            @arrReports << fillReportStruct(report.attributes["Name"], enabled, desc, fileClass, fileType)
          }           
       }
       
+      @UnknownDestDir = XPath.first(xmlFile, "//Report/UnkDestDir/text()").to_s
    end
    #-------------------------------------------------------------
    
@@ -241,7 +302,7 @@ private
    # - fileType (IN):
    # There is only one point in the class where all Dynamic structs 
    # are filled so that it is easier to update/modify the I/Fs   
-   def fillReportStruct(name, enabled, desc, fileType)
+   def fillReportStruct(name, enabled, desc, fileClass, fileType)
       name = name.to_s.upcase
 
       if enabled != "true" and enabled != "false" then
@@ -258,6 +319,15 @@ private
          enabled = true
       else
          enabled = false
+      end
+
+      if fileType == nil then
+         puts
+         puts "Error in Report #{name} - FileType cant be blank"
+         puts
+         puts "Error in ddc_config.xml file ! :-("
+         puts
+         exit(99) 
       end
 
       if fileType.length != 10 then
@@ -288,7 +358,7 @@ private
          exit(99)                  
       end
       
-      return Struct::Report.new(name, enabled, desc, fileType)
+      return Struct::Report.new(name, enabled, desc, fileClass, fileType)
    end
    #-------------------------------------------------------------
 
