@@ -87,6 +87,7 @@
 # OLDEST : returns the result file having the oldest (smallest) archive date
 # NEWEST : returns the result file having the most recent (greatest) archive date
 #
+#
 # -H flag:
 #
 # Optional flag. This is the Hardlink flag. It is used to perform a Hardlink from the Archive
@@ -118,6 +119,7 @@
 #     --end   <YYYYMMDDThhmmss>
 #     --Location <directory>     Directory in which retrieved file(s) will be copied
 #     --Hardlink                 It performs a Hardlink rather than a copy from Archive
+#     --All                      It retrieves all entries in the inventory
 #     --inv <full path filename> It generates an export of the inventory in excel format
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --rule <filering-rule>     Enable result filtering
@@ -166,6 +168,7 @@ def main
    startVal                   = ""
    endVal                     = ""
    @bHardLink                 = false
+   @bUnpack                   = false
    sInv                       = ""
 
    bIncStart                  = false
@@ -194,6 +197,7 @@ def main
      ["--delete", "-d",                GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",                 GetoptLong::NO_ARGUMENT],
      ["--Hardlink", "-H",              GetoptLong::NO_ARGUMENT],
+     ["--Unpack", "-U",                GetoptLong::NO_ARGUMENT],
      ["--Types", "-T",                 GetoptLong::NO_ARGUMENT],
      ["--All", "-A",                   GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",                 GetoptLong::NO_ARGUMENT],
@@ -225,6 +229,7 @@ def main
             when "--Hardlink"          then @bHardLink          = true
             when "--Types"             then bShowFileTypes      = true
             when "--All"               then bGetAllFiles        = true
+            when "--Unpack"            then @bUnpack            = true
          end
       end
    rescue Exception
@@ -365,7 +370,7 @@ def main
    end
 
    if @filename != "" then
-      ret = fileRetriever.retrieve_by_name(@full_path_target, @filename, @bDelete, @bHardLink)
+      ret = fileRetriever.retrieve_by_name(@full_path_target, @filename, @bDelete, @bHardLink, @bUnpack)
    end
 
    if bGetAllFiles == true then
@@ -400,12 +405,19 @@ end
 
 #-------------------------------------------------------------
 
+# Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -130 #{fullpathFile}")
-   exit
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -138 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
-
 #-------------------------------------------------------------
 
 

@@ -236,21 +236,6 @@ private
          bIsDir = false
       end
       
-      if @isDebugMode == true then
-         puts "===================================="
-         if @bIsAlreadyArchived == false then
-            puts "         NEW FILE ARCHIVING         "
-         else
-            puts "         UPDATE ARCHIVED FILE       "
-         end
-         puts "...................................."
-         puts "Source File    -> #{full_path_filename}"
-         puts "File-Type      -> #{type}"
-         puts "Validity Start -> #{start}"
-         puts "Validity Stop  -> #{stop}"
-         puts "Archiving date -> #{archival_date}"
-         puts "==================================="
-      end
 
       #-------------------------------------------
       # Define destination folder
@@ -263,20 +248,44 @@ private
          destDir << archival_date.strftime("/%Y%m")
       end
 
-      if bUnPack then         
-         destDir << "/" << File.basename(full_path_filename, ".*")
-      end
+#       if bUnPack then         
+#          destDir << "/" << File.basename(full_path_filename, ".*")
+#       end
 
       #-------------------------------------------
+
+      if @isDebugMode == true then
+         puts "===================================="
+         if @bIsAlreadyArchived == false then
+            puts "         NEW FILE ARCHIVING         "
+         else
+            puts "         UPDATE ARCHIVED FILE       "
+         end
+         puts "...................................."
+         puts "Source File    -> #{full_path_filename}"
+         puts "Destination    -> #{destDir}"
+         puts "File-Type      -> #{type}"
+         puts "Validity Start -> #{start}"
+         puts "Validity Stop  -> #{stop}"
+         puts "Archiving date -> #{archival_date}"
+         puts "==================================="
+      end
+
+
+
+
       # Copy / Move the source file to the archive
 
       checkDirectory(destDir)
 
       if @bHLink then
 
-         checkDirectory("#{destDir}/#{File.basename(full_path_filename, ".*")}")
+         
          
          if File.directory?(full_path_filename) == true then
+         
+            checkDirectory("#{destDir}/#{File.basename(full_path_filename, ".*")}")
+         
             prevDir = Dir.pwd
             Dir.chdir(full_path_filename)
             arrFiles = Dir["*"]
@@ -405,11 +414,15 @@ private
 
       begin
          anArchivedFile = ArchivedFile.new
+         
          if bUnPack then
             anArchivedFile.filename       = File.basename(full_path_filename, ".*")
          else
             anArchivedFile.filename       = File.basename(full_path_filename)
          end
+
+#          # Patch 2016 - filenames are kept without extension
+#          anArchivedFile.filename       = File.basename(full_path_filename, ".*")
 
          anArchivedFile.filetype       = type
          anArchivedFile.archive_date   = archival_date

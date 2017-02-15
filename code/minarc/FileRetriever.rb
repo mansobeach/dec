@@ -15,6 +15,7 @@
 #########################################################################
 
 require "cuc/DirUtils"
+require "cuc/FT_PackageUtils"
 require "cuc/EE_ReadFileName"
 require "minarc/MINARC_DatabaseModel"
 require "minarc/ReportEditor"
@@ -128,7 +129,7 @@ class FileRetriever
    end
    #-------------------------------------------------------------
 
-   def retrieve_by_name(destination, filename, bDelete = false, bHardlink = false)
+   def retrieve_by_name(destination, filename, bDelete = false, bHardlink = false, bUnpack = false)
 
       @arrInv  = Array.new
 
@@ -155,6 +156,10 @@ class FileRetriever
          if retVal then
             aFile.last_access_date = Time.now
             aFile.save
+         end
+      
+         if bUnpack == true then    
+            unPackFile(destination, aFile.filename)
          end
       
          return retVal
@@ -210,6 +215,30 @@ private
    end
    #-------------------------------------------------------------
 
+   def unPackFile(destination, filename)
+      if @isDebugMode == true then
+         puts "FileRetriever::unPackFile"
+         puts destination
+         puts filename
+      end
+
+      begin
+         unpacker = FT_PackageUtils.new(File.basename(filename), "#{destination}", true)
+            
+         if @isDebugMode == true then
+            unpacker.setDebugMode
+         end
+         unpacker.unpack
+      rescue
+         puts
+         puts "Could not unpack the file #{filename} ! :-("
+         puts
+         exit(99)
+      end
+   end
+
+   #-------------------------------------------------------------
+
    def extractFromArchive(destination, fileType, fileName, archDate, bDelete, bHardlink, path)
 
       arrEntries = Array.new
@@ -243,12 +272,14 @@ private
       arrEntries.each {|entry|
 
          if bHardlink then
-            cmd = "\\ln -f #{srcDir}/#{entry} #{destDir}/#{entry}"
+            cmd = "\\ln -f #{path}/#{entry} #{destDir}/#{entry}"
          else
-            cmd = "\\cp -f #{srcDir}/#{entry} #{destDir}/#{entry}"
+            cmd = "\\cp -f #{path}/#{entry} #{destDir}/#{entry}"
          end
 
          if @isDebugMode then
+#             puts srcDir
+#             puts path
             puts cmd
          end
          
