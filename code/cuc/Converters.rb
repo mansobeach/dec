@@ -45,12 +45,20 @@ module Converters
          return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S")
       end
 
-      if str.length == 19 and str.include?("T") then
-         return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S")
+      begin
+         if str.length == 19 and str.include?("T") then
+            return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S")
+         end
+      rescue Exception => e
+         puts e.to_s
+         puts
+         puts str
+         puts
+         exit(99)
       end
 
       begin
-         if str.length == 19 and str.include?("T") then
+         if str.length == 15 and str.include?("T") then
             return DateTime.strptime(str,"%Y%m%dT%H%M%S")
          end
       rescue Exception => e
