@@ -54,8 +54,11 @@ class FT_PackageUtils
    end
    #-------------------------------------------------------------
    
-   # Unpack file -> can generate from 1 to n files
-   def unpack   
+   # Unpack file -> it can generate from 1 to n files
+   def unpack
+   
+      puts "PEDO"
+   
       ext = getFileExtension(@srcFile)
       if @isDebugMode == true then
          puts "Unpacking filetype #{ext}"
@@ -88,6 +91,7 @@ class FT_PackageUtils
          when "TGZ"        then bRet = true
          when "ZIP"        then bRet = true
          when "GZIP"       then bRet = true
+         when "7Z"         then bRet = true
          when "NONE"       then bRet = true
          when "UNPACK"     then bRet = true
          when "UNPACK_HDR" then bRet = true
@@ -255,6 +259,16 @@ private
        puts "Fatal Error: tar not present in PATH !!   :-(\n\n\n"
        exit(-1)
      end
+
+     #check 7za tool
+     isToolPresent = `which 7za`
+   
+     if isToolPresent[0,1] != '/' then
+       puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
+       puts "Fatal Error: 7za not present in PATH !!   :-(\n\n\n"
+       exit(-1)
+     end
+
      
      if bDefined == false then
         puts "\nError in FT_Packageutils::checkModuleIntegrity :-(\n\n"
@@ -273,6 +287,7 @@ private
          when "TGZ"    then bRet = performUnTGZ
          when "ZIP"    then bRet = performUnZip
          when "GZIP"   then bRet = performUnGzip
+         when "7Z"     then bRet = performUncompress7z
          else
             puts "Unpack method #{compressMethod} is not supported"
             bRet = false  
@@ -369,6 +384,21 @@ private
    def performNone
       filname = File.basename(@srcFile)
       return filname
+   end
+   #-------------------------------------------------------------
+   
+   def performUncompress7z
+      prevDir = Dir.pwd
+      Dir.chdir(@srcPath)
+      cmd     = %Q{7za x #{@srcFile}}
+      if @isDebugMode == true then
+         puts cmd
+      end
+      `#{cmd}` 
+      if @bDeleteSrc == true then
+         File.delete(@srcFile)
+      end      
+      Dir.chdir(prevDir)   
    end
    #-------------------------------------------------------------
    
