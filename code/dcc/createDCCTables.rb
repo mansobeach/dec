@@ -3,7 +3,7 @@
 # === Written by Casale-Beach
 
 require 'dbm/DatabaseModel'
-require 'ddc/DDC_Migrations'
+require 'dcc/DCC_Migrations'
 
 puts "START"
 
@@ -11,8 +11,13 @@ if Interface.table_exists?() == false then
    CreateInterfaces.up
 end
 
-if SentFile.table_exists?() == false then
-   CreateSentFiles.up
+if ReceivedFile.table_exists?() == false then
+   CreateReceivedFiles.up
 end
+
+if TrackedFile.table_exists?() == false then
+   CreateTrackedFiles.up
+end
+
 
 puts "END"

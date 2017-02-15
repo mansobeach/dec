@@ -67,7 +67,7 @@ require 'getoptlong'
 require 'rdoc'
 
 # Global variables
-@@dateLastModification = "$Date: 2007/11/30 10:11:39 $" 
+@dateLastModification = "$Date: 2007/11/30 10:11:39 $" 
                                     # to keep control of the last modification
                                     # of this script
 @bIncoming        = false
@@ -96,7 +96,7 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--version" then
-               print("\nESA - DEIMOS-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.6 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - DEIMOS-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.6 $  [", @dateLastModification, "]\n\n\n")
                exit(0)
             when "--help"     then RDoc::usage
             when "--incoming" then @bIncoming = true
@@ -113,7 +113,7 @@ def main
    end
  
    if @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
-      RDoc::usage
+      usage
    end
 
    # Check DCC's general configuration files dcc_config.xml
@@ -180,7 +180,10 @@ end
 # Check the given XML file using the corresponding XSD schema file
 def validate (fileName)
 
-   cmd = "#{ENV['DECDIR']}/cots/xmlStarlet/xml val -e --xsd #{ENV['DECDIR']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
+   # cmd = "#{ENV['DECDIR']}/cots/xmlStarlet/xml val -e --xsd #{ENV['DECDIR']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
+
+   cmd = "xmlstarlet val -e --xsd #{ENV['DEC_BASE']}/schemas/#{fileName}.xsd #{ENV['DCC_CONFIG']}/#{fileName}.xml"
+
 
    output = `#{cmd} 2>&1`
 
@@ -195,7 +198,7 @@ def validate (fileName)
      print "XML Validity test : UNEXPECTED ERROR :-(\n"
      print "*** Environment was : ***\n"
      print "DCC Config path : #{ENV['DCC_CONFIG']}\n"
-     print "XMLStarlet path : #{ENV['DECDIR']}/cots/xmlStarlet/xml\n"
+     # print "XMLStarlet path : #{ENV['DECDIR']}/cots/xmlStarlet/xml\n"
      print "***Command was : ***\n"
      print "#{cmd}\n"
      print "***Output is : ***\n"
@@ -212,7 +215,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -70 #{fullpathFile}"}`
+   value = `#{"head -57 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
