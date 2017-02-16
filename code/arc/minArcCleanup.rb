@@ -54,8 +54,8 @@ require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/CommandLauncher'
 
-require 'minarc/ReadMinarcConfig'
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/ReadMinarcConfig'
+require 'arc/MINARC_DatabaseModel'
 
 # Global variables
 @dateLastModification = "$Date: 2008/09/24 10:18:26 $"   
@@ -160,7 +160,7 @@ def main
 
    elsif @action == "start"
       # load Configuration
-      confReader = MINARC::ReadMinarcConfig.instance
+      confReader = ARC::ReadMinarcConfig.instance
       arrFreqs = confReader.getFrequencies
 
       listStr = ""
@@ -212,7 +212,7 @@ def main
       end
    else
       # load Configuration
-      confReader = MINARC::ReadMinarcConfig.instance
+      confReader = ARC::ReadMinarcConfig.instance
       arrFreqs = confReader.getFrequencies
       
       arrFreqs.each{|freq|
@@ -243,7 +243,7 @@ def clean
    @logger.debug("Polling minarc cleanup operation")
 
    # load Configuration
-   confReader = MINARC::ReadMinarcConfig.instance
+   confReader = ARC::ReadMinarcConfig.instance
    rules = confReader.getAllRules
    
    #-------------------###

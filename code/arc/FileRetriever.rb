@@ -17,11 +17,11 @@
 require "cuc/DirUtils"
 require "cuc/FT_PackageUtils"
 require "cuc/EE_ReadFileName"
-require "minarc/MINARC_DatabaseModel"
-require "minarc/ReportEditor"
-require "minarc/FileDeleter"
+require "arc/MINARC_DatabaseModel"
+require "arc/ReportEditor"
+require "arc/FileDeleter"
 
-module MINARC
+module ARC
 
 class FileRetriever
 
@@ -89,7 +89,7 @@ class FileRetriever
       end
 
       if @bReport then
-         editor = MINARC::ReportEditor.new(arrFiles)
+         editor = ARC::ReportEditor.new(arrFiles)
          editor.generateReport(@reportFullName)
       end
 
@@ -109,7 +109,7 @@ class FileRetriever
                      aFile.save
                   rescue Exception => e
                      # Could not update last access time
-                     puts "MINARC::FileRetriever - Could not update #{aFile.filename} last_access"
+                     puts "ARC::FileRetriever - Could not update #{aFile.filename} last_access"
                   end
                end
             end
@@ -142,7 +142,7 @@ class FileRetriever
       @arrInv << aFile
 
       if @bReport then
-         editor = MINARC::ReportEditor.new(Array[aFile])
+         editor = ARC::ReportEditor.new(Array[aFile])
          editor.generateReport(@reportFullName)
       end
 

@@ -87,6 +87,8 @@ def main
    
    puts parser.date_time_original
    
+   # puts parser.title
+   
    exit(0)
 
 end 

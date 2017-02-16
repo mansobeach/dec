@@ -15,7 +15,7 @@
 
 require 'rubygems'
 require 'active_record'
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/MINARC_DatabaseModel'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']

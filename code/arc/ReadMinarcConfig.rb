@@ -23,7 +23,7 @@ require 'rexml/document'
 require 'cuc/DirUtils'
 
 
-module MINARC
+module ARC
 
 class ReadMinarcConfig
 

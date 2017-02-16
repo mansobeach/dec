@@ -22,7 +22,7 @@ require 'rubygems'
 require 'mini_exiftool'
 require 'getoptlong'
 require 'rdoc'
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/MINARC_DatabaseModel'
 
 # MAIN script function
 def main
@@ -39,6 +39,7 @@ def main
    @isDebugMode      = false 
    @directory        = ""
    @bIsSilent        = false
+   @isMoveMode       = false
    
    opts = GetoptLong.new(
      ["--directory", "-d",      GetoptLong::REQUIRED_ARGUMENT],
@@ -46,6 +47,7 @@ def main
      ["--prefix", "-p",         GetoptLong::REQUIRED_ARGUMENT],
      ["--filename", "-f",       GetoptLong::REQUIRED_ARGUMENT],
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
+     ["--Move", "-M",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--silent", "-s",         GetoptLong::NO_ARGUMENT],
      ["--list", "-l",           GetoptLong::NO_ARGUMENT],
@@ -55,7 +57,8 @@ def main
    begin 
       opts.each do |opt, arg|
          case opt     
-            when "--Debug"   then @isDebugMode = true
+            when "--Debug"   then @isDebugMode  = true
+            when "--Move"    then @isMoveMode   = true
             when "--version" then
                print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
@@ -80,15 +83,12 @@ def main
       usage
    end
    
-   
    puts @directory
       
    if File.exist?(@directory) == false then
       puts "#{@directory} not found !"
       exit(99)
    end
-
-
 
    if File.directory?(@directory) == false then
       puts "#{@directory} is not a directory !"
@@ -102,6 +102,57 @@ def main
 
    @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
   
+   processDirectory
+
+   Dir.chdir(prevDir)
+   
+   exit(0)
+
+end
+
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+
+def computeRootPath
+  
+   rootpath    = @directory.split("/").last  #.gsub!(" ", "_")
+   prevpath    = rootpath
+  
+   rootpath    = rootpath.dup.gsub("---R", "REVISADO").downcase
+   prevpath    = rootpath
+   
+   puts rootpath
+   puts rootpath.dup
+   
+   rootpath    = rootpath.dup.gsub!(/\d+/, "")
+   
+   if rootpath == nil then
+      rootpath = prevpath
+   else
+      prevpath    = rootpath
+   end
+   
+   rootpath    = rootpath.dup.gsub!(/[()-]/, "")
+ 
+   if rootpath == nil then
+      rootpath = prevpath
+   else
+      prevpath    = rootpath
+   end
+
+   arr         = rootpath.split(" ")
+   str         = ""
+   arr.each{|x| 
+      str = "#{str}_#{x}"
+   }
+   rootpath    = str.slice(1, str.length)
+   return rootpath
+end
+
+#---------------------------------------------------------------------
+
+def processDirectory
    arr = Dir['*']
 
    arr.each{|element|
@@ -109,27 +160,64 @@ def main
       puts "========================================"
       puts element
    
+      if element == "Thumbs.db" then
+         puts "skipping file #{element}"
+         next
+      end
+   
       if File.directory?(element) == true then
          puts "skipping directory #{element}"
          next
       end
 
-#       if ext != "m2ts" then
-#          next
-#       end
-
       basename    = File.basename(element, ".*")
       extension   = File.extname(element).to_s.downcase
       ext         = File.extname(element).to_s.downcase.gsub!('.', '')
-      rootpath    = @directory.split("/").last  #.gsub!(" ", "_")
+      rootpath    = computeRootPath
+      newname     = nil
+      
+
+      # ----------------------------------------------------
+      # Handle m2ts "revised" files with name such as:
+      # 20130730174343 (1).m2ts
+      #
+      # It is verified that it is already archived the original file 
+      # 20130730T174343_xxxxxx.m2ts
+
+      if ext == "m2ts" and basename.include?("(") == true then
+         originalName   = basename.split("(")[0]
+         rev            = basename.split("(")[1].slice(0,1)
+         searchKey      = "%#{originalName.slice(0,8)}T#{originalName.slice(8,6)}%"
+         
+#          aFile = ArchivedFile.where('filename LIKE ?', searchKey).load
+#          
+#          if aFile.first == nil then
+#             puts "No m2ts file archived with name #{searchKey}"
+#             next
+#          end
+         
+         # Handle new name
+         # Rx_20130730T174343.m2ts
+         
+         newname  = "R#{rev}_#{originalName.slice(0,8)}T#{originalName.slice(8,6)}.m2ts"
+         basename = "R#{rev}_#{originalName.slice(0,8)}T#{originalName.slice(8,6)}"
+         
+         cmd = "mv \"#{element}\" #{newname}"
+         puts cmd
+         system(cmd)
+                  
+      end
+
+      # ----------------------------------------------------
+
+      # next
 
       # ------------------------------------------
       #
       # Rename to avoid evil characters in the filename
       kk          = basename.dup.gsub!(/\d+/, "")
-      newname     = ""
             
-      if kk.length > 0 and basename.include?("T") == false then
+      if kk.length > 0 and basename.include?("T") == false and newname == nil and ext.downcase != "jpg" then
          tmp         = "#{element.dup.match(/\d+/)}"
          newname     = "#{tmp.slice(0,8)}T#{tmp.slice(8,6)}#{extension}"
          cmd         = "mv \"#{element}\" #{newname}"
@@ -140,31 +228,40 @@ def main
       end
       # ------------------------------------------   
 
+      # next
+
       # ----------------------------------------------------
       # AVI files with name *.avi
       if ext == "avi" then
-         cmd = "minArcStore2.rb -f #{@directory}/#{newname} -t AVI -L #{rootpath} -D -m"
+         cmd = "minArcStore2.rb -f \"#{@directory}/#{newname}\" -t AVI -L #{rootpath} -D -m"
          puts cmd
          system(cmd)
          next
       end
       # ----------------------------------------------------
 
-      next
    
       # ----------------------------------------------------
       # JPEG files with name DSC01256.JPG
       if ext == "jpg" or ext == "jpeg" then
-         cmd = "minArcStore2.rb -f #{@directory}/#{element} -t JPEG -L #{rootpath} -D -m"
-         cmd = "minArcStore2.rb -f #{@directory}/#{newname} -t JPEG -L #{rootpath} -D -m"
+         # cmd = "minArcStore2.rb -f #{@directory}/#{element} -t JPEG -L #{rootpath} -D -m"
+         cmd = "minArcStore2.rb -f \"#{@directory}/#{newname}\" -t JPEG -L #{rootpath}"
+         
+         if @isMoveMode == true then
+            cmd = "#{cmd} -m"
+         end
+
+         if @isDebugMode == true then
+            cmd = "#{cmd} -D"
+         end
+         
          puts cmd
          system(cmd)
          next
       end
       # ----------------------------------------------------
       
-
-   
+      
    
       basename    = File.basename(newname, ".*")
          
@@ -205,7 +302,7 @@ def main
       
          rootpath = "#{@archiveRoot}/m2ts/#{renewname.slice(0, 4)}/#{renewname.slice(0, 8)}_#{rootpath}"
       
-         cmd = "minArcStore2.rb -f #{@directory}/#{renewname} -t M2TS -L #{rootpath} -D -m"
+         cmd = "minArcStore2.rb -f \"#{@directory}/#{renewname}\" -t M2TS -L #{rootpath} -D -m"
          puts cmd
          system(cmd)
          # ------------------------------------------
@@ -234,27 +331,18 @@ def main
          # ------------------------------------------
          # Finally archive @ MINARC
       
-         cmd = "minArcStore2.rb -f #{@directory}/#{newname} -t M2TS -L #{rootpath} -D -m"
+         cmd = "minArcStore2.rb -f \"#{@directory}/#{newname}\" -t M2TS -L #{rootpath} -D -m"
          puts cmd
          system(cmd)
          # ------------------------------------------
+      
+         exit
       
       end
       
    }
 
-   Dir.chdir(prevDir)
-   
-   exit(0)
-
 end
-
-#---------------------------------------------------------------------
-
-#---------------------------------------------------------------------
-
-
-#---------------------------------------------------------------------
 #-------------------------------------------------------------
 
 def usage

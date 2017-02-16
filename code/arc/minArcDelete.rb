@@ -89,7 +89,7 @@
 require 'getoptlong'
 require 'rdoc/usage'
 
-require 'minarc/FileDeleter'
+require 'arc/FileDeleter'
 
 # Global variables
 @@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   # to keep control of the last modification
@@ -207,7 +207,7 @@ def main
    end
 
 
-   fileDeleter = MINARC::FileDeleter.new(@bListOnly)
+   fileDeleter = ARC::FileDeleter.new(@bListOnly)
 
    if @isDebugMode == true then
       fileDeleter.setDebugMode

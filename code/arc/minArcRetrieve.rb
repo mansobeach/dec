@@ -135,7 +135,7 @@
 require 'getoptlong'
 require 'rdoc/usage'
 
-require 'minarc/FileRetriever'
+require 'arc/FileRetriever'
 
 # Global variables
 @@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   # to keep control of the last modification
@@ -319,7 +319,7 @@ def main
    end
 
 
-   fileRetriever = MINARC::FileRetriever.new(@bListOnly)
+   fileRetriever = ARC::FileRetriever.new(@bListOnly)
 
    if @isDebugMode == true then
       fileRetriever.setDebugMode

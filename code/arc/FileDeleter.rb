@@ -16,10 +16,10 @@
 
 require "cuc/DirUtils"
 require "cuc/EE_ReadFileName"
-require "minarc/MINARC_DatabaseModel"
-require "minarc/ReportEditor"
+require "arc/MINARC_DatabaseModel"
+require "arc/ReportEditor"
 
-module MINARC
+module ARC
 
 class FileDeleter
 
@@ -62,7 +62,7 @@ class FileDeleter
       arrFiles = ArchivedFile.searchAllWithinInterval(fileType.upcase, start, stop, bIncStart, bIncStop)
 
       if @bReport then
-         editor = MINARC::ReportEditor.new(arrFiles)
+         editor = ARC::ReportEditor.new(arrFiles)
          editor.generateReport(@reportFullName)
       end
 
@@ -100,7 +100,7 @@ class FileDeleter
       end
 
       if @bReport then
-         editor = MINARC::ReportEditor.new(Array[aFile])
+         editor = ARC::ReportEditor.new(Array[aFile])
          editor.generateReport(@reportFullName)
       end
 

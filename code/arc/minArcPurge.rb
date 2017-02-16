@@ -34,7 +34,7 @@
 require 'getoptlong'
 require 'rdoc'
 
-require "minarc/MINARC_DatabaseModel"
+require "arc/MINARC_DatabaseModel"
 
 
 # MAIN script function

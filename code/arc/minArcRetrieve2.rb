@@ -95,6 +95,18 @@
 # Note that Archive and desired location directories must be in the same filesystem.
 #
 #
+# -U flag:
+#
+# Optional flag, stands for "--Unpack".
+# This is the Unpack flag. It is used to unpack/decompress files upon retrieval.
+# The file format must be supported to perform the unpack action.
+# The following formats are supported:
+# - zip
+# - tar
+# - tgz
+# - gz
+# - 7z
+#
 # -T flag:
 #
 # This flag is used to show all archived file-types.
@@ -149,8 +161,8 @@
 require 'getoptlong'
 require 'rdoc'
 
-require 'minarc/FileRetriever'
-require 'minarc/Inventory2Excel'
+require 'arc/FileRetriever'
+require 'arc/Inventory2Excel'
 
 # Global variables
 @dateLastModification = "$Date: 2008/09/24 10:18:26 $"   # to keep control of the last modification
@@ -344,7 +356,7 @@ def main
    end
 
 
-   fileRetriever = MINARC::FileRetriever.new(@bListOnly)
+   fileRetriever = ARC::FileRetriever.new(@bListOnly)
 
    if @isDebugMode == true then
       fileRetriever.setDebugMode
@@ -380,9 +392,14 @@ def main
    # -------------------------------------------------------
    # Create Excel-sheet with inventory export
    if sInv != "" then
+      
       arrItems = fileRetriever.getLastSearchResult
       
-      expExcel = MINARC::Inventory2Excel.new(arrItems, sInv)
+      if @isDebugMode == true then
+         puts arrItems
+      end
+      
+      expExcel = ARC::Inventory2Excel.new(arrItems, sInv)
       
       if @isDebugMode == true then
          expExcel.setDebugMode
@@ -409,7 +426,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -138 #{fullpathFile}"}`
+   value = `#{"head -151 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

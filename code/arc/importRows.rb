@@ -12,7 +12,7 @@
 #
 #########################################################################
 
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/MINARC_DatabaseModel'
 
 handler = File.open("myExportDBMeteo", "r")
 

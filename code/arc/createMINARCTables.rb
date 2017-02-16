@@ -12,8 +12,8 @@
 #
 #########################################################################
 
-require 'minarc/MINARC_DatabaseModel'
-require 'minarc/MINARC_Migrations'
+require 'arc/MINARC_DatabaseModel'
+require 'arc/MINARC_Migrations'
 
 puts "START"
 

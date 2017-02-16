@@ -17,7 +17,7 @@ require 'writeexcel'
 require 'ws23rb/WS_PlugIn_Loader'
 
 
-module MINARC
+module ARC
 
 class Inventory2Excel
 
@@ -53,7 +53,12 @@ class Inventory2Excel
             puts "#{item.filename} / #{item.path}"
          end
     
-         arr = item.path.split("/").reverse[0].gsub!("_", " ").upcase.split(" ")
+         arr = item.path.split("/").reverse[0] #.gsub!("_", " ").upcase.split(" ")
+         
+         # puts arr
+         
+         # exit
+         
          str = ""
          
          1.upto((arr.length)-1) do |x| 
@@ -107,25 +112,25 @@ private
       format.set_align('vcenter')
       format.set_bg_color('lime')
    
-      @worksheet.write(0, 0, "FECHA", format)
-      @worksheet.set_column('A:A', 8)
+      @worksheet.write(0, 0, "DATE", format)
+      @worksheet.set_column('A:A', 8, nil, true)
    
-      @worksheet.write(0, 1, "EVENTO", format)
-      @worksheet.set_column('B:B', 40)
+      @worksheet.write(0, 1, "EVENT", format)
+      @worksheet.set_column('B:B', 40, nil, true)
       
-      @worksheet.write(0, 2, "TIPO", format)
-      @worksheet.set_column('C:C', 6)
+      @worksheet.write(0, 2, "TYPE", format)
+      @worksheet.set_column('C:C', 12)
       
       @worksheet.write(0, 3, "EXTENSION", format)
       @worksheet.set_column('D:D', 6)
       
       @worksheet.write(0, 4, "DURACION", format)
-      @worksheet.set_column('E:E', 5)
+      @worksheet.set_column('E:E', 5, nil, true)
       
-      @worksheet.write(0, 5, "FICHERO", format)
-      @worksheet.set_column('F:F', 25)
+      @worksheet.write(0, 5, "FILE", format)
+      @worksheet.set_column('F:F', 90)
 
-      @worksheet.write(0, 6, "CARPETA", format)
+      @worksheet.write(0, 6, "DIRECTORY", format)
       @worksheet.set_column('G:G', 40)
    
    end

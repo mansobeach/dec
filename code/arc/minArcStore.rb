@@ -106,8 +106,8 @@
 require 'getoptlong'
 require 'rdoc/usage'
 
-require "minarc/FileArchiver"
-require "minarc/MINARC_DatabaseModel"
+require "arc/FileArchiver"
+require "arc/MINARC_DatabaseModel"
 
 # Global variables
 @@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
@@ -249,7 +249,7 @@ def main
       exit(99)
    end
 
-   archiver  = MINARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate)
    
    if @isDebugMode then
       archiver.setDebugMode

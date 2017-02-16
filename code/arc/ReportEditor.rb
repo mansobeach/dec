@@ -15,10 +15,10 @@
 #########################################################################
 
 require "cuc/DirUtils"
-require "minarc/MINARC_DatabaseModel"
+require "arc/MINARC_DatabaseModel"
 require "rexml/document"
 
-module MINARC
+module ARC
 
 class ReportEditor
 

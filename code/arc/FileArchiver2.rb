@@ -17,10 +17,10 @@
 require 'cuc/DirUtils'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
-require 'minarc/MINARC_DatabaseModel'
-require 'minarc/FileDeleter'
+require 'arc/MINARC_DatabaseModel'
+require 'arc/FileDeleter'
 
-module MINARC
+module ARC
 
 class FileArchiver
 
@@ -127,7 +127,7 @@ class FileArchiver
             start = ""
             stop  = ""
          else
-            require "minarc/plugins/#{handler}"
+            require "arc/plugins/#{handler}"
             nameDecoderKlass = eval(handler)
             
             # --------------------------------------------------------
@@ -445,7 +445,7 @@ private
 #                anArchivedFile.save!
 #                bInventoried = true
 #             rescue
-#                puts "MINARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
+#                puts "ARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
 #                sleep(1)
 #                bInventoried = true
 #             end

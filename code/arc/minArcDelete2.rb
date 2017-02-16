@@ -89,7 +89,7 @@
 require 'getoptlong'
 require 'rdoc'
 
-require 'minarc/FileDeleter'
+require 'arc/FileDeleter'
 
 
 # MAIN script function
@@ -206,7 +206,7 @@ def main
    end
 
 
-   fileDeleter = MINARC::FileDeleter.new(@bListOnly)
+   fileDeleter = ARC::FileDeleter.new(@bListOnly)
 
    if @isDebugMode == true then
       fileDeleter.setDebugMode

@@ -19,7 +19,7 @@ require 'active_record'
 require 'getoptlong'
 require 'rdoc'
 
-require 'minarc/MINARC_Migrations'
+require 'arc/MINARC_Migrations'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']

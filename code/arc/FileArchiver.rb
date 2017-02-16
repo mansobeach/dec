@@ -10,17 +10,17 @@
 # 
 # CVS: $Id: FileArchiver.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
 #
-# module MINARC
+# module ARC
 #
 #########################################################################
 
 require 'cuc/DirUtils'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
-require 'minarc/MINARC_DatabaseModel'
-require 'minarc/FileDeleter'
+require 'arc/MINARC_DatabaseModel'
+require 'arc/FileDeleter'
 
-module MINARC
+module ARC
 
 class FileArchiver
 
@@ -387,7 +387,7 @@ private
 #                anArchivedFile.save!
 #                bInventoried = true
 #             rescue
-#                puts "MINARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
+#                puts "ARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
 #                sleep(1)
 #                bInventoried = true
 #             end
