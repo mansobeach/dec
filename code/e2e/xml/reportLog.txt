@@ -1,0 +1,20 @@
+ Information : (22-Apr-2015 19:11:21) 
+Graph        1: Creating object for a GanttChart
+ Information : (22-Apr-2015 19:11:21) Graph        1: Processing legend.
+ Information : (22-Apr-2015 19:11:21) 
+Graph        1: Adding data from object L0_Completeness_Gantt_CGS2:
+DET_MPI_L0_Completeness_CGS2         114 elements.
+ Information : (22-Apr-2015 19:11:21) 
+Graph        1: Adding data from object L0_Completeness_Gantt_CGS2:
+DET_MPI_L0_Completeness_CGS2           1 elements.
+ Information : (22-Apr-2015 19:11:21) 
+Graph        1: Adding data from object L0_Completeness_Gantt_CGS2:
+DET_MPI_L0_Completeness_CGS2          27 elements.
+ Information : (22-Apr-2015 19:11:21) Graph        1: Generating PNG file.
+ Warning !   : (22-Apr-2015 19:11:21) 
+XTPlot::Draw. Cannot get the reference orbit, set to -1
+ Warning !   : (22-Apr-2015 19:11:21) 
+XTPlot::Draw. Cannot get the reference orbit, set to -1
+ Information : (22-Apr-2015 19:11:21) Graph        1: Destroying object.
+ Information : (22-Apr-2015 19:11:21) 
+Graph        1: Destroying graph parser object.

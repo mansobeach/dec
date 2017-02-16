@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Script to review inputs from the PDGS
+# Author: Daniel Brosnan Blazquez
+
+# Intray of the E2ESPM
+
+
+FILES="$MINARC_ARCHIVE_ROOT"/S2*
+
+echo $FILES
+
+for file in $FILES
+do
+   echo $file 
+   minArcStore2.rb -f $PWD/$file -d -H -t S2PDGS 
+done
+
+

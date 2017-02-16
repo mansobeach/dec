@@ -1,0 +1,8 @@
+<xdqi:session xmlns:axsl="http://www.deimos-space.com/dummy" xmlns:xdqi="http://www.deimos-space.com/Quarc/Data/Ingestion/Interface"><xdqi:directive xmlns:qgl="http://www.deimos-space.com/Quarc/Graphical/Language">
+         <xdqi:request>
+            <getObject script="L0_Completeness_Gantt_CGS1" object="DET_MPI_L0_Completeness_CGS1"></getObject>
+         </xdqi:request>
+         <xdqi:data>
+            <timeline type="EVENT" count="0"></timeline>
+         </xdqi:data>
+      </xdqi:directive></xdqi:session>

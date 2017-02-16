@@ -33,11 +33,10 @@ class CSWCreateQuery
       @isDebugMode         = debug
       if @isDebugMode == true then
          self.setDebugMode
-         puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-         puts @filename
-         puts @query
-         puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-         # exit
+#          puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#          puts @filename
+#          puts @query
+#          puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       end
      
       checkModuleIntegrity

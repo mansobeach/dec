@@ -1,0 +1,1561 @@
+<xdqi:session xmlns:axsl="http://www.deimos-space.com/dummy" xmlns:xdqi="http://www.deimos-space.com/Quarc/Data/Ingestion/Interface"><xdqi:directive xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" xmlns:qgl="http://www.deimos-space.com/Quarc/Graphical/Language">
+         <xdqi:request>
+            <getObject script="L0_Completeness_Gantt_CGS2" object="DET_MPI_L0_Completeness_CGS2"></getObject>
+         </xdqi:request>
+         <xdqi:data>
+            <timeline xmlns:date="http://exslt.org/dates-and-times">
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 15:28:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 15:28:50.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 17:22:12.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 17:22:28.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 22:13:20.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 22:13:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 23:53:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 23:53:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="1244">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 01:34:48.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 01:55:32.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 02:01:07.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 02:01:23.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:00:01.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:00:17.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="2467">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:29:38.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 04:10:45.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="1974">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 04:19:03.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 04:51:57.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:11.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5134">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:43:47.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:21.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="31">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:10:47.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:11:18.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="86">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:37.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:11:03.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5700">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:13:42.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:48:42.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5143">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:51:46.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 13:17:29.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5729">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 13:18:12.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 14:53:41.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 14:59:31.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 14:59:47.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="43">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 13:17:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 13:18:28.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 16:48:48.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 16:49:04.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 19:54:53.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 19:55:09.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="198">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 21:40:22.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 21:43:40.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 23:21:11.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 23:21:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="1142">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:05:43.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:24:45.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:30:21.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:30:37.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5188">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:55:32.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 04:22:00.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5114">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 04:36:00.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:01:14.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:20.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="5303">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:16:27.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:44:50.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="35">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:05.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:40.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="855">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:45:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:21.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 14:29:51.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 14:30:07.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 16:07:09.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 16:07:25.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 22:51:50.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 22:52:06.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="1067">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:36:22.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:54:09.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150403T151732_S20130707T134508_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="130">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 13:45:08.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 13:47:18.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150403T182651_S20130707T152324_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 15:23:24.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 15:23:40.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150403T200906_S20130707T171415_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 17:14:15.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 17:14:31.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T010743_S20130707T221009_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 22:10:09.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 22:10:25.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T024916_S20130707T235126_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 23:51:26.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 23:51:42.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T043917_S20130708T013144_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 01:31:44.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 01:32:00.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T043916_S20130708T025936_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 02:59:36.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 02:59:52.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T062138_S20130708T031118_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="111">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:11:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:13:09.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T080446_S20130708T031302_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:13:02.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:13:18.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T112558_S20130708T050152_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="360">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 05:02:15.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 05:08:15.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T112558_S20130708T063155_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="101">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:31:55.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:33:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T130913_S20130708T063329_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:33:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:33:45.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T112558_S20130708T082329_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="208">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:23:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:26:57.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T144901_S20130708T082918_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T194713_S20130708T163314_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 16:33:14.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 16:33:30.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T213752_S20130708T195233_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 19:52:33.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 19:52:49.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T021731_S20130708T232013_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 23:20:13.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 23:20:29.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T040831_S20130709T010137_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:01:37.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:01:53.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T055044_S20130709T024124_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:41:24.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 02:41:40.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T123929_S20130709T060848_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:48.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:09:04.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T142012_S20130709T080711_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="359">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 08:07:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 08:13:33.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T142012_S20130709T093619_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="314">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:36:19.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:41:33.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T155916_S20130709T094126_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="267">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:41:26.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:45:53.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T142011_S20130709T111252_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="173">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 11:12:52.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 11:15:45.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T155915_S20130709T111538_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="469">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 11:15:38.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 11:23:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T142012_S20130709T124724_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="50">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 12:47:24.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 12:48:14.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T155916_S20130709T142427_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="165">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 14:24:27.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 14:27:12.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T172554_S20130709T142705_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 14:27:05.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 14:27:21.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T190552_S20130709T160318_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 16:03:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 16:03:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T014744_S20130709T225013_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 22:50:13.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 22:50:29.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T033709_S20130710T003130_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:31:30.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:31:46.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T052444_S20130710T005821_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="129">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:58:44.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 01:00:53.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T052444_S20130710T021132_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="624">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 02:11:32.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 02:21:56.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150403T182651_S20130707T152324_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="294">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 15:23:40.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 15:28:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150403T200906_S20130707T171415_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="461">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 17:14:31.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 17:22:12.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T010743_S20130707T221009_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="175">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 22:10:25.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 22:13:20.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T024916_S20130707T235126_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="96">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 23:51:42.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 23:53:18.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T043917_S20130708T013144_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="168">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 01:32:00.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 01:34:48.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T043916_S20130708T015532_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="335">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 01:55:32.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 02:01:07.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T043916_S20130708T025936_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="9">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 02:59:52.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:00:01.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T080446_S20130708T031302_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="738">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:13:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T094738_S20130708T032529_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:52.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T094738_S20130708T032529_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="233">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:29:38.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T062136_S20130708T041045_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="498">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 04:10:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 04:19:03.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T094738_S20130708T045157_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="602">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 04:51:57.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 05:01:59.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T112558_S20130708T050152_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 05:01:52.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 05:02:15.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T130913_S20130708T063329_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="806">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:33:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:11.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T144901_S20130708T082918_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="853">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:43:47.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T130912_S20130708T100921_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="86">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:21.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:10:47.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T130912_S20130708T100921_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="70">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:37.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:10:47.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T144903_S20130708T101118_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="43">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:11:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:12:01.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162814_S20130708T101154_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:11:54.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:12:17.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162814_S20130708T101154_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="92">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:12:10.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:13:42.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162814_S20130708T114842_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="184">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:48:42.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:51:46.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162813_S20130708T131729_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="43">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 13:17:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 13:18:12.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162813_S20130708T131729_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="27">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 13:17:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 13:18:12.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T162813_S20130708T145341_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="350">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 14:53:41.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 14:59:31.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T194713_S20130708T163314_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="918">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 16:33:30.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 16:48:48.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150404T213752_S20130708T195233_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="124">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 19:52:49.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 19:54:53.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T021731_S20130708T232013_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="42">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 23:20:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 23:21:11.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T040831_S20130709T010137_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="230">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:01:53.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:05:43.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T040832_S20130709T012445_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="336">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:24:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:30:21.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T055044_S20130709T024124_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="587">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:41:40.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T073418_S20130709T025119_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="24">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:19.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:43.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T073418_S20130709T025119_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="237">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:35.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 02:55:32.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T073417_S20130709T042200_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="443">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 04:22:00.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:23.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T091708_S20130709T042916_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:16.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:39.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T091708_S20130709T042916_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="388">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:32.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 04:36:00.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T091708_S20130709T060114_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="426">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:01:14.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:20.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T123929_S20130709T060848_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="443">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:09:04.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:16:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T105743_S20130709T074450_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="855">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:44:50.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:05.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T105743_S20130709T074450_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="839">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:45:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:05.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T123928_S20130709T075940_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="458">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:40.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 08:07:18.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T142012_S20130709T080711_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 08:07:11.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 08:07:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T172554_S20130709T142705_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="150">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 14:27:21.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 14:29:51.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150405T190552_S20130709T160318_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="215">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 16:03:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 16:07:09.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T014744_S20130709T225013_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="81">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 22:50:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 22:51:50.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T033709_S20130710T003130_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="276">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:31:46.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:36:22.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T033707_S20130710T005409_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="259">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:54:09.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:58:28.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_MSI_L0__DS_SGS__20150406T052444_S20130710T005821_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=MSI_L0__DS" system="23">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:58:21.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:58:44.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150403T183113_V20150403T181945_20150403T182942">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="310">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 15:23:40.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 15:28:50.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150403T201222_V20150403T195917_20150403T201050">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="477">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 17:14:31.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 17:22:28.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T011122_V20150404T010153_20150404T010957">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="191">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 22:10:25.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 22:13:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T025237_V20150404T024419_20150404T025110">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="112">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 23:51:42.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 23:53:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T044222_V20150404T042700_20150404T044045">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="1763">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 01:32:00.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 02:01:23.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T044222_V20150404T042700_20150404T044045">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="25">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 02:59:52.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:00:17.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T080856_V20150404T075020_20150404T080702">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="754">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:13:18.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:52.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T095106_V20150404T093101_20150404T094918">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="5790">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 03:25:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 05:02:15.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T131235_V20150404T125142_20150404T131050">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="822">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:33:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T145230_V20150404T143135_20150404T145050">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="6163">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:12:17.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T131235_V20150404T125142_20150404T131050">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="86">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:37.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:11:03.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T163156_V20150404T161104_20150404T163015">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="17257">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:12:10.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 14:59:47.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T163156_V20150404T161104_20150404T163015">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="43">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 13:17:45.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 13:18:28.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T195049_V20150404T192921_20150404T194903">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="934">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 16:33:30.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 16:49:04.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150404T213018_V20150404T212136_20150404T212851">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="140">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 19:52:49.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 19:55:09.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T004000_V20150405T003123_20150405T003832">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="198">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 21:40:22.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 21:43:40.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T023135_V20150405T021332_20150405T023010">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="58">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 23:20:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 23:21:27.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T041202_V20150405T035614_20150405T041026">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="1724">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 01:01:53.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 01:30:37.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T055435_V20150405T053832_20150405T055303">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="603">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:41:40.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:43.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T073732_V20150405T072001_20150405T073554">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="5884">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 02:51:35.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:39.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T092030_V20150405T090052_20150405T091849">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="5944">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 04:29:32.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:36.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T124223_V20150405T122123_20150405T124041">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="7110">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:09:04.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 08:07:34.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T110125_V20150405T104117_20150405T105945">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="855">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:45:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:21.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T172925_V20150405T172030_20150405T172802">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="166">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 14:27:21.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 14:30:07.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150405T191043_V20150405T185930_20150405T190911">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="231">
+                     <value>14</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 16:03:34.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 16:07:25.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150406T015052_V20150406T014247_20150406T014924">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="97">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 22:50:29.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 22:52:06.000</UTC>
+                  </stop>
+               </event>
+               <event explicit_reference="S2A_OPER_REP_PASS_2_SGS__20150406T033947_V20150406T032526_20150406T033810">
+                  <gauge name="FILE-VALID;CENTRE=CGS2;DATATYPE=RAW-SCENE-VALIDITY" system="1618">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>10-JUL-2013 00:31:46.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>10-JUL-2013 00:58:44.000</UTC>
+                  </stop>
+               </event>
+            </timeline>
+            <timeline xmlns:date="http://exslt.org/dates-and-times"></timeline>
+         </xdqi:data>
+      </xdqi:directive></xdqi:session>

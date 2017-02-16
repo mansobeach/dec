@@ -1,0 +1,130 @@
+<xdqi:session xmlns:axsl="http://www.deimos-space.com/dummy" xmlns:xdqi="http://www.deimos-space.com/Quarc/Data/Ingestion/Interface"><xdqi:directive xmlns:qgl="http://www.deimos-space.com/Quarc/Graphical/Language">
+         <xdqi:request>
+            <getObject script="L0_Completeness_Gantt_CGS1" object="DET_MPI_L0_Completeness_CGS1"></getObject>
+         </xdqi:request>
+         <xdqi:data>
+            <timeline type="EVENT" count="11">
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150403T214104_V20150403T212930_20150403T213717">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="173">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 18:43:07.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 18:46:00.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="44">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:20.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:48:04.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T100702_V20150404T094418_20150404T095743">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="534">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:14:59.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:23:53.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="155">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:27:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:41.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T115341_V20150404T112223_20150404T114033">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="664">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 09:55:22.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:26.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T115341_V20150404T112223_20150404T114033">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="169">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:55.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:44.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="137">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:39:26.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:41:43.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="44">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:28.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:09:12.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="40">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:14.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:54.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="657">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:25:36.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:36:33.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_REP_PASS_2_MTI__20150405T205023_V20150405T203424_20150405T204436">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=RAW-SCENE-VALIDITY" system="187">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 17:43:17.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 17:46:24.000</UTC>
+                  </stop>
+               </event>
+            </timeline>
+         </xdqi:data>
+      </xdqi:directive></xdqi:session>

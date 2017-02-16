@@ -1,0 +1,416 @@
+<xdqi:session xmlns:axsl="http://www.deimos-space.com/dummy" xmlns:xdqi="http://www.deimos-space.com/Quarc/Data/Ingestion/Interface"><xdqi:directive xmlns:qgl="http://www.deimos-space.com/Quarc/Graphical/Language">
+         <xdqi:request>
+            <getObject script="L0_Completeness_Gantt_CGS1" object="DET_MPI_L0_Completeness_CGS1"></getObject>
+         </xdqi:request>
+         <xdqi:data>
+            <timeline type="EVENT" count="37">
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 18:45:44.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 18:46:00.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:48.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:48:04.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:23:37.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:23:53.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:25.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:41.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:10.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:26.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:28.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:44.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:41:27.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:41:43.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:56.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:09:12.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:38.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:54.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:36:17.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:36:33.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="MSI_L0__DS">
+                  <gauge name="FILE-MISSING;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>13</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 17:46:08.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 17:46:24.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150403T213435_S20130707T184251_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 18:42:51.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 18:43:07.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150403T231505_S20130707T202955_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="176">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 20:29:55.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 20:32:51.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131445_S20130708T064704_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:04.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:20.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T095550_S20130708T081443_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:14:43.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:14:59.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131446_S20130708T082650_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:26:50.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:27:06.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T113905_S20130708T095506_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 09:55:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 09:55:22.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T113906_S20130708T100639_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:39.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:55.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131446_S20130708T113910_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:39:10.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:39:26.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T210735_S20130708T164841_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="50">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 16:48:41.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 16:49:31.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T210736_S20130708T181255_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="184">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 18:12:55.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 18:15:59.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110942_S20130709T060812_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:12.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:28.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110941_S20130709T075858_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:58:58.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:14.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110940_S20130709T092520_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:25:20.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:25:36.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T124530_S20130709T110524_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="455">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 11:05:24.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 11:12:59.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T204050_S20130709T174301_N06.02">
+                  <gauge name="FILE-UNEXPECTED;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="16">
+                     <value>7</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 17:43:01.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 17:43:17.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150403T213435_S20130707T184251_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="157">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>07-JUL-2013 18:43:07.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>07-JUL-2013 18:45:44.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131445_S20130708T064704_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="28">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:20.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 06:47:48.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T095550_S20130708T081443_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="518">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:14:59.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:23:37.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131446_S20130708T082650_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="139">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 08:27:06.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 08:29:25.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T113905_S20130708T095506_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="648">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 09:55:22.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:10.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T113906_S20130708T100639_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="153">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 10:06:55.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 10:09:28.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150404T131446_S20130708T113910_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="121">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>08-JUL-2013 11:39:26.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>08-JUL-2013 11:41:27.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110942_S20130709T060812_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="28">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:28.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 06:08:56.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110941_S20130709T075858_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="24">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:14.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 07:59:38.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T110940_S20130709T092520_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="641">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 09:25:36.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 09:36:17.000</UTC>
+                  </stop>
+               </event>
+               <event xmlns:date="http://exslt.org/dates-and-times" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:functx="http://www.functx.com" xmlns:qrl="http://www.deimos-space.com/Quarc/Reporting/Language" xmlns:xdei="http://www.deimos-space.com/XML/Data/Extraction/Interface" explicit_reference="S2A_OPER_MSI_L0__DS_MTI__20150405T204050_S20130709T174301_N06.02">
+                  <gauge name="FILE-VALID;CENTRE=CGS1;DATATYPE=MSI_L0__DS" system="171">
+                     <value>3</value>
+                  </gauge>
+                  <start precise="TRUE">
+                     <UTC>09-JUL-2013 17:43:17.000</UTC>
+                  </start>
+                  <stop precise="TRUE">
+                     <UTC>09-JUL-2013 17:46:08.000</UTC>
+                  </stop>
+               </event>
+            </timeline>
+         </xdqi:data>
+      </xdqi:directive></xdqi:session>

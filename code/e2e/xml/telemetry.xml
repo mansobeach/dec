@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<GanttX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://1.software.taitussoftware.com/schemas/16.0/ganttx.xsd">
+
+  <ValidFrom>2013-07-07T13:45:07</ValidFrom>
+
+  <ValidTo>2013-07-10T02:21:55</ValidTo>
+
+  <Tasks>
+    <Task id="#0.SETTLM_VALIDITY">
+      <Start>2013-07-07T13:45:07.999999Z</Start>
+      <End>2013-07-07T13:47:17.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150403T152213_V20150403T151327_20150403T152041</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#1.SETTLM_VALIDITY">
+      <Start>2013-07-07T15:23:24.000000Z</Start>
+      <End>2013-07-07T15:28:34.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150403T183113_V20150403T181945_20150403T182942</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#2.SETTLM_VALIDITY">
+      <Start>2013-07-07T17:14:15.000000Z</Start>
+      <End>2013-07-07T17:22:11.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150403T201222_V20150403T195917_20150403T201050</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#3.SETTLM_VALIDITY">
+      <Start>2013-07-07T18:42:51.000000Z</Start>
+      <End>2013-07-07T18:45:44.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150403T214104_V20150403T212930_20150403T213717</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#4.SETTLM_VALIDITY">
+      <Start>2013-07-07T20:29:54.999999Z</Start>
+      <End>2013-07-07T20:32:51.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150403T232153_V20150403T230936_20150403T231724</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#5.SETTLM_VALIDITY">
+      <Start>2013-07-07T22:10:09.000000Z</Start>
+      <End>2013-07-07T22:13:20.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T011122_V20150404T010153_20150404T010957</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#6.SETTLM_VALIDITY">
+      <Start>2013-07-07T23:51:25.999999Z</Start>
+      <End>2013-07-07T23:53:17.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T025237_V20150404T024419_20150404T025110</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#7.SETTLM_VALIDITY">
+      <Start>2013-07-08T01:31:43.999999Z</Start>
+      <End>2013-07-08T02:01:07.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T044222_V20150404T042700_20150404T044045</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#8.SETTLM_VALIDITY">
+      <Start>2013-07-08T02:59:36.000000Z</Start>
+      <End>2013-07-08T03:00:01.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T044222_V20150404T042700_20150404T044045</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#9.SETTLM_VALIDITY">
+      <Start>2013-07-08T03:11:18.000000Z</Start>
+      <End>2013-07-08T03:13:09.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T062531_V20150404T060904_20150404T062347</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#10.SETTLM_VALIDITY">
+      <Start>2013-07-08T03:13:01.999999Z</Start>
+      <End>2013-07-08T03:25:36.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T080856_V20150404T075020_20150404T080702</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#11.SETTLM_VALIDITY">
+      <Start>2013-07-08T03:25:28.999999Z</Start>
+      <End>2013-07-08T05:01:58.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T095106_V20150404T093101_20150404T094918</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#12.SETTLM_VALIDITY">
+      <Start>2013-07-08T04:10:44.999999Z</Start>
+      <End>2013-07-08T04:19:02.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T062531_V20150404T060904_20150404T062347</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#13.SETTLM_VALIDITY">
+      <Start>2013-07-08T06:33:29.000000Z</Start>
+      <End>2013-07-08T06:47:10.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T131235_V20150404T125142_20150404T131050</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#14.SETTLM_VALIDITY">
+      <Start>2013-07-08T06:47:04.000000Z</Start>
+      <End>2013-07-08T06:47:48.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#15.SETTLM_VALIDITY">
+      <Start>2013-07-08T08:14:42.999999Z</Start>
+      <End>2013-07-08T08:23:37.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T100702_V20150404T094418_20150404T095743</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#16.SETTLM_VALIDITY">
+      <Start>2013-07-08T08:26:50.000000Z</Start>
+      <End>2013-07-08T08:29:24.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#17.SETTLM_VALIDITY">
+      <Start>2013-07-08T08:29:18.000000Z</Start>
+      <End>2013-07-08T10:12:00.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T145230_V20150404T143135_20150404T145050</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#18.SETTLM_VALIDITY">
+      <Start>2013-07-08T09:55:06.000000Z</Start>
+      <End>2013-07-08T10:06:10.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T115341_V20150404T112223_20150404T114033</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#19.SETTLM_VALIDITY">
+      <Start>2013-07-08T10:06:39.000000Z</Start>
+      <End>2013-07-08T10:09:27.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T115341_V20150404T112223_20150404T114033</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#20.SETTLM_VALIDITY">
+      <Start>2013-07-08T10:09:21.000000Z</Start>
+      <End>2013-07-08T10:10:47.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T131235_V20150404T125142_20150404T131050</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#21.SETTLM_VALIDITY">
+      <Start>2013-07-08T10:11:54.000000Z</Start>
+      <End>2013-07-08T14:59:31.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T163156_V20150404T161104_20150404T163015</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#22.SETTLM_VALIDITY">
+      <Start>2013-07-08T11:39:10.000000Z</Start>
+      <End>2013-07-08T11:41:27.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T132330_V20150404T130550_20150404T131607</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#23.SETTLM_VALIDITY">
+      <Start>2013-07-08T13:17:28.999999Z</Start>
+      <End>2013-07-08T13:18:11.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T163156_V20150404T161104_20150404T163015</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#24.SETTLM_VALIDITY">
+      <Start>2013-07-08T16:33:14.000000Z</Start>
+      <End>2013-07-08T16:48:48.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T195049_V20150404T192921_20150404T194903</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#25.SETTLM_VALIDITY">
+      <Start>2013-07-08T16:48:40.999999Z</Start>
+      <End>2013-07-08T16:49:31.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T211537_V20150404T210033_20150404T210921</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#26.SETTLM_VALIDITY">
+      <Start>2013-07-08T18:12:55.000000Z</Start>
+      <End>2013-07-08T18:15:58.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150404T211537_V20150404T210033_20150404T210921</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#27.SETTLM_VALIDITY">
+      <Start>2013-07-08T19:52:33.000000Z</Start>
+      <End>2013-07-08T19:54:53.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150404T213018_V20150404T212136_20150404T212851</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#28.SETTLM_VALIDITY">
+      <Start>2013-07-08T21:40:05.999999Z</Start>
+      <End>2013-07-08T21:43:24.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T004000_V20150405T003123_20150405T003832</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#29.SETTLM_VALIDITY">
+      <Start>2013-07-08T23:20:13.000000Z</Start>
+      <End>2013-07-08T23:21:10.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T023135_V20150405T021332_20150405T023010</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#30.SETTLM_VALIDITY">
+      <Start>2013-07-09T01:01:36.999999Z</Start>
+      <End>2013-07-09T01:30:20.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T041202_V20150405T035614_20150405T041026</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#31.SETTLM_VALIDITY">
+      <Start>2013-07-09T02:41:24.000000Z</Start>
+      <End>2013-07-09T02:51:27.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T055435_V20150405T053832_20150405T055303</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#32.SETTLM_VALIDITY">
+      <Start>2013-07-09T02:51:19.000000Z</Start>
+      <End>2013-07-09T04:29:23.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T073732_V20150405T072001_20150405T073554</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#33.SETTLM_VALIDITY">
+      <Start>2013-07-09T04:29:15.999999Z</Start>
+      <End>2013-07-09T06:08:19.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T092030_V20150405T090052_20150405T091849</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#34.SETTLM_VALIDITY">
+      <Start>2013-07-09T06:08:11.999999Z</Start>
+      <End>2013-07-09T06:08:56.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#35.SETTLM_VALIDITY">
+      <Start>2013-07-09T06:08:48.000000Z</Start>
+      <End>2013-07-09T08:07:18.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T124223_V20150405T122123_20150405T124041</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#36.SETTLM_VALIDITY">
+      <Start>2013-07-09T07:44:49.999999Z</Start>
+      <End>2013-07-09T07:59:04.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T110125_V20150405T104117_20150405T105945</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#37.SETTLM_VALIDITY">
+      <Start>2013-07-09T07:58:58.000000Z</Start>
+      <End>2013-07-09T07:59:38.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#38.SETTLM_VALIDITY">
+      <Start>2013-07-09T09:25:20.000000Z</Start>
+      <End>2013-07-09T09:36:16.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150405T112300_V20150405T105445_20150405T111112</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#39.SETTLM_VALIDITY">
+      <Start>2013-07-09T09:41:26.000000Z</Start>
+      <End>2013-07-09T14:27:12.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T160204_V20150405T154115_20150405T160026</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#40.SETTLM_VALIDITY">
+      <Start>2013-07-09T11:05:23.999999Z</Start>
+      <End>2013-07-09T11:12:59.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150405T125616_V20150405T123541_20150405T124750</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NRT</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#41.SETTLM_VALIDITY">
+      <Start>2013-07-09T14:27:04.999999Z</Start>
+      <End>2013-07-09T14:29:51.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T172925_V20150405T172030_20150405T172802</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#42.SETTLM_VALIDITY">
+      <Start>2013-07-09T16:03:18.000000Z</Start>
+      <End>2013-07-09T16:07:09.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150405T191043_V20150405T185930_20150405T190911</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=INCOMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#43.SETTLM_VALIDITY">
+      <Start>2013-07-09T17:43:01.000000Z</Start>
+      <End>2013-07-09T17:46:07.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_MTI__20150405T205023_V20150405T203424_20150405T204436</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS1</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#44.SETTLM_VALIDITY">
+      <Start>2013-07-09T22:50:13.000000Z</Start>
+      <End>2013-07-09T22:51:50.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150406T015052_V20150406T014247_20150406T014924</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#45.SETTLM_VALIDITY">
+      <Start>2013-07-10T00:31:29.999999Z</Start>
+      <End>2013-07-10T00:58:28.000000Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150406T033947_V20150406T032526_20150406T033810</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+    <Task id="#46.SETTLM_VALIDITY">
+      <Start>2013-07-10T00:58:20.999999Z</Start>
+      <End>2013-07-10T02:21:55.999999Z</End>
+      <Style/>
+      <Parameters>
+        <DFEP_REP>S2A_OPER_REP_PASS_2_SGS__20150406T052315_V20150406T050756_20150406T052137</DFEP_REP>
+        <PARAM>RAW-SCENE-VALIDITY</PARAM>
+        <CENTRE>CGS2</CENTRE>
+        <APID>STATUS=COMPLETE;MODE=NOM</APID>
+        <Timeline>SETTLM_VALIDITY</Timeline>
+        <Library>TLM</Library>
+        <Object>TLM // SETTLM_VALIDITY</Object>
+      </Parameters>
+    </Task>
+  </Tasks>
+
+  <Types>
+    <Categories>
+      <Category key="Library"/>
+      <Category key="Timeline"/>
+    </Categories>
+    <Type>
+      <ColorTasks>0x00E0E0C0</ColorTasks>
+      <EditEnable>true</EditEnable>
+      <Expanded>true</Expanded>
+      <UserDraw>false</UserDraw>
+      <OwnHeight>true</OwnHeight>
+      <Height>18</Height>
+      <HasExpandBox>false</HasExpandBox>
+      <Selected>false</Selected>
+      <HasBottomLine>true</HasBottomLine>
+      <Filtered>false</Filtered>
+      <OnDisplay>true</OnDisplay>
+      <Style/>
+    </Type>
+    <Type id="TLM">
+      <Caption>TLM</Caption>
+      <ColorTasks>0x004080FF</ColorTasks>
+      <EditEnable>true</EditEnable>
+      <Expanded>true</Expanded>
+      <UserDraw>false</UserDraw>
+      <OwnHeight>true</OwnHeight>
+      <Height>20</Height>
+      <HasExpandBox>true</HasExpandBox>
+      <Selected>false</Selected>
+      <HasBottomLine>true</HasBottomLine>
+      <Filtered>false</Filtered>
+      <OnDisplay>true</OnDisplay>
+      <Style/>
+    </Type>
+    <Type id="TLM.SETTLM_VALIDITY" parent="TLM">
+      <Caption>SETTLM_VALIDITY</Caption>
+      <ColorTasks>0x0080FFFF</ColorTasks>
+      <EditEnable>true</EditEnable>
+      <Expanded>true</Expanded>
+      <UserDraw>false</UserDraw>
+      <OwnHeight>true</OwnHeight>
+      <Height>66</Height>
+      <HasExpandBox>false</HasExpandBox>
+      <Selected>false</Selected>
+      <HasBottomLine>true</HasBottomLine>
+      <Filtered>false</Filtered>
+      <OnDisplay>true</OnDisplay>
+      <Style/>
+    </Type>
+  </Types>
+
+  <Styles>
+    <Style>
+      <Flags Font="0x00A110C4" Style="0x00000000" StyleEx="0x40001000"/>
+      <Color Back="0x00FFFFFF" Fill="0x00FFFFFF" Pen="0x00000000" Text="0x00000000"/>
+      <Alpha Fill="255" Pen="255"/>
+    </Style>
+  </Styles>
+
+</GanttX>
+

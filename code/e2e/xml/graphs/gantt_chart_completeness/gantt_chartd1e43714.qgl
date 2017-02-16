@@ -1,0 +1,43 @@
+<qgl:graph xmlns:qgl="http://www.deimos-space.com/Quarc/Graphical/Language">
+   <qgl:property name="title">Completeness Gantt Chart</qgl:property>
+   <qgl:property name="xsize">900</qgl:property>
+   <qgl:property name="ysize">600</qgl:property>
+   <qgl:view type="GanttChart">
+      <qgl:property type="DELObject" name="view_GanttChart/plottingPeriods">:ETL_query_period</qgl:property>
+   </qgl:view>
+   <qgl:legend>
+      <qgl:itemDefaults>
+         <qgl:object>
+            <qgl:property name="script">L0_Completeness_Gantt_CGS2</qgl:property>
+            <qgl:property name="object">DET_MPI_L0_Completeness_CGS2</qgl:property>
+         </qgl:object>
+         <qgl:colorModel>
+            <qgl:property name="palette/index">12</qgl:property>
+            <qgl:property name="colorRange">0.05:0.95</qgl:property>
+            <qgl:property name="valueRange">1:16</qgl:property>
+         </qgl:colorModel>
+      </qgl:itemDefaults>
+      <qgl:item>
+         <qgl:property name="label">MSI_L0__DS</qgl:property>
+         <qgl:object>
+            <qgl:property name="filter">setFilterGaugeNames("%MSI_L0__DS%")</qgl:property>
+         </qgl:object>
+         <qgl:colorModel></qgl:colorModel>
+      </qgl:item>
+      <qgl:item>
+         <qgl:property name="label">ISP-GAP</qgl:property>
+         <qgl:object>
+            <qgl:property name="filter">setFilterGaugeNames("%ISP-GAP%")</qgl:property>
+         </qgl:object>
+         <qgl:colorModel></qgl:colorModel>
+      </qgl:item>
+      <qgl:item>
+         <qgl:property name="label">RAW-SCENE-VALIDITY</qgl:property>
+         <qgl:object>
+            <qgl:property name="filter">setFilterGaugeNames("%RAW-SCENE-VALIDITY%")</qgl:property>
+         </qgl:object>
+         <qgl:colorModel></qgl:colorModel>
+      </qgl:item>
+      <qgl:property name="show">no</qgl:property>
+   </qgl:legend>
+</qgl:graph>
