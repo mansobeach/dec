@@ -51,7 +51,7 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
-require 'arc/FileArchiver2'
+require 'arc/FileArchiver'
 require 'arc/MINARC_DatabaseModel'
 
 # Global variables

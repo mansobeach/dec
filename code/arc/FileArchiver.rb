@@ -10,7 +10,7 @@
 # 
 # CVS: $Id: FileArchiver.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
 #
-# module ARC
+# module MINARC
 #
 #########################################################################
 
@@ -49,7 +49,10 @@ class FileArchiver
    #------------------------------------------------
 
    # Main method of the class.
-   def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false, arrAddFields = nil)
+   def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false,\
+               arrAddFields = nil, full_path_location = nil,\
+               size = 0, size_in_disk = 0)
+               
       path = ""
 
       # CHECK WHETHER SPECIFIED FILE EXISTS
@@ -70,6 +73,8 @@ class FileArchiver
       # CHECK WHETHER FILE IS NOT ALREADY ARCHIVED
 
       aFile = ArchivedFile.find_by_filename(fileName)
+
+      # aFile = ArchivedFile.where(filename: fileName).load
 
       if aFile != nil then
          puts "#{fileName} was already archived !"
@@ -107,9 +112,11 @@ class FileArchiver
          handler = ""
          rubylibs = ENV['RUBYLIB'].split(':')
          rubylibs.each {|path|
-            # puts "#{path}/minarc/plugins/#{fileType.upcase}_Handler.rb"
-            if File.exists?("#{path}/minarc/plugins/#{fileType.upcase}_Handler.rb") == true then
-               handler = "#{fileType.upcase}_Handler"
+            # puts "#{path}/arc/plugins/#{fileType.upcase}_Handler.rb"
+	    name = "#{path}/arc/plugins/Handler_#{fileType.upcase}.rb"
+	    
+            if File.exists?(name) == true then
+               handler = "Handler_#{fileType.upcase}"
                break
             end
          }
@@ -119,20 +126,33 @@ class FileArchiver
             puts "Could not find handler-file for file-type #{fileType.upcase}..."
             puts "Storing #{fileName} without further processing :-|"
             puts
-
             fileType = fileType.upcase
             start = ""
             stop  = ""
          else
-            require "minarc/plugins/#{handler}"
+            require "arc/plugins/#{handler}"
             nameDecoderKlass = eval(handler)
-            nameDecoder = nameDecoderKlass.new(fileName)
+            
+            # --------------------------------------------------------
+            # 2014-03-24
+            # New Interface with plug-ins
+            # Now the filename provided is full-path to allow 
+            # plug-ins process physically the file if needed
+            
+            # nameDecoder = nameDecoderKlass.new(fileName)
+            nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location)
+            
+            #
+            # --------------------------------------------------------
             
             if nameDecoder != nil and nameDecoder.isValid == true then
-               fileType = nameDecoder.fileType.upcase
-               start    = nameDecoder.start_as_dateTime
-               stop     = nameDecoder.stop_as_dateTime
-               path     = nameDecoder.archive_path
+               fileType       = nameDecoder.fileType.upcase
+               start          = nameDecoder.start_as_dateTime
+               stop           = nameDecoder.stop_as_dateTime
+               path           = nameDecoder.archive_path
+               full_path_file = nameDecoder.fileName
+               size           = nameDecoder.size
+               size_in_disk   = nameDecoder.size_in_disk
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -142,8 +162,38 @@ class FileArchiver
          end
       end
 
-      return store(full_path_file, fileType[0..19], start, stop, bDelete, bUnPack, arrAddFields, path)
+      return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk)
 
+   end
+   #------------------------------------------------
+
+   def reallocate(fp_file)
+      full_path_file = fp_file.dup
+      newpath        = File.dirname(full_path_file)
+      filename       = File.basename(full_path_file)
+                        
+      aFile = ArchivedFile.find_by_filename(filename)
+
+      if aFile == nil then
+         puts "File #{filename} is not in the Archive"
+         return false
+      end
+     
+      if File.exists?(full_path_file) == false then
+         puts "Error #{full_path_file} does not exist"
+         return false
+      end
+          
+      if aFile.path == newpath then
+         puts "#{filename} is already archived in #{newpath}"
+         return false
+      end
+     
+      aFile.path = newpath
+      
+      aFile.save!
+      
+      return true
    end
    #------------------------------------------------
 
@@ -173,15 +223,15 @@ private
       end
 
    end
-
-
+   #--------------------------------------------------------
+   
    #-------------------------------------------------------------
    # Performs the file archiving.
    # Copies/Moves the source file to the proper directory
    # Sets access rights
    # Registers the file in the database
    #-------------------------------------------------------------
-   def store(full_path_filename, type, start, stop, bDelete, bUnPack, arrAddFields, path = "")
+   def store(full_path_filename, type, start, stop, bDelete, bUnPack, arrAddFields, path = "", size = 0, size_in_disk = 0)
       
       archival_date = Time.now
 
@@ -191,21 +241,6 @@ private
          bIsDir = false
       end
       
-      if @isDebugMode == true then
-         puts "===================================="
-         if @bIsAlreadyArchived == false then
-            puts "         NEW FILE ARCHIVING         "
-         else
-            puts "         UPDATE ARCHIVED FILE       "
-         end
-         puts "...................................."
-         puts "Source File    -> #{full_path_filename}"
-         puts "File-Type      -> #{type}"
-         puts "Validity Start -> #{start}"
-         puts "Validity Stop  -> #{stop}"
-         puts "Archival date  -> #{archival_date}"
-         puts "==================================="
-      end
 
       #-------------------------------------------
       # Define destination folder
@@ -218,20 +253,46 @@ private
          destDir << archival_date.strftime("/%Y%m")
       end
 
-      if bUnPack then         
-         destDir << "/" << File.basename(full_path_filename, ".*")
-      end
+#       if bUnPack then         
+#          destDir << "/" << File.basename(full_path_filename, ".*")
+#       end
 
       #-------------------------------------------
+
+      if @isDebugMode == true then
+         puts "===================================="
+         if @bIsAlreadyArchived == false then
+            puts "         NEW FILE ARCHIVING         "
+         else
+            puts "         UPDATE ARCHIVED FILE       "
+         end
+         puts "...................................."
+         puts "Source File       -> #{full_path_filename}"
+         puts "Destination       -> #{destDir}"
+         puts "File-Type         -> #{type}"
+         puts "Validity Start    -> #{start}"
+         puts "Validity Stop     -> #{stop}"
+         puts "Archiving date    -> #{archival_date}"
+         puts "Size              -> #{size}"
+         puts "Disk occupation   -> #{size_in_disk}"
+         puts "==================================="
+      end
+
+
+
+
       # Copy / Move the source file to the archive
 
       checkDirectory(destDir)
 
       if @bHLink then
 
-         checkDirectory("#{destDir}/#{File.basename(full_path_filename, ".*")}")
+         
          
          if File.directory?(full_path_filename) == true then
+         
+            checkDirectory("#{destDir}/#{File.basename(full_path_filename, ".*")}")
+         
             prevDir = Dir.pwd
             Dir.chdir(full_path_filename)
             arrFiles = Dir["*"]
@@ -266,7 +327,7 @@ private
             end
 
          else
-            cmd = "\\ln -f #{full_path_filename} #{destDir}"
+            cmd = "\\ln -f \"#{full_path_filename}\" \"#{destDir}\""
         
             if @isDebugMode then
                puts cmd
@@ -283,9 +344,9 @@ private
          end
       else
          if @bMove then
-            cmd = "\\mv -f #{full_path_filename} #{destDir}"
+            cmd = "\\mv -f \"#{full_path_filename}\" \"#{destDir}/\""
          else
-            cmd = "\\cp -Rf #{full_path_filename} #{destDir}"
+            cmd = "\\cp -Rf \"#{full_path_filename}\" \"#{destDir}/\""
          end
 
          if @isDebugMode then
@@ -341,7 +402,7 @@ private
       elsif bIsDir then
          cmd = "\\chmod 555 #{destDir}/#{File.basename(full_path_filename)}; chmod 444 #{destDir}/#{File.basename(full_path_filename)}/*"
       else
-         cmd = "\\chmod 444 #{destDir}/" << File.basename(full_path_filename)
+         cmd = "chmod 744 #{destDir}; \\chmod 444 #{destDir}/" << File.basename(full_path_filename)
       end
 
       if @isDebugMode then
@@ -360,15 +421,21 @@ private
 
       begin
          anArchivedFile = ArchivedFile.new
+         
          if bUnPack then
             anArchivedFile.filename       = File.basename(full_path_filename, ".*")
          else
             anArchivedFile.filename       = File.basename(full_path_filename)
          end
 
+#          # Patch 2016 - filenames are kept without extension
+#          anArchivedFile.filename       = File.basename(full_path_filename, ".*")
+
          anArchivedFile.filetype       = type
          anArchivedFile.archive_date   = archival_date
          anArchivedFile.path           = path
+         anArchivedFile.size           = size
+         anArchivedFile.size_in_disk   = size_in_disk
 
          if start != "" and start != nil then
             anArchivedFile.validity_start = start
@@ -416,19 +483,21 @@ private
          puts "Could not inventory #{anArchivedFile.filename}, rolling back ! :-("
          puts
 
-         if bUnPack then
-            cmd = "\\rm -rf #{destDir}"
-         else
-            cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
-         end
-
-         ret = system(cmd)
-
-         if ret == false then
-            puts
-            puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
-            puts
-         end        
+# Commented 20140505 / It is not understood this snippet below
+#
+#          if bUnPack then
+#             cmd = "\\rm -rf #{destDir}"
+#          else
+#             cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
+#          end
+# 
+#          ret = system(cmd)
+# 
+#          if ret == false then
+#             puts
+#             puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
+#             puts
+#          end        
 
          return false
       end
@@ -453,6 +522,8 @@ private
       return true
 
    end
+
+   #--------------------------------------------------------
 
 end # class
 

@@ -65,6 +65,66 @@ class FileRetriever
    end
    #-------------------------------------------------------------
 
+   def retrieve_new_files(destination, aDate, bDelete = false, bHardlink = false, bUnpack = false)
+      arrFilenames   = Array.new
+      arrFiles       = ArchivedFile.getNewFiles(aDate)
+      retVal         = true
+      
+      if arrFiles != nil then
+      
+         arrFiles.each{|aFile|
+            
+            if @bListOnly then
+               arrFilenames << aFile.filename
+               aRetVal = true
+            else
+                     
+               aRetVal = extractFromArchive(destination, aFile.filetype, aFile.filename,
+                                              aFile.archive_date, bDelete, bHardlink, aFile.path)
+
+               if aRetVal == true then
+                  aFile.last_access_date = Time.now
+                  aFile.access_counter   = aFile.access_counter + 1
+                  begin
+                     aFile.save
+                  rescue Exception => e
+                     # Could not update last access time
+                     puts "ARC::FileRetriever - Could not update #{aFile.filename} last_access"
+                  end
+                  
+                  if bUnpack == true then    
+                     unPackFile(destination, aFile.filename)
+                  end
+
+                  
+               end
+
+               if retVal == true then
+                  retVal = aRetVal
+               end
+
+         
+
+            end
+         
+         }
+         
+         if @bListOnly == true then
+            arrFilenames.sort.each{|name|
+               puts name
+            }
+         end
+         
+      end
+      
+      return true
+
+        
+      
+      exit
+   end
+   #-------------------------------------------------------------
+
    # Main method of the class.
    def retrieve_by_type(destination, fileType, start = nil, stop = nil, bDelete = false, bIncStart = false, bIncStop = false, bHardlink = false)
       
@@ -105,6 +165,7 @@ class FileRetriever
 
                if aRetVal then
                   aFile.last_access_date = Time.now
+                  aFile.access_counter   = aFile.access_counter + 1
                   begin
                      aFile.save
                   rescue Exception => e
@@ -136,10 +197,19 @@ class FileRetriever
       aFile    = ArchivedFile.find_by_filename(filename)
 
       if !aFile then
-         return false
+      
+         aFile = ArchivedFile.where("filename LIKE ?", "%#{File.basename(filename, ".*")}%")
+         
+         if aFile == nil then
+            return false
+         else
+            @arrInv << aFile[0]
+            aFile = aFile[0]
+         end
+      else
+         
+         @arrInv << aFile
       end
-
-      @arrInv << aFile
 
       if @bReport then
          editor = ARC::ReportEditor.new(Array[aFile])
@@ -155,6 +225,7 @@ class FileRetriever
 
          if retVal then
             aFile.last_access_date = Time.now
+            aFile.access_counter   = aFile.access_counter + 1
             aFile.save
          end
       

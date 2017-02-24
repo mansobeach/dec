@@ -24,7 +24,7 @@ dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
          :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+         :username => dbUser, :password => dbPass, :timeout  => 1000)
 
 class ArchivedFile < ActiveRecord::Base
    validates_presence_of   :filename
@@ -104,7 +104,7 @@ class ArchivedFile < ActiveRecord::Base
       return fixDateFormat(arrResult)
 
    end
-   #--------------------------------------------------------
+   #-------------------------------------------------------------
 
    def ArchivedFile.searchAllByName(pattern)
       arrFiles    = Array.new
@@ -120,12 +120,43 @@ class ArchivedFile < ActiveRecord::Base
 
    end
 
-   #--------------------------------------------------------
+   #-------------------------------------------------------------
+
+
+   def ArchivedFile.getNewFiles(aDate)
+      arrFiles    = Array.new
+      arrResult   = Array.new
+
+      arrFiles = ArchivedFile.all
+
+      arrFiles.each{|aFile|
+        
+        
+            
+        if aFile.archive_date == nil then
+           puts "#{aFile.filename} does not have archive date !"
+           next
+        end
+            
+        tmp            = aFile.archive_date
+        archive_date   = DateTime.new(tmp.strftime("%Y").to_i, tmp.strftime("%m").to_i, tmp.strftime("%d").to_i, tmp.strftime("%H").to_i, tmp.strftime("%M").to_i, tmp.strftime("%S").to_i)
+             
+        if (aDate < archive_date) then
+           # puts aFile.archive_date
+           arrResult << aFile  
+        end
+         
+      }
+      
+      return fixDateFormat(arrResult)
+      
+   end
+   #-------------------------------------------------------------
 
    def ArchivedFile.getFileTypes()
       return ArchivedFile.find_by_sql("SELECT distinct filetype FROM archived_files")
    end
-   #--------------------------------------------------------
+   #-------------------------------------------------------------
 
    def ArchivedFile.deleteAll(condition = "")
       puts ArchivedFile.delete_all(condition)
@@ -134,7 +165,7 @@ class ArchivedFile < ActiveRecord::Base
          return false
       end
    end
-   #--------------------------------------------------------
+   #-------------------------------------------------------------
 
 private
 

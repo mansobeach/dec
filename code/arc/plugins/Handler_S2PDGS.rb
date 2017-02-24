@@ -18,6 +18,10 @@
 # S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.EOF
 # S2A_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.TGZ
 
+# S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
+
+require 'filesize'
+
 require 'cuc/Converters'
 
 include CUC::Converters
@@ -32,8 +36,10 @@ class Handler_S2PDGS
    @stop                = nil 
    @generation_date     = nil
    @full_path_filename  = ""
+   @size                = 0
+   @size_in_disk        = 0
 
-   attr_reader :archive_path
+   attr_reader :archive_path, :size, :size_in_disk
 
    #-------------------------------------------------------------
 
@@ -45,6 +51,14 @@ class Handler_S2PDGS
       @filename      = File.basename(name, ".*")
       @archive_path  = ""
       @validated     = false
+
+      if @filename.length == 72 then
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(41, 15))
+         @stop             = self.str2date(@filename.slice(57, 15))
+         @validated        = true
+      end 
 
       if @filename.length == 73 or @filename.length == 88 then
          @type             = @filename.slice(9,10)
@@ -81,7 +95,15 @@ class Handler_S2PDGS
 
       @archive_path     = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
 
-      compressFile(name)
+      if File.extname(name).downcase != ".zip" then
+         compressFile(name)
+      else
+         @full_path_filename  = name         
+      end
+
+      @size          = File.size(@full_path_filename)
+      result         = `du -hs #{@full_path_filename}`
+      @size_in_disk  = Filesize.from("#{result.split(" ")[0]}iB").to_int
 
    end
 
@@ -130,7 +152,7 @@ private
    def compressFile(full_path_name)
       filename       = File.basename(full_path_name, ".*")
       full_path      = File.dirname(full_path_name)
-       
+             
       cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} -sdel"
       # puts cmd
       ret = system(cmd)
@@ -143,8 +165,8 @@ private
          exit(99)
       end
       
-      @full_path_filename = "#{full_path}/#{filename}.7z"
-                  
+      @full_path_filename  = "#{full_path}/#{filename}.7z"
+      
    end
 
    #-------------------------------------------------------------

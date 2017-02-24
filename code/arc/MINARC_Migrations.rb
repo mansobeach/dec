@@ -12,10 +12,8 @@
 #
 #########################################################################
 
-
 require 'rubygems'
 require 'active_record'
-
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']
@@ -35,11 +33,15 @@ class CreateArchivedFiles < ActiveRecord::Migration
          t.column :filetype,            :string,  :limit => 64
          t.column :path,                :string,  :limit => 255
          t.column :info,                :string,  :limit => 255
+         t.column :size,                :integer
+         t.column :size_in_disk,        :integer
          t.column :detection_date,      :datetime
          t.column :validity_start,      :datetime
          t.column :validity_stop,       :datetime
          t.column :archive_date,        :datetime
          t.column :last_access_date,    :datetime
+         t.column :access_counter,      :integer, default: 0, null: false
+         # t.column :deleted              :boolean, default: false, null: false
       end
 
 #        change_column :archived_files, :filetype, :string, :limit => 64
@@ -52,3 +54,15 @@ class CreateArchivedFiles < ActiveRecord::Migration
 end
 
 #=====================================================================
+
+class AddNewColumns < ActiveRecord::Migration
+  def change
+     # size of the file in bytes
+     add_column :archived_files, :size, :integer, {:default=>0, :null=>true}
+     add_column :archived_files, :size_in_disk, :integer, {:default=>0, :null=>true}
+     add_column :archived_files, :access_counter, :integer, {:default=>0, :null=>true}
+  end
+end
+
+#=====================================================================
+

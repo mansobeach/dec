@@ -34,12 +34,14 @@ ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
 # MAIN script function
 def main
 
-   bUp   = false
-   bDown = false
+   bUp            = false
+   bDown          = false
+   @bUpdate       = false
    
    opts = GetoptLong.new(
      ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
      ["--create-tables", "-c",    GetoptLong::NO_ARGUMENT],
+     ["--update-tables", "-u",    GetoptLong::NO_ARGUMENT],
      ["--help", "-h",             GetoptLong::NO_ARGUMENT]
      )
     
@@ -48,6 +50,7 @@ def main
          case opt      
             when "--create-tables"    then @bUp   = true
             when "--drop-tables"      then @bDown = true
+            when "--update-tables"    then @bUpdate = true
 			   when "--help"             then usage
          end
       end
@@ -69,6 +72,12 @@ def main
       CreateArchivedFiles.up
       exit(0)
    end
+ 
+   if @bUpdate then
+      migration = AddNewColumns.new
+      migration.change
+      exit(0)
+   end 
  
    exit(0)
 
