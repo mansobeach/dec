@@ -1,0 +1,168 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a MINARC command line tool that shows status according to given criteria. 
+# 
+# == Usage
+# minArcStatus -t <filetype> [-s <start> -e <end>] | -f <filename>
+#     --file <filename>          it deletes a given filename
+#     --type <filetype>          file-type of the file to be deleted
+#     --start <YYYYMMDDThhmmss>  
+#     --end   <YYYYMMDDThhmmss>
+#     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
+#     --list                     it lists the files that would be retrieved
+#                                according to the selection criteria
+#     --help                     shows this help
+#     --usage                    shows the usage
+#     --Debug                    shows Debug info during the execution
+#     --version                  shows version number
+#
+#
+# == Author
+# DEIMOS-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === Mini Archive Component (MinArc)
+#
+# CVS: $Id: minArcDelete.rb,v 1.10 2008/09/24 10:18:26 decdev Exp $
+#
+#########################################################################
+
+require 'getoptlong'
+require 'rdoc'
+
+require 'arc/FileStatus'
+
+
+# MAIN script function
+def main
+
+   @filename                  = ""
+   @filetype                  = ""
+   @dirname                   = ""
+   startVal                   = ""
+   endVal                     = ""
+
+   @full_report_name          = ""
+
+   bIncStart = false
+   bIncEnd = false
+
+   @isDebugMode            = false
+   @bListOnly              = false
+
+   showVersion             = false
+   
+   opts = GetoptLong.new(
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
+     ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--start", "-s",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--Report", "-R",          GetoptLong::REQUIRED_ARGUMENT],
+     ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT],
+     ["--boundary_start_on",     GetoptLong::NO_ARGUMENT],
+     ["--boundary_end_on",       GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt      
+            when "--Debug"             then @isDebugMode = true
+            when "--list"              then @bListOnly   = true
+            when "--version"           then showVersion  = true
+            when "--file"              then @filename           = arg.to_s
+            when "--directory"         then @dirname            = arg.to_s
+                                            deleteDirectory
+	         when "--type"              then @filetype           = arg.to_s
+            when "--start"             then startVal            = arg.to_s
+            when "--end"               then endVal              = arg.to_s
+	         when "--Report"            then @full_report_name   = arg.to_s
+			   when "--help"              then usage
+	         when "--usage"             then usage
+            when "--boundary_start_on" then bIncStart           = true
+            when "--boundary_end_on"   then bIncEnd             = true
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   if showVersion then 
+      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
+         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
+      else
+         puts "version.txt is not present !"
+         exit(99)
+      end
+
+      binVersion = aFile.gets.chomp
+
+      puts
+      puts "Mini-Archive Component - Version #{binVersion}"
+      puts
+
+      aFile.close
+      exit(0)
+   end
+ 
+   # Check all flags and combinations
+
+   if @filename == "" and @filetype == "" then
+      usage
+   end
+
+   if @filename != "" and @filetype != "" then
+      usage
+   end
+
+   fileStatus = ARC::FileStatus.new(@filename)
+
+   if @isDebugMode == true then
+      fileStatus.setDebugMode
+   end
+
+   fileStatus.status
+
+
+   exit(0)
+
+end
+
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -30 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================
