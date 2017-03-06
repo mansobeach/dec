@@ -24,7 +24,7 @@ dbPass      = ENV['DCC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
          :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+         :username => dbUser, :password => dbPass, :timeout  => 10000)
 
 class Interface < ActiveRecord::Base
    validates_presence_of   :name
