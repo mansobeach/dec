@@ -484,13 +484,23 @@ def checkModuleIntegrity
 end
 #-------------------------------------------------------------
 
+#-------------------------------------------------------------
+
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -25 #{fullpathFile}")
-   exit
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -26 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 #-------------------------------------------------------------
+
 
 
 #===============================================================================
