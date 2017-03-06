@@ -35,6 +35,7 @@ class ReadInterfaceConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
+      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL"]
       checkModuleIntegrity
 	   defineStructs
       loadData
@@ -306,6 +307,13 @@ class ReadInterfaceConfig
    end
    #-------------------------------------------------------------
 
+   # Get the configuration FTP Config info for sending files.
+   # - mnemonic (IN): Entity name
+   def getProtocol(mnemonic)  
+      return searchEntityValue(mnemonic, @@arrExtEntities, "FTPServer").protocol
+   end
+   #-------------------------------------------------------------
+
 private
 
    @@isModuleOK        = false
@@ -355,13 +363,13 @@ private
 	   Struct.new("Entity", :mnemonic, :description, :incomingDir,
                       :outgoingDir, :FTPServer, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
-		Struct.new("FTPServer", :mnemonic, :hostname, :port,
+		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
                    :user, :password, :isTracked, :isRetrieved, 
                    :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 		Struct.new("TXRXParams", :mnemonic, :enabled4Send, :enabled4Receive,
-                 :immediateRetries, :loopRetries, :loopDelay, :pollingInterval)
+                 :immediateRetries, :loopRetries, :loopDelay, :pollingInterval, :pollingSize)
 		Struct.new("NotifyTo", :mnemonic, :sendNotification, :arrNotifyTo)		            
       Struct.new("GetMailParams", :mnemonic, :hostname, :port, 
                              :user, :password, :pollingInterval)
@@ -522,10 +530,40 @@ private
 		bDelete     = false      
       bErrorValue = false
       bPassive    = true
+      protocol    = ""
       
       nCleanUpFreq = 0
       
       arrDownloadDirs = Array.new
+
+      if !xmlstruct.elements["Protocol"].nil?
+           if (xmlstruct.elements["Protocol"].text != nil) and \
+               (@protocolArray.include?(xmlstruct.elements["Protocol"].text.upcase)) then
+              protocol = xmlstruct.elements["Protocol"].text.upcase    
+           else
+              puts "Error in ReadInterfaceConfig::fillFTPServerStruct"
+              puts "Protocol #{xmlstruct.elements["Protocol"].text.upcase} is not valid"
+              exit(99)
+           end
+      end
+
+      if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" and xmlstruct.elements["Protocol"].nil? then
+         bSecure  = true
+         protocol = "SFTP"
+      end
+      
+      if xmlstruct.elements["SecureFlag"].text.upcase == "FALSE" and xmlstruct.elements["Protocol"].nil? then
+         bSecure  = false
+         protocol = "FTP"
+      end
+
+      if protocol == "" then
+         puts "Fatal Error in ReadInterfaceConfig::fillFTPServerStruct (#{mnemonic})"
+         puts
+         puts "Verify Protocol / SecureFlag attributes"
+         puts 
+         exit(99)
+      end
 
       if xmlstruct.elements["RegisterContentFlag"].text.upcase == "TRUE" then
          bTracked = true
@@ -541,15 +579,6 @@ private
       else
          if xmlstruct.elements["RetrieveContentFlag"].text.upcase != "FALSE" then
             puts "Error[#{mnemonic}] RetrieveContentFlag field only accepts true|false value"
-            bErrorValue = true
-         end         
-      end
-
-      if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" then
-         bSecure = true
-      else
-         if xmlstruct.elements["SecureFlag"].text.upcase != "FALSE" then
-            puts "Error[#{mnemonic}] SecureFlag field only accepts true|false value"
             bErrorValue = true
          end         
       end
@@ -618,6 +647,7 @@ private
 
 	   ftpstruct   = Struct::FTPServer.new(
                          mnemonic,
+                         protocol,
                          xmlstruct.elements["Hostname"].text,
                          xmlstruct.elements["Port"].text.to_i,
                          expandPathValue(xmlstruct.elements["User"].text),
@@ -662,6 +692,13 @@ private
          @b4Rcv  = true
       end
 
+      pollingSize = nil
+      
+      if !xmlstruct.elements["PollingSize"].nil? then
+         pollingSize = xmlstruct.elements["PollingSize"].text
+      end
+
+
       txrxParams  = Struct::TXRXParams.new(
                          mnemonic,
                          @b4Send,
@@ -669,7 +706,8 @@ private
                          xmlstruct.elements["ImmediateRetries"].text,
                          xmlstruct.elements["LoopRetries"].text,
                          xmlstruct.elements["LoopDelay"].text,
-                         xmlstruct.elements["PollingInterval"].text
+                         xmlstruct.elements["PollingInterval"].text,
+                         pollingSize
                          )
       return txrxParams
    end
