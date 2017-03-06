@@ -31,7 +31,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/CheckerProcessUniqueness'
@@ -39,7 +38,7 @@ require 'dcc/DCC_MailProcessor'
 require 'dcc/ReadConfigDCC'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/07/03 11:38:07 $"   # to keep control of the last modification
+@dateLastModification = "$Date: 2008/07/03 11:38:07 $"   # to keep control of the last modification
                                        # of this script
                                        # execution showing Debug Info
 @mnemonic          = ""
@@ -67,14 +66,14 @@ def main
             when "--Debug"   then @isDebugMode = true
             when "--NOT"     then @delete = false
             when "--version" then	    
-               print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " $Revision: 1.3 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " $Revision: 1.3 $  [", @dateLastModification, "]\n\n\n")
                exit(0)
 	         when "--mnemonic" then
                @mnemonic = arg
             when "--list" then
                 @listOnly = true
-			   when "--help"          then RDoc::usage
-	         when "--usage"         then RDoc::usage("usage")
+			   when "--help"          then usage
+	         when "--usage"         then usage
          end
       end
    rescue Exception
@@ -134,6 +133,24 @@ def body
    @mailer.processAll(@delete)
 end
 #-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -22 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+
 
 #===============================================================================
 # Start of the main body
