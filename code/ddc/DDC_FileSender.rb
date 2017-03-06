@@ -23,7 +23,7 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/EE_ReadFileName'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/FileSender'
-require 'ctc/DeliveryListWriter'
+require 'ctc/ListWriterDelivery'
 # require 'dbm/DatabaseModel'
 require 'ddc/ReadConfigDDC'
 
