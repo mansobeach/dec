@@ -33,6 +33,7 @@ require 'ctc/CheckerInterfaceConfig'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileSource'
 require 'ctc/EventManager'
+require 'ctc/LocalInterfaceHandler'
 require 'dcc/EntityContentWriter'
 require 'dcc/FileDeliverer2InTrays'
 require 'dcc/ReadConfigDCC'
@@ -94,16 +95,20 @@ class DCC_ReceiverFromInterface
       end
      
       @entityConfig     = CTC::ReadInterfaceConfig.instance
+      @protocol         = @entityConfig.getProtocol(@entity)
       @finalDir         = @entityConfig.getIncomingDir(@entity)
       checkDirectory(@finalDir)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
       
-      # @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
+      @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
       # 2016 currently hardcoded number of files handled on each iteration
-      @pollingSize      = 150
-      
-      
+      if @pollingSize == nil then
+         @pollingSize      = 150
+      else
+         @pollingSize = @pollingSize.to_i
+      end
+            
       @fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
@@ -140,23 +145,59 @@ class DCC_ReceiverFromInterface
       cmd   = ""
       perf  = ""
       list  = nil
-      # If secure create the sftp client.
-      if @ftpserver[:isSecure] == true then
-         if @isDebugMode == true then
-           puts "I/F #{@entity} requires secure mode"
-         end
+      
+      
+      case @protocol
+         when "FTP"
+               
+            if @isDebugMode == true then
+               puts "I/F #{@entity} is non secure mode / #{@protocol}"
+            end
 
-         perf = measure { list = getSecureFileList }
+            perf = measure { list = getNonSecureFileList( @ftpserver[:isPassive]) }
 
-      else
-         if @isDebugMode == true then
-            puts "I/F #{@entity} is non secure mode"
-         end
 
-         perf = measure { list = getNonSecureFileList( @ftpserver[:isPassive]) }
+         when "SFTP"
+            
+            if @isDebugMode == true then
+               puts "I/F #{@entity} requires secure mode / #{@protocol}"
+            end
 
+            perf = measure { list = getSecureFileList }
+            
+         when "FTPS"  
+            
+            puts "FTPS not integrated yet from ALGK"
+            puts
+            puts "DCC_ReceiverFromInterface::check4NewFiles"
+            puts
+            exit(99)
+            
+            
+         when "LOCAL"
+         
+            if @isDebugMode == true then
+               puts "I/F #{@entity} does not use network / #{@protocol}"
+            end
+
+          
+            begin
+               
+               @local = CTC::LocalInterfaceHandler.new(@entity, true, false, @dccConfig.getDownloadDirs)
+               
+               if @isDebugMode then @local.setDebugMode end
+               perf = measure { list = @local.getLocalList }      
+            rescue Exception => e
+               puts e
+               exit (99)
+            end     
+            
       end
-
+      
+      
+      
+      
+     
 #       puts "+++++++++++++++++++++++++++++++++"
 #       puts list
 #       puts list.length
@@ -698,8 +739,93 @@ private
    end
    #-------------------------------------------------------------
    
+   def downloadFileLocal(filename)
+      retVal = @local.downloadFile(filename)
+      
+       if retVal == false then
+         puts "Failed to download #{filename}"
+         @logger.error("Could not download #{filename} from #{@entity} I/F")
+         return false
+      else
+		   # copy it to the final destination
+         
+         size = File.size("#{@localDir}/#{File.basename(filename)}")
+         @logger.debug("#{File.basename(filename)} with size #{size} bytes")
+
+			copyFileToInBox(File.basename(filename))
+			
+         # delete file in the temp directory
+         #deleteFileFromTemp(File.basename(filename))
+			
+         # @logger.info("RECEIVED #{File.size(filename)}")
+         
+         
+			# update DCC Inventory
+			setReceivedFromEntity(File.basename(filename), size)
+			
+			# if deleteFlag is enable delete it from remote directory
+         if @protocol == "LOCAL" then
+            @local.deleteFromEntity(filename)
+         else
+   			deleteFromEntity(filename)
+         end      
+         
+         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F")
+
+         event  = CTC::EventManager.new
+         
+         if @isDebugMode == true then
+            event.setDebugMode
+         end
+
+         arrParam             = Array.new
+         hParam1              = Hash.new
+         hParam1["filename"]  = File.basename(filename) 
+
+         hParam2              = Hash.new
+         hParam2["directory"] = @finalDir 
+      
+         arrParam << hParam1
+         arrParam << hParam2
+         
+         @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+
+         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam)
+
+         # rename the file if AddMnemonic2Name enabled
+         ret = renameFile(File.basename(filename))
+
+         disFile = ""
+         if ret != false then
+            disFile = ret
+         else
+            disFile = File.basename(filename)
+         end
+
+         # disseminate the file to the In-Trays
+
+         if @isNoInTray == false then
+            disseminateFile(disFile)
+         end     
+
+         return true
+      end     
+      
+   end
+   #-------------------------------------------------------------
+   
    # Download a file from the I/F
    def downloadFile(filename)
+      
+      # Quoting the filename to avoid problems with special chars (like #)
+      quoted_filename = %Q{"#{filename}"}
+
+      
+      if @protocol == "LOCAL" then
+         return downloadFileLocal(filename)
+      end
+      
       
       # If secure create the sftp client.
       if @ftpserver[:isSecure] == true then
@@ -954,6 +1080,8 @@ private
       tmpList        = Array.new(list)
       @fileListError = Array.new
       nStart         = list.length
+
+      # ------------------------------------------
       
       # Remove Repeated files found in different directories
       # and extract filename from the full path
@@ -971,6 +1099,7 @@ private
 
       } # end of measure
 # 
+      # ------------------------------------------
 
       if @isBenchmarkMode == true then
          puts
@@ -981,6 +1110,8 @@ private
          puts
       end
 
+
+      # ------------------------------------------
 
       # - Remove files which do not match with filters defined in dcc_config.xml
       # - Remove files which file-type are not defined in the ft_incoming_files.xml
@@ -1037,7 +1168,7 @@ private
          puts
       end
       
-      
+      # ------------------------------------------
       
       # ------------------------------------------
       #
@@ -1095,6 +1226,7 @@ private
       numFilesToBeRetrieved = 0
       
       tmpList.each{|fullpath|
+      
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
@@ -1121,11 +1253,19 @@ private
                arrPolled << fullpath
             end                     
          end
-
+      
          if @pollingSize != nil and numFilesToBeRetrieved >= @pollingSize.to_i then
          	break
+#          else
+#             puts
+#             puts @pollingSize
+#             puts numFilesToBeRetrieved
+#             puts
          end         
       }
+      
+   #   exit
+      
       arrDelete.each{|element| list.delete(element)}
       
       @fileListError << arrDelete
@@ -1135,6 +1275,10 @@ private
       } # end of measure
 
       end # end of if @isNoDB
+
+      if @isNoDB == true then
+         list = list[0..@pollingSize-1]
+      end
 
       if @isBenchmarkMode == true then
          puts
@@ -1156,6 +1300,9 @@ private
       arrTemp = Array.new
       output  = output.split(/\n/)
       output  = output.uniq
+      
+      numFilesToBeRetrieved = 0
+      
       output.each{|element|
             # Check dcc_config.xml filters
             @arrFilters.each {|ext|
@@ -1178,6 +1325,7 @@ private
          if forTracking == false then
             if hasBeenAlreadyReceived(fileName) == false then
                arrFile << fileName
+               numFilesToBeRetrieved += 1
             else
                if @isDebugMode == true then
                   puts "#{getFilenameFromFullPath(fileName)} already received from #{@entity}"
@@ -1195,6 +1343,15 @@ private
                end
             end                     
          end
+         
+#          puts "PEDO"
+#          exit
+         
+         if @pollingSize != nil and num_filesToRetrieve >= @pollingSize.to_i then
+         	break
+         end         
+
+         
       }
       arrFile = arrFile.uniq
       return arrFile
@@ -1267,7 +1424,7 @@ private
 	# It copies the downloaded file into the Entity Local InBox
 	def copyFileToInBox(filename)
 	   #cmd = %Q{\\cp #{@localDir}/#{filename} #{@finalDir}/}
-      cmd = %Q{\\mv #{@localDir}/#{filename} #{@finalDir}/}
+      cmd = %Q{\\mv -f \"#{@localDir}/#{filename}\" #{@finalDir}/}
 
       if @isDebugMode == true then
          puts "\nCopying #{filename} received from #{@entity} to #{@finalDir}"
