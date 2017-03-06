@@ -24,6 +24,7 @@ require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/CheckerFTPConfig'
+require 'ctc/CheckerLocalConfig'
 require 'ctc/EventManager'
 
 module CTC
@@ -44,17 +45,20 @@ class CheckerInterfaceConfig
    #
    # IN (bool) [optional] - check parameters required for sending
    def initialize(entity, bCheckDCC=true, bCheckDDC=true)
-      @bCheckDCC   = bCheckDCC
-      @bCheckDDC   = bCheckDDC
-      @isDebugMode = false
-      @entity      = entity
+      @bCheckDCC        = bCheckDCC
+      @bCheckDDC        = bCheckDDC
+      @isDebugMode      = false
+      @entity           = entity
       checkModuleIntegrity
-      @ftReadConf = ReadInterfaceConfig.instance
+      @ftReadConf       = ReadInterfaceConfig.instance
       @ftReadConf.update
-      @ftpRecv    = @ftReadConf.getFTPServer(@entity)
-      @ftpSend    = @ftReadConf.getFTPServer(@entity)
-      @check4Send = CheckerFTPConfig.new(@ftpSend, @entity)
-      @check4Recv = CheckerFTPConfig.new(@ftpRecv, @entity)
+      @ftpRecv          = @ftReadConf.getFTPServer(@entity)
+      @ftpSend          = @ftReadConf.getFTPServer(@entity)
+      @check4Send       = CheckerFTPConfig.new(@ftpSend, @entity)
+      @check4Recv       = CheckerFTPConfig.new(@ftpRecv, @entity)
+      @checkLocal4Send  = CheckerLocalConfig.new(@ftpSend, @entity)  
+      @checkLocal4Recv  = CheckerLocalConfig.new(@ftpRecv, @entity)    
+      @protocol         = @ftReadConf.getProtocol(@entity)
    end
    #-------------------------------------------------------------
    
@@ -65,17 +69,31 @@ class CheckerInterfaceConfig
       if @isDebugMode == true then
          @check4Send.setDebugMode
          @check4Recv.setDebugMode
+         @checkLocal4Send.setDebugMode
+         @checkLocal4Recv.setDebugMode
       end
      
       if @bCheckDDC == true then
-         retVal = @check4Send.check4Send
+         if @protocol == "LOCAL" then
+            retVal = @checkLocal4Send.checkLocal4Send
+         else
+            retVal = @check4Send.check4Send
+         end
       end     
 
       if @bCheckDCC == true then
          if retVal == true then
-            retVal = @check4Recv.check4Receive
+            if @protocol == "LOCAL" then
+               retVal = @checkLocal4Recv.checkLocal4Receive
+            else
+               retVal = @check4Recv.check4Receive
+            end
          else
-            @check4Recv.check4Receive
+            if @protocol == "LOCAL" then
+               @checkLocal4Recv.checkLocal4Receive
+            else
+               @check4Recv.check4Receive
+            end
          end
       end
 

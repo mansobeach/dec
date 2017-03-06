@@ -124,13 +124,14 @@ private
       
       puts
       if @ftpElement[:isSecure] == true then 
-        puts "Secure conection is used (sftp)"
+         puts "Secure conection is used (sftp)"
       else
-        puts "NON Secure conection is used (ftp)"
+         puts "NON Secure conection is used (ftp)"
       end
       if @ftpElement[:isSecure] == true and @ftpElement[:isCompressed] == true then 
         puts "Communication data is compressed (sftp)"
       end
+      puts "protocol     -> #{@ftpElement[:protocol]}"
       puts "hostname     -> #{@ftpElement[:hostname]}"
       puts "port         -> #{@ftpElement[:port]}"
       puts "user         -> #{@ftpElement[:user]}"

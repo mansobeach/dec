@@ -44,6 +44,9 @@ class CheckerInventoryConfig
       arrEnts  = @dccReadConf.getAllMnemonics
 
       arrEnts.each{|x|
+      
+         # Interface.where(["name = ?", x]).first
+      
          if Interface.find_by_name(x) != nil then
             puts "\n#{x} I/F is declared in DDC/Inventory ! :-) \n"
             retVal = true
