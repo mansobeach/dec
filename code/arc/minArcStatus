@@ -6,10 +6,9 @@
 # 
 # == Usage
 # minArcStatus -t <filetype> [-s <start> -e <end>] | -f <filename>
-#     --file <filename>          it deletes a given filename
+#     --file <filename>          status of a given filename
 #     --type <filetype>          file-type of the file to be deleted
-#     --start <YYYYMMDDThhmmss>  
-#     --end   <YYYYMMDDThhmmss>
+#     --global  
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --list                     it lists the files that would be retrieved
 #                                according to the selection criteria
@@ -48,6 +47,7 @@ def main
    @dirname                   = ""
    startVal                   = ""
    endVal                     = ""
+   @bGlobal                   = false
 
    @full_report_name          = ""
 
@@ -67,6 +67,7 @@ def main
      ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
      ["--Report", "-R",          GetoptLong::REQUIRED_ARGUMENT],
      ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--global", "-g",          GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
@@ -80,6 +81,7 @@ def main
          case opt      
             when "--Debug"             then @isDebugMode = true
             when "--list"              then @bListOnly   = true
+            when "--global"            then @bGlobal     = true
             when "--version"           then showVersion  = true
             when "--file"              then @filename           = arg.to_s
             when "--directory"         then @dirname            = arg.to_s
@@ -118,7 +120,7 @@ def main
  
    # Check all flags and combinations
 
-   if @filename == "" and @filetype == "" then
+   if @filename == "" and @filetype == "" and @bGlobal == false then
       usage
    end
 
@@ -126,13 +128,35 @@ def main
       usage
    end
 
-   fileStatus = ARC::FileStatus.new(@filename)
 
-   if @isDebugMode == true then
-      fileStatus.setDebugMode
+   if @filename != "" then
+      fileStatus = ARC::FileStatus.new(@filename)
+
+      if @isDebugMode == true then
+         fileStatus.setDebugMode
+      end
+      fileStatus.statusFile
    end
 
-   fileStatus.status
+   if @filetype != "" then
+      fileStatus = ARC::FileStatus.new(nil)
+
+      if @isDebugMode == true then
+         fileStatus.setDebugMode
+      end
+      fileStatus.statusType(@filetype)
+   end
+
+
+
+   if @bGlobal == true then
+      fileStatus = ARC::FileStatus.new(nil)
+
+      if @isDebugMode == true then
+         fileStatus.setDebugMode
+      end
+      fileStatus.statusGlobal
+   end
 
 
    exit(0)
@@ -146,7 +170,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -30 #{fullpathFile}"}`
+   value = `#{"head -26 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
