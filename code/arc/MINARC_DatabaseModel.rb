@@ -24,7 +24,7 @@ dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
          :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass, :timeout  => 1000)
+         :username => dbUser, :password => dbPass, :timeout  => 10000)
 
 class ArchivedFile < ActiveRecord::Base
    validates_presence_of   :filename
