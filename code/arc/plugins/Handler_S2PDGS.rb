@@ -17,8 +17,11 @@
 # S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF
 # S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.EOF
 # S2A_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.TGZ
-
+# S2A_OPER_REP__SUP___20151219T193158_99999999T999999_0001.EOF
 # S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
+#
+# - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
+# - Compressed files with extension zip, tgz are handled without further compression into 7z
 
 require 'filesize'
 
@@ -39,7 +42,7 @@ class Handler_S2PDGS
    @size                = 0
    @size_in_disk        = 0
 
-   attr_reader :archive_path, :size, :size_in_disk
+   attr_reader :archive_path, :size, :size_in_disk, :size_original
 
    #-------------------------------------------------------------
 
@@ -78,7 +81,13 @@ class Handler_S2PDGS
          @type             = @filename.slice(9,10)         
          @start            = self.str2date(@filename.slice(20, 15))
          @generation_date  = @start
-         @stop             = self.str2date(@filename.slice(36, 15))
+         
+         if @filename.slice(36, 15) == "99999999T999999" then
+            @stop = DateTime.new(2100,1,1)
+         else
+            @stop = self.str2date(@filename.slice(36, 15))
+         end
+         
 #          puts @generation_date
 #          puts @start
 #          puts @stop
@@ -93,9 +102,17 @@ class Handler_S2PDGS
          exit(99)
       end
 
-      @archive_path     = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
+      @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
 
-      if File.extname(name).downcase != ".zip" then
+      @size_original = File.size(name)
+
+#        puts "PEDO"
+#        puts name
+       puts @size_original
+      # exit
+
+
+      if File.extname(name).downcase != ".zip" and File.extname(name).downcase != ".tgz" then
          compressFile(name)
       else
          @full_path_filename  = name         
