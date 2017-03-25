@@ -49,6 +49,22 @@ class WriteGanttXLS
    end
    #-------------------------------------------------------------
    
+   # 
+   def writeToExcel(events)
+      createNewExcel   
+      createSheetEvents
+   
+      row = 1
+      
+      events.each{|event|
+         writeRow(row, event)
+         row = row + 1
+      }
+      
+      @workbook.close
+   end
+   #-------------------------------------------------------------
+   
    # Process 
    def writeEvents(analytics)
             
@@ -320,15 +336,17 @@ private
    #-------------------------------------------------------------
 
    def writeRow(row, event)
-      #       puts "-------------------------------------------"
-      #       puts event[:library]
-      #       puts event[:gauge_name]
-      #       puts event[:system]
-      #       puts event[:start].slice(0, 23)
-      #       puts event[:stop].slice(0, 23)
-      #       puts event[:value]
-      #       puts event[:explicit_reference]
-      #       puts "-------------------------------------------"
+#    puts event
+#    puts event.class
+#       puts "-------------------------------------------"
+#       puts event[:library]
+#       puts event[:gauge_name]
+#       puts event[:system]
+#       puts event[:start].slice(0, 23)
+#       puts event[:stop].slice(0, 23)
+#       puts event[:value]
+#       puts event[:explicit_reference]
+#       puts "-------------------------------------------"
       
       @sheetGauges.write(row, @Column_Library, event[:library])
       @sheetGauges.write(row, @Column_System, event[:system])
