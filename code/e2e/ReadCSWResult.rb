@@ -58,8 +58,8 @@ class ReadCSWResult
       # Array uniq call does not remove duplications as the duration
       # field is always unique generated as an excel formula with references
       # to the row and column   
-      return @arrEvents.uniq
-   
+      # return @arrEvents.uniq
+      return @arrEvents
    end
    #-------------------------------------------------------------
    
@@ -191,8 +191,7 @@ private
          
          values.uniq!
          
-         # ------------------------------------
-  
+         # ------------------------------------  
          
       }
  
@@ -296,10 +295,8 @@ private
                
                @arrERs << Struct::Explicit_Reference.new(explicit_reference, name, value) 
                
-               # exit
-               
-            }
-                                    
+               # exit  
+            }                                    
          }
       }
       
