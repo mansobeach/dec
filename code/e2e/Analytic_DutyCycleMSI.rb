@@ -92,6 +92,9 @@ class Analytic_E2E < AnalyticGeneric
          return false
       end
    
+      @totalImaging  = 0
+      @numOrbits     = arrANX.length
+   
       arrANX.each{|anx|
          events      = self.filterValueInWindow(arrEventMSI, anx[:start].to_time, anx[:stop].to_time)
          dutyCycle   = (accumulatedDutyCycle(events)/60.0).round(2)
@@ -102,9 +105,12 @@ class Analytic_E2E < AnalyticGeneric
          end
       
       }
-       
+      
       puts
-      puts "Avg switches orbit #{(@switchesTotal/arrANX.length.to_f).round(2)}"
+      puts "Avg sensing orbit #{((@totalImaging/60.0)/@numOrbits.to_f).round(2)} minutes"
+      puts
+
+      puts "Avg switches orbit #{(@switchesTotal/@numOrbits.to_f).round(2)}"
       puts
       
       if arrViolated.empty? == false then
@@ -135,6 +141,11 @@ class Analytic_E2E < AnalyticGeneric
             @switchesTotal = @switchesTotal + 1
             @switchesOrbit = @switchesOrbit + 1
          end
+         
+         if event[:value] == "IMAGING" then
+            @totalImaging = @totalImaging +  (event[:stop].to_time - event[:start].to_time)
+         end
+         
          
       }
       return accumulated
