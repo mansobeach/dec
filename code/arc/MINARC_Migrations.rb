@@ -35,6 +35,7 @@ class CreateArchivedFiles < ActiveRecord::Migration
          t.column :info,                :string,  :limit => 255
          t.column :size,                :integer
          t.column :size_in_disk,        :integer
+         t.column :size_original,       :integer
          t.column :detection_date,      :datetime
          t.column :validity_start,      :datetime
          t.column :validity_stop,       :datetime
@@ -56,7 +57,14 @@ end
 #=====================================================================
 
 class AddNewColumns < ActiveRecord::Migration
+
   def change
+     # size_original of the file before archive in bytes
+     add_column :archived_files, :size_original, :integer, {:default=>0, :null=>true}
+  end
+
+
+  def change_20170301
      # size of the file in bytes
      add_column :archived_files, :size, :integer, {:default=>0, :null=>true}
      add_column :archived_files, :size_in_disk, :integer, {:default=>0, :null=>true}

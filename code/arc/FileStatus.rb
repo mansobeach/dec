@@ -52,16 +52,17 @@ class FileStatus
       end
       
       
-      puts "Filename     - #{aFile.filename}"
-      puts "Type         - #{aFile.filetype}"
-      puts "Path         - #{aFile.path}"
-      puts "Size         - #{aFile.size}"
-      puts "Disk usage   - #{aFile.size_in_disk}"
-      puts "Start Val    - #{aFile.validity_start}"
-      puts "Stop Val     - #{aFile.validity_stop}"
-      puts "Archive Date - #{aFile.archive_date}"
-      puts "Last Access  - #{aFile.last_access_date}"
-      puts "Num Access   - #{aFile.access_counter}"
+      puts "Filename       - #{aFile.filename}"
+      puts "Type           - #{aFile.filetype}"
+      puts "Path           - #{aFile.path}"
+      puts "Size           - #{aFile.size}"
+      puts "Original Size  - #{aFile.size_original}"
+      puts "Disk usage     - #{aFile.size_in_disk}"
+      puts "Start Val      - #{aFile.validity_start}"
+      puts "Stop Val       - #{aFile.validity_stop}"
+      puts "Archive Date   - #{aFile.archive_date}"
+      puts "Last Access    - #{aFile.last_access_date}"
+      puts "Num Access     - #{aFile.access_counter}"
 
 #       puts aFile.detection_date
 #       puts aFile.archive_date
@@ -72,20 +73,41 @@ class FileStatus
    #-------------------------------------------------------------
 
    def statusGlobal
-      puts
+      lastHourFiles = ArchivedFile.where('archive_date > ?', 1.hours.ago)
+      lastHourCount = lastHourFiles.count
       
-      puts "Archived #{ArchivedFile.count} files"
+      lastHourSizeO     = lastHourFiles.sum(:size_original)
+      lastHourSize      = lastHourFiles.sum(:size)
+      lastHourDisk      = lastHourFiles.sum(:size_in_disk)
       
-      puts 
+      prettyHourSizeO   = Filesize.from("#{lastHourSizeO} B").pretty
+      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
+      prettyHourDisk    = Filesize.from("#{lastHourDisk} B").pretty
       
+      # Filesize.from("#{lastHourFiles.sum(:size)} B").pretty
+      
+      puts      
       puts "Last update #{ArchivedFile.last.archive_date}"
       
       puts
+      puts "New #{lastHourCount} files archived during last hour"
       
+      puts
+      puts "#{prettyHourSizeO} / #{prettyHourSize} / #{prettyHourDisk} "
+      
+      puts  
+      puts "Total archived #{ArchivedFile.count} files"
+      
+      puts 
+            
       arrTypes = ArchivedFile.select(:filetype).distinct
             
       arrTypes.each{|record|
-         puts record.filetype
+         # puts record.filetype
+         
+         arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
+         
+         puts "#{record.filetype} / #{arrFiles.count} files"
          
          # puts ArchivedFile.all.group(:filetype).count
          

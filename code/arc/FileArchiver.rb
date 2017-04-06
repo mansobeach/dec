@@ -30,10 +30,11 @@ class FileArchiver
    # Class contructor
    # move : boolean. If true a move is made, otherwise it is moved from source
    # debug: boolean. If true it shows debug info.
-   def initialize(bMove = false, bHLink = false, bUpdate = false, debugMode = false)
+   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, debugMode = false)
       @bMove               = bMove
       @bHLink              = bHLink
       @bUpdate             = bUpdate
+      @bInvOnly            = bInvOnly
       @bIsAlreadyArchived  = false
       @isDebugMode         = debugMode
       checkModuleIntegrity
@@ -51,7 +52,7 @@ class FileArchiver
    # Main method of the class.
    def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false,\
                arrAddFields = nil, full_path_location = nil,\
-               size = 0, size_in_disk = 0)
+               size = 0, size_in_disk = 0, size_original = 0)
                
       path = ""
 
@@ -153,6 +154,7 @@ class FileArchiver
                full_path_file = nameDecoder.fileName
                size           = nameDecoder.size
                size_in_disk   = nameDecoder.size_in_disk
+               size_original  = nameDecoder.size_original
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -162,7 +164,11 @@ class FileArchiver
          end
       end
 
-      return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk)
+      if @bInvOnly == true then
+         return inventoryNewFile(full_path_file, fileType, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+      end
+
+      return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk, size_original)
 
    end
    #------------------------------------------------
@@ -225,13 +231,91 @@ private
    end
    #--------------------------------------------------------
    
+   
+   #-------------------------------------------------------------
+   
+   def inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
+  
+      archival_date = Time.now
+  
+      #-------------------------------------------
+      # Register the file in the inventory
+
+      begin
+         anArchivedFile = ArchivedFile.new
+         
+         anArchivedFile.filename       = File.basename(full_path_filename)
+         anArchivedFile.filetype       = type
+         anArchivedFile.archive_date   = archival_date
+         anArchivedFile.path           = path
+         anArchivedFile.size           = size
+         anArchivedFile.size_in_disk   = size_in_disk
+         anArchivedFile.size_original  = size_original
+
+         if start != "" and start != nil then
+            anArchivedFile.validity_start = start
+         end
+
+         if stop != "" and stop != nil then
+            anArchivedFile.validity_stop = stop
+         end
+
+         #Treat eventual additional fields
+         if arrAddFields != nil and arrAddFields.size >= 2 then
+            i=0
+            while i <= (arrAddFields.size - 2)
+               
+               if anArchivedFile.has_attribute?(arrAddFields[i]) then
+                  anArchivedFile.update_attribute(arrAddFields[i], arrAddFields[i+1])
+               else
+                  puts "Attribute '#{arrAddFields[i]}' is not present in the archived_files table !"
+                  puts "Going on with archiving..."
+               end
+
+               i=i+2 
+            end
+         end
+
+         anArchivedFile.save!
+         
+         
+         if @isDebugMode == true then
+            puts "===================================="
+            puts "         NEW FILE ARCHIVING         "
+         
+         
+            puts "...................................."
+            puts "Source File       -> #{full_path_filename}"
+            puts "Destination       -> #{path}"
+            puts "File-Type         -> #{type}"
+            puts "Validity Start    -> #{start}"
+            puts "Validity Stop     -> #{stop}"
+            puts "Archiving date    -> #{archival_date}"
+            puts "Size              -> #{size}"
+            puts "Original Size     -> #{size_original}"
+            puts "Disk occupation   -> #{size_in_disk}"
+            puts "==================================="
+         end
+      
+      rescue Exception => e
+         puts
+         puts e.to_s
+         puts
+         puts "Could not inventory #{anArchivedFile.filename} :-("
+         puts
+         return false
+      end  
+   
+   end
+  
+  
    #-------------------------------------------------------------
    # Performs the file archiving.
    # Copies/Moves the source file to the proper directory
    # Sets access rights
    # Registers the file in the database
    #-------------------------------------------------------------
-   def store(full_path_filename, type, start, stop, bDelete, bUnPack, arrAddFields, path = "", size = 0, size_in_disk = 0)
+   def store(full_path_filename, type, start, stop, bDelete, bUnPack, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
       
       archival_date = Time.now
 
@@ -274,6 +358,7 @@ private
          puts "Validity Stop     -> #{stop}"
          puts "Archiving date    -> #{archival_date}"
          puts "Size              -> #{size}"
+         puts "Original Size     -> #{size_original}"
          puts "Disk occupation   -> #{size_in_disk}"
          puts "==================================="
       end
@@ -436,6 +521,7 @@ private
          anArchivedFile.path           = path
          anArchivedFile.size           = size
          anArchivedFile.size_in_disk   = size_in_disk
+         anArchivedFile.size_original  = size_original
 
          if start != "" and start != nil then
             anArchivedFile.validity_start = start

@@ -196,33 +196,9 @@ class FileRetriever
 
       aFile    = ArchivedFile.find_by_filename(filename)
 
-      if !aFile then
-      
-         aFile = ArchivedFile.where("filename LIKE ?", "%#{File.basename(filename, ".*")}%")
-         
-         if aFile == nil then
-            return false
-         else
-            @arrInv << aFile[0]
-            aFile = aFile[0]
-         end
-      else
-         
-         @arrInv << aFile
-      end
-
-      if @bReport then
-         editor = ARC::ReportEditor.new(Array[aFile])
-         editor.generateReport(@reportFullName)
-      end
-
-      if @bListOnly then
-         puts aFile.filename
-         return true
-      else
+      if aFile != nil then
          retVal = extractFromArchive(destination, aFile.filetype, aFile.filename, 
                                           aFile.archive_date, bDelete, bHardlink, aFile.path)
-
          if retVal then
             aFile.last_access_date = Time.now
             aFile.access_counter   = aFile.access_counter + 1
@@ -232,9 +208,48 @@ class FileRetriever
          if bUnpack == true then    
             unPackFile(destination, aFile.filename)
          end
-      
          return retVal
       end
+
+      aFile = ArchivedFile.where("filename LIKE ?", "%#{File.basename(filename, ".*")}%")
+
+      @arrInv << aFile
+
+      ret = true
+
+      @arrInv.to_a.each{|arrFiles|
+         arrFiles.each{|aFile|
+            puts aFile.filename
+            if @bListOnly == false then
+               retVal = extractFromArchive(destination, aFile.filetype, aFile.filename, 
+                                          aFile.archive_date, bDelete, bHardlink, aFile.path)
+
+               if retVal then
+                  aFile.last_access_date = Time.now
+                  aFile.access_counter   = aFile.access_counter + 1
+                  aFile.save
+                  
+                  if bUnpack == true then    
+                     unPackFile(destination, aFile.filename)
+                  end
+                  
+               else
+                  ret = false
+               end
+            end
+         }
+         
+      }
+
+      return ret
+
+
+
+#       if @bReport then
+#          editor = ARC::ReportEditor.new(Array[aFile])
+#          editor.generateReport(@reportFullName)
+#       end
+
 
    end
    #-------------------------------------------------------------
@@ -243,6 +258,10 @@ class FileRetriever
       @arrInv  = Array.new
       @arrInv  = ArchivedFile.all
       @arrInv  = ArchivedFile.all.order('filename DESC')
+      
+      @arrInv.each{|aFile|
+         puts aFile.filename
+      }
       
       # @arrInv  = ArchivedFile.all.order('filename DESC').order('type DESC')
       
