@@ -55,27 +55,34 @@ class Handler_S2PDGS
       @archive_path  = ""
       @validated     = false
 
+      # ----------------------------------------------------
+      # E2ESPM Analytics Reports 
       if @filename.length == 72 then
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(41, 15))
          @stop             = self.str2date(@filename.slice(57, 15))
+         
+         if isTypeAnalytic?(@type) == false then
+            system("\\rm -f #{name}")
+            puts "Deleted #{name}" 
+            exit(99)
+         end
+         
+         @type             = "REP_E2ESPM"
          @validated        = true
       end 
+      # ----------------------------------------------------
 
       if @filename.length == 73 or @filename.length == 88 then
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(42, 15))
-         @stop             = self.str2date(@filename.slice(58, 15))
-         
-#          puts @generation_date
-#          puts @start
-#          puts @stop
-#          exit
-       
+         @stop             = self.str2date(@filename.slice(58, 15))         
          @validated        = true
       end 
+     
+      # ----------------------------------------------------     
          
       if @filename.length == 56 then
          @type             = @filename.slice(9,10)         
@@ -87,11 +94,6 @@ class Handler_S2PDGS
          else
             @stop = self.str2date(@filename.slice(36, 15))
          end
-         
-#          puts @generation_date
-#          puts @start
-#          puts @stop
-#          exit       
          @validated        = true
       end          
          
@@ -105,12 +107,6 @@ class Handler_S2PDGS
       @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
 
       @size_original = File.size(name)
-
-#        puts "PEDO"
-#        puts name
-       puts @size_original
-      # exit
-
 
       if File.extname(name).downcase != ".zip" and File.extname(name).downcase != ".tgz" then
          compressFile(name)
@@ -188,5 +184,155 @@ private
 
    #-------------------------------------------------------------
 
+   # E2ESPM analytic reports
+   
+   def isTypeAnalytic?(type)
+
+      case type
+                 
+         when "REP_E2EMPL" then return true
+         
+         # REP_ACQSCH
+         
+         when "REP_ACQSCH" then return true
+         
+         when "REP_AOCPRO" then return true
+         
+         when "REP_ARCSUM" then return true
+         
+         when "REP_DATCOM" then return true
+         
+         when "REP_DARCCO" then return true
+         
+         when "REP_SUCINV" then return true
+         
+         when "REP_DAGSAC" then return true
+         
+         when "REP_DAMCOM" then return true
+         
+         when "REP_DATARC" then return true
+         
+         when "REP_DATARI" then return true
+         
+         when "REP_DATINX" then return true
+         
+         when "REP_DFEPCO" then return true
+         
+         when "REP_DHUSCO" then return true
+         
+         when "REP_E2EAC2" then return true
+         
+         when "REP_E2EACB" then return true
+         
+         when "REP_E2EACQ" then return true
+         
+         when "REP_E2EAVA" then return true
+         
+         when "REP_E2EAVB" then return true
+         
+         when "REP_E2EDAR" then return true
+         
+         when "REP_E2EL0C" then return true
+         
+         when "REP_E2EL1C" then return true
+         
+         when "REP_E2EL1C" then return true
+         
+         when "REP_E2EL1T" then return true
+         
+         when "REP_E2ELTD" then return true
+         
+         when "REP_E2EMPX" then return true
+         
+         when "REP_E2ETIM" then return true
+         
+         when "REP_EOBTRN" then return true
+         
+         when "REP_HKTARC" then return true
+         
+         when "REP_HKTCIR" then return true
+         
+         when "REP_HKTWOR" then return true
+         
+         when "REP_INGSTA" then return false
+         
+         when "REP_INGVAL" then return false
+         
+         when "REP_L0DARC" then return true
+         
+         when "REP_L0DCIR" then return true
+         
+         when "REP_L1BARC" then return true
+         
+         when "REP_L1ACIR" then return true
+         
+         when "REP_L1BCIR" then return true
+         
+         when "REP_L1CARC" then return true
+         
+         when "REP_L1CCIR" then return true
+         
+         when "REP_LOSTDA" then return true
+         
+         when "REP_MACOPR" then return true
+         
+         when "REP_MISCON" then return true
+         
+         when "REP_MISCOR" then return true
+         
+         when "REP_MMFUCO" then return true
+         
+         when "REP_MEMEVO" then return true
+         
+         when "REP_MEMEVB" then return true
+         
+         when "REP_MONMAC" then return false
+         
+         when "REP_OCPAOC" then return true
+         
+         when "REP_PODCIR" then return true
+         
+         when "REP_PREORW" then return true
+         
+         when "REP_PROTIM" then return true
+         
+         when "REP_PROWOB" then return true
+         
+         when "REP_PROWOR" then return true
+         
+         when "REP_PROWOS" then return true
+         
+         when "REP_DATIDS" then return true
+         
+         when "REP_QUADIS" then return true
+         
+         when "REP_QUATIM" then return true
+         
+         when "REP_TIMLIN" then return true
+         
+         when "REP_SADARC" then return true
+         
+         when "REP_SADCIR" then return true
+         
+         when "REP_SATCOM" then return true
+         
+         when "REP_SUCINS" then return false
+         
+         # Ingestion Error Stamps
+         when "REP_SUCINV" then return false
+         
+         when "REP_TLEWOR" then return true
+         
+         when "REP_TIMLIB" then return true
+         
+         else
+            puts
+            puts "Handler_S2PDGS::isTypeAnalytic? #{type} not registered"
+            puts
+            exit(99)
+         
+      end
+   end
+   #-------------------------------------------------------------
    
 end
