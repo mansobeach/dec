@@ -27,7 +27,6 @@ module E2E
 
 class Analytic_E2E < AnalyticGeneric
 
-   include CUC::Converters
 
    #-------------------------------------------------------------
   
