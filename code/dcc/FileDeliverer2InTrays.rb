@@ -264,15 +264,15 @@ class FileDeliverer2InTrays
             begin
                File.delete("#{directory}/#{file}")
             rescue Exception
-               @logger.error("Could not delete #{directory}/#{file}")
+               @logger.error("deliverFile : Could not delete #{directory}/#{file}")
                puts
                puts "Could not delete #{directory}/#{file} ! :-("
                puts
                exit(99)
             end
          else
-            @logger.error("#{file} has not been disseminated")
-            @logger.warn("#{file} is still placed in #{directory}")
+            @logger.error("deliverFile : #{file} has not been disseminated")
+            @logger.warn("deliverFile : #{file} is still placed in #{directory}")
             puts "#{file} has not been disseminated"
             puts "#{file} is still placed in #{directory}"
          end       
@@ -323,7 +323,9 @@ private
 		end
 		
 		prevDir = Dir.pwd
+      
 		Dir.chdir(fromDir)
+      
 		firstDir = arrToDir[0]
 		bFirst   = true
 		arrToDir.each{|targetDir|
@@ -357,8 +359,8 @@ private
 
             if bRet == false then
                if @isDebugMode == true then
-                  puts "Could not place final File in Target Directory ! :-("
-                  @logger.error("FileDeliverer2InTrays::disseminate Could not place final File in Target Directory ! :-(")
+                  puts "Could not place final #{file} in Target Directory #{targetDir}! :-("
+                  @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
                end
                bReturn = false
             else

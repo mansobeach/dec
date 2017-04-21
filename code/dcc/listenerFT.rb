@@ -14,6 +14,7 @@
 #     --mnemonic <MNEMONIC> (mnemonic is case sensitive)
 #     --interval            the frequency it is polled I/F given by MNEMONIC (in seconds)
 #     --nodb                no Inventory recording
+#     --no-intray           skip step of delivery to intrays upon download
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -68,6 +69,7 @@ def main
    @bCheckListeners    = false
    @isReload           = false
    @isNoDB             = false
+   @isNoIntray         = false
    @mnemonic           = "" 
    @intervalSeconds    = 0
    
@@ -99,6 +101,7 @@ def main
       ["--Reload", "-R",         GetoptLong::NO_ARGUMENT],
       ["--version", "-v",        GetoptLong::NO_ARGUMENT],
       ["--help", "-h",           GetoptLong::NO_ARGUMENT],
+      ["--no-intray", "-N",      GetoptLong::NO_ARGUMENT],
       ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
       )
 
@@ -118,7 +121,7 @@ def main
             when "--help"     then RDoc::usage
             when "--interval" then
                @intervalSeconds = arg.to_i
-	    when "--stop"     then
+	         when "--stop"     then
                if existEntity?(arg.to_s) == false then
                   puts
                   puts "#{arg.to_s} is not a registered I/F"
@@ -132,8 +135,9 @@ def main
 	            stopListeners
 	            puts "\nlisteners to the I/Fs have been killed ! }=-) \n\n"
 	            exit(0)
-            when "--usage"    then usage
-            when "--nodb"     then @isNoDB    = true
+            when "--usage"          then usage
+            when "--nodb"           then @isNoDB            = true
+            when "--no-intray"      then @isNoIntray        = true
          end
       end
    rescue Exception
@@ -217,19 +221,26 @@ def pollInterface
    # getFromInterface.rb --del-unknown flag would need a cleaner approach
    # New attribute in configuration file is needed
 
-   command  = %Q{#{command} --del-unknown} 
+#   command  = %Q{#{command} --del-unknown} 
 
    # ----------------------------------------------------------
    
    if @isNoDB == true then
-      command  = %Q{#{command} --nodb --no-intray}
+      command  = %Q{#{command} --nodb}
    end
+
+   if @isNoIntray == true then
+      command  = %Q{#{command} --no-intray}
+   end
+
 
    # ----------------------------------------------------------
 
    if @isDebugMode == true then
       puts "#{command}"
    end
+
+   puts command
 
 # DCC Commands provide a lot of console output
 # Because of this, if it is desired to use DCC_CommandLauncher execute
@@ -490,7 +501,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -26 #{fullpathFile}"}`
+   value = `#{"head -27 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

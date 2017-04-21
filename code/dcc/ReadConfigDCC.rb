@@ -92,6 +92,15 @@ class ReadConfigDCC
    end
    #-------------------------------------------------------------
 
+   def getDeleteUnknown
+      if @deleteUnknown == 'true' then
+         return true
+      else
+         return false
+      end
+   end
+   #-------------------------------------------------------------
+
    def getDeleteDuplicated
       if @deleteDuplicated == 'true' then
          return true
@@ -205,8 +214,9 @@ private
       @mission            = ""
       @arrReports         = Array.new
       @UnknownDestDir     = ""
-      @DownloadDirs       = ""
-      @DeleteDuplicated   = ""
+      @downloadDirs       = ""
+      @deleteDuplicated   = ""
+      @deleteUnknown      = ""
       enabled             = ""
       desc                = ""
       fileClass           = "" 
@@ -249,6 +259,10 @@ private
          XPath.each(option, "DeleteDuplicated"){
             |option_1|
             @deleteDuplicated = option_1.text.downcase
+         }
+         XPath.each(option, "DeleteUnknown"){
+            |option_1|
+            @deleteUnknown = option_1.text.downcase
          }
       }     
  
