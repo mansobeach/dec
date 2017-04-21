@@ -1,0 +1,120 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a DCC command line tool that shows file reception statistics  
+# 
+# == Usage
+# dccStats
+#     --file <filename>          status of a given filename
+#     --type <filetype>          file-type of the file to be deleted
+#     --global  
+#     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
+#     --list                     it lists the files that would be retrieved
+#                                according to the selection criteria
+#     --help                     shows this help
+#     --usage                    shows the usage
+#     --Debug                    shows Debug info during the execution
+#     --version                  shows version number
+#
+#
+# == Author
+# DEIMOS-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === Data Collector Component
+#
+# CVS: $Id: dccStats.rb,v 1.15 2015/09/25 16:55:04 decdev Exp $
+#
+#########################################################################
+
+require 'getoptlong'
+require 'rdoc'
+
+require 'dcc/StatisticDCC'
+
+
+# MAIN script function
+def main
+
+   @filename                  = ""
+   @filetype                  = ""
+   @dirname                   = ""
+   startVal                   = ""
+   endVal                     = ""
+   @bGlobal                   = false
+
+   @full_report_name          = ""
+
+   bIncStart = false
+   bIncEnd = false
+
+   @isDebugMode            = false
+   @bListOnly              = false
+
+   showVersion             = false
+   
+   opts = GetoptLong.new(
+     ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--global", "-g",          GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt      
+            when "--Debug"             then @isDebugMode = true
+            when "--list"              then @bListOnly   = true
+            when "--global"            then @bGlobal     = true
+            when "--version"           then showVersion  = true
+			   when "--help"              then usage
+	         when "--usage"             then usage
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   stats = DCC::StatisticDCC.new
+
+   stats.lastHour
+
+   exit(0)
+
+end
+
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -26 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================

@@ -51,7 +51,7 @@ class CreateReceivedFiles < ActiveRecord::Migration
          t.column :size,                :integer
          t.column :interface_id,        :integer
          t.column :reception_date,      :datetime
-         t.column :delivered_using,     :string,  :limit => 64
+         t.column :protocol,            :string,  :limit => 64
       end
    end
 
@@ -63,9 +63,17 @@ end
 #=====================================================================
 
 class AddSizeToReceivedFiles < ActiveRecord::Migration
+  # size of the file in bytes
   def change
-     # size of the file in bytes
      add_column :received_files, :size, :integer, {:default=>0, :null=>true}
+  end
+end
+
+#=====================================================================
+
+class AddProtocolToReceivedFiles < ActiveRecord::Migration
+  def change
+     add_column :received_files, :protocol, :string, {:limit => 64, :default=>"", :null=>true }
   end
 end
 

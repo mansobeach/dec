@@ -85,6 +85,7 @@ def main
 
    if @bUpdate then
       migration = AddSizeToReceivedFiles.new
+      migration = AddProtocolToReceivedFiles.new
       migration.change
       exit(0)
    end
