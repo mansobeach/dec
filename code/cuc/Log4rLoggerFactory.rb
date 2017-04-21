@@ -78,7 +78,9 @@ class Log4rLoggerFactory
       end
 
       if bLog2File then
-         @mainLogger.add Log4r::FileOutputter.new(modName, :filename => "#{full_path_logfile}", :formatter => logFormatter, :trunc => false)
+         # @mainLogger.add Log4r::FileOutputter.new(modName, :filename => "#{full_path_logfile}", :formatter => logFormatter, :trunc => false)
+         @mainLogger.add Log4r::RollingFileOutputter.new(modName, :filename => "#{full_path_logfile}", \
+                           :formatter => logFormatter, :trunc => false, :max_backups => 3, maxsize => 5000000)
       end
 
       @configured = true
