@@ -12,6 +12,13 @@
 #
 #########################################################################
 
+# Analytic_DutyCycleMSI
+#
+# Parameters (optional)
+#
+# MISSION=S2A|S2B
+
+
 require 'e2e/AnalyticGeneric'
 
 module E2E
@@ -96,9 +103,12 @@ class Analytic_E2E < AnalyticGeneric
       @numOrbits     = arrANX.length
    
       arrANX.each{|anx|
+      
+         @orbitImaging  = 0
+      
          events      = self.filterValueInWindow(arrEventMSI, anx[:start].to_time, anx[:stop].to_time)
          dutyCycle   = (accumulatedDutyCycle(events)/60.0).round(2)
-         puts "Orbit #{anx[:value]} : #{anx[:start].to_time} - #{anx[:stop].to_time} [#{((anx[:stop].to_time - anx[:start].to_time)/60.0).round(2)} min]=> #{dutyCycle} minutes / #{@switchesOrbit} switches"
+         puts "Orbit #{anx[:value]} : #{anx[:start].to_time} - #{anx[:stop].to_time} [#{((anx[:stop].to_time - anx[:start].to_time)/60.0).round(2)} min] => duty #{dutyCycle} minutes / imaging #{(@orbitImaging/60.0).round(2)} minutes / #{@switchesOrbit} switches"
       
          if dutyCycle > @limitDutyCycle then
             arrViolated << events
@@ -144,6 +154,7 @@ class Analytic_E2E < AnalyticGeneric
          
          if event[:value] == "IMAGING" then
             @totalImaging = @totalImaging +  (event[:stop].to_time - event[:start].to_time)
+            @orbitImaging = @orbitImaging +  (event[:stop].to_time - event[:start].to_time)
          end
          
          

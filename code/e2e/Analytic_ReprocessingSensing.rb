@@ -55,29 +55,24 @@ class Analytic_E2E < AnalyticGeneric
    
    # Process optional arguments supplied to the analytic
    
-   def processArguments
-      
+   def processArguments     
+      bArgument = false
       if @arguments == nil then
          @baseline = "N02.04"
          return
       end
-      
-      bArgument = false
-      
       @arguments.each{|key, value|
          if key.upcase == "BASELINE" then
             @baseline = "N#{value}"
             bArgument = true
          end        
       }
-      
       if bArgument == false then
          puts "Error in Analytic_ReprocessingSensing::processArguments"
          puts "arguments not supported"
          puts @arguments
          puts
       end
-
    end
    #-------------------------------------------------------------
    
@@ -91,7 +86,6 @@ class Analytic_E2E < AnalyticGeneric
       queryStartStr  = @queryStartStr
       queryStopStr   = @queryStopStr
       # --------------------------------
-     
       arrResults     = Array.new
      
       arrArchived    = self.filterExplicitReference(@hEvents["DATA-ARCHIVED"], @baseline)
@@ -106,13 +100,20 @@ class Analytic_E2E < AnalyticGeneric
       arrArchived       = self.filterExplicitReference(arrArchived, "MSI_L1C_DS_EPA_")
       arrArchived       = self.uniqueExplicitReference(arrArchived)
       
+      if arrArchived == nil or arrArchived.empty? then
+         puts
+         puts "No L1C generated in PAC1 with baseline #{@baseline.slice(1,5)} archived during [#{queryStartStr},#{queryStopStr}]"
+         puts
+         return false
+      end
+      
       sensingStartStr   = self.dsGetSensingStart(arrArchived[0][:explicit_reference])
       sensingStartDate  = self.str2date(sensingStartStr)
       sensingStopStr    = self.dsGetSensingStart(arrArchived[0][:explicit_reference])
       sensingStopDate   = self.str2date(sensingStopStr)
 
       if @isDebugMode == true then
-         puts "Archived #{arrArchived.length} DS generated at PAC1 with baseline #{@baseline}"
+         puts "Archived #{arrArchived.length} DS generated at PAC1 with baseline #{@baseline.slice(1,5)}"
       end
 
       arrConsideredDS = Array.new
@@ -125,7 +126,7 @@ class Analytic_E2E < AnalyticGeneric
          creationDate   = self.str2date(creationStr)
          
          if @isDebugMode == true then
-            puts "#{startStr} -> #{ds[:explicit_reference]}"
+            puts "#{ds[:explicit_reference]} -> #{startStr}"
          end
          
          # -----------------------------
@@ -148,7 +149,6 @@ class Analytic_E2E < AnalyticGeneric
          arrConsideredDS << ds[:explicit_reference]
       }
 
-
       if @isDebugMode == true then
          puts
          puts "Total DS considered for archiving #{arrConsideredDS.length}"
@@ -166,15 +166,10 @@ class Analytic_E2E < AnalyticGeneric
       arrReprocessed     = self.filterExplicitReference(arrReprocessed, "MSI_L1C_DS_EPA_")
       arrReprocessed     = self.filterValue(arrReprocessed, "REP_OPDPC_")
       
-      if @isDebugMode == true then
-         puts "Reprocessed #{arrReprocessed.length} DS"
-      end
+      arrConsideredDS2   = Array.new
+      @totalSensing      = 0
 
-      arrConsideredDS2 = Array.new
-      @totalSensing = 0
-
-      arrReprocessed.each{|ds|
-        
+      arrReprocessed.each{|ds|  
          # puts "Reprocessed #{ds[:explicit_reference]} datastrips with baseline #{@baseline}"
                    
          creationStr    = self.dsGetCreationTime(ds[:explicit_reference])
@@ -206,16 +201,16 @@ class Analytic_E2E < AnalyticGeneric
       end
 
       if arrConsideredDS2.sort !=  arrConsideredDS.sort then
-         puts "Archived #{arrConsideredDS.length} and Reprocessed #{arrConsideredDS2.length} DS do not fit :-( !"
+         puts "Archived #{arrConsideredDS.length} and Reprocessed #{arrConsideredDS2.length} DS does not fit :-( !"
          puts
+         puts arrConsideredDS - arrConsideredDS2
       end
 
       writeToExcel(arrResults)
 
       puts
-      puts "Total sensing #{@totalSensing/60.0} minutes reprocessed during period [#{queryStartStr},#{queryStopStr}] for baseline #{@baseline.slice(1,5)}"
+      puts "Total sensing #{(@totalSensing/60.0).round(2)} minutes reprocessed during period [#{queryStartStr},#{queryStopStr}] for baseline #{@baseline.slice(1,5)}"
       puts
-
    end
    #-------------------------------------------------------------
    

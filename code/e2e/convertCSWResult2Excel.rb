@@ -35,6 +35,7 @@ def main
    @bForce        = false
    @filename      = ""
    @arrArgs       = Array.new(ARGV)
+   @bCorrected    = false
 
    opts = GetoptLong.new(
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
