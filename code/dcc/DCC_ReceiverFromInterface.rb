@@ -21,6 +21,7 @@ require 'net/ssh'
 require 'net/sftp'
 require 'timeout'
 require 'benchmark'
+# require 'Process'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
@@ -37,6 +38,7 @@ require 'ctc/LocalInterfaceHandler'
 require 'dcc/EntityContentWriter'
 require 'dcc/FileDeliverer2InTrays'
 require 'dcc/ReadConfigDCC'
+
 # Conditional require driven by --nodb flag
 # require 'dbm/DatabaseModel'
 
@@ -46,6 +48,7 @@ module DCC
 class DCC_ReceiverFromInterface
 
    include Benchmark
+   include Process
    
    include CUC::DirUtils
    include CTC::FTPClientCommands
@@ -82,7 +85,6 @@ class DCC_ReceiverFromInterface
 			exit(99)
       end
 
-
       checker     = CTC::CheckerInterfaceConfig.new(entity, true, false)
       retVal      = checker.check
 
@@ -102,13 +104,18 @@ class DCC_ReceiverFromInterface
       
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
-      # 2016 currently hardcoded number of files handled on each iteration
+      # -------------------------------------
+      # 2016 currently hardcoded number of files handled on each iteration in case
+      # it is not defined in the configuration
       if @pollingSize == nil then
          @pollingSize      = 150
       else
          @pollingSize = @pollingSize.to_i
       end
+      # -------------------------------------      
             
+      @parallelDownload = @entityConfig.getTXRXParams(@entity)[:parallelDownload]      
+                        
       @fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
@@ -193,11 +200,7 @@ class DCC_ReceiverFromInterface
             end     
             
       end
-      
-      
-      
-      
-     
+           
 #       puts "+++++++++++++++++++++++++++++++++"
 #       puts list
 #       puts list.length
@@ -511,26 +514,102 @@ class DCC_ReceiverFromInterface
    end
    #-------------------------------------------------------------
 
+   def receiveAllFilesParallel
+      currentDir = Dir.pwd
+      checkDirectory(@localDir)
+      Dir.chdir(@localDir)
+      puts "Downloading file(s) ..." # into #{@localDir} ..."
+      @retValFilesReceived    = true
+      @atLeast1FileReceived   = false
+      listFiles               = Array.new(@fileList)
+      
+      arrSent  = Array.new
+      
+      loop do
+         break if listFiles.empty?
+         1.upto(@parallelDownload) {|i|
+            break if listFiles.empty?
+            # puts "Download process #{i}"
+            file = listFiles.shift
+            arrSent << file
+            puts File.basename(file)
+            fork{
+               #@logger.info("Forking #{File.basename(file)}")
+            	ret = downloadFile(file)
+               if ret == false then
+                  #@logger.error("Forked Failed to download #{File.basename(file)}")
+                  @retValFilesReceived  = false
+                  exit(1)
+               else
+                  #@logger.info("Forking Success #{File.basename(file)}")
+                  @atLeast1FileReceived = true
+                  exit(0)
+               end 
+            }
+         }
+         arr = Process.waitall
+         arr.each{|child|
+            if child[1].exitstatus == 0 then
+               #@logger.info(arrSent)
+               @atLeast1FileReceived = true
+            else
+               @logger.error("Problem(s) during file download")
+               @retValFilesReceived = false
+            end
+         }
+         arrSent  = Array.new
+      end
+            
+      deleteTempDir
+      
+#		createContentFile(@finalDir)
+      puts "\n"
+
+      # Create new files received lock file
+      if @bCreateNewFilesLock == true and @fileList.length >0 and @atLeast1FileReceived == true
+         notifyNewFilesReceived
+      end
+
+      Dir.chdir(currentDir)
+      return @retValFilesReceived   
+   end
+   #-------------------------------------------------------------
+
    # Get all Files found in the previous polling to the I/F.
    # All files are left in a temp local directory
    # $DCC_TMP/<current_time>_entity
    def receiveAllFiles
+   
+      if @parallelDownload > 1 then
+         return receiveAllFilesParallel
+      end
+   
       currentDir = Dir.pwd
       checkDirectory(@localDir)
       Dir.chdir(@localDir)
       puts "Downloading file(s) ..." # into #{@localDir} ..."
       @retValFilesReceived  = true
       @atLeast1FileReceived = false
-		@fileList.each{|file|
-		   puts File.basename(file)
-			ret = downloadFile(file)
-         if ret == false then
-            @retValFilesReceived = false
-         else
-            @atLeast1FileReceived = true
-         end
-		}
+		
+      
+      @fileList.each{|file|
+      
+            
+		         puts File.basename(file)
+                
+			      ret = downloadFile(file)
+            
+               if ret == false then
+                  @retValFilesReceived  = false
+               else
+                  @atLeast1FileReceived = true
+               end
+		
+      
+      }
+      
       deleteTempDir
+      
 #		createContentFile(@finalDir)
       puts "\n"
 
@@ -1018,12 +1097,12 @@ private
 	# This method is invoked after placing the files into the operational
 	# directory. It deletes the file in the remote Entity if the Config
 	# flag DeleteFlag is enable.
-	def deleteFromEntity(filename)
+	def deleteFromEntity(filename, bForce = false)
 	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
 		# if true proceed to remove the files from the remote I/F
-		if deleteFlag == true then
+		if deleteFlag == true or bForce == true then
 		   if @isDebugMode == true then
-			   puts "DeleteFlag is enabled for #{@entity} I/F"
+			   puts "DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F "
 			end
 
 		   if isSecureMode == true then
@@ -1062,7 +1141,7 @@ private
 			end      
 		else
 		   if @isDebugMode == true then
-			   puts "DeleteFlag is disabled for #{@entity} I/F"
+			   puts "DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F "
 			end
 		end
 	end
@@ -1082,23 +1161,27 @@ private
       nStart         = list.length
 
       # ------------------------------------------
-      
-      # Remove Repeated files found in different directories
-      # and extract filename from the full path
 
-      perf = measure {
-    
-      tmpList.each{|fullpath|
-         filename = File.basename(fullpath)
-         if arrFiles.include?(filename) == true then
-            list.delete(fullpath)
-            next
-         end
-         arrFiles << filename
-      }
-
-      } # end of measure
+#===============================================================================
+# 20170411 - temporal patch for massive ingestion of archives 2015 and 2016
+#      
+#       # Remove Repeated files found in different directories
+#       # and extract filename from the full path
 # 
+#       perf = measure {
+#     
+#       tmpList.each{|fullpath|
+#          puts fullpath
+#          filename = File.basename(fullpath)
+#          if arrFiles.include?(filename) == true then
+#             list.delete(fullpath)
+#             next
+#          end
+#          arrFiles << filename
+#       }
+# 
+#       } # end of measure
+#=============================================================================== 
       # ------------------------------------------
 
       if @isBenchmarkMode == true then
@@ -1217,6 +1300,8 @@ private
 
       if @isNoDB == false then
 
+      @logger.info("Filtering files previously recorded within db")
+
       perf = measure{
 
       arrDelete = Array.new
@@ -1237,7 +1322,8 @@ private
  
                puts "removing duplicated #{File.basename(filename)} previously received from #{@entity}"
                @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
-               deleteFromEntity(fullpath)
+               # deleteFromEntity(fullpath, true)
+               deleteFromEntity(fullpath, false)
             else
                numFilesToBeRetrieved += 1
                arrPolled << fullpath
@@ -1273,6 +1359,8 @@ private
       list.replace(arrPolled)
 
       } # end of measure
+
+      @logger.info("Filtering Completed")
 
       end # end of if @isNoDB
 
@@ -1332,7 +1420,8 @@ private
                end
                #2016 patch
                @logger.info("removing duplicated #{File.basename(fileName)} previously received from #{@entity}")
-               deleteFromEntity(fileName)
+               # deleteFromEntity(fileName, true)
+               deleteFromEntity(fileName, false)
             end
          else
             if hasBeenAlreadyTracked(fileName) == false then
@@ -1406,6 +1495,7 @@ private
       receivedFile.filename       = filename
       receivedFile.size           = size
       receivedFile.interface      = @interface
+      receivedFile.protocol       = @protocol
       receivedFile.reception_date = Time.now
             
       begin
@@ -1658,13 +1748,13 @@ private
    # Check if there are some temp dirs for this entity that stayed unremoved from a previous execution
    # - entity (IN): name of the currently processed entity
    def removePreviousTempDirs
-      cmd = %Q{find #{ENV['DCC_TMP']}/ -name '.*\\_#{@entity}*' -type d -exec rm -rf {} \\;}
+      cmd = %Q{find #{ENV['DCC_TMP']}/ -name '.*\\_#{@entity}' -type d -exec rm -rf {} \\;}
 
       if @isDebugMode == true then
          puts "\nRemoving previous temporary dirs if any..."
          puts cmd
       end
-      
+      @logger.info("Removing old tmps for #{@entity}: #{cmd}")
       execute(cmd, "getFromInterface", false, false, false, false)
 
    end
