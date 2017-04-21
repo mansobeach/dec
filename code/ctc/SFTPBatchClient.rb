@@ -32,7 +32,7 @@ class SFTPBatchClient
       @host        = host
       @port        = port
       @user        = user
-      @batchFile   = batchFile
+      @batchFile   = "#{batchFile}.#{Time.now.to_f}"
       @cmd         = ""
       @compress    = compress
       checkModuleIntegrity
@@ -88,12 +88,12 @@ class SFTPBatchClient
       # was successful or not.
       if retVal == true then
          retVal = processStdError(errorFile)
-      end      
-      if FileTest.exists?(@batchFile) then 
-         n = File.delete(@batchFile)
+      end
+      if FileTest.exists?(@batchFile) then # and retVal == true then 
+         File.delete(@batchFile)
       end 
-      if FileTest.exists?(errorFile) then 
-         n = File.delete(errorFile)
+      if FileTest.exists?(errorFile) then # and retVal == true then 
+         File.delete(errorFile)
       end      
       return retVal
    end   

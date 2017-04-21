@@ -369,7 +369,7 @@ private
                    :uploadTemp, :arrDownloadDirs)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 		Struct.new("TXRXParams", :mnemonic, :enabled4Send, :enabled4Receive,
-                 :immediateRetries, :loopRetries, :loopDelay, :pollingInterval, :pollingSize)
+                 :immediateRetries, :loopRetries, :loopDelay, :pollingInterval, :pollingSize, :parallelDownload)
 		Struct.new("NotifyTo", :mnemonic, :sendNotification, :arrNotifyTo)		            
       Struct.new("GetMailParams", :mnemonic, :hostname, :port, 
                              :user, :password, :pollingInterval)
@@ -692,12 +692,16 @@ private
          @b4Rcv  = true
       end
 
-      pollingSize = nil
+      pollingSize       = nil
+      parallelDownload  = 1
       
       if !xmlstruct.elements["PollingSize"].nil? then
          pollingSize = xmlstruct.elements["PollingSize"].text
       end
 
+      if !xmlstruct.elements["ParallelDownload"].nil? then
+         parallelDownload = xmlstruct.elements["ParallelDownload"].text.to_i
+      end
 
       txrxParams  = Struct::TXRXParams.new(
                          mnemonic,
@@ -707,7 +711,8 @@ private
                          xmlstruct.elements["LoopRetries"].text,
                          xmlstruct.elements["LoopDelay"].text,
                          xmlstruct.elements["PollingInterval"].text,
-                         pollingSize
+                         pollingSize,
+                         parallelDownload
                          )
       return txrxParams
    end

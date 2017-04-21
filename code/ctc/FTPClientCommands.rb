@@ -128,7 +128,8 @@ module FTPClientCommands
    # - compress (IN): optional argument for compressing SSH communication. 
    def createSftpCommand(host, port, user, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
-         command = %Q{sftp -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+         # command = %Q{sftp -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+         command = %Q{sftp -oPort=#{port} -b #{batchFile} #{user}@#{host}}
       else
          command = %Q{sftp -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
       end
