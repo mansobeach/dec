@@ -16,7 +16,7 @@
 
 require 'filesize'
 
-require "arc/MINARC_DatabaseModel"
+require 'arc/MINARC_DatabaseModel'
 
 module ARC
 
