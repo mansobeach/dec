@@ -145,10 +145,58 @@ protected
    end
    #-------------------------------------------------------------
 
+   def filterName_Annotations(annotations, name)
+      arr = Array.new
+      annotations.each{|annotation|
+         if annotation[:annotation].include?(name) == false then
+            next
+         end
+         arr << annotation
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
+
+   def filterValue_Annotations(annotations, value)
+      arr = Array.new
+      annotations.each{|annotation|
+         if annotation[:value].include?(value) == false then
+            next
+         end
+         arr << annotation
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
+
    def filterExplicitReference(events, er)
       arr = Array.new
       events.each{|event|
          if event[:explicit_reference].include?(er) == false then
+            next
+         end
+         arr << event
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
+
+   def filterExplicitReference_Annotations(annotations, er)
+      arr = Array.new
+      annotations.each{|annotation|
+         if annotation[:explicit_reference].include?(er) == false then
+            next
+         end
+         arr << annotation
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
+
+   def removeSystem(events, system)
+      arr = Array.new
+      events.each{|event|
+         if event[:system].include?(system) == true then
             next
          end
          arr << event
@@ -192,6 +240,17 @@ protected
       return nil
    end
    #-------------------------------------------------------------
+
+   def findByExplicitReference_Annotations(annotations, er)
+       arr   = Array.new
+       annotations.each{|annotation|
+         if annotation[:explicit_reference].include?(er) == true then
+            arr << annotation
+         end
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
    
    def writeToHTML(events)
       # blah blah blah
@@ -212,10 +271,31 @@ protected
       writer      = E2E::WriteGanttXLS.new(@isDebugMode)    
       writer.writeToExcel(events)
    end
+   
    #-------------------------------------------------------------
    
-      
+   def writeToConsole(events)
+      events.each{|event|
+         puts "------------------------------"
+         puts ":system              => #{event[:system]}"
+         puts ":value               => #{event[:value]}"
+         puts ":explicit_reference  => #{event[:explicit_reference]}"
+         puts ":values              => #{event[:values]}"
+         puts "------------------------------"
+      }
+   end
 
+   #-------------------------------------------------------------
+   
+   def writeToConsole_Annotations(annotations)
+      annotations.each{|annotation|
+         puts "------------------------------"
+         puts ":explicit_reference  => #{annotation[:explicit_reference]}"
+         puts ":annotation          => #{annotation[:annotation]}"
+         puts ":value               => #{annotation[:value]}"
+         puts "------------------------------"
+      }
+   end
 
    #-------------------------------------------------------------
 
