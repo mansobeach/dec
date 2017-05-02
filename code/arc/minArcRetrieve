@@ -417,7 +417,8 @@ def main
    end
 
    if @filename != "" then
-      ret = fileRetriever.retrieve_by_name(@full_path_target, @filename, @bDelete, @bHardLink, @bUnpack)
+      filename = @filename.gsub("*", "%")
+      ret = fileRetriever.retrieve_by_name(@full_path_target, filename, @bDelete, @bHardLink, @bUnpack)
    end
 
    if archive_date != "" then

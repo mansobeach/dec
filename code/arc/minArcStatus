@@ -135,7 +135,11 @@ def main
       if @isDebugMode == true then
          fileStatus.setDebugMode
       end
-      fileStatus.statusFile
+      ret = fileStatus.statusFile
+      
+      if ret == false then
+         exit(99)
+      end
    end
 
    if @filetype != "" then

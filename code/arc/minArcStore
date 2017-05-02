@@ -59,6 +59,14 @@
 # This flag is not compatible with -d flag.
 #
 #
+# -I flag:
+#
+# Optional flag, stands for "--Inventory".
+# This flag is used to ONLY "inventory" the specified source file to the Archive.
+# This is to leave untouched the source file and prevent subsequent storage into the Archive filesystem ($MINARC_ARCHIVE_ROOT)
+# This flag is not compatible with any flag involving manipulation of source file or / and manipulation at the Archive storage.
+#
+#
 # -a flag:
 # Optional flag, stands for "--additional-fields".
 # Allows to specify additional fields to fill in the archived_files table and the values
@@ -132,6 +140,7 @@ def main
    @arrAddFields           = Array.new
    @bHardLink              = false
    @bUpdate                = false
+   @bInventoryOnly         = false
    
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
@@ -139,6 +148,7 @@ def main
      ["--Location", "-L",           GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
      ["--Hardlink", "-H",           GetoptLong::NO_ARGUMENT],
+     ["--Inventory", "-I",          GetoptLong::NO_ARGUMENT],
      ["--Types", "-T",              GetoptLong::NO_ARGUMENT],
      ["--delete", "-d",             GetoptLong::NO_ARGUMENT],
      ["--update", "-u",             GetoptLong::NO_ARGUMENT],
@@ -167,6 +177,7 @@ def main
 	         when "--usage"             then usage
             when "--Unpack"            then @bUnpack = true
             when "--Hardlink"          then @bHardLink = true
+            when "--Inventory"         then @bInventoryOnly = true
          end
       end
    rescue Exception
@@ -204,6 +215,10 @@ def main
    end
 
    if @bHardLink and @bMove then
+      usage
+   end
+
+   if @bInventoryOnly and (@bDelete or @bMove or @bHardLink) then
       usage
    end
 
@@ -253,7 +268,7 @@ def main
       exit(99)
    end
 
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -286,7 +301,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -97 #{fullpathFile}"}`
+   value = `#{"head -105 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
