@@ -54,7 +54,7 @@ void Init_ruby_explorer_orbit()
    
    rb_define_method(ruby_explorer_orbit, "DateTime2OrbitAbsolute", method_DateTime2OrbitAbsolute, 2) ;
 
-   rb_define_method(ruby_explorer_orbit, "PositionInOrbit", method_PositionInOrbit, 4) ;
+   rb_define_method(ruby_explorer_orbit, "PositionInOrbit", method_PositionInOrbit, 3) ;
 
 }
 
@@ -77,6 +77,8 @@ VALUE method_xo_check_library_version()
 
 /* -------------------------------------------------------------------------- */
 
+
+
 /*============================================================================*/
 /*  MPL::blah blah blah blah 
       - blah blah blah
@@ -87,22 +89,17 @@ VALUE method_xo_check_library_version()
 VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAngle) 
 {
 
-
-/*
-   char strUTCDate [30] ;
-   strcpy(strUTCDate, StringValueCStr(strUTC) ) ; 
-*/
    
-   char path_orbit_scenario_file[XO_MAX_STR] ;   
-   strcpy(path_orbit_scenario_file, StringValueCStr(strROEF) ) ;
+   char path_orbit_file[XO_MAX_STR] ;   
+   strcpy(path_orbit_file, StringValueCStr(strROEF) ) ;
 
-  
-   printf("\n") ;
-   printf("DEBUG: entry ruby_explorer_orbit::method_PositionInOrbit \n" ) ;
-   printf("OSF/POF   => %s\n", path_orbit_scenario_file) ;
-   printf("Date      => %f\n", dAngle) ;
-   printf("\n") ;
+   long lOrbitNumber = NUM2ULONG(lOrbit) ;
    
+   printf("\n") ;
+   printf("DEBUG: entry ruby_explorer_orbit::method_DateTime2OrbitAbsolute \n" ) ;
+   printf("OSF/POF   => %s\n", path_orbit_file) ;
+   printf("Orbit     => %i\n", lOrbitNumber) ;
+   printf("\n") ;
    
    xl_model_id    model_id    = {NULL} ;
    xl_time_id     time_id     = {NULL} ;
@@ -120,9 +117,8 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
    /* orbit initilization */
    /* ------------------- */
    long time_mode, orbit_mode ;
-   /* char* files[1] ; */
+   char* files[1] ;
    long sat_id ;
-   long propag_model  ;
    /* --------------------------------------------------- */
    /* --------------------------------------------------- */
    /* xo_time_to_orbit & xo_orbit_to_time variables */
@@ -131,9 +127,9 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
    /* xl_time_ref_init_file */
    
    long   time_model, n_files, time_init_mode ;
-   char   *time_file[1] ;
+   char   *orbit_file[1] ;
    
-   long lOrbitNumber, lOrbitStart, lOrbitStop ;
+   long lOrbitStart, lOrbitStop ;
 
    double time0,
          time1,  
@@ -146,33 +142,24 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
    
    double dTimeProcessing, dTimeStart, dTimeStop ;
    
-   propag_model         = XO_PROPAG_MODEL_MEAN_KEPL ;
    sat_id               = XO_SAT_SENTINEL_2A ;   
    
-   /* to be parametrised */
-   lOrbitStart          = 9828 ;
-   lOrbitStop           = 9830 ;
+   lOrbitStart          = 0 ;
+   lOrbitStop           = 99999 ;
    
    dTimeStart           = -18260.0 ;
    dTimeStop            = 36523.0 ;
-   
-   // time_model           = XL_TIMEMOD_OSF ;
-   
-   time_model           = XL_TIMEMOD_FOS_PREDICTED ;
-   
+   /* time_model           = XL_TIMEMOD_OSF ; */
+   time_model           = XL_TIMEMOD_AUTO ;
    n_files              = 1 ;
-   
    time_init_mode       = XL_SEL_FILE ;
-   // time_init_mode       = XL_SEL_ORBIT ;
-   
-   
    time_ref_utc         = XL_TIME_UTC ;
-   time_file[0]         = path_orbit_scenario_file ;
-   
-   
+   orbit_file[0]        = path_orbit_file ;
+
+
    status = xl_time_ref_init_file(  &time_model, 
                                     &n_files, 
-                                    time_file,
+                                    orbit_file,
                                     &time_init_mode, 
                                     &time_ref_utc, 
                                     &dTimeStart, 
@@ -189,7 +176,12 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
       xo_get_msg(&func_id, ierr, &n, msg) ;
       xl_print_msg(&n, msg) ;
    }
+
    
+   
+   return LONG2NUM(99) ;
+   
+   long propag_model ;  
    
 
    /* orbit initialization with an OSF */
@@ -204,7 +196,7 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
                                  &time_id,            // NULL
                                  &orbit_mode,         // XO_ORBIT_INIT_OSF_MODE
                                  &n_files,            // 1
-                                 time_file,           // Array of one OSF
+                                 orbit_file,           // Array of one OSF
                                  &time_mode,          // XO_SEL_FILE
                                  &time_ref_utc,       // XL_TIME_UTC
                                  &time0, 
@@ -225,6 +217,21 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
    {
       printf("\n\nxo_orbit_init_file OK !!!\n") ;
    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
      /* Variables for xo_position_on_orbit_to_time */
@@ -334,13 +341,13 @@ VALUE method_DateTime2OrbitAbsolute(VALUE self, VALUE strROEF, VALUE strUTC)
    char strUTCDate [30] ;
    strcpy(strUTCDate, StringValueCStr(strUTC) ) ; 
    
-   char path_orbit_scenario_file[XO_MAX_STR] ;   
-   strcpy(path_orbit_scenario_file, StringValueCStr(strROEF) ) ;
+   char path_orbit_file[XO_MAX_STR] ;   
+   strcpy(path_orbit_file, StringValueCStr(strROEF) ) ;
 
    
    printf("\n") ;
    printf("DEBUG: entry ruby_explorer_orbit::method_DateTime2OrbitAbsolute \n" ) ;
-   printf("OSF/POF   => %s\n", path_orbit_scenario_file) ;
+   printf("OSF/POF   => %s\n", path_orbit_file) ;
    printf("Date      => %s\n", strUTCDate) ;
    printf("\n") ;
    
@@ -397,7 +404,7 @@ VALUE method_DateTime2OrbitAbsolute(VALUE self, VALUE strROEF, VALUE strUTC)
    n_files              = 1 ;
    time_init_mode       = XL_SEL_FILE ;
    time_ref_utc         = XL_TIME_UTC ;
-   orbit_file[0]        = path_orbit_scenario_file ;
+   orbit_file[0]        = path_orbit_file ;
 
 
    status = xl_time_ref_init_file(  &time_model, 
