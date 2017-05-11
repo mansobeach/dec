@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+export RUBYLIB=$RUBYLIB:$DEC_BASE/code/mpl
+export PATH=$PATH:$DEC_BASE/code/mpl
