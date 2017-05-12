@@ -22,17 +22,22 @@ module Converters
    #-------------------------------------------------------------
    
    # String formats supported: 
-   # - 20120325                  => "%Y%m%d"
-   # - 20120325T154814           => "%Y%m%dT%H%M%S"
-   # - 21-MAY-2015 14:00:01.516  => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
-   # - 01-FEB-2016 02:20:40.59   => "%e-%b-%Y %H:%M:%S.%L"  / length 23
-   # - 01-FEB-2016 02:20:40.5    => "%e-%b-%Y %H:%M:%S.%L"  / length 22
-   # - 22-FEB-2016 15:13:08      => "%e-%b-%Y %H:%M:%S"     / length 20
-   # - 2015-11-16T00:30:27       => "%Y-%m-%dT%H:%M:%S"
+   # - 20120325                     => "%Y%m%d"
+   # - 20120325T154814              => "%Y%m%dT%H%M%S"                        => XL_ASCII_CCSDSA_COMPACT
+   # - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
+   # - 21-MAY-2015 14:00:01.516     => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
+   # - 01-FEB-2016 02:20:40.59      => "%e-%b-%Y %H:%M:%S.%L"  / length 23
+   # - 01-FEB-2016 02:20:40.5       => "%e-%b-%Y %H:%M:%S.%L"  / length 22
+   # - 22-FEB-2016 15:13:08         => "%e-%b-%Y %H:%M:%S"     / length 20
+   # - 2015-11-16T00:30:27          => "%Y-%m-%dT%H:%M:%S"
    
    
    def str2date(str)
    
+      if (str.length == 26) and str.slice(4,1) == "-" and str.slice(7,1) == "-" and str.include?("T") then
+         return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S.%N")
+      end
+  
       if (str.length == 24 or str.length == 23 or str.length ==22) and str.slice(2,1) == "-" and str.slice(6,1) == "-" then
          return DateTime.strptime(str,"%e-%b-%Y %H:%M:%S.%L")
       end
@@ -158,7 +163,6 @@ module Converters
           str.slice(7,1) == "-" and str.slice(10,1) == "T" and str.slice(21,1) == "Z" then
          return str.slice(0, 19)
       end
-    
       
       puts
       puts "FATAL ERROR in CUC::Converters str2strexceldate(#{str} / length #{str.length}  )"
