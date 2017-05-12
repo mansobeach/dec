@@ -1,5 +1,10 @@
 require "ruby_explorer_orbit"
 
+require "cuc/Converters"
+
+include CUC::Converters
+
+
 test     = MPL::Explorer_Orbit.new
 
 
@@ -37,18 +42,40 @@ puts
 puts "-----------------------------------------"
 
 
+lOrbit      = 9572
+fAngleAnx   = 78.1299
+strROF      = "Predicted"
+
+val = test.PositionInOrbit("/Users/borja/Projects/dec/code/mpl/S2A_OPER_MPL_ORBPRE_20170420T072457_20170430T072457_0001.EOF", lOrbit, fAngleAnx)
+
+puts "-----------------------------------------"
+puts
+puts "PositionInOrbit (#{strROF}): Orbit => #{lOrbit} / Angle ANX => #{fAngleAnx} => #{val}"
+puts
+puts "-----------------------------------------"
+
+puts val
+puts self.str2date(val).to_time.usec
+
+timePRE = self.str2date(val).to_time
+
+strROF      = "Reference"
+
+val = test.PositionInOrbit("/Users/borja/Projects/dec/code/mpl/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", lOrbit, fAngleAnx)
+
+puts "-----------------------------------------"
+puts
+puts "PositionInOrbit (#{strROF}): Orbit => #{lOrbit} / Angle ANX => #{fAngleAnx} => #{val}"
+puts
+puts "-----------------------------------------"
 
 
-test.PositionInOrbit("/Users/borja/Projects/dec/code/mpl/S2A_OPER_MPL_ORBPRE_20170420T072457_20170430T072457_0001.EOF", 9572, 78.1299)
+puts self.str2date(val).to_time.usec
 
-exit
+timeOSF = self.str2date(val).to_time
 
-# # ------------------------------------------------------------------------------
-# #
-# # This version works without the so called processing id
-# # 
-# test.PositionInOrbit("/Users/borja/Projects/dec/code/mpl/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF",
-#                                     "20201220T120000", \
-#                                     9558, 78.1299)
-# # 
-# # ------------------------------------------------------------------------------
+puts
+puts
+puts "Difference between OSF and PRE #{(timeOSF - timePRE)} seconds"
+puts
+puts
