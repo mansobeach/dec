@@ -32,7 +32,7 @@ class SFTPBatchClient
       @host        = host
       @port        = port
       @user        = user
-      @batchFile   = "#{batchFile}.#{Time.now.to_f}"
+      @batchFile   = "#{batchFile}.#{Time.now.to_f}.#{Random.new.rand(1.5)}"
       @cmd         = ""
       @compress    = compress
       checkModuleIntegrity
@@ -124,7 +124,12 @@ private
    # - Otherwise it returns false.
    def processStdError(errorFile)
       
-      arr      = IO.readlines(errorFile)
+#      begin
+         arr      = IO.readlines(errorFile)
+#      rescue 
+#         return true
+#      end
+      
       numLines = arr.length
       
       if @isDebugMode == true then

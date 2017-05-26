@@ -30,13 +30,13 @@ class CheckerFTPConfig
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
    def initialize(ftpServerStruct, strInterfaceCaption = "")
       @isDebugMode = false
-      checkModuleIntegrity
       @ftpElement  = ftpServerStruct
       if strInterfaceCaption != "" then
          @entity = strInterfaceCaption
       else
          @entity = "Generic"
       end
+      checkModuleIntegrity
    end
    #-------------------------------------------------------------
    
@@ -106,7 +106,7 @@ private
       tmpDir = ENV['DCC_TMP']  
       time   = Time.new
       time.utc
-      @batchFile = %Q{#{tmpDir}/.#{time.to_f.to_s}}
+      @batchFile = %Q{#{tmpDir}/.checker.#{@entity}.#{time.to_f.to_s}.#{Random.new.rand(1.5)}}
    end
    #-------------------------------------------------------------
    
