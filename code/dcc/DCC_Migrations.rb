@@ -23,8 +23,11 @@ dbUser      = ENV['DCC_DATABASE_USER']
 dbPass      = ENV['DCC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+                                          :host => "localhost",
+                                          :database => dbName,
+                                          :username => dbUser,
+                                          :password => dbPass,
+                                          :timeout    => 60000 )
 
 #=====================================================================
 
