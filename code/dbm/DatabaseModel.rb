@@ -14,30 +14,44 @@
 #
 #########################################################################
 
-require "rubygems"
-require "active_record"
+require 'rubygems'
+require 'active_record'
 
 dbAdapter   = ENV['DCC_DB_ADAPTER']
 dbName      = ENV['DCC_DATABASE_NAME']
 dbUser      = ENV['DCC_DATABASE_USER']
 dbPass      = ENV['DCC_DATABASE_PASSWORD']
 
-ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass, :timeout  => 10000)
+ActiveRecord::Base.establish_connection(
+         :adapter    => dbAdapter,
+         :host       => "localhost", 
+         :database   => dbName,
+         :username   => dbUser,
+         :password   => dbPass, 
+         :timeout    => 60000
+         )
+
+#=====================================================================
 
 class Interface < ActiveRecord::Base
    validates_presence_of   :name
    validates_uniqueness_of :name
 end
 
+#=====================================================================
+
 class ReceivedFile < ActiveRecord::Base
    belongs_to  :interface
+   # attr_accessor :filename, size, reception_date, protocol
 end
+
+#=====================================================================
 
 class TrackedFile < ActiveRecord::Base
    belongs_to  :interface
 end
+
+#=====================================================================
 
 
 #=====================================================================
@@ -236,53 +250,3 @@ end
 
 #-----------------------------------------------------------
 
-
-# anInterface       = Interface.new
-# anInterface.name  = "FOS"
-# 
-# begin
-#    anInterface.save!
-# rescue Exception => e
-#    puts
-#    puts e.to_str
-#    puts
-# end
-# 
-# anInterface = Interface.find_by_name("FOS")
-# 
-# if anInterface == nil then
-#    exit
-# end
-# 
-# 
-# aReceivedFile           = ReceivedFile.new
-# aReceivedFile.filename  = "GO_TEST_MPL_ORB_EV_1436wXXXXXXXXXXXXXXX"
-# aReceivedFile.interface = anInterface
-# aReceivedFile.save!
-# 
-# 
-# 
-# puts
-# puts "-----------------------------"
-# puts "List of I/Fs"
-# 
-# interfaces = Interface.find_all
-# interfaces.each{|anInterface|
-#    print anInterface.id, "  -> ", anInterface.name, "\n"
-# }
-# puts "-----------------------------"
-# 
-# 
-# puts "-----------------------------"
-# 
-# receivedFiles = ReceivedFile.find_all
-# 
-# receivedFiles.each{|aFile|
-#    print aFile.filename, "  -> ", aFile.interface.name, "\n"
-# }
-# 
-# puts "-----------------------------"
-# 
-# 
-# 
-# exit
