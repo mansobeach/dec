@@ -256,6 +256,24 @@ def pollInterface
       puts "ERROR Polling #{@mnemonic} I/F !\n\n"
       @logger.error("Could not Poll #{@mnemonic} I/F !")
       # if previous polling failed, retry again inmediately
+      
+      # -------------------------------------
+      # 20170518 
+      
+      # With multiple simultaneous downloads on the same server,
+      # error condition can now be different a network glitch 
+      # but connectivity rejection by FW in between which can associate
+      # this scenario with a DoS attack, 
+      # hence inmediate retry brings inmediate rejection by FW
+      #  
+      # This waiting time to remove DCC from FW temporal blacklist
+      # should become an adaptative one, for the time being set 
+      # to two minutes with S2PDGS PDMC observations
+      
+      sleep(120)
+      
+      # -------------------------------------
+      
       return 1
    end 
 
