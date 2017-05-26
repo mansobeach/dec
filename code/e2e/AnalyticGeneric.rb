@@ -180,6 +180,27 @@ protected
       return arr
    end
    #-------------------------------------------------------------
+   
+   def filterTimeWindowER(events, start, stop)
+      arr = Array.new
+      events.each{|event|
+         annotation_time = self.str2date(dsGetSensingStart(event[:explicit_reference]) ).to_time
+         
+#          puts "--------------------------------"
+#          puts event[:explicit_reference]
+#          puts annotation_time
+#          puts start
+#          puts stop
+#          puts "--------------------------------"
+         
+         if annotation_time < start or annotation_time > stop then
+            next
+         end
+         arr << event
+      }
+      return arr
+   end
+   #-------------------------------------------------------------
 
    def filterExplicitReference_Annotations(annotations, er)
       arr = Array.new
@@ -404,12 +425,14 @@ protected
    #-------------------------------------------------------------
 
    # S2A_OPER_MSI_L0__DS_SGS__20150910T042806_S20150910T013228_N01.03
+   # S2A_OPER_AUX_RESORB_OPOD_20170421T235116_V20170421T194903_20170421T231233.EOF
    def dsGetCreationTime(dsName)
       return dsName.slice(25, 15)
    end
    #-------------------------------------------------------------  
    
    # S2A_OPER_MSI_L0__DS_SGS__20150910T042806_S20150910T013228_N01.03
+   # S2A_OPER_AUX_RESORB_OPOD_20170421T235116_V20170421T194903_20170421T231233.EOF
    def dsGetSensingStart(dsName)
       return dsName.slice(42, 15)
    end
