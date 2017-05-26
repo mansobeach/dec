@@ -6,15 +6,16 @@
 # Sentinel-2 End-User Product as per [PSD]
 
 # == Usage
-#  sanityCheck_S2Product.rb
+#  S2EndUserProduct_SanityCheck.rb   -p <S2PRODUCT.SAFE>
 #     --help                shows this help
+#     --excel               it creates an excel file with some checks
 #     --Debug               shows Debug info during the execution
 #     --Force               force mode
 #     --version             shows version number      
 # 
 
 # == Author
-# Borja Lopez Fernandez
+# Sentinel-2 PDGS Team (BL)
 #
 # == Copyleft
 # ESA / ESRIN
@@ -32,17 +33,74 @@
 #
 #########################################################################
 
+#
+# 20140728
+#
+# List of SPR to be raised:
+#
+# - INSPIRE.xml is not well formed XML
+#
+# - Granule mapping / List of Lists  !!
+#     <Granule_List> / <Granules>
+#
+# - missing file extension in product organisation:
+#     Product_Organisation/Granule_List/Granules/IMAGE_ID
+#     Pointers to Granule/Tile image data files (links to the physical image data)
+#
+# - Product_Image_Characteristics/PHYSICAL_GAINS / "Phisycal" gains for each band
+#     Only one band is contained
+#
+# - GIPP_FILENAME should not be included in the product metadata for download option "brief" metadata
+#    
+# - Source_Packet_Counters_List
+#
+#
+# RID on the [PSD] to the Datastrip Metadata file which is created by PS
+# how can different metadata levels be applied by the Production Service / FORMAT_METADATA_ds_L0c
+# but no different PDIs are archived.
+#
+# Download Option suggested should be "Expertise" / FORMAT_METADATA_ds_L0c
+# SPR to be raised in the datastrip PDI as it should contain all levels
+#  - brief
+#  - standard
+#  - expertise 
+#
+# Datastrip metadata file lacks Image_Data_Info node:
+#  - Granules_Information  (SPR CRITICAL) / RID to the [PSD] / Standard metadata ?
+#  - Sensor_Configuration
+#
+# Unexpected L1A granules in the user product metadata file
+#
+# Unexpected redounded L0 granules with different generation date
+#
+# DATATAKE timings versus GRANULES and DATASTRIPS
+#  - GRanules belonging to a single datastrip is being downloaded (super SPR !)  
+#
+# ANC_DATA SAD measurement Data file filenames not according to [PSD] 3.21.1
+# S2A_OPER_AUX_S38105_DS_CGS1_V20091211T104946_20091211T110345.bin
+# => Missing creation date
+# => Missing absolute orbit number 
+# => _DS_ would not seem part of the filename
+#
+# RAISE SPR on DAM for selection of full datatake and full swath which should not
+# be exclusive
+#
+# XSD schema namespaces are not reachable nor coherent.
+#
+# ------------------------------------------------------------------------------
+
 require 'rubygems'
 require 'getoptlong'
 require 'spreadsheet'
 require 'writeexcel'
 
-require 'cuc/Converters'
+require 'esa/S2Converters'
+require 'esa/S2FilenameDecoder'
 require 'esa/S2ReadProductMetadataFile'
-
+require 'esa/S2CheckProductMetadataFile'
+require 'esa/S2WriteExcelProductAnalysis'
 
 include CUC::Converters
-
 
 # ------------------------------------------------------------------------------
 #
@@ -98,6 +156,7 @@ def main
    @isForceMode   = false
    @reqST         = nil
    @isParseOnly   = false
+   @bCreateExcel  = false
 
    opts = GetoptLong.new(
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
@@ -105,16 +164,18 @@ def main
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT],
      ["--Parse", "-P",           GetoptLong::NO_ARGUMENT],
+     ["--excel", "-e",           GetoptLong::NO_ARGUMENT],
      ["--product", "-p",         GetoptLong::REQUIRED_ARGUMENT]
      )
    
    begin 
       opts.each do |opt, arg|
          case opt
-            when "--product"  then @product     = arg.to_s
-            when "--Debug"    then @isDebugMode = true
-            when "--Parse"    then @isParseOnly = true
-            when "--Force"    then @isForceMode = true
+            when "--product"  then @product        = arg.to_s
+            when "--Debug"    then @isDebugMode    = true
+            when "--excel"    then @bCreateExcel   = true
+            when "--Parse"    then @isParseOnly    = true
+            when "--Force"    then @isForceMode    = true
             when "--version"  then
                print("\nESA - ESRIN ", File.basename($0), " $Revision: 1.0 \n\n\n")
                exit (0)
@@ -138,6 +199,9 @@ def main
 
    checkProduct
 
+   if @bCreateExcel == true then
+      createExcel
+   end
 
    Dir.chdir(@prevDir)
    exit(0)
@@ -233,7 +297,7 @@ def checkProduct
 
    # ---------------------------------------------
 
-   exit
+   # exit
 
   
 end
@@ -407,7 +471,9 @@ def checkProductMetadataFile
    
    parseEndProductMetadataFile
    
-   exit
+   checkProductOrganisation
+   
+   # exit
    
    return retVal
 
@@ -418,14 +484,45 @@ end
 
 def parseEndProductMetadataFile
    parser = S2ReadProductMetadataFile.new(@filename_metadata, @isDebugMode)
+   
+   @product_info           = parser.getProductInfo
+   @product_organisation   = parser.getProductOrganisation
+   
+   
 end
 #-------------------------------------------------------------
 
 #---------------------------------------------------------------------
 
+def checkProductOrganisation
+   puts "checkProductOrganisation"
+      
+   checker              = S2CheckProductMetadataFile.new(@product_organisation, @isDebugMode)
+      
+   @hGranulesByDetector = checker.checkProductOrganisation   
+   
+   # puts @hGranulesByDetector
+   
+end
 
 #---------------------------------------------------------------------
 
+def createExcel
+   full_path_excelname  = "#{@prevDir}/#{@product_name}.xls"
+   @writeExcel          = S2WriteExcelProductAnalysis.new(full_path_excelname, @isDebugMode)
+   @writeExcel.writeGranulesByDetector(@hGranulesByDetector)
+   @writeExcel.close
+end
+
+#---------------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}`
+   puts File.basename($0)
+   puts fullpathFile
+   system("head -22 #{fullpathFile}")
+   exit
+end
 
 
 #-------------------------------------------------------------
