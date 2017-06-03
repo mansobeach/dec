@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Script to review inputs from the PDGS
+# Author: Daniel Brosnan Blazquez
+
+# Intray of the E2ESPM
+
+path=$1S2*
+
+minArcStore -f \"$path\" -d -H -t S2PDGS
+
+prevDIR=$PWD
+
+cd $1
+
+FILES=S2*
+
+# echo $FILES
+
+# remove previously archived files
+shopt -s nullglob
+
+for file in $FILES
+do
+   echo $file
+   newfile=`echo $file | cut -d "." -f1`
+   minArcRetrieve -f $newfile -l
+   if [[ $? -eq 0 ]]; then 
+      rm -f $file;
+   fi
+done
+
+
+cd $prevDIR
+
+exit
+
