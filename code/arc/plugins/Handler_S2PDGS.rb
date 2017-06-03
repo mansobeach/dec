@@ -21,7 +21,7 @@
 # S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
 #
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
-# - Compressed files with extension zip, tgz are handled without further compression into 7z
+# - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
 
 require 'filesize'
 
@@ -68,7 +68,7 @@ class Handler_S2PDGS
             puts "Deleted #{name}" 
             exit(99)
          end
-         
+        
          @type             = "REP_E2ESPM"
          @validated        = true
       end 
@@ -108,7 +108,9 @@ class Handler_S2PDGS
 
       @size_original = File.size(name)
 
-      if File.extname(name).downcase != ".zip" and File.extname(name).downcase != ".tgz" then
+      if File.extname(name).downcase != ".zip" and 
+         File.extname(name).downcase != ".tgz" and 
+         File.extname(name).downcase != ".7z" then
          compressFile(name)
       else
          @full_path_filename  = name         
