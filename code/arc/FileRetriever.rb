@@ -110,18 +110,18 @@ class FileRetriever
          }
          
          if @bListOnly == true then
+            if arrFilenames.empty? == true then
+               return false
+            end 
             arrFilenames.sort.each{|name|
                puts name
             }
          end
-         
+         return true
+      else
+         return false
       end
       
-      return true
-
-        
-      
-      exit
    end
    #-------------------------------------------------------------
 
@@ -218,6 +218,11 @@ class FileRetriever
       ret = true
 
       @arrInv.to_a.each{|arrFiles|
+            
+         if arrFiles.empty? == true then
+            return false
+         end
+      
          arrFiles.each{|aFile|
             puts aFile.filename
             if @bListOnly == false then
@@ -254,21 +259,21 @@ class FileRetriever
    end
    #-------------------------------------------------------------
 
-   def retrieveAll
+   def retrieveAll(full_path_target, bDelete = false, bHardLink = false, bUnpack = false)
       @arrInv  = Array.new
       @arrInv  = ArchivedFile.all
       @arrInv  = ArchivedFile.all.order('filename DESC')
       
+      retVal = true
+      
       @arrInv.each{|aFile|
          puts aFile.filename
+         ret = self.retrieve_by_name(full_path_target, aFile.filename, bDelete, bHardLink, bUnpack)  
+         if ret == false then
+            retVal = false
+         end
       }
-      
-      # @arrInv  = ArchivedFile.all.order('filename DESC').order('type DESC')
-      
-#       @arrInv.each{|item|
-#          puts item.filename
-#       }
-#       exit
+      return retVal      
    end
    #-------------------------------------------------------------
 
