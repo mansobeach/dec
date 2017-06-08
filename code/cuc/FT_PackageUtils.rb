@@ -57,8 +57,6 @@ class FT_PackageUtils
    # Unpack file -> it can generate from 1 to n files
    def unpack
    
-      puts "PEDO"
-   
       ext = getFileExtension(@srcFile)
       if @isDebugMode == true then
          puts "Unpacking filetype #{ext}"
