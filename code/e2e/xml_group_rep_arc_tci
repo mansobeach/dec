@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Script to review inputs from the PDGS
-# Author: Daniel Brosnan Blazquez
+# Author: Borja Lopez Fernandez
 
 # Intray of the E2ESPM
 
@@ -13,7 +13,7 @@ XMLFILE="S2__OPER_REP_ARCTCI_ESA__"$INGESTION_TIME"_V"$INGESTION_TIME"_"$INGESTI
 
 # XMLFILE="S2__REP_ARC_TCI_$INGESTION_TIME.xml"
 
-FILES=/home/e2edc/data/intray/REP_ARC_TCI/*.EOF
+FILES=/Data_Disk/e2espm/data/interfaces/s2pdgs/REP_ARC_TCI/*.EOF
 
 echo '<list_of_tci>' > $XMLFILE
 
@@ -34,7 +34,7 @@ do
    echo '<tci><name>'"$tci_name"'</name><size>'"$tci_size"'</size><centre>'"$tci_centre"'</centre><date>'"$tci_date"'</date></tci>' >> $XMLFILE
    # mv $file "$file.bckp"
 
-   rm $file
+   rm -f $file
 
 done
 
@@ -42,9 +42,10 @@ echo '</list_of_tci>' >> $XMLFILE
 
 
 if [ "$varEmpty" = false ] ; then
-   mv $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
+   cp -f $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/shadow/;
+   mv -f $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/;
 else
-   rm $XMLFILE
+   rm -f $XMLFILE
 fi
 
 # mv $XMLFILE /Data_Disk/e2espm/data/interfaces/s2pdgs/pre_input/
