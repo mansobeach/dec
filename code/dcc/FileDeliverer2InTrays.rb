@@ -13,9 +13,12 @@
 #
 #########################################################################
 
+require 'fileutils'
+
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/CommandLauncher'
 require 'cuc/DirUtils'
+require 'cuc/PackageUtils'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/EventManager'
 require 'cuc/EE_ReadFileName'
@@ -31,7 +34,7 @@ class FileDeliverer2InTrays
 
    include CUC::DirUtils
    include CUC::CommandLauncher
-   
+   include CUC::PackageUtils
    #-------------------------------------------------------------   
    
    # Class contructor
@@ -104,13 +107,13 @@ class FileDeliverer2InTrays
 				end
 			end
 
-			arrFiles.each{|file|		   
-            bIsEEFile = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
-            fileType  = CUC::EE_ReadFileName.new(file).fileType
-				
-            dimsDirs = Array.new
-            dimsName = Array.new
-            bByType  = true
+			arrFiles.each{|file|
+         		   
+            bIsEEFile   = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
+            fileType    = CUC::EE_ReadFileName.new(file).fileType
+            dimsDirs    = Array.new
+            dimsName    = Array.new
+            bByType     = true
             
             if bIsEEFile == true then
                bByType  = true
@@ -141,8 +144,7 @@ class FileDeliverer2InTrays
 	            else
                   hdlinked = @dimConfig.isHardLinked?(file)
                end
-             
-            
+                         
                if @isDebugMode == true then
 # 					   puts "#{file} is placed in:"
 # 				      puts dimsDirs
@@ -152,14 +154,22 @@ class FileDeliverer2InTrays
                   puts
 					end
 
+               # main dissemination method
+
 					ret = disseminate(file, dir, dimsDirs, hdlinked)
 					
+               # ---------------------------------
+               # 20170601 - Patch to compress locally disseminated files               
+               ret = compressFile(dimsName, file)
+               
+               # ---------------------------------
+               
                # The original file is only deleted if the dissemination has been
                # performed successfully, otherwise it is kept in order to not loose
                # the information and perform a later manual dissemination 
                if ret == true then
                   begin
-                     File.delete("#{dir}/#{file}")
+                     FileUtils.rm_rf("#{dir}/#{file}")
                   rescue Exception
                      @logger.error("Could not delete #{dir}/#{file}")
                      puts
@@ -256,13 +266,21 @@ class FileDeliverer2InTrays
 #         File.delete("#{directory}/#{file}")
  
  		   ret = disseminate(file, directory, dimsDirs, hdlinked)
+
+         # ---------------------------------
+         # 20170601 - Patch to compress locally disseminated files               
+               
+         ret = compressFile(dimsName, file)
+               
+         # ---------------------------------
+
          
          # The original file is only deleted if the dissemination has been
          # performed successfully, otherwise it is kept in order to not loose
          # the information and perform a later manual dissemination 
          if ret == true then
             begin
-               File.delete("#{directory}/#{file}")
+               FileUtils.rm_rf("#{directory}/#{file}")
             rescue Exception
                @logger.error("deliverFile : Could not delete #{directory}/#{file}")
                puts
@@ -351,6 +369,11 @@ private
                bReturn = false
             end
             
+            # Remove in target directory any eventual copy of a file with the same name
+            if File.exists?(targetDir+'/'+file) then 
+               FileUtils.rm_rf(targetDir+'/'+file) 
+            end
+            
 			   cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
    			if @isDebugMode == true then
 	   		   puts cmd
@@ -364,8 +387,14 @@ private
                end
                bReturn = false
             else
+            
+               @logger.debug("chmod a+r #{targetDir}/#{file}")
+               FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+            
                @logger.info("#{file} has been disseminated into #{targetDir}")
                
+               # -------------------------------------------
+               # Management of event NewFile2Intray
                arrParam             = Array.new
                hParam1              = Hash.new
                hParam1["filename"]  = file 
@@ -386,7 +415,8 @@ private
    
                @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
-
+               
+               # -------------------------------------------
             end
                                    
 			   bFirst = false
@@ -409,6 +439,10 @@ private
                   puts "Could not Link File to the Target Directory"
                   bReturn = false
                else
+                  
+                  @logger.debug("chmod a=r #{targetDir}/#{file}")
+                  FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+                  
                   @logger.info("#{file} has been disseminated into #{targetDir}")
                   
                   event  = CTC::EventManager.new
@@ -470,6 +504,59 @@ private
       return bReturn
    end
 	#-------------------------------------------------------------
+
+   # -----------------------------------------------------
+   # 20170601 Eventual compression upon local dissemination
+   #
+   #
+
+   def compressFile(dimsName, file)
+      retVal = true         
+      
+      dimsName.each{|dim|
+      
+         inTray   = @dimConfig.getDIMInTray(dim)
+         compress = @dimConfig.getDIMCompress(dim)
+
+         if compress == nil then
+            @logger.debug("No Compression #{dim} - #{file}")
+            next
+         end
+               
+         sourceFile = "#{inTray}/#{file}"
+         targetFile =  File.basename(file, ".*")
+         targetFile = "#{targetFile}.7z"
+         targetFile = "#{inTray}/#{targetFile}"
+                  
+         if compress == "7z" then
+                  
+#                      puts "xxxxxxxxxxx"
+#                      puts sourceFile
+#                      puts targetFile
+#                      puts "xxxxxxxxxxx"
+                   
+            ret = pack7z(sourceFile, targetFile, true, @isDebugMode)
+                     
+            if ret == false then
+               @logger.error("Could not compress in #{compress} #{file}")
+               File.delete(targetFile)
+               retVal = false
+            else
+               msg = "#{file} has been compressed in #{compress} for #{dim}"
+               puts msg
+               @logger.info(msg)
+            end
+         else
+            puts "FileDeliverer2InTrays::deliver => Compression mode #{compress} not supported"
+            @logger.error("Compression mode #{compress} not supported")
+            retVal = false
+         end
+                  
+      }
+      # -----------------------------------------------------
+      return retVal
+   end   
+   #-------------------------------------------------------------   
       
 end # class
 
