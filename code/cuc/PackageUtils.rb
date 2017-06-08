@@ -74,18 +74,31 @@ module PackageUtils
    # - full_path_file   (IN): File to be compressed
    # - deleteSourceFile (IN): Flag to delete the source file
    
-   def pack7z(full_path_file, targetName, bDeleteSourceFile = true, bIsDebugMode = false)
+   def pack7z(full_path_file, targetName = "", bDeleteSourceFile = true, bIsDebugMode = false)
+      
+      # puts "PackageUtils::pack7z"
+      
       checkModuleIntegrity
+      
       if FileTest.exist?(full_path_file) == false then
          return false
+      end
+
+      if targetName == "" then
+         targetName = File.basename(full_path_file, ".*")
+         targetName = "#{targetName}.7z"
       end
 
       bIsDir = true
 
       if FileTest.directory?(full_path_file) == true then
-         cmd  = %Q{7z a #{targetName} #{full_path_file}/*}
+         cmd  = %Q{7za a #{targetName} #{full_path_file}/*}
       else
-         cmd  = %Q{7z a #{targetName} #{full_path_file}}
+         cmd  = %Q{7za a #{targetName} #{full_path_file}}
+      end
+
+      if bDeleteSourceFile == true then
+         cmd = "#{cmd} -sdel"
       end
 
       if bIsDebugMode == true then
@@ -93,6 +106,14 @@ module PackageUtils
       end
 
       retVal = system(cmd)
+
+#       if retVal == false then
+#          File.delete(targetName)
+#       end
+
+#       if retVal == true and bDeleteSourceFile == true then
+#          File.delete(full_path_file)
+#       end
 
       return retVal
    end
@@ -259,6 +280,7 @@ private
    # Check that UNIX commands for the supported pack/unpack
    # tools are in the $PATH
    def checkModuleIntegrity
+      puts "PackageUtils::checkModuleIntegrity"
       bDefined = true
           
      #      # check UNIX compress tool
@@ -273,7 +295,7 @@ private
       #check gzip tool
       isToolPresent = `which gzip`
    
-      if isToolPresent[0,1] != '/' then
+      if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\n\nPackageUtils::checkModuleIntegrity\n"
          puts "Fatal Error: gzip not present in PATH !!   :-(\n\n\n"
          exit(99)
@@ -282,7 +304,7 @@ private
       #check zip tool
       isToolPresent = `which zip`
    
-      if isToolPresent[0,1] != '/' then
+      if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\n\nPackageUtils::checkModuleIntegrity\n"
          puts "Fatal Error: zip not present in PATH !!   :-(\n\n\n"
          bDefined = false
@@ -291,7 +313,7 @@ private
       #check unzip tool
       isToolPresent = `which unzip`
    
-      if isToolPresent[0,1] != '/' then
+      if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\n\nPackageUtils::checkModuleIntegrity\n"
          puts "Fatal Error: unzip not present in PATH !!   :-(\n\n\n"
          bDefined = false
@@ -300,23 +322,18 @@ private
       #check tar tool
       isToolPresent = `which tar`
    
-      if isToolPresent[0,1] != '/' then
+      if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\n\nPackageUtils::checkModuleIntegrity\n"
          puts "Fatal Error: tar not present in PATH !!   :-(\n\n\n"
          bDefined = false
       end
      
-      if bDefined == false then
-         puts "\nError in Packageutils::checkModuleIntegrity :-(\n\n"
-         bDefined = false
-      end     
-
       #check 7z tool
-      isToolPresent = `which 7z`
+      isToolPresent = `which 7za`
    
-      if isToolPresent[0,1] != '/' then
+      if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\n\nPackageUtils::checkModuleIntegrity\n"
-         puts "Fatal Error: 7z not present in PATH !!   :-(\n\n\n"
+         puts "Fatal Error: 7za not present in PATH !!   :-(\n\n\n"
          bDefined = false
       end
      
@@ -324,7 +341,6 @@ private
          puts "\nError in Packageutils::checkModuleIntegrity :-(\n\n"
          exit(99)
       end     
-
      
       time      = Time.new
       str       = time.strftime("%Y%m%d_%H%M%S")                                     
