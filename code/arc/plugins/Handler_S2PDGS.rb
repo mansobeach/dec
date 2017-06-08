@@ -118,7 +118,12 @@ class Handler_S2PDGS
 
       @size          = File.size(@full_path_filename)
       result         = `du -hs #{@full_path_filename}`
-      @size_in_disk  = Filesize.from("#{result.split(" ")[0]}iB").to_int
+      
+      begin
+         @size_in_disk  = Filesize.from("#{result.split(" ")[0]}iB").to_int
+      rescue Exception => e
+         @size_in_disk  = 0
+      end
 
    end
 
@@ -177,6 +182,9 @@ private
          puts
          puts cmd
          puts
+         puts "Deleting eventual previous compressed file #{full_path}/#{filename}.7z"
+         puts
+         File.delete("#{full_path}/#{filename}.7z")
          exit(99)
       end
       
