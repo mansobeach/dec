@@ -49,11 +49,19 @@ class CheckerInTrayConfig
  
       arrDims.each{|dim|
           
-         inTray = @dccReadConf.getDIMInTray(dim)
+         inTray   = @dccReadConf.getDIMInTray(dim)
+         compress = @dccReadConf.getDIMCompress(dim)
+
+         if compress == nil then
+            puts "No compression is applied at #{dim} intray"
+         else
+            puts "Compression #{compress} applied at #{dim} intray"
+         end
 
          if @isDebugMode == true then
             puts "Verifying #{dim} configuration ..."
-            puts "InTray: #{inTray}"
+            puts "InTray:    #{inTray}"
+            puts "Compress:  #{compress}"
          end
   
          if inTray == false then
@@ -67,11 +75,15 @@ class CheckerInTrayConfig
       arrTypes = @dccReadConf.getAllFileTypes
      
       arrTypes.each{|type|
+         
          arrDest = @dccReadConf.getDIMs4Filetype(type)
  
          if @isDebugMode == true then
-            puts "Verifying #{type} configuration ..."
-            puts "DIMs: #{arrDest}"
+            puts "================================================"
+            puts "Verifying #{type} configuration vs DIMs ..."
+            arrDest.each{|dim|
+              puts "#{type} - #{dim}"
+            }
          end
          
          if arrDest == false then
@@ -79,13 +91,21 @@ class CheckerInTrayConfig
             retVal = false          
          end
          
-         arrDest.each{|adim|
-            intray = @dccReadConf.getDIMInTray(adim)
+         arrDest.each{|dim|
+            intray = @dccReadConf.getDIMInTray(dim)
             if intray == false then
                retVal = false
-               puts "#{type} - #{adim} is not declared in the DIM_List"
+               puts "#{type} - #{dim} is not declared in the DIM_List"
             end
          }
+         
+         
+         puts "----------------------------------------"
+         puts "getTargetDirs4Filetype(#{type})"
+         arrDirs = @dccReadConf.getTargetDirs4Filetype(type)
+         puts arrDirs
+         puts "----------------------------------------"
+         
       }
 
       # Perform integrity between ft_incoming_files.xml & files2Dims.xml
