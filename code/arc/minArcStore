@@ -184,6 +184,11 @@ def main
       exit(99)
    end
 
+   # if parameters are quoted to avoid variable expansion by shell
+   if @full_path_filename.slice(0,1) == "\"" then
+      @full_path_filename = @full_path_filename.dup.gsub!("\"","")
+   end
+
    if showVersion then 
       if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
          aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
@@ -222,11 +227,10 @@ def main
       usage
    end
 
-
    if @full_path_filename == "" then
       usage
    end
-   
+      
    if @full_path_filename.slice(0,1) != "/" then
       puts
       puts "File must be specified with a full path"
@@ -240,6 +244,7 @@ def main
       puts
       exit(99)
    end
+
 
    @filename = File.basename(@full_path_filename)
 
@@ -268,11 +273,23 @@ def main
       exit(99)
    end
 
+   # ---------------------------------------------
+   #
+   # 20170603 - Bulk mode archive
+   if @full_path_filename.include?("?") == true or @full_path_filename.include?("*") == true then
+      bulkArchive
+   end
+   # ---------------------------------------------
+
+
+
    archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
    
    if @isDebugMode then
       archiver.setDebugMode
    end
+
+
 
    ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
    
@@ -295,6 +312,51 @@ end
 
 #-------------------------------------------------------------
 
+def bulkArchive
+   puts
+   puts "bulk mode detected"
+   puts
+   
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
+   
+   if @isDebugMode then
+      archiver.setDebugMode
+   end
+
+   retVal = true
+
+   arrFiles = Dir[@full_path_filename]
+   
+   arrFiles.each{|file|
+      
+      if @isDebugMode == true then
+         puts file
+      end
+      
+      ret = archiver.archive(file, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
+   
+      if ret == false then
+         retVal = false
+         puts
+         puts "MINARC could not archive #{file}"
+         puts
+      end
+
+      if @isDebugMode then
+         puts
+         puts "Operation successful !"
+         puts
+      end      
+      
+   }
+   
+   if retVal == true then
+      exit(0)
+   else
+      exit(1)
+   end
+   
+end
 #-------------------------------------------------------------
 
 # Print command line help
