@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Script to review inputs from the PDGS
-# Author: Daniel Brosnan Blazquez
+# Author: Borja Lopez Fernandez
 
 # Intray of the E2ESPM
 
@@ -27,6 +27,8 @@ do
    minArcRetrieve -f $newfile -l
    if [[ $? -eq 0 ]]; then 
       rm -f $file;
+   else
+      minArcStore -f $1"/"$file -d -H -t S2PDGS;
    fi
 done
 
