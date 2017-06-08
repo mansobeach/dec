@@ -426,7 +426,7 @@ def main
    end
 
    if bGetAllFiles == true then
-      ret = fileRetriever.retrieveAll
+      ret = fileRetriever.retrieveAll(@full_path_target, @bDelete, @bHardLink, @bUnpack)
    end
 
    # -------------------------------------------------------
