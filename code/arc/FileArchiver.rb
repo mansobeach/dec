@@ -14,6 +14,8 @@
 #
 #########################################################################
 
+require 'benchmark'
+
 require 'cuc/DirUtils'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
@@ -23,6 +25,8 @@ require 'arc/FileDeleter'
 module ARC
 
 class FileArchiver
+
+   include Benchmark
 
    include CUC::DirUtils
    #------------------------------------------------  
@@ -71,9 +75,31 @@ class FileArchiver
          fileName = File.basename(full_path_file, ".*")
       end
 
-      # CHECK WHETHER FILE IS NOT ALREADY ARCHIVED
 
-      aFile = ArchivedFile.find_by_filename(fileName)
+      # ----------------------------------------------------
+      # 
+      # 20170605 - Dirty Patch
+      # Optimistic approach to not check previous file
+      
+      aFile = nil
+
+#       # ----------------------------------------------------
+#       # CHECK WHETHER FILE IS NOT ALREADY ARCHIVED
+# 
+#       perf = measure{
+#          aFile = ArchivedFile.find_by_filename(fileName)
+#       }
+# 
+#       if @isDebugMode == true then
+#          puts
+#          puts "ArchivedFile.find_by_filename(#{fileName}) :"
+#          puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+#          puts
+#          puts
+#       end
+#       # ----------------------------------------------------
+
+      # ----------------------------------------------------
 
       # aFile = ArchivedFile.where(filename: fileName).load
 
@@ -165,10 +191,39 @@ class FileArchiver
       end
 
       if @bInvOnly == true then
-         return inventoryNewFile(full_path_file, fileType, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+         perf = measure {
+            return inventoryNewFile(full_path_file, fileType, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+         }
+         if @isDebugMode == true then
+            puts
+            puts "inventoryNewFile(#{full_path_file}) :"
+            puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+            puts
+            puts
+         end
+
       end
 
-      return store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk, size_original)
+      retVal = false
+      
+      perf = measure {
+         retVal = store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk, size_original)
+      }
+      
+      if @isDebugMode == true then
+         puts
+         puts "store(#{full_path_file}) :"
+         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+         puts
+         puts
+      end
+      
+      if retVal == true then
+         puts "(Archived) : " << fileName
+      end
+      
+      
+      return retVal
 
    end
    #------------------------------------------------
@@ -504,90 +559,115 @@ private
       #-------------------------------------------
       # Register the file in the inventory
 
-      begin
-         anArchivedFile = ArchivedFile.new
-         
-         if bUnPack then
-            anArchivedFile.filename       = File.basename(full_path_filename, ".*")
-         else
-            anArchivedFile.filename       = File.basename(full_path_filename)
-         end
+      retVal = true
 
-#          # Patch 2016 - filenames are kept without extension
-#          anArchivedFile.filename       = File.basename(full_path_filename, ".*")
-
-         anArchivedFile.filetype       = type
-         anArchivedFile.archive_date   = archival_date
-         anArchivedFile.path           = path
-         anArchivedFile.size           = size
-         anArchivedFile.size_in_disk   = size_in_disk
-         anArchivedFile.size_original  = size_original
-
-         if start != "" and start != nil then
-            anArchivedFile.validity_start = start
-         end
-
-         if stop != "" and stop != nil then
-            anArchivedFile.validity_stop = stop
-         end
-
-         anArchivedFile.save!
-
-#          bInventoried = false
-# 
-#          while not bInventoried
-#             begin
-#                anArchivedFile.save!
-#                bInventoried = true
-#             rescue
-#                puts "ARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
-#                sleep(1)
-#                bInventoried = true
-#             end
-#          end
-
-         #Treat eventual additional fields
-         if arrAddFields != nil and arrAddFields.size >= 2 then
-            i=0
-            while i <= (arrAddFields.size - 2)
-               
-               if anArchivedFile.has_attribute?(arrAddFields[i]) then
-                  anArchivedFile.update_attribute(arrAddFields[i], arrAddFields[i+1])
-               else
-                  puts "Attribute '#{arrAddFields[i]}' is not present in the archived_files table !"
-                  puts "Going on with archiving..."
-               end
-
-               i=i+2 
-            end
-         end
-
-      rescue Exception => e
+      perf = measure {
+            retVal = inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+      }
+      
+      if @isDebugMode == true then
          puts
-         puts e.to_s
+         puts "inventoryNewFile(#{full_path_filename}) :"
+         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
          puts
-         puts "Could not inventory #{anArchivedFile.filename}, rolling back ! :-("
          puts
+      end
 
-# Commented 20140505 / It is not understood this snippet below
-#
-#          if bUnPack then
-#             cmd = "\\rm -rf #{destDir}"
-#          else
-#             cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
-#          end
-# 
-#          ret = system(cmd)
-# 
-#          if ret == false then
-#             puts
-#             puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
-#             puts
-#          end        
-
+      
+      
+      if retVal == false then
          return false
       end
-      
+
+
+
+#       begin
+#          anArchivedFile = ArchivedFile.new
+#          
+#          if bUnPack then
+#             anArchivedFile.filename       = File.basename(full_path_filename, ".*")
+#          else
+#             anArchivedFile.filename       = File.basename(full_path_filename)
+#          end
+# 
+# #          # Patch 2016 - filenames are kept without extension
+# #          anArchivedFile.filename       = File.basename(full_path_filename, ".*")
+# 
+#          anArchivedFile.filetype       = type
+#          anArchivedFile.archive_date   = archival_date
+#          anArchivedFile.path           = path
+#          anArchivedFile.size           = size
+#          anArchivedFile.size_in_disk   = size_in_disk
+#          anArchivedFile.size_original  = size_original
+# 
+#          if start != "" and start != nil then
+#             anArchivedFile.validity_start = start
+#          end
+# 
+#          if stop != "" and stop != nil then
+#             anArchivedFile.validity_stop = stop
+#          end
+# 
+# 
+#          
+# 
+#          anArchivedFile.save!
+# 
+# #          bInventoried = false
+# # 
+# #          while not bInventoried
+# #             begin
+# #                anArchivedFile.save!
+# #                bInventoried = true
+# #             rescue
+# #                puts "ARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
+# #                sleep(1)
+# #                bInventoried = true
+# #             end
+# #          end
+# 
+#          #Treat eventual additional fields
+#          if arrAddFields != nil and arrAddFields.size >= 2 then
+#             i=0
+#             while i <= (arrAddFields.size - 2)
+#                
+#                if anArchivedFile.has_attribute?(arrAddFields[i]) then
+#                   anArchivedFile.update_attribute(arrAddFields[i], arrAddFields[i+1])
+#                else
+#                   puts "Attribute '#{arrAddFields[i]}' is not present in the archived_files table !"
+#                   puts "Going on with archiving..."
+#                end
+# 
+#                i=i+2 
+#             end
+#          end
+# 
+#       rescue Exception => e
+#          puts
+#          puts e.to_s
+#          puts
+#          puts "Could not inventory #{anArchivedFile.filename}, rolling back ! :-("
+#          puts
+# 
+# # Commented 20140505 / It is not understood this snippet below
+# #
+# #          if bUnPack then
+# #             cmd = "\\rm -rf #{destDir}"
+# #          else
+# #             cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
+# #          end
+# # 
+# #          ret = system(cmd)
+# # 
+# #          if ret == false then
+# #             puts
+# #             puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
+# #             puts
+# #          end        
+# 
+#          return false
+#       end
+#       
       #-------------------------------------------
       # Delete Source file if requested
 
@@ -602,8 +682,6 @@ private
             puts "WARNING : Could not delete source file ! :-("
          end
       end
-
-      puts "(Archived) : " << anArchivedFile.filename
 
       return true
 
