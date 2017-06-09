@@ -5,7 +5,7 @@
 # This is the command line tool to parse Sentinel-2 binary data
 
 # == Usage
-#  CADU   -file <>
+#  binDataReader   -file <> -type [cadu|isp|aisp]
 #     --help                shows this help
 #     --check               it checks existence of product organisation files 
 #     --excel               it creates an excel file with some checks
@@ -34,8 +34,9 @@ require 'cuc/Converters'
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-class S2_CADU # 
-   
+# Channel Access Data Unit
+
+class S2_CADU
    
    attr_accessor :offset
    # ------------------------------------------------------------  
@@ -86,9 +87,9 @@ class S2_CADU #
          end
          return
       end
-      data = @stream.read(@cadu_length_data)
-      data = @stream.read(@cadu_length_rs_check)
-      @offset = @offset + @cadu_length_sync_marker + @cadu_length_data + @cadu_length_rs_check
+      data     = @stream.read(@cadu_length_data)
+      data     = @stream.read(@cadu_length_rs_check)
+      @offset  = @offset + @cadu_length_sync_marker + @cadu_length_data + @cadu_length_rs_check
    end
    
    # ------------------------------------------------------------
@@ -124,7 +125,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-class S2_AISP
+class S2_ISP
 
    include CUC::Converters
 
@@ -139,24 +140,42 @@ class S2_AISP
       @filename                        = filename
       @stream                          = File.open(@filename)
       @stream.binmode
+      
+      # -------------------------------------
+      # DFEP ISP annnotation (cf. [DFEP-ICD])
       @aisp_length_annotation          = 18
-      @length_packet_header_total      = 6
-         @length_packet_header_id         = 2
-         @length_packet_header_psc        = 2
-         @length_packet_header_data_len   = 2
-      @length_data_pus_version         = 1
-      @length_data_service_type        = 1
-      @length_data_service_subtype     = 1
-      @length_data_destination_id      = 1
-      @length_data_cuc_coarse_time     = 4
-      @length_data_cuc_fine_time       = 3
+      
+      # -------------------------------------
+      # ISP header definition (cf. [S2GICD-ICD])
+      
+      # primary header
+      
+      @length_packet_header_primary_total = 6
+         @length_packet_header_id            = 2
+         @length_packet_header_psc           = 2
+         @length_packet_header_data_len      = 2
+      
+      # -------------------------------------
+      
+      # secondary header
+      
+      @length_packet_header_secondary_total = 12
+         @length_data_pus_version               = 1
+         @length_data_service_type              = 1
+         @length_data_service_subtype           = 1
+         @length_data_destination_id            = 1
+         @length_data_cuc_coarse_time           = 4
+         @length_data_cuc_fine_time             = 3
+         @length_data_time_quality              = 1
+      
+      
+      # -------------------------------------
+      
       @offset                          = 0
       
       @gps_epoch  = str2date("1980-01-06T00:00:00").to_time.to_i
-      puts @gps_epoch
-       #exit
       
-      setDebugMode
+      # setDebugMode
    end
 
    #-------------------------------------------------------------
@@ -170,15 +189,9 @@ class S2_AISP
 
    #-------------------------------------------------------------
 
-   def readAISP
+   def readISP
       
       puts "============================"
-      
-      # --------------------------------
-      # DFEP annotation => 18 Bytes
-      
-      data     = @stream.read(@aisp_length_annotation)
-      @offset  = @offset + @aisp_length_annotation
       
       # --------------------------------
       # Packet ID => 2 Bytes
@@ -188,10 +201,17 @@ class S2_AISP
       # - apid             = 11(bits)
       
       data     = @stream.read(@length_packet_header_id)
+      
+      if data == nil then
+         return false
+      end
+      
       @offset  = @offset + @length_packet_header_id
       apid     = data.unpack('B*')[0].slice(5,11).to_i(2)      
-      puts "[#{@offset.to_s.rjust(4,'0')}] APID          =>  #{data.unpack('H*')[0]}"
-                                 
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] APID          =>  #{data.unpack('H*')[0]}"
+      end
+                              
       # Packet Sequence Counter => 2 Bytes            
       data     = @stream.read(@length_packet_header_psc)
       @offset  = @offset + @length_packet_header_psc
@@ -200,46 +220,63 @@ class S2_AISP
       data     = @stream.read(@length_packet_header_data_len)
       @offset  = @offset + @length_packet_header_data_len
       length   = data.unpack('H*')[0].to_i(16)
-      puts "[#{@offset.to_s.rjust(4,'0')}] Length        =>  #{data.unpack('H*')[0]}"      
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] Length        =>  #{data.unpack('H*')[0]}"      
+      end
       
       # Packet Data PUS version
       data     = @stream.read(@length_data_pus_version)
       @offset  = @offset + @length_data_pus_version
-      length   = length - @length_data_pus_version     
-      puts "[#{@offset.to_s.rjust(4,'0')}] PUS Version   =>  #{data.unpack('H*')[0]}"      
+      length   = length - @length_data_pus_version
+      if @isDebugMode == true then     
+         puts "[#{@offset.to_s.rjust(4,'0')}] PUS Version   =>  #{data.unpack('H*')[0]}"      
+      end
 
       # Packet Data Service Type
       data     = @stream.read(@length_data_service_type)
       @offset  = @offset + @length_data_service_type
       length   = length - @length_data_service_type     
       service  = data.unpack('H*')[0].to_i(16)
-      puts "[#{@offset.to_s.rjust(4,'0')}] Service Type  =>  #{data.unpack('H*')[0]}"      
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] Service Type  =>  #{data.unpack('H*')[0]}"      
+      end
       
       # Packet Data Service Sub-type
       data     = @stream.read(@length_data_service_type)
       @offset  = @offset + @length_data_service_subtype
       length   = length - @length_data_service_subtype     
       subservice = data.unpack('H*')[0].to_i(16)
-      puts "[#{@offset.to_s.rjust(4,'0')}] Serv  Subtype =>  #{data.unpack('H*')[0]}"      
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] Serv  Subtype =>  #{data.unpack('H*')[0]}"      
+      end
 
       # Packet Data Destination Id
       data     = @stream.read(@length_data_destination_id)
       @offset  = @offset + @length_data_destination_id
       length   = length - @length_data_destination_id     
-      puts "[#{@offset.to_s.rjust(4,'0')}] DestinationId =>  #{data.unpack('H*')[0]}"      
-
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] DestinationId =>  #{data.unpack('H*')[0]}"      
+      end
+      
       # CUC Coarse Time
-      cuc_coarse_time = readCUC
+      cuc_time   = readCUC
+      length     = length - @length_data_cuc_coarse_time - @length_data_cuc_fine_time
       
-      puts "apid=#{apid} | service=#{service} | subservice=#{subservice} | cuc_coarse=#{cuc_coarse_time}"
+      # Packet Data Time Quality
+      data     = @stream.read(@length_data_time_quality)
+      @offset  = @offset + @length_data_time_quality
+      length   = length - @length_data_time_quality     
+      if @isDebugMode == true then
+         puts "[#{@offset.to_s.rjust(4,'0')}] Time Quality  =>  #{data.unpack('H*')[0]}"      
+      end
       
       
-      length   = length - @length_data_cuc_coarse_time
-      
+      puts "apid=#{apid} | service=#{service} | subservice=#{subservice} | cuc_time=#{cuc_time}"
+            
       data     = @stream.read(length+1)
       @offset  = @offset + length + 1
       
-      
+      return true
    end
    #-------------------------------------------------------------
 
@@ -248,30 +285,59 @@ class S2_AISP
    # sub-seconds coded on 3 octets.
    # Time = C0 * 256^3 + C1 * 256^2 + C2 * 256 + C3 + F0 * 256-1 + F1 * 256-2 + F2 * 256-3
    def readCUC
+      
+      all_data = @stream.read(7)
+      @stream.seek(-7, IO::SEEK_CUR)
+      
       offset   = @offset +1
       
       data     = @stream.read(1)
+      byte0    = data   
       @offset  = @offset + 1      
       c0       = data.unpack('H*')[0].to_i(16)*(256**3)
       
       data     = @stream.read(1)
+      byte1    = data 
       @offset  = @offset + 1
       c1       = data.unpack('H*')[0].to_i(16)*(256**2)
       
       data     = @stream.read(1)
+      byte2    = data 
       @offset  = @offset + 1
       c2       = data.unpack('H*')[0].to_i(16)*(256**1)
 
       data     = @stream.read(1)
+      byte3    = data
       @offset  = @offset + 1
       c3       = data.unpack('H*')[0].to_i(16)*(256**0)
       
-      cuc_coarse_time = c0 + c1 + c2 + c3
-      puts "[#{offset.to_s.rjust(4,'0')}] Coarse Time   =>  #{cuc_coarse_time}"
+      data     = @stream.read(1)
+      byte4    = data
+      @offset  = @offset + 1
+      f0       = data.unpack('H*')[0].to_i(16)*(256**-1)
+ 
+      data     = @stream.read(1)
+      byte5    = data
+      @offset  = @offset + 1
+      f1       = data.unpack('H*')[0].to_i(16)*(256**-2)
+
+      data     = @stream.read(1)
+      byte6    = data
+      @offset  = @offset + 1
+      f2       = data.unpack('H*')[0].to_i(16)*(256**-3)
+     
+      cuc_coarse_time = (c0 + c1 + c2 + c3)
+      # puts cuc_coarse_time
+      
+      cuc_precise_time = (cuc_coarse_time + f0 + f1 + f2).to_f
+      # puts cuc_precise_time
+      
+      if @isDebugMode == true then
+         puts "[#{offset.to_s.rjust(4,'0')}] CUC Time      =>  #{all_data.unpack('H2 H2 H2 H2 H2 H2 H2')}"
+      end
             
-      new_time = (@gps_epoch+cuc_coarse_time)
-            
-      return Time.at(new_time).utc.to_datetime
+      new_time = (@gps_epoch+cuc_precise_time)
+      return Time.at(new_time) #.utc.to_datetime
    end
    #-------------------------------------------------------------
 
@@ -280,6 +346,45 @@ end
 
 # ------------------------------------------------------------------------------
 
+class S2_AISP < S2_ISP
+   
+   # class constructor
+   #
+   # All the field lengths are expressed in bytes
+   
+   def initialize(filename)
+      super(filename)
+      
+      # -------------------------------------
+      # DFEP ISP annnotation (cf. [DFEP-ICD])
+      @aisp_length_total_annotation          = 18
+         @aisp_length_reception_time               = 8
+         @aisp_length_isp_length                   = 2
+         @aisp_length_num_VCDU                     = 2
+         @aisp_length_num_VCDU_missing             = 2
+         @aisp_length_crc_error_flag               = 1
+         @aisp_length_vcid                         = 1
+         @aisp_length_channel                      = 1
+         @aisp_length_spare                        = 1
+   end
+
+   #-------------------------------------------------------------
+
+   def readAISP
+      
+      # --------------------------------
+      # DFEP annotation => 18 Bytes
+      
+      data     = @stream.read(@aisp_length_total_annotation)
+      @offset  = @offset + @aisp_length_annotation
+      
+      self.readISP
+   end
+   #-------------------------------------------------------------
+
+end
+
+# ------------------------------------------------------------------------------
 
 # MAIN script function
 def main
@@ -338,11 +443,39 @@ def main
       parseAISP
    end
 
+   if @type == "isp" then
+      parseISP
+   end
+
+
    exit
 
 end
 
 #---------------------------------------------------------------------
+
+def parseISP
+
+   puts "parseISP"
+
+   aisp = S2_ISP.new(@filename)
+
+   if @isDebugMode == true then
+      aisp.setDebugMode
+   end
+
+   loop do
+      ret = aisp.readISP
+      
+      if ret == false then
+         break
+      end
+   end
+
+end
+
+#---------------------------------------------------------------------
+
 
 def parseAISP
 
@@ -350,8 +483,16 @@ def parseAISP
 
    aisp = S2_AISP.new(@filename)
 
+   if @isDebugMode == true then
+      aisp.setDebugMode
+   end
+
    loop do
-      aisp.readAISP
+      ret = aisp.readAISP
+      
+      if ret == false then
+         break
+      end
    end
 
 end
