@@ -18,8 +18,8 @@
 
 require 'rubygems'
 
-require "log4r"
-require "log4r/configurator"
+require 'log4r'
+require 'log4r/configurator'
 
 module CUC
 
@@ -43,8 +43,8 @@ class Log4rLoggerFactory
          Configurator['moduleName'] = modName
          Configurator.load_xml_file(logConfigFile)
          mainLoggerName = Configurator['mainLoggerName']
-         @mainLogger = Log4r::Logger["#{mainLoggerName}"]
-         @configured = true
+         @mainLogger    = Log4r::Logger["#{mainLoggerName}"]
+         @configured    = true
       end
       
    end   
@@ -78,9 +78,21 @@ class Log4rLoggerFactory
       end
 
       if bLog2File then
-         # @mainLogger.add Log4r::FileOutputter.new(modName, :filename => "#{full_path_logfile}", :formatter => logFormatter, :trunc => false)
-         @mainLogger.add Log4r::RollingFileOutputter.new(modName, :filename => "#{full_path_logfile}", \
-                           :formatter => logFormatter, :trunc => false, :max_backups => 3, maxsize => 5000000)
+         
+#          conf = {
+#             "filename" => "/tmp/pedo.log",
+#             "maxsize" => 16000,
+#             "trunc" => true
+#          }
+           
+         @mainLogger.add Log4r::RollingFileOutputter.new(modName, 
+               :maxsize => 500,
+               :filename => "#{full_path_logfile}",
+               :formatter => logFormatter,
+               :trunc => true,
+               :max_backups => 2,
+               :maxtime => 60
+               )
       end
 
       @configured = true
