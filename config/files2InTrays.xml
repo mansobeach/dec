@@ -2,489 +2,58 @@
 <DisseminationParams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <DIM_List>
       <DIM>
-         <Name>DIM_PLANNING</Name>
-         <IntrayDir>$DIMROOT/planning/input</IntrayDir>
+         <Name>ALL</Name>
+         <IntrayDir>/Users/borja/Projects/dec/data/intray/ALL</IntrayDir>
       </DIM>
       <DIM>
-         <Name>DIM_COMMAND_HISTORY</Name>
-         <IntrayDir>$DIMROOT/command_history/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_STATION_UNAVAILABITY</Name>
-         <IntrayDir>$DIMROOT/station_unavailability/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_XBAND_PLAN_MISMATCH</Name>
-         <IntrayDir>$DIMROOT/xband_plan_mismatch/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_XBAND_STATION_ACQ</Name>
-         <IntrayDir>$DIMROOT/xband_station_acquisition/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_XBAND_DISSEMINATION</Name>
-         <IntrayDir>$DIMROOT/xband_dissemination/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_XBAND_RECEPTION</Name>
-         <IntrayDir>$DIMROOT/xband_reception/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_FIXED_HEADER</Name>
-         <IntrayDir>$DIMROOT/fixed_header/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_PRODUCT_HEADER</Name>
-         <IntrayDir>$DIMROOT/product_header/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_APF_PRODUCTION</Name>
-         <IntrayDir>$DIMROOT/APF_production/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_APF_RECEPTION</Name>
-         <IntrayDir>$DIMROOT/APF_reception/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_APF_DISSEMINATION</Name>
-         <IntrayDir>$DIMROOT/APF_dissemination/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_ACMF_QUALITY</Name>
-         <IntrayDir>$DIMROOT/ACMF_quality/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_ACMF_RECEPTION</Name>
-         <IntrayDir>$DIMROOT/ACMF_reception/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_ACMF_DISSEMINATION</Name>
-         <IntrayDir>$DIMROOT/ACMF_dissemination/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_L0_PRODUCT</Name>
-         <IntrayDir>$DIMROOT/L0_product/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_QC_REPORT</Name>
-         <IntrayDir>$DIMROOT/QC_report/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_INVENTORY_FILE</Name>
-         <IntrayDir>$DIMROOT/DCC_inventory_files/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_STA_METADATA_UPDATE</Name>
-         <IntrayDir>$DIMROOT/STA_metadata_update/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_LTA_METADATA_UPDATE</Name>
-         <IntrayDir>$DIMROOT/LTA_metadata_update/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_MMPF_DISSEMINATION</Name>
-         <IntrayDir>$DIMROOT/MMPF_dissemination/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_MMPF_RECEPTION</Name>
-         <IntrayDir>$DIMROOT/MMPF_reception/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_MUS_COLLECTION</Name>
-         <IntrayDir>$DIMROOT/MUS_collections/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_ORBIT</Name>
-         <IntrayDir>$DIMROOT/orbit_information/input</IntrayDir>
-      </DIM>
-      <DIM>
-         <Name>DIM_MUS_USERS</Name>
-         <IntrayDir>$DIMROOT/MUS_users/input</IntrayDir>
+         <Name>REP_ARC_TCI</Name>
+         <IntrayDir>/Users/borja/Projects/dec/data/intray/REP_ARC_TCI</IntrayDir>
+         <Compress>7z</Compress>
       </DIM>
    </DIM_List>
+   
    <FileList>
-      <File Type="DCC_L*">
-         <HardLink>False</HardLink>
+      <!--
+      <File Type="S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.*">
+      -->
+      <File Type="S2?_OPER_??????????_????_???????????????_V???????????????_???????????????_A??????_T?????.*">
+         <HardLink>true</HardLink>
          <ToList>
-            <DIM>DIM_INVENTORY_FILE</DIM>
+            <DIM>REP_ARC_TCI</DIM>
+            <DIM>ALL</DIM>
          </ToList>
       </File>
-      <File Type="*_EX*ADD*">
-         <HardLink>False</HardLink>
+
+      <!--
+      <File Type="S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.*">
+      -->
+      <File Type="S2?_OPER_??????????_????_???????????????_V???????????????_???????????????.*">
+         <HardLink>true</HardLink>
          <ToList>
-            <DIM>DIM_LTA_METADATA_UPDATE</DIM>
+            <DIM>ALL</DIM>
          </ToList>
       </File>
-      <File Type="KAKAALD_U_N_0_">
-         <HardLink>False</HardLink>
+
+      <!--
+      <File Type="S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.*">
+      -->
+      <File Type="S2?_OPER_??????????_????_???????????????_???????????????_???????????????.*">
+         <HardLink>true</HardLink>
          <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
+            <DIM>ALL</DIM>
          </ToList>
       </File>
-      <File Type="ALD_U_N_1A">
-         <HardLink>False</HardLink>
+
+      <!--
+      <File Type="S2A_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.*">
+      -->
+      <File Type="S2?_OPER_??????????_???????????????_???????????????_????.*">
+         <HardLink>true</HardLink>
          <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
+            <DIM>ALL</DIM>
          </ToList>
       </File>
-      <File Type="ALD_U_N_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_ZWC_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="ALD_U_N_2A">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="ALD_U_N_2B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="ALD_U_N_2C">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PRODUCT_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_MET_12">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_RRC_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_MRC_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_ISR_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_IAT_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_DCC_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_IDC_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_LCP_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_LDT_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_OWV_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_ISR___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_IDC___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_LCM___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_LDT___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_LOS___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="CTI_MPC___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_RBC___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_CLM_2_">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_0_">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_1A">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_1B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_2A">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_2B">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_DEM___">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_PAR_QC">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="AUX_REP_QC">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_QC_REPORT</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_PL0_AC">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_L0_PRODUCT</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_QUA_AC">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ACMF_RECEPTION</DIM>
-            <DIM>DIM_ACMF_QUALITY</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_DIS_AC">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ACMF_DISSEMINATION</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_OBPL__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PLANNING</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_RAOP__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_COMMAND_HISTORY</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_ORBPRE">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ORBIT</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_ORBRES">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ORBIT</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_ORBTLE">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ORBIT</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_ORBSCT">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_ORBIT</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_GNDSTA">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_XSEG__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_STATION_UNAVAILABITY</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_XUSE__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
-      <File Type="MPL_XDWN__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_PLANNING</DIM>
-         </ToList>
-      </File>
-      <File Type="MMPF_FT_IN">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_MMPF_RECEPTION</DIM>
-         </ToList>
-      </File>
-      <File Type="MMPF_FTOUT">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_MMPF_DISSEMINATION</DIM>
-         </ToList>
-      </File>
-      <File Type="MMPF_FT_EM">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_MMPF_DISSEMINATION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_DSTDLY">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_APF_DISSEMINATION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_ALDPRO">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_APF_PRODUCTION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_APFDLY">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_APF_RECEPTION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_ASDLY_">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_XBAND_RECEPTION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_XACQ__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_XBAND_STATION_ACQ</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_XDIS__">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_XBAND_DISSEMINATION</DIM>
-         </ToList>
-      </File>
-      <File Type="REP_XMISM_">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-            <DIM>DIM_XBAND_PLAN_MISMATCH</DIM>
-         </ToList>
-      </File>
-      <File Type="OHS_SUBSCR">
-         <HardLink>False</HardLink>
-         <ToList>
-            <DIM>DIM_FIXED_HEADER</DIM>
-         </ToList>
-      </File>
+      
+
    </FileList>
 </DisseminationParams>
