@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <libgen.h>
 #include <math.h>
+#include <time.h>
 
 #include <explorer_visibility.h>
 #include <explorer_orbit.h>
@@ -30,7 +31,7 @@ and references about the module to be stored internally */
 static VALUE ruby_explorer_vis   = Qnil ;
 static VALUE mpl                 = Qnil ;
 
-/* Prototype for the initialization method - Ruby calls this, not you */
+/* Prototype for the initialization method - Ruby calls this */
 
 void Init_ruby_explorer_visibility() ;
 
@@ -69,12 +70,6 @@ void Init_ruby_explorer_visibility()
    
    rb_define_method(ruby_explorer_vis, "StationVisTimeCompute", method_xv_stationvistime_compute, 8) ;
    
-   /*
-   
-   rb_define_method(ruby_explorer_orbit, "PositionInOrbit", method_PositionInOrbit, 3) ;
-
-*/
-
 }
 
 /* -------------------------------------------------------------------------- */
@@ -656,6 +651,12 @@ VALUE method_xv_stationvistime_compute(
       printf("\n   Number of segments: %ld", sta_vis_list.num_rec);   
       printf("\n   Segments: Start (Orbit, seconds, microseconds) -- Stop (Orbit, seconds, microseconds) ") ;
    }
+   
+   char validity_start[32] ;
+   char validity_stop[32] ;
+   char creation_date[32] ;
+   
+   int iFirst = 1 ;
     
    for(i=0; i <  sta_vis_list.num_rec; i++)
    {
@@ -791,6 +792,12 @@ VALUE method_xv_stationvistime_compute(
       xf_tree_add_child( &fd, ".", "UTC", &error) ;
       xf_tree_set_string_node_value( &fd, ".", ascii_utc_start, "%s", &error) ;
 
+      if (iFirst == 1)
+      {
+         strcpy(validity_start, ascii_utc_start) ;
+         iFirst = 0 ;
+      }
+
       /* xf_tree_add_child( &fd, ".", "Orbit", &error) ; */
       xf_tree_add_next_sibling( &fd, ".", "Orbit", &error) ;
 
@@ -807,6 +814,7 @@ VALUE method_xv_stationvistime_compute(
       
       xf_tree_add_child( &fd, ".", "UTC", &error) ;
       xf_tree_set_string_node_value( &fd, ".", ascii_utc_stop, "%s", &error) ;
+      strcpy(validity_stop, ascii_utc_stop) ;
 
       /* xf_tree_add_child( &fd, ".", "Orbit", &error) ; */
       xf_tree_add_next_sibling( &fd, ".", "Orbit", &error) ;
@@ -858,18 +866,56 @@ VALUE method_xv_stationvistime_compute(
    strcpy(item_value, "Routine Operations") ;
    xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
 
+   strcpy(item_id, "File_Type") ;
+   strcpy(item_value, "MPL_GNDVIS") ;
+   xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+
    strcpy(item_id, "File_Version") ;
    strcpy(item_value, "0000") ;
    xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+
+   strcpy(item_id, "Validity_Start") ;
+   strcpy(item_value, validity_start) ;
+   xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+
+   strcpy(item_id, "Validity_Stop") ;
+   strcpy(item_value, validity_stop) ;
+   xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
  
-   strcpy(item_id, "Creator") ;
+   strcpy(item_id, "System") ;
    strcpy(item_value, "dec/mpl") ;
+   xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+
+   strcpy(item_id, "Creator") ;
+   strcpy(item_value, "xv_stationvistime_compute") ;
    xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
  
    strcpy(item_id, "Creator_Version") ;
    strcpy(item_value, "1.0") ;
+   
+   /*
+   long lValue ;
+   lValue = xl_check_library_version() ;
+   sprintf(item_value, "%lu", lValue) ;
+   */
+   
    xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+   
+   
+   time_t timer ; 
+   struct tm* tm_info ;
+    
+   time(&timer) ;
+   /* tm_info = localtime(&timer) ; */
+   tm_info = gmtime(&timer) ;
 
+   strftime(creation_date, 19, "%Y-%m-%dT%H:%M:%S", tm_info) ;
+   /* puts(creation_date) ;   */
+   
+   strcpy(item_id, "Creation_Date") ;
+   strcpy(item_value, creation_date) ;
+   xf_tree_set_fixed_header_item( &fd, item_id, item_value, &error) ;
+   
    xf_tree_add_child ( &fd, "/Earth_Explorer_File/Earth_Explorer_Header/Variable_Header",
               "Station", &error ) ;
    xf_tree_set_string_node_value ( &fd, ".", station_id, "%s", &error ) ;
@@ -911,24 +957,10 @@ VALUE method_xv_stationvistime_compute(
    }
 	
    return LONG2NUM(local_status) ;
-  
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* -------------------------------------------------------------------------- */
-
-
-
-
-
-
-
-/*============================================================================*/
-/*  MPL::PositionInOrbit 
-      - full_path_OSF
-      - Absolute_Orbit_Angle
-      - ANX_Angle        */
 /*============================================================================*/
 
