@@ -38,10 +38,10 @@
 require 'getoptlong'
 require 'rubygems'
 
-require 'explorer_lib/ruby_explorer_lib'
-require 'explorer_visibility/ruby_explorer_visibility'
 require 'explorer_orbit/ruby_explorer_orbit'
 require 'explorer_data_handling/ruby_explorer_data_handling'
+require 'explorer_lib/ruby_explorer_lib'
+require 'explorer_visibility/ruby_explorer_visibility'
 
 require 'cuc/Converters'
 

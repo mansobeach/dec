@@ -81,7 +81,7 @@ void Init_ruby_explorer_visibility()
 VALUE method_check_library_version() 
 { 
    printf("\n") ;
-   printf("DEBUG: entry ruby_explorer_visibility::method_check_library_version\n") ;  
+   printf("DEBUG: Entry ruby_explorer_visibility::method_check_library_version\n") ;  
    printf("\n") ;
 
    long lValue ;
@@ -152,6 +152,13 @@ VALUE method_xv_stationvistime_compute(
    strcpy (stat_file, StringValueCStr(strStationDB)) ;
 
 
+   if (iDebug == 1)
+   {
+      printf("ref orbit   :  %s\n", path_orbit_file) ;
+      printf("swath       :  %s\n", swath_file) ;
+      printf("station db  :  %s\n", stat_file) ;
+   }
+
    long num_stations ;
    char ** station_list_id ;
 
@@ -204,16 +211,13 @@ VALUE method_xv_stationvistime_compute(
       - gnd station db
       ------------------------------------------------------
    */
-   char * szElement ;
-   char * szValue ;
-   char * szMission ;
-   char * szFilenameOSF ;
-   char * szFilenameSwath ;
-   char * szFilenameStationDB ;
+   
+   char * szMission              = NULL ;
+   char * szFilenameOSF          = NULL ;
+   char * szFilenameSwath        = NULL ;
+   char * szFilenameStationDB    = NULL ;
 
    long fd_1 ;
-
-   static char 	string_element[]  = "Mission";
    char 	path [ XF_MAX_PATH_LENGTH ] ;
 
    /*
@@ -224,25 +228,38 @@ VALUE method_xv_stationvistime_compute(
 
    if ( local_status < XF_CFI_OK )
    {
-      printf("\nError parsing file %s\n", path_orbit_file) ;
+      printf("\n\nError parsing file %s\n\n", path_orbit_file) ;
       closeup (local_status) ;
    }
 
    strcpy ( path, "/Earth_Explorer_File/Earth_Explorer_Header/Fixed_Header/Mission" ) ;
-   xf_tree_path_read_string_node_value ( 
+   
+   
+   xf_tree_path_read_string_node_value(
                                           &fd_1, 
                                           path, 
-                                          &szMission, 
+                                          &szMission,
                                           &local_status 
                                           ) ;
+
 
    if ( local_status < XF_CFI_OK )
    {
       printf("\nError reading element as string\n" ) ;
       closeup (local_status) ;
    }
+   else
+   {
+      if (iDebug == 1)
+      {
+         printf("\n%s => %s", path, szMission) ;
+      }
+   }
+  
   
    strcpy ( path, "/Earth_Explorer_File/Earth_Explorer_Header/Fixed_Header/File_Name" ) ;
+   
+   
    xf_tree_path_read_string_node_value ( 
                                           &fd_1, 
                                           path, 
@@ -250,14 +267,22 @@ VALUE method_xv_stationvistime_compute(
                                           &local_status 
                                           ) ;
 
+
    if ( local_status < XF_CFI_OK )
    {
       printf("\nError reading element as string\n" ) ;
       closeup (local_status) ;
    }
-
+   else
+   {
+      if (iDebug == 1)
+      {
+         printf("\n%s => %s", path, szFilenameOSF) ;
+      }
+   }
 
    xf_tree_cleanup_parser ( &fd_1, &local_status ) ;
+
 
    if ( local_status < XF_CFI_OK )
    {
@@ -291,6 +316,14 @@ VALUE method_xv_stationvistime_compute(
       printf("\nError reading element as string\n" ) ;
       closeup (local_status) ;
    }
+   else
+   {
+      if (iDebug == 1)
+      {
+         printf("\n%s => %s", path, szFilenameSwath) ;
+      }
+   }
+
   
    xf_tree_cleanup_parser ( &fd_1, &local_status ) ;
 
@@ -326,6 +359,13 @@ VALUE method_xv_stationvistime_compute(
    {
       printf("\nError reading element as string\n" ) ;
       closeup (local_status) ;
+   }
+   else
+   {
+      if (iDebug == 1)
+      {
+         printf("\n%s => %s", path, szFilenameStationDB) ;
+      }
    }
 
 
