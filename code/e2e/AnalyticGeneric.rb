@@ -18,6 +18,7 @@ require 'cuc/Converters'
 require 'e2e/WriteGanttXLS'
 require 'e2e/ReadCSWResult'
 require 'e2e/QuarcModel'
+require 'e2e/FunctionEvents'
 
 
 module E2E
@@ -25,11 +26,12 @@ module E2E
 class AnalyticGeneric
 
    include CUC::Converters
+   include E2E::FunctionEvents
 
    #-------------------------------------------------------------
   
    # Class constructor
-   def initialize(arrMOE, parameters, debug = false)
+   def initialize(arrMOE, arguments, parameters, debug = false)
 
       if debug == true then
          setDebugMode
@@ -39,6 +41,7 @@ class AnalyticGeneric
       @hAnnotations     = Hash.new
       @hParams          = Hash.new
       @arrMOE           = arrMOE
+      @arguments        = self.getArguments(arguments)
       @parameters       = parameters
       @queryStartDate   = nil
       @queryStopDate    = nil
@@ -47,7 +50,9 @@ class AnalyticGeneric
       
       processParameters
             
-      loadData(@arrMOE, @parameters)      
+      if @arrMOE != nil then
+         loadData(@arrMOE, @parameters)
+      end    
    end
    #-------------------------------------------------------------
    
@@ -57,7 +62,10 @@ class AnalyticGeneric
       puts "AnalyticGeneric debug mode is on"
    end
    #-------------------------------------------------------------
-   
+ 
+   def usage
+      puts "AnalyticGeneric::usage"
+   end   
    #-------------------------------------------------------------
    
    # I'd love to do the dirty thing and call again the class constructor

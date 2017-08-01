@@ -372,26 +372,20 @@ private
       
       if event[:start].class.to_s == "DateTime" then
          # Handle dates as DateTime
-         
-#         strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S")
-#         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S")
-         
          strStart = event[:start].strftime("%Y-%m-%dT%H:%M:%S.%L")
-         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")
-
-         
       else
-         # Handle dates as string
-      
-#          strStart = event[:start].slice(0, 19)
-#          strStop  = event[:stop].slice(0, 19)
-         
-         # miliseconds format
+         # Handle dates as string with miliseconds format
          strStart = event[:start].slice(0, 23)
-         strStop  = event[:stop].slice(0, 23)      
-
-               
       end
+
+      if event[:stop].class.to_s == "DateTime" then
+         # Handle dates as DateTime         
+         strStop  = event[:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")
+      else
+         # Handle dates as string with miliseconds format
+         strStop  = event[:stop].slice(0, 23)                     
+      end
+
 
       if @isDebugMode == true then
          puts strStart
@@ -442,7 +436,11 @@ private
       other_cell = %Q{#{@Column_Letter_Explicit_Ref}#{row+1}}
       my_formula = %Q{MID(#{other_cell}, 26, 15)  }
 
-      @sheetGauges.write_formula(row, @Column_Creation_Date, my_formula)
+      if event[:explicit_reference].slice(33,1) == "T" then
+         @sheetGauges.write_formula(row, @Column_Creation_Date, my_formula)
+      else
+         @sheetGauges.write(row, @Column_Creation_Date, "N/A")
+      end
       
       # ----------------------
       # optional values in the result
@@ -455,9 +453,9 @@ private
    # Dirty-patch to write the optional array of values in the last columns 
    def writeValues(row, column, values, value)
       values.each{|a_value|
-         if a_value == value then
-            next
-         end
+#          if a_value == value then
+#             next
+#          end
          @sheetGauges.write(row, column, a_value)
          column = column + 1
       }

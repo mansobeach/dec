@@ -23,15 +23,13 @@ class Analytic_E2E < AnalyticGeneric
    #-------------------------------------------------------------
   
    # Class constructor
-   def initialize(arrMOE, parameters, debug = false)
+   def initialize(arguments, parameters, debug = false)
 
       if debug == true then
          self.setDebugMode
       end
 
-      super(["MISSION_DUMP_OPERATION"], parameters, debug)
-      
-      # super(["MISSION_PLAN_MMFU_OPERATION"], parameters, debug)
+      super(["MISSION_DUMP_OPERATION"], arguments, parameters, debug)
       
       @window_length  = 6000
       @duty_cycle     = 1500
@@ -45,6 +43,11 @@ class Analytic_E2E < AnalyticGeneric
    def setDebugMode
       @isDebugMode = true
       puts "Analytic_XbandDutyCycle debug mode is on"
+   end
+   #-------------------------------------------------------------
+
+   def usage
+      puts "Analytic_DutyCycleXband::usage"
    end
    #-------------------------------------------------------------
    

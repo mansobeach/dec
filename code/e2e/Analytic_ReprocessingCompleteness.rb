@@ -34,15 +34,14 @@ class Analytic_E2E < AnalyticGeneric
    def initialize(arguments, parameters, debug = false)
       
       @baseline   = nil
-      @arguments  = self.getArguments(arguments)
-      
-      processArguments
       
       if debug == true then
          self.setDebugMode
       end
       
-      super(["DATA-SENSING.DS"], parameters, debug)
+      super(["DATA-SENSING.DS"], arguments, parameters, debug)
+      
+      processArguments
       
    end
    #-------------------------------------------------------------
@@ -51,6 +50,16 @@ class Analytic_E2E < AnalyticGeneric
    def setDebugMode
       @isDebugMode = true
       puts "Analytic_ReprocessingCompleteness debug mode is on"
+   end
+   #-------------------------------------------------------------
+   
+   def usage
+      puts "Analytic_ReprocessingCompleteness::usage"
+      puts "Optional arguments:"
+      puts "baseline=<value>  default 02.04"
+      puts "Parameters:"
+      puts "START_UTC=2015-09-10T01:00:00;STOP_UTC=2015-09-10T02:00:00"
+      puts 
    end
    #-------------------------------------------------------------
    

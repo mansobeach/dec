@@ -32,16 +32,14 @@ class Analytic_E2E < AnalyticGeneric
    # Class constructor
    def initialize(arguments, parameters, debug = false)
       
-      @arguments = self.getArguments(arguments)
-      
       if debug == true then
          self.setDebugMode
       end
-      super(["MISSION_PLAN_MSI_OPERATION", "ORBIT-PRED"], parameters, debug)
+      super(["MISSION_PLAN_MSI_OPERATION", "ORBIT-PRED"], arguments, parameters, debug)
       
       @switchesTotal       = 0       
       @switchesOrbit       = 0
-      @limitDutyCycle      = 45.0
+      @limitDutyCycle      = 46.0
       
    end
    #-------------------------------------------------------------
@@ -50,6 +48,13 @@ class Analytic_E2E < AnalyticGeneric
    def setDebugMode
       @isDebugMode = true
       puts "Analytic_DutyCycleMSI debug mode is on"
+   end
+   #-------------------------------------------------------------
+   
+   def usage
+      puts "Analytic_DutyCycleMSI::usage"
+      puts "Optional arguments:"
+      puts "mission=s2a|s2b"
    end
    #-------------------------------------------------------------
    
@@ -124,6 +129,10 @@ class Analytic_E2E < AnalyticGeneric
       puts
       
       if arrViolated.empty? == false then
+         puts "Violated constraints in:"
+         arrViolated.each{|constraint|
+            puts constraint
+         }
          self.writeToExcel(arrViolated.flatten!)
       end
       

@@ -141,10 +141,19 @@ private
    
    
    def defineStructs
-      Struct.new("Event", :library, :gauge_name, :system, :start, :stop, :value, :explicit_reference, :values)     
-      @arrEvents  = Array.new
+      if Struct::const_defined? "Event"
+         Struct.const_get "Event"
+      else
+         Struct.new("Event", :library, :gauge_name, :system, :start, :stop, :value, :explicit_reference, :values)     
+      end
       
-      Struct.new("Explicit_Reference", :explicit_reference, :annotation, :value)     
+      if Struct::const_defined? "Explicit_Reference"
+         Struct.const_get "Explicit_Reference"
+      else
+         Struct.new("Explicit_Reference", :explicit_reference, :annotation, :value)     
+      end
+      
+      @arrEvents  = Array.new
       @arrERs     = Array.new
    end
    #-------------------------------------------------------------

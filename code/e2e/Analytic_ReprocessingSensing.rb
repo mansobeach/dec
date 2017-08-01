@@ -33,15 +33,14 @@ class Analytic_E2E < AnalyticGeneric
    def initialize(arguments, parameters, debug = false)
       
       @baseline   = nil
-      @arguments  = self.getArguments(arguments)
-      
-      processArguments
       
       if debug == true then
          self.setDebugMode
       end
       
-      super(["DATA-ARCHIVED"], parameters, debug)
+      super(["DATA-ARCHIVED"], arguments, parameters, debug)
+      
+      processArguments
       
    end
    #-------------------------------------------------------------
@@ -53,6 +52,16 @@ class Analytic_E2E < AnalyticGeneric
    end
    #-------------------------------------------------------------
    
+   def usage
+      puts "Analytic_ReprocessingCompleteness::usage"
+      puts "Optional arguments:"
+      puts "baseline=<value>  default 02.04"
+      puts "Parameters:"
+      puts "START_UTC=2015-09-10T01:00:00;STOP_UTC=2015-09-10T02:00:00"
+      puts 
+   end
+   #-------------------------------------------------------------
+      
    # Process optional arguments supplied to the analytic
    
    def processArguments     
