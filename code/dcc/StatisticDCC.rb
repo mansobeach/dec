@@ -11,8 +11,6 @@
 # CVS: $Id: StatisticDCC.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 #
 # Module Data Collector Component
-# This class polls a given Interface and gets all registered available files
-# via FTP or SFTP.
 #
 #########################################################################
 
@@ -41,8 +39,8 @@ class StatisticDCC
 
    #-------------------------------------------------------------
 
-   def lastHour
-      lastHourFiles     = ReceivedFile.where('reception_date > ?', 1.hours.ago)
+   def lastHour(iHours = 1)
+      lastHourFiles     = ReceivedFile.all.where('reception_date > ?', iHours.to_i.hours.ago)
       lastHourCount     = lastHourFiles.count
       lastHourSize      = lastHourFiles.sum(:size)
       prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
@@ -51,80 +49,66 @@ class StatisticDCC
          puts "No files received"
          return
       end
-            
+                  
+      lastHourFiles     = ReceivedFile.select("filename, interface_id").where('reception_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
+      
+      puts
+      
+      lastHourFiles.load.to_a.each{|item|
+         puts "#{item.interface.name.to_s.ljust(15)} - #{item.filename}"
+      }
+      puts
+
       puts      
       puts "Last received file #{ReceivedFile.last.reception_date}"
       
       puts
-      puts "New #{lastHourCount} files received during last hour"
+      puts "New #{lastHourCount} files received during last #{iHours} hour(s)"
       
       puts
       puts "Received #{prettyHourSize}"
       
-      puts  
-      puts "Total received #{ReceivedFile.count} files"
-      
-#       puts 
-#             
-#       arrTypes = ArchivedFile.select(:filetype).distinct
-#             
-#       arrTypes.each{|record|
-#          # puts record.filetype
-#          
-#          arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
-#          
-#          puts "#{record.filetype} / #{arrFiles.count} files"
-#          
-#          # puts ArchivedFile.all.group(:filetype).count
-#          
-#       }
-#       
-#       puts
+      puts
+      puts
       
    end
    #-------------------------------------------------------------
 
-   def statusType(filetype)
-      # puts ArchivedFile.all.group(:filetype).count
+   def customQuery
+      lastHourFiles     = ReceivedFile.all.where('reception_date > ?', 7.days.ago)
+      lastHourCount     = lastHourFiles.count
+      lastHourSize      = lastHourFiles.sum(:size)
+      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
       
-      arrFiles = ArchivedFile.where(filetype: filetype).order('archive_date ASC')
-      
-      puts "Archived #{arrFiles.count} files of type #{filetype}"
-      
-      puts
-      
-      puts "Last archive by #{arrFiles.last.archive_date}" 
-      
-      puts
-      
-      puts "First archive by #{arrFiles.first.archive_date}" 
-      
-      puts
-            
-      sizefile = Filesize.from("#{arrFiles.sum(:size)} B").pretty 
-      
-      puts "Size of the files #{sizefile}"
+      if ReceivedFile.last == nil then
+         puts "No files received"
+         return
+      end
+                  
+      lastHourFiles     = ReceivedFile.select("filename, interface_id").where('reception_date > ?', 7.days.ago).group(:interface_id, :filename).order('interface_id asc')
       
       puts
       
-      sizedisk = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      
-      puts "Disk occupation #{sizedisk}"
+      lastHourFiles.load.to_a.each{|item|
+         puts "#{item.interface.name.to_s.ljust(15)} - #{item.filename}"
+      }
+      puts
+
+      puts      
+      puts "Last received file #{ReceivedFile.last.reception_date}"
       
       puts
-      
-      puts "Ratio #{(arrFiles.sum(:size).to_f/arrFiles.sum(:size_in_disk).to_f)*100}"
+      puts "New #{lastHourCount} files received during last 7 days"
       
       puts
+      puts "Received #{prettyHourSize}"
       
-      return
+      puts
+      puts
       
-      puts arrFiles.sum(:size_in_disk)
-      
-      puts arrFiles.first.archive_date
-      puts arrFiles.last.archive_date
-      puts arrFiles.count
    end
+   #-------------------------------------------------------------
+
    #-------------------------------------------------------------
 
 private

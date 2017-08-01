@@ -101,7 +101,6 @@ class DCC_ReceiverFromInterface
       @finalDir         = @entityConfig.getIncomingDir(@entity)
       checkDirectory(@finalDir)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
-      
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
       # -------------------------------------
@@ -1159,7 +1158,7 @@ private
       tmpList        = Array.new(list)
       @fileListError = Array.new
       nStart         = list.length
-
+      numFilesToBeRetrieved = 0
       # ------------------------------------------
 
 #===============================================================================
@@ -1204,6 +1203,8 @@ private
       
       nStart    = list.length
 
+      @logger.info("Filtering filetypes / #{list.length} items")
+
       perf = measure{
 
       tmpList.each{|fullpath|
@@ -1235,9 +1236,15 @@ private
 
          if bFound == false then
             arrDelete << fullpath
+         else
+            numFilesToBeRetrieved += 1
          end
 
+         if @pollingSize != nil and numFilesToBeRetrieved >= @pollingSize.to_i then
+         	break
+         end
       }
+      
       if @isDebugMode == true then
          puts
       end
@@ -1260,7 +1267,8 @@ private
       # 2016 patch
              
       if @isDelUnknown == true and arrDelete.uniq.length > 0 then
-         puts "Deleting unknown files ..."
+         
+         
          arrDelete.uniq.each{|aFile|
          
             # ----------------------------------------------
@@ -1275,9 +1283,9 @@ private
          
             # ----------------------------------------------
             
-            puts "deleting #{File.basename(aFile)}"
-            @logger.info("deleting #{File.basename(aFile)}")
-            deleteFromEntity(aFile)
+#             puts "deleting #{File.basename(aFile)}"
+#             @logger.info("deleting unknown #{File.basename(aFile)}")
+#             deleteFromEntity(aFile)
          }
       end
 
@@ -1300,7 +1308,7 @@ private
 
       if @isNoDB == false then
 
-      @logger.info("Filtering files previously recorded within db")
+      @logger.info("Filtering files previously recorded within db / #{list.length} items")
 
       perf = measure{
 
@@ -1576,11 +1584,14 @@ private
    # - false otherwise
    def checkFileSource(fileName)
 
-      # We do not care whether a given file is Earth Explorer or not and we try
-      # to find a matching with the filename
+      # puts "DCC_ReceiverFromEntity::checkFileSource(#{fileName})"
+      
       
       # First we try perform filename matching vs wildcards in ft_incoming_files 
       sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
+
+      # puts sources
+
       if sources == nil then
          if @isDebugMode == true then
             puts "\nNo File-Name matchs with #{fileName} in ft_incoming_files.xml ! \n"

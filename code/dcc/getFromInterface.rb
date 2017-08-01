@@ -18,6 +18,11 @@
 # Report files are initally placed in the Interface local inbox and
 # if configured in files2InTrays.xml disseminated as nominal retrieved file.
 #
+# --del-unknown:
+#
+# It overrides the dcc_config.xml configuration parameter DeleteUnknown and explicitly
+# commands for removal of unknown files not configured in ft_incoming_files.xml
+#
 #
 # == Usage
 # getFromInterface.rb -m <MNEMONIC>  [-l] [--nodb]
@@ -83,7 +88,7 @@ def main
    @bShowMnemonics = false
    @isNoDB        = false
    @isNoIntray    = false
-   @isDelUnknown  = false
+   @isDelUnknown  = nil
    
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("getFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
@@ -144,7 +149,7 @@ def main
    rescue Exception
       exit(99)
    end
- 
+  
    if @listOnly == true and  @createReceipt == true then
       puts "--list and --receipt are incompatible flags"
       puts
@@ -160,6 +165,42 @@ def main
    if @entity == "" and @bShowMnemonics == false then
       usage
    end
+
+   if @isDelUnknown == nil then
+      @isDelUnknown = DCC::ReadConfigDCC.instance.getDeleteUnknown
+   end
+
+
+   if @bShowMnemonics == true and @isNoDB == false then
+      require 'dbm/DatabaseModel'
+      
+      arrInterfaces = Interface.all
+      if arrInterfaces == nil then
+         puts
+         puts "Sorry, there are no configured I/Fs :-|"
+         puts
+      else
+         if arrInterfaces.length == 0 then
+            puts
+            puts "Sorry, there are no configured I/Fs :-|"
+            puts
+         else
+            puts "=== Data Collector Component Registered I/Fs ==="
+            arrInterfaces.each{|interface|
+               print interface.id.to_s.rjust(2)
+               print " "
+               print interface.name
+               1.upto(25 - interface.name.length) do
+                  print " "
+               end
+               print interface.description
+               puts
+            }         
+         end
+      end
+      exit(0)
+   end
+   
 
    if @isNoDB == false then
       require 'dbm/DatabaseModel'
@@ -184,7 +225,6 @@ def main
          exit(99)
       end
 
-
       interface = Interface.find_by(name: @entity)
       
       if interface == nil then
@@ -192,33 +232,11 @@ def main
          puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
          exit(99)
       end
+
    end   
 
-   if @bShowMnemonics == true then
-      arrInterfaces = Interface.find(:all)
-      if arrInterfaces == nil then
-         puts
-         puts "Sorry, there are no configured I/Fs :-|"
-         puts
-      else
-         if arrInterfaces.length == 0 then
-            puts
-            puts "Sorry, there are no configured I/Fs :-|"
-            puts
-         else
-            puts "=== Data Collector Component Registered I/Fs ==="
-            arrInterfaces.each{|interface|
-               print interface.name
-               1.upto(25 - interface.name.length) do
-                  print " "
-               end
-               print interface.description
-               puts
-            }         
-         end
-      end
-      exit(0)
-   end
+
+
 
    cnf = CTC::ReadInterfaceConfig.instance
 
@@ -380,8 +398,10 @@ def body
 #             @receiver.createReportFile(@incomingDir, true, @createReport)
 
             if ret == true then
+               @logger.info("Event OnReceiveNewFilesOK triggered}")
                event.trigger(@entity, "ONRECEIVENEWFILESOK")
             else
+               @logger.info("Event OnReceiveError triggered}")
                event.trigger(@entity, "ONRECEIVEERROR")
             end
 
@@ -406,6 +426,7 @@ def body
 # 	      if @isDebugMode == true then
 # 	         deliverer.setDebugMode
 # 	      end
+         @logger.info("Dissemination of previous files received from #{@entity}")
 	      deliverer.deliver(@entity)         
       end	
    end

@@ -56,11 +56,38 @@ class ReadInTrayConfig
    end
    #-------------------------------------------------------------
    
+   def getDIMCompress(name)
+      @@arrDims.each{|dim|
+         if name == dim[:name] then
+            return dim[:compress]
+         end
+      }
+      return false
+
+   end
+   #-------------------------------------------------------------
+   
    # Get the In-Tray directory for a given DIM Name
    # It returns the InTray Directory if present, otherwise false
    def getDIMInTray(name)
+      
+      # ------------------------------------------
+      # 20170601 
+      # Super - dirty patch to support compression
+      # Depending on who is invoking this method, parameter can be a String
+      # or a Hash which carries whether such DIM name is to be compressed
+      
+      dimName = ""
+      
+      if name.class.to_s == "Hash" then
+         name.each_key{|key| dimName = key}
+      else
+         dimName = name
+      end
+      # ------------------------------------------
+      
       @@arrDims.each{|dim|
-         if name == dim[:name] then
+         if dimName == dim[:name] then
             return expandPathValue(dim[:intray])
          end
       }
@@ -350,7 +377,7 @@ private
    #-------------------------------------------------------------
 	# This method creates all the structs used
 	def defineStructs
-	   Struct.new("DIMStruct", :name, :intray)		
+	   Struct.new("DIMStruct", :name, :intray, :compress)		
 		Struct.new("Files2DimsStruct", :filetype, :filename, :hardlink, :arrDims)
 	end
 	#-------------------------------------------------------------
@@ -387,7 +414,7 @@ private
       
       dims = XPath.each(xmlFile, path){
           |dim|
-                    
+                         
           XPath.each(dim, "Name"){
              |name|
              dimName = name.text
@@ -396,6 +423,13 @@ private
           XPath.each(dim, "IntrayDir"){
              |intray|
              dimInTray = intray.text
+          }	  
+
+          compress = nil
+
+          XPath.each(dim, "Compress"){
+             |kompress|
+             compress = kompress.text
           }	  
       
           # Avoid DIMs duplication in DIM_List
@@ -409,7 +443,7 @@ private
              end
           }
       
-          @@arrDims << fillDimsStruct(dimName, dimInTray)      
+          @@arrDims << fillDimsStruct(dimName, dimInTray, compress)      
       
       }
             
@@ -434,7 +468,7 @@ private
             puts
             puts "Attribute Type for Element File has not been found in files2InTrays.xml"
             puts
-            puts "Majo, me temo que fatal error ! :-p"
+            puts "Fatal error, sorry ! :-p"
             puts
             exit(99)
          end
@@ -479,7 +513,7 @@ private
             |to|
             XPath.each(to, "DIM"){
                |dim|
-               arrDims << dim.text
+               arrDims << dim.text # { dim.text => dim.attributes["Compress"] }
             } 
          }
           
@@ -494,11 +528,11 @@ private
    # Fill an External entity struct
    # - name (IN)  :  DIM name
    # - intray (IN):  DIM Intray directory
+   # - compress (IN):  DIM compress configuration
    # There is only one point in the class where all dynamic structs 
    # are filled so that it is easier to update/modify the I/F.
-   def fillDimsStruct(name, intray)
-      tmpStruct     = Struct::DIMStruct.new(name,
-                                 intray)   		
+   def fillDimsStruct(name, intray, compress)
+      tmpStruct     = Struct::DIMStruct.new(name, intray, compress)   		
       return tmpStruct         
    end
    #-------------------------------------------------------------    

@@ -127,7 +127,7 @@ class FileDeliverer2InTrays
             
             if dimsName != false then
                dimsName.each{|dim|
-                  @logger.debug("#{file} is disseminated to #{dim}")
+                  @logger.log("#{file} is disseminated to #{dim}")
                }
             else
                # @logger.warn("#{file} has no In-Tray config")
