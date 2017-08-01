@@ -19,6 +19,7 @@
 # S2A_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.TGZ
 # S2A_OPER_REP__SUP___20151219T193158_99999999T999999_0001.EOF
 # S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
+# S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 #
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
 # - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
@@ -74,7 +75,11 @@ class Handler_S2PDGS
       end 
       # ----------------------------------------------------
 
-      if @filename.length == 73 or @filename.length == 88 then
+      # S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF
+      # S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.EOF
+      # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
+
+      if @filename.length == 73 or @filename.length == 88 or @filename.length == 77 then
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(42, 15))
