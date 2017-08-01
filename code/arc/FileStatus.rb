@@ -76,6 +76,11 @@ class FileStatus
       lastHourFiles = ArchivedFile.where('archive_date > ?', 1.hours.ago)
       lastHourCount = lastHourFiles.count
       
+      if lastHourCount == 0 then
+         puts "No files archived during period"
+         return
+      end
+      
       lastHourSizeO     = lastHourFiles.sum(:size_original)
       lastHourSize      = lastHourFiles.sum(:size)
       lastHourDisk      = lastHourFiles.sum(:size_in_disk)
