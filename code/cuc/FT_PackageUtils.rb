@@ -388,7 +388,7 @@ private
    def performUncompress7z
       prevDir = Dir.pwd
       Dir.chdir(@srcPath)
-      cmd     = %Q{7za x #{@srcFile}}
+      cmd     = %Q{7za x -y #{@srcFile}}
       if @isDebugMode == true then
          puts cmd
       end
