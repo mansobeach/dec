@@ -12,31 +12,26 @@
 
 ## ===============================================
 ##
-## CASALE BASE
+## E2ESPM Backup (owncloud)
 ##
 ## ===============================================
 
 
 export MINARC_BASE=$DEC_BASE
 
-# export MINARC_DB_ADAPTER=mysql
-# export MINARC_DB_ADAPTER=sqlite3
-export MINARC_DB_ADAPTER=postgresql
-# export MINARC_DATABASE_NAME=$METEO_BASE/data/inventory/meteo_minarc
+export MINARC_DB_ADAPTER=mysql
 
-export MINARC_DATABASE_NAME=meteo
+export MINARC_DATABASE_NAME=minarc
 
-export MINARC_DATABASE_USER=meteo
+export MINARC_DATABASE_USER=root
 
-export MINARC_DATABASE_PASSWORD=meteo
+export MINARC_DATABASE_PASSWORD=root
 
-export MINARC_ARCHIVE_ROOT=$METEO_ARCHIVE/minarc_root
-
-export MINARC_ARCHIVE_ERROR=$METEO_ARCHIVE/minarc_root
+export MINARC_ARCHIVE_ROOT=/backup_storage/e2espm/data/archive
 
 export MINARC_CONFIG=$MINARC_BASE/config
 
-export PATH=$PATH:$MINARC_BASE/code/minarc
+export PATH=$PATH:$MINARC_BASE/code/arc
 
 export RUBYLIB=$DEC_BASE/code
 
