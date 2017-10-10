@@ -1,8 +1,13 @@
 activerecord
+activerecord-import
+sequel
 net-ssh
 net-sftp
 log4r
+filesize
 pg
+sqlite3
+mysql2
 rubymagick
 gruff
 spreadsheet
