@@ -92,9 +92,11 @@
 #     --additional-fields        allows to specify additional fields to fill in the archived_files table.
 #     --Hardlink                 enables hardlinking the file to the archive.
 #     --Types                    it shows all file-types archived
+#     --Superbulk                Activates the superbulk mode
 #     --help                     shows this help
 #     --Usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
+#     --Profile                  shows execution time profiling information
 #     --version                  shows version number
 # 
 # == Author
@@ -132,6 +134,8 @@ def main
    @filename               = ""
    @filetype               = ""
    @isDebugMode            = false
+   @isProfileMode          = false
+   @isSuperbulk            = false
    @bDelete                = false
    @bMove                  = false
    @bUnpack                = false
@@ -154,6 +158,8 @@ def main
      ["--update", "-u",             GetoptLong::NO_ARGUMENT],
      ["--move", "-m",               GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
+     ["--Profile", "-P",            GetoptLong::NO_ARGUMENT],
+     ["--Superbulk", "-S",          GetoptLong::NO_ARGUMENT],
      ["--Unpack", "-U",             GetoptLong::NO_ARGUMENT],
      ["--Usage", "-g",              GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
@@ -163,16 +169,18 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--delete"            then @bDelete     = true
-            when "--move"              then @bMove       = true
-            when "--update"            then @bUpdate     = true
-            when "--version"           then showVersion  = true
-	         when "--file"              then @full_path_filename = arg.to_s
-            when "--Location"          then @full_path_location = arg.to_s
-	         when "--type"              then @filetype           = arg.to_s
-            when "--additional-fields" then @arrAddFields       = arg.to_s.split(":")
-            when "--Types"             then bShowFileTypes      = true
+            when "--Debug"             then @isDebugMode          = true
+            when "--Profile"           then @isProfileMode        = true
+            when "--Superbulk"         then @isSuperbulk          = true
+            when "--delete"            then @bDelete              = true
+            when "--move"              then @bMove                = true
+            when "--update"            then @bUpdate              = true
+            when "--version"           then showVersion           = true
+	         when "--file"              then @full_path_filename   = arg.to_s
+            when "--Location"          then @full_path_location   = arg.to_s
+	         when "--type"              then @filetype             = arg.to_s
+            when "--additional-fields" then @arrAddFields         = arg.to_s.split(":")
+            when "--Types"             then bShowFileTypes        = true
 			   when "--help"              then usage
 	         when "--usage"             then usage
             when "--Unpack"            then @bUnpack = true
@@ -230,6 +238,8 @@ def main
    if @full_path_filename == "" then
       usage
    end
+   
+
       
    if @full_path_filename.slice(0,1) != "/" then
       puts
@@ -244,7 +254,6 @@ def main
       puts
       exit(99)
    end
-
 
    @filename = File.basename(@full_path_filename)
 
@@ -277,7 +286,12 @@ def main
    #
    # 20170603 - Bulk mode archive
    if @full_path_filename.include?("?") == true or @full_path_filename.include?("*") == true then
-      bulkArchive
+      if @isSuperbulk == true then
+         superBulk
+      else
+         bulkArchive
+      end
+      exit(0)
    end
    # ---------------------------------------------
 
@@ -312,16 +326,56 @@ end
 
 #-------------------------------------------------------------
 
-def bulkArchive
-   puts
-   puts "bulk mode detected"
-   puts
+
+def superBulk
+   if @isDebugMode == true then
+      puts
+      puts "superbulk mode detected"
+   end
    
    archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
    
    if @isDebugMode then
       archiver.setDebugMode
    end
+
+   if @isProfileMode then
+      archiver.setProfileMode
+   end
+
+   retVal = true
+
+   arrFiles = Dir[@full_path_filename]
+   
+   retVal = archiver.bulkarchive(arrFiles, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
+      
+   if retVal == true then
+      exit(0)
+   else
+      exit(1)
+   end
+   
+end
+
+
+#-------------------------------------------------------------
+
+def bulkArchive
+   if @isDebugMode == true then
+      puts
+      puts "bulk mode detected"
+   end
+   
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
+   
+   if @isDebugMode then
+      archiver.setDebugMode
+   end
+
+   if @isProfileMode then
+      archiver.setProfileMode
+   end
+
 
    retVal = true
 
@@ -330,8 +384,16 @@ def bulkArchive
    arrFiles.each{|file|
       
       if @isDebugMode == true then
-         puts file
+         puts "found #{file}"
       end
+      
+      arrFile = Array.new
+      
+      arrFile << file
+      arrFile << @filetype
+      arrFile << @full_path_location
+      arrFile << Time.now
+      
       
       ret = archiver.archive(file, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
    
@@ -363,7 +425,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -105 #{fullpathFile}"}`
+   value = `#{"head -106 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
