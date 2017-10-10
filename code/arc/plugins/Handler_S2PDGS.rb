@@ -43,7 +43,7 @@ class Handler_S2PDGS
    @size                = 0
    @size_in_disk        = 0
 
-   attr_reader :archive_path, :size, :size_in_disk, :size_original
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename
 
    #-------------------------------------------------------------
 
