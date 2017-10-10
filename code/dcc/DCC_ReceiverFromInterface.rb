@@ -828,16 +828,12 @@ private
 		   # copy it to the final destination
          
          size = File.size("#{@localDir}/#{File.basename(filename)}")
-         @logger.debug("#{File.basename(filename)} with size #{size} bytes")
-
-			copyFileToInBox(File.basename(filename))
-			
-         # delete file in the temp directory
-         #deleteFileFromTemp(File.basename(filename))
-			
-         # @logger.info("RECEIVED #{File.size(filename)}")
          
-         
+         # @logger.debug("#{File.basename(filename)} received with size #{size} bytes")
+         # @logger.info("#{File.basename(filename)} received with size #{size} bytes")
+			
+         copyFileToInBox(File.basename(filename), size)
+			         
 			# update DCC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
@@ -848,7 +844,7 @@ private
    			deleteFromEntity(filename)
          end      
          
-         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F")
+         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F with size #{size} bytes")
 
          event  = CTC::EventManager.new
          
@@ -982,23 +978,20 @@ private
 		   # copy it to the final destination
          
          size = File.size("#{@localDir}/#{File.basename(filename)}")
-         @logger.debug("#{File.basename(filename)} with size #{size} bytes")
-
-			copyFileToInBox(File.basename(filename))
-			
-         # delete file in the temp directory
-         #deleteFileFromTemp(File.basename(filename))
-			
-         # @logger.info("RECEIVED #{File.size(filename)}")
          
-         
+			copyFileToInBox(File.basename(filename), size)
+			         
 			# update DCC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
 			# if deleteFlag is enable delete it from remote directory
 			deleteFromEntity(filename)
          
-         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F")
+         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F with size #{size} bytes")
+
+         if size.to_i == 0 then
+            return true
+         end
 
          event  = CTC::EventManager.new
          
@@ -1453,7 +1446,7 @@ private
       arrFile = arrFile.uniq
       return arrFile
    end
-   
+
    #-------------------------------------------------------------
    
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
@@ -1466,13 +1459,48 @@ private
          return false
       end
 
-      # arrFiles.each{|file|
+     # 20170822 temporal fix / if received by any interface is OK since S2PDGS is the entry point
+     
+     return true
+
+     # arrFiles.each{|file|
          if arrFiles.interface_id == @interface.id then
             #@logger.info("hasBeenAlreadyReceived: #{filename}")
             @logger.debug("hasBeenAlreadyReceived: #{filename}")
             return true
          end
       # }
+      return false
+   end
+   #-------------------------------------------------------------
+
+   
+   #-------------------------------------------------------------
+   
+	# It invokes the method DCC_InventoryInfo::isFileReceived? 
+   def hasBeenAlreadyReceived_NOT_WORKING(filename)
+      
+      puts "checking previous reception of #{filename}"
+      
+      arrFiles = ReceivedFile.where(filename: filename).to_a
+      
+      ## 20170917 PROBABLY RETURN IS NEVER NIL NOW !!! 
+            
+      if arrFiles == nil then
+         @logger.debug("never received #{filename} by anyone")
+         return false
+      end
+
+      return true
+      
+      arrFiles.each{|file|
+         if file.interface_id == @interface.id then
+            #@logger.info("hasBeenAlreadyReceived: #{filename}")
+            @logger.debug("hasBeenAlreadyReceived: #{filename}")
+            return true
+         end
+      }
+      @logger.info("#{filename} received for other interface than #{@interface.name} / #{@interface.id}")
       return false
    end
    #-------------------------------------------------------------
@@ -1497,6 +1525,15 @@ private
       if @isNoDB == true then
          return
       end
+      
+      # ------------------------------------------
+      # 20170917 patch to avoid updating the database when received file is empty
+      # to allow retransfer from originator 
+      if size.to_i == 0 then
+         @logger.info("abort setReceivedFromEntity for #{filename} with size #{size} bytes")
+         return 
+      end
+      # ------------------------------------------
             
       receivedFile                = ReceivedFile.new
       
@@ -1520,8 +1557,41 @@ private
    #-------------------------------------------------------------
    
 	# It copies the downloaded file into the Entity Local InBox
-	def copyFileToInBox(filename)
-	   #cmd = %Q{\\cp #{@localDir}/#{filename} #{@finalDir}/}
+	def copyFileToInBox(filename, size)
+	   
+      if size.to_i == 0 then
+         cmd = %Q{\\rm -f \"#{@localDir}/#{filename}"}
+
+         if @isDebugMode == true then
+            puts "\nRemoving #{filename} empty with size 0 received from #{@entity}"
+            puts cmd
+            puts
+         end
+      
+         retVal = execute(cmd, "getFromInterface")
+      
+         if retVal == false then
+            if @isDebugMode == true then
+               puts "#{cmd} Failed !"
+               puts "\nError in DCC_ReceiverFromInterface::copyFileToInBox :-(\n"
+            else
+               puts "\nError when removing empty file #{filename} :-("
+            end
+            @logger.error("Could not remove empty file #{filename}")
+            @logger.warn("#{filename} is still placed in #{@localDir}")
+            @logger.info("#{size}")
+			   puts "Could not remove empty file #{filename}"
+			   puts
+			   exit(99)
+         else
+            @logger.error("Removing #{filename} empty with size 0 received from #{@entity}")
+         end
+
+         return
+      
+      end
+      
+      #cmd = %Q{\\cp #{@localDir}/#{filename} #{@finalDir}/}
       cmd = %Q{\\mv -f \"#{@localDir}/#{filename}\" #{@finalDir}/}
 
       if @isDebugMode == true then
@@ -1541,7 +1611,6 @@ private
          end
          @logger.error("Could not copy #{filename} into #{@entity} local Inbox")
          @logger.warn("#{filename} is still placed in #{@localDir}")
-         size = File.size("#{@localDir}/#{filename}")
          @logger.info("#{size}")
 			puts "Could not copy #{filename} into #{@finalDir}"
 			puts
