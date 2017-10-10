@@ -16,6 +16,7 @@
 #     --Arguments <args> optional list of arguments with the following format
 #              -A "MISSION=S2A;CENTER=PAC;etc"
 #
+#     --usage <analytic>    it shows the analytic usage
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -64,6 +65,7 @@ def main
    @bIsSilent        = false
    @bVerify          = false
    @plugIn           = false
+   @bUsageAnalytic   = false
    
    opts = GetoptLong.new(
      ["--query", "-q",           GetoptLong::REQUIRED_ARGUMENT],
@@ -80,6 +82,7 @@ def main
      ["--Silent", "-S",          GetoptLong::NO_ARGUMENT],
      ["--Verify", "-V",          GetoptLong::NO_ARGUMENT],
      ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
    
@@ -108,7 +111,7 @@ def main
                   @bIsSilent = true
             when "--list"    then list
             when "--List"    then getList
-            when "--usage"   then usage
+            when "--usage"   then @bUsageAnalytic   = true
             when "--help"    then usage                      
          end
       end
@@ -125,7 +128,10 @@ def main
 
    analytic = E2E::Analytic_E2E.new(@arguments, @parameters, @isDebugMode)
 
-   # analytic.setDebugMode
+   if @bUsageAnalytic == true then
+      analytic.usage
+      exit(0)
+   end
 
    analytic.analysis
 
