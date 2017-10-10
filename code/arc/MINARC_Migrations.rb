@@ -74,3 +74,49 @@ end
 
 #=====================================================================
 
+class Export2CSV
+   #-------------------------------------------------------------   
+   
+   # Class contructor
+   def initialize
+      checkModuleIntegrity
+   end
+   #-------------------------------------------------------------
+
+   # Set the flag for debugging on.
+   def setDebugMode
+      @isDebugMode = true
+      puts "Export2CSV debug mode is on"
+   end
+   #-------------------------------------------------------------
+
+private
+
+
+   #-------------------------------------------------------------
+   
+   # Check that everything needed by the class is present.
+   def checkModuleIntegrity
+      bDefined = true
+      bCheckOK = true
+      
+      if !ENV['MINARC_ARCHIVE_ROOT'] then
+         puts
+         puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
+         bDefined = false
+      end
+
+      if bCheckOK == false or bDefined == false then
+         puts("FileRetriever::checkModuleIntegrity FAILED !\n\n")
+         exit(99)
+      end
+
+      @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
+      return
+   end
+   #-------------------------------------------------------------
+
+
+end
+
+#=====================================================================

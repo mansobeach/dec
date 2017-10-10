@@ -90,25 +90,29 @@ class FileDeleter
 
    def delete_by_name(filename)
 
-      aFile = ArchivedFile.find_by_filename(filename)
+      # aFile = ArchivedFile.find_by_filename(filename)
 
-      if !aFile then
+      aFile = ArchivedFile.where("filename LIKE ?", "%#{File.basename(filename, ".*")}%")
+
+      if aFile.to_a.length == 0 then
          puts
-         puts "#{filename} not present in the archive :-|"
-         puts
+         puts "#{File.basename(filename, ".*")} not present in the archive :-|"
+         puts            
          return false
       end
+      
+      theFile = aFile.to_a[0]
 
       if @bReport then
-         editor = ARC::ReportEditor.new(Array[aFile])
+         editor = ARC::ReportEditor.new(Array[theFile])
          editor.generateReport(@reportFullName)
       end
 
       if @bListOnly then
-         puts aFile.filename
+         puts theFile.filename
          return true
       else
-         retVal = deleteFromArchive(aFile)  
+         retVal = deleteFromArchive(theFile)  
          return retVal
       end
 
@@ -144,7 +148,7 @@ private
    def deleteFromArchive(aFile)
 
       # cmd = "\\chmod -R a+w #{@archiveRoot}/#{aFile.path}/" << "/#{aFile.filename}"
-      cmd = "\\chmod -R a+w #{aFile.path}/" << "/#{aFile.filename}"
+      cmd = "\\chmod -R a+w #{aFile.path}/" << "/#{aFile.filename}*"
 
       system(cmd)
 

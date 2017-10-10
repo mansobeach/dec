@@ -5,6 +5,7 @@
 # manageDB.rb --create-tables | --drop-tables
 #     --create-tables   create all minarc required tables
 #     --drop-tables     drops all minarc tables
+#     --export-rows     it exports all rows
 #     --help   shows this help
 # 
 # == Author
@@ -34,24 +35,27 @@ ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
 # MAIN script function
 def main
 
-   bUp            = false
-   bDown          = false
+   @bUp           = false
+   @bDown         = false
    @bUpdate       = false
+   @bExport       = false
    
    opts = GetoptLong.new(
-     ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
-     ["--create-tables", "-c",    GetoptLong::NO_ARGUMENT],
-     ["--update-tables", "-u",    GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",             GetoptLong::NO_ARGUMENT]
+     ["--drop-tables",     "-d",    GetoptLong::NO_ARGUMENT],
+     ["--create-tables",   "-c",    GetoptLong::NO_ARGUMENT],
+     ["--update-tables",   "-u",    GetoptLong::NO_ARGUMENT],
+     ["--export-rows",     "-e",    GetoptLong::NO_ARGUMENT],
+     ["--help",            "-h",    GetoptLong::NO_ARGUMENT]
      )
     
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--create-tables"    then @bUp   = true
-            when "--drop-tables"      then @bDown = true
-            when "--update-tables"    then @bUpdate = true
-			   when "--help"             then usage
+            when "--create-tables"     then @bUp       = true
+            when "--drop-tables"       then @bDown     = true
+            when "--update-tables"     then @bUpdate   = true
+            when "--export-rows"       then @bExport   = true
+			   when "--help"              then usage
          end
       end
    rescue Exception => e
@@ -60,6 +64,10 @@ def main
    end
 
    if @bDown and @bUp then
+      usage
+   end
+
+   if !@bDown and !@bUp and !@bUpdate and !@bExport then 
       usage
    end
 
@@ -78,6 +86,11 @@ def main
       migration.change
       exit(0)
    end 
+ 
+ 
+   if @bExport then
+      Export2CSV.new
+   end
  
    exit(0)
 

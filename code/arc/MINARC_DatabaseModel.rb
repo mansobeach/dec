@@ -16,6 +16,8 @@
 
 require 'rubygems'
 require 'active_record'
+require 'activerecord-import'
+
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']
@@ -39,6 +41,50 @@ class ArchivedFile < ActiveRecord::Base
    validates_presence_of   :archive_date
 
 
+   #--------------------------------------------------------
+
+   def ArchivedFile.superBulkSequel_mysql2(hashRecords)
+      
+      require 'sequel'
+      
+      db = Sequel.connect( 
+                           :adapter    => "#{ENV['MINARC_DB_ADAPTER']}",
+                           #:adapter    => "sqlite",
+                           :user       => "#{ENV['MINARC_DATABASE_USER']}", 
+                           :host       => "localhost", 
+                           :database   => "#{ENV['MINARC_DATABASE_NAME']}"
+                           )
+      
+      ret = db[:archived_files].multi_insert(hashRecords)
+      
+      
+#       ret = db[:archived_files].multi_insert( [ 
+# 					{ :filename => 'TEST_KAKA_1', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 },
+# 					{ :filename => 'TEST_KAKA_2', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 },
+# 					{ :filename => 'TEST_KAKA_3', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 }
+#                                   ] )
+
+      # puts ret
+   end
+   #--------------------------------------------------------
+
+   def ArchivedFile.superBulk(files, columns)
+      ret = ArchivedFile.import columns, files, :batch_size => 999, :validate => false
+      puts ret
+   end
+   #--------------------------------------------------------
+
+   def ArchivedFile.bulkImport(arrFiles, columns)
+      
+      # columns = [ :filename, :filetype, :path, :archive_date, :size ]
+ 
+      ret = ArchivedFile.import columns, arrFiles, :validate => false     
+      
+      puts ret
+
+      exit
+
+   end
    #--------------------------------------------------------
 
    def ArchivedFile.searchAllWithinInterval(filetype, start, stop, bIncStart=false, bIncEnd=false)

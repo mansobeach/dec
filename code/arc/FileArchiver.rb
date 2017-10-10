@@ -41,6 +41,7 @@ class FileArchiver
       @bInvOnly            = bInvOnly
       @bIsAlreadyArchived  = false
       @isDebugMode         = debugMode
+      @isProfileMode       = false
       checkModuleIntegrity
    end
    #------------------------------------------------
@@ -53,6 +54,198 @@ class FileArchiver
    end
    #------------------------------------------------
 
+   # Set the flag for profiling execution time.
+   def setProfileMode
+      @isProfileMode = true
+      puts "FileArchiver profile mode is on"
+      puts
+   end
+   #------------------------------------------------
+
+   # Main method of the class.
+   def bulkarchive(arrFiles, fileType = "", bDelete = false, bUnPack = false,\
+               arrAddFields = nil, full_path_location = nil,\
+               size = 0, size_in_disk = 0, size_original = 0)
+               
+      handler = ""
+      rubylibs = ENV['RUBYLIB'].split(':')
+      rubylibs.each {|path|
+            # puts "#{path}/arc/plugins/#{fileType.upcase}_Handler.rb"
+	      name = "#{path}/arc/plugins/Handler_#{fileType.upcase}.rb"
+	    
+         if File.exists?(name) == true then
+            handler = "Handler_#{fileType.upcase}"
+            break
+         end
+      }
+
+      if handler == "" then
+         puts
+         puts "Could not find handler-file for file-type #{fileType.upcase} ! :-("
+         puts
+         exit(99)
+      end
+      
+      bInventory = false
+         
+      require "arc/plugins/#{handler}"
+      nameDecoderKlass = eval(handler)
+      
+      the_archived_file = Array.new
+      arrFilesArchived  = Array.new
+      arrFilesFailed    = Array.new
+      
+      arrHFiles         = Array.new
+      
+      arrArchivedFiles  = Array.new
+      arrColumns        = Array.new
+      
+      # setProfileMode
+      
+      arrFiles.each{|full_path_file|
+            
+            # nameDecoder = nameDecoderKlass.new(fileName)
+            nameDecoder = nameDecoderKlass.new(full_path_file)
+            
+            # --------------------------------------------------------
+            
+            if nameDecoder != nil and nameDecoder.isValid == true then
+               filename       = File.basename(full_path_file)
+               fileType       = nameDecoder.fileType.upcase
+               start          = nameDecoder.start_as_dateTime
+               stop           = nameDecoder.stop_as_dateTime
+               path           = nameDecoder.archive_path
+               size           = nameDecoder.size
+               size_in_disk   = nameDecoder.size_in_disk
+               size_original  = nameDecoder.size_original
+               
+               puts "Detected #{filename} for bulk import"
+                              
+               # Refer to ArchivedFile.bulkImport(arrFiles) @ MINARC_DatabaseModel.rb
+               # for the order of the ddbb columns for bulk update
+
+#                the_archived_file << filename
+#                the_archived_file << fileType
+#                the_archived_file << path
+#                the_archived_file << Time.now
+#                the_archived_file << size
+#                the_archived_file << size_original
+#                the_archived_file << size_in_disk
+#                the_archived_file << Time.now
+#                the_archived_file << start
+#                the_archived_file << stop
+#                
+#                arrColumns = [ 
+#                               :filename, 
+#                               :filetype, 
+#                               :path, 
+#                               :size,
+#                               :size_original,
+#                               :size_in_disk,
+#                               :archive_date, 
+#                               :validity_start,
+#                               :validity_stop 
+#                               ]
+#                
+#                archivedFile = ArchivedFile.new(
+#                                  :filename         => filename,
+#                                  :filetype         => fileType,
+#                                  :path             => path,
+#                                  :size             => size,
+#                                  :size_original    => size_original,
+#                                  :size_in_disk     => size_in_disk,
+#                                  :archive_date     => Time.now,
+#                                  :validity_start   => start,
+#                                  :validity_stop    => stop
+#                                  )
+               
+               hFile = {
+                                 :filename         => filename,
+                                 :filetype         => fileType,
+                                 :path             => path,
+                                 :size             => size,
+                                 :size_original    => size_original,
+                                 :size_in_disk     => size_in_disk,
+                                 :archive_date     => Time.now,
+                                 :validity_start   => start,
+                                 :validity_stop    => stop
+
+               }
+                                                            
+               retVal = true
+               
+               perf = measure {
+                  retVal = store(   full_path_file, 
+                                    fileType, 
+                                    start, 
+                                    stop, 
+                                    bDelete, 
+                                    bUnPack, 
+                                    arrAddFields, 
+                                    path, 
+                                    size, 
+                                    size_in_disk, 
+                                    size_original,
+                                    bInventory
+                                    )
+               }
+
+
+               if @isProfileMode == true then
+                  puts "store_no_inventory(#{filename} / #{size} bytes) :"
+                  puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+                  puts
+               end
+
+
+               if retVal == false then
+                  puts "Could not archive #{File.basename(full_path_file)} ! :-("
+                  # original full_path_file is added to the array needed for the roll-back.
+                  # Yes, we like dirty ! 
+#                   the_archived_file << full_path_file
+#                   arrFilesFailed << the_archived_file
+               else
+#                   arrFilesArchived << the_archived_file
+#                   arrArchivedFiles << archivedFile
+                  arrHFiles        << hFile
+               end
+                      
+            else
+               puts
+               puts "The file #{full_path_file} could not be identified as a valid #{fileType.upcase} file..."
+               puts "Unable to store #{full_path_file} :-("
+               next
+            end     
+      
+      
+      }
+            
+      perf = measure {
+         # ArchivedFile.bulkImport(arrFilesArchived)
+         # ArchivedFile.superBulk(arrArchivedFiles, arrColumns)
+         ArchivedFile.superBulkSequel_mysql2(arrHFiles)
+      }
+      
+      if @isProfileMode == true then
+         # puts "ArchivedFile.bulkImport(#{arrFilesArchived.length} items) :"
+         puts "ArchivedFile.superBulkSequel_mysql2(#{arrHFiles.length} items) :"
+         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+         puts
+      end
+      
+      arrFilesFailed.each{|archive_item|
+         puts "Rolling archive for #{archive_item[0]}"
+         puts "NOT IMPLEMENTED YET ! :0p"
+         # to be implemented
+      }
+
+      puts "End of superbulk"
+      
+      exit
+            
+   end
+   
+   #------------------------------------------------
    # Main method of the class.
    def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false,\
                arrAddFields = nil, full_path_location = nil,\
@@ -74,6 +267,7 @@ class FileArchiver
       else
          fileName = File.basename(full_path_file, ".*")
       end
+
 
 
       # ----------------------------------------------------
@@ -103,6 +297,8 @@ class FileArchiver
 
       # aFile = ArchivedFile.where(filename: fileName).load
 
+
+
       if aFile != nil then
          puts "#{fileName} was already archived !"
          @bIsAlreadyArchived = true
@@ -117,7 +313,9 @@ class FileArchiver
          delFile.delete_by_name(fileName)
       end
 
+
       if fileType == "" then
+            
          nameDecoder = CUC::EE_ReadFileName.new(fileName)
 
          if nameDecoder.isEarthExplorerFile? == false then
@@ -190,6 +388,7 @@ class FileArchiver
          end
       end
 
+
       if @bInvOnly == true then
          perf = measure {
             return inventoryNewFile(full_path_file, fileType, start, stop, arrAddFields, path, size, size_in_disk, size_original)
@@ -205,6 +404,7 @@ class FileArchiver
       end
 
       retVal = false
+      
       
       perf = measure {
          retVal = store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk, size_original)
@@ -273,6 +473,17 @@ private
          puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
          exit(99)
       end
+
+      if ENV['MINARC_ARCHIVE_ERROR'] then
+         @archiveError = ENV['MINARC_ARCHIVE_ERROR']
+         checkDirectory(@archiveError)
+      else
+         puts
+         puts "MINARC_ARCHIVE_ERROR environment variable is not defined !\n"
+         puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
+         exit(99)
+      end
+
 
       if @bHLink == true and @bMove == true then
          puts "\nFatal Error in FileArchiver::checkModuleIntegrity"
@@ -370,7 +581,19 @@ private
    # Sets access rights
    # Registers the file in the database
    #-------------------------------------------------------------
-   def store(full_path_filename, type, start, stop, bDelete, bUnPack, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
+   def store(  
+               full_path_filename, 
+               type, 
+               start, 
+               stop, 
+               bDelete, 
+               bUnPack, 
+               arrAddFields, 
+               path = "", 
+               size = 0, 
+               size_in_disk = 0, 
+               size_original = 0,
+               bInventory = true  )
       
       archival_date = Time.now
 
@@ -396,6 +619,8 @@ private
 #          destDir << "/" << File.basename(full_path_filename, ".*")
 #       end
 
+
+
       #-------------------------------------------
 
       if @isDebugMode == true then
@@ -417,8 +642,6 @@ private
          puts "Disk occupation   -> #{size_in_disk}"
          puts "==================================="
       end
-
-
 
 
       # Copy / Move the source file to the archive
@@ -561,25 +784,37 @@ private
 
       retVal = true
 
-      perf = measure {
+
+      if bInventory == true then
+
+         perf = measure {
             retVal = inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path, size, size_in_disk, size_original)
-      }
+         }
       
-      if @isDebugMode == true then
-         puts
-         puts "inventoryNewFile(#{full_path_filename}) :"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts
+         if @isDebugMode == true then
+            puts
+            puts "inventoryNewFile(#{full_path_filename}) :"
+            puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+            puts
+            puts
+         end
+
+      
+         # If could not store in the database (likely duplication)
+         
+         if retVal == false then
+            puts "Moving file #{File.basename(full_path_filename)} into Error area "
+            cmd = "\\mv -f \"#{full_path_filename}\" \"#{@archiveError}/\""
+            if @isDebugMode then
+               puts cmd
+            end
+      
+            ret = system(cmd)
+
+            return false
+         end
+
       end
-
-      
-      
-      if retVal == false then
-         return false
-      end
-
-
 
 #       begin
 #          anArchivedFile = ArchivedFile.new
