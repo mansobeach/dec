@@ -1,3 +1,4 @@
+bundler
 activerecord
 activerecord-import
 sequel
