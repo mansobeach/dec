@@ -1,0 +1,29 @@
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+## ===============================================
+##
+## CASALE BASE
+##
+## ===============================================
+
+# MCF_REPORTING_DB=sdm_db_e2espm
+
+export SDM_DB_ADAPTER=postgresql
+export SDM_DATABASE_NAME=sdmdb
+export SDM_DATABASE_USER=sdm_db_e2espm
+export SDM_DATABASE_PASSWORD=sdm_db_e2espm
+
+export RUBYLIB=$DEC_BASE/code
+
+unset USERNAME
+
