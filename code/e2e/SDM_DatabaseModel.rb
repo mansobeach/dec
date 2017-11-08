@@ -43,7 +43,18 @@ ActiveRecord::Base.establish_connection(
 class DimSignatureTB < ActiveRecord::Base
    self.table_name = "dim_signature_tb"
    validates_uniqueness_of :dim_signature
-   validates_presence_of   :active_flag, :dim_exec_name
+   validates_presence_of   :active_flag, \
+                           :dim_exec_name
+end
+
+#=====================================================================
+
+#=====================================================================
+
+class ExplicitReferenceConfTB < ActiveRecord::Base
+   self.table_name = "explicit_ref_cnf_tb"
+   validates_uniqueness_of :expl_ref_cnf_id
+   validates_presence_of   :name, :dim_signature
 end
 
 #=====================================================================
@@ -60,21 +71,52 @@ end
 
 class AnnotConfTB < ActiveRecord::Base
    self.table_name = "annot_cnf_tb"
-   validates_uniqueness_of :annotation_id
-   validates_presence_of   :name, :dim_signature, :value_type, :expl_ref_cnf_id, :group_id
+   validates_uniqueness_of    :annotation_id
+   validates_presence_of      :name,               \
+                              :dim_signature,      \
+                              :value_type,         \
+                              :expl_ref_cnf_id,    \
+                              :group_id
 end
 
 #=====================================================================
 
 #=====================================================================
 
-class ExplicitReferenceConfTB < ActiveRecord::Base
-   self.table_name = "explicit_ref_cnf_tb"
-   validates_uniqueness_of :expl_ref_cnf_id
-   validates_presence_of   :name, :dim_signature
+class AnnotConstrTB < ActiveRecord::Base
+   self.table_name = "annot_constr_tb"
+   validates_uniqueness_of       :annotation_id
+   validates_presence_of         :c_index,         \
+                                 :const
 end
 
 #=====================================================================
+
+#=====================================================================
+
+class GaugeCnfTB < ActiveRecord::Base
+   self.table_name = "gauge_cnf_tb"
+   validates_uniqueness_of    :gauge_id
+   validates_presence_of      :system,             \
+                              :name,               \
+                              :value_type,         \
+                              :description,        \
+                              :units,              \
+                              :dim_signature,      \
+                              :update_type,        \
+                              :active_flag,        \
+                              :min_val_flag,       \
+                              :min_value,          \
+                              :max_val_flag,       \
+                              :max_value,          \
+                              :out_of_range,       \
+                              :overwriteflag,      \
+                              :expl_ref_cfg_id,    \
+                              :dimensions
+end
+
+#=====================================================================
+
 
 #-----------------------------------------------------------
 
