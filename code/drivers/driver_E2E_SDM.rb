@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #########################################################################
 #
@@ -58,7 +58,7 @@ puts "-------------------------------------------"
 
 
 puts "-------------------------------------------"
-puts "annot_group_cnf_tb"
+puts "annot_cnf_tb"
 
 annotConfTB = AnnotConfTB.all
 puts annotConfTB.length
@@ -76,4 +76,39 @@ annotConfTB.each{|cnfAnnotation|
 
 puts "-------------------------------------------"
 
+puts "-------------------------------------------"
+puts "annot_constr_tb"
+
+annotConstrTB = AnnotConstrTB.all
+puts annotConstrTB.length
+   
+annotConstrTB.each{|constrAnnotation|
+   puts "---------------------"
+   puts "Annotation ID   : #{constrAnnotation.annotation_id}"
+   puts "Constr index    : #{constrAnnotation.c_index}"
+   puts "Constraint      : #{constrAnnotation.const}"
+   puts "---------------------"
+}
+
+puts "-------------------------------------------"
+
+puts "-------------------------------------------"
+puts "gauge_cnf_tb"
+
+gaugeCnfTB = GaugeCnfTB.all
+puts gaugeCnfTB.length
+   
+gaugeCnfTB.each{|aGaugeCnf|
+   puts "---------------------"
+   puts "Gauge ID          : #{aGaugeCnf.gauge_id}"
+   puts "Gauge Name        : #{aGaugeCnf.name}"
+   puts "System            : #{aGaugeCnf.system}"
+   puts "DIM Signature     : #{aGaugeCnf.system}"
+   puts "ER Config         : #{aGaugeCnf.expl_ref_cfg_id}"
+   puts "Active Flag       : #{aGaugeCnf.active_flag}"
+   puts "---------------------"
+}
+
+
+puts "-------------------------------------------"
 
