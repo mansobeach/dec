@@ -1,0 +1,138 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# driver_E2E_WriteXFBD
+#
+# Written by Borja Lopez Fernandez
+#
+#
+#########################################################################
+
+require 'cuc/Converters'
+require 'e2e/SDM_DatabaseModel'
+require 'e2e/WriteSDMConfigXLS'
+
+
+writer = E2E::WriteSDMConfigXLS.new
+
+arrDim = DimSignatureTB.all
+
+puts "-------------------------------------------"
+puts "dim_signature_tb"
+
+arrItems = Array.new
+
+arrDim.each{|dim|
+	puts "--------------------------------------"
+	puts "DIM Signature : #{dim.dim_signature}"
+	puts "DIM Exec Name : #{dim.dim_exec_name}"
+	puts "Active Flag   : #{dim.active_flag}"
+	puts "--------------------------------------"
+
+   hDimSignatureTB   = Hash.new
+   hDimSignatureTB[:dim_signature]  = dim.dim_signature
+   hDimSignatureTB[:dim_exec_name]  = dim.dim_exec_name
+   hDimSignatureTB[:active_flag]    = dim.active_flag
+   arrItems << hDimSignatureTB
+}
+
+writer.writeNewSheet("dim_signature_tb", arrItems)
+
+puts
+puts
+
+arrErCnf = ExplicitReferenceConfTB.all
+
+puts "-------------------------------------------"
+puts "explicit_ref_cnf_tb"
+
+arrItems = Array.new
+
+arrErCnf.each{|anErCnf|
+	puts "--------------------------------------"
+	puts "ER Config ID  : #{anErCnf.expl_ref_cnf_id}"
+	puts "ER Name       : #{anErCnf.name}"
+	puts "DIM Signature : #{anErCnf.dim_signature}"
+	puts "--------------------------------------"
+   
+   hValue   = Hash.new
+   hValue[:expl_ref_cnf_id]   = anErCnf.expl_ref_cnf_id
+   hValue[:er_name]           = anErCnf.name
+   hValue[:dim_signature]     = anErCnf.dim_signature
+   arrItems << hValue
+      
+}
+
+writer.writeNewSheet("explicit_ref_cnf_tb", arrItems)
+writer.writeToDisk
+
+
+puts
+puts
+
+
+puts "-------------------------------------------"
+puts "annot_group_cnf_tb"
+
+arrGroupAnnotationsCnf = AnnotGroupConfTB.all
+puts arrGroupAnnotationsCnf.length
+
+puts "-------------------------------------------"
+
+
+puts "-------------------------------------------"
+puts "annot_cnf_tb"
+
+annotConfTB = AnnotConfTB.all
+puts annotConfTB.length
+   
+annotConfTB.each{|cnfAnnotation|
+   puts "---------------------"
+   puts "Annotation ID   : #{cnfAnnotation.annotation_id}"
+   puts "Annotation Name : #{cnfAnnotation.name}"
+   puts "DIM Signature   : #{cnfAnnotation.dim_signature}"
+   puts "ER Conf ID      : #{cnfAnnotation.expl_ref_cnf_id}"
+   puts "Group ID        : #{cnfAnnotation.group_id}"
+   puts "---------------------"
+}
+
+
+puts "-------------------------------------------"
+
+puts "-------------------------------------------"
+puts "annot_constr_tb"
+
+annotConstrTB = AnnotConstrTB.all
+puts annotConstrTB.length
+   
+annotConstrTB.each{|constrAnnotation|
+   puts "---------------------"
+   puts "Annotation ID   : #{constrAnnotation.annotation_id}"
+   puts "Constr index    : #{constrAnnotation.c_index}"
+   puts "Constraint      : #{constrAnnotation.const}"
+   puts "---------------------"
+}
+
+puts "-------------------------------------------"
+
+puts "-------------------------------------------"
+puts "gauge_cnf_tb"
+
+gaugeCnfTB = GaugeCnfTB.all
+puts gaugeCnfTB.length
+   
+gaugeCnfTB.each{|aGaugeCnf|
+   puts "---------------------"
+   puts "Gauge ID          : #{aGaugeCnf.gauge_id}"
+   puts "Gauge Name        : #{aGaugeCnf.name}"
+   puts "System            : #{aGaugeCnf.system}"
+   puts "DIM Signature     : #{aGaugeCnf.system}"
+   puts "ER Config         : #{aGaugeCnf.expl_ref_cfg_id}"
+   puts "Active Flag       : #{aGaugeCnf.active_flag}"
+   puts "---------------------"
+}
+
+
+puts "-------------------------------------------"
+
