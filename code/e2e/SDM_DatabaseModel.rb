@@ -67,6 +67,14 @@ end
 
 #=====================================================================
 
+class AnnotTB < ActiveRecord::Base
+   self.table_name = "annot_tb"
+   validates_uniqueness_of    :note_id
+   validates_presence_of      :explicit_ref_id,    \
+                              :annotation_id,      \
+                              :time_stamp
+end
+
 #=====================================================================
 
 class AnnotConfTB < ActiveRecord::Base
@@ -116,6 +124,40 @@ class GaugeCnfTB < ActiveRecord::Base
 end
 
 #=====================================================================
+
+class EventTB < ActiveRecord::Base
+   self.table_name = "events_tb"
+   validates_uniqueness_of    :gauge_id
+   validates_presence_of      :event_id,           \
+                              :ev_start,           \
+                              :stop,               \
+                              :explicit_ref_id,    \
+                              :time_stamp
+end
+
+
+#=====================================================================
+
+class EventStringTB < ActiveRecord::Base
+   self.table_name = "event_string_tb"
+   validates_uniqueness_of    :event_id
+   validates_presence_of      :value,              \
+                              :position
+end
+
+#=====================================================================
+
+class ExplicitReferenceTB < ActiveRecord::Base
+   self.table_name = "explicit_ref_tb"
+   validates_uniqueness_of    :explicit_ref_id
+   validates_presence_of      :value, \
+                              :expl_ref_cnf_id, \
+                              :expl_ref_parent_id, \
+                              :time_stamp
+end
+
+#=====================================================================
+
 
 
 #-----------------------------------------------------------

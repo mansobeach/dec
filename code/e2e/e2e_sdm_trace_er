@@ -1,0 +1,166 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a command line tool that blah blah blah
+#
+# == Usage
+# e2e_sdm_trace_er  -q <explicit_reference>
+#     --query <value>      it shows the analytic usage
+#     --help                shows this help
+#     --Debug               shows Debug info during the execution
+#     --version             shows version number      
+# 
+# == Author
+# Borja Lopez Fernandez
+#
+# == Copyleft
+# Casale & Beach
+#
+
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+require 'rubygems'
+require 'getoptlong'
+
+require 'e2e/SDM_DatabaseModel'
+
+
+# MAIN script function
+def main
+
+
+   #=======================================================================
+
+   def SIGTERMHandler
+      puts "\n[#{File.basename($0)} #{@@mnemonic}] SIGTERM signal received ... sayonara, baby !\n"
+      exit(0)
+   end
+   #=======================================================================
+
+   
+   @isDebugMode      = false
+   @query_value      = ""
+   
+   opts = GetoptLong.new(
+     ["--query", "-q",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--Silent", "-S",          GetoptLong::NO_ARGUMENT],
+     ["--Verify", "-V",          GetoptLong::NO_ARGUMENT],
+     ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT]
+     )
+   
+   begin 
+      opts.each do |opt, arg|
+         case opt     
+            when "--Debug"   then @isDebugMode = true
+            when "--version" then
+               print("\nCasale & Beach ", File.basename($0), " $Revision: 1.0 \n\n\n")
+               exit (0)
+            when "--query" then
+               @query_value = arg.to_s
+            when "--usage"   then @bUsageAnalytic   = true
+            when "--help"    then usage                      
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   if @query_value == "" then
+      usage
+   end
+
+   arr = ExplicitReferenceTB.where("value LIKE ?", @query_value) 
+
+   if arr.to_a.empty? == true then
+      puts "no explicit reference found with such name"
+      exit(99)
+   end
+
+   id = arr.to_a[0].explicit_ref_id
+   puts "value                : #{arr.to_a[0].value}"
+   puts "explicit_ref_id      : #{arr.to_a[0].explicit_ref_id}"
+   puts "expl_ref_cnf_id      : #{arr.to_a[0].expl_ref_cnf_id}"
+   puts "expl_ref_parent_id   : #{arr.to_a[0].expl_ref_parent_id}"
+   # puts arr.to_a[0].time_stamp
+   
+
+   puts
+   
+   arrAnnot = AnnotTB.where(explicit_ref_id: id)
+   
+   if arrAnnot.to_a.empty? == true then
+      puts "No annotations found for #{arr.to_a[0].value}"
+   else
+      puts "TBW annotations processing"
+   end
+
+
+   arrEvent = EventTB.where(explicit_ref_id: id)
+
+   if arrEvent.to_a.empty? == true then
+      puts "No events found for #{arr.to_a[0].value}"
+   else
+      puts "Events"
+      arrEvent.to_a.each{|event|
+      
+         ev = EventStringTB.where(event_id: event.event_id)
+         
+         ev.to_a.each{|e|
+            puts e.value
+         }
+      }
+      
+   end
+
+   
+
+
+
+   exit
+
+end
+
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+
+# Print command line help
+
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -20 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+
+end
+#-------------------------------------------------------------
+
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================
