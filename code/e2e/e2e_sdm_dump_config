@@ -65,8 +65,6 @@ arrErCnf.each{|anErCnf|
 }
 
 writer.writeNewSheet("explicit_ref_cnf_tb", arrItems)
-writer.writeToDisk
-
 
 puts
 puts
@@ -84,6 +82,8 @@ puts "-------------------------------------------"
 puts "-------------------------------------------"
 puts "annot_cnf_tb"
 
+arrItems = Array.new
+
 annotConfTB = AnnotConfTB.all
 puts annotConfTB.length
    
@@ -95,7 +95,19 @@ annotConfTB.each{|cnfAnnotation|
    puts "ER Conf ID      : #{cnfAnnotation.expl_ref_cnf_id}"
    puts "Group ID        : #{cnfAnnotation.group_id}"
    puts "---------------------"
+   
+   hValue   = Hash.new
+   hValue[:annotation_id]     = cnfAnnotation.annotation_id
+   hValue[:name]              = cnfAnnotation.name
+   hValue[:dim_signature]     = cnfAnnotation.dim_signature
+   hValue[:expl_ref_cnf_id]   = cnfAnnotation.expl_ref_cnf_id
+   hValue[:group_id]          = cnfAnnotation.group_id
+   arrItems << hValue
+   
+   
 }
+
+writer.writeNewSheet("annot_cnf_tb", arrItems)
 
 
 puts "-------------------------------------------"
@@ -119,6 +131,8 @@ puts "-------------------------------------------"
 puts "-------------------------------------------"
 puts "gauge_cnf_tb"
 
+arrItems = Array.new
+
 gaugeCnfTB = GaugeCnfTB.all
 puts gaugeCnfTB.length
    
@@ -127,11 +141,27 @@ gaugeCnfTB.each{|aGaugeCnf|
    puts "Gauge ID          : #{aGaugeCnf.gauge_id}"
    puts "Gauge Name        : #{aGaugeCnf.name}"
    puts "System            : #{aGaugeCnf.system}"
-   puts "DIM Signature     : #{aGaugeCnf.system}"
+   puts "DIM Signature     : #{aGaugeCnf.dim_signature}"
    puts "ER Config         : #{aGaugeCnf.expl_ref_cfg_id}"
    puts "Active Flag       : #{aGaugeCnf.active_flag}"
    puts "---------------------"
+
+   hValue   = Hash.new
+   hValue[:gauge_id]          = aGaugeCnf.gauge_id
+   hValue[:name]              = aGaugeCnf.name
+   hValue[:system]            = aGaugeCnf.system
+   hValue[:expl_ref_cfg_id]   = aGaugeCnf.expl_ref_cfg_id
+   hValue[:dim_signature]     = aGaugeCnf.dim_signature
+   hValue[:active_flag]       = aGaugeCnf.active_flag
+   hValue[:update_type]       = aGaugeCnf.update_type
+   hValue[:overwriteflag]     = aGaugeCnf.overwriteflag
+   arrItems << hValue
+
 }
+
+writer.writeNewSheet("gauge_cnf_tb", arrItems)
+writer.writeToDisk
+
 
 
 puts "-------------------------------------------"

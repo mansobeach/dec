@@ -59,10 +59,13 @@ class WriteSDMConfigXLS
       sheet.freeze_panes(1, 0)
       
       format      = @workbook.add_format
+      
       format.set_bold
+      format.set_underline
       format.set_text_wrap
       format.set_align('vcenter')
       format.set_bg_color('cyan')
+      format.set_align('vcenter')
       
       if items.empty? == true then
          return
@@ -75,7 +78,7 @@ class WriteSDMConfigXLS
       row         = 1
       items[0].each_key{|key|
          sheet.write(0, column, key, format)
-         sheet.set_column(column, 50)
+         sheet.set_column(0, column, 20)
          column = column + 1
       }
       
