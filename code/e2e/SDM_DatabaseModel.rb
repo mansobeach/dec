@@ -77,6 +77,22 @@ end
 
 #=====================================================================
 
+class AnnotStringTB < ActiveRecord::Base
+   self.table_name = "annot_string_tb"
+   validates_uniqueness_of    :note_id
+   validates_presence_of      :value
+end
+
+#=====================================================================
+
+class AnnotDoubleTB < ActiveRecord::Base
+   self.table_name = "annot_double_tb"
+   validates_uniqueness_of    :note_id
+   validates_presence_of      :value
+end
+
+#=====================================================================
+
 class AnnotConfTB < ActiveRecord::Base
    self.table_name = "annot_cnf_tb"
    validates_uniqueness_of    :annotation_id

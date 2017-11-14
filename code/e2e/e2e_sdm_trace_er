@@ -6,7 +6,7 @@
 #
 # == Usage
 # e2e_sdm_trace_er  -q <explicit_reference>
-#     --query <value>      it shows the analytic usage
+#     --query <explicit_reference_value>       
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -91,13 +91,19 @@ def main
       exit(99)
    end
 
+   if arr.to_a.length > 1 then
+      puts "Warning found more than one ER for #{arr.to_a[0].value}"
+      puts
+   end
+
    id = arr.to_a[0].explicit_ref_id
+   puts "======================================================================="
    puts "value                : #{arr.to_a[0].value}"
    puts "explicit_ref_id      : #{arr.to_a[0].explicit_ref_id}"
    puts "expl_ref_cnf_id      : #{arr.to_a[0].expl_ref_cnf_id}"
    puts "expl_ref_parent_id   : #{arr.to_a[0].expl_ref_parent_id}"
    # puts arr.to_a[0].time_stamp
-   
+   puts "======================================================================="
 
    puts
    
@@ -106,7 +112,26 @@ def main
    if arrAnnot.to_a.empty? == true then
       puts "No annotations found for #{arr.to_a[0].value}"
    else
-      puts "TBW annotations processing"
+      puts "Annotations :"
+      arrAnnot.to_a.sort.each{|annot|
+         puts "-----------------------"
+         # puts annot.note_id
+         
+         an = AnnotStringTB.where(note_id: annot.note_id)
+         
+         an.to_a.each{|a|
+            cnf = AnnotConfTB.where(annotation_id: annot.annotation_id)
+            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}"
+         }
+         
+         an = AnnotDoubleTB.where(note_id: annot.note_id)
+         an.to_a.each{|a|
+            cnf = AnnotConfTB.where(annotation_id: annot.annotation_id)
+            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}"         
+         }
+
+      }
+      puts "-----------------------"
    end
 
 
@@ -115,7 +140,7 @@ def main
    if arrEvent.to_a.empty? == true then
       puts "No events found for #{arr.to_a[0].value}"
    else
-      puts "Events"
+      puts "Events :"
       arrEvent.to_a.each{|event|
       
          ev = EventStringTB.where(event_id: event.event_id)
@@ -127,18 +152,11 @@ def main
       
    end
 
-   
-
-
-
-   exit
-
 end
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
-
 #---------------------------------------------------------------------
 
 # Print command line help
