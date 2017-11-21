@@ -191,11 +191,15 @@ class DCC_ReceiverFromInterface
                
                @local = CTC::LocalInterfaceHandler.new(@entity, true, false, @dccConfig.getDownloadDirs)
                
-               if @isDebugMode then @local.setDebugMode end
+               if @isDebugMode then 
+                  @local.setDebugMode
+               end
+                  
                perf = measure { list = @local.getLocalList }      
+            
             rescue Exception => e
-               puts e
-               exit (99)
+                  puts e
+                  exit (99)
             end     
             
       end
@@ -1097,6 +1101,13 @@ private
 			   puts "DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F "
 			end
 
+         
+         if @protocol == "LOCAL" then
+            @local.deleteFromEntity(filename)
+            return
+         end
+
+
 		   if isSecureMode == true then
 			   sftpClient = CTC::SFTPBatchClient.new(@ftpserver[:hostname],
                                              @ftpserver[:port],
@@ -1196,7 +1207,7 @@ private
       
       nStart    = list.length
 
-      @logger.info("Filtering filetypes / #{list.length} items")
+      @logger.info("Filtering filetypes / #{list.length} items for #{@entity}")
 
       perf = measure{
 
@@ -1301,7 +1312,7 @@ private
 
       if @isNoDB == false then
 
-      @logger.info("Filtering files previously recorded within db / #{list.length} items")
+      @logger.info("Filtering files #{@entity} previously recorded within db / #{list.length} items")
 
       perf = measure{
 
@@ -1361,7 +1372,7 @@ private
 
       } # end of measure
 
-      @logger.info("Filtering Completed")
+      @logger.info("Filtering Completed for #{@entity}")
 
       end # end of if @isNoDB
 
@@ -1452,7 +1463,7 @@ private
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
       puts "checking previous reception of #{filename}"
-      arrFiles = ReceivedFile.find_by filename: filename 
+      arrFiles = ReceivedFile.where(filename: filename)
       if arrFiles == nil then
          #@logger.info("not prev received #{filename}")
          @logger.debug("not prev received #{filename}")
@@ -1461,15 +1472,25 @@ private
 
      # 20170822 temporal fix / if received by any interface is OK since S2PDGS is the entry point
      
-     return true
+     
+#     puts
+#     puts arrFiles
+#     puts arrFiles.filename
+#     puts arrFiles.interface_id
+#     puts
+#     
+#     return true
 
-     # arrFiles.each{|file|
-         if arrFiles.interface_id == @interface.id then
+     arrFiles.to_a.each{|file|
+     
+         # puts file.interface_id
+     
+         if file.interface_id == @interface.id then
             #@logger.info("hasBeenAlreadyReceived: #{filename}")
             @logger.debug("hasBeenAlreadyReceived: #{filename}")
             return true
          end
-      # }
+      }
       return false
    end
    #-------------------------------------------------------------
