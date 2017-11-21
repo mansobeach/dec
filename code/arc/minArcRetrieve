@@ -295,7 +295,8 @@ def main
 
 
    if @bListOnly == false and @full_path_target == "" then
-      usage
+      @full_path_target = Dir.pwd
+      # usage
    end
 
    if (startVal != "" and endVal == "") or  (startVal == "" and endVal != "") then
