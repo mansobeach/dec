@@ -523,16 +523,67 @@ private
    # There is only one point in the class where all Dynamic structs 
    # are filled so that it is easier to update/modify the I/Fs.
    def fillFTPServerStruct(mnemonic, xmlstruct)
-      bTracked    = false
-		bRetrieved  = false
-      bSecure     = false
-		bCompress   = false
-		bDelete     = false      
-      bErrorValue = false
-      bPassive    = true
-      protocol    = ""
+      bTracked       = false
+		bRetrieved     = false
+      bSecure        = false
+		bCompress      = false
+		bDelete        = false      
+      bErrorValue    = false
+      bPassive       = true
+      protocol       = ""
+      hostname       = ""
+      port           = ""
+      user           = ""
+      pass           = ""
+      nCleanUpFreq   = 0
       
-      nCleanUpFreq = 0
+      if !xmlstruct.elements["Hostname"].nil? then
+         hostname    = xmlstruct.elements["Hostname"].text
+      end
+      
+      if !xmlstruct.elements["Port"].nil? then
+         port    = xmlstruct.elements["Port"].text.to_i
+      end
+      
+      if !xmlstruct.elements["User"].nil? then
+         user    = expandPathValue(xmlstruct.elements["User"].text)
+      end
+
+      if !xmlstruct.elements["Pass"].nil? then
+         pass    = xmlstruct.elements["Pass"].text
+      end
+
+      if !xmlstruct.elements["SecureFlag"].nil? then
+         if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" then
+            bSecure = true
+         else
+            bSecure = false
+         end
+      end
+
+      if !xmlstruct.elements["CleanUpFreq"].nil? and !xmlstruct.elements["CleanUpFreq"].text.nil? then
+
+         if !xmlstruct.elements["CleanUpFreq"].text.empty? then
+         
+            if xmlstruct.elements["CleanUpFreq"].text.upcase == "NEVER" then
+               nCleanUpFreq = 0
+            else
+               strTemp = xmlstruct.elements["CleanUpFreq"].text.to_s
+               if strTemp == "0" then
+                  nCleanUpFreq = 0
+               else
+                  nCleanUpFreq = strTemp.to_i
+                  if nCleanUpFreq == 0 then
+                     puts
+                     puts "Error[#{mnemonic}] CleanUpFreq field only accepts a number value or \"NEVER\" literal"
+                     bErrorValue = true
+                  end
+               end
+            end
+            
+         end
+         
+      end
       
       arrDownloadDirs = Array.new
 
@@ -547,23 +598,28 @@ private
            end
       end
 
-      if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" and xmlstruct.elements["Protocol"].nil? then
-         bSecure  = true
-         protocol = "SFTP"
-      end
-      
-      if xmlstruct.elements["SecureFlag"].text.upcase == "FALSE" and xmlstruct.elements["Protocol"].nil? then
-         bSecure  = false
-         protocol = "FTP"
-      end
+#      if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" and xmlstruct.elements["Protocol"].nil? then
+#         bSecure  = true
+#         protocol = "SFTP"
+#      end
+#      
+#      if xmlstruct.elements["SecureFlag"].text.upcase == "FALSE" and xmlstruct.elements["Protocol"].nil? then
+#         bSecure  = false
+#         protocol = "FTP"
+#      end
 
-      if protocol == "" then
-         puts "Fatal Error in ReadInterfaceConfig::fillFTPServerStruct (#{mnemonic})"
-         puts
-         puts "Verify Protocol / SecureFlag attributes"
-         puts 
-         exit(99)
-      end
+#      if protocol == "" then
+#         puts "Fatal Error in ReadInterfaceConfig::fillFTPServerStruct (#{mnemonic})"
+#         puts
+#         puts "Verify Protocol / SecureFlag attributes"
+#         puts 
+#         exit(99)
+#      end
+
+
+      if protocol != "" then
+
+      # puts protocol
 
       if xmlstruct.elements["RegisterContentFlag"].text.upcase == "TRUE" then
          bTracked = true
@@ -582,6 +638,7 @@ private
             bErrorValue = true
          end         
       end
+
 
       if xmlstruct.elements["CompressFlag"].text.upcase == "TRUE" then
          bCompress = true
@@ -614,22 +671,8 @@ private
       end
       # ----------------------
 
+      end # super asco
 
-      if xmlstruct.elements["CleanUpFreq"].text.upcase == "NEVER" then
-         nCleanUpFreq = 0
-      else
-         strTemp = xmlstruct.elements["CleanUpFreq"].text.to_s
-         if strTemp == "0" then
-            nCleanUpFreq = 0
-         else
-            nCleanUpFreq = strTemp.to_i
-            if nCleanUpFreq == 0 then
-               puts
-               puts "Error[#{mnemonic}] CleanUpFreq field only accepts a number value or \"NEVER\" literal"
-               bErrorValue = true
-            end
-         end
-      end
 
       if bErrorValue == true then
          puts
@@ -648,10 +691,10 @@ private
 	   ftpstruct   = Struct::FTPServer.new(
                          mnemonic,
                          protocol,
-                         xmlstruct.elements["Hostname"].text,
-                         xmlstruct.elements["Port"].text.to_i,
-                         expandPathValue(xmlstruct.elements["User"].text),
-                         xmlstruct.elements["Pass"].text,
+                         hostname,
+                         port,
+                         user,
+                         pass,
 								 bTracked,
                          bRetrieved,
                          bSecure,
