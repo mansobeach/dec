@@ -4,6 +4,7 @@ activerecord-import
 sequel
 net-ssh
 net-sftp
+ftpfxp
 log4r
 filesize
 pg
