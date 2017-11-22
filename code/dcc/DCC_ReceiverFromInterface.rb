@@ -151,8 +151,7 @@ class DCC_ReceiverFromInterface
       cmd   = ""
       perf  = ""
       list  = nil
-      
-      
+            
       case @protocol
          when "FTP"
                
@@ -1156,13 +1155,14 @@ private
    end
    #-------------------------------------------------------------
    
-   def filterFullPathFileList(list, forTracking)
+   def filterFullPathFileList(list, forTracking)      
       arrTemp        = Array.new
       arrFiles       = Array.new
       tmpList        = Array.new(list)
       @fileListError = Array.new
       nStart         = list.length
       numFilesToBeRetrieved = 0
+      perf           = nil
       # ------------------------------------------
 
 #===============================================================================
@@ -1184,18 +1184,18 @@ private
 #       }
 # 
 #       } # end of measure
+#
+#      # ------------------------------------------
+#
+#      if @isBenchmarkMode == true then
+#         puts
+#         puts "File Filter Step 1 - Remove repeated files (#{arrFiles.length} elements) of #{nStart}:"
+#         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+#         puts
+#         puts "Retrieved #{nStart} files"
+#         puts
+#      end
 #=============================================================================== 
-      # ------------------------------------------
-
-      if @isBenchmarkMode == true then
-         puts
-         puts "File Filter Step 1 - Remove repeated files (#{arrFiles.length} elements) of #{nStart}:"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts "Retrieved #{nStart} files"
-         puts
-      end
-
 
       # ------------------------------------------
 
@@ -1252,16 +1252,7 @@ private
       if @isDebugMode == true then
          puts
       end
-      
-      if @isBenchmarkMode == true then
-         puts
-         puts "File Filter Step 2 - Remove files not matching configuration filters (#{tmpList.length} elements) of #{nStart}:"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts "Retrieved #{nStart} files"
-         puts
-      end
-      
+            
       # ------------------------------------------
       
       # ------------------------------------------
