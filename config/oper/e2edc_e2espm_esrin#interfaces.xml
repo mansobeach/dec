@@ -18,6 +18,7 @@
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <FTPServer>
+      <Protocol>SFTP</Protocol>
       <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
 	   <Port>22</Port>
       <User>e2espm</User>
@@ -81,6 +82,7 @@
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <FTPServer>
+      <Protocol>SFTP</Protocol>
       <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
 	   <Port>22</Port>
       <User>e2espm</User>
