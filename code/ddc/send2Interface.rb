@@ -58,8 +58,6 @@
 
 require 'rubygems'
 require 'getoptlong'
-require 'rdoc'
-# require 'rdoc/usage'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'

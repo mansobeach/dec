@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 # == Synopsis
 #
 # This is a DDC command line tool that sends an email notification
@@ -38,7 +37,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
@@ -92,8 +90,8 @@ def main
                exit (0)
             when "--mnemonic" then
                @@mnemonic = arg
-            when "--usage"   then RDoc::usage("usage")
-            when "--help"    then RDoc::usage
+            when "--usage"   then usage
+            when "--help"    then usage
             when "--rop" then
                @@nROP    = arg.to_i
             when "--OK"   then @@isOK = true
@@ -111,15 +109,15 @@ def main
  
 
    if @@mnemonic == "" or option == false then
-      RDoc::usage("usage")
+      usage
    end
  
    if @@isOK == true and option == true and @@fullPathFile == "" then
-      RDoc::usage("usage")
+      usage
    end
    
    if @@isOK == false and option == true and @@fullPathFile == "" then
-      RDoc::usage("usage")
+      usage
    end
 
    # Set notify2Interface <I/F> running.
@@ -228,6 +226,22 @@ def notifyFailure2Entity
 end
 #---------------------------------------------------------------------
 
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -24 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
 
 #===============================================================================
 # Start of the main body

@@ -57,7 +57,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
 
 # Global variables
 @dateLastModification = "$Date: 2007/11/30 10:10:11 $" 
@@ -89,15 +88,13 @@ def main
             when "--version" then
                print("\nESA - DEIMOS-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.5 $  [", @@dateLastModification, "]\n\n\n")
                exit(0)
-            when "--help"     then RDoc::usage
+            when "--help"     then usage
             when "--outgoing" then @bOutgoing = true
             when "--entities" then @bEntities = true
 	         when "--mail"     then @bMail     = true
 	         when "--general"  then @bGeneral  = true
             when "--all"      then @bAll      = true
-            when "--usage"    then fullpathFile = `which #{File.basename($0)}` 
-                                   system("head -50 #{fullpathFile}")
-                                   exit
+            when "--usage"    then usage
          end
       end
    rescue Exception
@@ -105,9 +102,7 @@ def main
    end
  
    if @bOutgoing == false and @bEntities == false and @bAll == false and @bMail == false and @bGeneral == false then
-      fullpathFile = `which #{File.basename($0)}` 
-      system("head -50 #{fullpathFile}")
-      exit
+      usage
    end
 
    # Check DDC's general configuration files ddc_config.xml
@@ -189,6 +184,21 @@ def validate (fileName)
 end
 #-------------------------------------------------------------
 
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -49 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
 #-------------------------------------------------------------
 
 

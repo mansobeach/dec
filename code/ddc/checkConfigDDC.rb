@@ -63,7 +63,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
 
 require 'ctc/CheckerMailConfig'
 require 'ctc/CheckerInterfaceConfig'
@@ -82,7 +81,23 @@ require 'ctc/ReadFileDestination'
 @isDebugMode      = false               # execution showing Debug Info
 @isVerboseMode    = false
 @isSecure         = false
-@checkUploadTmp   = false
+@checkUploadTmp   = fals#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -54 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+e
 @bIncoming        = false
 @bOutgoing        = false
 @bEntities        = false
@@ -123,7 +138,7 @@ def main
             when "--version" then
                print("\nESA - Deimos-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.5 $  [", @@dateLastModification, "]\n\n\n")
                exit(0)
-            when "--help"     then RDoc::usage
+            when "--help"     then usage
 #            when "--incoming" then @bIncoming = true
             when "--outgoing" then @bOutgoing = true
             when "--entities" then @bEntities = true
@@ -132,10 +147,7 @@ def main
             when "--all"      then @bAll      = true
             when "--nodb"     then @isNoDB    = true
 #            when "--tray"     then @bTrays    = true
-            when "--usage"    then fullpathFile = `which #{File.basename($0)}` 
-                                   system("head -52 #{fullpathFile}")
-                                   exit
-
+            when "--usage"    then usage
          end
 
       end
@@ -146,9 +158,7 @@ def main
    if @bIncoming == false and @bOutgoing == false and @bClients == false and
       @bEntities == false and @bAll == false and @bMail == false and 
       @bServices == false and @bTrays == false then
-      fullpathFile = `which #{File.basename($0)}` 
-      system("head -52 #{fullpathFile}")
-      exit
+      usage
    end
    
    # Check Module Integrity
@@ -276,6 +286,25 @@ def checkModuleIntegrity
    return
 end 
 #-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -54 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+
+
 
 #==========================================================================
 # Start of the main body

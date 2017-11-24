@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 # == Synopsis
 #
 # This is a DDC command line tool that delivers all files from a given repository.
@@ -67,7 +66,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'ctc/ReadInterfaceConfig'
@@ -147,8 +145,8 @@ def main
                print("\nESA - Deimos-Space S.L.  DEC ", File.basename($0), " $Revision: 1.8 $  [", @@dateLastModification, "]\n\n\n")
                exit (0)
             when "--Report"  then @createReport = true
-            when "--help"    then RDoc::usage
-            when "--usage"   then RDoc::usage("usage")
+            when "--help"    then usage
+            when "--usage"   then usage
             when "--params"  then @strParams = arg.to_s
             when "--Kill"    then bKill = true
             when "--nodb"    then @isNoDB = true
@@ -298,6 +296,23 @@ def killInProgressDelivery
    end
 end
 #==========================================================================
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -54 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
 
 #===============================================================================
 # Start of the main body

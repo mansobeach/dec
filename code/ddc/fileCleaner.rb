@@ -65,7 +65,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc/usage'
 require 'rubygems'
 require 'net/ssh'
 require 'net/sftp'
@@ -129,7 +128,7 @@ def main
             when "--version" then
                print("\nESA - Deimos-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.4 $  [", @@dateLastModification, "]\n\n\n")
                exit(0)
-            when "--help"     then RDoc::usage
+            when "--help"     then usage
 #            when "--incoming" then @bIncoming = true
             when "--outgoing" then @bOutgoing = true
             when "--entities" then @bEntities = true
@@ -137,7 +136,7 @@ def main
             when "--mnemonic" then @entity = arg.to_s
             when "--all"      then @bAll      = true
 #            when "--tray"     then @bTrays    = true
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then usage
 
          end
 
@@ -147,11 +146,11 @@ def main
    end
    
    if @bAll == false and @entity == "" then
-      RDoc::usage("usage")
+      usage
    end
 
    if @bAll == true and @entity != "" then
-      RDoc::usage("usage")
+      usage
    end
  
    # Check Module Integrity
@@ -490,6 +489,24 @@ def checkModuleIntegrity
    return
 end 
 #-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -25 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+
 
 #==========================================================================
 # Start of the main body

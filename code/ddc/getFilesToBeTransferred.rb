@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 # == Synopsis
 #
 # This is a DDC command line tool that retrieves files to be transfer
@@ -35,7 +34,7 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
+
 require 'ddc/RetrieverFromArchive'
 require 'ctc/ReadInterfaceConfig'
 require 'cuc/Logger.rb'
@@ -73,8 +72,8 @@ def main
                exit (0)
             when "--list" then
                @bList = true
-            when "--help"    then RDoc::usage
-            when "--usage"   then RDoc::usage("usage")
+            when "--help"    then usage
+            when "--usage"   then usage
          end
       end
    rescue Exception
@@ -94,6 +93,22 @@ end
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -25 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
 
 
 #---------------------------------------------------------------------

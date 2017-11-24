@@ -42,7 +42,6 @@
 
 
 require 'getoptlong'
-require 'rdoc/usage'
 
 require 'cuc/Listener'
 require 'cuc/Log4rLoggerFactory'
@@ -112,7 +111,7 @@ def main
                exit(0)
             when "--mnemonic" then
                @mnemonic = arg            
-            when "--help"     then RDoc::usage
+            when "--help"     then usage
             when "--interval" then
                @intervalSeconds = arg.to_i
 	         when "--stop"     then
@@ -129,7 +128,7 @@ def main
 	            stopListeners
 	            puts "\nAll clean-up daemons have been killed ! }=-) \n\n"
 	            exit(0)
-            when "--usage"    then RDoc::usage("usage")
+            when "--usage"    then usage
          end
       end
    rescue Exception
@@ -142,11 +141,11 @@ def main
    end
 
    if @isReload == true and @launchAllListeners == false then
-      RDoc::usage("usage")
+      usage
    end
  
    if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) then
-      RDoc::usage("usage")
+      usage
    end
  
    # CheckModuleIntegrity
@@ -428,6 +427,23 @@ def checkModuleIntegrity
       puts "\nError in daemonCleanUp::checkModuleIntegrity :-(\n\n"
       exit(99)
    end                             
+end
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -25 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 #-------------------------------------------------------------
 
