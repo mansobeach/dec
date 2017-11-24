@@ -109,12 +109,7 @@ def main
          end
 
          opts.on_tail("-h", "--help", "Show this message") do
-            puts opts
-            puts
-            fullpathFile = `which #{File.basename($0)}` 
-            system("head -45 #{fullpathFile}")
-            exit
-            return
+            usage
          end
 
       end.parse!
@@ -147,9 +142,9 @@ def main
          puts "Missing options: #{missing.join(', ')}"
          puts
          puts cmdParser
-         fullpathFile = `which #{File.basename($0)}` 
-         system("head -27 #{fullpathFile}")
-         exit
+         puts
+         puts
+         usage
       end
    rescue OptionParser::InvalidOption, OptionParser::MissingArgument
       puts $!.to_s
@@ -446,6 +441,23 @@ def checkModuleIntegrity
       puts "\nError in daemonME::checkModuleIntegrity :-(\n\n"
       exit(99)
    end                             
+end
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -25 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 #-------------------------------------------------------------
 
