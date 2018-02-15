@@ -26,7 +26,7 @@ ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
 
 #=====================================================================
 
-class CreateArchivedFiles < ActiveRecord::Migration
+class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:archived_files) do |t|
          t.column :filename,            :string,  :limit => 255
@@ -56,7 +56,7 @@ end
 
 #=====================================================================
 
-class AddNewColumns < ActiveRecord::Migration
+class AddNewColumns < ActiveRecord::Migration[5.1]
 
   def change
      # size_original of the file before archive in bytes
