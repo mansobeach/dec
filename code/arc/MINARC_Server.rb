@@ -58,7 +58,11 @@ configure :development do
    checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
    checkDirectory("#{ENV['HOME']}/Sandbox/minarc/inv")
    
+   puts "========================================"
    print_environment
+   puts "========================================"
+   puts
+   puts
 
 end
 # ----------------------------------------------------------
@@ -150,9 +154,12 @@ end
 
 # ----------------------------------------------------------
 
-get "#{API_URL_RETRIEVE}/:filename" do
-   #{:filename}
+get "#{API_URL_RETRIEVE}/:filename" do |filename|
    
+   # #{params[:filename]}
+   
+   puts "==================================================="  
+   puts 
    puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
    
    cmd = "#{ENV['MINARC_BASE']}/code/arc/minArcRetrieve -f #{params[:filename]}"
@@ -161,6 +168,14 @@ get "#{API_URL_RETRIEVE}/:filename" do
    
    system(cmd)
    
+   theFile = Dir["#{params[:filename]}*"]
+   
+   puts theFile
+   
+   send_file(theFile[0], :filename => theFile[0]) ########, :disposition => :attachment)
+   
+   rm(theFile[0])
+      
 end
 # ----------------------------------------------------------
 
