@@ -85,8 +85,7 @@ class MINARC_Client
          puts "MINARC_Client::retrieveFile => #{url}"
          puts
       end
-      ret = getFile(url, filename)
-      puts ret
+      return getFile(url, filename)
    end
    #------------------------------------------------
    

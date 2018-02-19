@@ -72,23 +72,23 @@ class TestCaseStore < Test::Unit::TestCase
    # After every test case
 
    def teardown
-#       cmd = "minArcPurge.rb -Y"amp;
-#       ret = system(cmd)amp;
-# amp;
-#       if ret == false thenamp;
-#          puts "Error when cleaning the minarc root directory ! :-("amp;
-#          putsamp;
-#          exit(99)amp;
-#       endamp;
-# amp;
-#       cmd = "manageDB.rb -d"amp;
-#       ret = system(cmd)amp;
-#       amp;
-#       if ret == false thenamp;
-#          puts "Error when dropping the minarc inventory ! :-("amp;
-#          putsamp;
-#          exit(99)amp;
-#       endamp;
+       cmd = "minArcPurge.rb -Y"
+       ret = system(cmd)
+
+       if ret == false then
+          puts "Error when cleaning the minarc root directory ! :-("
+          puts
+          exit(99)
+       end
+
+       cmd = "manageDB.rb -d"
+       ret = system(cmd)
+       
+       if ret == false then
+          puts "Error when dropping the minarc inventory ! :-("
+          puts
+          exit(99)
+       end
    end
    #--------------------------------------------------------
 

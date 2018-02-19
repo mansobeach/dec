@@ -74,11 +74,15 @@ def main
 
 
    #------------------------------------------------------------------
-   puts
-   puts "Clean up of the Archive"
-
+   
    archiveRoot = ENV["MINARC_ARCHIVE_ROOT"]
 
+   
+   puts
+   puts "Clean up of the Archive in #{archiveRoot}"
+   puts
+
+   
    Dir.chdir(archiveRoot)
 
    ArchivedFile.delete_all
