@@ -20,6 +20,7 @@ module ARC
    
    def load_config_development
       ENV['MINARC_VERSION']         = "01.00.00"
+      ENV['MINARC_DB_ADAPTER']      = "sqlite3"
       ENV['MINARC_BASE']            = "#{ENV['HOME']}/Projects/dec"
       ENV['MINARC_SERVER']          = "http://localhost:4567"
       ENV['MINARC_ARCHIVE_ROOT']    = "#{ENV['HOME']}/Sandbox/minarc/archive_root"
@@ -34,6 +35,7 @@ module ARC
       puts "MINARC_DB_ADAPTER       => #{ENV['MINARC_DB_ADAPTER']}"
       puts "MINARC_SERVER           => #{ENV['MINARC_SERVER']}"
       puts "MINARC_ARCHIVE_ROOT     => #{ENV['MINARC_ARCHIVE_ROOT']}"
+      puts "MINARC_ARCHIVE_ERROR    => #{ENV['MINARC_ARCHIVE_ERROR']}"
    end
    # -----------------------------------------------------------------
    
