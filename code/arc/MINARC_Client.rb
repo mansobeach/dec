@@ -53,8 +53,7 @@ class MINARC_Client
    #------------------------------------------------
    
    def getVersion
-      version = getURL("#{@minArcServer}#{API_URL_VERSION}", @isDebugMode)
-      puts "MINARC Version = #{version}"
+      return getURL("#{@minArcServer}#{API_URL_VERSION}", @isDebugMode)
    end
    #------------------------------------------------
 
@@ -76,6 +75,18 @@ class MINARC_Client
       end
       
       return ret
+   end
+   #------------------------------------------------
+   
+   def retrieveFile(filename)
+      url = "#{@minArcServer}#{API_URL_RETRIEVE}/#{filename}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::retrieveFile => #{url}"
+         puts
+      end
+      ret = getFile(url)
+      puts ret
    end
    #------------------------------------------------
    
