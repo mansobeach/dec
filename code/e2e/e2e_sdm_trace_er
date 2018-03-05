@@ -33,12 +33,14 @@
 require 'rubygems'
 require 'getoptlong'
 
+require 'cuc/Converters'
 require 'e2e/SDM_DatabaseModel'
 
 
 # MAIN script function
 def main
 
+   include CUC::Converters
 
    #=======================================================================
 
@@ -92,8 +94,12 @@ def main
    end
 
    if arr.to_a.length > 1 then
-      puts "Warning found more than one ER for #{arr.to_a[0].value}"
+      puts "Found more than one ER:"
+      arr.to_a.each{|er|
+         puts er.value
+      }
       puts
+      exit(0)
    end
 
    id = arr.to_a[0].explicit_ref_id
@@ -121,14 +127,15 @@ def main
          
          an.to_a.each{|a|
             cnf = AnnotConfTB.where(annotation_id: annot.annotation_id)
-            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}"
+            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}  (#{mjd2000_to_utc(annot.time_stamp)})"
          }
          
          an = AnnotDoubleTB.where(note_id: annot.note_id)
          an.to_a.each{|a|
             cnf = AnnotConfTB.where(annotation_id: annot.annotation_id)
-            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}"         
+            puts "#{cnf.to_a[0].name.to_s.ljust(25, ' ')} : #{a.value}  (#{mjd2000_to_utc(annot.time_stamp)})"         
          }
+
 
       }
       puts "-----------------------"
@@ -146,7 +153,7 @@ def main
          ev = EventStringTB.where(event_id: event.event_id)
          
          ev.to_a.each{|e|
-            puts e.value
+            puts "#{e.value}  (#{mjd2000_to_utc(event.time_stamp)})" 
          }
       }
       
