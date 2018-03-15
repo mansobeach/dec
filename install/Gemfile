@@ -1,3 +1,4 @@
+# Data Exchange Component
 # frozen_string_literal: true
 
 source "https://rubygems.org"
@@ -7,10 +8,17 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 # gem "rails"
 
 gem 'activerecord', '5.1.4'
+gem 'activerecord-import', '0.20.2'
+gem 'filesize'
+gem 'ftools'
+gem 'json'
+gem 'log4r', '1.1.10'
 gem 'net-sftp', '2.1.2'
 gem 'net-ssh', '4.2.0'
 gem 'sinatra', '2.0.0'
-gem 'filesize'
+gem 'sinatra-contrib', '2.0.0'
+gem 'test-unit', '3.2.3'
+gem 'thin'
 
 group :development do
    gem 'sqlite3'

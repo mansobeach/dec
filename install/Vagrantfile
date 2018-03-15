@@ -25,7 +25,14 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  
+  # MINARC port forwarding for Sinatra
+  
+  # config.vm.network "private_network", ip: "192.168.50.4"
+  
+  config.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1"
+
+  # config.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "0.0.0.0"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -75,12 +82,30 @@ Vagrant.configure("2") do |config|
 end
 
 
+
+# ==============================================================================
+
+
+
+# ==============================================================================
+
+
 Vagrant.configure("2") do |config|
-   
    
    config.vm.provision "shell", path: "bootstrap.sh"
    
    # config.vm.provision "shell", path: "bundling.sh" #, privileged: false
+   
+   # ----------------------------------------------------------------------
+
+
+   # ----------------------------------------------------------------------
+   # gem install with vagrant non-root user
+   $script = <<-SCRIPT
+   gem install --local /vagrant/minarc-1.0.0.gem
+   SCRIPT
+   config.vm.provision "shell", inline: $script #, privileged: false
+   # ----------------------------------------------------------------------
    
    # ----------------------------------------------------------------------
    # install bundler with vagrant non-root user
@@ -90,9 +115,6 @@ Vagrant.configure("2") do |config|
    SCRIPT
    config.vm.provision "shell", inline: $script #, privileged: false
    # ----------------------------------------------------------------------
-
-
-
 
 
 end
