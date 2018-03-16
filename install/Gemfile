@@ -15,15 +15,17 @@ gem 'json'
 gem 'log4r', '1.1.10'
 gem 'net-sftp', '2.1.2'
 gem 'net-ssh', '4.2.0'
+gem 'pg'
 gem 'sinatra', '2.0.0'
 gem 'sinatra-contrib', '2.0.0'
+gem 'sqlite3'
 gem 'test-unit', '3.2.3'
 gem 'thin'
 
-group :development do
-   gem 'sqlite3'
-end
+# group :development do
+#    gem 'sqlite3'
+# end
 
-group :production do 
-   gem 'pg'
-end
+# group :production do 
+#    gem 'pg'
+# end

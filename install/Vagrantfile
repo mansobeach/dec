@@ -92,30 +92,31 @@ end
 
 Vagrant.configure("2") do |config|
    
-   config.vm.provision "shell", path: "bootstrap.sh"
+   config.vm.provision :shell, path: "bootstrap.sh"
    
-   # config.vm.provision "shell", path: "bundling.sh" #, privileged: false
+   config.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
    
+   config.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
+      
    # ----------------------------------------------------------------------
 
-
-   # ----------------------------------------------------------------------
-   # gem install with vagrant non-root user
-   $script = <<-SCRIPT
-   gem install --local /vagrant/minarc-1.0.0.gem
-   SCRIPT
-   config.vm.provision "shell", inline: $script #, privileged: false
-   # ----------------------------------------------------------------------
-   
    # ----------------------------------------------------------------------
    # install bundler with vagrant non-root user
    $script = <<-SCRIPT
    cd /vagrant
    bundler install
    SCRIPT
-   config.vm.provision "shell", inline: $script #, privileged: false
+   config.vm.provision :shell, inline: $script, privileged: false
    # ----------------------------------------------------------------------
 
+   # ----------------------------------------------------------------------
+   # gem install with vagrant non-root user
+   $script = <<-SCRIPT
+   gem install --local /vagrant/minarc-1.0.0.gem
+   SCRIPT
+   config.vm.provision :shell, inline: $script, privileged: false
+   # ----------------------------------------------------------------------
+   
 
 end
 
