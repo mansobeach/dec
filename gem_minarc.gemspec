@@ -17,7 +17,15 @@ Gem::Specification.new do |s|
 
   s.bindir = ['code/arc']
 
-  s.executables  = ['minArcStore', 'minArcDB', 'minArcServer']
+  s.executables  = [ 
+                     'minArcStore', \
+                     'minArcDB', \
+                     'minArcDelete', \
+                     'minArcPurge', \
+                     'minArcRetrieve', \
+                     'minArcServer', \
+                     'minArcUnitTests' #, \
+                     ]
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
