@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a MINARC command line tool that shows status according to given criteria. 
+# 
+# == Usage
+# minArcServer 
+#     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
+#     --list                     it lists the files that would be retrieved
+#                                according to the selection criteria
+#     --help                     shows this help
+#     --usage                    shows the usage
+#     --Debug                    shows Debug info during the execution
+#     --version                  shows version number
+#
+#
+# == Author
+# DEIMOS-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === Mini Archive Component (MinArc)
+#
+# CVS: $Id: minArcDelete.rb,v 1.10 2008/09/24 10:18:26 decdev Exp $
+#
+#########################################################################
+
+require 'getoptlong'
+require 'rdoc'
+
+require 'cuc/Listener'
+require 'arc/MINARC_Server'
+
+
+# MAIN script function
+def main
+
+   @isDebugMode            = false
+   showVersion             = false
+   
+   opts = GetoptLong.new(
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
+     ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--start", "-s",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--Report", "-R",          GetoptLong::REQUIRED_ARGUMENT],
+     ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--global", "-g",          GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT],
+     ["--boundary_start_on",     GetoptLong::NO_ARGUMENT],
+     ["--boundary_end_on",       GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt      
+            when "--Debug"             then @isDebugMode = true
+            when "--list"              then @bListOnly   = true
+            when "--global"            then @bGlobal     = true
+            when "--version"           then showVersion  = true
+            when "--file"              then @filename           = arg.to_s
+            when "--directory"         then @dirname            = arg.to_s
+                                            deleteDirectory
+	         when "--type"              then @filetype           = arg.to_s
+            when "--start"             then startVal            = arg.to_s
+            when "--end"               then endVal              = arg.to_s
+	         when "--Report"            then @full_report_name   = arg.to_s
+			   when "--help"              then usage
+	         when "--usage"             then usage
+            when "--boundary_start_on" then bIncStart           = true
+            when "--boundary_end_on"   then bIncEnd             = true
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   MINARC_Server.run!
+
+   exit(0)
+
+end
+
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = `which #{File.basename($0)}`    
+   
+   value = `#{"head -26 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================

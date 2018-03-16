@@ -335,6 +335,7 @@ class FileArchiver
          end
       else
          handler = ""
+=begin
          rubylibs = ENV['RUBYLIB'].split(':')
          rubylibs.each {|path|
             # puts "#{path}/arc/plugins/#{fileType.upcase}_Handler.rb"
@@ -345,6 +346,9 @@ class FileArchiver
                break
             end
          }
+=end
+
+         handler = "Handler_#{fileType.upcase}"
 
          if handler == "" then
             puts
