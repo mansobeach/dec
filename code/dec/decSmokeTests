@@ -1,0 +1,161 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Mini Archive Component (MinArc)
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'ctc/ReadInterfaceConfig'
+require 'dec/DEC_Environment'
+
+
+# Preconditions:
+# 1 - setup 
+
+
+# 2 - teardown
+
+
+#  1  - test_decConfigInterface2DB
+#  2  - test_decGetFromInterface
+#  3  - test_decListener
+
+class DECSmokeTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include DEC
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Smoke Test Cases"
+      puts
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+                  
+      if c != 'Y' then
+         exit(99)
+      end
+
+   end
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC Smoke tests"
+   end
+   
+   #--------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      # to be seen in production environment
+   end
+   #--------------------------------------------------------
+   # After every test case
+
+   def teardown
+      puts "end of test case"
+   end
+   #--------------------------------------------------------
+
+
+   #-------------------------------------------------------------
+
+   def test_decStats
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "decStats -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f S2A_OPER_REP_OPDPC__MTI__20180516T092545_V20180516T070229_20180516T070700.EOF"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -H 1"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -H 2"
+      assert(system(cmd), cmd)
+
+   end
+   #--------------------------------------------------------
+
+   def test_decGetFromInterface
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decGetFromInterface -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -h"
+      assert(system(cmd), cmd)
+
+   end
+   #--------------------------------------------------------
+
+   def test_decListener
+
+      cmd = "decListener -v"
+      assert(system(cmd), cmd)
+       
+      cmd = "decListener -h"
+      assert(system(cmd), cmd)
+   end
+
+   #-------------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   def test_decSend2Interface
+
+      cmd = "decSend2Interface -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface -h"
+      assert(system(cmd), cmd)
+
+   end
+
+   #-------------------------------------------------------------
+
+end
+
+
+#=====================================================================
+
+
+#-----------------------------------------------------------
+
+

@@ -1,0 +1,187 @@
+#!/usr/bin/env ruby
+
+#
+# == Usage
+# decManageDB --create-tables | --drop-tables
+#     --create-tables   create all minarc required tables
+#     --drop-tables     drops all minarc tables
+#     --Debug     shows Debug info during the execution
+#     --help   shows this help
+# 
+#
+
+require 'getoptlong'
+
+
+require 'rubygems'
+require 'active_record'
+
+require 'dec/DEC_DatabaseModel'
+require 'dcc/DCC_Migrations'
+require 'ddc/DDC_Migrations'
+require 'dec/DEC_Environment'
+
+@isDebugMode = false
+
+dbAdapter   = ENV['DEC_DB_ADAPTER']
+dbName      = ENV['DEC_DATABASE_NAME']
+dbUser      = ENV['DEC_DATABASE_USER']
+dbPass      = ENV['DEC_DATABASE_PASSWORD']
+
+ActiveRecord::Base.establish_connection(
+                                          :adapter => dbAdapter, \
+                                          :host => "localhost",  \
+                                          :database => dbName,   \
+                                          :username => dbUser, \
+                                          :password => dbPass, \
+                                          :timeout  => 60000
+                                        )
+
+
+# MAIN script function
+def main
+
+   include DEC
+
+   ret = checkEnvironmentEssential
+
+   if ret == true then
+      ret = checkEnvironmentDB
+   else
+      checkEnvironmentDB
+      exit(99)
+   end
+
+   if ret == false then
+      exit(99)
+   end
+
+   dbAdapter   = ENV['DEC_DB_ADAPTER']
+   dbName      = ENV['DEC_DATABASE_NAME']
+   dbUser      = ENV['DEC_DATABASE_USER']
+   dbPass      = ENV['DEC_DATABASE_PASSWORD']
+
+   bUp            = false
+   bDown          = false
+   @bUpdate       = false
+   @bShowVersion           = false
+   
+   opts = GetoptLong.new(
+     ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
+     ["--create-tables", "-c",    GetoptLong::NO_ARGUMENT],
+     ["--update-tables", "-u",    GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",            GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",          GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",             GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt
+            when "--Debug"             then @isDebugMode = true      
+            when "--create-tables"     then @bUp         = true
+            when "--drop-tables"       then @bDown       = true
+            when "--version"           then @bShowVersion   = true
+            when "--update-tables"     then @bUpdate     = true
+			   when "--help"              then usage
+         end
+      end
+   rescue Exception => e
+      puts e.to_s
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n\n")
+      exit(0)
+   end
+   
+   if @bDown and @bUp then
+      usage
+   end
+
+   if @isDebugMode == true then
+      puts "----------------"
+      puts dbAdapter
+      puts dbName
+      puts dbUser
+      puts dbPass
+      puts "----------------"
+   end
+
+   if @bUpdate then
+      migration = AddSizeToReceivedFiles.new
+      migration = AddProtocolToReceivedFiles.new
+      migration.change
+      exit(0)
+   end
+
+   if @bDown then
+      if ReceivedFile.table_exists?() == true then
+         CreateReceivedFiles.down
+      end
+      
+      if TrackedFile.table_exists?() == true then
+         CreateTrackedFiles.down
+      end
+      
+      if SentFile.table_exists?() == true then
+         CreateSentFiles.down
+      end
+      
+      if Interface.table_exists?() == true then
+         CreateInterfaces.down
+      end
+      
+      exit(0)
+   end
+
+   if @bUp then
+      if Interface.table_exists?() == false then
+         CreateInterfaces.up
+      end
+      
+      if TrackedFile.table_exists?() == false then
+         CreateTrackedFiles.up
+      end
+      
+      if ReceivedFile.table_exists?() == false then
+         CreateReceivedFiles.up
+      end
+      
+      if SentFile.table_exists?() == false then
+         CreateSentFiles.up
+      end
+      
+      exit(0)
+   end
+
+   usage
+ 
+   exit(0)
+
+end
+
+#-------------------------------------------------------------
+
+# Print command line help
+def usage
+   fullpathFile = File.expand_path(__FILE__)    
+   
+   value = `#{"head -10 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
+end
+#-------------------------------------------------------------
+
+
+#=====================================================================
+# Start of the main body
+main
+# End of the main body
+#=====================================================================

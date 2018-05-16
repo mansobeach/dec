@@ -1,0 +1,154 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a DEC/DCC command line tool that shows file reception statistics  
+# 
+# == Usage
+# decStats
+#     --Hours <hours>            status of last n hours
+#     --file <filename>          status of a given filename
+#     --help                     shows this help
+#     --usage                    shows the usage
+#     --Debug                    shows Debug info during the execution
+#     --version                  shows version number
+#
+#
+# == Author
+# DEIMOS-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === Data Collector Component
+#
+# CVS: $Id: dccStats.rb,v 1.15 2015/09/25 16:55:04 decdev Exp $
+#
+#########################################################################
+
+require 'getoptlong'
+require 'rdoc'
+
+require 'dcc/StatisticDCC'
+require 'dec/DEC_Environment'
+require 'dec/DEC_DatabaseModel'
+
+# MAIN script function
+def main
+
+   @filename                  = ""
+   @filetype                  = ""
+   @dirname                   = ""
+   startVal                   = ""
+   endVal                     = ""
+   @bGlobal                   = false
+   @filename                  = ""
+
+   @full_report_name          = ""
+
+   bIncStart = false
+   bIncEnd = false
+
+   @isDebugMode            = false
+   @bShowVersion           = false
+   @bShowUsage             = false
+   @hours                  = 1
+   
+   opts = GetoptLong.new(
+     ["--Hours", "-H",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--global", "-g",          GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt
+            when "--Hours"             then @hours          = arg.to_i      
+            when "--Debug"             then @isDebugMode    = true
+            when "--file"              then @filename       = arg.to_s
+            when "--version"           then @bShowVersion   = true
+			   when "--help"              then @bShowUsage     = true
+	         when "--usage"             then @bShowUsage     = true
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n\n")
+      exit(0)
+   end
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   if @filename != ""
+      queryFile
+   end
+
+   stats = DCC::StatisticDCC.new
+
+   stats.lastHour(@hours)
+
+   exit(0)
+
+end
+
+#-------------------------------------------------------------
+
+def queryFile
+   aFile = File.basename(@filename, ".*") 
+   aFile = "#{aFile}%"
+   files = ReceivedFile.where("filename LIKE ?", aFile)
+   
+   if files == nil or files.empty? == true then
+      puts "File not found in the inventory"
+      exit(99)
+   end
+   
+   puts
+   files.each{|file|
+      puts file.filename
+      puts Interface.find_by_id(file.interface_id).name
+      puts file.reception_date
+      puts file.size
+      puts file.protocol
+      puts
+   }
+   exit(0)
+end
+
+#-------------------------------------------------------------
+
+def usage
+   fullpathFile = File.expand_path(__FILE__)   
+   
+   value = `#{"head -22 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+
+#-------------------------------------------------------------
+
+
+#-------------------------------------------------------------
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================
