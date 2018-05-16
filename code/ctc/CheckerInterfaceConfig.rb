@@ -145,7 +145,7 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] then
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
          puts "\nDCC_TMP environment variable not defined !\n"
          bDefined = false
       end
@@ -154,11 +154,16 @@ private
          puts "\nError in CheckerInterfaceConfig::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
+
+      if ENV['DEC_TMP'] then
+         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      else
+         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
+      end        
                   
-      tmpDir = ENV['DCC_TMP']  
       time   = Time.new
       time.utc
-      @batchFile = %Q{#{tmpDir}/.#{time.to_f.to_s}}
+      @batchFile = %Q{#{@tmpDir}/.#{time.to_f.to_s}}
    end
    #-------------------------------------------------------------
 
