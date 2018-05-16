@@ -187,7 +187,7 @@ private
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true     
-      if !ENV['DCC_TMP'] then
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
          puts "\nDCC_TMP environment variable not defined !\n"
          bDefined = false
       end      
@@ -195,7 +195,13 @@ private
          puts "\nError in Listener::checkModuleIntegrity :-(\n\n"
          exit(99)
       end                  
-      @tmpDir = ENV['DCC_TMP']                                
+
+      if ENV['DEC_TMP'] then
+         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      else
+         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
+      end        
+                         
    end
    #-------------------------------------------------------------
 
