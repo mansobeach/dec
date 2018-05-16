@@ -83,7 +83,7 @@ class CheckerFTPConfig
 private
 
    @isDebugMode       = false      
-   @@ftpElement         = nil
+   @@ftpElement       = nil
    @sftpClient        = nil
    @ftReadConf        = nil
 
@@ -93,7 +93,7 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] then
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
          puts "\nDCC_TMP environment variable not defined !\n"
          bDefined = false
       end
@@ -103,10 +103,15 @@ private
          exit(99)
       end
                   
-      tmpDir = ENV['DCC_TMP']  
+      if ENV['DEC_TMP'] then
+         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      else
+         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
+      end        
+
       time   = Time.new
       time.utc
-      @batchFile = %Q{#{tmpDir}/.checker.#{@entity}.#{time.to_f.to_s}.#{Random.new.rand(1.5)}}
+      @batchFile = %Q{#{@tmpDir}/.checker.#{@entity}.#{time.to_f.to_s}.#{Random.new.rand(1.5)}}
    end
    #-------------------------------------------------------------
    
