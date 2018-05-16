@@ -30,7 +30,8 @@ module CUC
 module PackageUtils
 
    include CUC::DirUtils
-   include FileUtils::NoWrite 
+   # include FileUtils::NoWrite
+   include FileUtils 
    
    CompressMethods = ["NONE", "7z", "TGZ", "ZIP", "TAR", "GZIP", "COMPRESS", "UNPACK", "UNPACK_HDR", "UNPACK_DBL"]
     
@@ -97,9 +98,9 @@ module PackageUtils
          cmd  = %Q{7za a #{targetName} #{full_path_file}}
       end
 
-      if bDeleteSourceFile == true then
-         cmd = "#{cmd} -sdel"
-      end
+#      if bDeleteSourceFile == true then
+#         cmd = "#{cmd} -sdel"
+#      end
 
       if bIsDebugMode == true then
          puts(cmd)
@@ -111,9 +112,9 @@ module PackageUtils
 #          File.delete(targetName)
 #       end
 
-#       if retVal == true and bDeleteSourceFile == true then
-#          File.delete(full_path_file)
-#       end
+      if retVal == true and bDeleteSourceFile == true then
+         FileUtils::rm_f(full_path_file)
+      end
 
       return retVal
    end
