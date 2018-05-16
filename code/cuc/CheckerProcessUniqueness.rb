@@ -46,11 +46,13 @@ class CheckerProcessUniqueness
    # * string: the name of the process.
    # * string: optional arguments used by the process.
    # * boolean: if it is interpreted with ruby.
-   def initialize(processName, args, isRubyInterpreted)
+   # * string: temporal directory for the lock files
+   def initialize(processName, args, isRubyInterpreted, tmpDir = nil)
       @isDebugMode = false
       @processName = processName
       @isRuby      = isRubyInterpreted
       @args        = args
+      @tmpDir      = tmpDir
       checkModuleIntegrity
    end   
    #-------------------------------------------------------------
@@ -176,17 +178,24 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] then
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] and @tmpDir == nil then
          puts "\nDCC_TMP environment variable not defined !\n"
          bDefined = false
       end
       
-      if bDefined == false then
+      if bDefined == false and @tmpDir == nil then
          puts "\nError in CheckerProcessUniqueness::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
-                  
-      @tmpDir   = ENV['DCC_TMP']
+      
+      if @tmpDir == nil then
+         if ENV['DEC_TMP'] then
+            @tmpDir   = ENV['DEC_TMP']
+         else
+            @tmpDir   = ENV['DCC_TMP']
+         end
+      end
+      
       checkDirectory(@tmpDir)
       
       if @args == nil then 
