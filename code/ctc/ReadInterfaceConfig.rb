@@ -332,17 +332,24 @@ private
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DCC_CONFIG'] then
-        puts "\nDCC_CONFIG environment variable not defined !  :-(\n\n"
-        bCheckOK = false
-        bDefined = false
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDCC_CONFIG environment variable not defined !  :-(\n\n"
+         bCheckOK = false
+         bDefined = false
       end
 
       # if environment variables are defined check for config files
       # interfaces.xml
       
-      if bDefined == true then      
-        configDir         = %Q{#{ENV['DCC_CONFIG']}}        
+      if bDefined == true then
+         configDir = nil
+         if ENV['DEC_CONFIG'] then
+            configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+         else
+            configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+         end
+            
+              
         @@configDirectory = configDir
         
         @configFile = %Q{#{configDir}/interfaces.xml}        
