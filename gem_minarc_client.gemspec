@@ -1,14 +1,11 @@
 Gem::Specification.new do |s|
-  s.name        = 'minarc'
-  s.version     = '1.0.0'
+  s.name        = 'minarc_client'
+  s.version     = '0.0.1'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
-  
-  s.required_ruby_version = '>= 2.2'
-  
   s.files       = Dir['code/arc/*.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/arc/plugins/test/*'] + \
@@ -26,13 +23,8 @@ Gem::Specification.new do |s|
 
   s.executables   = [ 
                      'minArcStore', \
-                     'minArcDB', \
                      'minArcDelete', \
-                     'minArcPurge', \
                      'minArcRetrieve', \
-                     'minArcServer', \
-                     'minArcUnitTests', \
-                     'minArcSmokeTestLocal', \
                      'minArcSmokeTestRemote'
                      ]
 
@@ -43,26 +35,14 @@ Gem::Specification.new do |s|
   
   # ----------------------------------------------
   
-  s.add_dependency('activerecord', '~> 5.1')
-  s.add_dependency('filesize', '~> 0.1')
-  s.add_dependency('ftools', '~> 0.0')
-  s.add_dependency('log4r', '~> 1.0')
-  s.add_dependency('sinatra', '~> 2.0')
   s.add_dependency('test-unit', '~> 3.2')
-  s.add_dependency('thin', '~> 1.7')
-  s.add_dependency('writeexcel', '~> 1.0')
   
   # ----------------------------------------------
-  
-  # database specific gems which can differ
-  
-  # s.add_dependency('pg', '~> 1.0')
-  s.add_dependency('sqlite3', '~> 1.3')
-  
+    
   
   # you did document with RDoc, right?
   # s.has_rdoc = true  
   
-  s.post_install_message = "Elecnor Deimos MINARC installed :-)"
+  
   
 end
