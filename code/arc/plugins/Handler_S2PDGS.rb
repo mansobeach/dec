@@ -20,6 +20,7 @@
 # S2A_OPER_REP__SUP___20151219T193158_99999999T999999_0001.EOF
 # S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
 # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
+# S2__OPER_REP_OPDHUS_DHUS_20180404T165255.xml
 #
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
 # - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
@@ -50,7 +51,7 @@ class Handler_S2PDGS
    # Class constructor
    
    # Name now must be a full_path one
-   def initialize (name, destination = nil)
+   def initialize (name, destination = nil, args = {})
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
       @filename      = File.basename(name, ".*")
       @archive_path  = ""
@@ -100,7 +101,20 @@ class Handler_S2PDGS
             @stop = self.str2date(@filename.slice(36, 15))
          end
          @validated        = true
-      end          
+      end
+      
+      # ----------------------------------------------------
+      
+      # S2__OPER_REP_OPDHUS_DHUS_20180404T165255
+      if @filename.length == 40 then
+         @type             = @filename.slice(9,10)         
+         @start            = self.str2date(@filename.slice(25, 15))
+         @generation_date  = @start
+         @stop             = @start
+         @validated        = true
+      end
+
+      # ----------------------------------------------------
          
       if @validated == false then
          puts @filename.length
@@ -177,9 +191,12 @@ private
    def compressFile(full_path_name)
       filename       = File.basename(full_path_name, ".*")
       full_path      = File.dirname(full_path_name)
+      
+      # Ubuntu  
+      cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name}"
              
-      cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} -sdel"
-      # puts cmd
+      # cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} -sdel"
+      #puts cmd
       ret = system(cmd)
       
       if ret == false then
@@ -192,6 +209,8 @@ private
          File.delete("#{full_path}/#{filename}.7z")
          exit(99)
       end
+      
+      # File.delete(full_path_name)
       
       @full_path_filename  = "#{full_path}/#{filename}.7z"
       
