@@ -15,19 +15,27 @@
 require 'rubygems'
 require 'active_record'
 
-dbAdapter   = ENV['MINARC_DB_ADAPTER']
-dbName      = ENV['MINARC_DATABASE_NAME']
-dbUser      = ENV['MINARC_DATABASE_USER']
-dbPass      = ENV['MINARC_DATABASE_PASSWORD']
+@dbAdapter   = ENV['MINARC_DB_ADAPTER']
+@dbName      = ENV['MINARC_DATABASE_NAME']
+@dbUser      = ENV['MINARC_DATABASE_USER']
+@dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
-ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+puts @dbName
+
+ActiveRecord::Base.establish_connection(  
+                                          :adapter => @dbAdapter, \
+                                          :host => "localhost", \
+                                          :database => @dbName, \
+                                          :username => @dbUser, \
+                                          :password => @dbPass
+                                          )
 
 #=====================================================================
 
 class CreateArchivedFiles < ActiveRecord::Migration[5.1]
+   
    def self.up
+      puts "#{@dbName}"
       create_table(:archived_files) do |t|
          t.column :filename,            :string,  :limit => 255
          t.column :filetype,            :string,  :limit => 64

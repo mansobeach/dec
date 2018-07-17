@@ -30,7 +30,7 @@ ActiveRecord::Base.establish_connection(
                                           :database   => dbName,
                                           :username   => dbUser, 
                                           :password   => dbPass, 
-                                          :timeout    => 10000,
+                                          :timeout    => 50000,
                                           :cast       => false
                                           )
 

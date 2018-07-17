@@ -7,7 +7,7 @@ require 'ftools'
 
 require 'cuc/DirUtils'
 require 'arc/MINARC_API.rb'
-require 'arc/MINARC_ConfigDevelopment.rb'
+require 'arc/MINARC_Environment.rb'
 
 include CUC::DirUtils
 include FileUtils::Verbose
@@ -30,30 +30,45 @@ class MINARC_Server < Sinatra::Base
 
    configure do
       
+      # Parent exists, child continue
+      # exit!(0) if fork
+      # Become session leader without a controlling TTY
+      # Process.setsid
+
+      
       puts "Loading general configuration"
       
       # set :bind, '0.0.0.0'
       
-      set :root, '/Users/borja/Sandbox/minarc_root'
-      set :public_folder, '/Users/borja/Sandbox/minarc_root/load'
+      set :root,              "#{ENV['HOME']}/Sandbox/minarc_root"
+      set :public_folder,     "#{ENV['HOME']}/Sandbox/minarc_root/load"
+      set :isDebugMode,       true
    
       # Racks environment variable
-      ENV['TMPDIR']                 = '/Users/borja/Sandbox/minarc_root/load'
+      ENV['TMPDIR']         = "#{ENV['MINARC_TMP']}"
    
-      puts "CONFIGURE :root                        => #{settings.root}"
-      puts "CONFIGURE :public_folder               => #{settings.public_folder}"
-      puts "CONFIGURE ENV['TMPDIR']                => #{ENV['TMPDIR']}"      
+      if settings.isDebugMode then
+         puts "CONFIGURE ENV['HOME']                  => #{ENV['HOME']}"
+         puts "CONFIGURE :root                        => #{settings.root}"
+         puts "CONFIGURE :public_folder               => #{settings.public_folder}"
+         puts "CONFIGURE :isDebugMode                 => #{settings.isDebugMode}"
+         puts "CONFIGURE ENV['TMPDIR']                => #{ENV['TMPDIR']}" 
+      end
    end
 
    # ----------------------------------------------------------
 
    configure :production do
       # production configuration
+      @isDebugMode = false
    end
    # ----------------------------------------------------------
 
    configure :development do
       # development configuration
+      
+      @isDebugMode = true
+      
       puts
       puts "Loading development configuration"
       puts
@@ -63,7 +78,10 @@ class MINARC_Server < Sinatra::Base
       checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
       checkDirectory("#{ENV['HOME']}/Sandbox/minarc/inv")
+      checkDirectory(ENV['TMPDIR'])
    
+      Dir.chdir(ENV['TMPDIR'])
+      
       puts "========================================"
       print_environment
       puts "========================================"
@@ -107,7 +125,12 @@ class MINARC_Server < Sinatra::Base
    #      puts request.query_string
    #   end
    
-   
+
+      prevDir  = Dir.pwd
+      reqDir   = "minArcStore_#{Time.now.to_f}.#{Random.new.rand(1.5)}"   
+      FileUtils.mkdir(reqDir)
+      Dir.chdir(reqDir)
+
       if request.form_data? == false then
          logger.error("Missing form parameters for request")
       end
@@ -121,9 +144,9 @@ class MINARC_Server < Sinatra::Base
       #
       # Process the form parameters
          
-      cmd = "#{ENV['MINARC_BASE']}/code/arc/minArcStore"
+      cmd = "minArcStore"
    
-      cmd = "#{cmd} -D -f #{Dir.pwd}/#{filename}"
+      cmd = "#{cmd} -D -f #{Dir.pwd}/#{filename} --noserver"
    
       params.each{|param|
          if param[0].slice(0,1) != "-" then
@@ -132,7 +155,9 @@ class MINARC_Server < Sinatra::Base
          cmd = "#{cmd} #{param[0]} #{param[1]} "   
       }
    
-      puts cmd
+      if settings.isDebugMode == true then
+         puts "MINARC_Server::#{cmd}"
+      end
    
       retVal = true
    
@@ -154,39 +179,142 @@ class MINARC_Server < Sinatra::Base
       # ---------------------------------------------
    
       puts
+
+      Dir.chdir(prevDir)
+      FileUtils.rm_rf(reqDir)
    
 
    end
 
    # ----------------------------------------------------------
-
+   #
+   # minArcRetrieve
+   #
    get "#{API_URL_RETRIEVE}/:filename" do |filename|
    
-      # #{params[:filename]}
+=begin
+      puts "==================================================="  
+      puts
+      puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
+      puts
+      puts
+=end   
+      reqDir   = "retrieve_#{Time.now.to_f}.#{Random.new.rand(1.9)}.#{self.object_id}"      
+      Dir.chdir(settings.public_folder)
+      FileUtils.mkdir(reqDir)
+      Dir.chdir(reqDir)
    
+#       puts "xxxxxxxxxxxxxxx"
+#       puts "MINARC_Server::RETRIEVE_DIR(#{Process.pid}/#{self.object_id}) => #{Dir.pwd} / #{reqDir}"
+#       puts "xxxxxxxxxxxxxxx"
+   
+      # Retrieval from archive is a hard-link
+      cmd      = "minArcRetrieve -f #{params[:filename]} --noserver -H"
+   
+      if settings.isDebugMode == true then 
+         puts "MINARC_Server::#{cmd}"
+      end
+   
+      ret      = system(cmd)
+   
+      if ret == true then
+         Dir.chdir(settings.public_folder)
+         Dir.chdir(reqDir)
+      
+         theFile = Dir["#{params[:filename]}*"]
+         
+         if theFile.empty? then
+            puts "Problems come to me ! :-("
+            puts Dir.pwd
+            puts "#{params[:filename]}*"
+            puts
+         end
+         
+         content = File.read(theFile[0])         
+                  
+         response.headers['filename']     = theFile[0]
+         response.headers['Content-Type'] = "application/octet-stream"
+         # response.headers['Content-Disposition']   = "attachment;filename=#{theFile[0]}"
+         attachment(theFile[0])
+
+         # puts "BEFORE SEND_FILE"
+         # send_file(theFile[0], :filename => theFile[0]) ########, :disposition => :attachment)
+         # puts "AFTER SEND_FILE"
+         
+         rm(theFile[0])
+         Dir.chdir(settings.public_folder)
+         FileUtils.rm_rf(reqDir)
+
+         response.write(content)
+
+      else
+         puts "file #{params[:filename]} not found"
+         Dir.chdir(settings.public_folder)
+         FileUtils.rm_rf(reqDir)
+         status API_RESOURCE_NOT_FOUND
+      end
+            
+=begin
+      puts
+      puts "MINARC_Server::#{API_URL_RETRIEVE} EXIT"
+      puts 
+      puts "==========================================="
+
+=end      
+   end
+   # ----------------------------------------------------------
+
+   # ----------------------------------------------------------
+   #
+   # minArcRetrieve_LIST
+   #
+   get "#{API_URL_LIST}/:filename" do |filename|
+      cmd = "minArcRetrieve -f #{params[:filename]} --noserver -l"
+            
+      if settings.isDebugMode == true then 
+         puts "MINARC_Server::#{cmd}"
+      end
+
+      listFiles = `#{cmd}`
+
+      # "#{`#{cmd}`}"
+      
+      if $? == 0 then
+         "#{listFiles}"
+         # status API_RESOURCE_FOUND
+      else
+         puts "files not found"
+         status API_RESOURCE_NOT_FOUND
+      end
+   end
+   # ----------------------------------------------------------
+   
+   #
+   # minArcDelete
+   #
+   get "#{API_URL_DELETE}/:filename" do |filename|
       puts "==================================================="  
       puts 
-      puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
+      puts "MINARC_Server #{API_URL_DELETE} => #{params[:filename]}"
+
+      cmd = "minArcDelete -f #{params[:filename]} --noserver -D"
+
+      if settings.isDebugMode == true then  
+         "MINARC_Server::#{cmd}"
+      end
+
+      ret = system(cmd)
    
-      cmd = "#{ENV['MINARC_BASE']}/code/arc/minArcRetrieve -f #{params[:filename]}"
-   
-      puts cmd
-   
-      system(cmd)
-   
-      theFile = Dir["#{params[:filename]}*"]
-   
-      puts theFile
-   
-      send_file(theFile[0], :filename => theFile[0]) ########, :disposition => :attachment)
-   
-      rm(theFile[0])
-      
+      if ret == false then
+         puts "file #{params[:filename]} not found"
+         status API_RESOURCE_NOT_FOUND      
+      end
+
    end
    # ----------------------------------------------------------
 
    not_found do
-   "driverSinatra: page not found"
+      "driverSinatra: page not found"
    end
 
    # ----------------------------------------------------------

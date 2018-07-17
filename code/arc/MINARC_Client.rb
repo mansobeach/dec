@@ -78,6 +78,17 @@ class MINARC_Client
    end
    #------------------------------------------------
    
+   def listFile_By_Name(filename)
+      url = "#{@minArcServer}#{API_URL_LIST}/#{filename}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::listFile_By_Name => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)   
+   end
+   #------------------------------------------------
+   
    def retrieveFile(filename)
       url = "#{@minArcServer}#{API_URL_RETRIEVE}/#{filename}"
       if @isDebugMode == true then
@@ -85,7 +96,18 @@ class MINARC_Client
          puts "MINARC_Client::retrieveFile => #{url}"
          puts
       end
-      return getFile(url, filename)
+      return getFile(url, filename, @isDebugMode)
+   end
+   #------------------------------------------------
+   
+   def deleteFile(filename)
+      url = "#{@minArcServer}#{API_URL_DELETE}/#{filename}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::deleteFile => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)
    end
    #------------------------------------------------
    
