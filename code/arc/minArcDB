@@ -59,7 +59,12 @@ def main
          end
       end
    rescue Exception => e
-      puts e.to_s
+      # puts e.to_s
+      exit(99)
+   end
+
+   if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
+      puts "#{__FILE__} requires local mode configuration"
       exit(99)
    end
 
@@ -72,13 +77,24 @@ def main
    end
 
    if @bDown then
-      CreateArchivedFiles.down
-      exit(0)
+      begin
+         CreateArchivedFiles.down
+         if File.exist?(@dbName) == true then
+            File.delete(@dbName)
+         end
+         exit(0)
+      rescue
+         exit(99)
+      end
    end
 
    if @bUp then
-      CreateArchivedFiles.up
-      exit(0)
+      begin
+         CreateArchivedFiles.up
+         exit(0)
+      rescue
+         exit(99)
+      end
    end
  
    if @bUpdate then
@@ -99,8 +115,15 @@ end
 #-------------------------------------------------------------
 
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -15 #{fullpathFile}")
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -15 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
    exit
 end
 

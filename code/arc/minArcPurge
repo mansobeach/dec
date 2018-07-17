@@ -13,7 +13,7 @@
 # This is a confirmation flag
 #
 # == Usage
-# minArcPurge.rb [-Y]
+# minArcPurge [-Y]
 #
 #
 # == Author
@@ -70,10 +70,14 @@ def main
 
    pwd = Dir.pwd
 
-   # Clean-up for CECProductionTimeline
+   # ------------------------------------------------------------------
 
+   if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
+      puts "#{__FILE__} requires local mode configuration"
+      exit(99)
+   end
 
-   #------------------------------------------------------------------
+   # ------------------------------------------------------------------
    
    archiveRoot = ENV["MINARC_ARCHIVE_ROOT"]
 
@@ -103,9 +107,16 @@ end
 #-------------------------------------------------------------
 
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -24 #{fullpathFile}")
-   exit
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -24 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   exit   
 end
 
 #-------------------------------------------------------------

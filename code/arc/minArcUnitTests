@@ -17,8 +17,26 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
-require 'arc/MINARC_ConfigDevelopment'
+
+require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
+
+# Preconditions:
+# 1 - setup 
+# 1.1 - load_config_development
+# 1.2 - inventory database is created
+
+# 2 - teardown
+# 2.1 - purge archive
+# 2.2 - inventory database is destroyed
+
+
+#  1  - test_local_minArcStore
+#  2  - test_local_purge
+#  3  - test_remote_delete
+#  4  - test_remote_retrieve
+
+
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -42,6 +60,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       puts "do you want to continue Y/n" 
       puts
+      puts
       
       c = STDIN.getc
             
@@ -50,9 +69,69 @@ class TestCaseStore < Test::Unit::TestCase
          exit(99)
       end
       
+      @@conf = ARC_Manage_Config_Development.new
+      
+      @@conf.wrapper_load_config_development
+
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+ 
+      puts "call start teardown"
+      self.teardown
+      puts "call end teardown"
+
+
+      begin
+         cmd = "minArcPurge -Y"
+         puts cmd
+         # ret = system(cmd)
+      rescue
+      end
+
+      begin
+         cmd = "minArcDB -d"
+         puts cmd
+         ret = system(cmd)
+      rescue
+      end
+
+=begin
+      puts
+      puts "GEM DATADIR = #{Gem.datadir("minarc")}"
+      puts
+      
+      rootpath = nil
+      
+      if Gem.datadir("minarc") == nil then
+         rootpath = ENV['DEC_BASE']
+         @testDir = File.join(rootpath, "code/arc/plugins/test/")
+      else
+         rootpath = Gem.datadir("minarc")
+         @testDir = File.join(rootpath, "../../code/arc/plugins/test/")
+      end
+      
+=end
+      
+      @@testDataDir = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      @@testFile1   = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+
+      system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
+      system("rm -f #{@@testDataDir}/20110204T193316_000001.m2ts")
+
+
+      system("minArcServer -k")
+      prevDir = Dir.pwd
+      Dir.chdir(ENV['MINARC_TMP'])       
       puts "init server"
-      @serverPID = spawn("minArcServer")
+      FileUtils.rm_f("#{ENV['MINARC_TMP']}/minarc_server.out")
+      @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
+      Dir.chdir (prevDir)
       puts @serverPID
+      
+      
+      
    end
    
    #--------------------------------------------------------
@@ -61,10 +140,10 @@ class TestCaseStore < Test::Unit::TestCase
       puts "End of tests"
             
       puts "Killing MINARC_Server"
-      cmd = "kill -9 #{@serverPID}"
+      cmd = "minArcServer -k"
       system(cmd)
       
-      cmd = "rm -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.7z"
+      cmd = "\\rm -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336*"
       system(cmd)
       
    end
@@ -74,8 +153,13 @@ class TestCaseStore < Test::Unit::TestCase
    # Setup before every test-case
    #
    def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
       
-      load_config_development
+      @@conf.wrapper_load_config_development
       
       @path = "#{ENV['MINARC_BASE']}/code/arc"
       
@@ -83,63 +167,121 @@ class TestCaseStore < Test::Unit::TestCase
       ret = system(cmd)
       
       if ret == false then
+         puts
          puts "Error when creating the minarc inventory ! :-("
          puts
          # exit(99)
       end
       
-      cmd = "echo \"S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF\" > S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF"
-      system(cmd)
-      
-      @file = "#{Dir.pwd}/S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF"
    end
    #--------------------------------------------------------
    # After every test case
 
    def teardown
-       cmd = "minArcPurge -Y"
-       ret = system(cmd)
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
 
-       if ret == false then
-          puts "Error when cleaning the minarc root directory ! :-("
-          puts
-          exit(99)
-       end
+      @@conf.wrapper_load_config_development
 
-       cmd = "minArcDB -d"
-       ret = system(cmd)
+      # ENV.delete("MINARC_SERVER")
+
+      cmd = "minArcPurge -Y"
+      ret = system(cmd)
+
+      if ret == false then
+         puts "Error when cleaning the minarc root directory ! :-("
+         puts
+         exit(99)
+      end
+
+      cmd = "minArcDB -d"
+      puts cmd
+      ret = system(cmd)
        
-       if ret == false then
-          puts "Error when dropping the minarc inventory ! :-("
-          puts
-          exit(99)
-       end
+      if ret == false then
+         puts "Error when dropping the minarc inventory ! :-("
+         puts
+         exit(99)
+      end
    end
    #--------------------------------------------------------
 
 
    #-------------------------------------------------------------
 
-   def test_store
+   def test_local_minArcStore
+      puts __method__.to_s
       puts
       puts "================================================"
-      puts "MINARC_TestCases::test_store"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      cmd = "minArcStore -t S2PDGS -f #{@file} -D"
+      
+      @@conf.wrapper_load_config_development
+      
+      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -D --noserver"
       puts cmd
       assert(system(cmd), "minArcStore")
    end
    #--------------------------------------------------------
 
-   def test_delete
+
+   #--------------------------------------------------------
+
+   def test_local_purge
+      puts __method__.to_s
       puts
       puts "================================================"
-      puts "MINARC_TestCases::test_delete"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
    
-      test_store
+      test_local_minArcStore
    
-      cmd = "minArcDelete -f #{File.basename(@file, ".*")}"
+      cmd = "minArcPurge -Y"
+      puts cmd
+      assert(system(cmd), cmd)
+   end
+
+   #-------------------------------------------------------------
+
+   def test_remote_delete
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      test_local_minArcStore
+   
+      puts "Set environment variables to remote only"
+      @@conf.wrapper_setRemoteModeOnly
+      puts
+   
+      cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")}"
+      puts cmd
+      assert(system(cmd), "minArcDelete")
+   end
+
+   #-------------------------------------------------------------
+
+   #-------------------------------------------------------------
+
+   def test_remote_retrieve
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      test_local_minArcStore
+   
+      puts "Set environment variables to remote only"
+      @@conf.wrapper_setRemoteModeOnly
+      puts
+   
+      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")}"
       puts cmd
       assert(system(cmd), "minArcDelete")
    end
@@ -147,6 +289,12 @@ class TestCaseStore < Test::Unit::TestCase
    #-------------------------------------------------------------
 
    def test_remote_api_version
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
       arc = ARC::MINARC_Client.new
       # arc.setDebugMode
 
@@ -157,42 +305,135 @@ class TestCaseStore < Test::Unit::TestCase
    end
    #-------------------------------------------------------------
 
+=begin
    def test_remote_api_store
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
       
-      arc = ARC::MINARC_Client.new
+      arc = ARC::MINARC_Client.new(true)
       # arc.setDebugMode
 
       type     = "S2PDGS"
       bDelete  = false
-      assert( arc.storeFile(@file, type, bDelete) , "Verification remote API_URL_STORE: #{API_URL_STORE}")
+      assert( arc.storeFile("#{@@testDataDir}/#{@@testFile1}", type, bDelete) , "Verification remote API_URL_STORE: #{API_URL_STORE}")
+   end
+
+=end   #-------------------------------------------------------------
+
+   def test_remote_api_retrieve
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      test_local_minArcStore
+               
+      arc = ARC::MINARC_Client.new(true)
+      arc.setDebugMode
+#
+#      type     = "S2PDGS"
+#      bDelete  = false
+#      
+#      arc.storeFile(@file, type, bDelete)
+
+      dir1 = "1.#{__method__.to_s}"
+      
+      begin      
+         FileUtils.mkdir(dir1)
+      rescue Errno::EEXIST => e
+      
+      end
+
+      pwd = Dir.pwd
+      
+      Dir.chdir(dir1)
+
+
+      cmd = "\\rm -f #{File.basename(@@testFile1, ".*")}*"
+      puts cmd
+      system(cmd)
+
+      assert( \
+               arc.retrieveFile(File.basename(@@testFile1, ".*")), \
+               "Verification remote API_URL_RETRIEVE: #{API_URL_RETRIEVE}" \
+               )
+                     
+      arr = Dir["#{File.basename(@@testFile1, ".*")}*"]
+      
+      assert(!arr.empty?, "File retrieved #{arr[0]}")
+            
+      system("\\rm -f #{arr[0]}")
+      
+      Dir.chdir(pwd)
+      
+      system("\\rm -f #{dir1}*")         
    end
    #-------------------------------------------------------------
 
-   def test_remote_api_retrieve
-     
-      begin
-         FileUtils.rm("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336*")
-      rescue
+   def test_remote_api_delete
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      test_local_minArcStore
+      
+      puts
+      puts
+      
+      arc = ARC::MINARC_Client.new(true)
+      assert( \
+               arc.deleteFile(File.basename(@@testFile1, ".*") ), \
+               "Verification remote API_URL_DELETE: #{API_URL_DELETE}" \
+             )
+   end
+
+   #-------------------------------------------------------------
+
+   def test_handler_m2ts_local
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      @@conf.wrapper_load_config_development
+      
+      cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.m2ts -D --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcRetrieve -t m2ts -l --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      dir1 = "1.#{__method__.to_s}"
+      
+      begin      
+         FileUtils.mkdir(dir1)
+      rescue Errno::EEXIST => e
+      
       end
-      
-      arc = ARC::MINARC_Client.new
-      arc.setDebugMode
 
-      type     = "S2PDGS"
-      bDelete  = false
+      pwd = Dir.pwd
       
-      arc.storeFile(@file, type, bDelete)
+      Dir.chdir(dir1)
+      
+      cmd = "minArcRetrieve -f 20110204T193316_000001 --noserver -L #{Dir.pwd}"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      Dir.chdir(pwd)   
+   
+      cmd = "\\rm -rf #{dir1}*"
+      system(cmd)
 
-      assert( arc.retrieveFile("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336"),
-               "Verification remote API_URL_RETRIEVE: #{API_URL_RETRIEVE}")
-               
-      arr = Dir["S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336*"]
-      
-      puts "=================================================================="
-      puts "File retrieved"
-      puts arr
-      puts "=================================================================="
-               
    end
    #-------------------------------------------------------------
 

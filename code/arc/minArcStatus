@@ -172,8 +172,8 @@ end
 #-------------------------------------------------------------
 
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
+   fullpathFile = File.expand_path(__FILE__)
+      
    value = `#{"head -26 #{fullpathFile}"}`
       
    value.lines.drop(1).each{

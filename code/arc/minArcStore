@@ -82,6 +82,7 @@
 #
 # == Usage
 # minArcStore -f <full_path_file> [-t type-of-the-file] [-d] [-L <full_path_location>
+#     --noserver                 operations are performed locally
 #     --file <full_path_file>    it specifies the file to be archived
 #     --type <file-type>         it specifies the file-type of the file to be archived
 #     --Location <full_path>     it specifies the full_path desired archive location
@@ -118,8 +119,9 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
+require 'arc/MINARC_Environment'
 require 'arc/FileArchiver'
-require 'arc/MINARC_DatabaseModel'
+
 
 # Global variables
 @dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
@@ -145,12 +147,19 @@ def main
    @bHardLink              = false
    @bUpdate                = false
    @bInventoryOnly         = false
+   @bNoServer              = false
+   @bShowVersion           = false
+
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
    
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",               GetoptLong::REQUIRED_ARGUMENT],
      ["--Location", "-L",           GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
+     ["--noserver", "-n",           GetoptLong::NO_ARGUMENT],
      ["--Hardlink", "-H",           GetoptLong::NO_ARGUMENT],
      ["--Inventory", "-I",          GetoptLong::NO_ARGUMENT],
      ["--Types", "-T",              GetoptLong::NO_ARGUMENT],
@@ -170,12 +179,13 @@ def main
       opts.each do |opt, arg|
          case opt      
             when "--Debug"             then @isDebugMode          = true
+            when "--noserver"          then @bNoServer            = true
             when "--Profile"           then @isProfileMode        = true
             when "--Superbulk"         then @isSuperbulk          = true
             when "--delete"            then @bDelete              = true
             when "--move"              then @bMove                = true
             when "--update"            then @bUpdate              = true
-            when "--version"           then showVersion           = true
+            when "--version"           then @bShowVersion      = true
 	         when "--file"              then @full_path_filename   = arg.to_s
             when "--Location"          then @full_path_location   = arg.to_s
 	         when "--type"              then @filetype             = arg.to_s
@@ -197,30 +207,33 @@ def main
       @full_path_filename = @full_path_filename.dup.gsub!("\"","")
    end
 
-   if showVersion then 
-      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
-         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
-      else
-         puts "version.txt is not present !"
-         exit(99)
-      end
+   if ENV['MINARC_SERVER'] and @bNoServer == false then
+      @bRemoteMode = true
+   else
+      @bRemoteMode = false
+      require 'arc/MINARC_DatabaseModel'
+   end
 
-      binVersion = aFile.gets.chomp
-
-      puts
-      puts "Mini-Archive Component - Version #{binVersion}"
-      puts
-
-      aFile.close
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
       exit(0)
    end
  
    if bShowFileTypes then
-      arrFiles = ArchivedFile.getFileTypes()
-      arrFiles.each{|aFile|
-         puts aFile.filetype
-      }
-      exit(0)
+      if @bRemoteMode == false then
+         arrFiles = ArchivedFile.getFileTypes()
+         arrFiles.each{|aFile|
+            puts aFile.filetype
+         }
+         exit(0)
+      else
+         puts "Remote mode for getting file-type not implemeted yet ! :-p"
+         exit(99)
+      end
    end  
 
    if @bDelete and @bMove then
@@ -297,7 +310,7 @@ def main
 
 
 
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -421,21 +434,19 @@ def bulkArchive
 end
 #-------------------------------------------------------------
 
-# Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
-   value = `#{"head -106 #{fullpathFile}"}`
+
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -107 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
+   exit(0)
 end
-#-------------------------------------------------------------
-
 #-------------------------------------------------------------
 
 

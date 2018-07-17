@@ -5,7 +5,7 @@
 # This is a MINARC command line tool that shows status according to given criteria. 
 # 
 # == Usage
-# minArcServer 
+# minArcServer TBW TBW
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --list                     it lists the files that would be retrieved
 #                                according to the selection criteria
@@ -26,7 +26,7 @@
 #
 # === Mini Archive Component (MinArc)
 #
-# CVS: $Id: minArcDelete.rb,v 1.10 2008/09/24 10:18:26 decdev Exp $
+#  minArcServer
 #
 #########################################################################
 
@@ -34,7 +34,7 @@ require 'getoptlong'
 require 'rdoc'
 
 require 'cuc/Listener'
-require 'arc/MINARC_Server'
+# require 'arc/MINARC_Server' (cf. require below)
 
 
 # MAIN script function
@@ -42,49 +42,53 @@ def main
 
    @isDebugMode            = false
    showVersion             = false
+   @bCheckStatus           = false
+   @bStartServer           = false
+   @bStopServer            = false
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
-     ["--start", "-s",           GetoptLong::REQUIRED_ARGUMENT],
-     ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
-     ["--Report", "-R",          GetoptLong::REQUIRED_ARGUMENT],
+     ["--start", "-s",           GetoptLong::NO_ARGUMENT],
+     ["--kill",   "-k",          GetoptLong::NO_ARGUMENT],
+     ["--check", "-c",           GetoptLong::NO_ARGUMENT],
      ["--list", "-l",            GetoptLong::NO_ARGUMENT],
-     ["--global", "-g",          GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",            GetoptLong::NO_ARGUMENT],
-     ["--boundary_start_on",     GetoptLong::NO_ARGUMENT],
-     ["--boundary_end_on",       GetoptLong::NO_ARGUMENT]
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
-    
+   
+   
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--list"              then @bListOnly   = true
-            when "--global"            then @bGlobal     = true
-            when "--version"           then showVersion  = true
-            when "--file"              then @filename           = arg.to_s
-            when "--directory"         then @dirname            = arg.to_s
-                                            deleteDirectory
-	         when "--type"              then @filetype           = arg.to_s
-            when "--start"             then startVal            = arg.to_s
-            when "--end"               then endVal              = arg.to_s
-	         when "--Report"            then @full_report_name   = arg.to_s
+            when "--Debug"             then @isDebugMode          = true
+            when "--version"           then showVersion           = true
+            when "--start"             then @bStartServer         = true
+            when "--kill"              then @bStopServer          = true
+	         when "--check"             then @bCheckStatus         = true
 			   when "--help"              then usage
 	         when "--usage"             then usage
-            when "--boundary_start_on" then bIncStart           = true
-            when "--boundary_end_on"   then bIncEnd             = true
          end
       end
    rescue Exception
       exit(99)
    end
 
-   MINARC_Server.run!
+   if @bCheckStatus == true then
+      checkStatus
+   end
+
+   if @bStopServer == true then
+      stopServer
+   end
+
+   if @bStartServer == true then
+      startServer
+   end
+   
 
    exit(0)
 
@@ -92,11 +96,70 @@ end
 
 #-------------------------------------------------------------
 
+# It checks whether the server is running or not
+# It returns:
+# * 0 -> server is running
+# * 1 -> server is not running
+#
+def checkStatus
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
+   if @isDebugMode == true then
+      checker.setDebugMode
+   end
+   ret     = checker.isRunning
+   if ret == false then
+      puts "minArcServer is not running !"
+      exit(1)
+   else
+      puts "minArcServer is running :-)"
+      exit(0)
+   end
+end
+#-------------------------------------------------------------
+
+def startServer
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP']) 
+   if @locker.isRunning == true then
+      puts "\n#{File.basename($0)} is already running !\n\n"
+      exit(99)
+   end  
+   # Register in lock file the daemon
+   @locker.setRunning
+   
+   require 'arc/MINARC_Server'
+
+   MINARC_Server.run!
+
+   exit(0)
+   
+end
+#-------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+# It stops the listener for the given I/F
+def stopServer
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
+   pid     = checker.getRunningPID
+   if pid == false then
+      msg = "minArcServer was not running :-|"
+      puts msg
+      # @logger.info(msg)
+   else
+      puts "Sending signal SIGKILL to Process #{pid} for killing minArcServer"
+      Process.kill(9, pid.to_i)
+	   checker.release
+      # @logger.info("minArcServer has been shut-down")
+   end
+end
+#-------------------------------------------------------------
+
+
 #-------------------------------------------------------------
 
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
+   fullpathFile = File.expand_path(__FILE__)
+      
    value = `#{"head -26 #{fullpathFile}"}`
       
    value.lines.drop(1).each{

@@ -130,6 +130,7 @@
 #
 # == Usage
 # minArcRetrieve -t file-type -s <start> -e <end> -L <full_path_to_location> [-d] [-l]
+#     --noserver                 operations are performed locally
 #     --file <filename>          it retrieves a given filename
 #     --type <file-type>         it specifies the file-type of the file to be retrieved
 #     --start <YYYYMMDDThhmmss>  
@@ -200,6 +201,11 @@ def main
    bShowFileTypes          = false
    showVersion             = false
    bGetAllFiles            = false
+   @bNoServer              = false
+
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
 
    arrRules = Array["ALL", "OLDEST", "NEWEST", "FIRST", "LAST"]
    
@@ -214,6 +220,7 @@ def main
      ["--rule", "-r",                  GetoptLong::REQUIRED_ARGUMENT],
      ["--inv", "-i",                   GetoptLong::REQUIRED_ARGUMENT],
      ["--list", "-l",                  GetoptLong::NO_ARGUMENT],
+     ["--noserver", "-n",              GetoptLong::NO_ARGUMENT],
      ["--delete", "-d",                GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",                 GetoptLong::NO_ARGUMENT],
      ["--Hardlink", "-H",              GetoptLong::NO_ARGUMENT],
@@ -231,6 +238,7 @@ def main
       opts.each do |opt, arg|
          case opt      
             when "--Debug"             then @isDebugMode = true
+            when "--noserver"          then @bNoServer   = true
             when "--delete"            then @bDelete     = true
             when "--list"              then @bListOnly   = true
             when "--version"           then showVersion = true
@@ -253,10 +261,10 @@ def main
             when "--Unpack"            then @bUnpack            = true
          end
       end
-   rescue Exception
-      exit(99)
+   rescue Exception => e
+      # puts e.to_s
+      exit(0)
    end
-
 
    if showVersion then 
       if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
@@ -288,6 +296,11 @@ def main
 
 
    # Check all flags and combinations
+
+   if @filename == "" and @bListOnly == false then
+      usage
+   end
+
  
    if @bDelete == true and @bListOnly == true then
       usage
@@ -391,8 +404,7 @@ def main
       end
    end
 
-
-   fileRetriever = ARC::FileRetriever.new(@bListOnly)
+   fileRetriever = ARC::FileRetriever.new(@bListOnly, @bNoServer)
 
    if @isDebugMode == true then
       fileRetriever.setDebugMode
@@ -420,6 +432,12 @@ def main
    if @filename != "" then
       filename = @filename.gsub("*", "%")
       ret = fileRetriever.retrieve_by_name(@full_path_target, filename, @bDelete, @bHardLink, @bUnpack)
+   
+      if ret == false then
+         puts
+         puts "#{File.basename(filename, ".*")} not present in the archive :-|"
+         puts
+      end
    end
 
    if archive_date != "" then
@@ -465,16 +483,16 @@ end
 
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
-   value = `#{"head -157 #{fullpathFile}"}`
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -158 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
+   exit(0)
 end
 #-------------------------------------------------------------
 
