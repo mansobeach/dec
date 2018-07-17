@@ -24,27 +24,29 @@ require 'rubygems'
 require 'mini_exiftool'
 require 'exiftool'
 
+require 'filesize'
 require 'cuc/Converters'
 require 'cuc/WrapperExifTool'
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/MINARC_DatabaseModel'
 
 include CUC::Converters
 
 class Handler_M2TS
-   @type             = ""
-   @filename         = ""
-   @validated        = false
-   @start            = nil
-   @stop             = nil
-   @generation_date  = nil
-   @full_path_filename = ""
    
-   attr_reader :archive_path
-
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename
+   
+   @type                = ""
+   @filename            = ""
+   @validated           = false
+   @start               = nil
+   @stop                = nil
+   @generation_date     = nil
+   @full_path_filename  = ""
+   
    #------------------------------------------------
 
    # Class constructor
-   def initialize (full_path_name, destination = nil)
+   def initialize (full_path_name, destination = nil, args = {})
       full_path   = File.dirname(full_path_name)
       @filename   = File.basename(full_path_name)
       basename    = File.basename(full_path_name, ".*")
@@ -55,75 +57,37 @@ class Handler_M2TS
       width       = nil
       height      = nil
       
+      puts "------"
+      puts full_path_name
+      puts full_path
+      puts @filename
+      puts basename
+      puts extension
+      puts "------"
       
                
-#                puts "PEDO"
-#       puts extension
-#       puts basename.slice(0,1)
-#       exit
-
             
       # ------------------------------------------
       # Handle revised videos name
       # Rx_20130730T174343.m2ts
 
-      if extension == ".m2ts" and basename.slice(0,1) == "R" then
-         rev            = basename.split("_")[0]
-        # basename       = basename.split("_")[1]
-        # full_path_name = "#{full_path}/#{basename}.m2ts"
-         
-         pwd      = Dir.pwd
-         Dir.chdir(full_path)
-               
-         # ------------------------------------------
-         # Check whether such file has been previously archived      
-      
-         aFile = ArchivedFile.find_by_filename(basename)
-      
-         if aFile != nil then
-            puts "File #{@filename} is already archived with name #{basename}"
-            puts
-            exit(1)
-         end
-      
-         # ------------------------------------------
-              
-               
-#          # -----------------------------
-#          # Rename File or Copy      
-#          cmd         = "mv \"#{@filename}\" \"#{basename}.m2ts\""
-#          cmd         = "cp \"#{@filename}\" \"#{basename}.m2ts\""
-#          puts
-#          puts cmd
-#          puts
-#          system(cmd)
-#          # -----------------------------
-         
-         Dir.chdir(pwd)
-        
+      if extension != ".m2ts" then         
+         puts "File extension is not handled by #{self.class}::#{__method__.to_s}"
+         exit(99)
       end
       # ------------------------------------------      
       
-      # puts extension
       
-      if extension == ".m2ts" then            
-         begin
-         
-            puts
-            puts full_path_name
-            puts
-            
-            # exit
+      begin
                       
-            # Change to local directory to avoid full path names with spaces
-            # that makes fail MiniExiftool wrapper
+         # Change to local directory to avoid full path names with spaces
+         # that makes fail MiniExiftool wrapper
                         
-            mdata    = MiniExiftool.new "\"#{full_path_name}\""
-            width    = mdata.image_width
-            height   = mdata.image_height
-            duration = mdata.duration
-
-            puts "KAKA"
+         mdata    = MiniExiftool.new full_path_name
+         # mdata    = MiniExiftool.new "\"#{full_path_name}\""
+         width    = mdata.image_width
+         height   = mdata.image_height
+         duration = mdata.duration
 
             if width == 720 and height == 576 then
                @type  = "m2ts_sd"
@@ -139,86 +103,51 @@ class Handler_M2TS
 #             puts mdata.date
             
             # puts mdata.mime_type
-         rescue MiniExiftool::Error => e
-            puts "Error in MINARC::Handler_M2TS"
-            $stderr.puts e.message
-            exit(99)
-         end  
+      rescue MiniExiftool::Error => e
+         puts "Error in MINARC::Handler_M2TS"
+         $stderr.puts e.message
+         exit(99)
+      end  
    
-         # Compute duration
-         if duration.include?(":") == true then
-            arr      = duration.split(":")
-            duration = (arr[0].to_i * 3600 + arr[1].to_i * 60 + arr[2].to_i).to_s.rjust(6, '0')
-         else
-            duration = mdata.duration.to_i.to_s.rjust(6, '0')
-         end
-   
-         arr         = tStart.to_s.gsub!("-", "").gsub!(":", "").split(" ")         
-         @filename   = "#{arr[0]}T#{arr[1]}_#{duration}#{extension}" # .m2ts"
-         
-         if rev == nil then
-            @filename   = "#{basename.slice(0,8)}T#{basename.slice(8,6)}_#{duration}#{extension}" # .m2ts"
-         else
-            @filename   = "#{basename}_#{duration}_#{rev}#{extension}" # .m2ts"         
-         end
-         
-         year        = arr[0].slice(0, 4)
-      
-         @full_path_filename = "#{full_path}/#{@filename}"
-
-         cmd         = "mv \"#{full_path_name}\" \"#{@full_path_filename}\""
-         cmd         = "cp \"#{full_path_name}\" \"#{@full_path_filename}\""
-         puts
-         puts cmd
-         puts
-         
-#          puts arr[0]
-#          puts arr[1]
-#          
-#          puts tStart
-#          puts basename
-#          puts @filename
-#          
-          exit
-         
-         ret         = system(cmd)
-         
-         # ------------------------------------------
-      
-         tEnd        = tStart + duration.to_i      
-         @start      = tStart
-         @stop       = tEnd
-         @generation_date  = @start
-         @validated  = true
-
+      # Compute duration
+      if duration.include?(":") == true then
+         arr      = duration.split(":")
+         duration = (arr[0].to_i * 3600 + arr[1].to_i * 60 + arr[2].to_i).to_s.rjust(6, '0')
       else
-         # ---------------------------------------
-         # Handle other file extensions
-         
-         aFile = ArchivedFile.where("filename LIKE :prefix", prefix: "%#{basename}%.m2ts").load
-         
-         if aFile.first == nil then
-            puts "No m2ts file archived with name #{basename}"
-            @validated  = false
-            return
-         end
-
-         @full_path_filename  = "#{full_path}/#{@filename}"
-         @start               = aFile.first.validity_start
-         @stop                = aFile.first.validity_stop
-         @type                = "m2ts"
-         @validated           = true
-         # ---------------------------------------
+         duration = mdata.duration.to_i.to_s.rjust(6, '0')
       end
+      
+      arr         = tStart.to_s.gsub!("-", "").gsub!(":", "").split(" ")                  
+      year        = arr[0].slice(0, 4)
+      month       = arr[0].slice(4, 2)
+      day         = arr[0].slice(6, 2)
+      
+      @filename            = "#{arr[0]}T#{arr[1]}_#{duration}#{extension}" # .m2ts"
+      @full_path_filename  = "#{full_path}/#{@filename}"
+
+      # cmd         = "mv \"#{full_path_name}\" \"#{@full_path_filename}\""
+      cmd         = "cp \"#{full_path_name}\" \"#{@full_path_filename}\""
+      ret         = system(cmd)
+         
+      # ------------------------------------------
+      
+      tEnd        = tStart + duration.to_i      
+      @start      = tStart
+      @stop       = tEnd
+      @generation_date  = @start
+      @validated  = true
       
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
-      @archive_path  = "#{archRoot}/#{@type}/#{year}"
+      @archive_path  = "#{archRoot}/#{@type}/#{year}/#{year}#{month}#{day}"
+            
+      @size          = File.size(@full_path_filename)
+      result         = `du -hs #{@full_path_filename}`
       
-      if destination != nil then
-         @archive_path = destination
+      begin
+         @size_in_disk  = Filesize.from("#{result.split(" ")[0]}iB").to_int
+      rescue Exception => e
+         @size_in_disk  = 0
       end
-      
-      # exit
       
    end
 
