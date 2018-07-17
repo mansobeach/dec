@@ -1,0 +1,283 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #MINARC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Mini Archive Component (MinArc)
+# 
+# module MINARC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'arc/MINARC_Client'
+
+# Preconditions:
+# - inventory database is created
+# - minArcServer is running
+
+#  1   - test_remotecmd_store_plugin_S2PDGS
+#  2   - test_remotecmd_retrieve_list
+#  3   - test_remotecmd_retrieve_file
+#  4   - test_remotecmd_retrieve_non_existing_file
+#  5   - test_remotecmd_delete
+#  6   - test_remotecmd_delete_nonexisting_file
+#  7   - test_remotecmd_retrieve_file_2_consumers
+
+# need to distinguish error cases from curl (server not running) from file not found
+
+class MINARC_SmokeTestRemote < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include ARC
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "MINARC Smoke Test Cases"
+      puts
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+                  
+      if c != 'Y' then
+         exit(99)
+      end
+      
+      @@testDataDir = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      @@testFile1   = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      
+   end
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "end of test suite"      
+      cmd = "rm -f #{@testFile1}"
+      system(cmd)      
+   end
+   
+   #--------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      # load_config_development
+   end
+   #--------------------------------------------------------
+   # After every test case
+
+   def teardown
+      puts "end of test-case"
+   end
+   #--------------------------------------------------------
+
+
+   #--------------------------------------------------------
+
+   def test_remotecmd_store_plugin_S2PDGS
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDelete --noserver -f #{File.basename(@@testFile1, ".*")}"
+      system(cmd)
+
+      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d -D"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+   end
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   def test_remotecmd_retrieve_list
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      cmd = "minArcRetrieve -l -f #{File.basename(@@testFile1, ".*")}"
+      puts cmd
+      assert(system(cmd), cmd)
+   end
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   def test_remotecmd_retrieve_file
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")}"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      arr = Dir["#{File.basename(@@testFile1, ".*")}*"]
+      
+      assert(arr.empty? == false)
+      
+      FileUtils.rm(arr[0])
+      
+      # puts arr[0]
+      
+   end
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   # verify exit code 99 when file does not exist
+   def test_remotecmd_retrieve_non_existing_file
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      cmd = "minArcRetrieve -f toto"
+      puts cmd
+      assert(!system(cmd), "#{cmd} => ${$?}")      
+   end
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+
+   def test_remotecmd_delete
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+   
+      test_remotecmd_store_plugin_S2PDGS
+   
+      cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")}"
+      puts cmd
+      assert(system(cmd), "minArcDelete")
+   end
+
+
+   #--------------------------------------------------------
+   
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+   
+   def test_remotecmd_delete_nonexisting_file
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+        
+      cmd = "minArcDelete -f toto"
+      puts cmd
+      assert(!system(cmd), "minArcDelete non existing file")
+   end
+
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+   #--------------------------------------------------------
+
+   #--------------------------------------------------------
+   # (same $PWD and same file retrieved into different locations)
+   
+   def test_remotecmd_retrieve_file_2_consumers
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      
+      puts "----------------------------"
+      puts "precondition start"
+      puts
+      test_remotecmd_store_plugin_S2PDGS
+      puts
+      puts "precondition end"
+      puts "----------------------------"
+         
+      dir1 = "1.#{__method__.to_s}"
+      dir2 = "2.#{__method__.to_s}"
+      
+      begin      
+         FileUtils.mkdir(dir1)
+         FileUtils.mkdir(dir2)
+      rescue Errno::EEXIST => e
+      
+      end
+   
+      cmd1 = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -L #{Dir.pwd}/#{dir1} -D"
+      cmd2 = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -L #{Dir.pwd}/#{dir2} -D"
+   
+      puts cmd1
+      puts cmd2
+   
+      pid1 = spawn(cmd1)
+      pid2 = spawn(cmd2)   
+ 
+      arr = Process.waitall
+         
+      arr.each{|child|
+            assert(child[1].exitstatus == 0, "minArcRetrieve")
+       }
+
+      arr = Dir["#{dir1}/#{File.basename(@@testFile1, ".*")}*"]
+      assert(!arr.empty?, "Failed to retrieve file in #{dir1}")
+
+      arr = Dir["#{dir2}/#{File.basename(@@testFile1, ".*")}*"]
+      assert(!arr.empty?, "Failed to retrieve file in #{dir2}")
+      
+#      FileUtils.rm_rf("#{dir1}*",  :verbose => true)
+#      FileUtils.rm_rf("#{dir2}*",  :verbose => true)
+ 
+      cmd = "\\rm -rf #{dir1}*"
+      system(cmd)
+      
+      cmd = "\\rm -rf #{dir2}*"
+      system(cmd)
+       
+   end
+
+
+   #--------------------------------------------------------
+
+   #-------------------------------------------------------------
+
+end
+
+
+#=====================================================================
+
+
+#-----------------------------------------------------------
+
+
