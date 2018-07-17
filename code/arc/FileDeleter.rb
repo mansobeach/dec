@@ -14,10 +14,12 @@
 #
 #########################################################################
 
-require "cuc/DirUtils"
-require "cuc/EE_ReadFileName"
-require "arc/MINARC_DatabaseModel"
-require "arc/ReportEditor"
+require 'cuc/DirUtils'
+require 'cuc/EE_ReadFileName'
+
+require 'arc/MINARC_Client'
+require 'arc/ReportEditor'
+require 'arc/ReportEditor'
 
 module ARC
 
@@ -27,9 +29,18 @@ class FileDeleter
    #-------------------------------------------------------------   
    
    # Class contructor
-   def initialize(bListOnly = false)
+   def initialize(bListOnly = false, bNoServer = false)
       @bListOnly     = bListOnly
+      
+      if ENV['MINARC_SERVER'] and !bNoServer then
+         @bRemoteMode = true
+      else
+         @bRemoteMode = false
+         require 'arc/MINARC_DatabaseModel'
+      end
+
       checkModuleIntegrity
+      
    end
    #-------------------------------------------------------------
    
@@ -88,16 +99,41 @@ class FileDeleter
    end
    #-------------------------------------------------------------
 
+   def remote_delete_by_name(filename)
+      if @isDebugMode == true then
+         puts "FileRetriever::remote_delete_by_name"
+      end
+      arc = ARC::MINARC_Client.new
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+      ret = arc.deleteFile(filename)
+      return ret
+   end
+   #-------------------------------------------------------------
+
    def delete_by_name(filename)
+      if @bRemoteMode == true then
+         ret = remote_delete_by_name(filename)
+         if ret == false then
+            return ret
+         end
+         puts "(Deleted)  : " << filename
+         return true
+      end
 
       # aFile = ArchivedFile.find_by_filename(filename)
 
       aFile = ArchivedFile.where("filename LIKE ?", "%#{File.basename(filename, ".*")}%")
 
       if aFile.to_a.length == 0 then
-         puts
-         puts "#{File.basename(filename, ".*")} not present in the archive :-|"
-         puts            
+=begin
+         if @isDebugMode == true then
+            puts
+            puts "#{File.basename(filename, ".*")} not present in the archive :-|"
+            puts            
+         end
+=end         
          return false
       end
       
@@ -129,7 +165,7 @@ private
       bDefined = true
       bCheckOK = true
       
-      if !ENV['MINARC_ARCHIVE_ROOT'] then
+      if !ENV['MINARC_ARCHIVE_ROOT'] and @bRemoteMode == false then
          puts
          puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
          bDefined = false

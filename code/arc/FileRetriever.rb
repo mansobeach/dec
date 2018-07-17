@@ -14,12 +14,14 @@
 #
 #########################################################################
 
-require "cuc/DirUtils"
-require "cuc/FT_PackageUtils"
-require "cuc/EE_ReadFileName"
-require "arc/MINARC_DatabaseModel"
-require "arc/ReportEditor"
-require "arc/FileDeleter"
+require 'cuc/DirUtils'
+require 'cuc/FT_PackageUtils'
+require 'cuc/EE_ReadFileName'
+
+require 'arc/MINARC_Client'
+require 'arc/ReportEditor'
+require 'arc/FileDeleter'
+
 
 module ARC
 
@@ -29,10 +31,18 @@ class FileRetriever
    #-------------------------------------------------------------   
    
    # Class contructor
-   def initialize(bListOnly = false)
+   def initialize(bListOnly = false, bNoServer = false)
       @bListOnly     = bListOnly
       @rule          = "ALL"
       @arrInv        = Array.new
+      
+      if ENV['MINARC_SERVER'] and !bNoServer then
+         @bRemoteMode = true
+      else
+         @bRemoteMode = false
+         require 'arc/MINARC_DatabaseModel'
+      end
+
       checkModuleIntegrity
    end
    #-------------------------------------------------------------
@@ -190,7 +200,90 @@ class FileRetriever
    end
    #-------------------------------------------------------------
 
+   def remote_list_by_name(filename)
+      if @isDebugMode == true then
+         puts "FileRetriever::#{__method__.to_s}"
+      end
+      arc = ARC::MINARC_Client.new
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+      
+      ret = arc.listFile_By_Name(filename)
+      
+      if ret == false then
+         return false
+      else
+         puts ret
+         return true
+      end
+   end
+   #-------------------------------------------------------------
+
+   def remote_retrieve_by_name(filename, destination, bUnpack)
+      if @isDebugMode == true then
+         puts "FileRetriever::#{__method__.to_s}"
+      end
+      arc = ARC::MINARC_Client.new
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+      
+      ret = arc.retrieveFile(filename)
+      
+      if ret == true then
+            
+         # Creating the destination directory if necessary
+         
+         if !checkDir(destination) then
+            puts "'#{destination}' is not a valid path for extracting the file(s) !"
+            return false
+         end
+
+         arr = Dir["#{filename}*"]
+
+         arr.each{|file|
+            
+            begin
+               FileUtils.mv(file, destination)
+            # rescue Errno::EEXIST => e
+            rescue Exception => e
+               puts e.to_s
+            end
+            
+            puts "(Retrieved) : " << file
+            
+            if bUnpack == true then    
+               unPackFile(destination, file)
+            end
+
+         }
+
+
+      end
+      
+      return ret
+   end
+   #-------------------------------------------------------------
+
    def retrieve_by_name(destination, filename, bDelete = false, bHardlink = false, bUnpack = false)
+
+      if @bRemoteMode == true then
+      
+         ret = false
+      
+         if @bListOnly == false then
+            ret = remote_retrieve_by_name(filename, destination, bUnpack)
+         
+            if ret == false then
+               return ret
+            end
+            return true
+         else
+            ret = remote_list_by_name(filename)
+         end
+         return ret
+      end
 
       @arrInv  = Array.new
 
@@ -205,7 +298,7 @@ class FileRetriever
             aFile.save
          end
       
-         if bUnpack == true then    
+         if bUnpack == true then
             unPackFile(destination, aFile.filename)
          end
          return retVal
@@ -230,9 +323,13 @@ class FileRetriever
                                           aFile.archive_date, bDelete, bHardlink, aFile.path)
 
                if retVal then
-                  aFile.last_access_date = Time.now
-                  aFile.access_counter   = aFile.access_counter + 1
-                  aFile.save
+                  begin
+                     aFile.last_access_date = Time.now
+                     aFile.access_counter   = aFile.access_counter + 1
+                     aFile.save
+                  rescue Exception => e
+                     puts "Could not update access_counter / access_date for #{aFile.filename}"
+                  end
                   
                   if bUnpack == true then    
                      unPackFile(destination, aFile.filename)
@@ -294,7 +391,7 @@ private
       bDefined = true
       bCheckOK = true
       
-      if !ENV['MINARC_ARCHIVE_ROOT'] then
+      if !ENV['MINARC_ARCHIVE_ROOT'] and @bRemoteMode == false then
          puts
          puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
          bDefined = false

@@ -19,7 +19,7 @@ require 'benchmark'
 require 'cuc/DirUtils'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
-require 'arc/MINARC_DatabaseModel'
+
 require 'arc/FileDeleter'
 
 module ARC
@@ -34,7 +34,7 @@ class FileArchiver
    # Class contructor
    # move : boolean. If true a move is made, otherwise it is moved from source
    # debug: boolean. If true it shows debug info.
-   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, debugMode = false)
+   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = false, debugMode = false)
       @bMove               = bMove
       @bHLink              = bHLink
       @bUpdate             = bUpdate
@@ -42,7 +42,16 @@ class FileArchiver
       @bIsAlreadyArchived  = false
       @isDebugMode         = debugMode
       @isProfileMode       = false
+      
+      if ENV['MINARC_SERVER'] and !bNoServer then
+         @bRemoteMode = true
+      else
+         @bRemoteMode = false
+         require 'arc/MINARC_DatabaseModel'
+      end
+
       checkModuleIntegrity
+      
    end
    #------------------------------------------------
    
@@ -67,6 +76,11 @@ class FileArchiver
                arrAddFields = nil, full_path_location = nil,\
                size = 0, size_in_disk = 0, size_original = 0)
                
+      if @bRemoteMode == true then
+         puts "FileArchiver::bulkarchive remote not supported yet :-("
+         exit(99)
+      end
+
       handler = ""
       rubylibs = ENV['RUBYLIB'].split(':')
       rubylibs.each {|path|
@@ -245,11 +259,36 @@ class FileArchiver
             
    end
    
-   #------------------------------------------------
+   #--------------------------------------------------------
+   
+   def remote_archive(full_path_file, fileType, bDelete)
+      
+      # puts "#{__method__.to_s}"
+      
+      arc = ARC::MINARC_Client.new(@isDebugMode)
+      
+      # arc.setDebugMode
+
+      ret = arc.storeFile(full_path_file, fileType, bDelete)
+
+      if ret == true then
+         puts "(Archived) : " << File.basename(full_path_file, ".*")
+      end
+
+      return ret
+
+   end
+   #--------------------------------------------------------
+   #
    # Main method of the class.
    def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false,\
                arrAddFields = nil, full_path_location = nil,\
                size = 0, size_in_disk = 0, size_original = 0)
+      
+      if @bRemoteMode == true then
+         return remote_archive(full_path_file, fileType, bDelete)
+      end
+      
                
       path = ""
 
@@ -433,6 +472,13 @@ class FileArchiver
    #------------------------------------------------
 
    def reallocate(fp_file)
+   
+      if @bRemoteMode == true then
+         puts "FileArchiver::reallocate remote not supported yet :-("
+         exit(99)
+      end
+   
+   
       full_path_file = fp_file.dup
       newpath        = File.dirname(full_path_file)
       filename       = File.basename(full_path_file)
@@ -468,24 +514,28 @@ private
    # Check that everything needed by the class is present.
    #-------------------------------------------------------------
    def checkModuleIntegrity
-      
-      if ENV['MINARC_ARCHIVE_ROOT'] then
+            
+      if ENV['MINARC_ARCHIVE_ROOT'] and @bRemoteMode == false then
          @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
       else
-         puts
-         puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
-         puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
-         exit(99)
+         if @bRemoteMode == false then
+            puts
+            puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
+            puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
+            exit(99)
+         end
       end
 
-      if ENV['MINARC_ARCHIVE_ERROR'] then
+      if ENV['MINARC_ARCHIVE_ERROR'] and @bRemoteMode == false then
          @archiveError = ENV['MINARC_ARCHIVE_ERROR']
          checkDirectory(@archiveError)
       else
-         puts
-         puts "MINARC_ARCHIVE_ERROR environment variable is not defined !\n"
-         puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
-         exit(99)
+         if @bRemoteMode == false then
+            puts
+            puts "MINARC_ARCHIVE_ERROR environment variable is not defined !\n"
+            puts("FileArchiver::checkModuleIntegrity FAILED !\n\n")
+            exit(99)
+         end
       end
 
 
