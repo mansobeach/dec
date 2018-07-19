@@ -1,1 +1,4 @@
-docker image build -t app_dec:latest .
+docker image build -t app_minarc:latest .
+
+docker container run --name minarc -it app_minarc:latest /bin/bash
+
