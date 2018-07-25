@@ -1,0 +1,7 @@
+== Networking profile ==
+
+http://www.joedog.org/siege-home
+
+http://httpd.apache.org/docs/2.4/programs/ab.html
+
+nohup bash -c "while true; do ./dags-stats.sh pac1 >> dags_pac1.txt ; sleep 60; done &"
