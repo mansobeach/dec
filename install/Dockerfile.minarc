@@ -1,0 +1,58 @@
+# FROM ruby:2.4
+# FROM ruby:slim
+FROM ruby:2.4.1-slim
+
+# ================================================
+
+
+# ================================================
+
+
+# RUN apt-get update && apt-get install -y net-tools
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends build-essential gcc make sqlite3 libsqlite3-dev exiftool
+
+# ------------------------------------------------
+# Install ruby gem dependencies
+COPY Gemfile .
+RUN bundle install
+# ------------------------------------------------
+
+# ================================================
+
+COPY minarc.gem .
+RUN gem install --local minarc.gem
+# ------------------------------------------------
+
+# ------------------------------------------------
+
+RUN mkdir -p /minarc_root/0.tmp && \
+    mkdir -p /minarc_root/archive/ && \
+    mkdir -p /minarc_root/error
+    
+# ================================================
+
+# MINARC Environment Variables
+
+ENV DCC_TMP                            /minarc_root/0.tmp
+ENV TMP_DIR                            /minarc_root/0.tmp
+ENV RACK_ENV                           production
+ENV MINARC_VERSION                     DEPRECATED_VARIABLE
+ENV MINARC_SERVER                      http://localhost:4567
+ENV MINARC_DB_ADAPTER                  sqlite3
+ENV MINARC_ARCHIVE_ROOT                /minarc_root/archive/
+ENV MINARC_ARCHIVE_ERROR               /minarc_root/error/
+ENV MINARC_TMP                         /minarc_root/0.tmp
+ENV MINARC_DATABASE_NAME               /minarc_root/inventory/minarc_inventory
+ENV MINARC_DATABASE_USER               root
+ENV MINARC_DATABASE_PASSWORD           1mysql
+
+# ================================================
+
+# ------------------------------------------------
+
+ENV PORT 4567
+EXPOSE 4567
+
+CMD ["minArcServer -s"]
