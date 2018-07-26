@@ -47,7 +47,7 @@ class FileDeliverer2InTrays
 		@dimConfig = DCC::ReadInTrayConfig.instance
       
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("FileDeliverer2InTrays", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("FileDeliverer2InTrays", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -56,7 +56,7 @@ class FileDeliverer2InTrays
          puts
 			puts "Error in FileDeliverer2InTrays::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)
@@ -319,10 +319,26 @@ private
    def checkModuleIntegrity      
       bDefined = true
       bCheckOK = true
+ 
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "DCC_CONFIG environment variable not defined !  :-(\n"
+         bCheckOK = false
+         bDefined = false
+      end
+
+      configDir = nil
+         
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end        
+            
+      @@configDirectory = configDir
          
       if bCheckOK == false then
-        puts "FileDeliverer2InTrays::checkModuleIntegrity FAILED !\n\n"
-        exit(99)
+         puts "FileDeliverer2InTrays::checkModuleIntegrity FAILED !\n\n"
+         exit(99)
       end      
    end
    #-------------------------------------------------------------
