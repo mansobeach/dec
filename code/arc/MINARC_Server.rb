@@ -17,9 +17,6 @@ include ARC
 
 # C R U D 
 
-@minarc_version = "01.00.00"
-
-
 # ----------------------------------------------------------
 #
 # GENERAL configuration
@@ -60,33 +57,48 @@ class MINARC_Server < Sinatra::Base
 
    configure :production do
       # production configuration
+
+      puts
+      puts "Loading production configuration"
+      puts
+
       @isDebugMode = false
+      
+      puts ""
+      puts "========================================"
+      puts "Production Environment:"
+      print_environment
+      puts "========================================"
+      puts
+      puts
    end
    # ----------------------------------------------------------
 
    configure :development do
       # development configuration
-      
-      @isDebugMode = true
-      
+            
       puts
       puts "Loading development configuration"
       puts
    
+      @isDebugMode = true   
+   
       load_config_development
-         
+               
+      puts "========================================"
+      puts "Development Environment:"
+      print_environment
+      puts "========================================"
+      puts
+      puts
+
       checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
       checkDirectory("#{ENV['HOME']}/Sandbox/minarc/inv")
       checkDirectory(ENV['TMPDIR'])
    
       Dir.chdir(ENV['TMPDIR'])
-      
-      puts "========================================"
-      print_environment
-      puts "========================================"
-      puts
-      puts
+
 
    end
    # ----------------------------------------------------------
@@ -102,8 +114,8 @@ class MINARC_Server < Sinatra::Base
    # curl -X GET http://localhost:4567/dec/arc/version
 
    get ARC::API_URL_VERSION do
-      puts "minarc version: #{ENV['MINARC_VERSION']}"
-      "#{ENV['MINARC_VERSION']}"
+      puts "minarc version: #{ARC.class_variable_get(:@@version)}}"
+      "#{ARC.class_variable_get(:@@version)}}"
    end
 
    # ----------------------------------------------------------
