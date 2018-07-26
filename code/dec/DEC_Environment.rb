@@ -14,15 +14,18 @@
 #
 #########################################################################
 
-# 1.0.0     is the first installer created
-# 1.0.1     decStats -H <hours> has been integrated
-
 require 'rubygems'
 
 module DEC
    
    @@version = "1.0.1"
    
+   # -----------------------------------------------------------------
+   
+   @@change_record = { \
+      "1.0.0"  =>    "first version of the dec installer created", \
+      "1.0.1"  =>    "decStats -H <hours> has been integrated" \
+   }
    # -----------------------------------------------------------------
    
    def load_config_development      
