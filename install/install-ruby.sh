@@ -1,13 +1,17 @@
- #!/usr/bin/env bash
+#!/usr/bin/env bash
 
- source $HOME/.rvm/scripts/rvm || source /etc/profile.d/rvm.sh
+source $HOME/.rvm/scripts/rvm || source /etc/profile.d/rvm.sh
 
- rvm use --default --install $1
+rvm use --default --install $1
 
- shift
+shift
 
- if (( $# ))
+if (( $# ))
  then gem install $@
- fi
+fi
 
- rvm cleanup all
+rvm cleanup all
+
+gem install bundler
+
+gem update --system
