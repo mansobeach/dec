@@ -16,7 +16,7 @@
 
 require 'filesize'
 
-require 'dbm/DatabaseModel'
+# require 'dbm/DatabaseModel'
 
 module DCC
 
@@ -52,12 +52,10 @@ class StatisticDCC
                   
       lastHourFiles     = ReceivedFile.select("filename, interface_id").where('reception_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
       
-      puts
       
       lastHourFiles.load.to_a.each{|item|
          puts "#{item.interface.name.to_s.ljust(15)} - #{item.filename}"
       }
-      puts
 
       puts      
       puts "Last received file #{ReceivedFile.last.reception_date}"

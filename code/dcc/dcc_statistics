@@ -5,13 +5,9 @@
 # This is a DCC command line tool that shows file reception statistics  
 # 
 # == Usage
-# dccStats
+# dcc_statistics
 #     --file <filename>          status of a given filename
-#     --type <filetype>          file-type of the file to be deleted
 #     --global  
-#     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
-#     --list                     it lists the files that would be retrieved
-#                                according to the selection criteria
 #     --help                     shows this help
 #     --usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
@@ -48,6 +44,7 @@ def main
    startVal                   = ""
    endVal                     = ""
    @bGlobal                   = false
+   @filename                  = ""
 
    @full_report_name          = ""
 
@@ -65,6 +62,7 @@ def main
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
     
@@ -74,6 +72,7 @@ def main
             when "--Debug"             then @isDebugMode = true
             when "--list"              then @bListOnly   = true
             when "--global"            then @bGlobal     = true
+            when "--file"              then @filename    = arg.to_s
             when "--version"           then showVersion  = true
 			   when "--help"              then usage
 	         when "--usage"             then usage
@@ -81,6 +80,14 @@ def main
       end
    rescue Exception
       exit(99)
+   end
+
+   if @bGlobal == true and @filename != ""
+      usage
+   end
+
+   if @filename != ""
+      queryFile
    end
 
    stats = DCC::StatisticDCC.new
@@ -93,12 +100,29 @@ end
 
 #-------------------------------------------------------------
 
+def queryFile
+   aFile = File.basename(@filename, ".*") 
+   aFile = "#{aFile}%"
+   files = ReceivedFile.where("filename LIKE ?", aFile)
+   puts
+   files.each{|file|
+      puts file.filename
+      puts Interface.find_by_id(file.interface_id).name
+      puts file.reception_date
+      puts file.size
+      puts file.protocol
+      puts
+   }
+   
+   exit(0)
+end
+
 #-------------------------------------------------------------
 
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -26 #{fullpathFile}"}`
+   value = `#{"head -22 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

@@ -517,7 +517,7 @@ end
 
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
+   fullpathFile = File.expand_path(__FILE__) 
    
    value = `#{"head -27 #{fullpathFile}"}`
       
