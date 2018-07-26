@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.0'
+  s.version     = '1.0.2'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
   
   s.files       = Dir['code/arc/*.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
-                  Dir['code/arc/plugins/test/*'] + \
+                  Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF'] + \
+                  Dir['code/arc/plugins/test/example_1.m2ts'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
                   Dir['config/profile_minarc_sqlite3'] + \
