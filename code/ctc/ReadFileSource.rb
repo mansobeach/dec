@@ -310,15 +310,20 @@ private
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DCC_CONFIG'] then
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
         puts "\nDCC_CONFIG environment variable not defined !  :-(\n\n"
         bCheckOK = false
         bDefined = false
       end
       
-      if bDefined == true
-      then      
-        configDir         = %Q{#{ENV['DCC_CONFIG']}}        
+      if bDefined == true then
+        configDir = nil
+        if ENV['DEC_CONFIG'] then
+           configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+        else
+           configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+        end
+             
         @@configDirectory = configDir
                         
         configFile = %Q{#{configDir}/ft_incoming_files.xml}        
@@ -329,7 +334,7 @@ private
         
       end
       if bCheckOK == false then
-        puts "DCC_ReadFileDestination::checkModuleIntegrity FAILED !\n\n"
+        puts "ReadFileSource::checkModuleIntegrity FAILED !\n\n"
         exit(99)
       end      
    end
