@@ -16,18 +16,19 @@
 
 module ARC
    
-   @@version = "1.0.1"
+   @@version = "1.0.2"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.2"  =>    "minArcServer management of production and development environments", \
       "1.0.1"  =>    "Handler for m2ts files of Sony Camcorders", \
       "1.0.0"  =>    "First version of the minarc installer created" \
    }
    # -----------------------------------------------------------------
    
    def load_config_development
-      ENV['MINARC_VERSION']               = "01.00.00"
+      ENV['MINARC_VERSION']               = "DEPRECATED_ENVIRONMENT_VARIABLE_01.00.00"
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
       ENV['MINARC_BASE']                  = "#{ENV['HOME']}/Projects/dec"
       ENV['MINARC_SERVER']                = "http://localhost:4567"
