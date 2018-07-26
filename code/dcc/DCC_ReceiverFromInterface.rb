@@ -70,7 +70,7 @@ class DCC_ReceiverFromInterface
       @isBenchmarkMode = false
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DCC_ReceiverFromInterface", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("DCC_ReceiverFromInterface", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -79,7 +79,7 @@ class DCC_ReceiverFromInterface
          puts
 			puts "Error in DCC_ReceiverFromInterface::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)
@@ -118,7 +118,8 @@ class DCC_ReceiverFromInterface
       @fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
-         require 'dbm/DatabaseModel'
+         # require 'dbm/DatabaseModel'
+         require 'dec/DEC_DatabaseModel'
          @interface        = Interface.find_by_name(@entity)
          if @interface == nil then
             raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
@@ -298,6 +299,9 @@ class DCC_ReceiverFromInterface
       @depthLevel    = 0
 
       begin
+         if @isDebugMode == true then
+            puts "FTP #{host}:#{port} #{user}:#{pass} | passive = #{bPassive}"
+         end
          @ftp = Net::FTP.new(host)
          @ftp.login(user, pass)
          @ftp.passive = bPassive
@@ -341,7 +345,14 @@ class DCC_ReceiverFromInterface
          end
 
          @pwd = @ftp.pwd
-         entries = @ftp.list
+         
+         begin         
+            entries = @ftp.list
+         rescue Exception => e
+            puts "Failed to get list of files / FTP passive mode is #{@ftp.passive}"
+            puts e.to_s
+            exit(99)
+         end
          entries.each{|entry|
             exploreNonSecureTree(entry)
          }
@@ -781,24 +792,40 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] then
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
          puts "\nDCC_TMP environment variable not defined !\n"
          bDefined = false
       end
       
+      if ENV['DEC_TMP'] then
+         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      else
+         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
+      end        
+      
+      configDir = nil
+         
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end        
+            
+      @@configDirectory = configDir
+     
       if bDefined == false then
          puts "\nError in DCC_ReceiverFromInterface::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
                   
-      @@FileLog = %Q{#{ENV['DCC_TMP']}/ft_incoming.log}   # should this line not be removed ? (rell)
+      # @@FileLog = %Q{#{ENV['DCC_TMP']}/ft_incoming.log}   # should this line not be removed ? (rell)
       
       time = Time.new
       time.utc
       str  = time.strftime("%Y%m%d_%H%M%S")
                                       
-      @localDir        = %Q{#{ENV['DCC_TMP']}/.#{str}_#{@entity}}  
-      @ftBatchFilename = %Q{#{ENV['DCC_TMP']}/.FTBatchReceiveFrom#{@entity}}
+      @localDir        = %Q{#{@tmpDir}/.#{str}_#{@entity}}  
+      @ftBatchFilename = %Q{#{@tmpDir}/.FTBatchReceiveFrom#{@entity}}
       if FileTest.exist?(@ftBatchFilename) == true then
          File.delete(@ftBatchFilename)
       end
