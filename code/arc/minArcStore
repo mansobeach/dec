@@ -185,7 +185,7 @@ def main
             when "--delete"            then @bDelete              = true
             when "--move"              then @bMove                = true
             when "--update"            then @bUpdate              = true
-            when "--version"           then @bShowVersion      = true
+            when "--version"           then @bShowVersion         = true
 	         when "--file"              then @full_path_filename   = arg.to_s
             when "--Location"          then @full_path_location   = arg.to_s
 	         when "--type"              then @filetype             = arg.to_s
