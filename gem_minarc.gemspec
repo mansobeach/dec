@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.2'
+  s.version     = '1.0.5'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
                      'minArcPurge', \
                      'minArcRetrieve', \
                      'minArcServer', \
+                     'minArcStatus', \
                      'minArcUnitTests', \
                      'minArcSmokeTestLocal', \
                      'minArcSmokeTestRemote'

@@ -139,6 +139,7 @@
 #     --Location <directory>     Directory in which retrieved file(s) will be copied
 #     --Hardlink                 It performs a Hardlink rather than a copy from Archive
 #     --All                      It retrieves all entries in the inventory
+#     --Types                    it shows all file-types archived
 #     --inv <full path filename> It generates an export of the inventory in excel format
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --rule <filering-rule>     Enable result filtering
@@ -168,6 +169,7 @@
 require 'getoptlong'
 require 'rdoc'
 
+require 'arc/MINARC_Client'
 require 'arc/FileRetriever'
 require 'arc/Inventory2Excel'
 
@@ -266,6 +268,13 @@ def main
       exit(0)
    end
 
+   if ENV['MINARC_SERVER'] and @bNoServer == false then
+      @bRemoteMode = true
+   else
+      @bRemoteMode = false
+      require 'arc/MINARC_DatabaseModel'
+   end
+
    if showVersion then 
       if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
          aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
@@ -284,15 +293,26 @@ def main
       exit(0)
    end
  
-   if bShowFileTypes == true then
-      arrFiles = ArchivedFile.getFileTypes()
-      arrTypes = Array.new
-      arrFiles.each{|aFile|
-         arrTypes << aFile.filetype
-      }
-      puts arrTypes.sort
-      exit(0)
-   end
+   if bShowFileTypes then
+      if @bRemoteMode == false then
+         arrFiles = ArchivedFile.getFileTypes().sort
+         arrFiles.each{|aFile|
+            puts aFile.filetype
+         }
+         exit(0)
+      else
+      
+         arc = ARC::MINARC_Client.new
+         
+         if @isDebugMode == true then
+            arc.setDebugMode
+         end
+         
+         puts arc.getAllFileTypes
+
+         exit(0)
+      end
+   end  
 
 
    # Check all flags and combinations
@@ -430,7 +450,13 @@ def main
    end
 
    if @filename != "" then
-      filename = @filename.gsub("*", "%")
+      
+      if @bNoServer == false then
+         filename = @filename.gsub("*", "%2A")
+      else
+         filename = @filename.gsub("*", "%")
+      end
+      
       ret = fileRetriever.retrieve_by_name(@full_path_target, filename, @bDelete, @bHardLink, @bUnpack)
    
       if ret == false then

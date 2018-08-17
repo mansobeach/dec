@@ -41,6 +41,7 @@ class MINARC_Client
    def setDebugMode
       @isDebugMode = true
       puts "MINARC_Client debug mode is on"
+      puts "MINARC_Server is #{@minArcServer}"
    end
    #------------------------------------------------
 
@@ -105,6 +106,17 @@ class MINARC_Client
       if @isDebugMode == true then
          puts
          puts "MINARC_Client::deleteFile => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)
+   end
+   #------------------------------------------------
+   
+   def getAllFileTypes
+      url = "#{@minArcServer}#{API_URL_GET_FILETYPES}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::getAllFileTypes => #{url}"
          puts
       end
       return getURL(url, @isDebugMode)

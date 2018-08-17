@@ -16,11 +16,14 @@
 
 module ARC
    
-   @@version = "1.0.2"
+   @@version = "1.0.4"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.5"  =>    "minArcRetrieve -T now supports remote mode using server", \
+      "1.0.4"  =>    "minArcStatus bundled with -V to retrieve version from server", \
+      "1.0.3"  =>    "minArcRetrieve remote requests to replace * wildcards with http compliant %2A character", \
       "1.0.2"  =>    "minArcServer management of production and development environments", \
       "1.0.1"  =>    "Handler for m2ts files of Sony Camcorders", \
       "1.0.0"  =>    "First version of the minarc installer created" \

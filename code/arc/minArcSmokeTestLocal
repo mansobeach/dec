@@ -253,6 +253,14 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
 
    #--------------------------------------------------------
 
+   # get locally all filetypes
+   
+   def test_local_cmd_get_filetypes
+      cmd = "minArcRetrieve -T --noserver"
+      assert(!system(cmd), cmd)
+   end
+   #--------------------------------------------------------
+
    def test_localcmd_store
       cmd = "minArcStore -T"
       assert(!system(cmd), "minArcStore -T")

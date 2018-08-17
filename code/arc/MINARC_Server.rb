@@ -2,6 +2,8 @@
 
 require 'sinatra'
 require 'sinatra/reloader' if development?
+require 'sinatra/custom_logger'
+require 'logger'
 require 'json'
 require 'ftools'
 
@@ -25,13 +27,14 @@ include ARC
 
 class MINARC_Server < Sinatra::Base
 
+   helpers Sinatra::CustomLogger
+
    configure do
       
       # Parent exists, child continue
       # exit!(0) if fork
       # Become session leader without a controlling TTY
       # Process.setsid
-
       
       puts "Loading general configuration"
       
@@ -40,6 +43,7 @@ class MINARC_Server < Sinatra::Base
       set :root,              "#{ENV['HOME']}/Sandbox/minarc_root"
       set :public_folder,     "#{ENV['HOME']}/Sandbox/minarc_root/load"
       set :isDebugMode,       true
+      set :logger, Logger.new(STDOUT)
    
       # Racks environment variable
       ENV['TMPDIR']         = "#{ENV['MINARC_TMP']}"
@@ -61,8 +65,6 @@ class MINARC_Server < Sinatra::Base
       puts
       puts "Loading production configuration"
       puts
-
-      @isDebugMode = false
       
       puts ""
       puts "========================================"
@@ -80,9 +82,7 @@ class MINARC_Server < Sinatra::Base
       puts
       puts "Loading development configuration"
       puts
-   
-      @isDebugMode = true   
-   
+      
       load_config_development
                
       puts "========================================"
@@ -108,17 +108,73 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
+   # =================================================================
+
+   # Get all filetypes archived
+   
+   get ARC::API_URL_GET_FILETYPES do
+      msg = "GET #{ARC::API_URL_GET_FILETYPES} : get archived filetypes"
+      logger.info msg
+      
+      if settings.isDebugMode == true then
+         puts msg
+      end
+      "#{ARC.class_variable_get(:@@version)}"
+      
+      cmd = "minArcRetrieve -T --noserver"
+      
+      listTypes = `#{cmd}`
+
+      if $? == 0 then
+         "#{listTypes}"
+      else
+         logger.error "failure of #{cmd}"
+         status API_RESOURCE_NOT_FOUND
+      end
+
+   end
+       
+   # =================================================================
+   
    #
    # GET version
    #
    # curl -X GET http://localhost:4567/dec/arc/version
 
    get ARC::API_URL_VERSION do
-      puts "minarc version: #{ARC.class_variable_get(:@@version)}}"
-      "#{ARC.class_variable_get(:@@version)}}"
+      msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC.class_variable_get(:@@version)}"
+      logger.info msg
+      
+      if settings.isDebugMode == true then
+         puts msg
+      end
+      "#{ARC.class_variable_get(:@@version)}"
    end
+   # =================================================================
+   #
+   # minArcRetrieve_LIST
+   #
+   get "#{API_URL_LIST}/:filename" do |filename|
+      cmd = "minArcRetrieve -f #{params[:filename]} --noserver -l"
+            
+      if settings.isDebugMode == true then 
+         puts "GET #{API_URL_LIST}/#{params[:filename]}"
+         puts "MINARC_Server::#{cmd}"
+      end
 
+      listFiles = `#{cmd}`
+
+      # "#{`#{cmd}`}"
+      
+      if $? == 0 then
+         "#{listFiles}"
+      else
+         logger.info "#{params[:filename]} / files not found"
+         status API_RESOURCE_NOT_FOUND
+      end
+   end
    # ----------------------------------------------------------
+
 
    # ----------------------------------------------------------
    #
@@ -198,6 +254,37 @@ class MINARC_Server < Sinatra::Base
 
    end
 
+   # =================================================================
+   
+   #
+   # minArcDelete
+   #
+   get "#{API_URL_DELETE}/:filename" do |filename|
+      puts "==================================================="  
+      puts 
+      puts "MINARC_Server #{API_URL_DELETE} => #{params[:filename]}"
+
+      cmd = "minArcDelete -f #{params[:filename]} --noserver -D"
+
+      if settings.isDebugMode == true then
+         msg = "GET #{API_URL_DELETE}/#{params[:filename]}"
+         logger.info msg
+         msg = "MINARC_Server::#{cmd}"
+         logger.info msg
+      end
+
+      ret = system(cmd)
+   
+      if ret == false then
+         puts "file #{params[:filename]} not found"
+         status API_RESOURCE_NOT_FOUND      
+      end
+
+   end
+   # ----------------------------------------------------------
+
+
+   # =================================================================
    # ----------------------------------------------------------
    #
    # minArcRetrieve
@@ -274,56 +361,6 @@ class MINARC_Server < Sinatra::Base
 
 =end      
    end
-   # ----------------------------------------------------------
-
-   # ----------------------------------------------------------
-   #
-   # minArcRetrieve_LIST
-   #
-   get "#{API_URL_LIST}/:filename" do |filename|
-      cmd = "minArcRetrieve -f #{params[:filename]} --noserver -l"
-            
-      if settings.isDebugMode == true then 
-         puts "MINARC_Server::#{cmd}"
-      end
-
-      listFiles = `#{cmd}`
-
-      # "#{`#{cmd}`}"
-      
-      if $? == 0 then
-         "#{listFiles}"
-         # status API_RESOURCE_FOUND
-      else
-         puts "files not found"
-         status API_RESOURCE_NOT_FOUND
-      end
-   end
-   # ----------------------------------------------------------
-   
-   #
-   # minArcDelete
-   #
-   get "#{API_URL_DELETE}/:filename" do |filename|
-      puts "==================================================="  
-      puts 
-      puts "MINARC_Server #{API_URL_DELETE} => #{params[:filename]}"
-
-      cmd = "minArcDelete -f #{params[:filename]} --noserver -D"
-
-      if settings.isDebugMode == true then  
-         "MINARC_Server::#{cmd}"
-      end
-
-      ret = system(cmd)
-   
-      if ret == false then
-         puts "file #{params[:filename]} not found"
-         status API_RESOURCE_NOT_FOUND      
-      end
-
-   end
-   # ----------------------------------------------------------
 
    not_found do
       "driverSinatra: page not found"
