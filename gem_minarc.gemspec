@@ -9,7 +9,11 @@ Gem::Specification.new do |s|
   
   s.required_ruby_version = '>= 2.2'
   
-  s.files       = Dir['code/arc/*.rb'] + \
+  s.files       = Dir['code/arc/File*.rb'] + \
+                  Dir['code/arc/Inventory2Excel*.rb'] + \
+                  Dir['code/arc/MINARC_*.rb'] + \
+                  Dir['code/arc/ReadMinarcConfig.rb'] + \
+                  Dir['code/arc/ReportEditor.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF'] + \
                   Dir['code/arc/plugins/test/example_1.m2ts'] + \
