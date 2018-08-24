@@ -14,9 +14,10 @@
 #
 #########################################################################
 
-require "cuc/DirUtils"
-require "arc/MINARC_DatabaseModel"
+
 require "rexml/document"
+
+require 'cuc/DirUtils'
 
 module ARC
 

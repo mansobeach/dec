@@ -14,7 +14,6 @@
 
 require 'rubygems'
 require 'writeexcel'
-require 'ws23rb/WS_PlugIn_Loader'
 
 
 module ARC
