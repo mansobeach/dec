@@ -121,6 +121,7 @@ require 'rdoc'
 
 require 'arc/MINARC_Environment'
 require 'arc/FileArchiver'
+require 'arc/MINARC_Client'
 
 
 # Global variables
@@ -225,13 +226,13 @@ def main
  
    if bShowFileTypes then
       if @bRemoteMode == false then
-         arrFiles = ArchivedFile.getFileTypes()
+         arrFiles = ArchivedFile.getFileTypes().sort
          arrFiles.each{|aFile|
             puts aFile.filetype
          }
          exit(0)
       else
-         puts "Remote mode for getting file-type not implemeted yet ! :-p"
+         puts "Remote mode for getting all file-type names is not implemeted yet ! :-p"
          exit(99)
       end
    end  

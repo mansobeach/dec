@@ -14,13 +14,20 @@
 #
 #########################################################################
 
+require 'cuc/DirUtils'
+
 module ARC
    
-   @@version = "1.0.4"
+   include CUC::DirUtils
+   
+   @@version = "1.0.8"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.8"  =>    "minArcSmokeTestRemote working successfully with MINARC_SERVER variable only", \
+      "1.0.7"  =>    "Client mode to retrieve files using obsolete curl older than 7.21.2", \
+      "1.0.6"  =>    "minArcServer activation at execution time of selected environment", \
       "1.0.5"  =>    "minArcRetrieve -T now supports remote mode using server", \
       "1.0.4"  =>    "minArcStatus bundled with -V to retrieve version from server", \
       "1.0.3"  =>    "minArcRetrieve remote requests to replace * wildcards with http compliant %2A character", \
@@ -41,12 +48,20 @@ module ARC
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
       ENV['MINARC_DATABASE_USER']         = "root"
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
+      ENV['RACK_ENV']                     = "development"
    end
    
    # -----------------------------------------------------------------
    
+   def load_config_production
+      ENV['RACK_ENV']                     = "production"
+   end 
+   # -----------------------------------------------------------------
+   
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
+      puts "RACK_ENV                      => #{ENV['RACK_ENV']}"
+      puts "TMPDIR                        => #{ENV['TMPDIR']}"
       puts "MINARC_BASE                   => #{ENV['MINARC_BASE']}"
       puts "MINARC_DB_ADAPTER             => #{ENV['MINARC_DB_ADAPTER']}"
       puts "MINARC_SERVER                 => #{ENV['MINARC_SERVER']}"
@@ -56,6 +71,14 @@ module ARC
       puts "MINARC_DATABASE_PASSWORD      => #{ENV['MINARC_DATABASE_PASSWORD']}"
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
       puts "MINARC_ARCHIVE_ERROR          => #{ENV['MINARC_ARCHIVE_ERROR']}"
+   end
+   # -----------------------------------------------------------------
+
+   def check_environment_dirs
+      checkDirectory(ENV['TMPDIR'])
+      checkDirectory(ENV['MINARC_TMP'])
+      checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
+      checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
    end
    # -----------------------------------------------------------------
 

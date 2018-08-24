@@ -5,9 +5,11 @@
 # This is a MINARC server
 # 
 # == Usage
-# minArcServer [--start | --kill | --check]
-#     --list                     it lists the files that would be retrieved
-#                                according to the selection criteria
+# minArcServer --start | --kill | --check  [--devel]
+#     --start                    it starts the server
+#     --kill                     it kills the server
+#     --check                    it checks the server execution status
+#     --devel                    it loads the development preconfiguration
 #     --help                     shows this help
 #     --usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
@@ -41,21 +43,25 @@ require 'arc/MINARC_Environment'
 # MAIN script function
 def main
 
+   include ARC
+
    @isDebugMode            = false
    showVersion             = false
    @bCheckStatus           = false
    @bStartServer           = false
    @bStopServer            = false
    @bShowVersion           = false
+   @bDevelopment           = false
+   
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
-     ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
      ["--start", "-s",           GetoptLong::NO_ARGUMENT],
      ["--kill",   "-k",          GetoptLong::NO_ARGUMENT],
      ["--check", "-c",           GetoptLong::NO_ARGUMENT],
      ["--list", "-l",            GetoptLong::NO_ARGUMENT],
+     ["--devel", "-d",           GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
@@ -66,6 +72,7 @@ def main
       opts.each do |opt, arg|
          case opt      
             when "--Debug"             then @isDebugMode          = true
+            when "--devel"             then @bDevelopment         = true
             when "--version"           then @bShowVersion         = true
             when "--start"             then @bStartServer         = true
             when "--kill"              then @bStopServer          = true
@@ -89,6 +96,12 @@ def main
 
    if !@bCheckStatus and !@bStartServer and !@bStopServer
       usage
+   end
+
+   if @bDevelopment == true then
+      load_config_development
+   else
+      load_config_production
    end
 
    if @bCheckStatus == true then
@@ -173,7 +186,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -26 #{fullpathFile}"}`
+   value = `#{"head -22 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

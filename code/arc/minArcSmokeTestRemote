@@ -97,7 +97,8 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts "MINARC_SmokeTests::#{__method__.to_s}"
       puts
       
-      cmd = "minArcDelete --noserver -f #{File.basename(@@testFile1, ".*")}"
+      cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")}"
+      puts cmd
       system(cmd)
 
       cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d -D"
@@ -119,8 +120,11 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts "MINARC_SmokeTests::#{__method__.to_s}"
       puts
       cmd = "minArcRetrieve -l -f #{File.basename(@@testFile1, ".*")}"
+      puts
       puts cmd
+      puts
       assert(system(cmd), cmd)
+      puts
    end
 
    #--------------------------------------------------------
@@ -136,7 +140,9 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts "MINARC_SmokeTests::#{__method__.to_s}"
       puts
       cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")}"
+      puts
       puts cmd
+      puts
       assert(system(cmd), cmd)
       
       arr = Dir["#{File.basename(@@testFile1, ".*")}*"]

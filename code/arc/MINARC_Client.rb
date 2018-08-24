@@ -97,7 +97,8 @@ class MINARC_Client
          puts "MINARC_Client::retrieveFile => #{url}"
          puts
       end
-      return getFile(url, filename, @isDebugMode)
+      return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
+      # return getFile(url, filename, @isDebugMode)
    end
    #------------------------------------------------
    

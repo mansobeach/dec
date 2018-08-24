@@ -16,6 +16,7 @@
 #     --usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
 #     --version                  shows version number
+#     --Version                  shows version number of the Server
 #
 #
 # == Author
@@ -37,6 +38,8 @@ require 'getoptlong'
 require 'rdoc'
 
 require 'arc/FileStatus'
+require 'arc/MINARC_Environment'
+require 'arc/MINARC_Client'
 
 
 # MAIN script function
@@ -51,13 +54,14 @@ def main
 
    @full_report_name          = ""
 
-   bIncStart = false
-   bIncEnd = false
+   bIncStart                  = false
+   bIncEnd                    = false
 
-   @isDebugMode            = false
-   @bListOnly              = false
+   @isDebugMode               = false
+   @bListOnly                 = false
 
-   showVersion             = false
+   @bShowVersion              = false
+   @bShowVersionServer        = false
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
@@ -71,6 +75,7 @@ def main
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--Version", "-V",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT],
      ["--boundary_start_on",     GetoptLong::NO_ARGUMENT],
      ["--boundary_end_on",       GetoptLong::NO_ARGUMENT]
@@ -79,10 +84,11 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--list"              then @bListOnly   = true
-            when "--global"            then @bGlobal     = true
-            when "--version"           then showVersion  = true
+            when "--Debug"             then @isDebugMode        = true
+            when "--list"              then @bListOnly          = true
+            when "--global"            then @bGlobal            = true
+            when "--version"           then @bShowVersion       = true
+            when "--Version"           then @bShowVersionServer = true
             when "--file"              then @filename           = arg.to_s
             when "--directory"         then @dirname            = arg.to_s
                                             deleteDirectory
@@ -100,24 +106,29 @@ def main
       exit(99)
    end
 
-   if showVersion then 
-      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
-         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
-      else
-         puts "version.txt is not present !"
-         exit(99)
-      end
-
-      binVersion = aFile.gets.chomp
-
-      puts
-      puts "Mini-Archive Component - Version #{binVersion}"
-      puts
-
-      aFile.close
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
       exit(0)
    end
- 
+
+   if @bShowVersionServer == true then
+   
+      arc = ARC::MINARC_Client.new
+      
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+      
+      version = arc.getVersion
+      
+      puts "MINARC Server Version #{version}"
+      exit(0)
+   end
+
    # Check all flags and combinations
 
    if @filename == "" and @filetype == "" and @bGlobal == false then
@@ -174,7 +185,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -26 #{fullpathFile}"}`
+   value = `#{"head -27 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

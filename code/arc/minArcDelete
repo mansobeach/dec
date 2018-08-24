@@ -158,6 +158,10 @@ def main
       exit(99)
    end
 
+   if @isDebugMode == true and @bNoServer == true then
+      puts "MINARC Local Mode"
+   end
+
 
    if showVersion then 
       if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then

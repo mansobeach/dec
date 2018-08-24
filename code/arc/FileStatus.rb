@@ -16,8 +16,6 @@
 
 require 'filesize'
 
-require 'arc/MINARC_DatabaseModel'
-
 module ARC
 
 class FileStatus
@@ -180,6 +178,10 @@ private
          puts
          puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
          bDefined = false
+      end
+
+      if !ENV['MINARC_ARCHIVE_ROOT'] then
+         require 'arc/MINARC_DatabaseModel'
       end
 
       if bCheckOK == false or bDefined == false then

@@ -40,13 +40,15 @@ class MINARC_Server < Sinatra::Base
       
       # set :bind, '0.0.0.0'
       
-      set :root,              "#{ENV['HOME']}/Sandbox/minarc_root"
-      set :public_folder,     "#{ENV['HOME']}/Sandbox/minarc_root/load"
+      set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
+      set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :isDebugMode,       true
       set :logger, Logger.new(STDOUT)
    
       # Racks environment variable
-      ENV['TMPDIR']         = "#{ENV['MINARC_TMP']}"
+      if !ENV['TMPDIR'] then
+         ENV['TMPDIR'] = "#{ENV['MINARC_TMP']}"
+      end
    
       if settings.isDebugMode then
          puts "CONFIGURE ENV['HOME']                  => #{ENV['HOME']}"
@@ -73,6 +75,10 @@ class MINARC_Server < Sinatra::Base
       puts "========================================"
       puts
       puts
+      
+      check_environment_dirs
+            
+      
    end
    # ----------------------------------------------------------
 
@@ -92,13 +98,9 @@ class MINARC_Server < Sinatra::Base
       puts
       puts
 
-      checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
-      checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
-      checkDirectory("#{ENV['HOME']}/Sandbox/minarc/inv")
-      checkDirectory(ENV['TMPDIR'])
-   
+      check_environment_dirs
+         
       Dir.chdir(ENV['TMPDIR'])
-
 
    end
    # ----------------------------------------------------------
@@ -184,7 +186,7 @@ class MINARC_Server < Sinatra::Base
 
    post ARC::API_URL_STORE do
    
-      logger.info "POST #{ARC::API_URL_STORE}"
+      logger.info "POST #{ARC::API_URL_STORE}/#{params[:file][:filename]}"
    
    #   if true then
    #      puts JSON.pretty_generate(request.env)

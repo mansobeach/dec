@@ -19,7 +19,7 @@ require 'cuc/EE_ReadFileName'
 
 require 'arc/MINARC_Client'
 require 'arc/ReportEditor'
-require 'arc/ReportEditor'
+
 
 module ARC
 
@@ -32,7 +32,9 @@ class FileDeleter
    def initialize(bListOnly = false, bNoServer = false)
       @bListOnly     = bListOnly
       
-      if ENV['MINARC_SERVER'] and !bNoServer then
+      # puts "FileDeleter::initialize #{ENV['MINARC_SERVER']} | #{bNoServer}"
+      
+      if ENV['MINARC_SERVER'] and bNoServer == false then
          @bRemoteMode = true
       else
          @bRemoteMode = false
