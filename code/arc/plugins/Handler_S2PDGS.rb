@@ -21,9 +21,16 @@
 # S2A_OPER_REP_SUCINV_MPC__20150625T235026_20150624T232135_20150625T232135.ZIP
 # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 # S2__OPER_REP_OPDHUS_DHUS_20180404T165255.xml
+# S2__OPER_REP_ARC__A_UPA__20170517T150557_V20170518T001000_21000101T000000_<pid>.EOF
 #
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
 # - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
+#
+#
+# NOT SUPPORTED !! Fenomenal fake dates ! 
+# S2__OPER_REP_ARC__A_UPA__20170427T090404_V20170418T020822_99999999T999999_26869.EOF
+#
+#
 
 require 'filesize'
 
@@ -114,6 +121,21 @@ class Handler_S2PDGS
          @validated        = true
       end
 
+      # ----------------------------------------------------
+      
+      # S2__OPER_REP_ARC__A_UPA__20170517T150557_V20170518T001000_21000101T000000_<pid>.EOF
+      # S2__OPER_REP_ARC__A_UPA__20170505T190559_V20170322T000000_21000101T000000_343.EOF
+      # S2__OPER_REP_ARC__A_UPA__20170505T190530_V20170505T000000_20180504T000000_6949.EOF
+      # S2__OPER_REP_ARC__A_UPA__20170427T090404_V20170418T020822_99999999T999999_26864.EOF
+      
+      if @filename.include?("REP_ARC__A") == true then
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(42, 15))
+         @stop             = self.str2date(@filename.slice(58, 15))         
+         @validated        = true      
+      end
+      
       # ----------------------------------------------------
          
       if @validated == false then

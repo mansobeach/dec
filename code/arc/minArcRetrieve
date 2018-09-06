@@ -201,7 +201,7 @@ def main
    @bListOnly              = false
    rule                    = "ALL"
    bShowFileTypes          = false
-   showVersion             = false
+   @bShowVersion           = false
    bGetAllFiles            = false
    @bNoServer              = false
 
@@ -239,11 +239,11 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--noserver"          then @bNoServer   = true
-            when "--delete"            then @bDelete     = true
-            when "--list"              then @bListOnly   = true
-            when "--version"           then showVersion = true
+            when "--Debug"             then @isDebugMode        = true
+            when "--noserver"          then @bNoServer          = true
+            when "--delete"            then @bDelete            = true
+            when "--list"              then @bListOnly          = true
+            when "--version"           then @bShowVersion       = true
 	         when "--Location"          then @full_path_target   = arg.to_s
 	         when "--Report"            then @full_report_name   = arg.to_s
 	         when "--rule"              then rule                = arg.to_s.upcase
@@ -275,24 +275,25 @@ def main
       require 'arc/MINARC_DatabaseModel'
    end
 
-   if showVersion then 
-      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
-         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
-      else
-         puts "version.txt is not present !"
-         exit(99)
-      end
+   # -------------------------------------------------------
+   #
+   # Show the version of the component
 
-      sInversion = aFile.gets.chomp
-
-      puts
-      puts "Mini-Archive Component - Version #{sInversion}"
-      puts
-
-      aFile.close
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
       exit(0)
    end
+      
+   # -------------------------------------------------------
  
+   # -------------------------------------------------------
+   #
+   # Show the different file-types archived
+    
    if bShowFileTypes then
       if @bRemoteMode == false then
          arrFiles = ArchivedFile.getFileTypes().sort
@@ -300,22 +301,28 @@ def main
             puts aFile.filetype
          }
          exit(0)
-      else
-      
+      else     
          arc = ARC::MINARC_Client.new
          
          if @isDebugMode == true then
             arc.setDebugMode
          end
          
-         puts arc.getAllFileTypes
+         ret = arc.getAllFileTypes
 
-         exit(0)
+         if ret == false
+            puts "Could not get file-types from server"
+            exit(99)
+         else
+            ret.split("\n").sort.each{|file| puts file}
+            exit(0)
+         end
       end
    end  
+   # -------------------------------------------------------
 
 
-   # Check all flags and combinations
+   # Check some flags and combinations
 
    if @filename == "" and @bListOnly == false then
       usage
@@ -350,8 +357,6 @@ def main
       usage
    end
 
-
-
    if @filename != "" and rule != "ALL" then
       puts
       puts "Rules have no effects when retrieving a file by file-name :-|"
@@ -372,7 +377,17 @@ def main
       exit(99)
    end
 
+   # -------------------------------------------------------
+   #
+   # If retrieval of multiple files is requested to the server
 
+   if @bListOnly == false and @filename != "" and @bNoServer == false and \
+      (@filename.include?("?") == true or @filename.include?("*") == true) then
+      remote_get_multiple_files
+      exit(0)
+   end
+
+   # -------------------------------------------------------
 
    dateExpr = "[0-9]{8}T[0-9]{6}"
    if (startVal != "" and endVal != "") and (startVal.match(dateExpr) == nil or endVal.match(dateExpr) == nil) then
@@ -382,8 +397,6 @@ def main
       usage
       exit(99)
    end
-
-
 
    begin
       if archive_date != "" then
@@ -505,6 +518,37 @@ end
 
 #-------------------------------------------------------------
 
+def remote_get_multiple_files
+   if @isDebugMode == true then
+      puts "minArcRetrieve::#{__method__.to_s}"
+   end
+   
+   files = `minArcRetrieve -l -f "#{@filename}"`
+   
+   if @isDebugMode == true then
+      puts "File to retrieve from server:"
+      puts files
+      puts
+   end
+   
+   files.split("\n").each{|file|
+      
+      cmd = "minArcRetrieve -f #{file}"
+      
+      if @bUnpack == true then
+         cmd = "#{cmd} -U"
+      end
+
+      if @isDebugMode == true then
+         cmd = "#{cmd} -D"
+         puts cmd
+      end
+      
+      ret = system(cmd)
+      
+   }
+   
+end
 #-------------------------------------------------------------
 
 # Print command line help

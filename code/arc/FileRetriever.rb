@@ -214,7 +214,7 @@ class FileRetriever
       if ret == false then
          return false
       else
-         puts ret
+         ret.split("\n").sort.each{|file| puts File.basename(file,File.extname(file))}
          return true
       end
    end
@@ -224,14 +224,24 @@ class FileRetriever
       if @isDebugMode == true then
          puts "FileRetriever::#{__method__.to_s}"
       end
+      
+      if filename.include?("%2A") then
+         filename = filename.dup.gsub("%2A", "*")
+      end
+      
       arc = ARC::MINARC_Client.new
+      
       if @isDebugMode == true then
          arc.setDebugMode
       end
       
       ret = arc.retrieveFile(filename)
       
-      if ret == true then
+      if @isDebugMode == true then
+         puts "arc.retrieveFile => #{ret}"
+      end
+      
+      if ret != false then
             
          # Creating the destination directory if necessary
          
@@ -242,16 +252,27 @@ class FileRetriever
 
          arr = Dir["#{filename}*"]
 
+         if arr.empty? == true then
+            puts Dir.pwd
+            puts
+            puts "#{filename}*"
+            puts
+         end
+
          arr.each{|file|
             
-            begin
-               FileUtils.mv(file, destination)
-            # rescue Errno::EEXIST => e
-            rescue Exception => e
-               puts e.to_s
+            if @isDebugMode == true then
+               puts "Processing #{file} ; destination => #{destination} ; unpack => #{bUnpack}"
             end
             
-            puts "(Retrieved) : " << file
+#            begin
+#               FileUtils.mv(file, destination)
+#            # rescue Errno::EEXIST => e
+#            rescue Exception => e
+#               puts e.to_s
+#            end
+            
+            puts "(Retrieved) : " << File.basename(file,File.extname(file))
             
             if bUnpack == true then    
                unPackFile(destination, file)

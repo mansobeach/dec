@@ -20,11 +20,14 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.8"
+   @@version = "1.0.11"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.11" =>    "minArcRetrieve support for wildcards and multiple files retrieval from server", \
+      "1.0.10" =>    "Listing files from server fixed when more than one is found", \
+      "1.0.9"  =>    "Handler_S2PDGS updated to support S2 REP_ARC__A index of auxiliary files", \
       "1.0.8"  =>    "minArcSmokeTestRemote working successfully with MINARC_SERVER variable only", \
       "1.0.7"  =>    "Client mode to retrieve files using obsolete curl older than 7.21.2", \
       "1.0.6"  =>    "minArcServer activation at execution time of selected environment", \

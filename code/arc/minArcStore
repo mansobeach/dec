@@ -232,8 +232,21 @@ def main
          }
          exit(0)
       else
-         puts "Remote mode for getting all file-type names is not implemeted yet ! :-p"
-         exit(99)
+         arc = ARC::MINARC_Client.new
+         
+         if @isDebugMode == true then
+            arc.setDebugMode
+         end
+         
+         ret = arc.getAllFileTypes
+
+         if ret == false
+            puts "Could not get file-types from server"
+            exit(99)
+         else
+            ret.split("\n").sort.each{|file| puts file}
+            exit(0)
+         end
       end
    end  
 
