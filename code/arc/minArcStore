@@ -308,12 +308,19 @@ def main
    #
    # 20170603 - Bulk mode archive
    if @full_path_filename.include?("?") == true or @full_path_filename.include?("*") == true then
+      
+      if @isDebugMode == true then
+         puts "Wildcard detected / bulk archiving"
+      end
+      
       if @isSuperbulk == true then
          superBulk
       else
          bulkArchive
       end
       exit(0)
+   else
+      # puts "bulkk - #{@full_path_filename}"
    end
    # ---------------------------------------------
 
@@ -355,7 +362,7 @@ def superBulk
       puts "superbulk mode detected"
    end
    
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -388,7 +395,7 @@ def bulkArchive
       puts "bulk mode detected"
    end
    
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
    
    if @isDebugMode then
       archiver.setDebugMode
