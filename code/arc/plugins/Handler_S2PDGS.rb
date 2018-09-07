@@ -166,6 +166,10 @@ class Handler_S2PDGS
          @size_in_disk  = 0
       end
 
+      if args[:bDeleteSource] == true then
+         File.delete(name)
+      end
+
    end
 
    #-------------------------------------------------------------
@@ -215,7 +219,7 @@ private
       full_path      = File.dirname(full_path_name)
       
       # Ubuntu  
-      cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name}"
+      cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} > /dev/null"
              
       # cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} -sdel"
       #puts cmd
@@ -231,9 +235,7 @@ private
          File.delete("#{full_path}/#{filename}.7z")
          exit(99)
       end
-      
-      # File.delete(full_path_name)
-      
+            
       @full_path_filename  = "#{full_path}/#{filename}.7z"
       
    end

@@ -408,7 +408,20 @@ class FileArchiver
             # plug-ins process physically the file if needed
             
             # nameDecoder = nameDecoderKlass.new(fileName)
-            nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location)
+            
+            
+            # 2018-09-06
+            # New interface with plug-ins
+            # additional parameter with a hash 
+            
+            hParams = Hash.new
+            
+            if bDelete == true then
+               hParams[:bDeleteSource] = bDelete
+            end
+            
+            
+            nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location, hParams)
             
             #
             # --------------------------------------------------------

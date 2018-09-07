@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.11"
+   @@version = "1.0.12"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.12" =>    "minArcStore supports -d (delete source file) with plug-in S2PDGS", \
       "1.0.11" =>    "minArcRetrieve support for wildcards and multiple files retrieval from server", \
       "1.0.10" =>    "Listing files from server fixed when more than one is found", \
       "1.0.9"  =>    "Handler_S2PDGS updated to support S2 REP_ARC__A index of auxiliary files", \

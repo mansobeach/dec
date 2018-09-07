@@ -266,13 +266,8 @@ def main
       usage
    end
    
-
-      
    if @full_path_filename.slice(0,1) != "/" then
-      puts
-      puts "File must be specified with a full path"
-      puts
-      exit(99)
+      @full_path_filename = "#{Dir.pwd}/#{@full_path_filename.dup}"
    end
 
    if File.directory?(@full_path_filename) == true and @bUnpack == true then

@@ -169,6 +169,7 @@
 require 'getoptlong'
 require 'rdoc'
 
+require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
 require 'arc/FileRetriever'
 require 'arc/Inventory2Excel'
