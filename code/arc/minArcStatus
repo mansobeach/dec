@@ -6,6 +6,7 @@
 # 
 # == Usage
 # minArcStatus -t <filetype> [-s <start> -e <end>] | -f <filename>
+#     --noserver                 operations are performed locally
 #     --file <filename>          status of a given filename
 #     --type <filetype>          file-type of the file to be deleted
 #     --global  
@@ -35,6 +36,7 @@
 #########################################################################
 
 require 'getoptlong'
+require 'json'
 require 'rdoc'
 
 require 'arc/FileStatus'
@@ -62,7 +64,12 @@ def main
 
    @bShowVersion              = false
    @bShowVersionServer        = false
-   
+   @bNoServer                 = false
+
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
+
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
@@ -70,6 +77,7 @@ def main
      ["--start", "-s",           GetoptLong::REQUIRED_ARGUMENT],
      ["--end",   "-e",           GetoptLong::REQUIRED_ARGUMENT],
      ["--Report", "-R",          GetoptLong::REQUIRED_ARGUMENT],
+     ["--noserver", "-n",        GetoptLong::NO_ARGUMENT],
      ["--list", "-l",            GetoptLong::NO_ARGUMENT],
      ["--global", "-g",          GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
@@ -85,6 +93,7 @@ def main
       opts.each do |opt, arg|
          case opt      
             when "--Debug"             then @isDebugMode        = true
+            when "--noserver"          then @bNoServer          = true
             when "--list"              then @bListOnly          = true
             when "--global"            then @bGlobal            = true
             when "--version"           then @bShowVersion       = true
@@ -116,15 +125,11 @@ def main
    end
 
    if @bShowVersionServer == true then
-   
       arc = ARC::MINARC_Client.new
-      
       if @isDebugMode == true then
          arc.setDebugMode
       end
-      
       version = arc.getVersion
-      
       puts "MINARC Server Version #{version}"
       exit(0)
    end
@@ -139,7 +144,6 @@ def main
       usage
    end
 
-
    if @filename != "" then
       fileStatus = ARC::FileStatus.new(@filename)
 
@@ -153,24 +157,80 @@ def main
       end
    end
 
+   # -------------------------------------------------------
+   # status by file-type
+   
    if @filetype != "" then
-      fileStatus = ARC::FileStatus.new(nil)
+      if @bNoServer == true then
+         fileStatus = ARC::FileStatus.new(nil)
 
-      if @isDebugMode == true then
-         fileStatus.setDebugMode
+         if @isDebugMode == true then
+            fileStatus.setDebugMode
+         end
+         ret = fileStatus.statusType(@filetype)
+         if @isDebugMode == true then
+            puts ret
+         end
+      else
+         arc = ARC::MINARC_Client.new
+         
+         if @isDebugMode == true then
+            arc.setDebugMode
+         end
+         
+         ret = arc.statusFileType(@filetype)
+
+         if @isDebugMode == true then
+            puts
+            puts ret
+            puts
+         end
+
+         hReturn = JSON.parse(ret)
+
+         hReturn.each{|key, value|
+            puts "#{key} : #{value}"
+         }
+         
+         exit(0)
+
       end
-      fileStatus.statusType(@filetype)
    end
-
+   # -------------------------------------------------------
 
 
    if @bGlobal == true then
-      fileStatus = ARC::FileStatus.new(nil)
+      if @bNoServer == true then
+         fileStatus = ARC::FileStatus.new(nil)
 
-      if @isDebugMode == true then
-         fileStatus.setDebugMode
+         if @isDebugMode == true then
+            fileStatus.setDebugMode
+         end
+         fileStatus.statusGlobal
+      else
+         arc = ARC::MINARC_Client.new
+         
+         if @isDebugMode == true then
+            arc.setDebugMode
+         end
+         
+         ret = arc.statusGlobal
+
+         if @isDebugMode == true then
+            puts
+            puts ret
+            puts
+         end
+
+         hReturn = JSON.parse(ret)
+
+         hReturn.each{|key, value|
+            puts "#{key} : #{value}"
+         }
+         
+         exit(0)
+
       end
-      fileStatus.statusGlobal
    end
 
 

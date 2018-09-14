@@ -70,13 +70,42 @@ class FileStatus
    end
    #-------------------------------------------------------------
 
-   def statusGlobal
+
+   #-------------------------------------------------------------
+
+   def statusGlobal   
+#      puts
+#      puts "FileStatus::statusGlobal"
+#      puts
+      
+      ret = require 'arc/MINARC_DatabaseModel'
+   
+#      puts
+#      puts ret
+#      puts
+
+      ret = load("arc/MINARC_DatabaseModel.rb")
+
+#      puts
+#      puts ret
+#      puts
+
+      hResult = Hash.new
+   
+      numTotalFiles = ArchivedFile.count
+      
+      puts  
+      puts "Total archived #{numTotalFiles} files"
+      hResult[:num_total_files] = numTotalFiles
+   
       lastHourFiles = ArchivedFile.where('archive_date > ?', 1.hours.ago)
       lastHourCount = lastHourFiles.count
+      hResult[:num_files_last_hour] = lastHourCount
       
       if lastHourCount == 0 then
+         # ActiveRecord::Base.remove_connection
          puts "No files archived during period"
-         return
+         return hResult
       end
       
       lastHourSizeO     = lastHourFiles.sum(:size_original)
@@ -92,14 +121,15 @@ class FileStatus
       puts      
       puts "Last update #{ArchivedFile.last.archive_date}"
       
+      
       puts
       puts "New #{lastHourCount} files archived during last hour"
+      
       
       puts
       puts "#{prettyHourSizeO} / #{prettyHourSize} / #{prettyHourDisk} "
       
-      puts  
-      puts "Total archived #{ArchivedFile.count} files"
+      
       
       puts 
             
@@ -118,43 +148,51 @@ class FileStatus
       
       puts
       
+      # ActiveRecord::Base.remove_connection
+      return hResult
+      
    end
    #-------------------------------------------------------------
 
+   # It now reports a hash json-wise
    def statusType(filetype)
+      
+      require 'arc/MINARC_DatabaseModel'
+      
+      hResult = Hash.new
+      
       # puts ArchivedFile.all.group(:filetype).count
       
-      arrFiles = ArchivedFile.where(filetype: filetype).order('archive_date ASC')
-      
+      arrFiles = ArchivedFile.where(filetype: filetype).order('archive_date ASC')      
+      hResult[:num_files] = arrFiles.count
       puts "Archived #{arrFiles.count} files of type #{filetype}"
-      
       puts
       
+      hResult[:last_archive_date] = arrFiles.last.archive_date
       puts "Last archive by #{arrFiles.last.archive_date}" 
-      
       puts
       
+      hResult[:first_archive_date] = arrFiles.first.archive_date
       puts "First archive by #{arrFiles.first.archive_date}" 
-      
       puts
-            
-      sizefile = Filesize.from("#{arrFiles.sum(:size)} B").pretty 
       
+      hResult[:total_size] = Filesize.from("#{arrFiles.sum(:size)} B").pretty      
+      sizefile = Filesize.from("#{arrFiles.sum(:size)} B").pretty
       puts "Size of the files #{sizefile}"
-      
       puts
       
+      hResult[:total_size_in_disk] = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
       sizedisk = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      
       puts "Disk occupation #{sizedisk}"
-      
       puts
       
       puts "Ratio #{(arrFiles.sum(:size).to_f/arrFiles.sum(:size_in_disk).to_f)*100}"
-      
       puts
       
-      return
+      # ActiveRecord::Base.remove_connection
+      # ActiveRecord::Base.remove_connection
+      
+      return hResult
       
       puts arrFiles.sum(:size_in_disk)
       

@@ -1,15 +1,16 @@
 #!/usr/bin/env ruby
 
 require 'sinatra'
-require 'sinatra/reloader' if development?
+require 'sinatra/reloader' # if development?
 require 'sinatra/custom_logger'
 require 'logger'
 require 'json'
 require 'ftools'
 
 require 'cuc/DirUtils'
-require 'arc/MINARC_API.rb'
-require 'arc/MINARC_Environment.rb'
+require 'arc/MINARC_API'
+require 'arc/MINARC_Environment'
+require 'arc/FileStatus'
 
 include CUC::DirUtils
 include FileUtils::Verbose
@@ -62,8 +63,6 @@ class MINARC_Server < Sinatra::Base
    # ----------------------------------------------------------
 
    configure :production do
-      # production configuration
-
       puts
       puts "Loading production configuration"
       puts
@@ -76,15 +75,11 @@ class MINARC_Server < Sinatra::Base
       puts
       puts
       
-      check_environment_dirs
-            
-      
+      check_environment_dirs      
    end
    # ----------------------------------------------------------
 
    configure :development do
-      # development configuration
-            
       puts
       puts "Loading development configuration"
       puts
@@ -99,9 +94,8 @@ class MINARC_Server < Sinatra::Base
       puts
 
       check_environment_dirs
-         
+      
       Dir.chdir(ENV['TMPDIR'])
-
    end
    # ----------------------------------------------------------
 
@@ -363,6 +357,54 @@ class MINARC_Server < Sinatra::Base
 
 =end      
    end
+
+
+   # =================================================================
+   
+   #
+   # minArcStatus by file-type
+   #
+   get "#{API_URL_STAT_FILETYPES}/:filetype" do |filetype|
+      fileStatus = ARC::FileStatus.new(nil)
+
+      if settings.isDebugMode == true then
+         fileStatus.setDebugMode
+      end
+     
+      ret = fileStatus.statusType("#{params[:filetype]}")
+      
+      if settings.isDebugMode == true then
+         puts ret
+      end
+
+      content_type :json 
+      ret.to_json
+   end
+
+   # =================================================================
+
+   #
+   # minArcStatus global
+   #
+
+   get ARC::API_URL_STAT_GLOBAL do
+   
+      fileStatus = ARC::FileStatus.new(nil)
+
+      if settings.isDebugMode == true then
+         fileStatus.setDebugMode
+      end
+     
+      ret = fileStatus.statusGlobal
+      
+      if settings.isDebugMode == true then
+         puts ret
+      end
+
+      content_type :json 
+      ret.to_json
+   end
+   # =================================================================
 
    not_found do
       "driverSinatra: page not found"

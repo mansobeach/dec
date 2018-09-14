@@ -21,6 +21,8 @@ module ARC
    API_URL_LIST               = '/dec/arc/minArcList'
    API_URL_DELETE             = '/dec/arc/minArcDelete'
    API_URL_GET_FILETYPES      = '/dec/arc/filetypes'
+   API_URL_STAT_FILETYPES     = '/dec/arc/minArcStatFileType.json'
+   API_URL_STAT_GLOBAL        = '/dec/arc/minArcStatGlobal.json'
    API_RESOURCE_NOT_FOUND     = 404
    API_RESOURCE_FOUND         = 200
 end

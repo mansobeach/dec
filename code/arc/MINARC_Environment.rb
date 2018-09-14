@@ -20,11 +20,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.13"
+   @@version = "1.0.15"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.15" =>    "Server mode restarts the connection to avoid pool limit :-( | ConnectionPool pending", \
+      "1.0.14" =>    "minArcStatus supports server mode for global and filetype", \
       "1.0.13" =>    "minArcStore supports bulk mode with wildcards in local mode", \
       "1.0.12" =>    "minArcStore supports -d (delete source file) with plug-in S2PDGS", \
       "1.0.11" =>    "minArcRetrieve support for wildcards and multiple files retrieval from server", \

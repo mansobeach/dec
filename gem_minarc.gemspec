@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.13'
+  s.version     = '1.0.15'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -52,6 +52,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord', '~> 5.1')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
+  s.add_dependency('json', '~> 2.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('sinatra', '~> 2.0')
   s.add_dependency('test-unit', '~> 3.2')

@@ -124,6 +124,28 @@ class MINARC_Client
    end
    #------------------------------------------------
    
+   def statusFileType(filetype)
+      url = "#{@minArcServer}#{API_URL_STAT_FILETYPES}/#{filetype}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::statusFileType => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)   
+   end
+   #------------------------------------------------
+
+   def statusGlobal
+      url = "#{@minArcServer}#{API_URL_STAT_GLOBAL}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::statusGlobal => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)   
+   end
+   #------------------------------------------------
+   
 private
 
    #-------------------------------------------------------------
