@@ -27,7 +27,9 @@ dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 # puts "MINARC_DatabaseModel::before_call_establish_connection"
 
-@@handler = ActiveRecord::Base.establish_connection(
+# @@handler =
+
+ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
                                           :host       => "localhost", 
                                           :database   => dbName,
@@ -38,9 +40,25 @@ dbPass      = ENV['MINARC_DATABASE_PASSWORD']
                                           :pool       => 10
                                           )
 
-# puts @@handler
-
-# puts "MINARC_DatabaseModel::after_call_establish_connection"
+#puts
+#puts @@handler.class
+#puts
+#
+#puts @@handler.methods
+#
+#connection_handle = ActiveRecord::Base.connection
+#
+#puts connection_handle.class
+#
+#
+#puts "active_connection?"
+#puts @@handler.active_connection?
+#puts
+#puts
+#puts @@handler.checkout
+#puts
+#
+## puts "MINARC_DatabaseModel::after_call_establish_connection"
 
 class ArchivedFile < ActiveRecord::Base
 

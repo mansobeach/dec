@@ -39,6 +39,7 @@ require 'getoptlong'
 require 'json'
 require 'rdoc'
 
+require 'arc/MINARC_Status'
 require 'arc/FileStatus'
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
@@ -197,40 +198,35 @@ def main
       end
    end
    # -------------------------------------------------------
-
+   # status global
 
    if @bGlobal == true then
+      ret = Hash.new
       if @bNoServer == true then
-         fileStatus = ARC::FileStatus.new(nil)
-
+         fileStatus = ARC::MINARC_Status.new(nil)
          if @isDebugMode == true then
             fileStatus.setDebugMode
          end
-         fileStatus.statusGlobal
+         ret = fileStatus.statusGlobal
       else
          arc = ARC::MINARC_Client.new
          
          if @isDebugMode == true then
             arc.setDebugMode
          end
-         
          ret = arc.statusGlobal
-
-         if @isDebugMode == true then
-            puts
-            puts ret
-            puts
-         end
-
-         hReturn = JSON.parse(ret)
-
-         hReturn.each{|key, value|
-            puts "#{key} : #{value}"
-         }
-         
-         exit(0)
-
       end
+      
+      if @isDebugMode == true then
+         puts
+         puts ret
+         puts
+      end
+
+      ret.sort.each{|key, value|
+         puts "#{key} : #{value}"
+      }
+      exit(0)
    end
 
 

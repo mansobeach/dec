@@ -10,6 +10,7 @@ require 'ftools'
 require 'cuc/DirUtils'
 require 'arc/MINARC_API'
 require 'arc/MINARC_Environment'
+require 'arc/MINARC_Status'
 require 'arc/FileStatus'
 
 include CUC::DirUtils
@@ -389,13 +390,13 @@ class MINARC_Server < Sinatra::Base
 
    get ARC::API_URL_STAT_GLOBAL do
    
-      fileStatus = ARC::FileStatus.new(nil)
+      arcStatus = ARC::MINARC_Status.new(nil)
 
       if settings.isDebugMode == true then
-         fileStatus.setDebugMode
+         arcStatus.setDebugMode
       end
      
-      ret = fileStatus.statusGlobal
+      ret = arcStatus.statusGlobal
       
       if settings.isDebugMode == true then
          puts ret

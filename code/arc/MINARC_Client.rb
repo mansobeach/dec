@@ -15,6 +15,7 @@
 #########################################################################
 
 require 'benchmark'
+require 'json'
 
 require 'ctc/WrapperCURL'
 require 'arc/MINARC_API'
@@ -142,7 +143,7 @@ class MINARC_Client
          puts "MINARC_Client::statusGlobal => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)   
+      return JSON.parse(getURL(url, @isDebugMode))   
    end
    #------------------------------------------------
    

@@ -18,7 +18,7 @@ require 'filesize'
 
 module ARC
 
-class FileStatus
+class MINARC_Status
 
    #-------------------------------------------------------------   
    
@@ -89,56 +89,35 @@ class FileStatus
       lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
       lastHourCount     = lastHourFiles.count
       lastArchiveDate   = ArchivedFile.last.archive_date
+      sizeOriginal      = Filesize.from("#{arrFiles.sum(:size_original)} B").pretty
       sizefile          = Filesize.from("#{arrFiles.sum(:size)} B").pretty
-
-      hResult[:total_size] = Filesize.from("#{arrFiles.sum(:size)} B").pretty      
-      
-      puts "Size of the files #{sizefile}"
-      puts
-      
-      hResult[:total_size_in_disk] = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      sizedisk = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      puts "Disk occupation #{sizedisk}"
-      puts
-
-      
-      hResult[:num_total_files]     = numTotalFiles
-      hResult[:num_files_last_hour] = lastHourCount
-      hResult[:last_date_archive]   = lastArchiveDate
-      
-      puts  
-      puts "Total archived #{numTotalFiles} files"
-
+      sizeInDisk        = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
+      arrTypes          = ArchivedFile.select(:filetype).distinct
+      lastHourSizeO     = lastHourFiles.sum(:size_original)
+      lastHourSize      = lastHourFiles.sum(:size)
+      lastHourDisk      = lastHourFiles.sum(:size_in_disk)
+      prettyHourSizeO   = Filesize.from("#{lastHourSizeO} B").pretty
+      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
+      prettyHourDisk    = Filesize.from("#{lastHourDisk} B").pretty
+                 
+      hResult[:total_size]                = sizefile
+      hResult[:total_size_in_disk]        = sizeInDisk
+      hResult[:total_size_original]       = sizeOriginal
+      hResult[:num_total_files]           = numTotalFiles
+      hResult[:num_files_last_hour]       = lastHourCount
+      hResult[:num_file_types]            = arrTypes.length
+      hResult[:last_date_archive]         = lastArchiveDate
+      hResult[:last_archive_filename]     = ArchivedFile.last.filename
+      hResult[:last_hour_size_original]   = prettyHourSizeO
+      hResult[:last_hour_size]            = prettyHourSize
+      hResult[:last_hour_size_in_disk]    = prettyHourDisk
       
       if lastHourCount == 0 then
          # ActiveRecord::Base.remove_connection
          puts "No files archived during period"
          return hResult
       end
-      
-      lastHourSizeO     = lastHourFiles.sum(:size_original)
-      lastHourSize      = lastHourFiles.sum(:size)
-      lastHourDisk      = lastHourFiles.sum(:size_in_disk)
-      
-      prettyHourSizeO   = Filesize.from("#{lastHourSizeO} B").pretty
-      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
-      prettyHourDisk    = Filesize.from("#{lastHourDisk} B").pretty
-      
-      # Filesize.from("#{lastHourFiles.sum(:size)} B").pretty
-      
-      puts      
-      puts "Last update #{lastArchiveDate}"
-      
-      
-      puts
-      puts "New #{lastHourCount} files archived during last hour"
-      
-      
-      puts
-      puts "#{prettyHourSizeO} / #{prettyHourSize} / #{prettyHourDisk} "
-      
-      
-      
+            
       puts 
             
       arrTypes = ArchivedFile.select(:filetype).distinct
