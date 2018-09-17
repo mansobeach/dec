@@ -53,7 +53,7 @@ class Handler_E2ESPM
    # Class constructor
    
    # Name now must be a full_path one
-   def initialize (name, destination = nil)
+   def initialize (name, destination = nil, args = {})
       archRoot             = ENV['MINARC_ARCHIVE_ROOT']
       @filename            = File.basename(name, ".*")
       @archive_path        = File.dirname(name)
