@@ -36,7 +36,11 @@ require 'arc/MINARC_Status'
 #  2  - test_local_purge
 #  3  - test_remote_delete
 #  4  - test_remote_retrieve
-
+#  5  - test_remote_api_version
+#  6  - test_remote_api_retrieve
+#  7  - test_remote_api_delete
+#  8  - test_local_and_remote_status_global
+#  9  - test_handler_m2ts_local
 
 
 class TestCaseStore < Test::Unit::TestCase
@@ -397,6 +401,32 @@ class TestCaseStore < Test::Unit::TestCase
 
    #-------------------------------------------------------------
 
+   def test_local_and_remote_status_global
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      test_local_minArcStore
+
+      puts
+      puts
+
+      cmd = "minArcStatus -g --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      puts
+      puts
+
+      cmd = "minArcStatus -g"
+      puts cmd
+      assert(system(cmd), cmd)
+            
+   end
+   #-------------------------------------------------------------
+
    def test_handler_m2ts_local
       puts __method__.to_s
       puts
@@ -435,33 +465,6 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "\\rm -rf #{dir1}*"
       system(cmd)
 
-   end
-   #-------------------------------------------------------------
-
-   def test_local_and_remote_status_global
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      test_local_minArcStore
-
-      puts
-      puts
-
-      cmd = "minArcStatus -g --noserver"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      puts
-      puts
-
-      cmd = "minArcStatus -g"
-      puts cmd
-      assert(system(cmd), cmd)
-
-            
    end
    #-------------------------------------------------------------
 

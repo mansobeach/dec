@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.15"
+   @@version = "1.0.16"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.16" =>    "minArcRetrieve local mode supports to filter --New files by archive date", \
       "1.0.15" =>    "Server mode restarts the connection to avoid pool limit :-( | ConnectionPool pending", \
       "1.0.14" =>    "minArcStatus supports server mode for global and filetype", \
       "1.0.13" =>    "minArcStore supports bulk mode with wildcards in local mode", \

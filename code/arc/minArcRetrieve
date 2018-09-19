@@ -189,22 +189,20 @@ def main
    @filetype                  = ""
    startVal                   = ""
    endVal                     = ""
-   archive_date               = ""
+   archive_date               = nil
    @bHardLink                 = false
    @bUnpack                   = false
    sInv                       = ""
-
    bIncStart                  = false
    bIncEnd                    = false
-
-   @isDebugMode            = false
-   @bDelete                = false
-   @bListOnly              = false
-   rule                    = "ALL"
-   bShowFileTypes          = false
-   @bShowVersion           = false
-   bGetAllFiles            = false
-   @bNoServer              = false
+   @isDebugMode               = false
+   @bDelete                   = false
+   @bListOnly                 = false
+   rule                       = "ALL"
+   bShowFileTypes             = false
+   @bShowVersion              = false
+   bGetAllFiles               = false
+   @bNoServer                 = false
 
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
@@ -325,7 +323,7 @@ def main
 
    # Check some flags and combinations
 
-   if @filename == "" and @bListOnly == false then
+   if @filename == "" and @bListOnly == false and archive_date == nil then
       usage
    end
 
@@ -400,7 +398,7 @@ def main
    end
 
    begin
-      if archive_date != "" then
+      if archive_date != nil then
          archive_date = Time.utc(archive_date.slice(0,4), archive_date.slice(4,2), archive_date.slice(6,2), archive_date.slice(9,2), archive_date.slice(11,2), archive_date.slice(13,2) )
          # archive_date = DateTime.parse(archive_date)
       end
@@ -480,7 +478,7 @@ def main
       end
    end
 
-   if archive_date != "" then
+   if archive_date != nil then
       ret = fileRetriever.retrieve_new_files(@full_path_target, archive_date, @bDelete, @bHardLink, @bUnpack)
    end
 
