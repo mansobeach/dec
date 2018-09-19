@@ -42,6 +42,8 @@ class MINARC_Server < Sinatra::Base
       
       # set :bind, '0.0.0.0'
       
+      set :server, :thin
+      set :threaded, true
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :isDebugMode,       true
@@ -104,6 +106,10 @@ class MINARC_Server < Sinatra::Base
       # test configuration
    end
    # ----------------------------------------------------------
+
+   after do
+      ActiveRecord::Base.clear_active_connections!
+   end
 
    # =================================================================
 
