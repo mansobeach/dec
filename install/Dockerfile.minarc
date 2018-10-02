@@ -4,14 +4,48 @@ FROM ruby:2.4.1-slim
 
 # ================================================
 
-
 # ================================================
 
 
 # RUN apt-get update && apt-get install -y net-tools
 
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends build-essential gcc make sqlite3 libsqlite3-dev exiftool
+  apt-get install -y --no-install-recommends build-essential gcc make p7zip-full sqlite3 libsqlite3-dev exiftool curl lsof
+
+# ------------------------------------------------
+
+# RUN mkdir -p /minarc_root/0.tmp && \
+#    mkdir -p /minarc_root/archive/ && \
+#    mkdir -p /minarc_root/error
+    
+# ================================================
+
+# MINARC Environment Variables into a single layer
+
+ENV   RACK_ENV=production \
+      MINARC_VERSION=DEPRECATED_VARIABLE \
+      MINARC_SERVER=http://localhost:4567 \
+      MINARC_DB_ADAPTER=sqlite3 \
+      MINARC_DATABASE_USER=root \
+      MINARC_DATABASE_PASSWORD=1mysql \
+      DCC_TMP=/volume/minarc_root/0.tmp \
+      TMP_DIR=/volume/minarc_root/0.tmp \
+      MINARC_TMP=/volume/minarc_root/0.tmp \
+      MINARC_ARCHIVE_ROOT=/volume/minarc_root/archive \
+      MINARC_ARCHIVE_ERROR=/volume/minarc_root/error \
+      MINARC_DATABASE_NAME=/volume/minarc_root/inventory/minarc_inventory
+
+RUN env
+# ================================================
+
+# MINARC ROOT storage to be handled as data volumes
+
+RUN mkdir /volume
+VOLUME /volume
+
+
+ENV PORT 4567
+EXPOSE 4567
 
 # ------------------------------------------------
 # Install ruby gem dependencies
@@ -21,38 +55,17 @@ RUN bundle install
 
 # ================================================
 
-COPY minarc.gem .
+# Install the minarc gem
+
+COPY ./gems/minarc.gem .
 RUN gem install --local minarc.gem
 # ------------------------------------------------
 
-# ------------------------------------------------
 
-RUN mkdir -p /minarc_root/0.tmp && \
-    mkdir -p /minarc_root/archive/ && \
-    mkdir -p /minarc_root/error
-    
-# ================================================
+# Execution entry point
 
-# MINARC Environment Variables
-
-ENV DCC_TMP                            /minarc_root/0.tmp
-ENV TMP_DIR                            /minarc_root/0.tmp
-ENV RACK_ENV                           production
-ENV MINARC_VERSION                     DEPRECATED_VARIABLE
-ENV MINARC_SERVER                      http://localhost:4567
-ENV MINARC_DB_ADAPTER                  sqlite3
-ENV MINARC_ARCHIVE_ROOT                /minarc_root/archive/
-ENV MINARC_ARCHIVE_ERROR               /minarc_root/error/
-ENV MINARC_TMP                         /minarc_root/0.tmp
-ENV MINARC_DATABASE_NAME               /minarc_root/inventory/minarc_inventory
-ENV MINARC_DATABASE_USER               root
-ENV MINARC_DATABASE_PASSWORD           1mysql
-
-# ================================================
+CMD ["minArcServer", "-s"]
 
 # ------------------------------------------------
 
-ENV PORT 4567
-EXPOSE 4567
 
-CMD ["minArcServer -s"]

@@ -27,13 +27,26 @@ sudo apt-get -y install build-essential
 
 sudo apt-add-repository -y ppa:brightbox/ruby-ng
 
+# ================================================
+
+# Networking tools
+
 sudo apt-get -y update
+
+sudo apt-get -y bridge-utils
+
+sudo apt-get -y lsof
 
 sudo apt-get -y install curl
 
 sudo apt-get -y install ncftp
 
 sudo apt-get -y install libcurl3 libcurl3-gnutls libcurl4-openssl-dev
+
+# General tools
+
+# command line json editor
+sudo apt-get -y install jq
 
 sudo apt-get -y install p7zip
 
