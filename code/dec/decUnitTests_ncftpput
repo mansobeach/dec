@@ -80,22 +80,36 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
    
    #--------------------------------------------------------
    
-   data("abs_path1",     ["/tmp/destination_dir", "/tmp/destination_dir/tmp_dir"])
-   data("abs_path2",     ["/tmp/destination_dir", "/tmp/tmp_dir"])
-   data("rel_path1",     ["destination_dir", "tmp_dir"])
-   data("rel_path2",     ["destination_dir", "destination_dir/tmp_dir"])
-   data("mix_path1",     ["destination_dir", "/tmp/tmp_dir"])
-   data("mix_path2",     ["/tmp/destination_dir", "tmp_dir"])
-   data("biz_path1",     ["../../tmp/destination_dir", "../../tmp/tmp_dir"])
-   data("biz_path2",     ["../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir"])
+   # full paths
+   data("abs_path1",     ["ABSOLUTE_PATH_NESTED",        "/tmp/destination_dir", "/tmp/destination_dir/tmp_dir"])
+   data("abs_path2",     ["ABSOLUTE_PATH_NOT_NESTED",    "/tmp/destination_dir", "/tmp/tmp_dir"])
+   
+   # relative paths
+   data("rel_path1",     ["RELATIVE_PATH_NOT_NESTED",    "destination_dir", "tmp_dir"])
+   data("rel_path2",     ["RELATIVE_PATH_NESTED",        "destination_dir", "destination_dir/tmp_dir"])
+   
+   # combination of full paths and relative paths
+   data("mix_path1",     ["MIX_1_ABS_&_REL_PATH",        "destination_dir", "/tmp/tmp_dir"])
+   data("mix_path2",     ["MIX_2_ABS_&_REL_PATH",        "/tmp/destination_dir", "tmp_dir"])
+   
+   # Two levels to get root "/" from home /home/wisconsin_butcher 
+   data("biz_path1",     ["BIZARRE_REL_PATH_NOT_NESTED", "../../tmp/destination_dir", "../../tmp/tmp_dir"])
+   data("biz_path2",     ["BIZARRE_REL_PATH_NESTED",     "../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir"])
+   
+   # Same directories for UploadDir & UploadTemp
+   data("biz_path3",     ["SAME_ABSOLUTE_PATH",          "/tmp/destination_dir", "/tmp/destination_dir"])
+   data("biz_path4",     ["SAME_RELATIVE_PATH",          "destination_dir", "destination_dir"])
+   data("biz_path5",     ["SAME_LOCATION_DIFFERENT_PATH",  "/Users/borja/destination_dir", "destination_dir"])
 
-
-   def test_ncftpput(data)
+   # This test creates every necessary directory to make the circulations succeed
+   def test_ncftpput_1(data)
       
-      dir, tmpDir = data
+      label, dir, tmpDir = data
+      
                            
       puts
       puts "---------------------------------"
+      puts label
       puts "UploadDir   => #{dir}"
       puts "UploadTemp  => #{tmpDir}"
       puts "---------------------------------"
@@ -163,6 +177,86 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
 
       Dir.chdir(prevDir)
       
+   end
+   #--------------------------------------------------------
+
+   # Same directories for UploadDir & UploadTemp
+   data("abs_path1",     ["ABSOLUTE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",   "/tmp/texas_chainsaw_holy_molly", "/tmp/texas_chainsaw_holy_molly/tmp", true])
+   data("abs_path2",     ["NO_WRITE_PERMISSION_BOTH",             "/", "/", false])
+   data("abs_path3",     ["NO_WRITE_PERMISSION_FINAL_1",          "/", "/tmp", false])
+   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
+   data("abs_path4",     ["NO_WRITE_PERMISSION_TMP",              "/tmp", "/", false])
+   data("rel_path1",     ["RELATIVE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",  "texas_chainsaw_holly_molly", "texas_chainsaw_holly_molly/tmp", true])
+   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
+
+   # this test does not create directories to verify circulations failure behaviour
+   def test_ncftpput_2(data)
+
+      label, dir, tmpDir, cmdResult = data
+      
+                           
+      puts
+      puts "---------------------------------"
+      puts label
+      puts "UploadDir   => #{dir}"
+      puts "UploadTemp  => #{tmpDir}"
+      puts "---------------------------------"
+      puts
+
+
+      prevDir = Dir.pwd
+      Dir.chdir("/tmp")
+          
+      cmd = self.createNcFtpPut_NEW(@@host,  \
+                                    @@port, \
+                                    @@user, \
+                                    @@pass, \
+                                    tmpDir, \
+                                    dir, \
+                                    @@file, \
+                                    @@prefix, \
+                                    @@verbose \
+                                    )
+
+      puts                              
+      puts cmd
+      puts
+
+      ret = system(cmd)
+      
+#      puts
+#      puts ret
+#      puts cmdResult
+#      puts
+      
+      assert(ret == cmdResult, cmd)
+      
+      if ret == true then
+         if dir[0,1] != '/' then
+            Dir.chdir("#{ENV['HOME']}/#{dir}")
+         else
+            Dir.chdir(dir)  
+         end
+         
+         assert(File.exists?(@@file), "Everything in the right place ...")
+         
+         # remove destination directory UploadDir
+         if dir[0,1] != '/' then
+            system("rm -rf ~/#{dir}")
+         else
+            system("rm -rf #{dir}")
+         end
+      
+         # remove destination directory UploadTemp
+         if tmpDir[0,1] != '/' then
+            system("rm -rf ~/#{tmpDir}")
+         else
+            system("rm -rf #{tmpDir}")
+         end             
+      end
+               
+      Dir.chdir(prevDir)
+
    end
    #--------------------------------------------------------
 
