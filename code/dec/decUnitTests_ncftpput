@@ -1,0 +1,171 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L.
+#
+# === Data Exchange Component
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'ctc/FTPClientCommands'
+
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+class DECTestCase_Ncftpput < Test::Unit::TestCase
+
+   include Test::Unit::Data
+      
+   include CTC::FTPClientCommands
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      # --------------------------------
+      # change your credentials here      
+      @@host        = "localhost"      
+      @@user        = "borja"
+      @@pass        = "perrillo"
+      @@port        = 21
+      # --------------------------------
+      @@file        = "satansaldemi.txt"
+      @@prefix      = ''
+      @@verbose     = true
+   end
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC tests ncftpput"
+   end
+   #--------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      prevDir     = Dir.pwd      
+      Dir.chdir("/tmp")
+      system("echo \'satan sal de mi\' > #{@@file}")
+      Dir.chdir(prevDir)
+   end
+   #--------------------------------------------------------
+   # After every test case
+
+   def teardown
+      # remove source file
+      system("rm -f /tmp/#{@@file}")
+      return
+   end
+   #--------------------------------------------------------
+   
+   #--------------------------------------------------------
+   
+   data("abs_path1",     ["/tmp/destination_dir", "/tmp/destination_dir/tmp_dir"])
+   data("abs_path2",     ["/tmp/destination_dir", "/tmp/tmp_dir"])
+   data("rel_path1",     ["destination_dir", "tmp_dir"])
+   data("rel_path2",     ["destination_dir", "destination_dir/tmp_dir"])
+   data("mix_path1",     ["destination_dir", "/tmp/tmp_dir"])
+   data("mix_path2",     ["/tmp/destination_dir", "tmp_dir"])
+   data("biz_path1",     ["../../tmp/destination_dir", "../../tmp/tmp_dir"])
+   data("biz_path2",     ["../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir"])
+
+
+   def test_ncftpput(data)
+      
+      dir, tmpDir = data
+                           
+      puts
+      puts "---------------------------------"
+      puts "UploadDir   => #{dir}"
+      puts "UploadTemp  => #{tmpDir}"
+      puts "---------------------------------"
+      puts
+ 
+      # create destination directory UploadDir
+      if dir[0,1] != '/' then
+         system("mkdir -p ~/#{dir}")
+      else
+         system("mkdir -p #{dir}")
+      end
+      
+      # create destination directory UploadTemp
+      if tmpDir[0,1] != '/' then
+         system("mkdir -p ~/#{tmpDir}")
+      else
+         system("mkdir -p #{tmpDir}")
+      end
+      
+      prevDir = Dir.pwd
+      Dir.chdir("/tmp")
+          
+      cmd = self.createNcFtpPut_NEW(@@host,  \
+                                    @@port, \
+                                    @@user, \
+                                    @@pass, \
+                                    tmpDir, \
+                                    dir, \
+                                    @@file, \
+                                    @@prefix, \
+                                    @@verbose \
+                                    )
+
+      puts                              
+      puts cmd
+      puts
+
+      ret = system(cmd)
+      assert(ret, cmd)
+      
+      if ret == true then
+         root = Dir.pwd
+         if dir[0,1] != '/' then
+            Dir.chdir("#{ENV['HOME']}/#{dir}")
+         else
+            Dir.chdir(dir)  
+         end
+         assert(File.exists?(@@file), "Everything in the right place ...")         
+         Dir.chdir(root)
+      end
+               
+      # remove destination directory UploadDir
+      if dir[0,1] != '/' then
+         system("rm -rf ~/#{dir}")
+      else
+         system("rm -rf #{dir}")
+      end
+      
+      # remove destination directory UploadTemp
+      if tmpDir[0,1] != '/' then
+         system("rm -rf ~/#{tmpDir}")
+      else
+         system("rm -rf #{tmpDir}")
+      end
+
+      Dir.chdir(prevDir)
+      
+   end
+   #--------------------------------------------------------
+
+end
+
+#=====================================================================
