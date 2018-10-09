@@ -6,7 +6,7 @@
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === Mini Archive Component (MinArc)
+# === Data Exchange Component
 # 
 # module DEC
 #
@@ -17,6 +17,7 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
 require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
@@ -35,10 +36,23 @@ require 'dec/DEC_Environment'
 #  2  - test_decGetFromInterface
 #  3  - test_decListener
 
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
 class DECTestCase < Test::Unit::TestCase
 
    include CUC::DirUtils
+   include CTC::FTPClientCommands
    include DEC
+
    
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
@@ -68,6 +82,7 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
       
+=begin
       puts
       puts
       puts "THINK IT TWICE  !!! "
@@ -82,7 +97,8 @@ class DECTestCase < Test::Unit::TestCase
       if c != 'Y' then
          exit(99)
       end
-      
+
+=end      
       
       @@conf = DEC_Environment.new
       
@@ -126,6 +142,17 @@ class DECTestCase < Test::Unit::TestCase
       if ret == false then
          puts
          puts "Error when creating the minarc inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decAddInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
          puts
          # exit(99)
       end
@@ -293,6 +320,10 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decSend2Interface -m non_existing_if"
       assert(!system(cmd), cmd)
+
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      assert(system(cmd), cmd)
+
 
    end
 

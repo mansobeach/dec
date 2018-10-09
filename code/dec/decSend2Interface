@@ -2,7 +2,7 @@
 
 # == Synopsis
 #
-# This is a Data Distributor Ccmponent command line tool that deliver files to a given I/F.
+# This is a Data Distributor Component command line tool that deliver files to a given I/F.
 # It delivers files via (s)ftp and email. Files sent are registered in the Inventory 
 # and the delivery date is set to the latest one.
 #
@@ -174,7 +174,11 @@ def main
    end   
    
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n\n")
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = DEC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }      
       exit(0)
    end
    
@@ -212,6 +216,7 @@ def main
 
    if @entity == "" then
       usage
+      exit(0)
    end
    
    if @strParams != "" then
@@ -472,7 +477,7 @@ def deliverByFTP
 
 
    while bNewFiles
-      sender = DDC_FileSender.new(@entity, @isDebugMode, @isNoDB)
+      sender = DDC_FileSender.new(@entity, "FTP", @isDebugMode, @isNoDB)
       if @isDebugMode == true then
          sender.setDebugMode
       end

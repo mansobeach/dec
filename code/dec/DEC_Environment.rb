@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component (DEC)
 # 
-# CVS: $Id: DEC_ConfigDevelopment,v 1.12 2008/09/24 16:09:19 decdev Exp $
+# Git: DEC_ConfigDevelopment,v $Id$
 #
 # module DEC
 #
@@ -18,13 +18,14 @@ require 'rubygems'
 
 module DEC
    
-   @@version = "1.0.1"
+   @@version = "1.0.2"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.0"  =>    "first version of the dec installer created", \
-      "1.0.1"  =>    "decStats -H <hours> has been integrated" \
+      "1.0.2"  =>    "commands triggered by reception events are now logged", \
+      "1.0.1"  =>    "decStats -H <hours> has been integrated", \
+      "1.0.0"  =>    "first version of the dec installer created" \
    }
    # -----------------------------------------------------------------
    

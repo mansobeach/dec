@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: EventManager.rb,v 1.4 2007/03/21 08:43:44 decdev Exp $
+# Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
 #
 # === Module: Common Transfer Component // Class EventManager
 #
@@ -51,14 +51,20 @@ class EventManager
    end
    #-------------------------------------------------------------
    
-   def trigger(interface, eventName, params = nil)
+   def trigger(interface, eventName, params = nil, log = nil)
       eventMgr  = @ftReadConf.getEvents(interface)
       if eventMgr == nil then
          return
       end
-      events = eventMgr[:arrEvents]
       
+      if @isDebugMode == true and log != nil then
+         log.debug("EventManager::trigger #{eventName} - #{interface} - #{params}")
+      end
+      
+      events = eventMgr[:arrEvents]
+            
       events.each{|event|
+         
          if eventName == event["name"] then
             cmd = event["cmd"]
             # Escape special XML characters.
@@ -66,6 +72,9 @@ class EventManager
             anewCmd = cmd.sub!("&amp;", "&")
             if anewCmd != nil then
                cmd = anewCmd
+            end
+            if log != nil then
+               log.info(cmd)
             end
             retVal = system(cmd)
             if @isDebugMode == true then

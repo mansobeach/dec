@@ -382,7 +382,7 @@ def body
       if bNewFiles == false then
          puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("No file(s) available from #{@entity} I/F for retrieving")
-         event.trigger(@entity, "ONRECEIVEOK")
+         event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
       else
          puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("New file(s) available from #{@entity} I/F for retrieving")
@@ -399,10 +399,10 @@ def body
 
             if ret == true then
                @logger.info("Event OnReceiveNewFilesOK triggered}")
-               event.trigger(@entity, "ONRECEIVENEWFILESOK")
+               event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
             else
                @logger.info("Event OnReceiveError triggered}")
-               event.trigger(@entity, "ONRECEIVEERROR")
+               event.trigger(@entity, "ONRECEIVEERROR", nil, @logger)
             end
 
          end

@@ -7,6 +7,8 @@
 # === Written by DEIMOS Space S.L.
 #
 # === Data Exchange Component
+#
+# # git: decUnitTests_ncftpput,v $Id$: 
 # 
 # module DEC
 #
@@ -80,31 +82,54 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
    
    #--------------------------------------------------------
    
-   # full paths
-   data("abs_path1",     ["ABSOLUTE_PATH_NESTED",        "/tmp/destination_dir", "/tmp/destination_dir/tmp_dir"])
-   data("abs_path2",     ["ABSOLUTE_PATH_NOT_NESTED",    "/tmp/destination_dir", "/tmp/tmp_dir"])
-   
-   # relative paths
-   data("rel_path1",     ["RELATIVE_PATH_NOT_NESTED",    "destination_dir", "tmp_dir"])
-   data("rel_path2",     ["RELATIVE_PATH_NESTED",        "destination_dir", "destination_dir/tmp_dir"])
+      
+   # full paths Port mode
+   data("abs_path1",     ["ABSOLUTE_PATH_NESTED",        "/tmp/destination_dir", "/tmp/destination_dir/tmp_dir",  false])
+   data("abs_path2",     ["ABSOLUTE_PATH_NOT_NESTED",    "/tmp/destination_dir", "/tmp/tmp_dir",   false])
+
+   # full paths Passive mode
+   data("abs_path3",     ["ABSOLUTE_PATH_NESTED_PASSIVE_MODE",        "/tmp/destination_dir", "/tmp/destination_dir/tmp_dir",  true])
+   data("abs_path4",     ["ABSOLUTE_PATH_NOT_NESTED_PASSIVE_MODE",    "/tmp/destination_dir", "/tmp/tmp_dir",   true])
+
+   # relative paths Port mode
+   data("rel_path1",     ["RELATIVE_PATH_NOT_NESTED",    "destination_dir", "tmp_dir", false])
+   data("rel_path2",     ["RELATIVE_PATH_NESTED",        "destination_dir", "destination_dir/tmp_dir",   false])
+
+   # relative paths Passive mode
+   data("rel_path3",     ["RELATIVE_PATH_NOT_NESTED_PASSIVE_MODE",    "destination_dir", "tmp_dir", true])
+   data("rel_path4",     ["RELATIVE_PATH_NESTED_PASSIVE_MODE",        "destination_dir", "destination_dir/tmp_dir",   true])
    
    # combination of full paths and relative paths
-   data("mix_path1",     ["MIX_1_ABS_&_REL_PATH",        "destination_dir", "/tmp/tmp_dir"])
-   data("mix_path2",     ["MIX_2_ABS_&_REL_PATH",        "/tmp/destination_dir", "tmp_dir"])
+   data("mix_path1",     ["MIX_1_ABS_&_REL_PATH",        "destination_dir", "/tmp/tmp_dir",  false])
+   data("mix_path2",     ["MIX_2_ABS_&_REL_PATH",        "/tmp/destination_dir", "tmp_dir",  false])
+
+   # combination of full paths and relative paths in Passive mode
+   data("mix_path3",     ["MIX_1_ABS_&_REL_PATH_PASSIVE_MODE",        "destination_dir", "/tmp/tmp_dir",  true])
+   data("mix_path4",     ["MIX_2_ABS_&_REL_PATH_PASSIVE_MODE",        "/tmp/destination_dir", "tmp_dir",  true])
    
    # Two levels to get root "/" from home /home/wisconsin_butcher 
-   data("biz_path1",     ["BIZARRE_REL_PATH_NOT_NESTED", "../../tmp/destination_dir", "../../tmp/tmp_dir"])
-   data("biz_path2",     ["BIZARRE_REL_PATH_NESTED",     "../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir"])
+   data("biz_path1",     ["BIZARRE_REL_PATH_NOT_NESTED", "../../tmp/destination_dir", "../../tmp/tmp_dir", false])
+   data("biz_path2",     ["BIZARRE_REL_PATH_NESTED",     "../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir", false])
    
    # Same directories for UploadDir & UploadTemp
-   data("biz_path3",     ["SAME_ABSOLUTE_PATH",          "/tmp/destination_dir", "/tmp/destination_dir"])
-   data("biz_path4",     ["SAME_RELATIVE_PATH",          "destination_dir", "destination_dir"])
-   data("biz_path5",     ["SAME_LOCATION_DIFFERENT_PATH",  "/Users/borja/destination_dir", "destination_dir"])
+   data("biz_path3",     ["SAME_ABSOLUTE_PATH",          "/tmp/destination_dir", "/tmp/destination_dir", false])
+   data("biz_path4",     ["SAME_RELATIVE_PATH",          "destination_dir", "destination_dir", false])
+   data("biz_path5",     ["SAME_LOCATION_DIFFERENT_PATH",  "/Users/borja/destination_dir", "destination_dir", false])
+
+   # Two levels to get root "/" from home /home/wisconsin_butcher in Passive mode
+   data("biz_path6",     ["BIZARRE_REL_PATH_NOT_NESTED_PASSIVE_MODE", "../../tmp/destination_dir", "../../tmp/tmp_dir", true])
+   data("biz_path7",     ["BIZARRE_REL_PATH_NESTED_PASSIVE_MODE",     "../../tmp/destination_dir", "../../tmp/destination_dir/tmp_dir", true])
+
+   # Same directories for UploadDir & UploadTemp in Passive mode
+   data("biz_path8",     ["SAME_ABSOLUTE_PATH_PASSIVE_MODE",          "/tmp/destination_dir", "/tmp/destination_dir", true])
+   data("biz_path9",     ["SAME_RELATIVE_PATH_PASSIVE_MODE",          "destination_dir", "destination_dir", false])
+   data("biz_path10",    ["SAME_LOCATION_DIFFERENT_PATH_PASSIVE_MODE",  "/Users/borja/destination_dir", "destination_dir", true])
+
 
    # This test creates every necessary directory to make the circulations succeed
    def test_ncftpput_1(data)
       
-      label, dir, tmpDir = data
+      label, dir, tmpDir, flagPassive = data
       
                            
       puts
@@ -132,7 +157,7 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
       prevDir = Dir.pwd
       Dir.chdir("/tmp")
           
-      cmd = self.createNcFtpPut_NEW(@@host,  \
+      cmd = self.createNcFtpPut(@@host,  \
                                     @@port, \
                                     @@user, \
                                     @@pass, \
@@ -140,7 +165,8 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
                                     dir, \
                                     @@file, \
                                     @@prefix, \
-                                    @@verbose \
+                                    @@verbose, \
+                                    flagPassive \
                                     )
 
       puts                              
@@ -180,7 +206,8 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
    end
    #--------------------------------------------------------
 
-   # Same directories for UploadDir & UploadTemp
+   # all tests are passive connections
+   
    data("abs_path1",     ["ABSOLUTE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",   "/tmp/texas_chainsaw_holy_molly", "/tmp/texas_chainsaw_holy_molly/tmp", true])
    data("abs_path2",     ["NO_WRITE_PERMISSION_BOTH",             "/", "/", false])
    data("abs_path3",     ["NO_WRITE_PERMISSION_FINAL_1",          "/", "/tmp", false])
@@ -207,7 +234,7 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
       prevDir = Dir.pwd
       Dir.chdir("/tmp")
           
-      cmd = self.createNcFtpPut_NEW(@@host,  \
+      cmd = self.createNcFtpPut(@@host,  \
                                     @@port, \
                                     @@user, \
                                     @@pass, \

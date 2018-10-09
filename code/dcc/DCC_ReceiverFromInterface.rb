@@ -895,7 +895,7 @@ private
          @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
-         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam)
+         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, nil, @logger)
 
          # rename the file if AddMnemonic2Name enabled
          ret = renameFile(File.basename(filename))
@@ -1042,7 +1042,7 @@ private
          @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
-         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam)
+         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, @logger)
 
          # rename the file if AddMnemonic2Name enabled
          ret = renameFile(File.basename(filename))
