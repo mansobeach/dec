@@ -1,0 +1,620 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
+require 'ctc/ReadInterfaceConfig'
+require 'dec/DEC_Environment'
+
+
+# Preconditions:
+# 1 - setup 
+# 1.1 - load_config_development
+# 1.2 - inventory database is created
+
+# 2 - teardown
+# 2.1 - purge archive
+# 2.2 - inventory database is destroyed
+
+
+#  1  - test_decConfigInterface2DB
+#  2  - test_decGetFromInterface
+#  3  - test_decListener
+
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+class DECTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   # --------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Reference Planning Facility (RPF) Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+      
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+      @@conf.load_config_developmentRPF
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+      
+      puts      
+      @@conf.wrapper_print_environmentRPF
+      puts
+
+      
+      @@conf.createEnvironmentDirs
+
+      @@conf.createEnvironmentDirsRPF      
+      
+      require 'dec/DEC_DatabaseModel'
+      
+      
+   end
+   
+   # --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      system("decListener -S")
+      puts "End of DEC tests"
+   end
+   
+   # --------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+      
+      @@conf.load_config_developmentRPF
+      
+      cmd = "decManageDB -c --rpf"
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when creating the minarc inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decAddInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
+         puts
+         # exit(99)
+      end
+      
+      # Load basic data
+      
+      0.upto(10) do |rop_id|
+         aROP                       = InventoryROP.new
+         aROP.ROP_ID                = rop_id
+         aROP.STATUS                = InventoryROP::STATUS_NEW
+         aROP.TRANSFERABILITY       = InventoryROP::NOT_TRANSFERABLE
+         aROP.save!
+      end
+      
+      
+      ftParams = InventoryParams.new
+      ftParams.KEYWORD  = "FILE_TRANSFER_LOCK"
+      ftParams.VALUE    = "0"
+      ftParams.save!
+
+      cmd = "rm -f /tmp/sendRopLog*"
+      system(cmd)
+      
+   end
+   # --------------------------------------------------------
+   # After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d --rpf"
+      puts cmd
+      ret = system(cmd)
+       
+      if ret == false then
+         puts "Error when dropping the DEC / RPF inventory ! :-("
+         puts
+         exit(99)
+      end
+            
+   end
+   # --------------------------------------------------------
+
+
+   # --------------------------------------------------------
+
+   def test_decConfigInterface2DB
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -v"
+      assert(system(cmd), cmd)
+            
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+   end
+   # --------------------------------------------------------
+
+
+
+   # --------------------------------------------------------
+
+   def test_setROPStatus
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "setROPStatus.rb -R 3 -s STATUS_VALIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_VALIDATED, "ROP#3 FAILED to update STATUS_VALIDATED")
+ 
+      cmd = "setROPStatus.rb -R 3 -s STATUS_NEW"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_NEW, "ROP#3 FAILED to update STATUS_NEW")
+          
+      cmd = "setROPStatus.rb -R 3 -s STATUS_CONSOLIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_CONSOLIDATED, "ROP#3 FAILED to update STATUS_CONSOLIDATED")
+
+      cmd = "setROPStatus.rb -R 3 -s STATUS_BEING_TRANSFERRED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_BEING_TRANSFERRED, "ROP#3 FAILED to update STATUS_BEING_TRANSFERRED")
+
+      cmd = "setROPStatus.rb -R 3 -s STATUS_TRANSFERRED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_TRANSFERRED, "ROP#3 FAILED to update STATUS_TRANSFERRED")
+
+      cmd = "setROPStatus.rb -R 3 -s STATUS_CONSOLIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_CONSOLIDATED, "ROP#3 FAILED to update STATUS_CONSOLIDATED")
+
+   end
+   # --------------------------------------------------------
+   
+   def test_getFiles
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "getRPFFilesToBeTransferred.rb -u"
+      assert(system(cmd), cmd)
+  
+      cmd = "getRPFFilesToBeTransferred.rb -v"
+      assert(system(cmd), cmd)
+
+      cmd = "getRPFFilesToBeTransferred.rb -h"
+      assert(system(cmd), cmd)
+
+      cmd = "getRPFFilesToBeTransferred.rb -R 3 -V -D"
+      assert(system(cmd), cmd)
+   end
+   
+   # --------------------------------------------------------
+   
+   def test_sendROP_Various
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "sendROP.rb -v"
+      assert(system(cmd), cmd)
+      
+      cmd = "sendROP.rb -h"
+      assert(system(cmd), cmd)
+      
+      cmd = "sendROP.rb -u"
+      assert(system(cmd), cmd)
+      
+      puts
+
+      # ROP#3 with status NOT TRANSFERABLE
+      cmd = "sendROP.rb -R 3 -D"
+      assert(!system(cmd), cmd)
+      puts
+      puts
+
+      # Set ROP Transferable
+      InventoryROP.unsetAllTransferable(3)
+
+      cmd = "setROPStatus.rb -R 3 -s STATUS_CONSOLIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_CONSOLIDATED, "ROP#3 FAILED to update STATUS_CONSOLIDATED")
+
+
+      # ROP#3 with status TRANSFERABLE
+      cmd = "sendROP.rb -R 3 -D"
+      assert(system(cmd), cmd)
+
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_TRANSFERRED, "ROP#3 FAILED to update STATUS_TRANSFERRED")
+
+   end
+   # --------------------------------------------------------
+
+   def test_sendROPFilesEmergency
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      rpfRoot = ENV['RPF_ARCHIVE_ROOT']
+                  
+      checkDirectory("#{rpfRoot}/Files/MPL__NPPF_")
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 1
+      aFile.FILENAME       = "S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.EEF"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL__NPPF_/S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.EEF"
+      system(cmd)
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 2
+      aFile.FILENAME       = "S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0002.EEF"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL__NPPF_/S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0002.EEF"
+      system(cmd)
+      
+#      cmd = %Q{getRPFFilesToBeTransferred.rb -E -i "1 2" -V}
+#      puts cmd
+#      assert(system(cmd), cmd)        
+            
+      cmd = %Q{sendROPFiles.rb -E -i "1 2" -V}
+      puts cmd
+      assert(system(cmd), cmd)        
+      
+      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
+      @uploadDir     = @ftpServer[:uploadDir]
+      
+      cmd = "rm -f ~/#{@uploadDir}/*"
+      puts
+      system(cmd)
+            
+      cmd = "setROPStatus.rb -R 3 -s STATUS_VALIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: 3)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_VALIDATED, "ROP#3 FAILED to update STATUS_VALIDATED")
+                  
+   end
+   # --------------------------------------------------------
+   def test_sendROPFiles
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      rpfRoot = ENV['RPF_ARCHIVE_ROOT']
+                  
+      rop_id = 11
+      
+      aROP                       = InventoryROP.new
+      aROP.ROP_ID                = rop_id
+      aROP.STATUS                = InventoryROP::STATUS_NEW
+      aROP.TRANSFERABILITY       = InventoryROP::TRANSFERABLE
+      aROP.save!
+      
+                  
+      checkDirectory("#{rpfRoot}/Files/MPL__NPPF_")
+      
+      # ----------------------------------------------------
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 1
+      aFile.FILENAME       = "S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.EEF"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL__NPPF_/S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.EEF"
+      system(cmd)
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 2
+      aFile.FILENAME       = "S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0002.EEF"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL__NPPF_/S2_OPER_MPL__NPPF__20170217T110000_20170304T140000_0002.EEF"
+      system(cmd)
+
+      # ----------------------------------------------------
+
+      aFile = InventoryROPFile.new       
+      aFile.FILE_ID        = 1
+      aFile.ROP_ID         = rop_id
+      aFile.save!
+
+      aFile = InventoryROPFile.new       
+      aFile.FILE_ID        = 2
+      aFile.ROP_ID         = rop_id
+      aFile.save!
+      
+      # ----------------------------------------------------
+      
+      cmd = "setROPStatus.rb -R #{rop_id} -s STATUS_VALIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: rop_id)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_VALIDATED, "ROP #{rop_id} FAILED to update STATUS_VALIDATED")
+            
+      cmd = "sendROPFiles.rb -R #{rop_id} -i \"1 2\" -V -D"
+      cmd = %Q{sendROPFiles.rb -R 11 -i "1 2" -V}
+      puts cmd
+      assert(system(cmd), cmd)        
+      
+      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
+      @uploadDir     = @ftpServer[:uploadDir]
+      
+#      cmd = "rm -f ~/#{@uploadDir}/*"
+#      puts
+#      system(cmd)
+            
+                  
+   end
+   # --------------------------------------------------------
+
+   # --------------------------------------------------------
+   def test_sendROP
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      rpfRoot = ENV['RPF_ARCHIVE_ROOT']
+                  
+      rop_id = 11
+      
+      aROP                       = InventoryROP.new
+      aROP.ROP_ID                = rop_id
+      aROP.STATUS                = InventoryROP::STATUS_NEW
+      aROP.TRANSFERABILITY       = InventoryROP::TRANSFERABLE
+      aROP.save!
+      
+                  
+      checkDirectory("#{rpfRoot}/Files/MPL_STPLAN")
+      checkDirectory("#{rpfRoot}/Files/MPL_SEG___")
+      
+      # ----------------------------------------------------
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 1
+      aFile.FILENAME       = "AE_OPER_MPL_STPLAN_20071029T000000_20071105T000000_0001.TGZ"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL_STPLAN/AE_OPER_MPL_STPLAN_20071029T000000_20071105T000000_0001.TGZ"
+      system(cmd)
+      
+      aFile = InventoryFile.new         
+      aFile.FILE_ID        = 2
+      aFile.FILENAME       = "AE_OPER_MPL_SEG____20071029T000000_20071105T000000_0003.TGZ"   
+      aFile.save!
+      cmd = "echo content > #{rpfRoot}/Files/MPL_SEG___/AE_OPER_MPL_SEG____20071029T000000_20071105T000000_0003.TGZ"
+      system(cmd)
+
+      # ----------------------------------------------------
+
+      aFile = InventoryROPFile.new       
+      aFile.FILE_ID        = 1
+      aFile.ROP_ID         = rop_id
+      aFile.save!
+
+      aFile = InventoryROPFile.new       
+      aFile.FILE_ID        = 2
+      aFile.ROP_ID         = rop_id
+      aFile.save!
+      
+      # ----------------------------------------------------
+
+      aRopFile = InventoryROPFileView.new
+      aRopFile.CURRENT_ROP = rop_id
+      aRopFile.FILE_ID     = 1
+      aRopFile.TYPE_ID     = 1
+      aRopFile.FILENAME    = "AE_OPER_MPL_STPLAN_20071029T000000_20071105T000000_0001.TGZ"   
+      aRopFile.STATUS      = InventoryFile::STATUS_VALIDATED 
+      aRopFile.save!
+            
+      aRopFile = InventoryROPFileView.new
+      aRopFile.CURRENT_ROP = rop_id
+      aRopFile.FILE_ID     = 2
+      aRopFile.TYPE_ID     = 2
+      aRopFile.FILENAME    = "AE_OPER_MPL_SEG____20071029T000000_20071105T000000_0003.TGZ"   
+      aRopFile.STATUS      = InventoryFile::STATUS_VALIDATED 
+      aRopFile.save!
+      
+      # ----------------------------------------------------
+      
+      cmd = "getRPFFilesToBeTransferred.rb -R 11 -V -D -l"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      puts
+      puts
+      puts
+      
+      cmd = "getRPFFilesToBeTransferred.rb -R 11 -V -D"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "rm -f #{ENV['FTPROOT']}/outbox/_processed_/ROP#{rop_id}/*"
+      system(cmd)
+      
+      
+      puts
+      puts
+
+      cmd = "setROPStatus.rb -R #{rop_id} -s STATUS_CONSOLIDATED"
+      assert(system(cmd), cmd)
+      aROP = InventoryROP.where(ROP_ID: rop_id)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_CONSOLIDATED, "ROP# #{rop_id} FAILED to update STATUS_CONSOLIDATED")
+
+      # ROP#11 with status TRANSFERABLE
+      cmd = "sendROP.rb -R #{rop_id} -D"
+      assert(system(cmd), cmd)
+
+      aROP = InventoryROP.where(ROP_ID: rop_id)
+      assert(aROP.to_a[0].STATUS == InventoryROP::STATUS_TRANSFERRED, "ROP# #{rop_id} FAILED to update STATUS_TRANSFERRED")
+
+      
+            
+      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
+      @uploadDir     = @ftpServer[:uploadDir]
+      
+#      cmd = "rm -f ~/#{@uploadDir}/*"
+#      puts
+#      system(cmd)
+            
+                  
+   end
+   # --------------------------------------------------------
+
+   def testEmail
+      cmd = "echo AE_OPER_MPL_STPLAN_20071029T000000_20071105T000000_0001 > /tmp/list_of_files.txt"
+      system(cmd)
+      
+      cmd = "echo AE_OPER_MPL_SEG____20071029T000000_20071105T000000_0003 >> /tmp/list_of_files.txt"
+      system(cmd)
+      
+      cmd = "notify2Interface.rb -m LOCALHOST_NOT_SECURE -O -f /tmp/list_of_files.txt -D"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      puts
+      puts
+      
+      cmd = "notify2Interface.rb -m LOCALHOST_NOT_SECURE -K -f /tmp/list_of_files.txt -D"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+   end
+   # --------------------------------------------------------
+
+#   def test_decNotify2Interface
+#      cmd = "decNotify2Interface -v"
+#      assert(system(cmd), cmd)
+#   end
+   #-------------------------------------------------------------
+
+end
+
+
+#=====================================================================
+
+
+#-----------------------------------------------------------
+
+

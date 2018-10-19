@@ -63,8 +63,8 @@ class SentFile < ActiveRecord::Base
    #-----------------------------------------------------------
    
    def SentFile.hasAlreadyBeenSent?(file, entity, deliveryMethod)
-      someFiles = SentFile.find_all_by_filename(file)
-      someFiles.each{|aFile|
+      someFiles = SentFile.where(filename: file)
+      someFiles.to_a.each{|aFile|
        #  if aFile.interface.name == entity then
          if aFile.interface == entity then
             methods = aFile.delivered_using
@@ -84,6 +84,7 @@ class SentFile < ActiveRecord::Base
    
    def SentFile.setBeenSent(file, interface, deliveryMethod, hParams=nil)
      
+      puts "DEC_DatabaseModel::SentFile.setBeenSent #{file}, #{interface}, #{deliveryMethod}, #{hParams}"
  
       # Verify all the "extra" params exist in SENT_FILES table 
       if hParams != nil then
@@ -100,15 +101,15 @@ class SentFile < ActiveRecord::Base
          arrAttrs    = exampleFile.attribute_names
 
          hParams.each_key{|aKey|
-            if arrAttrs.include?(aKey.downcase) == false then
-               puts "#{aKey.downcase} is not field of SENT_FILES table"
+            if arrAttrs.include?(aKey) == false then
+               puts "#{aKey} is not field of SENT_FILES table"
                puts
                exit(99)            
             end
          }
       end
 
-      someFiles = SentFile.find_all_by_filename(file)
+      someFiles = SentFile.where(filename: file)
       
       if someFiles != nil then
          someFiles.each{|aFile|
@@ -156,7 +157,7 @@ class SentFile < ActiveRecord::Base
       if hParams != nil then
          # Update all optional params in the database
          hParams.each_pair{|key,value|
-            sentFile.update_attribute(key.downcase, value)
+            sentFile.update_attribute(key, value)
          }
       end
       sentFile.save!
@@ -177,6 +178,11 @@ end
 class InventoryFile < ActiveRecord::Base
    self.table_name   = 'FILE_TB'
    self.primary_key  = 'FILE_ID'
+   
+   STATUS_NEW                 = 0
+   STATUS_VALIDATED           = 1
+
+   
 end
 #=====================================================================
 
@@ -191,25 +197,25 @@ class InventoryROP < ActiveRecord::Base
    self.primary_key  = 'ROP_ID'
    
    # class constants
-   TRANSFERABLE          = 0
-   NOT_TRANSFERABLE      = 1
+   TRANSFERABLE               = 0
+   NOT_TRANSFERABLE           = 1
       
-   STATUS_NEW            = 0
-   STATUS_VALIDATED      = 1
-   STATUS_CONSOLIDATED   = 2
-   STATUS_TRANSFERRED    = 3
-   STATUS_BEING_TRANSFERRED = 4
+   STATUS_NEW                 = 0
+   STATUS_VALIDATED           = 1
+   STATUS_CONSOLIDATED        = 2
+   STATUS_TRANSFERRED         = 3
+   STATUS_BEING_TRANSFERRED   = 4
 
    #-----------------------------------------------------------
    # Set ROP Status
  
    def InventoryROP.setROPStatus(nROP, nStatus)
-      aROP = InventoryROP.find_by_rop_id(nROP)
-      if aROP == nil then
+      aROP = InventoryROP.where(ROP_ID: nROP)
+      if aROP == nil or aROP.empty? == true then
          return false
-      end
-      InventoryROP.update_all "status = #{nStatus}", "rop_id = #{nROP}"
-      return true
+      end      
+      aROP.to_a[0].update(STATUS: nStatus)
+      return aROP.to_a[0].save!
    end
    #-----------------------------------------------------------
 
@@ -221,13 +227,17 @@ class InventoryROP < ActiveRecord::Base
    # Unset transferable flagf for all ROPs except the given ROP 
    
    def InventoryROP.unsetAllTransferable(nROP)
-      aROP = InventoryROP.find_by_rop_id(nROP)
-      if aROP == nil then
-         return false
-      end
-      InventoryROP.update_all "transferability = #{NOT_TRANSFERABLE}", "rop_id != #{nROP}"
-      InventoryROP.update_all "transferability = #{TRANSFERABLE}", "rop_id = #{nROP}"
+      ret = InventoryROP.where.not(ROP_ID: nROP).update_all(TRANSFERABILITY: NOT_TRANSFERABLE)
+      puts ret
+      ret = InventoryROP.where(ROP_ID: nROP).update_all(TRANSFERABILITY: TRANSFERABLE)
+      puts ret
       return true
+   end
+   #-----------------------------------------------------------
+   
+   def InventoryROP.setToBeTransferred(nROP)
+      InventoryROP.setROPStatus(nROP, STATUS_CONSOLIDATED)
+      InventoryROP.unsetAllTransferable(nROP)
    end
    #-----------------------------------------------------------
 

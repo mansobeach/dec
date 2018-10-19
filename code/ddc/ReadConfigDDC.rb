@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: ReadConfigDDC.rb,v 1.8 2007/12/05 15:15:41 decdev Exp $
+# CVS: $Id: ReadConfigDDC.rb,v 1.12 2014/05/16 00:13:30 algs Exp $
 #
 # Module Data Distributor Component
 # This class processes ddc_config.xml configuration file.
@@ -116,7 +116,21 @@ class ReadConfigDDC
       exit(99)
    end
    #-------------------------------------------------------------
-   
+
+   def getUploadFilePrefix
+      return @uploadFilePrefix
+   end
+   #-------------------------------------------------------------   
+
+   def getUploadDirs
+      if @uploadDirs == 'true' then
+         return true
+      else
+         return false
+      end
+   end
+   #-------------------------------------------------------------   
+
    def getReports
       return @arrReports
    end
@@ -136,14 +150,20 @@ private
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DCC_CONFIG'] then
-        puts "\nDCC_CONFIG environment variable not defined !  :-(\n\n"
-        bCheckOK = false
-        bDefined = false
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG / DCC_CONFIG environment variable not defined !  :-(\n\n"
+         bCheckOK = false
+         bDefined = false
       end
       
       if bDefined == true then      
-        configDir         = %Q{#{ENV['DCC_CONFIG']}}        
+        configDir         = nil
+        if ENV['DEC_CONFIG'] then
+           configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+        else
+           configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+        end
+                
         @@configDirectory = configDir
         
         configFile = %Q{#{configDir}/ddc_config.xml}        
@@ -154,7 +174,7 @@ private
         
       end
       if bCheckOK == false then
-        puts "DCC_ReadFileDestination::checkModuleIntegrity FAILED !\n\n"
+        puts "ReadConfigDDC::checkModuleIntegrity FAILED !\n\n"
         exit(99)
       end      
    end
@@ -163,7 +183,7 @@ private
 	# This method defines all the structs used
 	def defineStructs
 	   Struct.new("Project", :name, :id)
-      Struct.new("Report", :name, :enabled, :desc, :fileType)
+      Struct.new("Report", :name, :enabled, :desc, :fileClass, :fileType)
 	end
 	#-------------------------------------------------------------   
    
@@ -194,11 +214,14 @@ private
       arrToList      = Array.new
       @satPrefix          = ""
       bDeleteSourceFiles  = nil
+      @uploadFilePrefix   = ""
+      @uploadDirs         = ""
       @bDeleteSourceFiles = ""
-      @globalOutbox    = ""
+      @globalOutbox       = ""
       @arrReports         = Array.new
       enabled             = ""
       desc                = ""
+      fileClass           = "" 
       fileType            = ""
 
       
@@ -234,7 +257,15 @@ private
          XPath.each(option, "DeleteSourceFiles"){
             |option_1|
             bDeleteSourceFiles = option_1.text.downcase
-         }           
+         }
+         XPath.each(option, "UploadFilePrefix"){
+            |option_1|
+            @uploadFilePrefix = option_1.text.downcase
+         }
+         XPath.each(option, "UploadDirs"){
+            |option_1|
+            @uploadDirs = option_1.text.downcase
+         }
       }
       @bDeleteSourceFiles = bDeleteSourceFiles
 
@@ -261,22 +292,32 @@ private
          XPath.each(reports, "Report"){
             |report|
             
-            XPath.each(report, "Enabled"){      
-               |isEnabled|
-               enabled = isEnabled.text.to_s.downcase
-            }
+#             XPath.each(report, "Enabled"){      
+#                |isEnabled|
+#                enabled = isEnabled.text.to_s.downcase
+#             }
+# 
+#             XPath.each(report, "Desc"){      
+#                |aDesc|
+#                desc = aDesc.text
+#             }
+# 
 
-            XPath.each(report, "Desc"){      
-               |aDesc|
-               desc = aDesc.text
-            }
+            enabled     = report.elements[1].text
+            desc        = report.elements[2].text
 
+            fileClass = ""
+            XPath.each(report, "FileClass"){      
+                |aFileClass|
+                fileClass = aFileClass.text.to_s
+             }
+ 
             XPath.each(report, "FileType"){      
-               |aFileType|
-               fileType = aFileType.text.to_s.upcase
-            }
-      
-            @arrReports << fillReportStruct(report.attributes["Name"], enabled, desc, fileType)
+                |aFileType|
+                fileType = aFileType.text.to_s.upcase
+             }
+    
+            @arrReports << fillReportStruct(report.attributes["Name"], enabled, desc, fileClass, fileType)
          }           
       }
 
@@ -289,7 +330,7 @@ private
    # - fileType (IN):
    # There is only one point in the class where all Dynamic structs 
    # are filled so that it is easier to update/modify the I/Fs   
-   def fillReportStruct(name, enabled, desc, fileType)
+   def fillReportStruct(name, enabled, desc, fileClass, fileType)
       name = name.to_s.upcase
 
       if enabled != "true" and enabled != "false" then
@@ -306,6 +347,15 @@ private
          enabled = true
       else
          enabled = false
+      end
+      
+      if fileType == nil then
+         puts
+         puts "Error in Report #{name} - FileType cant be blank"
+         puts
+         puts "Error in ddc_config.xml file ! :-("
+         puts
+         exit(99) 
       end
 
       if fileType.length != 10 then
@@ -335,7 +385,7 @@ private
          exit(99)                  
       end
       
-      return Struct::Report.new(name, enabled, desc, fileType)
+      return Struct::Report.new(name, enabled, desc, fileClass, fileType)
    end
    #-------------------------------------------------------------
 

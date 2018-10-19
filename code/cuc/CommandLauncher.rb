@@ -75,8 +75,16 @@ private
    # Log the execution of the command
    def log_execution(msg, header)
 
+      configDir = nil
+
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
+
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("CommandLauncher:#{header}", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("CommandLauncher:#{header}", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -85,7 +93,7 @@ private
          puts
 			puts "Error in CommandLauncher::log_execution"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{configDir}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)

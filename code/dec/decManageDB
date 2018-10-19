@@ -1,25 +1,38 @@
 #!/usr/bin/env ruby
-
 #
 # == Usage
 # decManageDB --create-tables | --drop-tables
 #     --create-tables   create all minarc required tables
 #     --drop-tables     drops all minarc tables
-#     --Debug     shows Debug info during the execution
-#     --help   shows this help
+#     --rpf             selector to include reference planning tables
+#     --Debug           shows Debug info during the execution
+#     --help            shows this help
 # 
 #
 
-require 'getoptlong'
-
+#########################################################################
+#
+# Ruby source for #ROPSender class
+#
+# Written by DEIMOS Space S.L. (bolf)
+#
+# Data Exchange Component -> 
+# 
+# git:
+#   decManageDB.rb,v $Date$ $Id$ 
+#
+#########################################################################
 
 require 'rubygems'
+require 'getoptlong'
 require 'active_record'
 
-require 'dec/DEC_DatabaseModel'
-require 'dcc/DCC_Migrations'
-require 'ddc/DDC_Migrations'
+# require 'dcc/DCC_Migrations'
+# require 'ddc/DDC_Migrations'
+require 'rpf/RPF_Migrations'
+require 'dec/DEC_Migrations'
 require 'dec/DEC_Environment'
+require 'dec/DEC_DatabaseModel'
 
 @isDebugMode = false
 
@@ -64,26 +77,30 @@ def main
    bUp            = false
    bDown          = false
    @bUpdate       = false
-   @bShowVersion           = false
+   @bUsage        = false
+   @bShowVersion  = false
+   @bRPF          = false
    
    opts = GetoptLong.new(
-     ["--drop-tables",   "-d",    GetoptLong::NO_ARGUMENT],
-     ["--create-tables", "-c",    GetoptLong::NO_ARGUMENT],
-     ["--update-tables", "-u",    GetoptLong::NO_ARGUMENT],
-     ["--Debug", "-D",            GetoptLong::NO_ARGUMENT],
-     ["--version", "-v",          GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",             GetoptLong::NO_ARGUMENT]
+     ["--drop-tables",   "-d",      GetoptLong::NO_ARGUMENT],
+     ["--create-tables", "-c",      GetoptLong::NO_ARGUMENT],
+     ["--update-tables", "-u",      GetoptLong::NO_ARGUMENT],
+     ["--rpf", "-r",                GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",            GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",               GetoptLong::NO_ARGUMENT]
      )
     
    begin
       opts.each do |opt, arg|
          case opt
-            when "--Debug"             then @isDebugMode = true      
-            when "--create-tables"     then @bUp         = true
-            when "--drop-tables"       then @bDown       = true
+            when "--Debug"             then @isDebugMode    = true      
+            when "--create-tables"     then @bUp            = true
+            when "--drop-tables"       then @bDown          = true
+            when "--rpf"               then @bRPF           = true
             when "--version"           then @bShowVersion   = true
-            when "--update-tables"     then @bUpdate     = true
-			   when "--help"              then usage
+            when "--update-tables"     then @bUpdate        = true
+			   when "--help"              then @bUsage         = true
          end
       end
    rescue Exception => e
@@ -100,8 +117,14 @@ def main
       exit(0)
    end
    
+   if @bUsage then
+      usage
+      exit(0)
+   end
+   
    if @bDown and @bUp then
       usage
+      exit(99)
    end
 
    if @isDebugMode == true then
@@ -114,6 +137,11 @@ def main
    end
 
    if @bUpdate then
+   
+      migration = Add_ROP_ID_ToSentFiles.new
+      migration.change
+      exit(0)
+      
       migration = AddSizeToReceivedFiles.new
       migration = AddProtocolToReceivedFiles.new
       migration.change
@@ -137,7 +165,31 @@ def main
          CreateInterfaces.down
       end
       
+      if @bRPF == true
+         if InventoryFile.table_exists?() == true then
+            CreateInventoryFile.down
+         end
+
+         if InventoryROP.table_exists?() == true then
+            CreateInventoryROP.down
+         end
+
+         if InventoryROPFile.table_exists?() == true then
+            CreateInventoryROPFile.down
+         end
+          
+         if InventoryParams.table_exists?() == true then
+            CreateInventoryParams.down
+         end
+         
+         if InventoryROPFileView.table_exists?() == true then
+            CreateInventoryROPFileView.down
+         end         
+         
+      end
+      
       exit(0)
+      
    end
 
    if @bUp then
@@ -157,7 +209,36 @@ def main
          CreateSentFiles.up
       end
       
+      if @bRPF == true
+      
+         if InventoryFile.table_exists?() == false then
+            CreateInventoryFile.up
+         end
+
+         if InventoryROP.table_exists?() == false then
+            CreateInventoryROP.up
+         end
+
+         if InventoryROPFile.table_exists?() == false then
+            CreateInventoryROPFile.up
+         end
+
+         if InventoryParams.table_exists?() == false then
+            CreateInventoryParams.up
+         end
+
+         if InventoryROPFileView.table_exists?() == false then
+            CreateInventoryROPFileView.up
+         end
+         
+         migration = Add_ROP_ID_ToSentFiles.new
+         migration.change
+
+
+      end      
+      
       exit(0)
+      
    end
 
    usage
@@ -172,14 +253,13 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
-   value = `#{"head -10 #{fullpathFile}"}`
+   value = `#{"head -11 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 #-------------------------------------------------------------
 

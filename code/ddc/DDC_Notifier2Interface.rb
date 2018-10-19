@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS:  $Id: DDC_Notifier2Interface.rb,v 1.7 2007/11/30 13:23:33 decdev Exp $
+# CVS:  $Id: DDC_Notifier2Interface.rb,v 1.9 2010/10/18 15:47:55 algs Exp $
 #
 # Module Data Distributor Component
 # This class delivers text mails.
@@ -17,14 +17,12 @@
 #
 #########################################################################
 
-require 'rubygems'
-
 require 'ddc/ReadConfigDDC'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadMailConfig'
 require 'ctc/CheckerMailConfig'
 require 'ctc/MailSender'
-require 'dbm/DatabaseModel'
+require 'dec/DEC_DatabaseModel'
 
 
 module DDC
@@ -83,13 +81,16 @@ class DDC_Notifier2Interface
          return
       end
            
-      # setup Mailer for a notification of success      
+      # setup Mailer for a notification of success   
+      
+               
       setupMailer(true)
       
       ddcConf = DDC::ReadConfigDDC.instance
       
       prjName = ddcConf.getProjectName
       prjID   = ddcConf.getProjectID
+      
       
       @mailer.setMailSubject("New incoming file(s) from #{prjID} - #{prjName} to #{@entity} I/F")
       
@@ -103,6 +104,12 @@ class DDC_Notifier2Interface
       @mailer.addLineToContent("Have a nice day !")
       @mailer.addLineToContent("")
       # It performs the mail send
+      
+      
+      @mailer.buildMessage
+      
+      @mailer.init
+      
       @mailer.sendMail
       
    end
@@ -184,7 +191,13 @@ class DDC_Notifier2Interface
       @mailer.addLineToContent("Apologize for the inconvenience.")
       @mailer.addLineToContent("")
       # It performs the mail send
-      @mailer.sendMail   
+      
+      @mailer.buildMessage
+      
+      @mailer.init
+      
+      @mailer.sendMail
+      
    end
    #-------------------------------------------------------------   
    
@@ -201,7 +214,7 @@ private
    # - Here it is checked that Entity Name I/F is already registered
    # - in the database.
    def checkModuleIntegrity
-      ret = Interface.find_by_name(@entity)
+      ret = Interface.where(name: @entity)
       if ret == nil then
          puts
          puts "Error - #{@entity} is not a registered I/F ! :-("
@@ -212,6 +225,10 @@ private
       # Load Mail Params for this I/F.
       ftMailConf    = CTC::ReadMailConfig.instance
       @mailParams   = ftMailConf.getSendMailParams
+      
+#      puts @mailParams
+#      exit
+      
       ftReadConf    = CTC::ReadInterfaceConfig.instance
       @bIsNotified  = ftReadConf.isNotificationSent?(@entity)
       @contactInfo  = ftReadConf.getContactInfo(@entity)
@@ -226,21 +243,26 @@ private
    # destinations are different.
    def setupMailer(bSuccess)
       sendTo    = Array.new
-      smtpHost  = @mailParams[:server]
-      smtpPort  = @mailParams[:port]
-      user      = @mailParams[:user]
       if bSuccess == true then
          sendTo    = @arrNotify2
       else
          sendTo    << @contactEmail
       end 
      
-      @mailer   = CTC::MailSender.new(user, smtpHost, smtpPort.to_i)
+      @mailer   = CTC::MailSender.new(@mailParams[:server], @mailParams[:port].to_i, @mailParams[:user], @mailParams[:pass], @mailParams[:isSecure])
 
       if @isDebugMode == true then
-        @mailer.setDebugMode
+         puts @mailParams[:server]
+         puts @mailParams[:port]
+         puts @mailParams[:user]
+         puts @mailParams[:pass]
+         puts @mailParams[:isSecure]
       end
-      @mailer.init
+
+      if @isDebugMode == true then
+         @mailer.setDebugMode
+      end
+#      @mailer.init
       sendTo.each{|x| @mailer.addToAddress(x)}
    end
    #-------------------------------------------------------------

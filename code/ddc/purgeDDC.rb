@@ -109,7 +109,7 @@ end
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
-   value = `#{"head -54 #{fullpathFile}"}`
+   value = `#{"head -26 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Utils Component
 # 
-# CVS: $Id: EE_ReadFileName.rb,v 1.11 2008/05/23 13:07:12 decdev Exp $
+# CVS: $Id: EE_ReadFileName.rb,v 1.15 2009/04/21 12:02:18 decdev Exp $
 #
 # This class is used for reading the system filename.
 # It decodes the UNIX/Linux Filename following the
@@ -22,7 +22,8 @@ module CUC
 class EE_ReadFileName
 
    attr_reader :fileType, :fileClass, :fileVersion, :startValidity, :stopValidity,
-               :fileContent, :dateStart, :dateStop, :start_as_dateTime, :stop_as_dateTime
+               :fileContent, :dateStart, :dateStop, :start_as_dateTime, :stop_as_dateTime,
+               :fileNameType
 
    #-------------------------------------------------------------
    
@@ -189,7 +190,8 @@ class EE_ReadFileName
    def getDateStart
       return @dateStart
    end
-   #-------------------------------------------------------------   
+   #-------------------------------------------------------------  
+  
 
    # Returns dateStop
    def getDateStop
@@ -202,6 +204,18 @@ class EE_ReadFileName
       return @fileVersion
    end
    #-------------------------------------------------------------
+
+   # Returns dateStart
+   def getStrDateStart
+      return @strStart
+   end
+   #------------------------------------------------------------- 
+
+   # Returns dateStart
+   def getStrDateStop
+      return @strStop
+   end
+   #------------------------------------------------------------- 
    
 private
    @isDebugMode        = false
@@ -222,9 +236,37 @@ private
    # - fullname (IN): file path name
    def decodeFileName(fullname)
       filename       = File::basename(fullname)
+      @fileNameType  = ""
+      if File.extname(filename) == ".EEF" then
+         @fileNameType = "physical"
+      else
+         @fileNameType = "stem"
+      end
       @fileType      = filename.slice(8,10)
       @fileClass     = filename.slice(3,4)
-      @fileVersion   = filename.slice(51,4).to_i.to_s
+      
+      # Asign File Version
+      @fileVersion   = 0
+
+      if filename.length == 60 and File.extname(filename) == "" then
+         @fileVersion   = filename.slice(55,3).to_i.to_s
+      end      
+      
+      if filename.length == 64 and File.extname(filename).length == 4 then
+         @fileVersion   = filename.slice(55,3).to_i.to_s
+      end      
+
+      if filename.length == 55 and File.extname(filename) == "" then
+         @fileVersion   = filename.slice(51,4).to_i.to_s
+      end      
+
+      if filename.length == 59 and File.extname(filename).length == 4 then
+         @fileVersion   = filename.slice(51,4).to_i.to_s
+      end
+
+      @strStart      = filename.slice(19,15)
+      @strStop       = filename.slice(35,15)
+
       date = %Q{#{filename.slice(19,4)}-#{filename.slice(23,2)}-#{filename.slice(25,2)}}      
       time = %Q{#{filename.slice(28,2)}:#{filename.slice(30,2)}:#{filename.slice(32,2)}}
       @startValidity=%Q{#{date}_#{time}}

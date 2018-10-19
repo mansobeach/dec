@@ -18,7 +18,7 @@ require 'singleton'
 require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'cuc/Log4rLoggerFactory'
-require 'dbm/DatabaseModel'
+require 'dec/DEC_DatabaseModel'
 
 #require 'FT_ReportHandler'
 
@@ -43,7 +43,7 @@ class ROPSender
       checkModuleIntegrity
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("ROPSender", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("ROPSender", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -52,7 +52,7 @@ class ROPSender
          puts
 			puts "Error in ROPSender::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)
@@ -69,21 +69,21 @@ class ROPSender
    def sendROP(nROP)     
       
       # Check ROP existence
-      aROP = InventoryROP.find_by_rop_id(nROP)
+      aROP = InventoryROP.where(ROP_ID: nROP)
       
-      if aROP == nil then
+      if aROP == nil or aROP.empty? == true then
          puts "\nROP #{nROP} does not exist  !    :-(\n\n"
          return false
       end     
           
       # Check ROP Transferability         
-      if aROP.transferability != InventoryROP::TRANSFERABLE then
+      if aROP.to_a[0].TRANSFERABILITY != InventoryROP::TRANSFERABLE then
          puts "\nROP #{nROP} is not Transferable  !\n" 
          return false
       end
      
       # Check ROP Status
-      if aROP.status != InventoryROP::STATUS_CONSOLIDATED then
+      if aROP.to_a[0].STATUS != InventoryROP::STATUS_CONSOLIDATED then
          puts "\nROP #{nROP} is not Consolidated  !\n" 
          return false
       end
@@ -106,7 +106,7 @@ class ROPSender
       end
 
       # Deliver files via DDC
-      cmd = %Q{ddcDeliverFiles.rb -O -N -p "rop_id:#{nROP}"}
+      cmd = %Q{decDeliverFiles -O -N -p "ROP_ID:#{nROP}"}
       if @isDebugMode == true then
          cmd = %Q{#{cmd} -D}
          puts cmd
@@ -115,7 +115,7 @@ class ROPSender
       #bRet = execute(cmd, "sendROP", false, @isDebugMode)
 
       if bRet == false then
-         @logger.error("Error in ddcDeliverFiles")
+         @logger.error("Error in decDeliverFiles")
          @logger.error("Could not deliver files to the Interface")
          return false
       end
@@ -130,15 +130,15 @@ class ROPSender
    
    def isTransferableROP?(nROP)
       # Check ROP existence
-      aROP = InventoryROP.find_by_rop_id(nROP)
+      aROP = InventoryROP.where(ROP_ID: nROP)
       
-      if aROP == nil then
+      if aROP == nil or aROP.empty? == true then
          puts "\nROP #{nROP} does not exist  !    :-(\n\n"
          return false
       end     
           
       # Check ROP Transferability         
-      if aROP.transferability != InventoryROP::TRANSFERABLE then
+      if aROP.to_a[0].TRANSFERABILITY != InventoryROP::TRANSFERABLE then
          # puts "\nROP #{nROP} is not Transferable  ! :-(\n" 
          return false
       end
@@ -155,15 +155,21 @@ class ROPSender
 
    # Lock File Transfer
    def lockFTActions
-      lock = InventoryParams.find_by_keyword("FILE_TRANSFER_LOCK")
+      lock = InventoryParams.all.where(KEYWORD: "FILE_TRANSFER_LOCK")
       if lock == nil then
          puts "Error in ROPSender::lockFTActions ! =:-0"
          puts "FILE_TRANSFER_LOCK must exists in PARAMETERS_TB"
          exit(99)
       end
 
-      if lock.value == "0"
-         InventoryParams.update_all "value = '1'", "keyword = 'FILE_TRANSFER_LOCK'"
+      puts
+      puts lock.empty?
+      puts
+
+      # if lock.VALUE == "0" then
+      
+      if lock.empty? == false then         
+         InventoryParams.where(KEYWORD: "FILE_TRANSFER_LOCK").update_all(VALUE: '1')
          return true
       else
          return false
@@ -172,15 +178,21 @@ class ROPSender
    #-------------------------------------------------------------
 
    def unlockFTActions
-      lock = InventoryParams.find_by_keyword("FILE_TRANSFER_LOCK")
+      lock = InventoryParams.all.where(KEYWORD: "FILE_TRANSFER_LOCK")
       if lock == nil then
-         puts "Error in ROPSender::unlockFTActions ! =:-0"
+         puts "Error in ROPSender::lockFTActions ! =:-0"
          puts "FILE_TRANSFER_LOCK must exists in PARAMETERS_TB"
          exit(99)
       end
 
-      if lock.value == "1"
-         InventoryParams.update_all "value = '0'", "keyword = 'FILE_TRANSFER_LOCK'"
+      puts
+      puts lock.empty?
+      puts
+
+      # if lock.VALUE == "0" then
+      
+      if lock.empty? == false then         
+         InventoryParams.where(KEYWORD: "FILE_TRANSFER_LOCK").update_all(VALUE: '0')
          return true
       else
          return false

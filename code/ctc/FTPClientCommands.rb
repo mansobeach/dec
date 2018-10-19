@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: FTPClientCommands.rb,v 1.3 2007/06/26 15:52:24 decdev Exp $
+# git: FTPClientCommands.rb,v $Id$: 
 #
 # === module Common Transfer Component module FTPClientCommands
 #
@@ -95,12 +95,14 @@ module FTPClientCommands
    # - file (IN): string of the filename.
    # - verbose (IN): boolean for activating or not the verbose mode.
    # - passive (IN): boolean to switch between Passive or Port mode.
-   def createNcFtpPut(host,port,user,pass,dir,file,verbose, passive = nil)
-      
+   def createNcFtpPut(host,port,user,pass,tmpDir,dir,file,prefix,verbose, passive = nil)
+      if dir[0,1] != '/' then
+         dir='~/'+dir
+      end      
       # --------------------------------
       # Switch between FTP passive or port mode
       optionPassive = ""
-      if passive == nil then
+      if passive == nil or passive == false then
          optionPassive = "-E"
       else
          optionPassive = "-F"
@@ -108,12 +110,75 @@ module FTPClientCommands
       # --------------------------------
 
       if verbose == true then
-        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -v #{host} #{dir} #{file} }      
+         options= "-v"
       else
-        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -V #{host} #{dir} #{file} }
+         options= "-V"
       end
+
+      if !prefix.empty? then
+         tmpDir=dir
+         options= options+" -T #{prefix}"
+      end
+      command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} #{optionPassive} -m #{options} -X "RNFR #{file}" -X "RNTO #{dir}/#{file}" #{host} #{tmpDir} #{file} }
       return command
    end
+   #-------------------------------------------------------------
+   
+   # Create ncftpput command line for sending a given file.
+   # - host (IN): string containing the host name.
+   # - port (IN): string containing the port number.
+   # - user (IN): string containing the user name.
+   # - pass (IN): string containing the password.
+   # - dir  (IN): string containing the dir where the file is placed.
+   # - file (IN): string of the filename.
+   # - verbose (IN): boolean for activating or not the verbose mode.
+   def createNcFtpPut_NEW(host,port,user,pass,tmpDir,dir,file,prefix,verbose)
+      if dir[0,1] != '/' then
+         dir='~/'+dir
+      end
+
+      if verbose == true then
+         options= "-v"
+      else
+         options= "-V"
+      end
+
+      if !prefix.empty? then
+         tmpDir=dir
+         options= options+" -T #{prefix}"
+      end
+
+      command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} -F -m #{options} -X "RNFR #{file}" -X "RNTO #{dir}/#{file}" #{host} #{tmpDir} #{file} }
+      return command
+   end
+   #-------------------------------------------------------------   
+
+   #-------------------------------------------------------------
+   # Create ncftpput command line for creating dynamic dirs.
+   # - host    (IN): string containing the host name.
+   # - port    (IN): string containing the port number.
+   # - user    (IN): string containing the user name.
+   # - pass    (IN): string containing the password.
+   # - dir     (IN): string containing the dir where the file is placed.
+   # - dirFile (IN): string containing the dir where the file is located.
+   # - file    (IN): string of the filename.
+   # - verbose (IN): boolean for activating or not the verbose mode.
+   def createNcFtpMkd(host,port,user,pass,dir, dirFile, file,verbose)
+         if !FileTest.exists?(dirFile+'/'+file) then
+            File.open(dirFile+'/'+file, "w" ) do |new_file| 
+               new_file.puts "create dynamic dirs" 
+            end 
+         end
+         if verbose == true then
+            command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} -F -m -v -X "DELE #{file}" #{host} #{dir} #{dirFile}/#{file}}
+         else
+            command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} -F -m -V -X "DELE #{file}" #{host} #{dir} #{dirFile}/#{file}}
+         end
+      return command
+   end   
+   #-------------------------------------------------------------
+   
+   
    #-------------------------------------------------------------
    
    # Create secureftp (sftp) command. Also creates or appends into 
@@ -128,10 +193,9 @@ module FTPClientCommands
    # - compress (IN): optional argument for compressing SSH communication. 
    def createSftpCommand(host, port, user, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
-         # command = %Q{sftp -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
-         command = %Q{sftp -oPort=#{port} -b #{batchFile} #{user}@#{host}}
+         command = %Q{sftp -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
       else
-         command = %Q{sftp -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
+         command = %Q{sftp -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
       end
       addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
       return command      

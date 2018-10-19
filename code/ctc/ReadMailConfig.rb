@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS:  $Id: ReadMailConfig.rb,v 1.2 2006/10/17 13:26:07 decdev Exp $
+# CVS:  $Id: ReadMailConfig.rb,v 1.5 2013/03/14 13:40:57 algs Exp $
 #
 # Module Common Transfer Component
 # This class reads and decodes DEC mail configuration stored 
@@ -80,13 +80,29 @@ class ReadMailConfig
       return @@sendMailParams[:port]
    end
    #-------------------------------------------------------------  
+
+   def isSendMailSecure
+      return @@sendMailParams[:isSecure]
+   end	
+   #-------------------------------------------------------------	
+
+   def isSendMailSubject
+      return @@sendMailParams[:subject]
+   end	
+   #-------------------------------------------------------------	
+
+   def isSendMailBody
+      return @@sendMailParams[:body]
+   end	
+   #-------------------------------------------------------------	
 	
    def getSendMailParams
       return @@sendMailParams
    end
 	
    #-------------------------------------------------------------
-	
+   #-------------------------------------------------------------
+
    def getReceiveMailServer
       return @@receiveMailParams[:server]
    end
@@ -106,6 +122,11 @@ class ReadMailConfig
       return @@receiveMailParams[:port]
    end
    #-------------------------------------------------------------  
+ 
+   def isReceiveMailSecure
+      return @@receiveMailParams[:isSecure]
+   end	
+   #-------------------------------------------------------------
    
    def getReceiveMailParams
       return @@receiveMailParams
@@ -129,14 +150,22 @@ private
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DCC_CONFIG'] then
-        puts "DCC_CONFIG environment variable not defined !  :-(\n"
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+        puts "DEC_CONFIG / DCC_CONFIG environment variable not defined !  :-(\n"
         bCheckOK = false
         bDefined = false
       end
             
       if bDefined == true then      
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}        
+      
+         configDir = nil
+
+         if ENV['DEC_CONFIG'] then
+            configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+         else
+            configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+         end
+     
          @@configDirectory = configDir
         
          configFile = %Q{#{configDir}/ft_mail_config.xml}        
@@ -170,12 +199,14 @@ private
    # Process the xml file decoding all the file
    # - xmlFile (IN): XML configuration file
    def process(xmlFile)
-      smtpserver          = ""
-		popserver           = ""
-      port                = ""
-		email               = ""
-      user                = ""
-      pass                = ""
+      smtpserver     = ''
+      popserver      = ''
+      port           = ''
+      user           = ''
+      pass           = ''
+      isSecure       = false
+      subject        = ''
+      body           = ''
       
       path    = "MailParams/SendMailParams"
       mailer  = XPath.each(xmlFile, path){
@@ -196,12 +227,30 @@ private
              |ppass|
              pass = ppass.text
           }	  	  
-          
-   	  @@sendMailParams = fillSendMailStruct(smtpserver,
+          XPath.each(entity, "isSecure"){
+             |sec|            
+               case sec.text
+                  when "true" then isSecure = true
+                  when "false" then isSecure = false
+                  else isSecure = false 
+               end            
+          }
+          XPath.each(entity, "Subject"){
+             |ssubject|
+             subject = ssubject.text
+          }
+          XPath.each(entity, "Body"){
+             |bbody|
+             body = bbody.text
+          }	 
+
+   @@sendMailParams = fillSendMailStruct(smtpserver,
                                           port,
                                           user,
-					                           pass
-                                          )
+                                          pass,
+                                          isSecure,
+                                          subject,
+                                          body)
       }
       if @isDebugMode == true then
          puts @@sendMailParams
@@ -217,11 +266,7 @@ private
           XPath.each(entity, "Port"){
              |pport|
              port = pport.text
-          }
-          XPath.each(entity, "EMail"){
-             |mail|
-             email = mail.text
-          }			 
+          }		 
           XPath.each(entity, "User"){
              |uuser|
              user = uuser.text
@@ -230,12 +275,19 @@ private
              |ppass|
              pass = ppass.text
           }	  	  
-          
-   	  @@receiveMailParams = fillReceiveMailStruct(popserver,
+          XPath.each(entity, "isSecure"){
+             |sec|            
+               case sec.text
+                  when "true" then isSecure = true
+                  when "false" then isSecure = false
+                  else isSecure = "" 
+               end            
+          }	  	  
+      @@receiveMailParams = fillReceiveMailStruct(popserver,
                                           port,
-														email,
                                           user,
-					                           pass
+                                          pass,
+                                          isSecure
                                           )
       }
       if @isDebugMode == true then
@@ -246,9 +298,9 @@ private
    #-------------------------------------------------------------   
    
 	# Define all the structs
-	def defineStructs
-	   Struct.new("SendMailStruct", :server, :port, :user, :pass)
-		Struct.new("ReceiveMailStruct", :server, :port, :email, :user, :pass)
+   def defineStructs
+      Struct.new("SendMailStruct", :server, :port, :user, :pass, :isSecure, :subject, :body)
+      Struct.new("ReceiveMailStruct", :server, :port, :user, :pass, :isSecure)
    end
    #-------------------------------------------------------------
 
@@ -259,11 +311,14 @@ private
    # - pass (IN):
    # There is only one point in the class where all dynamic structs 
    # are filled so that it is easier to update/modify the I/F.
-   def fillSendMailStruct(smtpserver, port, user, pass)                      
+   def fillSendMailStruct(smtpserver, port, user, pass, isSecure, subject, body)                      
       sendMailStruct = Struct::SendMailStruct.new(smtpserver,
                                   port,
                                   user,
-			                         pass)
+			                         pass,
+                                  isSecure,
+                                  subject,
+                                  body)
       return sendMailStruct               
    end
    #-------------------------------------------------------------
@@ -271,17 +326,16 @@ private
 	# Fill a ReceiveMail struct
    # - server (IN):
    # - port (IN):
-	# - email (IN):
    # - user (IN):
    # - pass (IN):
    # There is only one point in the class where all dynamic structs 
    # are filled so that it is easier to update/modify the I/F.
-   def fillReceiveMailStruct(server, port, email, user, pass)                      
+   def fillReceiveMailStruct(server, port, user, pass, isSecure)   
       receiveMailStruct = Struct::ReceiveMailStruct.new(server,
-                                  port,
-											 email,
-                                  user,
-			                         pass)
+                                 port,
+                                 user,
+                                 pass,
+                                 isSecure)
       return receiveMailStruct               
    end
    #-------------------------------------------------------------   

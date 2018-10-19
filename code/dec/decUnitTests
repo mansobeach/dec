@@ -109,6 +109,10 @@ class DECTestCase < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       puts
       
+      
+      @@conf.createEnvironmentDirs
+      
+      
       require 'dec/DEC_DatabaseModel'
       
       
@@ -182,7 +186,17 @@ class DECTestCase < Test::Unit::TestCase
    end
    #--------------------------------------------------------
 
+   def test_decAddInterface2DB
+      cmd = "decAddInterface2DB -v"
+      assert(system(cmd), cmd)
 
+      cmd = "decAddInterface2DB -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decAddInterface2DB -S"
+      assert(system(cmd), cmd)
+
+   end
    #-------------------------------------------------------------
 
    def test_decConfigInterface2DB
@@ -217,6 +231,16 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decGetFromInterface -v"
       assert(system(cmd), cmd)
+
+      dec_tmp = ENV['DEC_TMP']
+
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      assert(!system(cmd), cmd)
+      
+      ENV['DEC_TMP'] = dec_tmp
+
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
@@ -293,7 +317,15 @@ class DECTestCase < Test::Unit::TestCase
    
       cmd = "decListener -c IERS"
       assert(!system(cmd), cmd)
-   
+
+      dec_tmp = ENV['DEC_TMP']
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decListener -m IERS --nodb -D -i 60"
+      assert(!system(cmd), cmd)
+      
+      ENV['DEC_TMP'] = dec_tmp
+      
       cmd = "decListener -m IERS --nodb -D -i 60"
       assert(system(cmd), cmd)
    
@@ -324,9 +356,24 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
       assert(system(cmd), cmd)
 
+      dec_tmp = ENV['DEC_TMP']
+
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      assert(!system(cmd), cmd)
+      
+      ENV['DEC_TMP'] = dec_tmp
 
    end
 
+   #-------------------------------------------------------------
+
+   def test_decNotify2Interface
+      cmd = "decNotify2Interface -v"
+      assert(system(cmd), cmd)
+
+   end
    #-------------------------------------------------------------
 
 end

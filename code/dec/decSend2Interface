@@ -51,7 +51,7 @@
 #
 # Data Exchange Component -> Data Distributor Component
 # 
-# CVS:
+# git:
 #   $Id: send2Interface.rb,v 1.23 2008/07/03 11:38:26 decdev Exp $
 #
 #########################################################################
@@ -70,10 +70,6 @@ require 'ddc/DDC_BodyMailer'
 require 'ddc/ReadConfigDDC'
 require 'dec/DEC_Environment'
 
-# Global variables
-@dateLastModification = "$Date: 2008/07/03 11:38:26 $"     # to keep control of the last modification
-                                                            # of this script
-                                                            # execution showing Debug Info
 @isDebugMode      = false                  
 @entity           = ""
 
@@ -111,6 +107,7 @@ def main
    end
    #=======================================================================   
 
+   include           DEC
    include           DDC
    include           CUC::DirUtils
 
@@ -185,8 +182,15 @@ def main
    if @bShowUsage == true then
       usage
       exit(0)
-   end   
-    
+   end
+   
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+       
    if @bShowMnemonics == true then
       require 'dec/DEC_DatabaseModel'
       arrInterfaces = Interface.all
@@ -327,7 +331,7 @@ def notifySuccess2Entity
    cmd           = nil
    # Create a File which contains all the files sent
    fileListFiles = ""
-   tmpDir    = ENV['DCC_TMP']
+   tmpDir    = ENV['DEC_TMP']
    time      = Time.new
    fileListFiles = %Q{#{tmpDir}/.#{time.to_f.to_s}_sent2#{@entity}}
    aFile = File.new(fileListFiles, File::CREAT|File::WRONLY)
@@ -343,13 +347,18 @@ def notifySuccess2Entity
    end      
       
    retVal = system(cmd)
+   
    if retVal == false then
       puts "\nWarning: Failed to send mail notification ! :-(\n"
       @logger.error("Failed to send mail notification-success to #{@entity}")
+   else
+      puts "Mail notification-success sent to #{@entity} :-)"
+      @logger.info("Mail notification-success sent to #{@entity}")   
    end
    if FileTest.exist?(fileListFiles)==true then
       File.delete(fileListFiles)
    end
+   return retVal
 end
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -360,7 +369,7 @@ def notifyFailure2Entity
    cmd           = nil
    # Create a File which contains all the files failed to be sent
    fileListFilesErrors = ""
-   tmpDir    = ENV['DCC_TMP']
+   tmpDir    = ENV['DEC_TMP']
    time      = Time.new
    fileListFilesErrors = %Q{#{tmpDir}/.#{time.to_f.to_s}_failed2#{@entity}}
    aFile = File.new(fileListFilesErrors, File::CREAT|File::WRONLY)
@@ -477,7 +486,7 @@ def deliverByFTP
 
 
    while bNewFiles
-      sender = DDC_FileSender.new(@entity, "FTP", @isDebugMode, @isNoDB)
+      sender = DDC_FileSender.new(@entity, "FTP", @isDeliveredOnce, @isDebugMode, @isNoDB)
       if @isDebugMode == true then
          sender.setDebugMode
       end
@@ -503,12 +512,18 @@ def deliverByFTP
          # -------------------------------------------------
          # Notify via Mail the new files delivered
          if bSent == true then
+            puts
+            puts
+            puts
+            puts "sent is TRUE and notify is #{@bNotify} | #{mailParams[:sendNotification].to_s}"
+            puts
+            puts
             # Create the Report if applicable   
             sender.createReportFile(reportDir, true, @createReport, @isDeliveredOnce)
             # if it is enabled notification
             if @bNotify == true and (mailParams[:sendNotification].to_s == "true") then
                @listFiles = sender.listFileSent
-               notifySuccess2Entity
+               ret = notifySuccess2Entity
             end
          else
             bNewFiles = false

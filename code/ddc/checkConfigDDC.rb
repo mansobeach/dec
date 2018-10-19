@@ -35,12 +35,11 @@
 #
 #
 # == Usage
-# checkConfigDCC.rb
+# checkConfigDDC.rb
 #     -a    checks all DDC configuration
 #     -e    checks entities configuration in interfaces.xml
 #     -o    checks the outgoing file types in ft_outgoing_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
-#    --nodb no Inventory checks
 #     -h    it shows the help of the tool
 #     -u    it shows the usage of the tool
 #     -v    it shows the version number
@@ -58,46 +57,31 @@
 #
 # === Data Distributor Component
 # 
-# CVS: $Id: checkConfigDDC.rb,v 1.5 2007/12/19 05:34:15 decdev Exp $
+# CVS: $Id: checkConfigDDC.rb,v 1.15 2010/04/09 10:42:22 algs Exp $
 #
 #########################################################################
 
 require 'getoptlong'
+require 'rdoc/usage'
+
+require 'ddc/ReadConfigDDC'
 
 require 'ctc/CheckerMailConfig'
 require 'ctc/CheckerInterfaceConfig'
 require 'ctc/CheckerOutgoingFileConfig'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileDestination'
+require 'ctc/CheckerInventoryConfig'
 
 
 # checkSent2Entity checks what it has been sent to a given entity.
 # It checks in the UploadDir and UploadTemp directories 
 
-# Global variables
-@dateLastModification = "$Date: 2007/12/19 05:34:15 $" 
-                                    # to keep control of the last modification
-                                    # of this script
+
 @isDebugMode      = false               # execution showing Debug Info
 @isVerboseMode    = false
 @isSecure         = false
-@checkUploadTmp   = fals#-------------------------------------------------------------
-
-# Print command line help
-def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
-   value = `#{"head -54 #{fullpathFile}"}`
-      
-   value.lines.drop(1).each{
-      |line|
-      len = line.length - 1
-      puts line[2, len]
-   }
-   exit   
-end
-#-------------------------------------------------------------
-e
+@checkUploadTmp   = false
 @bIncoming        = false
 @bOutgoing        = false
 @bEntities        = false
@@ -106,7 +90,6 @@ e
 @bAll             = false
 @bServices        = false
 @bTrays           = false
-@isNoDB           = false
 
 # MAIN script function
 def main
@@ -119,13 +102,11 @@ def main
      ["--entities", "-e",       GetoptLong::NO_ARGUMENT],
      ["--mail", "-m",           GetoptLong::NO_ARGUMENT],
      ["--services", "-s",       GetoptLong::NO_ARGUMENT],
-     ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
-     
+     ["--usage", "-u",          GetoptLong::NO_ARGUMENT],     
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--Verbose", "-V",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT],
-     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
+     ["--help", "-h",           GetoptLong::NO_ARGUMENT]
      )
     
    begin
@@ -136,18 +117,20 @@ def main
             when "--Debug"   then @isDebugMode   = true
             when "--Verbose" then @isVerboseMode = true
             when "--version" then
-               print("\nESA - Deimos-Space S.L.  Data Collector Component ", File.basename($0), " $Revision: 1.5 $  [", @@dateLastModification, "]\n\n\n")
-               exit(0)
-            when "--help"     then usage
+               projectName = DDC::ReadConfigDDC.instance
+               version = File.new("#{ENV["DECDIR"]}/version.txt").readline
+               print("\nESA - DEIMOS-Space S.L.  DEC   ", version," \n[",projectName.getProjectName,"]\n\n\n")
+               exit (0)
+            when "--help"     then RDoc::usage
 #            when "--incoming" then @bIncoming = true
             when "--outgoing" then @bOutgoing = true
             when "--entities" then @bEntities = true
             when "--services" then @bServices = true
 	         when "--mail"     then @bMail     = true
             when "--all"      then @bAll      = true
-            when "--nodb"     then @isNoDB    = true
 #            when "--tray"     then @bTrays    = true
-            when "--usage"    then usage
+            when "--usage"    then RDoc::usage("usage")
+
          end
 
       end
@@ -158,59 +141,83 @@ def main
    if @bIncoming == false and @bOutgoing == false and @bClients == false and
       @bEntities == false and @bAll == false and @bMail == false and 
       @bServices == false and @bTrays == false then
-      usage
+      RDoc::usage("usage")
    end
    
    # Check Module Integrity
    checkModuleIntegrity
-
+   
    ftConfig = CTC::ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllExternalMnemonics
+
+   retValGlob = true
 
    puts "\nChecking Data Distributor Component Configuration \n\n"
 
    # Check of the Entities Configuration
    
    if @bEntities == true or @bAll == true then
-#      puts
+
       puts "================================================"
       puts "Checking interfaces.xml Configuration ..."
-#      puts
+
+      arrDirs = Array.new
+
       arrEnts.each{|x|
-       
-         if ftConfig.isEnabled4Sending?(x) == false then
+         bEnabled4Send = ftConfig.isEnabled4Sending?(x)
+
+         if !bEnabled4Send then
             puts
-            puts "#{x} is disabled for sending ... :-|"
+            puts "Warning: #{x} is disabled for sending ... :-|"
             next
          end
             
-		 checker    = CTC::CheckerInterfaceConfig.new(x, false, true)
-                 if @isDebugMode == true or @isVerboseMode then
-                   checker.setDebugMode
-                 end
-                 # In DDC we must check only for Send
-                 retVal     = checker.check
+         checker = CTC::CheckerInterfaceConfig.new(x, false, bEnabled4Send)
+                 
+         if @isDebugMode == true or @isVerboseMode then
+            checker.setDebugMode
+         end
+                 
+         outDir = ftConfig.getOutgoingDir(x)
 
-                 if retVal == true then
-                    puts "\n#{x} I/F is configured correctly ! :-) \n"
-                 else
-                    puts "\n#{x} I/F is not configured correctly ! :-( \n"
-                 end
+         retVal2 = true
+
+         if arrDirs.include?(outDir) == true then
+            retVal2 = false
+            puts
+            puts "Error: #{x} OutgoingDir #{outDir} is duplicated ! :-("
+         else
+            arrDirs << outDir
+         end
+
+         # In DDC we must check only for Send
+         retVal     = checker.check
+
+         if retVal == true and retVal2 == true then
+            puts "\n#{x} I/F is configured correctly ! :-) \n"
+         else
+            puts "\nError: #{x} I/F is not configured correctly ! :-( \n"
+            retValGlob = false
+         end
       }      
       puts "================================================"
       
-      if @isNoDB == false then
-         require 'ctc/CheckerInventoryConfig'
-         
-         # Perform the check against the Inventory
-         puts "Checking DDC/Inventory entries ..."
-         checkerInventory = CTC::CheckerInventoryConfig.new
-         ret = checkerInventory.check
-         puts "================================================"
-         if ret == false then
-            puts "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
+      # Perform the check against the Inventory
+      puts "Checking DDC/Inventory entries ..."
+      checkerInventory = CTC::CheckerInventoryConfig.new
+      ret = true
+      arrEnts.each{|x|
+         ret1 = checkerInventory.check(x)
+         if !ret1 then
+            ret = false
          end
-      end 
+      }
+
+      puts "================================================"
+      if ret == false then
+         puts "\ntry registering them with addInterfaces2Database.rb tool !  ;-) \n\n"
+         retValGlob = false
+      end
       
    end
 
@@ -218,8 +225,10 @@ def main
    # in interfaces.xml
    
    if @bOutgoing == true or @bAll == true then
+      failed = Array.new
       ftReadOutgoing   = CTC::ReadFileDestination.instance   
-      arrOutgoingFiles = ftReadOutgoing.getAllOutgoingFiles  
+      arrOutgoingFiles = ftReadOutgoing.getAllOutgoingFiles
+      arrOutgoingFileNames =  ftReadOutgoing.getAllOutgoingFileNames
       puts
       puts "================================================"
       puts "Checking ft_outgoing_files.xml Configuration ..."
@@ -234,16 +243,51 @@ def main
          
          if retVal == false then ret = false end
          
-         if retVal == true and @isVerboseMode == true then
+         if retVal == true then
             puts "#{x} - OK"
-            puts
+         else
+            failed << "Error: in #{x} :-("
+         end
+         
+         if x.length != 10 then
+            failed << "Warning: the fileType #{x} is not a ten char value :-|"
          end
       }
-   
+      
+      if arrOutgoingFileNames.empty? == false then
+         puts
+         puts "Wildcards: "
+      end
+
+      ret = true
+      arrOutgoingFileNames.each{|x|
+         puts "Check incoming files like #{x} \n"
+
+         # A boolean is passed so the checker knows its a wildcard.
+	      # It will check with the specific wildcard methods
+	      checker = CTC::CheckerOutgoingFileConfig.new(x,true)
+	 
+         retVal  = checker.check
+         
+         if retVal == false then ret = false end
+         
+         if retVal == true then
+            puts "#{x} - OK"
+         else
+            failed << "Error: in #{x} :-("
+         end
+      }
+
+      if !failed.empty? then
+         puts     
+         puts "Consider revising the following types/wildcards:"
+         puts failed  
+      end
       if ret == true then
          puts "\nft_outgoing_files.xml is configured correctly ! :-) \n"
       else
-         puts "\nft_outgoing_files.xml is not configured correctly ! :-( \n"
+         puts "\nError: ft_outgoing_files.xml is not configured correctly ! :-( \n"
+         retValGlob = false
       end     
       puts "================================================"
    end
@@ -268,12 +312,18 @@ def main
       if retVal == true then
          puts "\nft_mail_config.xml is configured correctly ! :-) \n"
       else
-         puts "\nft_mail_config.xml is not configured correctly ! :-( \n"
+         puts "\nError: ft_mail_config.xml is not configured correctly ! :-( \n"
+         retValGlob = false
       end
       puts "================================================"         
    end
    
    # Check that dcc_services.xml is correctly configured
+
+   if !retValGlob then
+      exit(99)
+   end
+   
    
 end
 
@@ -286,25 +336,6 @@ def checkModuleIntegrity
    return
 end 
 #-------------------------------------------------------------
-
-#-------------------------------------------------------------
-
-# Print command line help
-def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
-   value = `#{"head -54 #{fullpathFile}"}`
-      
-   value.lines.drop(1).each{
-      |line|
-      len = line.length - 1
-      puts line[2, len]
-   }
-   exit   
-end
-#-------------------------------------------------------------
-
-
 
 #==========================================================================
 # Start of the main body

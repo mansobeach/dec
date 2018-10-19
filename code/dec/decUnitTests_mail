@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L.
+#
+# === Data Exchange Component
+#
+# # git: decUnitTests_email,v $Id$: 
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'ctc/ReadMailConfig'
+require 'ddc/DDC_Notifier2Interface'
+require 'dec/DEC_Environment'
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+class DECTestCase_mail < Test::Unit::TestCase
+
+   include Test::Unit::Data
+   
+   include DEC
+   
+      
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do
+   
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+  
+   
+      decMailConfig = CTC::ReadMailConfig.instance
+      @smtpServer = decMailConfig.getSendMailParams
+      puts @smtpServer   
+   end
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC tests mail"
+   end
+   #--------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+   end
+   #--------------------------------------------------------
+   # After every test case
+
+   def teardown
+   end
+   #--------------------------------------------------------
+   
+   #--------------------------------------------------------
+         
+   # full paths Port mode
+   data("test_1",     ["mail_test",        "LOCALHOST_NOT_SECURE"] )
+
+
+   # This test creates every necessary directory to make the circulations succeed
+   def test_mail_1(data)
+   
+      label, interface = data
+                             
+      puts
+      puts "---------------------------------"
+      puts label
+      puts "interface   => #{interface}"
+      puts "---------------------------------"
+      puts
+      
+      notifier = DDC::DDC_Notifier2Interface.new(interface)
+      notifier.setDebugMode
+#      notifier = DDC::DDC_Notifier2Interface.new("LOCALHOST_NOT_SECURE")
+      notifier.setListFilesSent(["file1.txt", "file2.txt"])
+      notifier.notifyFilesSent
+   end
+   #--------------------------------------------------------
+
+
+   #--------------------------------------------------------
+
+end
+
+#=====================================================================

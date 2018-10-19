@@ -371,9 +371,14 @@ private
                       :outgoingDir, :FTPServer, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
 		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
-                   :user, :password, :isTracked, :isRetrieved, 
+                   :user, :password, :FTPServerMirror, :isTracked, :isRetrieved, 
                    :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
+#		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
+#                   :user, :password, :FTPServerMirror, :isTracked, :isRetrieved, 
+#                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
+#                   :uploadTemp, :arrDownloadDirs)
+      Struct.new("FTPServerMirror", :mnemonic,:protocol, :hostname, :port, :user, :password)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 		Struct.new("TXRXParams", :mnemonic, :enabled4Send, :enabled4Receive,
                  :immediateRetries, :loopRetries, :loopDelay, :pollingInterval, :pollingSize, :parallelDownload)

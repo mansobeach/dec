@@ -8,7 +8,7 @@
 #
 # == Data Exchange Component -> Common Transfer Component
 # 
-# CVS:  $Id: CheckerMailConfig.rb,v 1.6 2007/12/19 06:08:03 decdev Exp $
+# CVS:  $Id: CheckerMailConfig.rb,v 1.10 2010/10/18 15:47:15 algs Exp $
 #
 # === module Common Transfer Component (CTC)
 # This class is in charge of verify that the mail configuration
@@ -37,8 +37,8 @@ class CheckerMailConfig
       checkModuleIntegrity
       @dccReadConf    = ReadMailConfig.instance
       @sendMailCfg    = @dccReadConf.getSendMailParams
-		@receiveMailCfg = @dccReadConf.getReceiveMailParams
-      @isDebugMode    = false
+      @receiveMailCfg = @dccReadConf.getReceiveMailParams
+      @isDebugMode    = true
    end
    #-------------------------------------------------------------
    
@@ -80,8 +80,11 @@ class CheckerMailConfig
       puts "CheckerMailConfig debug mode is on"
    end
    #-------------------------------------------------------------
-   
 
+   def getSendMailConfig
+      return @sendMailCfg
+   end
+   #-------------------------------------------------------------
 
 private
 
@@ -93,11 +96,6 @@ private
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       return
-   end
-   #-------------------------------------------------------------
-
-   def getSendMailConfig
-      return @sendMailCfg
    end
    #-------------------------------------------------------------
 
@@ -125,7 +123,8 @@ private
       puts "SendMailParams.SMTPServer  -> #{@sendMailCfg[:server]}"
       puts "SendMailParams.Port        -> #{@sendMailCfg[:port]}"
       puts "SendMailParams.User        -> #{@sendMailCfg[:user]}"
-      puts "SendMailParams.Pass        -> #{@sendMailCfg[:pass]}"
+      puts "SendMailParams.Pass        -> *************"
+      puts "SendMailParams.isSecure    -> #{@sendMailCfg[:isSecure]}"
       puts "----------------------------------------"
       puts
    end   
@@ -137,9 +136,9 @@ private
       puts "----------------------------------------"
       puts "RecvMailParams.POPServer   -> #{@receiveMailCfg[:server]}"
       puts "RecvMailParams.Port        -> #{@receiveMailCfg[:port]}"
-#		puts "RecvMailParams.EMail       -> #{@receiveMailCfg[:email]}"
       puts "RecvMailParams.User        -> #{@receiveMailCfg[:user]}"
-      puts "RecvMailParams.Pass        -> #{@receiveMailCfg[:pass]}"
+      puts "RecvMailParams.Pass        -> *************"
+      puts "RecvMailParams.isSecure    -> #{@receiveMailCfg[:isSecure]}"
       puts "----------------------------------------"
       puts
    end   
@@ -148,9 +147,11 @@ private
 	# It checks the configuration for sending mails
    def checkSendMailParams
       mailer = MailSender.new(
-		                        @sendMailCfg[:user], 
                               @sendMailCfg[:server],
-			                     @sendMailCfg[:port]
+                              @sendMailCfg[:port],
+                              @sendMailCfg[:user],
+                              @sendMailCfg[:pass],
+                              @sendMailCfg[:isSecure]
 			                    )
       return mailer.init
    end
@@ -158,15 +159,16 @@ private
 
    # It checks the configuration for receiving mails
 	
-	def checkReceiveMailParams
-	   mailer = MailReceiver.new(
-                              @receiveMailCfg[:server],
-			                     @receiveMailCfg[:port],
-										@receiveMailCfg[:user],
-										@receiveMailCfg[:pass]
+   def checkReceiveMailParams
+      mailer = MailReceiver.new(
+                                 @receiveMailCfg[:server],
+                                 @receiveMailCfg[:port],
+                                 @receiveMailCfg[:user],
+                                 @receiveMailCfg[:pass],
+                                 @receiveMailCfg[:isSecure]
 			                    )
       return mailer.init
-	end
+   end
    #-------------------------------------------------------------
 
 end # class

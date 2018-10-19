@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+
 # == Synopsis
 #
 # This is a Data Distributor Ccmponent command line tool that deliver files to a given I/F.
@@ -17,7 +18,7 @@
 #
 #
 # == Usage
-# send2Interface.rb -m <MNEMONIC> [-O] [--nodb]
+# send2Interface.rb -m <MNEMONIC> [-O]
 #        --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
 #        --ONCE      The file is just sent once for that I/F
 #        --AUTO      local outbox Automatic management 
@@ -26,10 +27,9 @@
 #                      [60 secs by default if it is not specified]
 #        --retries <r>  r is the number of retries on each Loop for each file
 #        --Report    create a Report with the list of files delivered to the Interface
-#        --list      list only (not downloading and no ingestion)
+#        --List      list files in the outgoing tray only (not uploading and no ingestion)
 #        --Nomail    avoids mail notification to the I/F after successfully delivery
 #        --Show      it shows all available I/Fs registered in the Inventory
-#        --nodb      no usage of the Inventory for recording operations
 #        --help      shows this help
 #        --usage     shows the usage
 #        --Debug     shows Debug info during the execution
@@ -52,12 +52,12 @@
 # Data Exchange Component -> Data Distributor Component
 # 
 # CVS:
-#   $Id: send2Interface.rb,v 1.23 2008/07/03 11:38:26 decdev Exp $
+#   $Id: send2Interface.rb,v 1.32 2014/03/27 15:34:24 algs Exp $
 #
 #########################################################################
 
-require 'rubygems'
 require 'getoptlong'
+require 'rdoc/usage'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
@@ -69,11 +69,8 @@ require 'ddc/DDC_FileMailer'
 require 'ddc/DDC_BodyMailer'
 require 'ddc/ReadConfigDDC'
 
-# Global variables
-@dateLastModification = "$Date: 2008/07/03 11:38:26 $"     # to keep control of the last modification
-                                                            # of this script
-                                                            # execution showing Debug Info
-@isDebugMode      = false                  
+
+@isDebugMode      = false              # execution showing Debug Info           
 @entity           = ""
 
 # MAIN script function
@@ -117,16 +114,17 @@ def main
    @createReport     = false    
    @isDebugMode      = false 
    @isDeliveredOnce  = false
-   @isNoDB           = false 
-   @retries         = 1
-   @loops           = 1
-   @delay           = 60
+   @@retries         = 1
+   @@loops           = 1
+   @@delay           = 60
+   @@nROP            = 0
+   @@bResult         = false
    sent              = false
    @bShowMnemonics   = false           
    @bNotify          = true
    @strParams        = ""
    @hParams          = nil
-   
+   @bList            = false  
    
    opts = GetoptLong.new(
      ["--mnemonic", "-m",       GetoptLong::REQUIRED_ARGUMENT],
@@ -142,40 +140,58 @@ def main
      ["--Report", "-R",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",           GetoptLong::NO_ARGUMENT],
      ["--Show", "-S",           GetoptLong::NO_ARGUMENT],
-     ["--Nomail", "-N",         GetoptLong::NO_ARGUMENT],
-     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
+     ["--List", "-L",           GetoptLong::NO_ARGUMENT],
+     ["--Nomail", "-N",         GetoptLong::NO_ARGUMENT]
      )
    
    begin 
       opts.each do |opt, arg|
          case opt
-            when "--ONCE"    then @isDeliveredOnce = true
-            when "--AUTO"    then @isAutoManagement = true
-            when "--Debug"   then @isDebugMode = true
-            when "--version" then print("\nESA - Deimos-Space S.L.  DEC ", File.basename($0), " $Revision: 1.23 $  [", @@dateLastModification, "]\n\n\n")
-                                  exit(0)
-            when "--mnemonic" then
-               @entity = arg         
-            when "--help"    then usage
-            when "--usage"   then usage
-            when "--retries" then 
-               @retries = arg.to_i
-            when "--loops" then
-               @loops   = arg.to_i
-            when "--delay" then
-               @delay   = arg.to_i
-            when "--params"   then  @strParams = arg.to_s
-            when "--nodb"     then  @isNoDB = true
-            when "--Nomail" then
-               @bNotify  = false
-            when "--Show" then @bShowMnemonics = true
-            when "--Report" then @createReport = true                     
+            when "--version" then
+               projectName = DDC::ReadConfigDDC.instance
+               version = File.new("#{ENV["DECDIR"]}/version.txt").readline
+               print("\nESA - DEIMOS-Space S.L.  DEC   ", version," \n[",projectName.getProjectName,"]\n\n\n")
+               exit (0)
+            when "--ONCE"     then  @isDeliveredOnce  = true
+            when "--AUTO"     then  @isAutoManagement = true
+            when "--Debug"    then  @isDebugMode      = true
+            when "--mnemonic" then  @entity     = arg         
+            when "--retries"  then  @@retries   = arg.to_i
+            when "--loops"    then  @@loops     = arg.to_i
+            when "--delay"    then  @@delay     = arg.to_i
+            when "--params"   then  @strParams  = arg.to_s
+            when "--List"     then  @bList      = true
+            when "--Nomail"   then  @bNotify    = false
+            when "--Show"     then  @bShowMnemonics   = true
+            when "--Report"   then  @createReport     = true
+            when "--help"     then  RDoc::usage("usage")
+            when "--usage"    then  RDoc::usage("usage")           
          end
       end
    rescue Exception
       exit(99)
    end   
     
+
+   if @bList and @entity != "" then
+      @outgoingDir = CTC::ReadInterfaceConfig.instance.getOutgoingDir(@entity)
+      puts "\nList of files in the #{@entity} interface to be sent"
+         
+      if  File.exists?(@outgoingDir+"/email") then
+         puts "by email:"
+         Dir.foreach(@outgoingDir+"/email") { |x| if x != "." and x != ".." then puts "  - #{x}" end}       
+      end
+      if  File.exists?(@outgoingDir+"/mailbody") then
+         puts "by mailbody:"
+         Dir.foreach(@outgoingDir+"/mailbody") { |x| if x != "." and x != ".." then puts "  - #{x}" end}       
+      end
+      if  File.exists?(@outgoingDir+"/ftp") then
+         puts "by ftp:"
+         Dir.foreach(@outgoingDir+"/ftp") { |x| if x != "." and x != ".." then puts "  - #{x}" end}
+      end
+      exit (0)
+   end
+
    if @bShowMnemonics == true then
       arrInterfaces = Interface.find(:all)
       if arrInterfaces == nil then
@@ -203,15 +219,13 @@ def main
    end
 
    if @entity == "" then
-      usage
+      RDoc::usage("usage")
    end
    
    if @strParams != "" then
       decodeParams
    end
-
-   @incomingDir = CTC::ReadInterfaceConfig.instance.getIncomingDir(@entity)
-   
+  
    # Set send2Interface <I/F> running.
    # This assures there is only one send2Interface running for a given I/F. 
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true)
@@ -248,8 +262,8 @@ def main
    @locker.setRunning
 
    # Check that the given mnemonic is present in the config file   
-   @ftReadConf = CTC::ReadInterfaceConfig.instance
-   arrEntities = @ftReadConf.getAllExternalMnemonics
+   @interfaceConf = CTC::ReadInterfaceConfig.instance
+   arrEntities = @interfaceConf.getAllExternalMnemonics
    bFound      = false
    arrEntities.each{|entity|
       if @entity == entity then
@@ -286,11 +300,11 @@ def main
       end   
 
       # Try again for FTP deliveries
-      if bSent == true then
-         bSent = deliverByFTP
-      else
-         deliverByFTP
-      end   
+#      if bSent == true then
+#         bSent = deliverByFTP
+#      else
+#         deliverByFTP
+#      end   
    end
    #------------------------------------------------------------------
 
@@ -332,7 +346,7 @@ def notifySuccess2Entity
    retVal = system(cmd)
    if retVal == false then
       puts "\nWarning: Failed to send mail notification ! :-(\n"
-      @logger.error("Failed to send mail notification-success to #{@entity}")
+      @logger.error("[DEC_220] Failed to send mail notification-success to #{@entity}")
    end
    if FileTest.exist?(fileListFiles)==true then
       File.delete(fileListFiles)
@@ -363,7 +377,7 @@ def notifyFailure2Entity
    retVal = system(cmd)   
    if retVal == false then
       puts "\n\nWarning: Failed to send mail notification ! :-(\n"
-      @logger.error("Failed to send mail notification-error to #{@entity}")
+      @logger.error("[DEC_221] Failed to send mail notification-error to #{@entity}")
    end   
    if FileTest.exist?(fileListFilesErrors)==true then
       File.delete(fileListFilesErrors)
@@ -389,20 +403,20 @@ def deliverByBodyMail
    bFirst      = true
    
    while bNewFiles
-      ddcMailer = DDC::DDC_BodyMailer.new(@entity, false, @isNoDB)
+      ddcMailer = DDC::DDC_BodyMailer.new(@entity, @isDeliveredOnce, false)
       if @isDebugMode == true then
          ddcMailer.setDebugMode
       end
-      numFiles  = ddcMailer.listFileToBeSent.length
-      
-      if numFiles == 0 then
+
+      if ddcMailer.listFileToBeSent.empty? then
          bNewFiles = false
          if bFirst == true then
             puts "No files to be delivered via mailbody to #{@entity}"
             puts
          end
       else
-         bSent = ddcMailer.deliver(@isDeliveredOnce, @hParams)
+         @logger.info("New files to be delivered via mailbody to #{@entity}")
+         bSent = ddcMailer.deliver(@hParams)
          # If there was an error in the delivery, 
          # do not mind whether there are new files to be sent
          if bSent == false then
@@ -424,19 +438,19 @@ def deliverByMail
    bFirst      = true
    
    while bNewFiles
-      ddcMailer = DDC::DDC_FileMailer.new(@entity, false, @isNoDB)
+      ddcMailer = DDC::DDC_FileMailer.new(@entity, @isDeliveredOnce, false)
       if @isDebugMode == true then
          ddcMailer.setDebugMode
       end
-      numFiles  = ddcMailer.listFileToBeSent.length
-      
-      if numFiles == 0 then
+
+      if ddcMailer.listFileToBeSent.empty? then
          bNewFiles = false
          if bFirst == true then
             puts "No files to be delivered via email to #{@entity}"
          end
       else
-         bSent = ddcMailer.deliver(@isDeliveredOnce, @hParams)
+         @logger.info("New files to be delivered via mail to #{@entity}")
+         bSent = ddcMailer.deliver(@hParams)
          # If there was an error in the delivery, 
          # do not mind whether there are new files to be sent
          if bSent == false then
@@ -464,24 +478,25 @@ def deliverByFTP
 
 
    while bNewFiles
-      sender = DDC_FileSender.new(@entity, @isDebugMode, @isNoDB)
+      protocol=@interfaceConf.getProtocol(@entity)
+      sender = DDC_FileSender.new(@entity, protocol, @isDeliveredOnce, @isDebugMode)
       if @isDebugMode == true then
          sender.setDebugMode
       end
-      numFiles = sender.listFileToBeSent.length
 
-      if numFiles == 0 then
+      if sender.listFileToBeSent.empty? then
          bNewFiles = false
          if bFirst == true then
             puts
-            puts "No files to be delivered via ftp to #{@entity}"
+            puts "No files to be delivered via #{protocol} to #{@entity}"
             puts
          end
       else
-         bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         @logger.info("New files to be delivered via #{protocol} to #{@entity}")
+         bSent = sender.deliver(@hParams)
 
          # Configure Mail Notification
-         mailParams  = @ftReadConf.getMailParams(@entity)
+         mailParams  = @interfaceConf.getMailParams(@entity)
          ddcConfig   = DDC::ReadConfigDDC.instance
          reportDir   = ddcConfig.getReportDir
          checkDirectory(reportDir)   
@@ -526,23 +541,6 @@ def deliverByFTP
    return bSent
 end
 #---------------------------------------------------------------------
-
-#-------------------------------------------------------------
-
-# Print command line help
-def usage
-   fullpathFile = `which #{File.basename($0)}`    
-   
-   value = `#{"head -45 #{fullpathFile}"}`
-      
-   value.lines.drop(1).each{
-      |line|
-      len = line.length - 1
-      puts line[2, len]
-   }
-   exit   
-end
-#-------------------------------------------------------------
 
 #===============================================================================
 # Start of the main body

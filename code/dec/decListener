@@ -140,6 +140,13 @@ def main
       exit(0)
    end
 
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("decListener", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then

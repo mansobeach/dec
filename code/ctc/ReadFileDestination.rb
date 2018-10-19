@@ -275,15 +275,21 @@ private
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DCC_CONFIG'] then
-        puts "\nDCC_CONFIG environment variable not defined !  :-(\n\n"
-        bCheckOK = false
-        bDefined = false
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG / DCC_CONFIG environment variable not defined !  :-(\n\n"
+         bCheckOK = false
+         bDefined = false
       end
       
       if bDefined == true
       then      
-        configDir         = %Q{#{ENV['DCC_CONFIG']}}        
+        configDir         = nil
+        if ENV['DEC_CONFIG'] then
+           configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+        else
+           configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+        end
+               
         @@configDirectory = configDir
                         
         configFile = %Q{#{configDir}/ft_incoming_files.xml}        

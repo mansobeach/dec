@@ -208,8 +208,8 @@ private
    # tools are in the $PATH
    def checkModuleIntegrity
 
-     if !ENV['DCC_TMP'] then
-        puts "\nDCC_TMP environment variable not defined !\n"
+     if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
+        puts "\nDEC_TMP / DCC_TMP environment variable not defined !\n"
         bDefined = false
      end
           
@@ -274,8 +274,17 @@ private
      end     
      
      time      = Time.new
-     str       = time.strftime("%Y%m%d_%H%M%S")                                     
-     @localDir = %Q{#{ENV['DCC_TMP']}/.#{str}_packager}                 
+     str       = time.strftime("%Y%m%d_%H%M%S")
+     
+     configDir = nil
+
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
+                                     
+     @localDir = %Q{#{configDir}/.#{str}_packager}                 
    end
    
    #------------------------------------------------------------- 

@@ -147,6 +147,13 @@ def main
       usage
       exit(0)
    end
+   
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
   
    if @listOnly == true and  @createReceipt == true then
       puts "--list and --receipt are incompatible flags"

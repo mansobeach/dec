@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: DDC_FileSender.rb,v 1.15 2008/07/03 11:38:26 decdev Exp $
+# CVS: $Id: DDC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
 #
 # Module Data Distributor Component
 # This class performs the file(s) FTP/SFTP delivery to a given Entity.
@@ -24,9 +24,8 @@ require 'cuc/EE_ReadFileName'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/FileSender'
 require 'ctc/ListWriterDelivery'
-# require 'dbm/DatabaseModel'
 require 'ddc/ReadConfigDDC'
-
+require 'dec/DEC_Environment'
 
 module DDC
 
@@ -34,17 +33,43 @@ class DDC_FileSender
 
    include CUC::DirUtils
    include DDC
+   include DEC
    #-------------------------------------------------------------
    
    attr_reader :listFileSent, :listFileError, :listFileToBeSent
    
-   def initialize(entity, isDebug=false, isNoDB=false)
+   def initialize(entity, protocol, deliverOnce, isDebug=false, isNoDB=false)
       @entity      = entity
+      @protocol    = protocol
+      @deliverOnce = deliverOnce
       checkModuleIntegrity
       @isDebugMode = false
       @isNoDB      = isNoDB
+
+      if @isNoDB == false then
+         require 'dec/DEC_DatabaseModel'
+         @interface   = Interface.where(name: @entity).to_a[0]
+#         puts @interface
+#         puts @interface.to_a[0].name
+#         puts @interface.to_a[0].description
+#         puts
+      else
+         @interface   = @entity
+      end
+
+
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DDC_FileSender", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      
+      configDir = nil
+
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
+      
+      
+      loggerFactory = CUC::Log4rLoggerFactory.new("DDC_FileSender", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -53,19 +78,19 @@ class DDC_FileSender
          puts
 			puts "Error in DDC_FileSender::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{configDir}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)
       end
 
       @ftReadConf  = CTC::ReadInterfaceConfig.instance
-      ftpserver    = @ftReadConf.getFTPServer4Send(@entity)
+      @ftpserver    = @ftReadConf.getFTPServer4Send(@entity)
       txparams     = @ftReadConf.getTXRXParams(@entity)
       @delay       = @ftReadConf.getLoopDelay(@entity).to_i
       @loops       = @ftReadConf.getLoopRetries(@entity).to_i
       @retries     = @ftReadConf.getImmediateRetries(@entity).to_i
-      @sender      = CTC::FileSender.new(ftpserver)
+      @sender      = CTC::FileSender.new(@ftpserver, protocol)
       if isDebug == true then
          setDebugMode
       end
@@ -77,18 +102,13 @@ class DDC_FileSender
       @arrFiles    = Array.new
       loadFileList
       @sender.setFileList(@arrFiles, @outboxDir)
-
-      if @isNoDB == false then
-         require 'dbm/DatabaseModel'
-         @interface   = Interface.find_by_name(@entity)
-      else
-         @interface   = @entity
-      end
-
+                  
       @satPrefix   = DDC::ReadConfigDDC.instance.getSatPrefix
       @prjName     = DDC::ReadConfigDDC.instance.getProjectName
       @prjID       = DDC::ReadConfigDDC.instance.getProjectID
       @mission     = DDC::ReadConfigDDC.instance.getMission
+      @sender.setUploadPrefix(DDC::ReadConfigDDC.instance.getUploadFilePrefix)
+
    end
    #-------------------------------------------------------------
   
@@ -110,40 +130,50 @@ class DDC_FileSender
       arrTmp            = Array.new
       prevDir           = Dir.pwd
       Dir.chdir(@outboxDir)
-      if @isDebugMode == true then
-         puts
+
+      if @isDebugMode then
+         puts "\nLoading list of files to be Sent from:#{@outboxDir}"
       end
+
       @arrFilters.each{|filter|
-         if @isDebugMode == true then
+         if @isDebugMode then
             puts "Filtering outgoing files by #{filter}"
          end
-         arrTmp << Dir[filter]
-         arrTmp = arrTmp.flatten
-         arrTmp.each{|element|
-            if File.directory?(element) == true then
-              # next
-            end
-            @arrFiles << element
-         }
+         arrTmp << Dir[filter].sort_by{ |f| File.mtime(f)}
       }
-      @arrFiles = @arrFiles.flatten
-      @arrFiles = @arrFiles.uniq
+      arrTmp = arrTmp.flatten
+      arrTmp = arrTmp.uniq
       Dir.chdir(prevDir)
-      
-      if @isDebugMode == true and (@arrFiles.length > 0) then
+
+      # If delivery once has been selected, check whether the file
+      # has already been delivered
+      if @deliverOnce then
+         arrTmp.each { |file|
+            if SentFile.hasAlreadyBeenSent?(file, @entity, "ftp") == true then
+               if @isDebugMode then
+                  puts "#{file} already sent to #{@entity} via ftp"
+               end
+               File.delete(%Q{#{@outboxDir}/#{file}})
+            else
+               @arrFiles << file
+            end                   
+         }
+      else
+         @arrFiles= arrTmp.clone
+      end
+
+      if @isDebugMode and !@arrFiles.empty? then
          puts "-------------------------------------------------------"
-         print("Files to be sent to #{@entity} are :\n")
+         print("Files to be sent via #{@protocol} to #{@entity} are :\n")
          puts @arrFiles
          puts "-------------------------------------------------------"
       end
       
-      @listFileToBeSent = @arrFiles
-      
-      if @arrFiles.length == 0 then
-         message = "No Files to #{@entity} I/F in ftp outbox #{@outboxDir}"
-         @logger.debug(message)
+      if @arrFiles.empty? then
+         @logger.debug("No Files to #{@entity} I/F in ftp outbox #{@outboxDir}")
       end
-      
+
+      @listFileToBeSent = @arrFiles      
    end
    #-------------------------------------------------------------
 
@@ -151,7 +181,7 @@ class DDC_FileSender
    # to the given entity
    def deliver(deliverOnce=false, hParams=nil)
       @deliverOnce = deliverOnce
-
+           
       if @arrFiles.length == 0 then
          return true
       end
@@ -175,43 +205,26 @@ class DDC_FileSender
          
          puts         
          @arrFiles.each{|file|
-            
-            # If delivery once has been selected, check whether the file
-            # has already been delivered
-            if @deliverOnce == true then
-               if SentFile.hasAlreadyBeenSent?(file, @entity, "ftp") == true then
-                  puts "#{file} already sent to #{@entity} via (s)ftp"
-                  File.delete(%Q{#{@outboxDir}/#{file}})
-                  next
-               end
-            end            
 
-            puts "Sending #{file} to #{@entity} via (s)ftp"
+            puts "Sending #{file} to #{@entity} via #{@protocol}"
             
             bRet = sendFile(file)
             
             if bRet == false then
-               @logger.error("Failed sending #{file} to #{@entity}")
+               @logger.error("[DEC_200] Failed sending #{file} to #{@entity}")
                puts "Error sending #{file} to #{@entity}"
                @listFileError << file
                @listFileError = @listFileError.uniq
                bSent = false
             else
-               @logger.info("#{file} sent to #{@entity} via (s)ftp")
+               @logger.info("#{file} sent to #{@entity} via #{@protocol}")
                tmpFilesSent  << file
                @listFileSent << file
                
                # Now we register the files sent even if we allow them to be re-send
                # (deliveryOnce equal to false)
                # Registry of Files sent
-
-#               if @deliverOnce == true then
-
-               if @isNoDB == false then
-                  SentFile.setBeenSent(file, @interface, "ftp", hParams)
-               end
-
-#               end
+               SentFile.setBeenSent(file, @interface, "ftp", hParams)
             end
             
          }
@@ -230,7 +243,7 @@ class DDC_FileSender
       
          if @isDebugMode == true and loop >= 0 then
             pid = Process.pid
-            puts "Waiting #{@@delay} seconds for sending files to #{@entity} (pid=#{pid}) "
+            puts "Waiting #{@delay} seconds for sending files to #{@entity} (pid=#{pid}) "
          end
          
          if loop >=0 then
@@ -246,6 +259,7 @@ class DDC_FileSender
    def createReportFile(directory, bDeliver = true, bForceCreation = false, bNominal = true)
 	   bFound      = false
       bIsEnabled  = false
+      fileClass    = ""
       fileType    = ""
       desc        = ""
       arrRepTypes = Array.new 
@@ -265,9 +279,10 @@ class DDC_FileSender
       arrReports.each{|aReport|
          if aReport[:name] == reportType then
             bFound      = true
-            fileType    = aReport[:fileType]
-            desc        = aReport[:desc]
             bIsEnabled  = aReport[:enabled]
+            desc        = aReport[:desc]
+            fileClass   = aReport[:fileClass]
+            fileType    = aReport[:fileType]
          end
          arrRepTypes << aReport[:fileType]
       }
@@ -296,7 +311,7 @@ class DDC_FileSender
          return
       end
 
-	   writer = CTC::DeliveryListWriter.new(directory, true, fileType)
+	   writer = CTC::DeliveryListWriter.new(directory, true, fileClass, fileType)
          
       if @isDebugMode == true then
 		   writer.setDebugMode
@@ -353,9 +368,23 @@ private
             bRetVal = @sender.sendDir(file)
          else
             bRetVal = @sender.sendFile(file)
-         end         
+         end
 
-         if bRetVal == true then
+#         if !bRetVal and @ftpserver[:FTPServerMirror] != nil then
+#            puts "Warning: Main host did not respond ( #{@ftpserver[:hostname]} ). Trying to use the Mirror server"
+#            @logger.warn("Main host did not respond ( #{@ftpserver[:hostname]} ). Trying to use the Mirror server")         
+#            if File.directory?(file) then
+#               bRetVal = @sender.useMirrorServer(file, false)
+#            else
+#               bRetVal = @sender.useMirrorServer(file)
+#            end
+#            if !bRetVal then
+#               puts "Error: Mirror host did not respond neither ( #{@ftpserver[:FTPServerMirror][:hostname]} )"
+#               @logger.error("[DEC_201] Mirror host did not respond neither ( #{@ftpserver[:FTPServerMirror][:hostname]} )")
+#            end
+#         end
+
+         if bRetVal then
             Dir.chdir(prevDir)
             return true
          end

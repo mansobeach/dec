@@ -51,7 +51,17 @@ class DDC_FileMailer
       checkModuleIntegrity
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DDC_FileMailer", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      
+      configDir = nil
+
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
+      
+      
+      loggerFactory = CUC::Log4rLoggerFactory.new("DDC_FileMailer", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -60,7 +70,7 @@ class DDC_FileMailer
          puts
 			puts "Error in DDC_FileMailer::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{configDir}/dec_log_config.xml\"" 
 			puts
 			puts
 			exit(99)
@@ -95,7 +105,8 @@ class DDC_FileMailer
       loadFileList
 
       if @isNoDB == false then
-         require 'dbm/DatabaseModel'
+         # require 'dbm/DatabaseModel'
+         require 'dec/DEC_DatabaseModel'
          @interface   = Interface.find_by_name(@entity)
       else
          @interface   = @entity
