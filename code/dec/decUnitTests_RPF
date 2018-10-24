@@ -210,9 +210,40 @@ class DECTestCase < Test::Unit::TestCase
       end
             
    end
-   # --------------------------------------------------------
+   # -------------------------------------------------------
 
+   def test_decValidateConfig
+      cmd = "decValidateConfig -v"
+      assert(system(cmd), cmd)
 
+      cmd = "decValidateConfig -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -e"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -i"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -m"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -l"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -t"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -g"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -a"
+      assert(system(cmd), cmd)
+
+   end
    # --------------------------------------------------------
 
    def test_decConfigInterface2DB
@@ -301,7 +332,7 @@ class DECTestCase < Test::Unit::TestCase
    
    # --------------------------------------------------------
    
-   def test_sendROP_Various
+   def test_helpers
       puts __method__.to_s
       puts
       puts "================================================"
@@ -316,6 +347,27 @@ class DECTestCase < Test::Unit::TestCase
       
       cmd = "sendROP.rb -u"
       assert(system(cmd), cmd)
+
+      cmd = "sendROP.rb -e"
+      assert(system(cmd), cmd)
+
+      cmd = "sendROPFiles.rb -e"
+      assert(system(cmd), cmd)
+
+      cmd = "sendROPFiles.rb -h"
+      assert(system(cmd), cmd)
+
+      cmd = "sendROPFiles.rb -v"
+      assert(system(cmd), cmd)
+   end
+   # --------------------------------------------------------
+
+   def test_to_be_refurbished
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
       
       puts
 

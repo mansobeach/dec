@@ -4,6 +4,15 @@
 
  <xs:include schemaLocation="./common_types.xsd"/>
 
+  <xs:simpleType name="protocolType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FTP"/>
+      <xs:enumeration value="SFTP"/>
+      <xs:enumeration value="FTPS"/>
+      <xs:enumeration value="LOCAL"/>
+    </xs:restriction>
+  </xs:simpleType> 
+
  <xs:complexType name="TimeTagType">
    <xs:simpleContent>
      <xs:extension base="posIntType">
@@ -29,7 +38,7 @@
  </xs:complexType>
 
  <xs:complexType name="DownloadDirsType">
-  <xs:sequence>
+  <xs:sequence minOccurs="0">
    <xs:element name="Directory" type="DirectoryType" maxOccurs="unbounded"/>
   </xs:sequence>
  </xs:complexType>
@@ -45,10 +54,11 @@
      <xs:enumeration value="OnReceiveOK"/>
      <xs:enumeration value="OnReceiveNewFilesOK"/>
      <xs:enumeration value="OnReceiveError"/>
-     <xs:enumeration value="OnSendOk"/>
+     <xs:enumeration value="OnSendOK"/>
      <xs:enumeration value="OnSendNewFilesOK"/>
      <xs:enumeration value="OnSendError"/>
      <xs:enumeration value="OnTrackOK"/>
+     <xs:enumeration value="NewFile2Intray"/>
    </xs:restriction>
  </xs:simpleType>
 
@@ -65,23 +75,44 @@
    <xs:element name="LoopRetries" type="posIntType"/>
    <xs:element name="LoopDelay" type="TimeTagType"/>
    <xs:element name="PollingInterval" type="TimeTagType"/>
+   <xs:element name="PollingSize" type="posIntType" minOccurs="0"/>
+   <xs:element name="ParallelDownload" type="posIntType" minOccurs="0"/>
   </xs:sequence>
  </xs:complexType>
 
- <xs:complexType name="FTPServerType">
-  <xs:sequence>
+   <xs:element name="Protocol" type="protocolType"/>
    <xs:element name="Hostname" type="xs:string"/>
    <xs:element name="Port" type="posIntType"/>
    <xs:element name="User" type="xs:string"/>
    <xs:element name="Pass" type="xs:string"/>
+
+ <xs:complexType name="FTPServerType">
+  <xs:sequence>
+   <xs:element ref="Protocol"/>
+   <xs:element ref="Hostname"/>
+   <xs:element ref="Port" minOccurs="0"/>
+   <xs:element ref="User" minOccurs="0"/>
+   <xs:element ref="Pass" minOccurs="0"/>
+   <xs:element name="FTPServer_Mirror" minOccurs="0">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="Protocol"/>
+            <xs:element ref="Hostname"/>
+            <xs:element ref="Port" minOccurs="0"/>
+            <xs:element ref="User" minOccurs="0"/>
+            <xs:element ref="Pass" minOccurs="0"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
    <xs:element name="UploadDir" type="xs:string"/>
    <xs:element name="UploadTemp" type="xs:string"/>
    <xs:element name="DownloadDirs" type="DownloadDirsType"/>
    <xs:element name="RegisterContentFlag" type="BooleanType"/>
    <xs:element name="RetrieveContentFlag" type="BooleanType"/>
-   <xs:element name="SecureFlag" type="BooleanType"/>
+   <xs:element name="SecureFlag" type="BooleanType" minOccurs="0"/>
    <xs:element name="CompressFlag" type="BooleanType"/>
    <xs:element name="DeleteFlag" type="BooleanType"/>
+   <xs:element name="PassiveFlag" type="BooleanType"/>
    <xs:element name="CleanUpFreq" type="CleanUpFreqType"/>
   </xs:sequence>
  </xs:complexType>
@@ -100,13 +131,13 @@
  </xs:complexType>
 
  <xs:complexType name="EventsType">
-  <xs:sequence>
+  <xs:sequence minOccurs="0">
    <xs:element name="Event" type="EventType" maxOccurs="unbounded"/>
   </xs:sequence>
  </xs:complexType>
 
  <xs:complexType name="ContactInfoType">
-  <xs:sequence>
+  <xs:sequence minOccurs="0">
    <xs:element name="Name" type="xs:string"/>
    <xs:element name="EMail" type="xs:string"/>
    <xs:element name="Tel" type="xs:string"/>
@@ -122,7 +153,7 @@
    <xs:element name="OutgoingDir" type="xs:string"/>
    <xs:element name="TXRXParams" type="TXRXParamsType"/>
    <xs:element name="FTPServer" type="FTPServerType"/>
-   <xs:element name="DeliverByMailTo" type="DeliverByMailToType"/>
+   <xs:element name="DeliverByMailTo" type="DeliverByMailToType" minOccurs="0"/>
    <xs:element name="Notify" type="NotifyType"/>
    <xs:element name="Events" type="EventsType"/>
    <xs:element name="ContactInfo" type="ContactInfoType"/>

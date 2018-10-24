@@ -32,7 +32,7 @@ require 'active_record'
 require 'rpf/RPF_Migrations'
 require 'dec/DEC_Migrations'
 require 'dec/DEC_Environment'
-require 'dec/DEC_DatabaseModel'
+
 
 @isDebugMode = false
 
@@ -68,6 +68,8 @@ def main
    if ret == false then
       exit(99)
    end
+
+   require 'dec/DEC_DatabaseModel'
 
    dbAdapter   = ENV['DEC_DB_ADAPTER']
    dbName      = ENV['DEC_DATABASE_NAME']

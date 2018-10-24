@@ -12,6 +12,7 @@
 #              --usage     shows the usage
 #              --Debug     shows Debug info during the execution
 #              --Kill      it cancels a sendROP execution via sending signal SIGTERM
+#              --env       it prints the execution environment variables
 #              --version   shows version number
 # 
 # == Author
@@ -91,18 +92,20 @@ def main
    @bUnblock            = true 
    @bUsage              = false
    @bShowVersion        = false
+   @bShowEnv            = false
    
    
    opts = GetoptLong.new(
-     ["--ROP", "-R",            GetoptLong::REQUIRED_ARGUMENT],
-     ["--loops", "-l",          GetoptLong::REQUIRED_ARGUMENT],
-     ["--delay", "-d",          GetoptLong::REQUIRED_ARGUMENT],
-     ["--retries", "-r",        GetoptLong::REQUIRED_ARGUMENT],
-     ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
-     ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
-     ["--version", "-v",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT],
-     ["--Kill", "-K",           GetoptLong::NO_ARGUMENT]
+     ["--ROP", "-R",             GetoptLong::REQUIRED_ARGUMENT],
+     ["--loops", "-l",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--delay", "-d",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--retries", "-r",         GetoptLong::REQUIRED_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
+     ["--env", "-e",             GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",            GetoptLong::NO_ARGUMENT],
+     ["--Kill", "-K",            GetoptLong::NO_ARGUMENT]
      )
    
    begin 
@@ -110,6 +113,7 @@ def main
          case opt      
             when "--Debug"    then @isDebugMode          = true
             when "--version"  then @bShowVersion         = true
+            when "--env"      then @bShowEnv             = true
             when "--help"     then @bUsage               = true
             when "--usage"    then @bUsage               = true
             when "--ROP"      then @nROP                 = arg
@@ -134,6 +138,13 @@ def main
    
    if @bUsage then
       usage
+      exit(0)
+   end
+
+   if @bShowEnv == true then
+      self.print_environment
+      self.print_environmentRPF
+      puts
       exit(0)
    end
 

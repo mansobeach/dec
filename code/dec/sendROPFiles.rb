@@ -53,7 +53,6 @@ require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'cuc/CheckerProcessUniqueness'
 require 'rpf/ROPSender'
-require 'dec/DEC_DatabaseModel'
 require 'dec/DEC_Environment'
 
 @isDebugMode      = false
@@ -92,6 +91,7 @@ def main
    @bUnblock            = true 
    @bUsage              = false
    @bShowVersion        = false
+   @bShowEnv            = false
 
    
    opts = GetoptLong.new(
@@ -102,6 +102,7 @@ def main
      ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--Verbose", "-V",        GetoptLong::NO_ARGUMENT],
+     ["--env", "-e",            GetoptLong::NO_ARGUMENT],
      ["--Emergency", "-E",      GetoptLong::NO_ARGUMENT],
      ["--help", "-h",           GetoptLong::NO_ARGUMENT]
      )
@@ -111,6 +112,7 @@ def main
          case opt      
             when "--Debug"       then     @isDebugMode      = true
             when "--version"     then     @bShowVersion     = true
+            when "--env"         then     @bShowEnv         = true
             when "--list"        then     @bJustList        = true
             when "--help"        then     @bUsage           = true
             when "--usage"       then     @bUsage           = true
@@ -135,6 +137,13 @@ def main
    
    if @bUsage then
       usage
+      exit(0)
+   end
+
+   if @bShowEnv == true then
+      self.print_environment
+      self.print_environmentRPF
+      puts
       exit(0)
    end
 
@@ -165,6 +174,7 @@ def main
       exit(99)   
    end
 
+   require 'dec/DEC_DatabaseModel'
     
    old_stdout = $stdout
    

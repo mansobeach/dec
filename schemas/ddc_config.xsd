@@ -27,6 +27,7 @@
   <xs:sequence>
    <xs:element name="Enabled" type="BooleanType"/>
    <xs:element name="Desc" type="xs:string"/>
+   <xs:element name="FileClass" type="xs:string" minOccurs="0"/>
    <xs:element name="FileType" type="xs:string"/>
   </xs:sequence>
   <xs:attribute name="Name" type="ReportNameType" use="required"/>

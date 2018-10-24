@@ -18,7 +18,7 @@ require 'singleton'
 require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'cuc/Log4rLoggerFactory'
-require 'dec/DEC_DatabaseModel'
+
 
 #require 'FT_ReportHandler'
 
@@ -35,6 +35,9 @@ class ROPSender
    
    # Class constructor. It is called only once as this is a singleton class
    def initialize
+   
+      require 'dec/DEC_DatabaseModel'
+   
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false

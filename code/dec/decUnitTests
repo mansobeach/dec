@@ -186,6 +186,40 @@ class DECTestCase < Test::Unit::TestCase
    end
    #--------------------------------------------------------
 
+   def test_decValidateConfig
+      cmd = "decValidateConfig -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -e"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -i"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -m"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -l"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -t"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -g"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -a"
+      assert(system(cmd), cmd)
+
+   end
+   #-------------------------------------------------------------
+
    def test_decAddInterface2DB
       cmd = "decAddInterface2DB -v"
       assert(system(cmd), cmd)

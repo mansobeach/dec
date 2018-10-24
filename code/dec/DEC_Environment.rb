@@ -22,11 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.3"
+   @@version = "1.0.4"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.4"  =>    "decValidateConfig shipped with the required xsd schemas", \
       "1.0.3"  =>    "upgrade of rpf module to support ruby 2.x series", \
       "1.0.2"  =>    "commands triggered by reception events are now logged", \
       "1.0.1"  =>    "decStats -H <hours> has been integrated", \
@@ -82,14 +83,12 @@ module DEC
       bCheck = true
       if !ENV['DEC_CONFIG'] then
          bCheck = false
-         puts
          puts "DEC_CONFIG environment variable is not defined !\n"
          puts
       end
 
       if !ENV['DEC_TMP'] then
          bCheck = false
-         puts
          puts "DEC_TMP environment variable is not defined !\n"
          puts
       end
@@ -205,6 +204,7 @@ module DEC
       bCheckOK = true
       
       arrTools = [ \
+                  "xmllint", \
                   "ncftp", \
                   "ncftpput", \
                   "sftp" \
