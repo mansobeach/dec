@@ -150,7 +150,7 @@ class DECTestCase < Test::Unit::TestCase
          # exit(99)
       end
       
-      cmd = "decAddInterface2DB -p EXTERNAL"
+      cmd = "decConfigInterface2DB -p EXTERNAL"
       
       ret = system(cmd)
       
@@ -186,6 +186,23 @@ class DECTestCase < Test::Unit::TestCase
    end
    #--------------------------------------------------------
 
+   def test_parsers
+      
+      require 'ctc/ReadInterfaceConfig'
+      
+      
+      ftReadConf = CTC::ReadInterfaceConfig.instance
+      ftReadConf.update
+      ftpRecv    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
+      
+      puts
+      puts ftpRecv
+      puts
+
+      # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
+   end
+   #-------------------------------------------------------------
+
    def test_decValidateConfig
       cmd = "decValidateConfig -v"
       assert(system(cmd), cmd)
@@ -218,20 +235,51 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   def test_decAddInterface2DB
-      cmd = "decAddInterface2DB -v"
+   def test_checkConfig
+
+#      cmd = "decCheckConfig -h"
+#      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -v"
+      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -e"
       assert(system(cmd), cmd)
 
-      cmd = "decAddInterface2DB -h"
+      cmd = "decCheckConfig -e --nodb"
       assert(system(cmd), cmd)
 
-      cmd = "decAddInterface2DB -S"
+      cmd = "decCheckConfig -i"
       assert(system(cmd), cmd)
 
+      # ----------------------
+      # not integrated yet
+      cmd = "decCheckConfig -o"
+      assert(!system(cmd), cmd)
+      #
+      
+      # only mail delivery is checked so far
+      cmd = "decCheckConfig -m"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -l"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -t"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -a"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -a --nodb"
+      assert(system(cmd), cmd)
+
+      
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_decConfigInterface2DB
       puts __method__.to_s
@@ -271,6 +319,7 @@ class DECTestCase < Test::Unit::TestCase
       ENV.delete('DEC_TMP')
       
       cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
       assert(!system(cmd), cmd)
       
       ENV['DEC_TMP'] = dec_tmp
@@ -290,9 +339,11 @@ class DECTestCase < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/finals.all")
             
       cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
       assert(system(cmd), cmd)
       
       cmd = "decGetFromInterface -m IERS --nodb --no-intray"
+      puts cmd
       assert(system(cmd), cmd)
 
       assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
@@ -302,6 +353,7 @@ class DECTestCase < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/finals.all")
 
       cmd = "decGetFromInterface -m IERS --no-intray"
+      puts cmd
       assert(system(cmd), cmd)
 
       assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
@@ -326,6 +378,7 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "decGetFromInterface -m IERS --no-intray"
+      puts
       assert(system(cmd), cmd)
 
       assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")

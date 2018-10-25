@@ -371,7 +371,7 @@ private
                       :outgoingDir, :FTPServer, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
 		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
-                   :user, :password, :FTPServerMirror, :isTracked, :isRetrieved, 
+                   :user, :password, :isTracked, :isRetrieved, 
                    :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
 #		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,

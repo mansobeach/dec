@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec_rpf'
-  s.version     = '1.0.4'
+  s.version     = '1.0.5'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/RPF component"
   s.description = "Data Exchange Component for Reference Planning"

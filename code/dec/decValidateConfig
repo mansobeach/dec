@@ -138,6 +138,10 @@ def main
       exit(0)
    end
 
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
  
    if @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
       usage
@@ -314,7 +318,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 #-------------------------------------------------------------
 

@@ -156,7 +156,7 @@ class DECTestCase < Test::Unit::TestCase
          # exit(99)
       end
       
-      cmd = "decAddInterface2DB -p EXTERNAL"
+      cmd = "decConfigInterface2DB -p EXTERNAL"
       
       ret = system(cmd)
       

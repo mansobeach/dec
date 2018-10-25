@@ -8,7 +8,7 @@
 #
 # == Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: CheckerIncomingFileConfig.rb,v 1.5 2007/12/19 06:08:03 decdev Exp $
+# CVS: $Id: CheckerIncomingFileConfig.rb,v 1.7 2009/10/21 13:36:46 algs Exp $
 #
 # === module Common Transfer Component (CTC)
 # This class is in charge of verify that the Configuration
@@ -81,8 +81,8 @@ private
       arrExternalEntities = @ftReadConf.getAllExternalMnemonics  
       arrSenderEntities.each{|x|
          if arrExternalEntities.include?(x) == false then
-            puts "Incoming Type #{@filetype} Received from #{x} ..."
-            puts "#{x} is not a configured I/F !"
+            puts
+            puts "Error: Incoming Type #{@filetype} Received from #{x}: #{x} is not a configured I/F ! :-("
             puts
             bReturn = false
         end

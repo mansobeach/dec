@@ -43,32 +43,34 @@ require 'cuc/CheckerProcessUniqueness'
 require 'ctc/ReadInterfaceConfig'
 require 'ddc/DDC_Notifier2Interface'
 
+require 'dec/DEC_Environment'
 
-# Global variables
-@@dateLastModification = "$Date$"   # to keep control of the last modification
-                                       # of this script
-@@debugMode       = 0                  # execution showing Debug Info
-@@mnemonic        = ""
+
 
 # MAIN script function
 def main
 
+   include DEC
+   
    #=======================================================================
 
    def SIGTERMHandler
-      puts "\n[#{File.basename($0)} #{@@mnemonic}] SIGTERM signal received ... sayonara, baby !\n"
+      puts "\n[#{File.basename($0)} #{@mnemonic}] SIGTERM signal received ... sayonara, baby !\n"
       @locker.release
       exit(0)
    end
    #=======================================================================
 
    include           CUC::DirUtils
-   
-   @@debugMode       = 0 
+
+   @mnemonic         = ""   
+   @debugMode        = 0 
    option            = false
-   @@bResult         = false
-   @@fullPathFile    = ""
+   @bResult          = false
+   @fullPathFile     = ""
    @bNotify          = true
+   @bShowVersion     = false
+   @bShowUsage       = false
    
    
    opts = GetoptLong.new(
@@ -84,52 +86,75 @@ def main
    begin 
       opts.each do |opt, arg|
          case opt     
-            when "--Debug"   then @@debugMode = 1
+            when "--Debug"   then @debugMode = 1
             when "--version" then
-               print("\nESA - Deimos-Space S.L. ", File.basename($0), " $Revision: 1.6 $  [", @@dateLastModification, "]\n\n\n")
+               print("\nESA - Deimos-Space S.L. ", File.basename($0), " $Revision: 1.6 $  [", @dateLastModification, "]\n\n\n")
                exit (0)
             when "--mnemonic" then
-               @@mnemonic = arg
+               @mnemonic = arg
             when "--usage"   then usage
             when "--help"    then usage
             when "--rop" then
-               @@nROP    = arg.to_i
-            when "--OK"   then @@isOK = true
+               @nROP    = arg.to_i
+            when "--OK"   then @isOK = true
                                option = true
                             
-            when "--KO"   then @@isOK = false
+            when "--KO"   then @isOK = false
                                option = true         
             when "--file" then
-                @@fullPathFile = arg                                   
+                @fullPathFile = arg                                   
          end
       end
    rescue Exception
       exit(99)
    end
- 
 
-   if @@mnemonic == "" or option == false then
-      usage
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = DEC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }      
+      exit(0)
    end
- 
-   if @@isOK == true and option == true and @@fullPathFile == "" then
+    
+   if @bShowUsage == true then
       usage
+      exit(0)
    end
    
-   if @@isOK == false and option == true and @@fullPathFile == "" then
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end 
+
+   if @mnemonic == "" or option == false then
       usage
+      exit(99)
+   end
+ 
+   if @isOK == true and option == true and @fullPathFile == "" then
+      usage
+      exit(99)
+   end
+   
+   if @isOK == false and option == true and @fullPathFile == "" then
+      usage
+      exit(99)
    end
 
    # Set notify2Interface <I/F> running.
    # This assures there is only one send2Interface running for a given I/F. 
-   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @@mnemonic, true)
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @mnemonic, true)
    
-#    if @@debugMode == 1 then
+#    if @debugMode == 1 then
 #       @locker.setDebugMode
 #    end
    
    if @locker.isRunning == true then
-      puts "\n#{File.basename($0)} for #{@@mnemonic} I/F is already running !\n\n"
+      puts "\n#{File.basename($0)} for #{@mnemonic} I/F is already running !\n\n"
       exit(99)
    end
   
@@ -148,13 +173,13 @@ def main
    
    bFound = false
    0.upto(numEntities-1) do |i|
-     if @@mnemonic == arrEntities[i] then
+     if @mnemonic == arrEntities[i] then
         bFound = true
      end
    end
    
    if bFound == false then
-      print("\nThe Entity ", @@mnemonic, "does not exist !!   :-(\n\n")
+      print("\nThe Entity ", @mnemonic, "does not exist !!   :-(\n\n")
       @locker.release
       exit(99)
    end
@@ -164,17 +189,17 @@ def main
    # SR-2352-TRN-FUN - MP-FU-50b
    # SR-2354-TRN-FUN - MP-FU-59a
    
-   @bNotify  = ftReadConf.isNotificationSent?(@@mnemonic)
+   @bNotify  = ftReadConf.isNotificationSent?(@mnemonic)
 
    if @bNotify == false then
       puts
-      puts "E-mail Delivery Notification is disabled for #{@@mnemonic}"
+      puts "E-mail Delivery Notification is disabled for #{@mnemonic}"
       puts
       @locker.release
       exit(0)
    end
 
-   if @@isOK == true then
+   if @isOK == true then
       # if it is enabled notification
       if @bNotify == true then
          notifySuccess2Entity
@@ -195,12 +220,12 @@ end
 # Generate and deliver Notification Mail to the given I/F
 # If for this I/F no file is sent, no mail is sent as well. 
 def notifySuccess2Entity
-   notifier = DDC::DDC_Notifier2Interface.new(@@mnemonic)
-   if @@debugMode == 1 then
+   notifier = DDC::DDC_Notifier2Interface.new(@mnemonic)
+   if @debugMode == 1 then
       notifier.setDebugMode
    end
 
-   aFile      = File.open(@@fullPathFile)
+   aFile      = File.open(@fullPathFile)
    list       = aFile.readlines
    @listFiles = Array.new
    list.each{|x| @listFiles << x.chop}
@@ -212,12 +237,12 @@ end
 
 # Generate and deliver Notification Mail to the given 
 def notifyFailure2Entity
-   notifier = DDC::DDC_Notifier2Interface.new(@@mnemonic)
-   if @@debugMode == 1 then
+   notifier = DDC::DDC_Notifier2Interface.new(@mnemonic)
+   if @debugMode == 1 then
       notifier.setDebugMode
    end
    
-   aFile         = File.open(@@fullPathFile)
+   aFile         = File.open(@fullPathFile)
    listErr       = aFile.readlines
    @listFilesErr = Array.new
    listErr.each{|x| @listFilesErr << x.chop}
@@ -230,7 +255,7 @@ end
 
 # Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
+   fullpathFile = File.expand_path(__FILE__)
    
    value = `#{"head -24 #{fullpathFile}"}`
       
@@ -239,7 +264,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 #-------------------------------------------------------------
 

@@ -30,7 +30,8 @@ module CTC
 class CheckerMailConfig
    
    include CTC 
-   #--------------------------------------------------------------
+   
+   # --------------------------------------------------------------
 
    # Class constructor.
    def initialize
@@ -40,7 +41,7 @@ class CheckerMailConfig
       @receiveMailCfg = @dccReadConf.getReceiveMailParams
       @isDebugMode    = true
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # ==== Main method of the class
    # ==== It returns a boolean True whether checks are OK. False otherwise.
@@ -72,14 +73,14 @@ class CheckerMailConfig
 		         
       return retVal
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # Set debug mode on
    def setDebugMode
       @isDebugMode = true
       puts "CheckerMailConfig debug mode is on"
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getSendMailConfig
       return @sendMailCfg
@@ -91,18 +92,18 @@ private
    @isDebugMode       = false      
    @ftReadConf        = nil
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       return
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getRecvMailConfig
       return @receiveMailCfg
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # It shows all relevant info regarding to the Mail Config
    # communication.
@@ -114,7 +115,7 @@ private
 		   showReceiveMailConfig
       end
    end   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # It shows the SendMail Configuration.
    def showSendMailConfig      
@@ -128,7 +129,7 @@ private
       puts "----------------------------------------"
       puts
    end   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
 	# It shows the ReceiveMail Configuration.
    def showReceiveMailConfig      
@@ -142,7 +143,7 @@ private
       puts "----------------------------------------"
       puts
    end   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
 	# It checks the configuration for sending mails
    def checkSendMailParams
@@ -155,7 +156,7 @@ private
 			                    )
       return mailer.init
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # It checks the configuration for receiving mails
 	
@@ -169,7 +170,7 @@ private
 			                    )
       return mailer.init
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end # class
 

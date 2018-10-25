@@ -78,7 +78,20 @@ class MailSender
    # -------------------------------------------------------------
 
    def buildMessage
-      destination = @arrToAddress[0]
+      destination = ""
+      @arrToAddress.each{|address|
+         if destination == "" then
+            destination = "#{address}"
+         else
+            destination = "#{address},#{destination}"
+         end
+      }
+      
+      # destination = @arrToAddress[0]
+      
+      puts
+      puts destination
+      puts
       
       @msg = <<END_OF_MESSAGE
 From: #{@optMail[:from_alias]} <#{@optMail[:from]}>
@@ -134,7 +147,7 @@ END_OF_MESSAGE
 
 
       Net::SMTP.start(@optMail[:server]) do |smtp|
-         smtp.send_message @msg, @optMail[:from], @arrToAddress[0]
+         smtp.send_message @msg, @optMail[:from], @arrToAddress  #[0]
       end
 
       return true

@@ -20,7 +20,7 @@
 #########################################################################
 
 require 'ctc/ReadInterfaceConfig'
-require 'dbm/DatabaseModel'
+
 
 
 module CTC
@@ -74,7 +74,22 @@ private
 
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
-      return
+
+      if !ENV['DEC_DATABASE_NAME'] and !ENV['DCC_DATABASE_NAME'] then
+         puts "DEC_DATABASE_NAME | DCC_DATABASE_NAME environment variable not defined !  :-(\n\n"
+         bCheckOK = false
+         bDefined = false
+         puts "Error in CheckerInventoryConfig::checkModuleIntegrity !"
+         puts
+         exit(99)
+      end
+      
+      if ENV['DEC_DATABASE_NAME'] then
+         require 'dec/DEC_DatabaseModel'
+      else
+         require 'dbm/DatabaseModel'
+      end
+     
    end
    #-------------------------------------------------------------
 

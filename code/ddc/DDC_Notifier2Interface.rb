@@ -40,7 +40,7 @@ class DDC_Notifier2Interface
       checker           = CTC::CheckerMailConfig.new
       ret               = checker.check(true, false)
       if ret == false then
-         puts "Notifier2Interface could not connect to SMTP Server !! =-O"
+         puts "DDC_Notifier2Interface could not connect to SMTP Server !! =-O"
          puts
          exit(99)
       end      
@@ -263,7 +263,10 @@ private
          @mailer.setDebugMode
       end
 #      @mailer.init
-      sendTo.each{|x| @mailer.addToAddress(x)}
+      sendTo.each{|x|
+         puts x
+         @mailer.addToAddress(x)
+      }
    end
    #-------------------------------------------------------------
       

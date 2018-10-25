@@ -8,14 +8,14 @@
 #
 # Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: CheckerFTPConfig.rb,v 1.3 2006/10/19 14:07:19 decdev Exp $
+# CVS: $Id: CheckerFTPConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
 #
 #########################################################################
 
 require 'net/ftp'
 
-require "ctc/SFTPBatchClient"
-require "ctc/FTPClientCommands"
+require 'ctc/SFTPBatchClient'
+require 'ctc/FTPClientCommands'
 
 
 module CTC
@@ -30,13 +30,13 @@ class CheckerFTPConfig
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
    def initialize(ftpServerStruct, strInterfaceCaption = "")
       @isDebugMode = false
+      checkModuleIntegrity
       @ftpElement  = ftpServerStruct
       if strInterfaceCaption != "" then
          @entity = strInterfaceCaption
       else
          @entity = "Generic"
       end
-      checkModuleIntegrity
    end
    #-------------------------------------------------------------
    
@@ -66,8 +66,7 @@ class CheckerFTPConfig
    def check4Receive
       if @isDebugMode == true then
          showFTPConfig(false, true)
-      end
-   
+      end  
       retVal = checkFTPConfig(false, true)
       return retVal   
    end
@@ -93,8 +92,9 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
-         puts "\nDCC_TMP environment variable not defined !\n"
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG | DCC_CONFIG environment variable not defined !  :-(\n\n"
+         bCheckOK = false
          bDefined = false
       end
       
@@ -103,15 +103,17 @@ private
          exit(99)
       end
                   
-      if ENV['DEC_TMP'] then
-         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      tmpDir = nil
+         
+      if ENV['DEC_CONFIG'] then
+         tmpDir         = %Q{#{ENV['DEC_CONFIG']}}  
       else
-         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
-      end        
+         tmpDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
 
       time   = Time.new
       time.utc
-      @batchFile = %Q{#{@tmpDir}/.checker.#{@entity}.#{time.to_f.to_s}.#{Random.new.rand(1.5)}}
+      @batchFile = %Q{#{tmpDir}/.#{time.to_f.to_s}}
    end
    #-------------------------------------------------------------
    
@@ -129,14 +131,13 @@ private
       
       puts
       if @ftpElement[:isSecure] == true then 
-         puts "Secure conection is used (sftp)"
+        puts "Secure conection is used (sftp)"
       else
-         puts "NON Secure conection is used (ftp)"
+        puts "NON Secure conection is used (ftp)"
       end
       if @ftpElement[:isSecure] == true and @ftpElement[:isCompressed] == true then 
         puts "Communication data is compressed (sftp)"
       end
-      puts "protocol     -> #{@ftpElement[:protocol]}"
       puts "hostname     -> #{@ftpElement[:hostname]}"
       puts "port         -> #{@ftpElement[:port]}"
       puts "user         -> #{@ftpElement[:user]}"
@@ -146,6 +147,9 @@ private
       	puts "upload tmp   -> #{@ftpElement[:uploadTemp]}"
       end
       if b4Receive == true then
+         puts
+         puts @ftpElement
+         puts
          arrDirs = @ftpElement[:arrDownloadDirs]
          arrDirs.each{|element|
             puts "download dir -> #{element[:depthSearch]} | #{element[:directory]}"
@@ -163,14 +167,18 @@ private
    # otherwise it returns false.
    def checkFTPConfig(bCheck4Send, bCheck4Receive)
 
+      mirror=false
+#      if @ftpElement[:FTPServerMirror] != nil then
+#         mirror=true
+#      end
+
       ret = true
-      
       if @ftpElement[:port].to_i == 21 and @ftpElement[:isSecure] == true then
-         puts "\nWARNING: you may experience problems with Secure Mode and Port 21 \n\n"
+         puts "\nWarning: you may experience problems with Secure Mode and Port 21 :-|\n\n"
          puts "Check your configuration \n" 
       end
       if @ftpElement[:port].to_i == 22 and @ftpElement[:isSecure] == false then
-         puts "\nWARNING: you may experience problems with NON Secure Mode and Port 22 \n\n"
+         puts "\nWarning: #{@ftpElement[:mnemonic]} you may experience problems with NON Secure Mode and Port 22 :-|\n\n"
          puts "Check your configuration \n" 
       end      
 
@@ -178,35 +186,51 @@ private
       if bCheck4Send == true then
 
          if @ftpElement[:uploadDir] == "" then
-            puts "\nConfiguration Error in #{@entity} I/F"
-            puts "UploadDir configuration element cannot be void\n"
+            puts "\nError: in #{@entity} I/F: UploadDir configuration element cannot be void :-(\n"
             ret = false         
          end
 
          if @ftpElement[:uploadTemp] == "" then
-            puts "\nConfiguration Error in #{@entity} I/F"
-            puts "UploadTemp configuration element cannot be void\n"
+            puts "\nError: in #{@entity} I/F: UploadTemp configuration element cannot be void :-(\n"
             ret = false         
          end
-   
-         retVal = checkRemoteDirectory(@ftpElement[:uploadDir])
-         if retVal == false then
-            puts "\nConfiguration Error in #{@entity} I/F"
-            puts "Unable to access to remote dir #{@ftpElement[:uploadDir]}\n"
-            ret = false
-         end
-      
-         retVal = checkRemoteDirectory(@ftpElement[:uploadTemp])
-         if retVal == false then
-            puts "\nConfiguration Error in #{@entity} I/F"
-            puts "Unable to access to remote dir #{@ftpElement[:uploadTemp]}\n"
-            ret = false
-         end
          
-         if @ftpElement[:uploadTemp] == @ftpElement[:uploadDir] then
-            puts "\nConfiguration Error in #{@entity} I/F"
-            puts "Upload directory and UploadTemp cannot be the same directory\n"            
+#         if @ftpElement[:uploadTemp] == @ftpElement[:uploadDir] then
+#            puts "\nError: in #{@entity} I/F: Upload directory and UploadTemp cannot be the same directory :-(\n"            
+#            ret = false
+#         end
+
+   #dynamic directories
+         dir=@ftpElement[:uploadDir]
+         if dir.include?('[') then #it has dynamic uploadDirs
+            puts "\nWarning: #{@entity} is using dynamic directories. Only checking directory before the expression !"
+            dir= dir.slice(0,dir.index('['))
+         end
+   ###  
+         retVal = checkRemoteDirectory(dir, false)
+         if retVal == false then
+            puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{dir} :-(\n"
             ret = false
+         end
+
+         retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], false)
+         if retVal == false then
+            puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+            ret = false
+         end
+
+   #mirror server check
+         if mirror then
+            retVal = checkRemoteDirectory(dir, true)
+            if retVal == false then
+               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{dir} :-(\n"
+               ret = false
+            end
+            retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], true)
+            if retVal == false then
+               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+               ret = false
+            end
          end
       end
 
@@ -214,26 +238,33 @@ private
       # We set as a configuration error when ALL download directories are un-reachable
       if bCheck4Receive == true then   
          arrElements = @ftpElement[:arrDownloadDirs]
-         bNoError = false
-         bWarning = false
+#         bNoError = false
+#         bWarning = false
+         bError = false
          arrElements.each{|element|
             dir = element[:directory]
             retVal = checkRemoteDirectory(dir)
             if retVal == false then
-#               puts "\nConfiguration Error in #{@entity} I/F"
-               puts
-               puts "#{@entity} I/F: Unable to access to remote dir #{element[:directory]}\n"
-               bWarning = true
-            else
-               bNoError = true
+               puts "\nError: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n"
+               bError = true
             end
          }
-         if bNoError == true and bWarning == true then
-            puts
-            puts "Warning: some of configured Download dirs are not reachable !  :-|"
+         if mirror then
+            arrElements.each{|element|
+               dir = element[:directory]
+               retVal = checkRemoteDirectory(dir, true)
+               if retVal == false then
+                  puts "\nError: #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{element[:directory]} :-(\n"
+                  bError = true
+               end
+            }
          end
+#         if bNoError == true and bWarning == true then
+#            puts
+#            puts "Warning: some of configured Download dirs are not reachable !  :-|"
+#         end
          if ret == true then
-            ret = bNoError
+            ret = !bError
          end
       end
       
@@ -243,56 +274,33 @@ private
    #-------------------------------------------------------------
    
    # Check that the remote directories exists
-   def checkRemoteDirectory(dir)
-      
-      host = @ftpElement[:hostname]
-      port = @ftpElement[:port].to_i
-      user = @ftpElement[:user]
-      pass = @ftpElement[:password]
+   def checkRemoteDirectory(dir, mirror=false)
+      if mirror then
+         host = @ftpElement[:FTPServerMirror][:hostname]
+         port = @ftpElement[:FTPServerMirror][:port].to_i
+         user = @ftpElement[:FTPServerMirror][:user]
+         pass = @ftpElement[:FTPServerMirror][:password]         
+      else
+         host = @ftpElement[:hostname]
+         port = @ftpElement[:port].to_i
+         user = @ftpElement[:user]
+         pass = @ftpElement[:password]
+      end
 
       if @ftpElement[:isSecure] == false then
          begin
             @ftp = Net::FTP.new(host)
             @ftp.login(user, pass)
-         rescue Exception
-            puts
-            puts "Error login at #{host} with #{user} / #{pass}"
-            return false
-         end
-
-         begin
-#             @ftp = Net::FTP.new(host)
-#             @ftp.login(user, pass)
             @ftp.passive = true
             @ftp.chdir(dir)
-         rescue Exception => e
-         
-            puts "Directory => #{dir}"
-            puts
-            puts
-            puts e.to_s
-            puts
-            exit
-         
-            # ---------------------
-            # 20140923 - BL
-            # If remote directory does not exist
-            # it is then created
-            
-            @ftp = Net::FTP.new(host)
-            @ftp.login(user, pass)
-            @ftp.mkdir(dir)
-            # ---------------------
+         rescue Exception
             return false
          end
          return true
       end
 
       if @ftpElement[:isSecure] == true then
-         sftpClient = SFTPBatchClient.new(@ftpElement[:hostname],
-                                             @ftpElement[:port],
-                                             @ftpElement[:user],
-                                             @batchFile)
+         sftpClient = SFTPBatchClient.new(host, port, user, @batchFile)
          if @isDebugMode == true then
             sftpClient.setDebugMode
          end

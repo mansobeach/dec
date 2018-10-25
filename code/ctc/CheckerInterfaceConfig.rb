@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: CheckerInterfaceConfig.rb,v 1.6 2007/12/19 06:08:03 decdev Exp $
+# CVS: $Id: CheckerInterfaceConfig.rb,v 1.8 2010/04/09 10:12:28 algs Exp $
 #
 # === module Common Transfer Component (CTC)
 # This class is in charge of verify that the configuration
@@ -45,20 +45,20 @@ class CheckerInterfaceConfig
    #
    # IN (bool) [optional] - check parameters required for sending
    def initialize(entity, bCheckDCC=true, bCheckDDC=true)
-      @bCheckDCC        = bCheckDCC
-      @bCheckDDC        = bCheckDDC
-      @isDebugMode      = false
-      @entity           = entity
+      @bCheckDCC   = bCheckDCC
+      @bCheckDDC   = bCheckDDC
+      @isDebugMode = false
+      @entity      = entity
       checkModuleIntegrity
-      @ftReadConf       = ReadInterfaceConfig.instance
+      @ftReadConf = ReadInterfaceConfig.instance
       @ftReadConf.update
-      @ftpRecv          = @ftReadConf.getFTPServer(@entity)
-      @ftpSend          = @ftReadConf.getFTPServer(@entity)
-      @check4Send       = CheckerFTPConfig.new(@ftpSend, @entity)
-      @check4Recv       = CheckerFTPConfig.new(@ftpRecv, @entity)
-      @checkLocal4Send  = CheckerLocalConfig.new(@ftpSend, @entity)  
-      @checkLocal4Recv  = CheckerLocalConfig.new(@ftpRecv, @entity)    
-      @protocol         = @ftReadConf.getProtocol(@entity)
+      @ftpRecv    = @ftReadConf.getFTPServer(@entity)
+      @ftpSend    = @ftReadConf.getFTPServer(@entity)
+      @check4Send = CheckerFTPConfig.new(@ftpSend, @entity)
+      @check4Recv = CheckerFTPConfig.new(@ftpRecv, @entity)
+      @checkLocal4Send = CheckerLocalConfig.new(@ftpSend, @entity)  
+      @checkLocal4Recv = CheckerLocalConfig.new(@ftpRecv, @entity)    
+      @protocol   = @ftReadConf.getProtocol(@entity)
    end
    #-------------------------------------------------------------
    
@@ -69,8 +69,6 @@ class CheckerInterfaceConfig
       if @isDebugMode == true then
          @check4Send.setDebugMode
          @check4Recv.setDebugMode
-         @checkLocal4Send.setDebugMode
-         @checkLocal4Recv.setDebugMode
       end
      
       if @bCheckDDC == true then
@@ -145,8 +143,9 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
-         puts "\nDCC_TMP environment variable not defined !\n"
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG | DCC_CONFIG environment variable not defined !  :-(\n\n"
+         bCheckOK = false
          bDefined = false
       end
       
@@ -155,15 +154,16 @@ private
          exit(99)
       end
 
-      if ENV['DEC_TMP'] then
-         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
+      tmpDir = nil
+         
+      if ENV['DEC_CONFIG'] then
+         tmpDir         = %Q{#{ENV['DEC_CONFIG']}}  
       else
-         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
-      end        
-                  
+         tmpDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
       time   = Time.new
       time.utc
-      @batchFile = %Q{#{@tmpDir}/.#{time.to_f.to_s}}
+      @batchFile = %Q{#{tmpDir}/.#{time.to_f.to_s}}
    end
    #-------------------------------------------------------------
 
@@ -241,7 +241,7 @@ private
       valFlag = @ftReadConf.registerDirContent?(@entity)
       
       if valFlag != true and valFlag != false then
-         puts "\nConfiguration Error in #{@entity} I/F for Server.RegisterDirContent !"
+         puts "\nError: in #{@entity} I/F for Server.RegisterDirContent ! :-("
          puts "Accepted values for this field are true|false"
          bRet = false
       end
@@ -249,7 +249,7 @@ private
       valFlag = @ftReadConf.retrieveDirContent?(@entity)
       
       if valFlag != true and valFlag != false then
-         puts "\nConfiguration Error in #{@entity} I/F for Server.RetrieveDirContent !"
+         puts "\nError: in #{@entity} I/F for Server.RetrieveDirContent ! :-("
          puts "Accepted values for this field are true|false"
          bRet = false
       end
@@ -277,7 +277,7 @@ private
       
       if (notifyParams[:sendNotification].to_s.downcase == "true") then
          if notifyParams[:arrNotifyTo].length < 1 then
-            puts "Notify -> To  should have a list of email addresses"
+            puts "Error: Notify -> To  should have a list of email addresses :-("
             retVal = false
          end
       end
@@ -323,7 +323,7 @@ private
          ret = `which #{cmd}`
          if ret[0,1] != "/" then
             puts
-            puts "Error #{@entity} #{cmd} triggered by #{event["name"]} not in PATH ! :-("
+            puts "Error: #{@entity} #{cmd} triggered by #{event["name"]} not in PATH ! :-("
             retVal = false
          end
       }
