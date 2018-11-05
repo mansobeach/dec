@@ -8,11 +8,16 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: DatabaseModel.rb,v 1.12 2007/12/18 18:34:03 decdev Exp $
+# Git: $Id$: DEC_DatabaseModel.rb,v 1.12 2007/12/18 18:34:03 decdev Exp $
 #
-# module DBM
+# module DEC
 #
 #########################################################################
+
+# CREATE INDEX IS GOOD ! :o)
+
+# psql -U cat_db_e2espm -d sdmdb
+# sdmdb=> CREATE INDEX index_received_files_on_filename_and_interface_id on received_files (filename, interface_id);
 
 require 'rubygems'
 require 'active_record'

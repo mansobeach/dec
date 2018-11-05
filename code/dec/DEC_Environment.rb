@@ -22,11 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.5"
+   @@version = "1.0.6"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \
       "1.0.5"  =>    "notify2Interface.rb fix sending mail to first address only \n         decCheckConfig shipped in the gem", \
       "1.0.4"  =>    "decValidateConfig shipped with the required xsd schemas", \
       "1.0.3"  =>    "upgrade of rpf module to support ruby 2.x series", \

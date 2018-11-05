@@ -204,17 +204,17 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
       Dir.chdir(prevDir)
       
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    # all tests are passive connections
    
-   data("abs_path1",     ["ABSOLUTE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",   "/tmp/texas_chainsaw_holy_molly", "/tmp/texas_chainsaw_holy_molly/tmp", true])
-   data("abs_path2",     ["NO_WRITE_PERMISSION_BOTH",             "/", "/", false])
+#   data("abs_path1",     ["ABSOLUTE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",   "/tmp/texas_chainsaw_holy_molly", "/tmp/texas_chainsaw_holy_molly/tmp", true])
+#   data("abs_path2",     ["NO_WRITE_PERMISSION_BOTH",             "/", "/", false])
    data("abs_path3",     ["NO_WRITE_PERMISSION_FINAL_1",          "/", "/tmp", false])
-   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
-   data("abs_path4",     ["NO_WRITE_PERMISSION_TMP",              "/tmp", "/", false])
-   data("rel_path1",     ["RELATIVE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",  "texas_chainsaw_holly_molly", "texas_chainsaw_holly_molly/tmp", true])
-   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
+#   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
+#   data("abs_path4",     ["NO_WRITE_PERMISSION_TMP",              "/tmp", "/", false])
+#   data("rel_path1",     ["RELATIVE_PATH_CRAZY_NOT_EXISTING_PREVIOUSLY",  "texas_chainsaw_holly_molly", "texas_chainsaw_holly_molly/tmp", true])
+#   data("mix_path1",     ["NO_WRITE_PERMISSION_FINAL_2",          "/", "tmp", false])
 
    # this test does not create directories to verify circulations failure behaviour
    def test_ncftpput_2(data)
@@ -251,10 +251,10 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
 
       ret = system(cmd)
       
-#      puts
-#      puts ret
-#      puts cmdResult
-#      puts
+      puts
+      puts ret
+      puts cmdResult
+      puts
       
       assert(ret == cmdResult, cmd)
       
@@ -285,7 +285,66 @@ class DECTestCase_Ncftpput < Test::Unit::TestCase
       Dir.chdir(prevDir)
 
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
+
+   # full paths result
+   data("rel_path1",     ["REL_PATH_INDEPENDENT",        "destination_dir", "tmp_dir",  false] )
+   
+   def test_fjlh(data)
+   
+      label, dir, tmpDir, cmdResult = data
+
+      puts
+      puts "---------------------------------"
+      puts label
+      puts "UploadDir   => #{dir}"
+      puts "UploadTemp  => #{tmpDir}"
+      puts "---------------------------------"
+      puts
+
+   
+      prevDir = Dir.pwd
+      
+      Dir.chdir(ENV['HOME'])
+      
+      cmd = "mkdir -p #{dir}"
+      system(cmd)
+
+      cmd = "mkdir -p #{tmpDir}"
+      system(cmd)
+      
+      cmd = "chmod 500 #{dir}"
+      system(cmd)
+
+      Dir.chdir("/tmp")
+      
+      cmd = self.createNcFtpPut_FJLH1(@@host,  \
+                                    @@port, \
+                                    @@user, \
+                                    @@pass, \
+                                    dir, \
+                                    tmpDir, \
+                                    @@file, \
+                                    @@verbose \
+                                    )
+
+      puts                              
+      puts cmd
+      puts
+
+      ret = system(cmd)
+      
+      puts
+      puts ret
+      puts cmdResult
+      puts
+      
+      assert(ret == cmdResult, cmd)
+      
+      
+      Dir.chdir(prevDir)
+   end
+   # --------------------------------------------------------
 
 end
 

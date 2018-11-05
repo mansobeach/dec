@@ -44,21 +44,21 @@ class CheckerInterfaceConfig
    # IN (bool) [optional] - check parameters required for receiving
    #
    # IN (bool) [optional] - check parameters required for sending
-   def initialize(entity, bCheckDCC=true, bCheckDDC=true)
-      @bCheckDCC   = bCheckDCC
-      @bCheckDDC   = bCheckDDC
-      @isDebugMode = false
-      @entity      = entity
+   def initialize(entity, bCheckDCC = true, bCheckDDC = true)
+      @bCheckDCC        = bCheckDCC
+      @bCheckDDC        = bCheckDDC
+      @isDebugMode      = false
+      @entity           = entity
       checkModuleIntegrity
-      @ftReadConf = ReadInterfaceConfig.instance
+      @ftReadConf       = ReadInterfaceConfig.instance
       @ftReadConf.update
-      @ftpRecv    = @ftReadConf.getFTPServer(@entity)
-      @ftpSend    = @ftReadConf.getFTPServer(@entity)
-      @check4Send = CheckerFTPConfig.new(@ftpSend, @entity)
-      @check4Recv = CheckerFTPConfig.new(@ftpRecv, @entity)
-      @checkLocal4Send = CheckerLocalConfig.new(@ftpSend, @entity)  
-      @checkLocal4Recv = CheckerLocalConfig.new(@ftpRecv, @entity)    
-      @protocol   = @ftReadConf.getProtocol(@entity)
+      @ftpRecv          = @ftReadConf.getFTPServer(@entity)
+      @ftpSend          = @ftReadConf.getFTPServer(@entity)
+      @check4Send       = CheckerFTPConfig.new(@ftpSend, @entity)
+      @check4Recv       = CheckerFTPConfig.new(@ftpRecv, @entity)
+      @checkLocal4Send  = CheckerLocalConfig.new(@ftpSend, @entity)  
+      @checkLocal4Recv  = CheckerLocalConfig.new(@ftpRecv, @entity)    
+      @protocol         = @ftReadConf.getProtocol(@entity)
    end
    #-------------------------------------------------------------
    

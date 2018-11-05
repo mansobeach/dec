@@ -116,6 +116,38 @@ class DECTestCase < Test::Unit::TestCase
       require 'dec/DEC_DatabaseModel'
       
       
+      require 'ctc/ReadInterfaceConfig'
+      
+      ftConfig = CTC::ReadInterfaceConfig.instance
+      arrEnts  = ftConfig.getAllMnemonics
+
+      arrEnts.each{|x|
+         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
+         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
+         
+         if bEnabled4Send == false then
+            next
+         end
+         
+         ftpSend        = ftConfig.getFTPServer(x)
+         uploadDir      = ftpSend[:uploadDir]
+         uploadTemp     = ftpSend[:uploadTemp]
+         
+         if uploadDir[0,1] != '/' then
+            uploadDir='~/'+uploadDir
+         end     
+         cmd = "mkdir -p #{uploadDir}"
+         puts cmd
+         system(cmd)
+            
+         if uploadTemp[0,1] != '/' then
+            uploadTemp='~/'+uploadTemp
+         end     
+         cmd = "mkdir -p #{uploadTemp}"
+         puts cmd
+         system(cmd)            
+      }
+      
    end
    
    #--------------------------------------------------------
@@ -240,13 +272,25 @@ class DECTestCase < Test::Unit::TestCase
 
    def test_checkConfig
 
-#      cmd = "decCheckConfig -h"
-#      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -v"
+      cmd = "chmod 500 ~/Sandbox/dec/dec_sent_file"
+      puts cmd
+      system(cmd)
+
+      cmd = "decCheckConfig -e -D"
+      assert(!system(cmd), cmd)
+
+      cmd = "chmod 755 ~/Sandbox/dec/dec_sent_file"
+      puts cmd
+      system(cmd)
+
+      cmd = "decCheckConfig -e -D"
+      assert(system(cmd), cmd)
+
+
+      cmd = "decCheckConfig -h"
       assert(system(cmd), cmd)
       
-      cmd = "decCheckConfig -e"
+      cmd = "decCheckConfig -v"
       assert(system(cmd), cmd)
 
       cmd = "decCheckConfig -e --nodb"
@@ -255,27 +299,29 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decCheckConfig -i"
       assert(system(cmd), cmd)
 
-      # ----------------------
-      # not integrated yet
-      cmd = "decCheckConfig -o"
-      assert(!system(cmd), cmd)
-      #
-      
-      # only mail delivery is checked so far
-      cmd = "decCheckConfig -m"
-      assert(system(cmd), cmd)
+#      # ----------------------
+#      # not integrated yet
+#      cmd = "decCheckConfig -o"
+#      assert(!system(cmd), cmd)
+#      #
+#      
+#      # only mail delivery is checked so far
+#      cmd = "decCheckConfig -m"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -l"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -t"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -a"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -a --nodb"
+#      assert(system(cmd), cmd)
 
-      cmd = "decCheckConfig -l"
-      assert(system(cmd), cmd)
 
-      cmd = "decCheckConfig -t"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -a"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -a --nodb"
-      assert(system(cmd), cmd)
 
       
    end

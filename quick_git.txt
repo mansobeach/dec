@@ -1,7 +1,15 @@
+git config filter.dater.smudge git_expand_date
+git config filter.dater.clean 'perl -pe "s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/"'
+
+
+# ------------------------------------------------
 # Login
 
 git config --global user.name "Your Name"
 git config --global user.email you@example.com
+
+git clone https://username:password@remote
+
 
 # Set editor
 git config --global core.editor vim
@@ -52,5 +60,9 @@ git rm --cached code/ws23rb
 git fetch --all
 
 git reset --hard origin/master 
+
+# Recover last version of a file
+
+git checkout origin/master -- FTPClientCommands.rb
 
 

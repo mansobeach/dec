@@ -128,6 +128,7 @@ def main
 
    @bShowVersion     = false
    @bShowUsage       = false
+   @retVal           = true
 
    opts = GetoptLong.new(     
      ["--all", "-a",            GetoptLong::NO_ARGUMENT],
@@ -214,27 +215,32 @@ def main
       puts "================================================"
       puts "Checking interfaces.xml Configuration ..."
       arrEnts.each{|x|
+         puts "Verification of interface #{x}"
          bEnabled4Send = ftConfig.isEnabled4Sending?(x)
          bEnabled4Recv = ftConfig.isEnabled4Receiving?(x)
 
-         if ftConfig.isEnabled4Receiving?(x) == false then
-            puts
-            puts "#{x} is disabled for receive ... :-|"
-            next
+         if bEnabled4Recv == false then
+            puts "#{x} is disabled for receiving files"
          end
 
+         if bEnabled4Send == false then
+            puts "#{x} is disabled for sending files"
+         end
 
-		   checker = CTC::CheckerInterfaceConfig.new(x, bEnabled4Recv, false)
-                 if @isDebugMode == true or @isVerboseMode then
-                   checker.setDebugMode
-                 end
-                 retVal     = checker.check
+		   checker = CTC::CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send)
+                 
+         if @isDebugMode == true or @isVerboseMode then
+            checker.setDebugMode
+         end
+                 
+         retVal     = checker.check
 
-                 if retVal == true then
-                    puts "\n#{x} I/F is configured correctly ! :-) \n"
-                 else
-                    puts "\n#{x} I/F is not configured correctly ! :-( \n"
-                 end
+         if retVal == true then
+            puts "\n#{x} I/F is configured correctly ! :-) \n"
+         else
+            puts "\n#{x} I/F is not configured correctly ! :-( \n"
+            @retVal = retVal
+         end
       }      
       puts "================================================"
 
@@ -249,6 +255,7 @@ def main
          puts "================================================"
          if ret == false then
             puts "\ntry registering them with decConfigInterface2DB tool !  ;-) \n\n"
+            @retVal = ret
          end
       end
       
@@ -277,7 +284,10 @@ def main
 	 
          retVal  = checker.check
          
-         if retVal == false then ret = false end
+         if retVal == false then 
+            ret      = false
+            @retVal  = retVal
+         end
          
          if retVal == true and @isVerboseMode == true then
             puts "#{x} - OK"
@@ -294,7 +304,10 @@ def main
 	 
          retVal  = checker.check
          
-         if retVal == false then ret = false end
+         if retVal == false then 
+            ret      = false
+            @retVal  = retVal
+         end
          
          if retVal == true and @isVerboseMode == true then
             puts "#{x} - OK"
@@ -331,7 +344,8 @@ def main
       if retVal == true then
          puts "\nfiles2InTrays.xml is configured correctly ! :-) \n"
       else
-         puts "\nfiles2InTrays.xml is not configured correctly ! :-( \n"         
+         puts "\nfiles2InTrays.xml is not configured correctly ! :-( \n"
+         @retVal = retVal        
       end      
       
       puts "================================================"            
@@ -360,6 +374,7 @@ def main
          puts "\nft_mail_config.xml is configured correctly ! :-) \n"
       else
          puts "\nft_mail_config.xml is not configured correctly ! :-( \n"
+         @retVal = retVal
       end
       puts "================================================"         
    end
@@ -417,6 +432,11 @@ def main
 #       puts "================================================"         
 #    end
    
+   if @retVal == true then
+      exit(0)
+   else
+      exit(99)
+   end
    
 end
 

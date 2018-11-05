@@ -53,6 +53,46 @@ module FTPClientCommands
       return command         
    end
    #-------------------------------------------------------------
+
+   def createNcFtpPut_FJLH1(host, port, user, pass, dir, tdir, file, verbose)
+      filename = File.basename(file)
+      
+      # Attention: RNFR fails in Cryosat development/test platform executed after NCFTPPUT
+      # As a workaround, RNFR/RNTO commands are executed using an additional NCFTPLS
+      # An extra NCFTPLS with the file name as filter is used to actually test the transfer success
+      if verbose == true then
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -v  #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} }
+      else
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -V #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} }
+      end
+      return command
+   end
+
+   # =======================================================================================
+   
+   def createNcFtpPut_FJLH2(host, port, user, pass, dir, tdir, file, verbose)
+      filename = File.basename(file)
+      
+      # Attention: RNFR fails in Cryosat development/test platform executed after NCFTPPUT
+      # As a workaround, RNFR/RNTO commands are executed using an additional NCFTPLS
+      # An extra NCFTPLS with the file name as filter is used to actually test the transfer success
+      if verbose == true then
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -v  #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -x \"ls -1 #{filename}\" ftp://#{host}/#{dir}/ }      
+      else
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} -F -V #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} -F -x \"ls -1 #{filename}\" ftp://#{host}/#{dir}/ }
+      end
+      return command
+   end
+
+   # =======================================================================================
+   
+   
    
    # Create ncftpget command for downloading a given file.
    # %2F literal slash character is required for managing full path directories
@@ -65,7 +105,11 @@ module FTPClientCommands
    # - delete (IN): boolean containing whether it is desired
    #                        to delete the file once retrieved or not
    # - verbose (IN): boolean for activating or not the verbose mode.
-   def createNcFtpGet(host,port,user,pass,dir,file,delete,verbose)      
+   def createNcFtpGet(host, port, user, pass, dir, file, delete, verbose)      
+      if dir[0,1] == '/' then
+         dir='%2F'+dir
+      end      
+
       command = %Q{ncftpget -P #{port} -u #{user} -p #{pass} -F}
       if verbose == true then
          command = %Q{#{command} -v}
@@ -78,13 +122,13 @@ module FTPClientCommands
       end
       
       if dir != "" then
-         command = %Q{#{command} ftp://#{host}/%2F#{dir}/#{file}}
+         command = %Q{#{command} ftp://#{host}/#{dir}/#{file}}
       else
-         command = %Q{#{command} ftp://#{host}/%2F#{file}}
+         command = %Q{#{command} ftp://#{host}/#{file}}
       end
       return command         
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Create ncftpput command line for sending a given file.
    # - host (IN): string containing the host name.
@@ -115,7 +159,7 @@ module FTPClientCommands
          options= "-V"
       end
 
-      if !prefix.empty? then
+      if prefix != nil or !prefix.empty? then
          tmpDir=dir
          options= options+" -T #{prefix}"
       end
@@ -254,6 +298,68 @@ module FTPClientCommands
           
    end
    #------------------------------------------------------------- 
+
+
+   # by FJLH
+   def createNcFtpPut_FJLH_BOLF(host, port, user, pass, tdir, dir, file, verbose, passive = nil)
+      
+      url_dir = ""
+      
+      # Management of full paths
+      if dir[0,1] == '/' then
+         url_dir = "/%2F#{dir.dup[1..-1]}"
+      else
+         url_dir = dir
+      end
+
+      url_tdir = ""
+
+      if tdir[0,1] == '/' then
+         url_tdir = "/%2F#{tdir.dup[1..-1]}"
+      else
+         url_tdir = tdir
+      end
+      
+      # --------------------------------
+      # Switch between FTP passive or port mode
+      optionPassive = ""
+      if passive == nil or passive == false then
+         optionPassive = "-E"
+      else
+         optionPassive = "-F"
+      end
+      # --------------------------------
+
+      if verbose == true then
+         options= "-v"
+      else
+         options= "-V"
+      end
+      
+      filename = File.basename(file)
+      
+      # Attention: RNFR fails in Cryosat development/test platform executed after NCFTPPUT
+      # As a workaround, RNFR/RNTO commands are executed using an additional NCFTPLS
+      # An extra NCFTPLS with the file name as filter is used to actually test the transfer success
+      if verbose == true then
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -v  #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} #{optionPassive} -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} #{optionPassive} -x \"ls -1 #{filename}\" ftp://#{host}/#{url_dir}/ }      
+      else
+        command = %Q{ncftpput -u #{user} -p #{pass} -P #{port} #{optionPassive} -V #{host} #{tdir} #{file} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} #{optionPassive} -X "RNFR #{tdir}/#{filename}" -X "RNTO #{dir}/#{filename}" ftp://#{host} ;
+                     ncftpls  -u #{user} -p #{pass} -P #{port} #{optionPassive} -x \"ls -1 #{filename}\" ftp://#{host}/#{url_dir}/ }
+      end
+      
+      puts "=========================================="
+      puts command
+      puts "=========================================="
+      
+      return command
+   end
+
+   # -------------------------------------------------------------
+
 
 end
 

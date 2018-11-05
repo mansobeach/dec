@@ -24,7 +24,7 @@ class CheckerFTPConfig
 
    include CTC
    include FTPClientCommands
-   #--------------------------------------------------------------
+   # --------------------------------------------------------------
 
    # Class constructor.
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
@@ -38,7 +38,7 @@ class CheckerFTPConfig
          @entity = "Generic"
       end
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Main method of the class which performs the check.
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
@@ -51,7 +51,7 @@ class CheckerFTPConfig
      
       return retVal
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    def check4Send
       if @isDebugMode == true then
@@ -61,7 +61,7 @@ class CheckerFTPConfig
       retVal = checkFTPConfig(true, false)
       return retVal
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    def check4Receive
       if @isDebugMode == true then
@@ -70,14 +70,14 @@ class CheckerFTPConfig
       retVal = checkFTPConfig(false, true)
       return retVal   
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Set debug mode on
    def setDebugMode
       @isDebugMode = true
       puts "CheckerFTPConfig debug mode is on"
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 private
 
@@ -158,9 +158,9 @@ private
       puts "============================================================="
       puts
    end   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Check FTP params.
    # It returns true if the check is successful
@@ -219,19 +219,38 @@ private
             ret = false
          end
 
-   #mirror server check
-         if mirror then
-            retVal = checkRemoteDirectory(dir, true)
+         if @ftpElement[:isSecure] == false then
+            retVal = checkWriteRemoteDirectoryNonSecure(@ftpElement[:uploadTemp])
+
             if retVal == false then
-               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{dir} :-(\n"
-               ret = false
-            end
-            retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], true)
-            if retVal == false then
-               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+               puts "\nError: in #{@entity} I/F: Unable to write into remote dir uploadTemp #{@ftpElement[:uploadTemp]} :-(\n"
                ret = false
             end
          end
+
+         if @ftpElement[:isSecure] == false then
+            retVal = checkWriteRemoteDirectoryNonSecure(@ftpElement[:uploadDir])
+
+            if retVal == false then
+               puts "\nError: in #{@entity} I/F: Unable to write into remote dir uploadDir #{@ftpElement[:uploadDir]} :-(\n"
+               ret = false
+            end
+         end
+
+#         #mirror server check
+#         if mirror then
+#            retVal = checkRemoteDirectory(dir, true)
+#            if retVal == false then
+#               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{dir} :-(\n"
+#               ret = false
+#            end
+#            retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], true)
+#            if retVal == false then
+#               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+#               ret = false
+#            end
+#         end
+      
       end
 
       # Check 4 Receive
@@ -271,7 +290,7 @@ private
       return ret
       
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Check that the remote directories exists
    def checkRemoteDirectory(dir, mirror=false)
@@ -318,7 +337,78 @@ private
       end
       
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+
+   def checkWriteRemoteDirectoryNonSecure(dir, mirror=false)
+      retVal  = true
+      prevDir = Dir.pwd
+
+      if @ftpElement[:isSecure] == true then
+         puts "Error in CheckerFTPConfig::checkWriteRemoteDirectory"
+         puts "Method not supported yet for secure protocol ! :-("
+         puts
+         return true
+      end
+   
+      Dir.chdir(ENV['DEC_TMP'])
+   
+      file     = "satansaldemi.txt"
+      system("echo \'satan sal de mi\' > #{file}")   
+      
+      host     = @ftpElement[:hostname]
+      port     = @ftpElement[:port].to_i
+      user     = @ftpElement[:user]
+      pass     = @ftpElement[:password]
+      passive  = @ftpElement[:isPassive]
+
+      cmd = self.createNcFtpPut(host,  \
+                                port, \
+                                user, \
+                                pass, \
+                                dir, \
+                                dir, \
+                                file, \
+                                [], \
+                                @isDebugMode, \
+                                passive \
+                               )
+
+      ret = system(cmd)   
+
+      if ret == false then
+         retVal = false
+      end
+
+      system("rm -f #{file}")
+
+      cmd = self.createNcFtpGet( host,  \
+                                 port, \
+                                 user, \
+                                 pass, \
+                                 dir, \
+                                 file, \
+                                 true, \
+                                 @isDebugMode \
+                                )
+
+      if @isDebugMode == true then
+         puts cmd
+      end
+
+      ret = system(cmd)   
+
+      if ret == false then
+         retVal = false
+      end
+
+      system("rm -f #{file}")
+
+      Dir.chdir(prevDir)
+
+      return retVal
+
+   end
+   # -------------------------------------------------------------
 
 end # end class
 
