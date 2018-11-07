@@ -31,8 +31,8 @@
 #
 # Data Exchange Component -> Mission Management & Planning Facility
 # 
-# CVS:
-#   $Id: sendROP.rb,v 1.5 2007/03/22 17:19:18 decdev Exp $
+# Git:
+#     sendROP.rb,v 1.5 $Date$ 2007/03/22 17:19:18 $Id$
 #
 #########################################################################
 
