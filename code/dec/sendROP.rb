@@ -32,7 +32,9 @@
 # Data Exchange Component -> Mission Management & Planning Facility
 # 
 # Git:
-#     sendROP.rb,v 1.5 $Date$ 2007/03/22 17:19:18 $Id$
+#     sendROP.rb  $Author$
+#                 $Date$ 
+#                 $Committer$
 #
 #########################################################################
 
