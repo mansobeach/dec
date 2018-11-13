@@ -32,9 +32,10 @@
 # Data Exchange Component -> Mission Management & Planning Facility
 # 
 # Git:
-#     sendROP.rb  $Author$
+#     sendROP.rb  $Author: bolf$
 #                 $Date$ 
-#                 $Committer$
+#                 $Committer: bolf$
+#                 $Hash$
 #
 #########################################################################
 
