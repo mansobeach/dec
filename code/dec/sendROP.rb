@@ -35,7 +35,7 @@
 #     sendROP.rb  $Author: bolf$
 #                 $Date$ 
 #                 $Committer: bolf$
-#                 $Hash$
+#                 $Hash: f3afa7c$
 #
 #########################################################################
 
