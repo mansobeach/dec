@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-# ================================================
+#########################################################################
+#
+# Git:
+#     bootstrap.sh   $Author: bolf$
+#                    $Date$ 
+#                    $Committer: bolf$
+#                    $Hash: f3afa7c$
+#
+#########################################################################
 
 # Create Swap File
 
@@ -46,7 +54,12 @@ sudo apt-get -y install libcurl3 libcurl3-gnutls libcurl4-openssl-dev
 # General tools
 
 # command line json editor
+
 sudo apt-get -y install jq
+
+# xmllint
+
+apt-get install libxml2-utils
 
 sudo apt-get -y install p7zip
 
@@ -89,3 +102,21 @@ chmod a+x /usr/local/bin/docker-compose
 # sudo gem update --system
 
 # sudo gem install bundler
+
+
+
+# ================================================
+
+# Management of gems without openssl
+#
+
+# edit  either edit your ~/.gemrc
+# :ssl_verify_mode: 0
+
+# gem sources --add http://rubygems.org
+# gem sources --remove https://rubygems.org/
+# gem sources --list
+
+
+# ================================================
+

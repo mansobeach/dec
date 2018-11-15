@@ -5,118 +5,95 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
-Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
-
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
-  
-  config.vm.box         = "hashicorp/precise64"
-  config.vm.hostname    = "vm-dec"
-
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  
-  # MINARC port forwarding for Sinatra
-  
-  # config.vm.network "private_network", ip: "192.168.50.4"
-  
-  config.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1"
-
-  # config.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "0.0.0.0"
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
-
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
-  
-  # config.vm.provision :shell, path: "bootstrap.sh"
-  
-end
-
-
-
-# ==============================================================================
-
-
-
-# ==============================================================================
 
 
 Vagrant.configure("2") do |config|
-   
-   config.vm.provision :shell, path: "bootstrap.sh"
-   
-   config.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
-   
-   config.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
+
+#
+# Vagrant is now only used for hosting containers
+# and no component is directly installed there
+#
+#
+#   # ----------------------------------------------------------------------
+#   # install bundler with vagrant non-root user
+#   $script_bundler = <<-SCRIPT
+#   cd /vagrant
+#   bundle install --clean --force
+#   SCRIPT
+#   # ----------------------------------------------------------------------
+#
+#   # ----------------------------------------------------------------------
+#   # gem install with vagrant non-root user
+#   $script_minarc = <<-SCRIPT
+#   gem install --local /vagrant/minarc.gem
+#   SCRIPT
+#   # ----------------------------------------------------------------------
+
+
+  
+   config.vm.define "minarc-server" do |minarc_server|
+      # minarc_server.vm.box         = "hashicorp/precise64"
       
-   # ----------------------------------------------------------------------
-
-   # ----------------------------------------------------------------------
-   # install bundler with vagrant non-root user
-   $script = <<-SCRIPT
-   cd /vagrant
-   bundler install
-   SCRIPT
-   config.vm.provision :shell, inline: $script, privileged: false
-   # ----------------------------------------------------------------------
-
-   # ----------------------------------------------------------------------
-   # gem install with vagrant non-root user
-   $script = <<-SCRIPT
-   gem install --local /vagrant/minarc-1.0.0.gem
-   SCRIPT
-   config.vm.provision :shell, inline: $script, privileged: false
-   # ----------------------------------------------------------------------
+      minarc_server.vm.box          = "ubuntu/trusty64"
+      
+      minarc_server.vm.hostname     = "vagrant"
+      
+      minarc_server.vm.boot_timeout = 400
+      
+      minarc_server.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1"
+      
+      
+      # minarc_server.vm.box_check_update = false
+      # minarc_server.vm.network "private_network", ip: "192.168.50.1"
+            
+      minarc_server.vm.synced_folder "/Users/borja/Projects/dec/config/", "/home/vagrant/minarc_config", disabled: false
+      
+      # --------------------------------------------------------------
+      #
+      # Provisioning section
+      
+      minarc_server.vm.provision :shell, path: "bootstrap.sh"
+      
+      minarc_server.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
+      
+      minarc_server.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
+      
+      # minarc_server.vm.provision :shell, inline: $script_bundler, privileged: false
+      
+      # minarc_server.vm.provision :shell, inline: $script_minarc, privileged: false
+      
+      # --------------------------------------------------------------
    
+   end
 
+
+#   config.vm.define "minarc-client", autostart: false do |minarc_client|
+#      
+#      # minarc_client.vm.box         = "hashicorp/precise64"
+#      minarc_client.vm.box         = "ubuntu/trusty64"
+#      
+#      minarc_client.vm.hostname    = "minarc-client"
+#
+#      # --------------------------------------------------------------
+#      #
+#      # Provisioning section
+#      
+#      minarc_client.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
+#      
+#      minarc_client.vm.provision :shell, path: "install-ruby.sh", args: "2.4 haml", privileged: false
+#      
+#      # minarc_client.vm.provision :shell, inline: $script_bundler, privileged: false
+#      
+#      # --------------------------------------------------------------
+#      
+#   end
+
+  
 end
+
+
+
+# ==============================================================================
+
+
 
