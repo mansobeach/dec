@@ -43,40 +43,38 @@ Vagrant.configure("2") do |config|
 
 
   
-   config.vm.define "vagrantbox" do |vserver|
+   config.vm.define "vagrantbox" do |vagrantbox|
       
-      vserver.vm.box_check_update = false
+      vagrantbox.vm.box_check_update = false
       
-      # vserver.vm.box         = "hashicorp/precise64"
+      # vagrantbox.vm.box        = "hashicorp/precise64"
       
-      vserver.vm.box          = "ubuntu/trusty64"
+      vagrantbox.vm.box          = "ubuntu/trusty64"
       
-      vserver.vm.hostname     = "vserver"
+      vagrantbox.vm.hostname     = "vagrantbox"
       
-      vserver.vm.boot_timeout = 400
+      vagrantbox.vm.boot_timeout = 400
       
-      vserver.vm.network "public_network"
+      vagrantbox.vm.network "public_network"
       
-      vserver.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1", auto_correct: true
-            
-      # vserver.vm.synced_folder "/Users/borja/Projects/dec/config/", "/home/vagrant/minarc_config", disabled: false
-     
-      vserver.vm.synced_folder "/Users/borja/Volumes", "/home/vagrant/Volumes", disabled: false
+      vagrantbox.vm.network "forwarded_port", guest: 4567, host: 4567 #, host_ip: "127.0.0.1" #, auto_correct: true
+                 
+      vagrantbox.vm.synced_folder "/Users/borja/Volumes", "/home/vagrant/Volumes", disabled: false
 
       
       # --------------------------------------------------------------
       #
       # Provisioning section
       
-      vserver.vm.provision :shell, path: "bootstrap.sh"
+      vagrantbox.vm.provision :shell, path: "bootstrap.sh"
       
-      vserver.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
+      vagrantbox.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
       
-      vserver.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
+      vagrantbox.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
       
-      vserver.vm.provision :shell, inline: $script_bundler, privileged: false
+      vagrantbox.vm.provision :shell, inline: $script_bundler, privileged: false
       
-      vserver.vm.provision :shell, inline: $script_minarc, privileged: false
+      vagrantbox.vm.provision :shell, inline: $script_minarc, privileged: false
       
       # --------------------------------------------------------------
    
