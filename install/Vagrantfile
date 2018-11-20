@@ -26,20 +26,20 @@ Vagrant.configure("2") do |config|
 # and no component is directly installed there
 #
 #
-#   # ----------------------------------------------------------------------
-#   # install bundler with vagrant non-root user
-#   $script_bundler = <<-SCRIPT
-#   cd /vagrant
-#   bundle install --clean --force
-#   SCRIPT
-#   # ----------------------------------------------------------------------
-#
-#   # ----------------------------------------------------------------------
-#   # gem install with vagrant non-root user
-#   $script_minarc = <<-SCRIPT
-#   gem install --local /vagrant/minarc.gem
-#   SCRIPT
-#   # ----------------------------------------------------------------------
+   # ----------------------------------------------------------------------
+   # install bundler with vagrant non-root user
+   $script_bundler = <<-SCRIPT
+   cd /vagrant
+   bundle install --clean --force
+   SCRIPT
+   # ----------------------------------------------------------------------
+
+   # ----------------------------------------------------------------------
+   # gem install with vagrant non-root user
+   $script_minarc = <<-SCRIPT
+   gem install --local /vagrant/gems/minarc.gem
+   SCRIPT
+   # ----------------------------------------------------------------------
 
 
   
