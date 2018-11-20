@@ -1,10 +1,11 @@
 #########################################################################
 #
 # Git:
-#     Dockerfile.minarc    $Author: bolf$
+#     Vagrantfile          $Author: bolf$
 #                          $Date$ 
 #                          $Committer: bolf$
 #                          $Hash: f3afa7c$
+#                          $Subject$
 #
 #########################################################################
 
@@ -42,68 +43,44 @@ Vagrant.configure("2") do |config|
 
 
   
-   config.vm.define "vserver" do |vagrantbox|
+   config.vm.define "vagrantbox" do |vserver|
       
-      vagrantbox.vm.box_check_update = false
+      vserver.vm.box_check_update = false
       
-      # vagrantbox.vm.box         = "hashicorp/precise64"
+      # vserver.vm.box         = "hashicorp/precise64"
       
-      vagrantbox.vm.box          = "ubuntu/trusty64"
+      vserver.vm.box          = "ubuntu/trusty64"
       
-      vagrantbox.vm.hostname     = "vagrantbox"
+      vserver.vm.hostname     = "vserver"
       
-      vagrantbox.vm.boot_timeout = 400
+      vserver.vm.boot_timeout = 400
       
-      vagrantbox.vm.network "public_network"
+      vserver.vm.network "public_network"
       
-      vagrantbox.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1", auto_correct: true
+      vserver.vm.network "forwarded_port", guest: 4567, host: 4567, host_ip: "127.0.0.1", auto_correct: true
             
-            
-      # vagrantbox.vm.synced_folder "/Users/borja/Projects/dec/config/", "/home/vagrant/minarc_config", disabled: false
+      # vserver.vm.synced_folder "/Users/borja/Projects/dec/config/", "/home/vagrant/minarc_config", disabled: false
      
-      vagrantbox.vm.synced_folder "/Users/borja/Volumes", "/home/vagrant/Volumes", disabled: false
+      vserver.vm.synced_folder "/Users/borja/Volumes", "/home/vagrant/Volumes", disabled: false
 
       
       # --------------------------------------------------------------
       #
       # Provisioning section
       
-      vagrantbox.vm.provision :shell, path: "bootstrap.sh"
+      vserver.vm.provision :shell, path: "bootstrap.sh"
       
-      vagrantbox.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
+      vserver.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
       
-      vagrantbox.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
+      vserver.vm.provision :shell, path: "install-ruby.sh", args: "2.4 rails haml", privileged: false
       
-      vagrantbox.vm.provision :shell, inline: $script_bundler, privileged: false
+      vserver.vm.provision :shell, inline: $script_bundler, privileged: false
       
-      vagrantbox.vm.provision :shell, inline: $script_minarc, privileged: false
+      vserver.vm.provision :shell, inline: $script_minarc, privileged: false
       
       # --------------------------------------------------------------
    
    end
-
-
-#   config.vm.define "minarc-client", autostart: false do |minarc_client|
-#      
-#      # minarc_client.vm.box         = "hashicorp/precise64"
-#      minarc_client.vm.box         = "ubuntu/trusty64"
-#      
-#      minarc_client.vm.hostname    = "minarc-client"
-#
-#      # --------------------------------------------------------------
-#      #
-#      # Provisioning section
-#      
-#      minarc_client.vm.provision :shell, path: "install-rvm.sh", args: "stable", privileged: false
-#      
-#      minarc_client.vm.provision :shell, path: "install-ruby.sh", args: "2.4 haml", privileged: false
-#      
-#      # minarc_client.vm.provision :shell, inline: $script_bundler, privileged: false
-#      
-#      # --------------------------------------------------------------
-#      
-#   end
-
   
 end
 
