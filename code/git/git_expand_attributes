@@ -1,20 +1,33 @@
 #! /usr/bin/env ruby
 
+#########################################################################
+#
+# Git:
+# git_expand_attributes    $Author: bolf$
+#                          $Date$ 
+#                          $Committer: bolf$
+#                          $Hash: f3afa7c$
+#                          $Subject$
+#
+#########################################################################
+
 data = STDIN.read
 
 filename = ARGV[0].to_s
 
-author = `git log --pretty=format:\%an \'-1\' -- #{filename}`
-data = data.dup.gsub('$Author$', '$Author: ' + author.to_s + '$')
+author      = `git log --pretty=format:\%an \'-1\' -- #{filename}`
+data        = data.dup.gsub('$Author$', '$Author: ' + author.to_s + '$')
 
+last_date   = `git log --pretty=format:"%ad" -1 --date=iso-strict -- #{filename}`
+data        = data.dup.gsub('$Date$', '$Date: ' + last_date.to_s + '$')
 
-last_date = `git log --pretty=format:"%ad" -1 --date=iso-strict -- #{filename}`
-data = data.dup.gsub('$Date$', '$Date: ' + last_date.to_s + '$')
+committer   = `git log --pretty=format:"%cn" -1 -- #{filename}`
+data        = data.dup.gsub('$Committer$', '$Committer: ' + committer.to_s + '$')
 
-committer = `git log --pretty=format:"%cn" -1 -- #{filename}`
-data = data.dup.gsub('$Committer$', '$Committer: ' + committer.to_s + '$')
+hash        = `git log --pretty=format:"%h" -1 -- #{filename}`
+data        = data.dup.gsub('$Hash$', '$Hash: ' + hash.to_s + '$')
 
-hash = `git log --pretty=format:"%h" -1 -- #{filename}`
-data = data.dup.gsub('$Hash$', '$Hash: ' + hash.to_s + '$')
+subject     = `git log --pretty=format:"%h" -1 -- #{filename}`
+data        = data.dup.gsub('$Subject$', '$Subject: ' + subject.to_s + '$')
 
 puts data
