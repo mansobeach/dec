@@ -8,7 +8,7 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# CVS: $Id: MINARC_Environment.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
+# Git: $Id: MINARC_Environment.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
 #
 # module MINARC
 #
@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.16"
+   @@version = "1.0.17"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.17" =>    "minArcRetrieve remote mode supports -t <filetype> retrieval", \
       "1.0.16" =>    "minArcRetrieve local mode supports to filter --New files by archive date", \
       "1.0.15" =>    "Server mode restarts the connection to avoid pool limit :-( | ConnectionPool pending", \
       "1.0.14" =>    "minArcStatus supports server mode for global and filetype", \

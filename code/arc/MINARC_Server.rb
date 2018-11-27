@@ -38,10 +38,9 @@ class MINARC_Server < Sinatra::Base
       # Become session leader without a controlling TTY
       # Process.setsid
       
-      puts "Loading general configuration"
+      puts "Loading general configuration / shit / pedo"
       
       # set :bind, '0.0.0.0'
-      
       set :server, :thin
       set :threaded, true
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
@@ -107,9 +106,6 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
-   after do
-      ActiveRecord::Base.clear_active_connections!
-   end
 
    # =================================================================
 
@@ -155,19 +151,29 @@ class MINARC_Server < Sinatra::Base
    end
    # =================================================================
    #
-   # minArcRetrieve_LIST
+   # minArcRetrieve_LIST FILENAMES
    #
-   get "#{API_URL_LIST}/:filename" do |filename|
+   get "#{API_URL_LIST_FILENAME}/:filename" do |filename|
       cmd = "minArcRetrieve -f #{params[:filename]} --noserver -l"
             
       if settings.isDebugMode == true then 
-         puts "GET #{API_URL_LIST}/#{params[:filename]}"
+         puts "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"
          puts "MINARC_Server::#{cmd}"
       end
 
+#      puts
+#      puts cmd
+#      puts
+
       listFiles = `#{cmd}`
 
-      # "#{`#{cmd}`}"
+#      puts
+#      puts $?
+#      puts
+
+#      puts
+#      puts listFiles
+#      puts
       
       if $? == 0 then
          "#{listFiles}"
@@ -178,6 +184,27 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
+   # =================================================================
+   #
+   # minArcRetrieve_LIST FILETYPES
+   #
+   get "#{API_URL_LIST_FILETYPE}/:filetype" do |filetype|
+      cmd = "minArcRetrieve -t #{params[:filetype]} --noserver -l"
+            
+      if settings.isDebugMode == true then 
+         puts "GET #{API_URL_LIST_FILETYPE}/#{params[:filetype]}"
+         puts "MINARC_Server::#{cmd}"
+      end
+
+      listFiles = `#{cmd}`
+      
+      if $? == 0 then
+         "#{listFiles}"
+      else
+         logger.info "#{params[:filename]} / files not found"
+         status API_RESOURCE_NOT_FOUND
+      end
+   end
 
    # ----------------------------------------------------------
    #
@@ -237,19 +264,11 @@ class MINARC_Server < Sinatra::Base
       if retVal == false then
          status 500
       end
-
    
       # retVal = %x["#{cmd}"]
-   
-   
-      puts retVal
-   
-      puts "PEDO"
-   
+      
       #
       # ---------------------------------------------
-   
-      puts
 
       Dir.chdir(prevDir)
       FileUtils.rm_rf(reqDir)

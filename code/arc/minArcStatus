@@ -131,8 +131,13 @@ def main
          arc.setDebugMode
       end
       version = arc.getVersion
-      puts "MINARC Server Version #{version}"
-      exit(0)
+      if version != false then
+         puts "MINARC Server Version #{version}"
+         exit(0)
+      else
+         puts "Could not connect with minarc server #{ENV['MINARC_SERVER']}"
+         exit(99)
+      end
    end
 
    # Check all flags and combinations

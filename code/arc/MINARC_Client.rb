@@ -27,7 +27,7 @@ class MINARC_Client
    include Benchmark
    include CTC::WrapperCURL
 
-   #------------------------------------------------  
+   # ------------------------------------------------  
    
    # Class contructor
    # debug: boolean. If true it shows debug info.
@@ -36,7 +36,7 @@ class MINARC_Client
       @isProfileMode       = false
       checkModuleIntegrity
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
@@ -44,7 +44,7 @@ class MINARC_Client
       puts "MINARC_Client debug mode is on"
       puts "MINARC_Server is #{@minArcServer}"
    end
-   #------------------------------------------------
+   # ------------------------------------------------
 
    # Set the flag for profiling execution time.
    def setProfileMode
@@ -52,12 +52,12 @@ class MINARC_Client
       puts "MINARC_Client profile mode is on"
       puts
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    def getVersion
       return getURL("#{@minArcServer}#{API_URL_VERSION}", @isDebugMode)
    end
-   #------------------------------------------------
+   # ------------------------------------------------
 
    def storeFile(full_path_filename, fileType, bIsDelete)
       hParams = Hash.new
@@ -78,18 +78,29 @@ class MINARC_Client
       
       return ret
    end
-   #------------------------------------------------
+   # ------------------------------------------------
+   
+   def listFile_By_Filetype(filetype)
+      url = "#{@minArcServer}#{API_URL_LIST_FILETYPE}/#{filetype}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::listFile_By_Filetype => #{url}"
+         puts
+      end
+      return getURL(url, @isDebugMode)   
+   end
+   # ------------------------------------------------
    
    def listFile_By_Name(filename)
-      url = "#{@minArcServer}#{API_URL_LIST}/#{filename}"
+      url = "#{@minArcServer}#{API_URL_LIST_FILENAME}/#{filename}"
       if @isDebugMode == true then
          puts
          puts "MINARC_Client::listFile_By_Name => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)   
+      return getURL(url, @isDebugMode)
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    def retrieveFile(filename)
       url = "#{@minArcServer}#{API_URL_RETRIEVE}/#{filename}"
@@ -101,7 +112,7 @@ class MINARC_Client
       return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
       # return getFile(url, filename, @isDebugMode)
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    def deleteFile(filename)
       url = "#{@minArcServer}#{API_URL_DELETE}/#{filename}"
@@ -112,7 +123,7 @@ class MINARC_Client
       end
       return getURL(url, @isDebugMode)
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    def getAllFileTypes
       url = "#{@minArcServer}#{API_URL_GET_FILETYPES}"
@@ -123,7 +134,7 @@ class MINARC_Client
       end
       return getURL(url, @isDebugMode)
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
    def statusFileType(filetype)
       url = "#{@minArcServer}#{API_URL_STAT_FILETYPES}/#{filetype}"
@@ -134,7 +145,7 @@ class MINARC_Client
       end
       return getURL(url, @isDebugMode)   
    end
-   #------------------------------------------------
+   # ------------------------------------------------
 
    def statusGlobal
       url = "#{@minArcServer}#{API_URL_STAT_GLOBAL}"
@@ -145,13 +156,13 @@ class MINARC_Client
       end
       return JSON.parse(getURL(url, @isDebugMode))   
    end
-   #------------------------------------------------
+   # ------------------------------------------------
    
 private
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    # Check that everything needed by the class is present.
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    def checkModuleIntegrity
       
       if ENV['MINARC_SERVER'] then
@@ -164,11 +175,11 @@ private
       end
 
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
       
    
    
 end # class
 
 end # module
-#=================================================
+# =================================================

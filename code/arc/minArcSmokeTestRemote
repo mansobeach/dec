@@ -101,6 +101,12 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts cmd
       system(cmd)
 
+      prevDir = Dir.pwd     
+      Dir.chdir(@@testDataDir)
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      Dir.chdir(prevDir)
+
+
       cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d -D"
       puts cmd
       assert(system(cmd), "minArcStore")
@@ -157,6 +163,17 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
 
    #--------------------------------------------------------
 
+   def test_remotecmd_retrieve_filetype
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      fileTypes   = `minArcRetrieve -T`
+      cmd         = "minArcRetrieve -t #{fileTypes[0]} -L #{Dir.pwd}"
+      puts cmd
+      assert(system(cmd), cmd)
+   end
    #--------------------------------------------------------
 
    # verify exit code 99 when file does not exist

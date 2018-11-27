@@ -35,6 +35,7 @@ class FileRetriever
       @bListOnly     = bListOnly
       @rule          = "ALL"
       @arrInv        = Array.new
+      @isDebugMode   = false
       
       if ENV['MINARC_SERVER'] and !bNoServer then
          @bRemoteMode = true
@@ -133,11 +134,71 @@ class FileRetriever
       end
       
    end
-   #-------------------------------------------------------------
+   
+   # -------------------------------------------------------------
+   
+   def remote_retrieve_by_type(destination, fileType, start, stop, bDelete, bIncStart, bIncStop)
+   
+      files = remote_list_by_type(fileType)
+     
+      retVal = true
+     
+      files.each{|file|
+         cmd = "minArcRetrieve -f #{File.basename(file,File.extname(file))} -L #{destination}"
+         ret = system(cmd)
+         if ret == false then
+            retVal = false
+         end
+      }
+      
+      if retVal == true then
+         exit(0)
+      else
+         exit(99)
+      end
+      
+   end
+   
+   # -------------------------------------------------------------
+   
+   def remote_list_by_type(fileType)
+      if @isDebugMode == true then
+         puts "FileRetriever::#{__method__.to_s}"
+      end
+      arc = ARC::MINARC_Client.new
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+      
+      ret = arc.listFile_By_Filetype(fileType)
+      
+      if ret == false then
+         return false
+      else
+         return ret.split("\n").sort.each{|file| puts File.basename(file,File.extname(file))}
+      end   
+   end
+   # -------------------------------------------------------------
 
    # Main method of the class.
    def retrieve_by_type(destination, fileType, start = nil, stop = nil, bDelete = false, bIncStart = false, bIncStop = false, bHardlink = false)
-      
+
+      if @bRemoteMode == true then      
+         ret = false
+         if @bListOnly == false then
+            
+            ret = remote_retrieve_by_type(destination, fileType, start, stop, bDelete, bIncStart, bIncStop)
+         
+            if ret == false then
+               return ret
+            end
+            return true
+         else
+            ret = remote_list_by_type(fileType)
+         end
+         return ret
+      end
+
       @arrInv  = Array.new
       arrFiles = Array.new
 
@@ -201,6 +262,7 @@ class FileRetriever
    #-------------------------------------------------------------
 
    def remote_list_by_name(filename)
+            
       if @isDebugMode == true then
          puts "FileRetriever::#{__method__.to_s}"
       end
@@ -208,9 +270,9 @@ class FileRetriever
       if @isDebugMode == true then
          arc.setDebugMode
       end
-      
+            
       ret = arc.listFile_By_Name(filename)
-      
+            
       if ret == false then
          return false
       else
@@ -221,6 +283,7 @@ class FileRetriever
    #-------------------------------------------------------------
 
    def remote_retrieve_by_name(filename, destination, bUnpack)
+
       if @isDebugMode == true then
          puts "FileRetriever::#{__method__.to_s}"
       end
@@ -228,15 +291,15 @@ class FileRetriever
       if filename.include?("%2A") then
          filename = filename.dup.gsub("%2A", "*")
       end
-      
+            
       arc = ARC::MINARC_Client.new
-      
+            
       if @isDebugMode == true then
          arc.setDebugMode
       end
       
       ret = arc.retrieveFile(filename)
-      
+            
       if @isDebugMode == true then
          puts "arc.retrieveFile => #{ret}"
       end
@@ -282,7 +345,7 @@ class FileRetriever
 
 
       end
-      
+            
       return ret
    end
    #-------------------------------------------------------------

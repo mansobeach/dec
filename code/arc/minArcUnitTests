@@ -37,10 +37,11 @@ require 'arc/MINARC_Status'
 #  3  - test_remote_delete
 #  4  - test_remote_retrieve
 #  5  - test_remote_api_version
-#  6  - test_remote_api_retrieve
-#  7  - test_remote_api_delete
-#  8  - test_local_and_remote_status_global
-#  9  - test_handler_m2ts_local
+#  6  - test_remote_api_retrieve_file
+#  7  - test_remote_api_retrieve_type
+#  8  - test_remote_api_delete
+#  9  - test_local_and_remote_status_global
+# 10  - test_handler_m2ts_local
 
 
 class TestCaseStore < Test::Unit::TestCase
@@ -51,7 +52,7 @@ class TestCaseStore < Test::Unit::TestCase
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    Test::Unit.at_start do      
       puts
@@ -125,6 +126,10 @@ class TestCaseStore < Test::Unit::TestCase
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
       system("rm -f #{@@testDataDir}/20110204T193316_000001.m2ts")
 
+      prevDir = Dir.pwd     
+      Dir.chdir(@@testDataDir)
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      Dir.chdir(prevDir)
 
       system("minArcServer -k")
       prevDir = Dir.pwd
@@ -139,7 +144,7 @@ class TestCaseStore < Test::Unit::TestCase
       
    end
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    Test::Unit.at_exit do
       puts "End of tests"
@@ -153,7 +158,7 @@ class TestCaseStore < Test::Unit::TestCase
       
    end
    
-   #--------------------------------------------------------   
+   # --------------------------------------------------------   
    
    # Setup before every test-case
    #
@@ -179,7 +184,7 @@ class TestCaseStore < Test::Unit::TestCase
       end
       
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    # After every test case
 
    def teardown
@@ -212,10 +217,10 @@ class TestCaseStore < Test::Unit::TestCase
          exit(99)
       end
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_local_minArcStore
       puts __method__.to_s
@@ -230,10 +235,10 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "minArcStore")
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    def test_local_purge
       puts __method__.to_s
@@ -249,7 +254,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_remote_delete
       puts __method__.to_s
@@ -269,9 +274,9 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), "minArcDelete")
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_remote_retrieve
       puts __method__.to_s
@@ -291,7 +296,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), "minArcDelete")
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_remote_api_version
       puts __method__.to_s
@@ -308,7 +313,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC Version #{version}"
       assert( (version != "") , "Verification remote API_URL_VERSION: #{API_URL_VERSION}")   
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 =begin
    def test_remote_api_store
@@ -327,9 +332,11 @@ class TestCaseStore < Test::Unit::TestCase
       assert( arc.storeFile("#{@@testDataDir}/#{@@testFile1}", type, bDelete) , "Verification remote API_URL_STORE: #{API_URL_STORE}")
    end
 
-=end   #-------------------------------------------------------------
+=end   
 
-   def test_remote_api_retrieve
+   # -------------------------------------------------------------
+
+   def test_remote_api_retrieve_file
       puts __method__.to_s
       puts
       puts "================================================"
@@ -376,9 +383,59 @@ class TestCaseStore < Test::Unit::TestCase
       
       Dir.chdir(pwd)
       
-      system("\\rm -f #{dir1}*")         
+      system("\\rm -rf #{dir1}*")         
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+
+   def test_remote_api_retrieve_filetype
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      pwd = Dir.pwd
+
+      test_local_minArcStore
+               
+      arc = ARC::MINARC_Client.new(true)
+      arc.setDebugMode
+#
+#      type     = "S2PDGS"
+#      bDelete  = false
+#      
+#      arc.storeFile(@file, type, bDelete)
+
+      dir1 = "1.#{__method__.to_s}"
+      
+      begin      
+         FileUtils.mkdir(dir1)
+      rescue Errno::EEXIST => e
+      
+      end
+
+      Dir.chdir(dir1)
+
+      cmd = "minArcRetrieve -t REP_OPDPC_ -L #{Dir.pwd}"
+      
+      puts
+      puts cmd
+      puts
+      
+      assert(system(cmd), cmd)
+           
+      arr = Dir["#{File.basename(@@testFile1, ".*")}*"]
+      
+      assert(!arr.empty?, "File retrieved #{arr[0]}")
+            
+      system("\\rm -f #{arr[0]}")
+      
+      Dir.chdir(pwd)
+      
+      system("\\rm -rf #{dir1}*")           
+   
+   end
+   # -------------------------------------------------------------
 
    def test_remote_api_delete
       puts __method__.to_s
@@ -399,7 +456,7 @@ class TestCaseStore < Test::Unit::TestCase
              )
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_local_and_remote_status_global
       puts __method__.to_s
@@ -425,7 +482,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
             
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def test_handler_m2ts_local
       puts __method__.to_s
@@ -466,7 +523,7 @@ class TestCaseStore < Test::Unit::TestCase
       system(cmd)
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end
 

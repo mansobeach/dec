@@ -267,6 +267,7 @@ def main
       exit(0)
    end
 
+
    if ENV['MINARC_SERVER'] and @bNoServer == false then
       @bRemoteMode = true
    else
@@ -323,7 +324,7 @@ def main
 
    # Check some flags and combinations
 
-   if @filename == "" and @bListOnly == false and archive_date == nil then
+   if @filename == "" and @bListOnly == false and archive_date == nil and @full_path_target == "" then
       usage
    end
 
@@ -468,7 +469,7 @@ def main
       else
          filename = @filename.gsub("*", "%")
       end
-      
+                  
       ret = fileRetriever.retrieve_by_name(@full_path_target, filename, @bDelete, @bHardLink, @bUnpack)
    
       if ret == false then
@@ -476,6 +477,7 @@ def main
          puts "#{File.basename(filename, ".*")} not present in the archive :-|"
          puts
       end
+            
    end
 
    if archive_date != nil then
