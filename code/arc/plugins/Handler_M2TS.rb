@@ -57,13 +57,14 @@ class Handler_M2TS
       width       = nil
       height      = nil
       
-      puts "------"
-      puts full_path_name
-      puts full_path
-      puts @filename
-      puts basename
-      puts extension
-      puts "------"
+#      puts "------"
+#      puts full_path_name
+#      puts full_path
+#      puts @filename
+#      puts basename
+#      puts extension
+#      puts destination
+#      puts "------"
       
                
             
@@ -149,6 +150,14 @@ class Handler_M2TS
          @size_in_disk  = 0
       end
       
+      if destination != nil then
+         if destination.slice(0,1) == "/" then
+            @archive_path = destination
+         else
+            @archive_path = "#{archRoot}/#{@type}/#{year}#{month}#{day}_#{destination}"
+         end
+      end
+
    end
 
    #------------------------------------------------

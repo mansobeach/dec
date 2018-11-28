@@ -80,12 +80,19 @@
 # It is not compatible with any other flags and does not trigger the archiving process.
 #
 #
+# -L flag:
+#
+# If location flag specifies a full_path, such path is used as the definitive location
+# of the file archived ; if name does not refer to a full path, such destination is
+# used by the plug-in handler to eventually use it to define the archive directory
+#
+#
 # == Usage
 # minArcStore -f <full_path_file> [-t type-of-the-file] [-d] [-L <full_path_location>
 #     --noserver                 operations are performed locally
 #     --file <full_path_file>    it specifies the file to be archived
 #     --type <file-type>         it specifies the file-type of the file to be archived
-#     --Location <full_path>     it specifies the full_path desired archive location
+#     --Location <path>          it specifies the path desired archive location
 #     --delete                   enable delete flag
 #     --move                     it moves the file to the Archive
 #     --update                   it updates the Archive with new file if previously present
@@ -111,7 +118,7 @@
 #
 # === Mini Archive Component (MinArc)
 #
-# CVS: $Id: minArcStore.rb,v 1.13 2008/09/25 11:37:23 decdev Exp $
+# Git: $Id: minArcStore.rb,v 1.13 2008/09/25 11:37:23 decdev Exp $
 #
 #########################################################################
 
@@ -454,7 +461,7 @@ def usage
 
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -107 #{fullpathFile}"}`
+   value = `#{"head -115 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

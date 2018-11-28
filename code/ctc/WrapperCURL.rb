@@ -28,6 +28,7 @@ module WrapperCURL
       if isDebugMode == true then
          puts cmd
       end
+      
       output = `#{cmd}`
       
       if $? !=0 then

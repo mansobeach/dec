@@ -261,7 +261,7 @@ class FileArchiver
    
    #--------------------------------------------------------
    
-   def remote_archive(full_path_file, fileType, bDelete)
+   def remote_archive(full_path_file, fileType, bDelete, destination)
       
       # puts "#{__method__.to_s}"
       
@@ -269,7 +269,7 @@ class FileArchiver
       
       # arc.setDebugMode
 
-      ret = arc.storeFile(full_path_file, fileType, bDelete)
+      ret = arc.storeFile(full_path_file, fileType, bDelete, destination)
 
       if ret == true then
          puts "(Archived) : " << File.basename(full_path_file, ".*")
@@ -281,12 +281,19 @@ class FileArchiver
    #--------------------------------------------------------
    #
    # Main method of the class.
-   def archive(full_path_file, fileType = "", bDelete = false, bUnPack = false,\
-               arrAddFields = nil, full_path_location = nil,\
-               size = 0, size_in_disk = 0, size_original = 0)
+   def archive(full_path_file, \
+               fileType = "", \
+               bDelete = false, \
+               bUnPack = false, \
+               arrAddFields = nil, \
+               full_path_location = nil, \
+               size = 0, \
+               size_in_disk = 0, \
+               size_original = 0 \
+               )
       
       if @bRemoteMode == true then
-         return remote_archive(full_path_file, fileType, bDelete)
+         return remote_archive(full_path_file, fileType, bDelete, full_path_location)
       end
       
                

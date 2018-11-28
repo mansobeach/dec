@@ -59,7 +59,7 @@ class MINARC_Client
    end
    # ------------------------------------------------
 
-   def storeFile(full_path_filename, fileType, bIsDelete)
+   def storeFile(full_path_filename, fileType, bIsDelete, destination = nil)
       hParams = Hash.new
       
       hParams["--type"] = fileType
@@ -68,6 +68,10 @@ class MINARC_Client
          hParams["--delete"] = ""
       end
       
+      if destination != nil then
+         hParams["--Location"] = destination
+      end
+            
       ret = postFile("#{@minArcServer}#{API_URL_STORE}", full_path_filename, hParams, @isDebugMode)
       
       if ret == false then

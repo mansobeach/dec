@@ -74,7 +74,9 @@ class Handler_MP4
          arr         = tStart.to_s.gsub!("-", "").gsub!(":", "").split(" ")         
          @filename   = "#{arr[0]}T#{arr[1]}_#{duration}#{extension}" # 
          year        = arr[0].slice(0, 4)
-      
+         month       = arr[0].slice(4, 2)
+         day         = arr[0].slice(6, 2)
+         
          @full_path_filename = "#{full_path}/#{@filename}"
 
          # ------------------------------------------
@@ -106,12 +108,9 @@ class Handler_MP4
          if destination.slice(0,1) == "/" then
             @archive_path = destination
          else
-            @archive_path = "#{@archive_path}/#{arr[0].slice(0,8)}_#{destination}"
+            @archive_path = "#{archRoot}/#{@type}/#{year}#{month}#{day}_#{destination}"
          end
       end
-      
-#       puts @archive_path
-#       exit
       
    end
 

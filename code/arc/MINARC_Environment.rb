@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.17"
+   @@version = "1.0.18"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.18" =>    "minArcStore remote -L (location directory) used by m2ts/mp4", \
       "1.0.17" =>    "minArcRetrieve remote mode supports -t <filetype> retrieval", \
       "1.0.16" =>    "minArcRetrieve local mode supports to filter --New files by archive date", \
       "1.0.15" =>    "Server mode restarts the connection to avoid pool limit :-( | ConnectionPool pending", \

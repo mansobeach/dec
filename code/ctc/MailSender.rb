@@ -20,7 +20,6 @@
 require 'net/smtp'
 require 'cuc/DirUtils'
 
-
 module CTC
 
 
@@ -147,7 +146,7 @@ END_OF_MESSAGE
 
 
       Net::SMTP.start(@optMail[:server]) do |smtp|
-         smtp.send_message @msg, @optMail[:from], @arrToAddress  #[0]
+         smtp.send_message @msg, @optMail[:from], @arrToAddress
       end
 
       return true
