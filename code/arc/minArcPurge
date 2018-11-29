@@ -27,25 +27,30 @@
 #
 # === Mini Archive Component (MinArc)
 #
-# CVS: $Id: minArcPurge.rb,v 1.1 2008/11/10 09:39:34 decdev Exp $
+# CVS: $Id: minArcPurge,v 1.1 2008/11/10 09:39:34 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
 require 'rdoc'
 
-require "arc/MINARC_DatabaseModel"
+require 'arc/MINARC_DatabaseModel'
+require 'arc/MINARC_Environment'
 
 
 # MAIN script function
 
 def main
 
-   @bConfirmed  = false
+   @bConfirmed                = false
+   @bShowVersion              = false
+   @bShowUsage                = false
+
 
    opts = GetoptLong.new(
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--YES",   "-Y",           GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
@@ -53,19 +58,46 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--YES"               then @bConfirmed  = true
-            when "--version"           then showVersion  = true
-			   when "--help"              then usage
-	         when "--usage"             then usage
+            when "--Debug"             then @isDebugMode    = true
+            when "--YES"               then @bConfirmed     = true
+            when "--version"           then @bShowVersion   = true
+			   when "--help"              then @bShowUsage     = true
+	         when "--usage"             then @bShowUsage     = true
          end
       end
    rescue Exception
       exit(99)
    end
 
+   # -------------------------------------------------------
+   #
+   # Show the version of the component
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+      
+   # -------------------------------------------------------
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+
+
    if @bConfirmed == false then
       usage
+      exit(99)
    end
 
    pwd = Dir.pwd
@@ -116,7 +148,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 
 #-------------------------------------------------------------

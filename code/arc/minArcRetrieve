@@ -203,6 +203,7 @@ def main
    @bShowVersion              = false
    bGetAllFiles               = false
    @bNoServer                 = false
+   @bShowUsage                = false
 
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
@@ -251,8 +252,8 @@ def main
             when "--New"               then archive_date        = arg.to_s
             when "--start"             then startVal            = arg.to_s
             when "--end"               then endVal              = arg.to_s
-			   when "--help"              then usage
-	         when "--usage"             then usage
+			   when "--help"              then @bShowUsage         = true
+	         when "--usage"             then @bShowUsage         = true
             when "--boundary_start_on" then bIncStart           = true
             when "--inv"               then sInv                = arg.to_s
             when "--boundary_end_on"   then bIncEnd             = true
@@ -265,14 +266,6 @@ def main
    rescue Exception => e
       # puts e.to_s
       exit(0)
-   end
-
-
-   if ENV['MINARC_SERVER'] and @bNoServer == false then
-      @bRemoteMode = true
-   else
-      @bRemoteMode = false
-      require 'arc/MINARC_DatabaseModel'
    end
 
    # -------------------------------------------------------
@@ -289,6 +282,20 @@ def main
    end
       
    # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+   
+   if ENV['MINARC_SERVER'] and @bNoServer == false then
+      @bRemoteMode = true
+   else
+      @bRemoteMode = false
+      require 'arc/MINARC_DatabaseModel'
+   end
  
    # -------------------------------------------------------
    #
@@ -563,7 +570,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit(0)
 end
 #-------------------------------------------------------------
 

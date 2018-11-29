@@ -20,14 +20,14 @@ require 'active_record'
 @dbUser      = ENV['MINARC_DATABASE_USER']
 @dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
-puts @dbName
+
 
 ActiveRecord::Base.establish_connection(  
-                                          :adapter => @dbAdapter, \
-                                          :host => "localhost", \
-                                          :database => @dbName, \
-                                          :username => @dbUser, \
-                                          :password => @dbPass
+                                          :adapter    => @dbAdapter, \
+                                          :host       => "localhost", \
+                                          :database   => @dbName, \
+                                          :username   => @dbUser, \
+                                          :password   => @dbPass
                                           )
 
 #=====================================================================
@@ -35,9 +35,9 @@ ActiveRecord::Base.establish_connection(
 class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    
    def self.up
-      puts "#{@dbName}"
       create_table(:archived_files) do |t|
-         t.column :filename,            :string,  :limit => 255
+         t.column :filename,            :string,  :limit => 255, :unique => true
+         t.index  :filename,             unique: true
          t.column :filetype,            :string,  :limit => 64
          t.column :path,                :string,  :limit => 255
          t.column :info,                :string,  :limit => 255
@@ -52,9 +52,6 @@ class CreateArchivedFiles < ActiveRecord::Migration[5.1]
          t.column :access_counter,      :integer, default: 0, null: false
          # t.column :deleted              :boolean, default: false, null: false
       end
-
-#        change_column :archived_files, :filetype, :string, :limit => 64
-
    end
 
    def self.down
@@ -62,7 +59,7 @@ class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+# =====================================================================
 
 class AddNewColumns < ActiveRecord::Migration[5.1]
 
@@ -80,7 +77,16 @@ class AddNewColumns < ActiveRecord::Migration[5.1]
   end
 end
 
-#=====================================================================
+# =====================================================================
+
+class AddIndexFilename < ActiveRecord::Migration[5.1]
+   def change
+      add_index :archived_files, :filename
+      #add_index :filename, :string, :unique => true
+   end
+end
+
+# =====================================================================
 
 class Export2CSV
    #-------------------------------------------------------------   

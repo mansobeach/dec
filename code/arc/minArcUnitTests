@@ -31,7 +31,7 @@ require 'arc/MINARC_Status'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-
+#  0  - test_commmandline_helpers
 #  1  - test_local_minArcStore
 #  2  - test_local_purge
 #  3  - test_remote_delete
@@ -219,6 +219,66 @@ class TestCaseStore < Test::Unit::TestCase
    end
    # --------------------------------------------------------
 
+   def test_commmandline_helpers
+      cmd = "minArcDelete -v"
+      assert(system(cmd), cmd)
+      
+      cmd = "minArcStore -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcRetrieve -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDB -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcPurge -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcServer -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStore -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStore -g"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcRetrieve -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcRetrieve -u"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -u"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDelete -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDelete -u"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcPurge -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcPurge -u"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDB -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDB -u"
+      assert(system(cmd), cmd)
+
+      
+   end
 
    # -------------------------------------------------------------
 

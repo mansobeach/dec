@@ -91,7 +91,7 @@ require 'getoptlong'
 require 'rdoc'
 
 require 'arc/FileDeleter'
-
+require 'arc/MINARC_Environment'
 
 # MAIN script function
 def main
@@ -103,20 +103,17 @@ def main
    endVal                     = ""
    @bNoServer                 = false
    @full_report_name          = ""
-
-   bIncStart = false
-   bIncEnd = false
-
-   @isDebugMode            = false
-   @bListOnly              = false
-
-   showVersion             = false
+   bIncStart                  = false
+   bIncEnd                    = false
+   @isDebugMode               = false
+   @bListOnly                 = false
+   @bShowVersion              = false
+   @bShowUsage                = false
    
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
    end
 
-   
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
@@ -137,26 +134,45 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--noserver"          then @bNoServer   = true
-            when "--list"              then @bListOnly   = true
-            when "--version"           then showVersion  = true
-            when "--file"              then @filename           = arg.to_s
-            when "--directory"         then @dirname            = arg.to_s
+            when "--Debug"             then @isDebugMode          = true
+            when "--noserver"          then @bNoServer            = true
+            when "--list"              then @bListOnly            = true
+            when "--version"           then @bShowVersion         = true
+            when "--file"              then @filename             = arg.to_s
+            when "--directory"         then @dirname              = arg.to_s
                                             deleteDirectory
-	         when "--type"              then @filetype           = arg.to_s
-            when "--start"             then startVal            = arg.to_s
-            when "--end"               then endVal              = arg.to_s
-	         when "--Report"            then @full_report_name   = arg.to_s
-			   when "--help"              then usage
-	         when "--usage"             then usage
-            when "--boundary_start_on" then bIncStart           = true
-            when "--boundary_end_on"   then bIncEnd             = true
+	         when "--type"              then @filetype             = arg.to_s
+            when "--start"             then startVal              = arg.to_s
+            when "--end"               then endVal                = arg.to_s
+	         when "--Report"            then @full_report_name     = arg.to_s
+			   when "--help"              then @bShowUsage           = true
+	         when "--usage"             then @bShowUsage           = true
+            when "--boundary_start_on" then bIncStart             = true
+            when "--boundary_end_on"   then bIncEnd               = true
          end
       end
    rescue Exception
       exit(99)
    end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
 
    if @isDebugMode == true and @bNoServer == true then
       puts "MINARC Local Mode"
@@ -287,7 +303,6 @@ end
 #-------------------------------------------------------------
 
 def usage
-
    fullpathFile = File.expand_path(__FILE__)
       
    value = `#{"head -80 #{fullpathFile}"}`
@@ -297,7 +312,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit(0)
 end
 
 #-------------------------------------------------------------

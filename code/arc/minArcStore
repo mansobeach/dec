@@ -157,6 +157,7 @@ def main
    @bInventoryOnly         = false
    @bNoServer              = false
    @bShowVersion           = false
+   @bShowUsage             = false
 
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
@@ -199,8 +200,8 @@ def main
 	         when "--type"              then @filetype             = arg.to_s
             when "--additional-fields" then @arrAddFields         = arg.to_s.split(":")
             when "--Types"             then bShowFileTypes        = true
-			   when "--help"              then usage
-	         when "--usage"             then usage
+			   when "--help"              then @bShowUsage           = true
+	         when "--Usage"             then @bShowUsage           = true
             when "--Unpack"            then @bUnpack = true
             when "--Hardlink"          then @bHardLink = true
             when "--Inventory"         then @bInventoryOnly = true
@@ -209,6 +210,21 @@ def main
    rescue Exception
       exit(99)
    end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
 
    # if parameters are quoted to avoid variable expansion by shell
    if @full_path_filename.slice(0,1) == "\"" then
@@ -220,15 +236,6 @@ def main
    else
       @bRemoteMode = false
       require 'arc/MINARC_DatabaseModel'
-   end
-
-   if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
-      hRecord = ARC.class_variable_get(:@@change_record)
-      hRecord.each_pair{|key, value|
-         puts "#{key} => #{value}"
-      }
-      exit(0)
    end
  
    if bShowFileTypes then
@@ -468,7 +475,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit(0)
 end
 #-------------------------------------------------------------
 

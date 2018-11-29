@@ -8,7 +8,7 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# Git: $Id: MINARC_Environment.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
+# Git: $Id: MINARC_Environment.rb $Date$
 #
 # module MINARC
 #
@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.18"
+   @@version = "1.0.19"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.19" =>    "minArcDB creates an index by filename", \
       "1.0.18" =>    "minArcStore remote -L (location directory) used by m2ts/mp4", \
       "1.0.17" =>    "minArcRetrieve remote mode supports -t <filetype> retrieval", \
       "1.0.16" =>    "minArcRetrieve local mode supports to filter --New files by archive date", \

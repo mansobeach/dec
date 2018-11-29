@@ -5,8 +5,9 @@
 # minArcDB --create-tables | --drop-tables
 #     --create-tables   create all minarc required tables
 #     --drop-tables     drops all minarc tables
+#     --Update-tables   performs a migration update of minarc tables
 #     --export-rows     it exports all rows
-#     --help   shows this help
+#     --help            shows this help
 # 
 # == Author
 # DEIMOS-Space S.L.
@@ -14,22 +15,26 @@
 # == Copyright
 # Copyright (c) 2008 ESA - DEIMOS Space S.L.
 #
+
+#########################################################################
+#
+# === Ruby source for #minArcDB execytable
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Mini Archive Component (MinArc)
+# 
+# module MINARC
+#
+#########################################################################
+
 require 'rubygems'
 require 'active_record'
-
 require 'getoptlong'
 require 'rdoc'
 
 require 'arc/MINARC_Migrations'
-
-dbAdapter   = ENV['MINARC_DB_ADAPTER']
-dbName      = ENV['MINARC_DATABASE_NAME']
-dbUser      = ENV['MINARC_DATABASE_USER']
-dbPass      = ENV['MINARC_DATABASE_PASSWORD']
-
-ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+require 'arc/MINARC_Environment'
 
 
 # MAIN script function
@@ -39,29 +44,53 @@ def main
    @bDown         = false
    @bUpdate       = false
    @bExport       = false
+   @bShowVersion  = false
+   @bShowUsage    = false
    
    opts = GetoptLong.new(
-     ["--drop-tables",     "-d",    GetoptLong::NO_ARGUMENT],
-     ["--create-tables",   "-c",    GetoptLong::NO_ARGUMENT],
-     ["--update-tables",   "-u",    GetoptLong::NO_ARGUMENT],
-     ["--export-rows",     "-e",    GetoptLong::NO_ARGUMENT],
-     ["--help",            "-h",    GetoptLong::NO_ARGUMENT]
+     ["--drop-tables",     "-d",       GetoptLong::NO_ARGUMENT],
+     ["--create-tables",   "-c",       GetoptLong::NO_ARGUMENT],
+     ["--Update-tables",   "-U",       GetoptLong::NO_ARGUMENT],
+     ["--export-rows",     "-e",       GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",               GetoptLong::NO_ARGUMENT],
+     ["--usage",   "-u",               GetoptLong::NO_ARGUMENT],
+     ["--help",            "-h",       GetoptLong::NO_ARGUMENT]
      )
     
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--create-tables"     then @bUp       = true
-            when "--drop-tables"       then @bDown     = true
-            when "--update-tables"     then @bUpdate   = true
-            when "--export-rows"       then @bExport   = true
-			   when "--help"              then usage
+            when "--create-tables"     then @bUp                  = true
+            when "--drop-tables"       then @bDown                = true
+            when "--Update-tables"     then @bUpdate              = true
+            when "--export-rows"       then @bExport              = true
+            when "--usage"             then @bShowUsage           = true
+			   when "--help"              then @bShowUsage           = true
+            when "--version"           then @bShowVersion         = true
          end
       end
    rescue Exception => e
       # puts e.to_s
       exit(99)
    end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
 
    if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
       puts "#{__FILE__} requires local mode configuration"
@@ -70,10 +99,12 @@ def main
 
    if @bDown and @bUp then
       usage
+      exit(0)
    end
 
    if !@bDown and !@bUp and !@bUpdate and !@bExport then 
       usage
+      exit(0)
    end
 
    if @bDown then
@@ -91,15 +122,25 @@ def main
    if @bUp then
       begin
          CreateArchivedFiles.up
-         exit(0)
-      rescue
+         puts "Right !"
+         puts "Bye"
+      rescue Exception => e
+         puts e.to_s
          exit(99)
       end
+      exit(0)
    end
  
    if @bUpdate then
-      migration = AddNewColumns.new
-      migration.change
+#      migration1 = AddNewColumns.new
+#      migration1.change
+      
+      if ActiveRecord::Base.connection.index_exists?(:archived_files, :filename) == false
+         migration2 = AddIndexFilename.new
+         migration2.change
+      else
+         puts "Index on filename already exists :-)"
+      end
       exit(0)
    end 
  
@@ -117,14 +158,13 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -15 #{fullpathFile}"}`
+   value = `#{"head -17 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
    }
-   exit
 end
 
 #-------------------------------------------------------------

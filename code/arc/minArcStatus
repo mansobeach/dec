@@ -54,18 +54,15 @@ def main
    startVal                   = ""
    endVal                     = ""
    @bGlobal                   = false
-
    @full_report_name          = ""
-
    bIncStart                  = false
    bIncEnd                    = false
-
    @isDebugMode               = false
    @bListOnly                 = false
-
    @bShowVersion              = false
    @bShowVersionServer        = false
    @bNoServer                 = false
+   @bShowUsage                = false
 
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
@@ -124,6 +121,16 @@ def main
       }
       exit(0)
    end
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
 
    if @bShowVersionServer == true then
       arc = ARC::MINARC_Client.new
@@ -253,7 +260,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 
 #-------------------------------------------------------------
