@@ -27,8 +27,6 @@ require 'rubygems'
 require 'getoptlong'
 require 'active_record'
 
-# require 'dcc/DCC_Migrations'
-# require 'ddc/DDC_Migrations'
 require 'rpf/RPF_Migrations'
 require 'dec/DEC_Migrations'
 require 'dec/DEC_Environment'
@@ -139,6 +137,29 @@ def main
    end
 
    if @bUpdate then
+
+      if ActiveRecord::Base.connection.index_exists?(:received_files, :filename) == false
+         migration = AddIndexFilename2ReceivedFiles.new
+         migration.change
+      else
+         puts "Index on filename for received_files already exists :-)"
+      end
+
+      if ActiveRecord::Base.connection.index_exists?(:tracked_files, :filename) == false
+         migration = AddIndexFilename2TrackedFiles.new
+         migration.change
+      else
+         puts "Index on filename for tracked_files already exists :-)"
+      end
+
+      if ActiveRecord::Base.connection.index_exists?(:sent_files, :filename) == false
+         migration = AddIndexFilename2SentFiles.new
+         migration.change
+      else
+         puts "Index on filename for sent_files already exists :-)"
+      end
+   
+      exit(0)
    
       migration = Add_ROP_ID_ToSentFiles.new
       migration.change

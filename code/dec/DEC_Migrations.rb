@@ -22,6 +22,7 @@ class CreateTrackedFiles < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:tracked_files) do |t|
          t.column :filename,            :string,  :limit => 255
+         t.index  :filename
          t.column :interface_id,        :integer
          t.column :tracking_date,       :datetime
       end
@@ -38,6 +39,7 @@ class CreateReceivedFiles < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:received_files) do |t|
          t.column :filename,            :string,  :limit => 255
+         t.index  :filename
          t.column :size,                :integer
          t.column :interface_id,        :integer
          t.column :reception_date,      :datetime
@@ -89,6 +91,7 @@ class CreateSentFiles < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:sent_files) do |t|
          t.column :filename,         :string,  :limit => 255
+         t.index  :filename
          t.column :interface,        :string,  :limit => 100
          t.column :interface_id,     :integer
          t.column :delivered_using,  :string,  :limit => 100
@@ -108,3 +111,32 @@ class Add_ROP_ID_ToSentFiles < ActiveRecord::Migration[5.1]
      add_column :sent_files, :ROP_ID, :integer, { :null => true }
   end
 end
+
+
+# =====================================================================
+
+class AddIndexFilename2SentFiles < ActiveRecord::Migration[5.1]
+   def change
+      add_index :sent_files,     :filename
+   end
+end
+
+# =====================================================================
+
+class AddIndexFilename2ReceivedFiles < ActiveRecord::Migration[5.1]
+   def change
+      add_index :received_files, :filename
+   end
+end
+
+
+# =====================================================================
+
+class AddIndexFilename2TrackedFiles < ActiveRecord::Migration[5.1]
+   def change
+      add_index :tracked_files, :filename
+   end
+end
+
+# =====================================================================
+

@@ -27,7 +27,7 @@ module DEC
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.7"  =>    "working version" \
+      "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
       "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \
       "1.0.5"  =>    "notify2Interface.rb fix sending mail to first address only \n         decCheckConfig shipped in the gem", \
       "1.0.4"  =>    "decValidateConfig shipped with the required xsd schemas", \

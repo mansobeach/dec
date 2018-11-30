@@ -159,11 +159,14 @@ module FTPClientCommands
          options= "-V"
       end
 
-      if prefix != nil or !prefix.empty? then
-         tmpDir=dir
-         options= options+" -T #{prefix}"
-      end
+#      if prefix != nil or !prefix.empty? then
+#         tmpDir=dir
+#         options= options+" -T #{prefix}"
+#      end
       command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} #{optionPassive} -m #{options} -X "RNFR #{file}" -X "RNTO #{dir}/#{file}" #{host} #{tmpDir} #{file} }
+      puts
+      puts command
+      puts
       return command
    end
    #-------------------------------------------------------------
