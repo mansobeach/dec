@@ -36,8 +36,12 @@ class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    
    def self.up
       create_table(:archived_files) do |t|
+         # filename includes the file extension
          t.column :filename,            :string,  :limit => 255, :unique => true
          t.index  :filename,             unique: true
+         # name to be the filename without extension
+         t.column :name,                :string,  :limit => 255, :unique => true
+         t.index  :name,                 unique: true
          t.column :filetype,            :string,  :limit => 64
          t.column :path,                :string,  :limit => 255
          t.column :info,                :string,  :limit => 255

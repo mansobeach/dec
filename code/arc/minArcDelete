@@ -90,7 +90,6 @@
 require 'getoptlong'
 require 'rdoc'
 
-require 'arc/FileDeleter'
 require 'arc/MINARC_Environment'
 
 # MAIN script function
@@ -178,24 +177,18 @@ def main
       puts "MINARC Local Mode"
    end
 
+   # -------------------------------------------------------
 
-   if showVersion then 
-      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
-         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
-      else
-         puts "version.txt is not present !"
-         exit(99)
-      end
-
-      binVersion = aFile.gets.chomp
-
-      puts
-      puts "Mini-Archive Component - Version #{binVersion}"
-      puts
-
-      aFile.close
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
       exit(0)
    end
+
+   # -------------------------------------------------------
  
    # Check all flags and combinations
 
@@ -204,15 +197,20 @@ def main
       puts "Single-bounded intervals are not allowed..."
       puts
       usage
+      exit(99)
    end
 
    if @filename == "" and @filetype == "" then
       usage
+      exit(66)
    end
 
    if @filename != "" and @filetype != "" then
       usage
+      exit(66)
    end
+
+   require 'arc/FileDeleter'
 
    begin
       if startVal != "" and endVal != "" then

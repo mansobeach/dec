@@ -42,7 +42,7 @@ module WrapperCURL
    # -------------------------------------------------------------
 
    def postFile(url, file, hFormParams, isDebugMode = false)
-      cmd = "curl -s -X POST "
+      cmd = "curl --max-time 900 -s -X POST "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "

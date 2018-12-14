@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.19"
+   @@version = "1.0.20"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.20" =>    "inventory updated to keep filename without extension\n          time-out updated when posting files", \
       "1.0.19" =>    "minArcDB creates an index by filename", \
       "1.0.18" =>    "minArcStore remote -L (location directory) used by m2ts/mp4", \
       "1.0.17" =>    "minArcRetrieve remote mode supports -t <filetype> retrieval", \
@@ -62,6 +63,19 @@ module ARC
       ENV['RACK_ENV']                     = "development"
    end
    
+   # -----------------------------------------------------------------
+   
+   def unset_config
+      ENV.delete('MINARC_DB_ADAPTER')
+      ENV.delete('MINARC_BASE')
+      ENV.delete('MINARC_SERVER')
+      ENV.delete('MINARC_ARCHIVE_ROOT')
+      ENV.delete('MINARC_ARCHIVE_ERROR')
+      ENV.delete('MINARC_DATABASE_NAME')
+      ENV.delete('MINARC_DATABASE_USER')
+      ENV.delete('MINARC_DATABASE_PASSWORD')
+      ENV.delete('MINARC_TMP')
+   end
    # -----------------------------------------------------------------
    
    def load_config_production
@@ -125,6 +139,10 @@ class ARC_Manage_Config_Development
 
    def wrapper_print_environment
       print_environment
+   end
+
+   def wrapper_unset_config
+      unset_config
    end
    
    def wrapper_setRemoteModeOnly

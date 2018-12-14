@@ -120,8 +120,9 @@ class TestCaseStore < Test::Unit::TestCase
       
 =end
       
-      @@testDataDir = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
-      @@testFile1   = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      @@testFile1          = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      @@filename1_noext    = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
 
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
       system("rm -f #{@@testDataDir}/20110204T193316_000001.m2ts")
@@ -220,6 +221,9 @@ class TestCaseStore < Test::Unit::TestCase
    # --------------------------------------------------------
 
    def test_commmandline_helpers
+   
+      @@conf.wrapper_unset_config
+   
       cmd = "minArcDelete -v"
       assert(system(cmd), cmd)
       
@@ -239,6 +243,9 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -v"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcServer -h"
       assert(system(cmd), cmd)
 
       cmd = "minArcStore -h"
@@ -277,6 +284,31 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcDB -u"
       assert(system(cmd), cmd)
 
+      # invoke command line parameters without parameters to do nothing
+      # and return error in parameters
+
+      cmd = "minArcDelete"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcRetrieve"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcDB"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcPurge"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcServer"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcStatus"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcStore"
+      assert(!system(cmd), cmd)
+
+      @@conf.wrapper_load_config_development
       
    end
 
@@ -297,7 +329,19 @@ class TestCaseStore < Test::Unit::TestCase
    end
    # --------------------------------------------------------
 
-
+   def test_DBModel
+      require 'arc/MINARC_DatabaseModel'
+      
+      test_local_minArcStore
+            
+      aFile = ArchivedFile.where(name: @@filename1_noext)
+      
+      
+      puts
+      aFile.to_a[0].print_introspection
+      puts
+            
+   end
    # --------------------------------------------------------
 
    def test_local_purge

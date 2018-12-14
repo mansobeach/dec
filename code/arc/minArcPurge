@@ -34,7 +34,6 @@
 require 'getoptlong'
 require 'rdoc'
 
-require 'arc/MINARC_DatabaseModel'
 require 'arc/MINARC_Environment'
 
 
@@ -93,8 +92,6 @@ def main
 
    # -------------------------------------------------------
 
-
-
    if @bConfirmed == false then
       usage
       exit(99)
@@ -105,12 +102,15 @@ def main
    # ------------------------------------------------------------------
 
    if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
-      puts "#{__FILE__} requires local mode configuration"
+      puts "#{__FILE__} requires local mode configuration / environment unready :-("
+      puts
       exit(99)
    end
 
    # ------------------------------------------------------------------
-   
+
+   require 'arc/MINARC_DatabaseModel'
+
    archiveRoot = ENV["MINARC_ARCHIVE_ROOT"]
 
    

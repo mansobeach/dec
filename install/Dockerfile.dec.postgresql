@@ -1,0 +1,55 @@
+#########################################################################
+#
+# Git:
+#     Dockerfile.minarc    $Author: bolf$
+#                          $Date: 2018-11-13T11:54:43+01:00$ 
+#                          $Committer: bolf$
+#                          $Hash: f3afa7c$
+#
+#########################################################################
+
+# FROM ruby:2.4
+# FROM ruby:slim
+# FROM ruby:2.4.1-slim
+
+FROM ubuntu 
+
+# ================================================
+
+
+# RUN apt-get update && apt-get install -y net-tools
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    net-tools \
+    gcc \
+    make \
+    p7zip-full \
+    sqlite3 \
+    libsqlite3-dev \
+    exiftool \
+    curl \
+    lsof
+
+# ------------------------------------------------
+
+# ------------------------------------------------
+# Install ruby gem dependencies
+COPY Gemfile .
+RUN bundle install
+# ------------------------------------------------
+
+# ================================================
+
+# Install the dec gem
+
+# COPY ./gems/dec.gem .
+# RUN gem install --local dec.gem
+# ------------------------------------------------
+
+
+# Execution entry point
+#CMD ["minArcServer", "-s"]
+
+# ------------------------------------------------

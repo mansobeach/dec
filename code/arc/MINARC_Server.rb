@@ -11,15 +11,13 @@ require 'cuc/DirUtils'
 require 'arc/MINARC_API'
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Status'
+require 'arc/MINARC_DatabaseModel'
 require 'arc/FileStatus'
 
 include CUC::DirUtils
 include FileUtils::Verbose
 include ARC
 
-# POST GET PUT DELETE
-
-# C R U D 
 
 # ----------------------------------------------------------
 #
@@ -32,12 +30,7 @@ class MINARC_Server < Sinatra::Base
    helpers Sinatra::CustomLogger
 
    configure do
-      
-      # Parent exists, child continue
-      # exit!(0) if fork
-      # Become session leader without a controlling TTY
-      # Process.setsid
-      
+            
       puts "Loading general configuration / shit / pedo"
       
       # set :bind, '0.0.0.0'
@@ -45,7 +38,7 @@ class MINARC_Server < Sinatra::Base
       set :threaded, true
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
-      set :isDebugMode,       true
+      set :isDebugMode,       false
       set :logger, Logger.new(STDOUT)
    
       # Racks environment variable
@@ -106,9 +99,38 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
+   # =================================================================
+
+   get "#{API_URL_RETRIEVE}/:filename" do |filename|
+
+#      puts "==================================================="  
+#      puts
+#      puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
+#      puts
+#      puts
+      
+      aFile = ArchivedFile.where(name: filename)
+      
+      if aFile.size != 0 then
+         theFile = aFile.to_a[0]
+         if settings.isDebugMode == true
+            theFile.print_introspection
+         end
+         content = File.read("#{theFile.path}/#{theFile.filename}")                 
+         response.headers['filename']     = theFile.filename
+         response.headers['Content-Type'] = "application/octet-stream"
+         attachment(theFile.filename)
+      else
+         puts "file #{params[:filename]} not found"
+         status API_RESOURCE_NOT_FOUND      
+      end
+   end
 
    # =================================================================
 
+
+   # =================================================================
+   #
    # Get all filetypes archived
    
    get ARC::API_URL_GET_FILETYPES do
@@ -130,11 +152,10 @@ class MINARC_Server < Sinatra::Base
          logger.error "failure of #{cmd}"
          status API_RESOURCE_NOT_FOUND
       end
-
    end
        
    # =================================================================
-   
+   #
    #
    # GET version
    #
@@ -149,6 +170,7 @@ class MINARC_Server < Sinatra::Base
       end
       "#{ARC.class_variable_get(:@@version)}"
    end
+   
    # =================================================================
    #
    # minArcRetrieve_LIST FILENAMES
@@ -277,7 +299,7 @@ class MINARC_Server < Sinatra::Base
    end
 
    # =================================================================
-   
+   #
    #
    # minArcDelete
    #
@@ -305,13 +327,11 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
-
-   # =================================================================
    # ----------------------------------------------------------
    #
    # minArcRetrieve
    #
-   get "#{API_URL_RETRIEVE}/:filename" do |filename|
+   get "/kaka/#{API_URL_RETRIEVE}/:filename" do |filename|
    
 =begin
       puts "==================================================="  
@@ -443,29 +463,6 @@ class MINARC_Server < Sinatra::Base
       "There is nothing wrong really :-p"
    end
 
-   # curl -d "param1=value1&param2=value2" -X POST http://localhost:4567/posting
-
-   post '/posting' do
-      puts params
-      # redirect to "/hello"
-   end
-
-   # ----------------------------------------------------------
-   
-   # curl -X DELETE http://localhost:4567/delete/:id
-
-   delete '/delete/:id' do
-      puts "deleting #{params[:id]}"
-   end
-
-   # curl -X PUT http://localhost:4567/update/:id
-   # ----------------------------------------------------------
-   
-   put '/update/:id' do
-      puts "updating #{params[:id]}"
-      "updating #{params[:id]}\n"
-   end
-
    # ----------------------------------------------------------
    
    get '/' do
@@ -511,15 +508,8 @@ class MINARC_Server < Sinatra::Base
    
    end
 
-
-
    # ----------------------------------------------------------
    
-   get '/:name' do
-      name = params[:name]
-      "Hi there #{name}!"
-   end
-
    # ----------------------------------------------------------
    
    get '/:param1/:param2/:param3' do

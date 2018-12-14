@@ -35,7 +35,7 @@ ActiveRecord::Base.establish_connection(
                                           :database   => dbName,
                                           :username   => dbUser, 
                                           :password   => dbPass, 
-                                          :timeout    => 50000,
+                                          :timeout    => 100000,
                                           :cast       => false,
                                           :pool       => 10
                                           )
@@ -62,13 +62,33 @@ ActiveRecord::Base.establish_connection(
 
 class ArchivedFile < ActiveRecord::Base
 
+   validates_presence_of   :name
+   validates_uniqueness_of :name
+
    validates_presence_of   :filename
    validates_uniqueness_of :filename
+
    validates_presence_of   :filetype
+
    validates_presence_of   :archive_date
 
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
+   
+   def print_introspection
+      puts "Logical name    : #{self.name}"
+      puts "Physical name   : #{self.filename}"
+      puts "Path            : #{self.path}"
+      puts "Filetype        : #{self.filetype}"
+      puts "Size            : #{self.size} Bytes"
+      puts "Size Original   : #{self.size_original} Bytes"
+      puts "Disk Occupation : #{self.size_in_disk} Bytes"
+      puts "Archive Date    : #{self.archive_date}"
+      puts "Last Access     : #{self.last_access_date}"
+      puts "Info            : #{self.info}"
+      puts "Num Access      : #{self.access_counter}"
+   end
+   # --------------------------------------------------------
 
    def ArchivedFile.superBulkSequel_mysql2(hashRecords)
       

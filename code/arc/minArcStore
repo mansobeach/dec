@@ -16,7 +16,7 @@
 #
 # -t flag:
 #
-# Optional flag, stands for "--type".
+# Mandatory flag, stands for "--type".
 # This flag is used to specify the file-type of the file to be archived.
 # By default MINARC will determine the file-type automatically, nevertheless 
 # such classification may be overidden using this parameter. 
@@ -220,11 +220,34 @@ def main
       exit(0)
    end
 
+   # -------------------------------------------------------
+
    if @bShowUsage == true then
       usage
       exit(0)
    end
 
+   if @bDelete and @bMove then
+      usage
+      exit(66)
+   end
+
+   if @bHardLink and @bMove then
+      usage
+      exit(66)
+   end
+
+   if @bInventoryOnly and (@bDelete or @bMove or @bHardLink) then
+      usage
+      exit(66)
+   end
+
+   if @full_path_filename == "" then
+      usage
+      exit(66)
+   end
+
+   # -------------------------------------------------------
 
    # if parameters are quoted to avoid variable expansion by shell
    if @full_path_filename.slice(0,1) == "\"" then
@@ -263,22 +286,6 @@ def main
          end
       end
    end  
-
-   if @bDelete and @bMove then
-      usage
-   end
-
-   if @bHardLink and @bMove then
-      usage
-   end
-
-   if @bInventoryOnly and (@bDelete or @bMove or @bHardLink) then
-      usage
-   end
-
-   if @full_path_filename == "" then
-      usage
-   end
    
    if @full_path_filename.slice(0,1) != "/" then
       @full_path_filename = "#{Dir.pwd}/#{@full_path_filename.dup}"
@@ -346,6 +353,12 @@ def main
       archiver.setDebugMode
    end
 
+
+   if @filetype == "" then
+      puts "--type <file-type> is mandatory flag"
+      puts
+      exit(99)
+   end
 
 
    ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)

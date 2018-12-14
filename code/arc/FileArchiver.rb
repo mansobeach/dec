@@ -584,6 +584,7 @@ private
       begin
          anArchivedFile = ArchivedFile.new
          
+         anArchivedFile.name           = File.basename(full_path_filename, ".*")
          anArchivedFile.filename       = File.basename(full_path_filename)
          anArchivedFile.filetype       = type
          anArchivedFile.archive_date   = archival_date

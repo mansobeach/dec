@@ -142,6 +142,7 @@ class Handler_M2TS
       @archive_path  = "#{archRoot}/#{@type}/#{year}/#{year}#{month}#{day}"
             
       @size          = File.size(@full_path_filename)
+      @size_original = File.size(@full_path_filename)
       result         = `du -hs #{@full_path_filename}`
       
       begin

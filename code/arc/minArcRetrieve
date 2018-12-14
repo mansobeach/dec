@@ -171,7 +171,6 @@ require 'rdoc'
 
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
-require 'arc/FileRetriever'
 require 'arc/Inventory2Excel'
 
 # Global variables
@@ -290,6 +289,34 @@ def main
 
    # -------------------------------------------------------
    
+   # Check some flags and combinations
+
+   if @filename == "" and @bListOnly == false and archive_date == nil and @full_path_target == "" and bShowFileTypes == false then
+      usage
+      exit(66)
+   end
+
+ 
+   if @bDelete == true and @bListOnly == true then
+      usage
+      exit(66)
+   end
+
+   if @bListOnly == true and @full_path_target != "" then
+      usage
+      exit(66)
+   end
+
+
+   if @filename != "" and @filetype != "" and bGetAllFiles == false and bShowFileTypes == false then
+      usage
+      exit(66)
+   end
+
+   # -------------------------------------------------------
+   
+   require 'arc/FileRetriever'
+   
    if ENV['MINARC_SERVER'] and @bNoServer == false then
       @bRemoteMode = true
    else
@@ -329,16 +356,6 @@ def main
    # -------------------------------------------------------
 
 
-   # Check some flags and combinations
-
-   if @filename == "" and @bListOnly == false and archive_date == nil and @full_path_target == "" then
-      usage
-   end
-
- 
-   if @bDelete == true and @bListOnly == true then
-      usage
-   end
 
 
    if @bListOnly == false and @full_path_target == "" then
@@ -355,14 +372,6 @@ def main
    end
 
 
-   if @bListOnly == true and @full_path_target != "" then
-      usage
-   end
-
-
-   if @filename != "" and @filetype != "" and bGetAllFiles == false then
-      usage
-   end
 
    if @filename != "" and rule != "ALL" then
       puts
@@ -563,7 +572,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -158 #{fullpathFile}"}`
+   value = `#{"head -159 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

@@ -20,7 +20,7 @@
 # DEIMOS-Space S.L.
 #
 # == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
+# Copyright (c) 2018 ESA - DEIMOS Space S.L.
 #
 
 #########################################################################
@@ -52,7 +52,7 @@ def main
    @bStopServer            = false
    @bShowVersion           = false
    @bDevelopment           = false
-   
+   @bShowUsage             = false
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
@@ -77,8 +77,8 @@ def main
             when "--start"             then @bStartServer         = true
             when "--kill"              then @bStopServer          = true
 	         when "--check"             then @bCheckStatus         = true
-			   when "--help"              then usage
-	         when "--usage"             then usage
+			   when "--help"              then @bShowUsage           = true
+	         when "--usage"             then @bShowUsage           = true
          end
       end
    rescue Exception
@@ -94,8 +94,19 @@ def main
       exit(0)
    end
 
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+
    if !@bCheckStatus and !@bStartServer and !@bStopServer
       usage
+      exit(99)
    end
 
    if @bDevelopment == true then
@@ -186,14 +197,13 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -22 #{fullpathFile}"}`
+   value = `#{"head -24 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
-   }
-   exit   
+   }  
 end
 
 #-------------------------------------------------------------

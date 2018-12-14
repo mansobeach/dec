@@ -103,8 +103,8 @@ def main
             when "--start"             then startVal            = arg.to_s
             when "--end"               then endVal              = arg.to_s
 	         when "--Report"            then @full_report_name   = arg.to_s
-			   when "--help"              then usage
-	         when "--usage"             then usage
+			   when "--help"              then @bShowUsage         = true
+	         when "--usage"             then @bShowUsage         = true
             when "--boundary_start_on" then bIncStart           = true
             when "--boundary_end_on"   then bIncEnd             = true
          end
@@ -131,6 +131,19 @@ def main
 
    # -------------------------------------------------------
 
+   # Check all flags and combinations
+
+   if @filename == "" and @filetype == "" and @bGlobal == false and @bShowVersionServer == false then
+      usage
+      exit(66)
+   end
+
+   if @filename != "" and @filetype != "" and @bShowVersionServer == false then
+      usage
+      exit(66)
+   end
+
+   # -------------------------------------------------------
 
    if @bShowVersionServer == true then
       arc = ARC::MINARC_Client.new
@@ -147,15 +160,6 @@ def main
       end
    end
 
-   # Check all flags and combinations
-
-   if @filename == "" and @filetype == "" and @bGlobal == false then
-      usage
-   end
-
-   if @filename != "" and @filetype != "" then
-      usage
-   end
 
    if @filename != "" then
       fileStatus = ARC::FileStatus.new(@filename)
@@ -253,7 +257,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -27 #{fullpathFile}"}`
+   value = `#{"head -28 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

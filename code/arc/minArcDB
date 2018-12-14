@@ -33,7 +33,6 @@ require 'active_record'
 require 'getoptlong'
 require 'rdoc'
 
-require 'arc/MINARC_Migrations'
 require 'arc/MINARC_Environment'
 
 
@@ -92,11 +91,6 @@ def main
 
    # -------------------------------------------------------
 
-   if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
-      puts "#{__FILE__} requires local mode configuration"
-      exit(99)
-   end
-
    if @bDown and @bUp then
       usage
       exit(0)
@@ -104,8 +98,16 @@ def main
 
    if !@bDown and !@bUp and !@bUpdate and !@bExport then 
       usage
-      exit(0)
+      exit(66)
    end
+
+   if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
+      puts "#{__FILE__} requires local mode configuration / environment unready :-("
+      puts
+      exit(99)
+   end
+
+   require 'arc/MINARC_Migrations'
 
    if @bDown then
       begin
