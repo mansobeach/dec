@@ -75,7 +75,7 @@
 #
 # Data Collector Component
 # 
-# CVS: $Id: checkConfigDCC.rb,v 1.7 2007/12/18 18:21:36 decdev Exp $
+# Git: $Id: checkConfigDCC.rb,v 1.7 2007/12/18 18:21:36 decdev Exp $
 #
 #########################################################################
 
@@ -184,20 +184,20 @@ def main
       exit(0)
    end
 
+   if @bIncoming == false and @bOutgoing == false and @bClients == false and
+      @bEntities == false and @bAll == false and @bMail == false and 
+      @bServices == false and @bTrays == false and @bLog == false then
+      usage
+      exit(66)
+   end
+
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
       exit(99)
    end
- 
-   if @bIncoming == false and @bOutgoing == false and @bClients == false and
-      @bEntities == false and @bAll == false and @bMail == false and 
-      @bServices == false and @bTrays == false and @bLog == false then
-      usage
-      exit(99)
-   end
-   
+    
    # Check Module Integrity
    checkModuleIntegrity
 

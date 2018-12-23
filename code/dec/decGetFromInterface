@@ -117,7 +117,7 @@ def main
             when "--Debug"          then @isDebugMode       = true
             when "--Benchmark"      then @isBenchMark       = true
             when "--version"        then @bShowVersion      = true
-	         when "--mnemonic"       then @entity = arg
+	         when "--mnemonic"       then @entity            = arg
             when "--list"           then @listOnly          = true
             when "--nodb"           then @isNoDB            = true
             when "--no-intray"      then @isNoIntray        = true
@@ -147,29 +147,29 @@ def main
       usage
       exit(0)
    end
-   
-   if self.checkEnvironmentEssential == false then
-      puts
-      self.printEnvironmentError
-      puts
-      exit(99)
-   end
-  
+     
    if @listOnly == true and  @createReceipt == true then
       puts "--list and --receipt are incompatible flags"
       puts
-      exit(99)
+      exit(66)
    end
 
    if @listUnknown == true and @listOnly == false then
       puts "--Unknown flag requires to specify --list flag"
       puts
-      exit(99)
+      exit(66)
    end
 
    if @entity == "" and @bShowMnemonics == false then
       usage
-      exit(0)
+      exit(66)
+   end
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
    end
 
    # initialize logger

@@ -70,6 +70,7 @@ def main
    @launchAllListeners = false
    @bCheckListeners    = false
    @bStopListeners     = false
+   @bStopInterface     = false
    @isReload           = false
    @isNoDB             = false
    @isNoIntray         = false
@@ -113,9 +114,8 @@ def main
                   puts
                   exit(99)
                end
-               stopListener(arg.to_s)
-               stopGetFromEntity(arg.to_s)
-               exit(0)
+               @bStopInterface         = true
+               @mnemonic               = arg 
             when "--Stop"           then @bStopListeners    = true
             when "--usage"          then @bShowUsage        = true
             when "--nodb"           then @isNoDB            = true
@@ -140,12 +140,26 @@ def main
       exit(0)
    end
 
+   if @isReload == true and @launchAllListeners == false and @bCheckListeners == false \
+          and @bStopListeners == false and @bStopInterface == false then
+      usage
+      exit(66)
+   end
+ 
+   if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) and @bCheckListeners == false \
+          and @bStopListeners == false and @bStopInterface == false then
+      usage
+      exit(66)
+   end
+
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
       exit(99)
    end
+
+   checkModuleIntegrity
 
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("decListener", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
@@ -162,9 +176,10 @@ def main
 		puts
 		exit(99)
    end
-   
-   if @bCheckListeners == true then
-      checkListeners
+
+   if @bStopInterface == true then
+      stopListener(@mnemonic)
+      stopGetFromEntity(@mnemonic)
       exit(0)
    end
 
@@ -173,17 +188,12 @@ def main
 	   puts "\nlisteners to the I/Fs have been killed ! }=-) \n\n"
       exit(0)
    end
+ 
+   if @bCheckListeners == true then
+      checkListeners
+      exit(0)
+   end
 
-   if @isReload == true and @launchAllListeners == false then
-      usage
-   end
- 
-   if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) then
-      usage
-   end
- 
-   # CheckModuleIntegrity
-   checkModuleIntegrity
  
    @projectName = DCC::ReadConfigDCC.instance.getProjectName
    @projectID   = DCC::ReadConfigDCC.instance.getProjectID
@@ -206,8 +216,15 @@ def main
          exit(99)
       end
    
-      # Register a listener for this I/F.
-      # Create our lovely listener and start it.
+      ftReadConf   = CTC::ReadInterfaceConfig.instance
+   
+      if ftReadConf.isEnabled4Receiving?(@mnemonic) == false then
+         puts "Interface #{@mnemonic} is not configured for receiving"
+         puts "Check out the flag Enabled4Receiving"
+         puts
+         exit(99)
+      end
+   
       listener = CUC::Listener.new(File.basename($0), @mnemonic, @intervalSeconds,
                               self.method("pollInterface").to_proc)
 
@@ -367,6 +384,7 @@ def stopListeners
    arrPIDs      = Array.new
    @logger.info("Stopping all I/Fs ...")
    arrEntities.each{|x|
+      puts x
       if ftReadConf.isEnabled4Receiving?(x) == true then
          stopListener(x)
       end
@@ -403,6 +421,7 @@ def checkListeners
    bAll  = true
    bNone = true
    arrEntities.each{|x|
+      puts x
        checker = CUC::CheckerProcessUniqueness.new(File.basename($0), x, true)
        if @isDebugMode == true then
           checker.setDebugMode

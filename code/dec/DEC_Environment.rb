@@ -22,11 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.7"
+   @@version = "1.0.8"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.8"  =>    "decListener command line flags fixed", \
       "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
       "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \
       "1.0.5"  =>    "notify2Interface.rb fix sending mail to first address only \n         decCheckConfig shipped in the gem", \
@@ -59,6 +60,18 @@ module DEC
       ENV['RPF_ARCHIVE_ROOT']             = "#{ENV['HOME']}/Sandbox/dec/rpf_archive_root"
       ENV['FTPROOT']                      = "#{ENV['HOME']}/Sandbox/dec/delivery_root"
       ENV['RPFBIN']                       = File.dirname(File.expand_path(__FILE__))
+   end
+
+   # -----------------------------------------------------------------
+
+   def unset_config
+      ENV.delete('DEC_VERSION')
+      ENV.delete('DEC_DB_ADAPTER')
+      ENV.delete('DEC_DATABASE_NAME')
+      ENV.delete('DEC_DATABASE_USER')
+      ENV.delete('DEC_DATABASE_PASSWORD')
+      ENV.delete('DEC_TMP')
+      ENV.delete('DEC_DELIVERY_ROOT')
    end
 
    # -----------------------------------------------------------------
@@ -281,6 +294,10 @@ class DEC_Environment
 
    def wrapper_load_config_developmentRPF
       load_config_developmentRPF
+   end
+
+   def wrapper_unset_config
+      unset_config
    end
 
    def wrapper_print_environment

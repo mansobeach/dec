@@ -194,7 +194,7 @@ class DECTestCase < Test::Unit::TestCase
       end
       
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    # After every test case
 
    def teardown
@@ -216,7 +216,51 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
+
+   def test_commmandline_helpers
+      @@conf.wrapper_unset_config
+      
+      cmd = "decConfigInterface2DB"
+      assert(!system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decListener"
+      assert(!system(cmd), cmd)
+
+      cmd = "decListener -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decListener -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig"
+      assert(!system(cmd), cmd)
+
+      cmd = "decCheckConfig -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface"
+      assert(!system(cmd), cmd)
+
+      cmd = "decGetFromInterface -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -h"
+      assert(system(cmd), cmd)
+
+
+      @@conf.wrapper_load_config_development
+   end
+   # --------------------------------------------------------
 
    def test_parsers
       
@@ -441,6 +485,11 @@ class DECTestCase < Test::Unit::TestCase
    #--------------------------------------------------------
 
    def test_decListener
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
 
       cmd = "decListener -v"
       assert(system(cmd), cmd)
@@ -448,27 +497,47 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decListener -s non_existing_interface"
       assert(!system(cmd), cmd)
    
-      cmd = "decListener -c IERS"
-      assert(!system(cmd), cmd)
-
       dec_tmp = ENV['DEC_TMP']
       ENV.delete('DEC_TMP')
       
-      cmd = "decListener -m IERS --nodb -D -i 60"
+      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
       assert(!system(cmd), cmd)
       
       ENV['DEC_TMP'] = dec_tmp
       
-      cmd = "decListener -m IERS --nodb -D -i 60"
+      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
       assert(system(cmd), cmd)
    
       sleep(10)
-      
-      cmd = "decListener -c IERS"
+
+      cmd = "decListener -s LOCALHOST_NOT_SECURE"
       assert(system(cmd), cmd)
+
+      sleep(10)
+      
+      cmd = "decListener -c"
+      assert(!system(cmd), cmd)
        
       cmd = "decListener -S"
       assert(system(cmd), cmd)
+      
+      sleep(10)
+  
+      cmd = "decListener -a"
+      assert(system(cmd), cmd)
+
+      sleep(10)
+
+      cmd = "decListener -a -R"
+      assert(system(cmd), cmd)
+
+      sleep(10)
+            
+      cmd = "decListener -S"
+      assert(system(cmd), cmd)
+      
+      sleep(20)
+      
    end
 
    #-------------------------------------------------------------

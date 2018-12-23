@@ -30,7 +30,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: addInterfaces2Database.rb,v 1.5 2007/02/06 13:38:56 decdev Exp $
+# Git: $Id: decConfigInterface2DB 1.5 2007/02/06 13:38:56 decdev Exp $
 #
 #########################################################################
 
@@ -41,18 +41,17 @@ require 'rdoc'
 require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
-# Global variables
-@dateLastModification = "$Date: 2007/02/06 13:38:56 $"   # to keep control of the last modification
-                                     # of this script
-@verboseMode      = 0                # execution in verbose mode
-@mnemonic         = ""
-@bShowMnemonics   = false
-@bShowVersion     = false
+
 
 # MAIN script function
 def main   
-   add      = 0
-   process  = 0
+   @verboseMode      = 0                
+   @mnemonic         = ""
+   @bShowMnemonics   = false
+   @bShowVersion     = false
+   @bShowUsage       = false
+   add               = 0
+   process           = 0
    
    opts = GetoptLong.new(
      ["--add", "-a",            GetoptLong::REQUIRED_ARGUMENT],
@@ -67,10 +66,8 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Verbose"       then @verboseMode = 1
-   
-            when "--version"       then @bShowVersion   = true
-   
+            when "--Verbose"       then @verboseMode  = 1
+            when "--version"       then @bShowVersion = true
             when "--add" then
                add = 1
                @mnemonic = arg         
@@ -79,11 +76,9 @@ def main
                process = 1
                @process = arg
    
-            when "--help"          then   usage
-                                
-            when "--usage"         then   usage
-            
-            when "--Show"          then @bShowMnemonics = true
+            when "--help"          then   @bShowUsage       = true
+            when "--usage"         then   @bShowUsage       = true
+            when "--Show"          then   @bShowMnemonics   = true
          end
       end
    rescue Exception
@@ -98,6 +93,28 @@ def main
       }      
       exit(0)
    end
+
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   if add==1 and process==1 and @bShowMnemonics == false then 
+      usage
+      exit(66)
+   end
+
+   if process==0 and add==0 and @bShowMnemonics == false then 
+      usage
+      exit(66) 
+   end
+   
+   if process==1 and @process!="EXTERNAL" and @bShowMnemonics == false then
+      usage
+      exit(66)
+   end
+
 
    begin
       require 'dec/DEC_DatabaseModel'
@@ -127,15 +144,7 @@ def main
       puts
       exit(0)
    end
- 
-   if add==1 and process==1 then usage end
-
-   if process==0 and add==0 then usage end
    
-   if process==1 and @process!="EXTERNAL" then
-      usage
-   end
-  
    
    # add command line mnemonic to the database
    if add==1 and @mnemonic != "" then
@@ -194,7 +203,6 @@ def usage
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
 #-------------------------------------------------------------
 

@@ -27,7 +27,6 @@ require 'rubygems'
 require 'getoptlong'
 require 'active_record'
 
-require 'rpf/RPF_Migrations'
 require 'dec/DEC_Migrations'
 require 'dec/DEC_Environment'
 
@@ -39,14 +38,22 @@ dbName      = ENV['DEC_DATABASE_NAME']
 dbUser      = ENV['DEC_DATABASE_USER']
 dbPass      = ENV['DEC_DATABASE_PASSWORD']
 
-ActiveRecord::Base.establish_connection(
-                                          :adapter => dbAdapter, \
-                                          :host => "localhost",  \
-                                          :database => dbName,   \
-                                          :username => dbUser, \
-                                          :password => dbPass, \
-                                          :timeout  => 60000
-                                        )
+
+#begin
+#   ActiveRecord::Base.establish_connection(
+#                                          :adapter => dbAdapter, \
+#                                          :host => "localhost",  \
+#                                          :database => dbName,   \
+#                                          :username => dbUser, \
+#                                          :password => dbPass, \
+#                                          :timeout  => 60000
+#                                        )
+#rescue Exception => e
+#   puts e.to_s
+#   puts
+#   puts e.backtrace
+#   puts
+#end
 
 
 # MAIN script function
@@ -54,28 +61,9 @@ def main
 
    include DEC
 
-   ret = checkEnvironmentEssential
-
-   if ret == true then
-      ret = checkEnvironmentDB
-   else
-      checkEnvironmentDB
-      exit(99)
-   end
-
-   if ret == false then
-      exit(99)
-   end
-
-   require 'dec/DEC_DatabaseModel'
-
-   dbAdapter   = ENV['DEC_DB_ADAPTER']
-   dbName      = ENV['DEC_DATABASE_NAME']
-   dbUser      = ENV['DEC_DATABASE_USER']
-   dbPass      = ENV['DEC_DATABASE_PASSWORD']
-
    bUp            = false
    bDown          = false
+   @bCreateDB     = false
    @bUpdate       = false
    @bUsage        = false
    @bShowVersion  = false
@@ -84,6 +72,7 @@ def main
    opts = GetoptLong.new(
      ["--drop-tables",   "-d",      GetoptLong::NO_ARGUMENT],
      ["--create-tables", "-c",      GetoptLong::NO_ARGUMENT],
+     ["--Create-Database", "-C",    GetoptLong::NO_ARGUMENT],     
      ["--update-tables", "-u",      GetoptLong::NO_ARGUMENT],
      ["--rpf", "-r",                GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
@@ -94,7 +83,8 @@ def main
    begin
       opts.each do |opt, arg|
          case opt
-            when "--Debug"             then @isDebugMode    = true      
+            when "--Debug"             then @isDebugMode    = true
+            when "--Create-Database"   then @bCreateDB      = true  
             when "--create-tables"     then @bUp            = true
             when "--drop-tables"       then @bDown          = true
             when "--rpf"               then @bRPF           = true
@@ -122,10 +112,36 @@ def main
       exit(0)
    end
    
+#   if @bCreateDB == true then
+#      puts "Creating database ..."
+#      createDatabase
+#      exit(0)
+#   end
+      
    if @bDown and @bUp then
       usage
       exit(99)
    end
+
+   ret = checkEnvironmentEssential
+
+   if ret == true then
+      ret = checkEnvironmentDB
+   else
+      checkEnvironmentDB
+      exit(99)
+   end
+
+   if ret == false then
+      exit(99)
+   end
+
+   require 'dec/DEC_DatabaseModel'
+
+   dbAdapter   = ENV['DEC_DB_ADAPTER']
+   dbName      = ENV['DEC_DATABASE_NAME']
+   dbUser      = ENV['DEC_DATABASE_USER']
+   dbPass      = ENV['DEC_DATABASE_PASSWORD']
 
    if @isDebugMode == true then
       puts "----------------"
@@ -234,6 +250,8 @@ def main
       
       if @bRPF == true
       
+         require 'rpf/RPF_Migrations'
+      
          if InventoryFile.table_exists?() == false then
             CreateInventoryFile.up
          end
@@ -270,13 +288,13 @@ def main
 
 end
 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 # Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
-   value = `#{"head -11 #{fullpathFile}"}`
+   value = `#{"head -12 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
@@ -284,8 +302,31 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
+def createDatabase
+   dbAdapter   = ENV['DEC_DB_ADAPTER']
+   dbName      = ENV['DEC_DATABASE_NAME']
+   dbUser      = ENV['DEC_DATABASE_USER']
+   dbPass      = ENV['DEC_DATABASE_PASSWORD']
+
+   db_config = {
+	   host: 'localhost',
+	   adapter: 'postgresql',
+	   encoding: 'utf-8',
+	   database: dbName,
+	   schema_search_path: 'public',
+      timeout: 60000
+   }
+
+   db_config = db_config.merge({username: dbUser, password: dbPass})
+
+   ActiveRecord::Base.establish_connection(db_config)
+   
+   ActiveRecord::Base.connection.create_database(db_config[:database])
+   
+end
+# -------------------------------------------------------------
 
 #=====================================================================
 # Start of the main body

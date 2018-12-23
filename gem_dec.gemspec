@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.7'
+  s.version     = '1.0.8'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
 
   s.executables   = [ 
                      'decValidateConfig', \
+                     'decCheckConfig', \
                      'decConfigInterface2DB', \
                      'decGetFromInterface', \
                      'decListener', \
@@ -41,7 +42,7 @@ Gem::Specification.new do |s|
                      'decStats', \
                      'decUnitTests', \
                      'decUnitTests_ncftpput', \
-                     'decUnitTests_ncftpput' \
+                     'decUnitTests_mail' \
                      ]
 
   s.homepage    = 'http://www.deimos-space.com'
@@ -54,8 +55,8 @@ Gem::Specification.new do |s|
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('net-sftp', '~> 2.1')
-  s.add_dependency('net-ssh', '~> 5.0')
-  s.add_dependency('test-unit', '~> 3.2')
+  s.add_dependency('net-ssh', '~> 4.2')
+  s.add_dependency('test-unit', '~> 3.0')
   
   # ----------------------------------------------
   
