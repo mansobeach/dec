@@ -1,0 +1,78 @@
+#########################################################################
+#
+# Git:
+#     Dockerfile.dec    
+#                          $Author: bolf$
+#                          $Date: 2018-11-13T11:54:43+01:00$ 
+#                          $Committer: bolf$
+#                          $Hash: f3afa7c$
+#
+#########################################################################
+#
+# Dockerfile for E2ESPM inputhub host @ ESRIN
+#
+FROM ruby:2.6
+# ================================================
+RUN apt-get update && \
+    apt-get install -y apt-utils && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    net-tools \
+    xml-twig-tools \
+    gnupg \
+    net-tools \
+    gcc \
+    make \
+    p7zip-full \
+    sqlite3 \
+    libsqlite3-dev \
+    exiftool \
+    curl \
+    lsof
+RUN apt-get update \
+  && apt-get install -y postgresql postgresql-contrib \
+  && apt-get install sudo \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update && \
+      apt-get install -y apt-file && \
+      apt-file update && \
+      apt-get install -y vim
+# ------------------------------------------------
+RUN groupadd -g 10001 e2edc && \
+    useradd -u 10001 -ms /bin/bash -g e2edc -d /home/e2edc e2edc
+# ------------------------------------------------    
+RUN gem update
+COPY Gemfile .
+RUN bundle install
+COPY ./gems/dec.gem .
+RUN gem install --local dec.gem
+# ------------------------------------------------
+# ------------------------------------------------
+# ------------------------------------------------
+RUN service postgresql start
+# ------------------------------------------------
+USER postgres
+RUN    /etc/init.d/postgresql start &&\
+    psql --command "CREATE USER e2edc WITH SUPERUSER PASSWORD 'e2edc';"
+USER e2edc
+ENV   DEC_BASE=/home/e2edc/Projects/dec && \
+      DEC_CONFIG=/volumes/dec/config && \
+      DEC_DB_ADAPTER=postgresql && \
+      DEC_DATABASE_NAME=e2edc && \
+      DEC_DATABASE_USER=e2edc && \
+      DEC_DATABASE_PASSWORD=e2edc && \
+      DEC_DELIVERY_ROOT=$HOME/Sandbox/dec/delivery_root && \
+      DEC_TMP=/volumes/dec/tmp && \
+      HOSTNAME=dec && \
+      GEM_HOME=/usr/local/bundle && \
+      PATH="/usr/local/bundle/bin:${PATH}"
+RUN   mkdir -p /home/e2edc/.ssh && \
+      mkdir -p /home/e2edc/Projects/dec/config
+COPY ./oper/e2edc_e2espm_esrin* /tmp/
+COPY ./keys/* /home/e2edc/.ssh/
+COPY profile_dec_postgres /home/e2edc
+#RUN createdb dec -O e2edc e2edc
+EXPOSE 5432
+# Execution entry point
+#CMD ["decListener", "-s"]
