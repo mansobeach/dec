@@ -72,8 +72,8 @@ class Handler_M2TS
       # Handle revised videos name
       # Rx_20130730T174343.m2ts
 
-      if extension != ".m2ts" then         
-         puts "File extension is not handled by #{self.class}::#{__method__.to_s}"
+      if extension != ".m2ts" and extension != ".mp4" then         
+         puts "File extension #{extension} is not handled by #{self.class}::#{__method__.to_s}"
          exit(99)
       end
       # ------------------------------------------      
@@ -85,7 +85,6 @@ class Handler_M2TS
          # that makes fail MiniExiftool wrapper
                         
          mdata    = MiniExiftool.new full_path_name
-         # mdata    = MiniExiftool.new "\"#{full_path_name}\""
          width    = mdata.image_width
          height   = mdata.image_height
          duration = mdata.duration
@@ -94,16 +93,20 @@ class Handler_M2TS
                @type  = "m2ts_sd"
                tStart = Time.new(1980)
             else
-               @type    = "m2ts"
                parser   = CUC::WrapperExifTool.new("\"#{full_path_name}\"", false)
-               tStart   = parser.date_time_original
+               tStart   = nil
+               
+               if extension == ".m2ts" then
+                  @type    = "m2ts"
+                  tStart   = parser.date_time_original
+               end
+               
+               if extension == ".mp4" then
+                  @type    = "mp4"
+                  tStart   = parser.create_date
+               end
+               
             end
-            
-#             puts mdata.file_type
-#             puts mdata.date_time_original
-#             puts mdata.date
-            
-            # puts mdata.mime_type
       rescue MiniExiftool::Error => e
          puts "Error in MINARC::Handler_M2TS"
          $stderr.puts e.message

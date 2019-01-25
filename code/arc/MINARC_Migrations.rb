@@ -79,6 +79,13 @@ class AddNewColumns < ActiveRecord::Migration[5.1]
      add_column :archived_files, :size_in_disk, :integer, {:default=>0, :null=>true}
      add_column :archived_files, :access_counter, :integer, {:default=>0, :null=>true}
   end
+  
+  def change_20181216
+     add_column :archived_files, :name, :string, {:limit=>255, :null=>true}
+     add_index :archived_files, :name
+  end
+  
+  
 end
 
 # =====================================================================
@@ -86,9 +93,17 @@ end
 class AddIndexFilename < ActiveRecord::Migration[5.1]
    def change
       add_index :archived_files, :filename
-      #add_index :filename, :string, :unique => true
    end
 end
+
+# =====================================================================
+
+class AddIndexName < ActiveRecord::Migration[5.1]
+   def change
+      add_index :archived_files, :name
+   end
+end
+
 
 # =====================================================================
 

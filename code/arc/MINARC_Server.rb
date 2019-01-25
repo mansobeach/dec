@@ -143,6 +143,7 @@ class MINARC_Server < Sinatra::Base
       "#{ARC.class_variable_get(:@@version)}"
       
       cmd = "minArcRetrieve -T --noserver"
+      puts cmd
       
       listTypes = `#{cmd}`
 

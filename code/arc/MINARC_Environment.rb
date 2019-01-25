@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.20"
+   @@version = "1.0.21"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.21" =>    "Handler_M2TS updated to handle mp4 files too\n          minArcStore supports deletion of local file upon remote archive", \
       "1.0.20" =>    "inventory updated to keep filename without extension\n          time-out updated when posting files", \
       "1.0.19" =>    "minArcDB creates an index by filename", \
       "1.0.18" =>    "minArcStore remote -L (location directory) used by m2ts/mp4", \

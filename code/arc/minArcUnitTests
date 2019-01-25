@@ -33,15 +33,17 @@ require 'arc/MINARC_Status'
 
 #  0  - test_commmandline_helpers
 #  1  - test_local_minArcStore
-#  2  - test_local_purge
-#  3  - test_remote_delete
-#  4  - test_remote_retrieve
-#  5  - test_remote_api_version
-#  6  - test_remote_api_retrieve_file
-#  7  - test_remote_api_retrieve_type
-#  8  - test_remote_api_delete
-#  9  - test_local_and_remote_status_global
-# 10  - test_handler_m2ts_local
+#  2  - test_local_minArcRetrieve
+#  3  - test_local_purge
+#  4  - test_remote_delete
+#  5  - test_remote_retrieve
+#  6  - test_remote_api_version
+#  7  - test_remote_api_retrieve_file
+#  8  - test_remote_api_retrieve_type
+#  9  - test_remote_api_delete
+# 10  - test_local_and_remote_status_global
+# 11  - test_handler_m2ts_local
+# 12  - test_handler_m2ts_local_mp4
 
 
 class TestCaseStore < Test::Unit::TestCase
@@ -326,6 +328,27 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -D --noserver"
       puts cmd
       assert(system(cmd), "minArcStore")
+   end
+   # --------------------------------------------------------
+
+   def test_local_minArcRetrieve
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      test_local_minArcStore
+      
+      cmd = "minArcRetrieve -T --noserver"
+      puts cmd
+      assert(system(cmd), "minArcRetrieve -T --noserver")
+      
+      cmd = "minArcRetrieve -T"
+      puts cmd
+      assert(system(cmd), "minArcRetrieve -T")   
+      
+      
    end
    # --------------------------------------------------------
 
@@ -628,6 +651,48 @@ class TestCaseStore < Test::Unit::TestCase
 
    end
    # -------------------------------------------------------------
+
+   def test_handler_m2ts_local_mp4
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      @@conf.wrapper_load_config_development
+      
+      cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.mp4 -D --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcRetrieve -t mp4 -l --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      dir1 = "1.#{__method__.to_s}"
+      
+      begin      
+         FileUtils.mkdir(dir1)
+      rescue Errno::EEXIST => e
+      
+      end
+
+      pwd = Dir.pwd
+      
+      Dir.chdir(dir1)
+      
+      cmd = "minArcRetrieve -f 20181029T114813_000002 --noserver -L #{Dir.pwd}"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      Dir.chdir(pwd)   
+   
+      cmd = "\\rm -rf #{dir1}*"
+      system(cmd)
+
+   end
+   # -------------------------------------------------------------
+
 
 end
 

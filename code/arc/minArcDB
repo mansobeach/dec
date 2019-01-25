@@ -143,7 +143,18 @@ def main
       else
          puts "Index on filename already exists :-)"
       end
+
+      if ActiveRecord::Base.connection.index_exists?(:archived_files, :name) == false
+         # migration3 = AddNewColumns.new
+         # migration3.change_20181216
+         migration3 = AddIndexName.new
+         migration3.change
+      else
+         puts "Index on name already exists :-)"
+      end
+      
       exit(0)
+      
    end 
  
  

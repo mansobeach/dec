@@ -22,7 +22,7 @@ require 'exiftool'
 
 require 'cuc/Converters'
 require 'cuc/WrapperExifTool'
-require 'minarc/MINARC_DatabaseModel'
+require 'arc/MINARC_DatabaseModel'
 
 include CUC::Converters
 
@@ -40,7 +40,7 @@ class Handler_MP4
    #------------------------------------------------
 
    # Class constructor
-   def initialize (full_path_name, destination = nil)
+   def initialize (full_path_name, destination = nil, args = {})
       full_path   = File.dirname(full_path_name)
       @filename   = File.basename(full_path_name)
       basename    = File.basename(full_path_name, ".*")
@@ -103,6 +103,18 @@ class Handler_MP4
       
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
       @archive_path  = "#{archRoot}/#{@type}/#{year}"
+      
+      @size          = File.size(@full_path_filename)
+      @size_original = File.size(@full_path_filename)
+      result         = `du -hs #{@full_path_filename}`
+      
+      begin
+         @size_in_disk  = Filesize.from("#{result.split(" ")[0]}iB").to_int
+      rescue Exception => e
+         @size_in_disk  = 0
+      end
+      
+      
       
       if destination != nil then
          if destination.slice(0,1) == "/" then

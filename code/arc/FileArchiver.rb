@@ -259,24 +259,34 @@ class FileArchiver
             
    end
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
+   #
    
    def remote_archive(full_path_file, fileType, bDelete, destination)
-      
-      # puts "#{__method__.to_s}"
-      
       arc = ARC::MINARC_Client.new(@isDebugMode)
-      
-      # arc.setDebugMode
-
       ret = arc.storeFile(full_path_file, fileType, bDelete, destination)
 
       if ret == true then
          puts "(Archived) : " << File.basename(full_path_file, ".*")
       end
 
-      return ret
+      # -------------------------------------------
+      # Delete Source file if requested
 
+      if bDelete then
+         cmd = "\\rm -rf #{full_path_file}"
+         if @isDebugMode then
+            puts cmd
+         end
+         retVal = system(cmd)
+         if retVal == false then
+            puts "WARNING : Could not delete source file ! :-("
+            puts full_path_file
+            puts
+         end
+      end
+      # -------------------------------------------
+      return ret
    end
    #--------------------------------------------------------
    #

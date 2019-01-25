@@ -292,23 +292,27 @@ def main
    # Check some flags and combinations
 
    if @filename == "" and @bListOnly == false and archive_date == nil and @full_path_target == "" and bShowFileTypes == false then
+      puts "exit1"
       usage
       exit(66)
    end
 
  
-   if @bDelete == true and @bListOnly == true then
+   if @bDelete == true and @bListOnly == true and bShowFileTypes == false then
+      puts "exit2"
       usage
       exit(66)
    end
 
-   if @bListOnly == true and @full_path_target != "" then
+   if @bListOnly == true and @full_path_target != "" and bShowFileTypes == false then
+      puts "exit3"
       usage
       exit(66)
    end
 
 
    if @filename != "" and @filetype != "" and bGetAllFiles == false and bShowFileTypes == false then
+      puts "exit4"
       usage
       exit(66)
    end

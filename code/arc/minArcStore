@@ -35,7 +35,7 @@
 # -d flag:
 #
 # Optional flag, stands for "--delete".
-# This flag is used to delete specified source file after a successful Archiving.
+# This flag is used to delete specified source file upon a successful Archiving.
 # If file is not archived successfully it is not deleted. This flag is not compatible with -m flag.
 # 
 #
