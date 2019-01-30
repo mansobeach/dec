@@ -22,11 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.8"
+   @@version = "1.0.9dev"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.9"  =>    "working version", \
       "1.0.8"  =>    "decListener command line flags fixed", \
       "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
       "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \

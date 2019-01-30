@@ -218,11 +218,17 @@ private
       filename       = File.basename(full_path_name, ".*")
       full_path      = File.dirname(full_path_name)
       
+      if File.exist?("#{full_path}/#{filename}.7z") == true then
+         @full_path_filename  = "#{full_path}/#{filename}.7z"
+         return
+      end
+      
       # Ubuntu  
       cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} > /dev/null"
-             
+      
+      # MacOS       
       # cmd = "7za a #{full_path}/#{filename}.7z #{full_path_name} -sdel"
-      #puts cmd
+     
       ret = system(cmd)
       
       if ret == false then
@@ -237,7 +243,7 @@ private
       end
             
       @full_path_filename  = "#{full_path}/#{filename}.7z"
-      
+            
    end
 
    #-------------------------------------------------------------

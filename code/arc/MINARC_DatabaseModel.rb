@@ -15,6 +15,7 @@
 #########################################################################
 
 require 'rubygems'
+require 'json'
 require 'active_record'
 require 'activerecord-import'
 
@@ -73,6 +74,28 @@ class ArchivedFile < ActiveRecord::Base
    validates_presence_of   :archive_date
 
 
+   # --------------------------------------------------------
+   
+   def json_introspection
+      return JSON.pretty_generate(hash_introspection.to_s)
+   end
+   # --------------------------------------------------------
+   
+   def hash_introspection
+      hFile = Hash.new
+      hFile['name']              = self.name
+      hFile['filename']          = self.filename
+      hFile['path']              = self.path
+      hFile['filetype']          = self.filetype
+      hFile['size']              = self.size
+      hFile['size_original']     = self.size_original
+      hFile['size_in_disk']      = self.size_in_disk
+      hFile['archive_date']      = self.archive_date
+      hFile['last_access_date']  = self.last_access_date
+      hFile['access_counter']    = self.access_counter
+      hFile['info']              = self.info
+      return hFile
+   end
    # --------------------------------------------------------
    
    def print_introspection

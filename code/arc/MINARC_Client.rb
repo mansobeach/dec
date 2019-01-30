@@ -162,6 +162,18 @@ class MINARC_Client
    end
    # ------------------------------------------------
    
+   def statusFileName(filename)
+      url = "#{@minArcServer}#{API_URL_STAT_FILENAME}/#{filename}"
+      if @isDebugMode == true then
+         puts
+         puts "MINARC_Client::statusFileName => #{url}"
+         puts
+      end
+      # return JSON.parse(getURL(url, @isDebugMode))
+      return getURL(url, @isDebugMode) 
+   end
+   # ------------------------------------------------
+   
 private
 
    # -------------------------------------------------------------

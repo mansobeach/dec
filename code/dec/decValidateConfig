@@ -84,6 +84,7 @@ def main
 
    include DEC
 
+   @isDebugMode      = false
    @bIncoming        = false
    @bEntities        = false
    @bMail            = false
@@ -106,6 +107,7 @@ def main
      ["--general", "-g",         GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
     
@@ -113,6 +115,7 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--version"  then @bShowVersion      = true
+            when "--Debug"    then @isDebugMode       = true
             when "--help"     then @bShowUsage        = true
             when "--incoming" then @bIncoming         = true
             when "--outgoing" then @bOutgoing         = true
@@ -145,14 +148,14 @@ def main
  
    if @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
       usage
-      exit(99)
+      exit(66)
    end
 
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
-      exit(99)
+      exit(66)
    end
 
    bReturn = true
@@ -297,7 +300,15 @@ def validate (fileName)
 
    cmd = "xmllint --schema #{rootPath}/#{fileName}.xsd #{ENV['DEC_CONFIG']}/#{fileName}.xml --noout"
 
+   if @isDebugMode == true then
+      puts cmd
+   end
+
    ret = system(cmd)
+   
+   if ret == false then
+      puts "Fail schema check for #{fileName}"
+   end
    
    return ret   
 end

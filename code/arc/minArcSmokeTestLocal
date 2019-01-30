@@ -24,15 +24,16 @@ require 'arc/MINARC_Client'
 # - minArcServer is running
 
 #  1   - test_localcmd_store_plugin_S2PDGS
-#  2   - test_localcmd_retrieve_list
-#  3   - test_localcmd_retrieve_file
-#  4   - test_localcmd_minArcRetrieve_NEW_Files
-#  5   - test_localcmd_retrieve_non_existing_file
-#  6   - test_local_cmd_get_filetypes
-#  6   - test_localcmd_delete
-#  7   - test_localcmd_delete_nonexisting_file
-#  8   - test_localcmd_retrieve_file_2_consumers
-#  9   - test_localcmd_store
+#  2   - test_localcmd_status_filename
+#  3   - test_localcmd_retrieve_list
+#  4   - test_localcmd_retrieve_file
+#  5   - test_localcmd_minArcRetrieve_NEW_Files
+#  6   - test_localcmd_retrieve_non_existing_file
+#  7   - test_local_cmd_get_filetypes
+#  8   - test_localcmd_delete
+#  9   - test_localcmd_delete_nonexisting_file
+# 10   - test_localcmd_retrieve_file_2_consumers
+# 11   - test_localcmd_store
 
 # need to distinguish error cases from curl (server not running) from file not found
 
@@ -44,7 +45,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    Test::Unit.at_start do      
       puts
@@ -67,7 +68,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
             
    end
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    Test::Unit.at_exit do
       puts "clean archive of files used during smoke tests"
@@ -82,23 +83,20 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       system(cmd)      
    end
    
-   #--------------------------------------------------------   
+   # --------------------------------------------------------   
    
    # Setup before every test-case
    #
    def setup
       # load_config_development
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    # After every test case
 
    def teardown
       puts "end of test-case"
    end
-   #--------------------------------------------------------
-
-
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    def test_localcmd_store_plugin_S2PDGS
       puts __method__.to_s
@@ -109,7 +107,8 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       
       prevDir = Dir.pwd     
       Dir.chdir(@@testDataDir)
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      cmd = "echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      system(cmd)
       Dir.chdir(prevDir)
 
       
@@ -120,9 +119,23 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
-   #--------------------------------------------------------
+   def test_localcmd_status_filename
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)      
+   end
+
+   # --------------------------------------------------------
 
    def test_localcmd_retrieve_list
       puts __method__.to_s
@@ -135,9 +148,9 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       assert(system(cmd), cmd)
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    def test_localcmd_retrieve_file
       puts __method__.to_s
@@ -175,7 +188,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    def test_localcmd_minArcRetrieve_NEW_Files
       puts __method__.to_s
@@ -226,11 +239,13 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
 
 
       Dir.chdir(prev_dir)
-      Dir.rmdir(test_dir)
+      
+      cmd = "\\rm -rf #{test_dir}"
+      system(cmd)
 
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    # verify exit code 99 when file does not exist
    def test_localcmd_retrieve_non_existing_file
@@ -244,7 +259,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       assert(!system(cmd), "#{cmd} => ${$?}")      
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
    # get locally all filetypes
    
@@ -258,7 +273,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       cmd = "minArcRetrieve -T --noserver"
       assert(system(cmd), cmd)
    end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
    def test_localcmd_delete
@@ -272,10 +287,10 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       assert(system(cmd), "minArcDelete")
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    def test_localcmd_delete_nonexisting_file
       puts __method__.to_s
@@ -289,9 +304,9 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       assert(!system(cmd), "minArcDelete non existing file")
    end
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    # (same $PWD and same file retrieved into different locations)
    
    def test_localcmd_retrieve_file_2_consumers
@@ -352,7 +367,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
    end
 
 
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
 #   def test_localcmd_store
@@ -373,16 +388,16 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
 #
 #   end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end
 
 
-#=====================================================================
+# =====================================================================
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 
 

@@ -160,17 +160,22 @@ def main
       end
    end
 
+   # -------------------------------------------------------
 
    if @filename != "" then
-      fileStatus = ARC::FileStatus.new(@filename)
+      fileStatus = ARC::FileStatus.new(@filename, @bNoServer)
 
       if @isDebugMode == true then
          fileStatus.setDebugMode
       end
-      ret = fileStatus.statusFile
       
+      ret = fileStatus.statusFileName(@filename)
+     
       if ret == false then
          exit(99)
+      else
+         puts ret
+         exit(0)
       end
    end
 

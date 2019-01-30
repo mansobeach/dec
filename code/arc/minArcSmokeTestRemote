@@ -24,12 +24,13 @@ require 'arc/MINARC_Client'
 # - minArcServer is running
 
 #  1   - test_remotecmd_store_plugin_S2PDGS
-#  2   - test_remotecmd_retrieve_list
-#  3   - test_remotecmd_retrieve_file
-#  4   - test_remotecmd_retrieve_non_existing_file
-#  5   - test_remotecmd_delete
-#  6   - test_remotecmd_delete_nonexisting_file
-#  7   - test_remotecmd_retrieve_file_2_consumers
+#  2   - test_remotecmd_status_filename
+#  3   - test_remotecmd_retrieve_list
+#  4   - test_remotecmd_retrieve_file
+#  5   - test_remotecmd_retrieve_non_existing_file
+#  6   - test_remotecmd_delete
+#  7   - test_remotecmd_delete_nonexisting_file
+#  8   - test_remotecmd_retrieve_file_2_consumers
 
 # need to distinguish error cases from curl (server not running) from file not found
 
@@ -97,6 +98,7 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts "MINARC_SmokeTests::#{__method__.to_s}"
       puts
       
+      # Delete file just in case
       cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")}"
       puts cmd
       system(cmd)
@@ -106,8 +108,7 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       Dir.chdir(prevDir)
 
-
-      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d -D"
+      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d"
       puts cmd
       assert(system(cmd), "minArcStore")
    end
@@ -116,6 +117,22 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
    #--------------------------------------------------------
 
    #--------------------------------------------------------
+   def test_remotecmd_status_filename
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      test_remotecmd_store_plugin_S2PDGS
+      
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")}"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+   end
+
+   # -------------------------------------------------------------
 
    #--------------------------------------------------------
 
@@ -145,7 +162,7 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_SmokeTests::#{__method__.to_s}"
       puts
-      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")}"
+      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -U"
       puts
       puts cmd
       puts
@@ -156,9 +173,6 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       assert(arr.empty? == false)
       
       FileUtils.rm(arr[0])
-      
-      # puts arr[0]
-      
    end
 
    #--------------------------------------------------------
@@ -247,6 +261,8 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts
       puts "precondition end"
       puts "----------------------------"
+      
+      sleep(10)
          
       dir1 = "1.#{__method__.to_s}"
       dir2 = "2.#{__method__.to_s}"
@@ -255,7 +271,7 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
          FileUtils.mkdir(dir1)
          FileUtils.mkdir(dir2)
       rescue Errno::EEXIST => e
-      
+         puts e.to_s
       end
    
       cmd1 = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -L #{Dir.pwd}/#{dir1} -D"
@@ -265,6 +281,9 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       puts cmd2
    
       pid1 = spawn(cmd1)
+      
+      sleep(10)
+      
       pid2 = spawn(cmd2)   
  
       arr = Process.waitall

@@ -15,6 +15,9 @@
 #########################################################################
 
 require 'filesize'
+require 'json'
+
+require 'arc/MINARC_Client'
 
 module ARC
 
@@ -23,21 +26,65 @@ class FileStatus
    #-------------------------------------------------------------   
    
    # Class contructor
-   def initialize(filename = nil)
+   def initialize(filename = nil, bNoServer = false)
+#      puts "FileStatus::initialize"
+#      puts filename
+#      puts bNoServer
+      
       @filename     = filename
+      
+      if ENV['MINARC_SERVER'] and bNoServer == false then
+         @bRemoteMode = true
+      else
+         @bRemoteMode = false
+         require 'arc/MINARC_DatabaseModel'
+      end
+      
       checkModuleIntegrity
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "FileStatus debug mode is on"
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   def statusFile
-      status
+   def statusFileName(filename)
+      if @bRemoteMode == true then
+      
+         if @isDebugMode == true then
+            puts "Remote mode is true"
+         end
+      
+         arc = ARC::MINARC_Client.new
+      
+         if @isDebugMode == true then
+            arc.setDebugMode
+         end
+         
+         return arc.statusFileName(filename)
+      
+      else
+      
+         if @isDebugMode == true then
+            puts "Remote mode is false"
+         end
+      
+         aFile = queryInventoryByName(filename)
+         if aFile == nil then
+            return false
+         end
+         
+         if @isDebugMode == true then
+            puts "----------------------------------"
+            aFile.print_introspection
+            puts "----------------------------------"
+         end
+         
+         return aFile.hash_introspection
+      end
    end
    #-------------------------------------------------------------
 
@@ -238,7 +285,7 @@ private
       @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
       return
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def queryInventory
       if @filename == nil then
@@ -260,7 +307,42 @@ private
       end
       return aFile
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+   
+   def queryInventoryByName(filename)
+      aFile = ArchivedFile.find_by_filename(filename)
+      if !aFile then
+      
+         aFile = ArchivedFile.where("name LIKE ?", "%#{File.basename(filename, ".*")}%") #.to_sql
+         
+         if aFile == nil then
+            puts
+            puts "#{filename} not present in the archive :-|"
+            puts
+            return false
+         else
+            return aFile[0]
+         end
+      end
+      return aFile   
+   end
+   # -------------------------------------------------------------
+   
+   def remote_status_filename(filename)
+      if @isDebugMode == true then
+         puts "FileStatus::#{__method__.to_s}"
+      end
+      arc = ARC::MINARC_Client.new
+      if @isDebugMode == true then
+         arc.setDebugMode
+      end
+            
+      ret = arc.statusFileName(filename)
+
+      return ret
+            
+   end
+   # -------------------------------------------------------------
 
 end # class
 

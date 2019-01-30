@@ -35,15 +35,17 @@ require 'arc/MINARC_Status'
 #  1  - test_local_minArcStore
 #  2  - test_local_minArcRetrieve
 #  3  - test_local_purge
-#  4  - test_remote_delete
-#  5  - test_remote_retrieve
-#  6  - test_remote_api_version
-#  7  - test_remote_api_retrieve_file
-#  8  - test_remote_api_retrieve_type
-#  9  - test_remote_api_delete
-# 10  - test_local_and_remote_status_global
-# 11  - test_handler_m2ts_local
-# 12  - test_handler_m2ts_local_mp4
+#  4  - test_local_status_filename
+#  5  - test_remote_status_filename
+#  6  - test_remote_delete
+#  7  - test_remote_retrieve
+#  8  - test_remote_api_version
+#  9  - test_remote_api_retrieve_file
+# 10  - test_remote_api_retrieve_type
+# 11  - test_remote_api_delete
+# 12  - test_local_and_remote_status_global
+# 13  - test_handler_m2ts_local
+# 14  - test_handler_m2ts_local_mp4
 
 
 class TestCaseStore < Test::Unit::TestCase
@@ -86,10 +88,21 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       puts
  
-      puts "call start teardown"
-      self.teardown
-      puts "call end teardown"
+#      puts "call start teardown"
+#      self.teardown
+#      puts "call end teardown"
 
+
+      begin
+         cmd = "minArcDB -d"
+         puts cmd
+         ret = system(cmd)
+
+         cmd = "minArcDB -c"
+         puts cmd
+         ret = system(cmd)
+      rescue
+      end
 
       begin
          cmd = "minArcPurge -Y"
@@ -98,12 +111,7 @@ class TestCaseStore < Test::Unit::TestCase
       rescue
       end
 
-      begin
-         cmd = "minArcDB -d"
-         puts cmd
-         ret = system(cmd)
-      rescue
-      end
+
 
 =begin
       puts
@@ -129,22 +137,22 @@ class TestCaseStore < Test::Unit::TestCase
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
       system("rm -f #{@@testDataDir}/20110204T193316_000001.m2ts")
 
-      prevDir = Dir.pwd     
+      @@prevDir = Dir.pwd     
       Dir.chdir(@@testDataDir)
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      Dir.chdir(prevDir)
+      Dir.chdir(@@prevDir)
 
       system("minArcServer -k")
       prevDir = Dir.pwd
-      Dir.chdir(ENV['MINARC_TMP'])       
+      Dir.chdir(ENV['MINARC_TMP'])
+      
+            
       puts "init server"
       FileUtils.rm_f("#{ENV['MINARC_TMP']}/minarc_server.out")
       @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
       Dir.chdir (prevDir)
       puts @serverPID
-      
-      
-      
+            
    end
    
    # --------------------------------------------------------
@@ -155,6 +163,8 @@ class TestCaseStore < Test::Unit::TestCase
       puts "Killing MINARC_Server"
       cmd = "minArcServer -k"
       system(cmd)
+      
+      Process.kill(9, @serverPID)
       
       cmd = "\\rm -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336*"
       system(cmd)
@@ -176,16 +186,19 @@ class TestCaseStore < Test::Unit::TestCase
       
       @path = "#{ENV['MINARC_BASE']}/code/arc"
       
-      cmd = "minArcDB -c"
-      ret = system(cmd)
+      Dir.chdir(@@testDataDir)
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
       
-      if ret == false then
-         puts
-         puts "Error when creating the minarc inventory ! :-("
-         puts
-         # exit(99)
-      end
+      Dir.chdir(@@prevDir)
       
+      Dir.chdir(ENV['MINARC_TMP'])       
+
+      puts
+      puts Dir.pwd
+      puts
+      puts "END OF MINARC_UnitTests::#{__method__.to_s}"
+      puts
    end
    # --------------------------------------------------------
    # After every test case
@@ -209,16 +222,10 @@ class TestCaseStore < Test::Unit::TestCase
          puts
          exit(99)
       end
+      puts
+      puts "END OF MINARC_UnitTests::#{__method__.to_s}"
+      puts
 
-      cmd = "minArcDB -d"
-      puts cmd
-      ret = system(cmd)
-       
-      if ret == false then
-         puts "Error when dropping the minarc inventory ! :-("
-         puts
-         exit(99)
-      end
    end
    # --------------------------------------------------------
 
@@ -313,9 +320,9 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_load_config_development
       
    end
-
+   
    # -------------------------------------------------------------
-
+   
    def test_local_minArcStore
       puts __method__.to_s
       puts
@@ -325,9 +332,11 @@ class TestCaseStore < Test::Unit::TestCase
       
       @@conf.wrapper_load_config_development
       
-      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -D --noserver"
+      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} --noserver"
       puts cmd
       assert(system(cmd), "minArcStore")
+      
+      system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
    end
    # --------------------------------------------------------
 
@@ -347,8 +356,7 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcRetrieve -T"
       puts cmd
       assert(system(cmd), "minArcRetrieve -T")   
-      
-      
+
    end
    # --------------------------------------------------------
 
@@ -383,6 +391,45 @@ class TestCaseStore < Test::Unit::TestCase
 
    # -------------------------------------------------------------
 
+   def test_local_status_filename
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      test_local_minArcStore
+
+      puts
+      puts
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)      
+   end
+
+   # -------------------------------------------------------------
+   # -------------------------------------------------------------
+   def test_remote_status_filename
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+            
+      test_local_minArcStore
+            
+      Dir.chdir(@@prevDir)
+      
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} -D"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)  
+   end
+   # -------------------------------------------------------------
+   
    def test_remote_delete
       puts __method__.to_s
       puts
@@ -396,35 +443,47 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_setRemoteModeOnly
       puts
    
-      cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")}"
+      cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")} -D"
       puts cmd
       assert(system(cmd), "minArcDelete")
+      @@conf.wrapper_load_config_development
    end
 
    # -------------------------------------------------------------
-
-   # -------------------------------------------------------------
-
+      
    def test_remote_retrieve
-      puts __method__.to_s
       puts
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-   
+  
       test_local_minArcStore
+      
+      Dir.chdir(@@prevDir)
+      system("\\rm -f #{@@filename1_noext}*") 
+ 
    
       puts "Set environment variables to remote only"
       @@conf.wrapper_setRemoteModeOnly
       puts
    
-      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")}"
+      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -D"
       puts cmd
-      assert(system(cmd), "minArcDelete")
+      assert(system(cmd), cmd)
+            
+      puts Dir.pwd
+      puts      
+      cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.EOF"
+      puts cmd
+      system(cmd)
+      
+      cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.7z"
+      puts cmd
+      system(cmd)
+      
    end
 
-   # -------------------------------------------------------------
-
+   # -------------------------------------------------------------   
    def test_remote_api_version
       puts __method__.to_s
       puts
@@ -474,18 +533,18 @@ class TestCaseStore < Test::Unit::TestCase
                
       arc = ARC::MINARC_Client.new(true)
       arc.setDebugMode
-#
-#      type     = "S2PDGS"
-#      bDelete  = false
-#      
-#      arc.storeFile(@file, type, bDelete)
+      
+      Dir.chdir(@@prevDir)
+      system("rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
 
       dir1 = "1.#{__method__.to_s}"
       
       begin      
          FileUtils.mkdir(dir1)
       rescue Errno::EEXIST => e
-      
+         puts e.to_s
+         puts "Could not create directory in #{Dir.pwd}"
+         puts "Could not create directory #{dir1}"
       end
 
       pwd = Dir.pwd
@@ -496,6 +555,7 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "\\rm -f #{File.basename(@@testFile1, ".*")}*"
       puts cmd
       system(cmd)
+      puts Dir.pwd
 
       assert( \
                arc.retrieveFile(File.basename(@@testFile1, ".*")), \
@@ -510,7 +570,19 @@ class TestCaseStore < Test::Unit::TestCase
       
       Dir.chdir(pwd)
       
-      system("\\rm -rf #{dir1}*")         
+      puts Dir.pwd
+      
+      cmd = "\\rm -rf #{dir1}/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "\\rm -f #{@@filename1_noext}.7z"
+      puts cmd
+      system(cmd)
+      puts
+      puts Dir.pwd
+      puts
+      puts
    end
    # -------------------------------------------------------------
 
@@ -521,10 +593,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
 
-      pwd = Dir.pwd
-
       test_local_minArcStore
-               
+
+      Dir.chdir(@@prevDir)
+
+      pwd = Dir.pwd               
       arc = ARC::MINARC_Client.new(true)
       arc.setDebugMode
 #
@@ -538,7 +611,9 @@ class TestCaseStore < Test::Unit::TestCase
       begin      
          FileUtils.mkdir(dir1)
       rescue Errno::EEXIST => e
-      
+         puts e.to_s
+         puts "Could not create directory in #{Dir.pwd}"
+         puts "Could not create directory #{dir1}"
       end
 
       Dir.chdir(dir1)
@@ -559,7 +634,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       Dir.chdir(pwd)
       
-      system("\\rm -rf #{dir1}*")           
+      system("\\rm -rf #{dir1}/")           
    
    end
    # -------------------------------------------------------------
@@ -592,6 +667,8 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
+      Dir.chdir(@@prevDir)
+      
       test_local_minArcStore
 
       puts
@@ -609,6 +686,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
             
    end
+
    # -------------------------------------------------------------
 
    def test_handler_m2ts_local

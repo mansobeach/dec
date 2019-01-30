@@ -8,11 +8,13 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# CVS: $Id: FileRetriever.rb,v 1.14 2008/11/26 12:40:47 decdev Exp $
+# Git: $Id$: FileRetriever.rb,v 1.14 2008/11/26 12:40:47 decdev Exp $
 #
 # module MINARC
 #
 #########################################################################
+
+require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/FT_PackageUtils'
@@ -140,6 +142,10 @@ class FileRetriever
    def remote_retrieve_by_type(destination, fileType, start, stop, bDelete, bIncStart, bIncStop)
    
       files = remote_list_by_type(fileType)
+    
+      if files == false or files == nil then
+         return false
+      end
      
       retVal = true
      
@@ -316,6 +322,7 @@ class FileRetriever
          arr = Dir["#{filename}*"]
 
          if arr.empty? == true then
+            puts
             puts Dir.pwd
             puts
             puts "#{filename}*"
@@ -328,12 +335,11 @@ class FileRetriever
                puts "Processing #{file} ; destination => #{destination} ; unpack => #{bUnpack}"
             end
             
-#            begin
-#               FileUtils.mv(file, destination)
-#            # rescue Errno::EEXIST => e
-#            rescue Exception => e
-#               puts e.to_s
-#            end
+            begin
+               FileUtils.mv(file, destination)
+            rescue Exception => e
+               # puts e.to_s
+            end
             
             puts "(Retrieved) : " << File.basename(file,File.extname(file))
             

@@ -31,9 +31,13 @@ module WrapperCURL
       
       output = `#{cmd}`
       
-      if $? !=0 then
+      if $? != 0 then
          if isDebugMode == true then
+            puts
             puts "Failed execution of #{cmd} ! :-("
+            puts "Exit code #{$?}"
+            puts output
+            puts 
          end
          return false
       end
@@ -117,6 +121,10 @@ module WrapperCURL
    # Implementation for curl for versions older than 7.21.2 
 
    def getDirtyFile_obsoleteCurl(url, filename, isDebugMode = false)
+      if isDebugMode == true then
+         puts "WrapperCURL::getDirtyFile_obsoleteCurl"
+      end
+   
       # curl -sI  $url | grep -o -E 'filename=.*$' | sed -e 's/filename=//'
       
       cmd = %Q{curl -sI "#{url}" | grep -o -E 'filename=.*$' | sed -e 's/filename=//'}
@@ -127,11 +135,17 @@ module WrapperCURL
       
       filename = `#{cmd}`
       
+#      puts
+#      puts filename
+#      puts
+      
       cmd = %Q{curl -s -o "#{filename.to_s.chop}" -L "#{url}" }
       
-      # puts
-      # puts cmd
-      # puts
+      if isDebugMode == true then
+         puts
+         puts cmd
+         puts
+      end
 
       system(cmd)
       

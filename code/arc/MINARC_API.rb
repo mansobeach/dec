@@ -8,7 +8,7 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# Git: $Id: MINARC_API.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
+# Git: MINARC_API.rb,v $Id$
 #
 # module MINARC
 #
@@ -22,6 +22,7 @@ module ARC
    API_URL_LIST_FILETYPE      = '/dec/arc/minArcList/filetype'
    API_URL_DELETE             = '/dec/arc/minArcDelete'
    API_URL_GET_FILETYPES      = '/dec/arc/filetypes'
+   API_URL_STAT_FILENAME      = '/dec/arc/minArcStatFileName.json/filename'
    API_URL_STAT_FILETYPES     = '/dec/arc/minArcStatFileType.json'
    API_URL_STAT_GLOBAL        = '/dec/arc/minArcStatGlobal.json'
    API_RESOURCE_NOT_FOUND     = 404
