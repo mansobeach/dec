@@ -11,7 +11,7 @@
 # === module Common Transfer Component module WrapperCURL
 #
 # This module contains methods for creating the curl
-# command line statements. 
+# command line parameters. 
 #
 #########################################################################
 
@@ -44,9 +44,11 @@ module WrapperCURL
       return output
    end
    # -------------------------------------------------------------
+   
+   # curl parameters tailored for sending big files
 
    def postFile(url, file, hFormParams, isDebugMode = false)
-      cmd = "curl --max-time 900 -s -X POST "
+      cmd = "curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -X POST "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -84,7 +86,7 @@ module WrapperCURL
    # option -J
 
    def getFile(url, filename, isDebugMode = false)
-      cmd = "curl -s -f -OJ -X GET "
+      cmd = "curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -f -OJ -X GET "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -139,7 +141,7 @@ module WrapperCURL
 #      puts filename
 #      puts
       
-      cmd = %Q{curl -s -o "#{filename.to_s.chop}" -L "#{url}" }
+      cmd = %Q{curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -o "#{filename.to_s.chop}" -L "#{url}" }
       
       if isDebugMode == true then
          puts

@@ -108,6 +108,7 @@ def main
    end
 
    require 'arc/MINARC_Migrations'
+   require 'arc/MINARC_DatabaseModel'
 
    if @bDown then
       begin
@@ -134,8 +135,6 @@ def main
    end
  
    if @bUpdate then
-#      migration1 = AddNewColumns.new
-#      migration1.change
       
       if ActiveRecord::Base.connection.index_exists?(:archived_files, :filename) == false
          migration2 = AddIndexFilename.new
@@ -152,11 +151,16 @@ def main
       else
          puts "Index on name already exists :-)"
       end
+            
+      if ArchivedFile.columns_hash["size_in_disk"].type == :integer then
+         puts "Updating columns type to bigint: size, size_original, size_in_disk, access_counter"
+         migration4 = ModifySizeColumns.new
+         migration4.change
+      end
       
       exit(0)
       
    end 
- 
  
    if @bExport then
       Export2CSV.new

@@ -21,13 +21,15 @@ require 'active_record'
 @dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 
-
 ActiveRecord::Base.establish_connection(  
                                           :adapter    => @dbAdapter, \
                                           :host       => "localhost", \
                                           :database   => @dbName, \
                                           :username   => @dbUser, \
-                                          :password   => @dbPass
+                                          :password   => @dbPass, \
+                                          :timeout    => 100000, \
+                                          :cast       => false, \
+                                          :pool       => 10
                                           )
 
 #=====================================================================
@@ -45,15 +47,15 @@ class CreateArchivedFiles < ActiveRecord::Migration[5.1]
          t.column :filetype,            :string,  :limit => 64
          t.column :path,                :string,  :limit => 255
          t.column :info,                :string,  :limit => 255
-         t.column :size,                :integer
-         t.column :size_in_disk,        :integer
-         t.column :size_original,       :integer
+         t.column :size,                :bigint
+         t.column :size_in_disk,        :bigint
+         t.column :size_original,       :bigint
          t.column :detection_date,      :datetime
          t.column :validity_start,      :datetime
          t.column :validity_stop,       :datetime
          t.column :archive_date,        :datetime
          t.column :last_access_date,    :datetime
-         t.column :access_counter,      :integer, default: 0, null: false
+         t.column :access_counter,      :bigint, default: 0, null: false
          # t.column :deleted              :boolean, default: false, null: false
       end
    end
@@ -104,6 +106,16 @@ class AddIndexName < ActiveRecord::Migration[5.1]
    end
 end
 
+# =====================================================================
+
+class ModifySizeColumns < ActiveRecord::Migration[5.1]
+   def change
+      change_column :archived_files, :size,           :bigint
+      change_column :archived_files, :size_in_disk,   :bigint
+      change_column :archived_files, :size_original,  :bigint
+      change_column :archived_files, :access_counter, :bigint
+   end
+end
 
 # =====================================================================
 

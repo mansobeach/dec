@@ -8,7 +8,7 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# CVS: $Id: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 decdev Exp $
+# Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 decdev
 #
 # module MINARC
 #

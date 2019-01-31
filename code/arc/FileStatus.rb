@@ -267,13 +267,13 @@ private
       bDefined = true
       bCheckOK = true
       
-      if !ENV['MINARC_ARCHIVE_ROOT'] then
+      if !ENV['MINARC_ARCHIVE_ROOT'] and @bRemoteMode == false then
          puts
          puts "MINARC_ARCHIVE_ROOT environment variable is not defined !\n"
          bDefined = false
       end
 
-      if !ENV['MINARC_ARCHIVE_ROOT'] then
+      if !ENV['MINARC_ARCHIVE_ROOT'] and @bRemoteMode == false then
          require 'arc/MINARC_DatabaseModel'
       end
 
@@ -281,9 +281,6 @@ private
          puts("FileDeleter::checkModuleIntegrity FAILED !\n\n")
          exit(99)
       end
-
-      @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
-      return
    end
    # -------------------------------------------------------------
 
