@@ -1,0 +1,33 @@
+detectors:
+
+   BooleanParameter:
+      enabled: false
+
+   ControlParameter:
+      enabled: false
+
+   DataClump:
+      max_copies: 3
+      min_clump_size: 3
+
+   DuplicateMethodCall:
+      allow_calls:
+      - '$?'
+      - 'isDebugMode'
+
+   LongParameterList:
+      enabled: false
+
+   TooManyStatements:
+      enabled: true
+      exclude:
+      - initialize
+      max_statements: 20
+
+   UncommunicativeParameterName:
+      accept:
+      - isDebugMode
+      - hFormParams
+      
+   UncommunicativeMethodName:
+      enabled: false
