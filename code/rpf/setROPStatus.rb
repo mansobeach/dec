@@ -48,7 +48,7 @@ require 'cuc/DirUtils'
 require 'dbm/DatabaseModel'
 
 # Global variables
-@@dateLastModification = "$Date: 2007/01/09 15:27:30 $"   # to keep control of the last modification
+@@dateLastModification = "$Date$"   # to keep control of the last modification
                                        # of this script
 @@debugMode       = 0                  # execution showing Debug Info
 @@mnemonic        = ""

@@ -55,7 +55,7 @@ require 'arc/FileArchiver'
 require 'arc/MINARC_DatabaseModel'
 
 # Global variables
-@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
+@dateLastModification = "$Date$"   # to keep control of the last modification
                                        # of this script
                                        # execution showing Debug Info
 

@@ -49,7 +49,7 @@ require 'ddc/RetrieverFromArchive'
 require 'dbm/DatabaseModel'
 
 # Global variables
-@@dateLastModification = "$Date: 2007/12/03 14:43:05 $"     # to keep control of the last modification
+@@dateLastModification = "$Date$"     # to keep control of the last modification
                                                             # of this script
                                                             # execution showing Debug Info
 

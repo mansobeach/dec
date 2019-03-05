@@ -50,7 +50,7 @@ require 'cuc/CheckerProcessUniqueness'
 
 
 # Global variables
-@@dateLastModification = "$Date: 2007/03/22 17:19:18 $"     # to keep control of the last modification
+@@dateLastModification = "$Date$"     # to keep control of the last modification
                                                             # of this script
                                                             # execution showing Debug Info
 @isDebugMode      = false                  

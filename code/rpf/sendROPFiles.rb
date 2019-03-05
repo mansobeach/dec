@@ -58,7 +58,7 @@ require 'dbm/DatabaseModel'
 require 'rpf/ROPSender'
 
 # Global variables
-@@dateLastModification = "$Date: 2008/07/03 11:34:58 $"     # to keep control of the last modification
+@@dateLastModification = "$Date$"     # to keep control of the last modification
                                                             # of this script
                                                             # execution showing Debug Info
 
