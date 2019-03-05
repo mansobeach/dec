@@ -20,11 +20,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.24"
+   @@version = "1.0.26"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.26" =>    "minArcStore --delete fix in remote mode\n          Fix to minArcRetrieve list with wildcards in remote mode", \
+      "1.0.25" =>    "Server invokes minArcStore with --move flag to avoid copy", \
       "1.0.24" =>    "curl time-outs tailored to send big files in remote mode", \
       "1.0.23" =>    "Database model updated to replace Integer types by BigInt", \
       "1.0.22" =>    "Connection pool limit with ActiveRecord/thin fixed\n          new API function API_URL_STAT_FILENAME implemented", \
@@ -61,6 +63,7 @@ module ARC
       ENV['MINARC_ARCHIVE_ROOT']          = "#{ENV['HOME']}/Sandbox/minarc/archive_root"
       ENV['MINARC_ARCHIVE_ERROR']         = "#{ENV['HOME']}/Sandbox/minarc/error"
       ENV['MINARC_TMP']                   = "#{ENV['HOME']}/Sandbox/minarc/tmp"
+      ENV['TMPDIR']                       = "#{ENV['HOME']}/Sandbox/minarc/tmp"
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
       ENV['MINARC_DATABASE_USER']         = "root"
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
@@ -126,6 +129,17 @@ module ARC
       ENV.delete('MINARC_SERVER')
    end
    # -----------------------------------------------------------------
+   
+   def checkToolsRemoteMode
+      isToolPresent = `which curl`
+   
+      if isToolPresent[0,1] != '/' or $? != 0 then
+         puts "\nMINARC_Environment::checkToolsRemoteMode\n"
+         puts "Fatal Error: curl not present in PATH   :-(\n"
+         return false
+      end
+      return true
+   end
    
 end # module
 
