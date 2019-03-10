@@ -263,12 +263,12 @@ class MINARC_Server < Sinatra::Base
       end
    end
 
-   # ----------------------------------------------------------
-   #
-   # Upload with POST multipart/form-data
-   #
-   # curl -X POST -F 'field1=value1' -F 'field2=value2' -F file=@/tmp/1.plist http://localhost:4567/dec/arc/minArcStore
-
+   ## ----------------------------------------------------------
+   ##
+   ## Upload with POST multipart/form-data
+   ##
+   ## curl -X POST -F 'field1=value1' -F 'field2=value2' -F file=@/tmp/1.plist http://localhost:4567/dec/arc/minArcStore
+   ##
    post ARC::API_URL_STORE do
    
       logger.info "POST #{ARC::API_URL_STORE}/#{params[:file][:filename]}"
@@ -314,15 +314,12 @@ class MINARC_Server < Sinatra::Base
          puts "MINARC_Server::#{cmd}"
       end
    
-      retVal = true
-   
-      retVal = system(cmd)
+      retStr = `#{cmd}`
 
-      if retVal == false then
-         status 500
+      if $? != 0 then
+         "#{retStr}"
+         status API_RESOURCE_ERROR
       end
-   
-      # retVal = %x["#{cmd}"]
       
       #
       # ---------------------------------------------
@@ -330,7 +327,6 @@ class MINARC_Server < Sinatra::Base
       Dir.chdir(prevDir)
       FileUtils.rm_rf(reqDir)
    
-
    end
 
    # =================================================================

@@ -27,4 +27,5 @@ module ARC
    API_URL_STAT_GLOBAL        = '/dec/arc/minArcStatGlobal.json'
    API_RESOURCE_NOT_FOUND     = 404
    API_RESOURCE_FOUND         = 200
+   API_RESOURCE_ERROR         = 500
 end

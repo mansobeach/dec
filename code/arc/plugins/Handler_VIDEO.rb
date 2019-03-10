@@ -65,7 +65,7 @@ class Handler_VIDEO
       ## Handle revised videos name
       ## Rx_20130730T174343.m2ts
 
-      if extension != ".m2ts" and extension != ".mp4" and extension != ".wmv" then         
+      if extension != ".m2ts" and extension != ".mp4" and extension != ".wmv" and extension != ".mkv" then         
          puts "File extension #{extension} is not handled by #{self.class}::#{__method__.to_s}"
          exit(99)
       end
@@ -91,6 +91,11 @@ class Handler_VIDEO
             if width >= 720 and height <= 576 then
                @type  = "m2ts_sd"
                tStart = Time.new(1980)
+               
+               if extension == ".mkv" then
+                  @type    = "mkv_sd"
+                  tStart   = parser.date_time_original
+               end
                
                if extension == ".m2ts" then
                   @type    = "m2ts_sd"

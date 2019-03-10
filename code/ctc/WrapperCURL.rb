@@ -50,7 +50,7 @@ module WrapperCURL
 
    def postFile(url, file, hFormParams, isDebugMode = false)
       ## --silent mode removed
-      cmd = "curl --progress-bar -o upload.txt --max-time 900 --connect-timeout 10 --keepalive-time 12000 -X POST "
+      cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -91,7 +91,7 @@ module WrapperCURL
 
    def getFile(url, filename, isDebugMode = false)
       ## --silent mode commented
-      cmd = "curl --progress-bar --max-time 900 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      cmd = "curl --progress-bar --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
