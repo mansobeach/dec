@@ -18,7 +18,7 @@ require 'rubygems'
 require 'json'
 require 'active_record'
 require 'activerecord-import'
-
+require 'bcrypt'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbName      = ENV['MINARC_DATABASE_NAME']
@@ -26,9 +26,6 @@ dbUser      = ENV['MINARC_DATABASE_USER']
 dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 
-# puts "MINARC_DatabaseModel::before_call_establish_connection"
-
-# @@handler =
 
 ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
@@ -61,6 +58,14 @@ ActiveRecord::Base.establish_connection(
 #
 ## puts "MINARC_DatabaseModel::after_call_establish_connection"
 
+## =====================================================================
+
+class User < ActiveRecord::Base
+   has_secure_password
+end
+
+## =====================================================================
+
 class ArchivedFile < ActiveRecord::Base
 
    validates_presence_of   :name
@@ -72,7 +77,6 @@ class ArchivedFile < ActiveRecord::Base
    validates_presence_of   :filetype
 
    validates_presence_of   :archive_date
-
 
    # --------------------------------------------------------
    

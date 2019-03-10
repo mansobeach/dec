@@ -32,7 +32,25 @@ ActiveRecord::Base.establish_connection(
                                           :pool       => 10
                                           )
 
-#=====================================================================
+## =====================================================================
+
+class CreateUsers < ActiveRecord::Migration[5.1]
+   def self.up
+      create_table(:users) do |t|
+         t.column :name,                :string,  :limit => 255, :unique => true
+         t.column :password_digest,     :string
+         t.column :created_at,          :datetime
+         t.column :updated_at,          :datetime
+      end
+   end
+
+   def self.down
+      drop_table :users
+   end
+
+end
+
+## =====================================================================
 
 class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    

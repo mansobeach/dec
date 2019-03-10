@@ -35,7 +35,7 @@ require 'arc/MINARC_DatabaseModel'
 
 include CUC::Converters
 
-class Handler_M2TS
+class Handler_VIDEO
    
    attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename
    

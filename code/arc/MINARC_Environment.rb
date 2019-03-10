@@ -20,11 +20,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.26"
+   @@version = "1.0.27"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.27" =>    "Handler_VIDEO replaces M2TS & updated to handle wmv files\n", \
       "1.0.26" =>    "minArcStore --delete fix in remote mode\n          Fix to minArcRetrieve list with wildcards in remote mode", \
       "1.0.25" =>    "Server invokes minArcStore with --move flag to avoid copy", \
       "1.0.24" =>    "curl time-outs tailored to send big files in remote mode", \

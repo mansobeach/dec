@@ -16,12 +16,13 @@
 #########################################################################
 
 require 'shell'
+require 'fileutils'
 
 module CTC
 
 module WrapperCURL
   
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    #
    def getURL(url, isDebugMode = false)
       cmd = "curl -f -s -X GET #{url}"
@@ -43,12 +44,13 @@ module WrapperCURL
       end
       return output
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    
-   # curl parameters tailored for sending big files
+   ## curl parameters tailored for sending big files
 
    def postFile(url, file, hFormParams, isDebugMode = false)
-      cmd = "curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -X POST "
+      ## --silent mode removed
+      cmd = "curl --progress-bar -o upload.txt --max-time 900 --connect-timeout 10 --keepalive-time 12000 -X POST "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -72,6 +74,8 @@ module WrapperCURL
          puts
       end
       
+      FileUtils.rm_f("upload.txt")
+      
       if $? != 0 then
          return false
       else
@@ -79,14 +83,15 @@ module WrapperCURL
       end
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Method requires curl 7.21.2 or later to make usage of 
-   #  --remote-header-name / -J 
-   # option -J
+   ## Method requires curl 7.21.2 or later to make usage of 
+   ##  --remote-header-name / -J 
+   ## option -J
 
    def getFile(url, filename, isDebugMode = false)
-      cmd = "curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -f -OJ -X GET "
+      ## --silent mode commented
+      cmd = "curl --progress-bar --max-time 900 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -118,9 +123,9 @@ module WrapperCURL
       end
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Implementation for curl for versions older than 7.21.2 
+   ## Implementation for curl for versions older than 7.21.2 
 
    def getDirtyFile_obsoleteCurl(url, filename, isDebugMode = false)
       if isDebugMode == true then
@@ -141,7 +146,8 @@ module WrapperCURL
 #      puts filename
 #      puts
       
-      cmd = %Q{curl --max-time 900 --connect-timeout 10 --keepalive-time 600 -s -o "#{filename.to_s.chop}" -L "#{url}" }
+      ## --silent mode removed
+      cmd = %Q{curl --progress-bar --max-time 900 --connect-timeout 10 --keepalive-time 12000 -o "#{filename.to_s.chop}" -L "#{url}" }
       
       if isDebugMode == true then
          puts
@@ -165,7 +171,7 @@ module WrapperCURL
       end
       
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
 end # module FTPClientCommands
 

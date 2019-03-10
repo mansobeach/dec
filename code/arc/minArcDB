@@ -113,6 +113,7 @@ def main
    if @bDown then
       begin
          CreateArchivedFiles.down
+         CreateUsers.down
          if File.exist?(@dbName) == true then
             File.delete(@dbName)
          end
@@ -125,6 +126,7 @@ def main
    if @bUp then
       begin
          CreateArchivedFiles.up
+         CreateUsers.up
          puts "Right !"
          puts "Bye"
       rescue Exception => e

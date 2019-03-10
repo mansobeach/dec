@@ -20,11 +20,11 @@ include FileUtils::Verbose
 include ARC
 
 
-# ----------------------------------------------------------
-#
-# GENERAL configuration
-#
-#
+## ----------------------------------------------------------
+##
+## GENERAL configuration
+##
+##
 
 class MINARC_Server < Sinatra::Base
 
@@ -97,8 +97,8 @@ class MINARC_Server < Sinatra::Base
    end
    # ----------------------------------------------------------
 
-   # =================================================================
-   #
+   ## =================================================================
+   ##
    
    get "#{API_URL_RETRIEVE}/:filename" do |filename|
       msg = "GET #{API_URL_RETRIEVE} : get #{params[:filename]}"
@@ -137,21 +137,21 @@ class MINARC_Server < Sinatra::Base
    # =================================================================
 
 
-   # =================================================================
-   #
-   # Get all filetypes archived
+   ## =================================================================
+   ##
+   ## Get all filetypes archived
    
    get ARC::API_URL_GET_FILETYPES do
       msg = "GET #{ARC::API_URL_GET_FILETYPES} : get archived filetypes"
       logger.info msg
       
-      if settings.isDebugMode == true then
-         puts msg
-      end
       "#{ARC.class_variable_get(:@@version)}"
       
       cmd = "minArcRetrieve -T --noserver"
-      puts cmd
+      
+      if settings.isDebugMode == true then
+         logger.debug cmd
+      end
       
       listTypes = `#{cmd}`
 
@@ -163,38 +163,32 @@ class MINARC_Server < Sinatra::Base
       end
    end
        
-   # =================================================================
-   #
-   #
-   # GET version
-   #
-   # curl -X GET http://localhost:4567/dec/arc/version
+   ## =================================================================
+   ##
+   ## GET version
+   ##
+   ## curl -X GET http://localhost:4567/dec/arc/version
 
    get ARC::API_URL_VERSION do
       msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC.class_variable_get(:@@version)}"
-      logger.info msg
-      
-      if settings.isDebugMode == true then
-         puts msg
-      end
+      logger.info msg      
       "#{ARC.class_variable_get(:@@version)}"
    end
    
-   # =================================================================
-   #
-   # minArcRetrieve_LIST FILENAMES
-   #
+   ## =================================================================
+   ##
+   ## minArcRetrieve_LIST FILENAMES
+   ##
    get "#{API_URL_LIST_FILENAME}/:filename" do |filename|
-      cmd = "minArcRetrieve -f #{params[:filename]} --noserver -l"
+      msg = "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"      
+      logger.info msg
+      
+      cmd = "minArcRetrieve -f \'#{params[:filename]}\' --noserver -l"
             
       if settings.isDebugMode == true then 
-         puts "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"
-         puts "MINARC_Server::#{cmd}"
+         msg = "MINARC_Server::#{cmd}"
+         logger.debug msg
       end
-
-#      puts
-#      puts cmd
-#      puts
 
       listFiles = `#{cmd}`
 
@@ -202,9 +196,9 @@ class MINARC_Server < Sinatra::Base
 #      puts $?
 #      puts
 
-#      puts
-#      puts listFiles
-#      puts
+      if settings.isDebugMode == true then
+         logger.debug listFiles
+      end
       
       if $? == 0 then
          "#{listFiles}"
@@ -213,13 +207,11 @@ class MINARC_Server < Sinatra::Base
          status API_RESOURCE_NOT_FOUND
       end
    end
-   # ----------------------------------------------------------
-
-   # =================================================================
    
-   #
-   # minArcStatus by filename
-   #
+   ## =================================================================
+   ##
+   ## minArcStatus by filename
+   ##
    get "#{API_URL_STAT_FILENAME}/:filename" do |filename|
       msg = "GET #{API_URL_STAT_FILENAME} : get #{params[:filename]}"
       logger.info msg
@@ -249,10 +241,10 @@ class MINARC_Server < Sinatra::Base
       ret.to_json
    end
 
-   # =================================================================
-   #
-   # minArcRetrieve_LIST FILETYPES
-   #
+   ## =================================================================
+   ##
+   ## minArcRetrieve_LIST FILETYPES
+   ##
    get "#{API_URL_LIST_FILETYPE}/:filetype" do |filetype|
       cmd = "minArcRetrieve -t #{params[:filetype]} --noserver -l"
             
@@ -561,14 +553,15 @@ class MINARC_Server < Sinatra::Base
       "List of params \n#{params[:param1]}\n#{params[:param2]}\n#{params[:param3]}\n"
    end
 
-   # ----------------------------------------------------------
-
-   # Release the activerecord connection upon every request
+   ## ----------------------------------------------------------
+   ##
+   ## Release the activerecord connection upon every request
+   
    after do
       ActiveRecord::Base.connection.close
    end
 
-   # ----------------------------------------------------------
+   ## ----------------------------------------------------------
 
    run! if __FILE__ == $0
 
