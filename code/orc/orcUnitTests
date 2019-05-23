@@ -1,0 +1,452 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #ORC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Orchestrator Component
+# 
+# module ORC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
+require 'ctc/ReadInterfaceConfig'
+require 'orc/ORC_Environment'
+
+
+# Preconditions:
+# 1 - setup 
+# 1.1 - load_config_development
+# 1.2 - inventory database is created
+
+# 2 - teardown
+# 2.1 - purge archive
+# 2.2 - inventory database is destroyed
+
+
+#  1  - test_decConfigInterface2DB
+#  2  - test_decGetFromInterface
+#  3  - test_decListener
+
+
+# Select a single test of the suite
+
+# ruby orcUnitTests -n test_my_method 
+
+
+class ORCTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include ORC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "ORC Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+      
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+      
+      @@conf = ORC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+      
+      
+      @@conf.createEnvironmentDirs
+      
+      
+      require 'orc/ORC_DataModel'
+            
+      require 'orc/ReadOrchestratorConfig'
+      
+      orcConfig = ORC::ReadOrchestratorConfig.instance
+      
+            
+   end
+   
+   #--------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of ORC tests"
+   end
+   
+   #--------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+      
+      @path = "#{ENV['MINARC_BASE']}/code/orc"
+      
+#      cmd = "decManageDB -c"
+#      ret = system(cmd)
+#      
+#      if ret == false then
+#         puts
+#         puts "Error when creating the minarc inventory ! :-("
+#         puts
+#         # exit(99)
+#      end
+#      
+#      cmd = "decConfigInterface2DB -p EXTERNAL"
+#      
+#      ret = system(cmd)
+#      
+#      if ret == false then
+#         puts
+#         puts "Error when adding interface configuration to the database ! :-("
+#         puts
+#         # exit(99)
+#      end
+      
+   end
+   # --------------------------------------------------------
+   # After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+#      cmd = "decManageDB -d"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when dropping the dec inventory ! :-("
+#         puts
+#         exit(99)
+#      end
+   end
+   # --------------------------------------------------------
+
+   def test_commandline_helpers
+      
+      
+      @@conf.wrapper_unset_config
+      
+      cmd = "orcIngeter"
+      assert(!system(cmd), cmd)
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "orcIngester -v"
+      assert(system(cmd), cmd)
+
+   end
+   # --------------------------------------------------------
+
+   def test_parsers
+      
+      require 'orc/ReadOrchestratorConfig'
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      
+      puts "==========================================="
+      puts "Data Providers"
+      puts orcConf.getAllDataProviders
+      puts "==========================================="
+      puts "File-Types"
+      puts orcConf.getAllFileTypes
+      puts "==========================================="
+      puts "Data-Types"
+      puts orcConf.getAllDataTypes
+      puts "==========================================="
+      puts "Priority-Rules"
+      puts orcConf.getPriorityRules
+      puts "==========================================="
+      puts "Miscelanea"
+      puts orcConf.getAllMiscelanea
+      puts "==========================================="
+
+
+   end
+   #-------------------------------------------------------------
+
+   def test_decValidateConfig
+      cmd = "decValidateConfig -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -e"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -i"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -m"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -l"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -t"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -g"
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -a"
+      assert(system(cmd), cmd)
+
+   end
+   # -------------------------------------------------------------
+   # -------------------------------------------------------------
+
+   def test_checkConfig
+
+      cmd = "chmod 500 ~/Sandbox/dec/dec_sent_file"
+      puts cmd
+      system(cmd)
+
+      cmd = "decCheckConfig -e -D"
+      assert(!system(cmd), cmd)
+
+      cmd = "chmod 755 ~/Sandbox/dec/dec_sent_file"
+      puts cmd
+      system(cmd)
+
+      cmd = "decCheckConfig -e -D"
+      assert(system(cmd), cmd)
+
+
+      cmd = "decCheckConfig -h"
+      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -e --nodb"
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -i"
+      assert(system(cmd), cmd)
+
+#      # ----------------------
+#      # not integrated yet
+#      cmd = "decCheckConfig -o"
+#      assert(!system(cmd), cmd)
+#      #
+#      
+#      # only mail delivery is checked so far
+#      cmd = "decCheckConfig -m"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -l"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -t"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -a"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -a --nodb"
+#      assert(system(cmd), cmd)
+
+
+
+      
+   end
+   # -------------------------------------------------------------
+
+   def test_decConfigInterface2DB
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -v"
+      assert(system(cmd), cmd)
+            
+      cmd = "decConfigInterface2DB --add IF_1"
+      assert(system(cmd), "decConfigInterface2DB --add IF_1")
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+   end
+   #--------------------------------------------------------
+
+   def test_decGetFromInterface
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decGetFromInterface -v"
+      assert(system(cmd), cmd)
+
+      dec_tmp = ENV['DEC_TMP']
+
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
+      assert(!system(cmd), cmd)
+      
+      ENV['DEC_TMP'] = dec_tmp
+
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      @entityConfig     = CTC::ReadInterfaceConfig.instance
+      @finalDir         = @entityConfig.getIncomingDir("IERS")
+      
+      checkDirectory(@finalDir)
+
+      # finals.all / tai-utc.dat
+            
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+            
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "decGetFromInterface -m IERS --nodb --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+
+      cmd = "decGetFromInterface -m IERS --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "decStats -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f non_received_file.kk"
+      assert(!system(cmd), cmd)
+      
+      cmd = "decStats -f finals.all"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.dat"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m IERS --no-intray"
+      puts
+      assert(system(cmd), cmd)
+
+      assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve twice tai-utc.dat")
+
+      cmd = "decStats -H 1"
+      assert(system(cmd), cmd)
+      
+      cmd = "decStats -H 2"
+      assert(system(cmd), cmd)
+      
+
+   end
+   #--------------------------------------------------------
+
+   #-------------------------------------------------------------
+
+   #--------------------------------------------------------
+
+
+   #-------------------------------------------------------------
+
+   #-------------------------------------------------------------
+
+end
+
+
+#=====================================================================
+
+
+#-----------------------------------------------------------
+
+

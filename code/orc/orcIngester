@@ -1,0 +1,320 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is an Orchestrator command line tool that polls incoming files.
+#
+#
+# == Usage
+#
+# orcIngester -c start -d <full_path_dir> -i <seconds>
+#
+#     --command [ start | stop | status ]
+#               start  -> it starts the ingester
+#               stop   -> it stops the ingester
+#               status -> it checks whether ingester is running
+#
+#     --dir <full_path_dir> directory to be polled)
+#     --interval <time>     in-tray polling frequency (seconds)
+#     --pid                 <process_pid_to_ack>
+#     --Debug               shows Debug info during the execution
+#     --help                shows this help
+#     --version             shows version number      
+#
+#
+# == Author
+#
+# DEIMOS-Space S.L.
+#
+#
+# == Copyright
+#
+# Copyright (c) 2009 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === MDS-LEGOS -> Orchestrator
+#
+# CVS: $Id: ingesterComponent.rb,v 1.2 2009/03/17 12:47:03 decdev Exp $
+#
+#########################################################################
+
+require 'getoptlong'
+
+
+require 'cuc/Listener'
+require 'cuc/Log4rLoggerFactory'
+require 'cuc/DirUtils'
+require 'cuc/CheckerProcessUniqueness'
+require 'cuc/CommandLauncher'
+
+require 'orc/ORC_Environment'
+
+
+
+# MAIN script function
+def main
+
+   include CUC::DirUtils
+   include CUC::CommandLauncher
+   include ORC
+
+   @command            = ""
+   @isDebugMode        = false
+   @pollingDir			  = ""
+   @intervalSeconds    = 0
+   @pid                = nil
+   @bShowVersion       = false
+   @bShowUsage         = false
+
+   
+   # Check environment pre-requisites
+   checkModuleIntegrity  
+   
+   @orcConfigDir       = ENV['ORC_CONFIG']
+
+   opts = GetoptLong.new(
+      ["--command", "-c",	      GetoptLong::REQUIRED_ARGUMENT],        
+      ["--dir", "-d",	         GetoptLong::REQUIRED_ARGUMENT],
+      ["--interval", "-i",       GetoptLong::REQUIRED_ARGUMENT],
+      ["--pid", "-p",            GetoptLong::REQUIRED_ARGUMENT],
+      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
+      ["--usage", "-u",          GetoptLong::NO_ARGUMENT],                   
+      ["--help", "-h",           GetoptLong::NO_ARGUMENT],
+      ["--version", "-v",        GetoptLong::NO_ARGUMENT]
+      )
+
+   begin
+      opts.each do |opt, arg|
+         case opt
+            when "--command" then
+               @command = arg
+            when "--dir"  then
+               @pollingDir = arg
+            when "--interval" then
+               @intervalSeconds = arg.to_i
+            when "--pid"      then
+               @pid = arg.to_i                         
+            when "--Debug"       then     @isDebugMode         = true                                    	                  
+            when "--help"        then     @bShowUsage          = true
+            when "--usage"       then     @bShowUsage          = true
+            when "--version"     then     @bShowVersion        = true
+         end
+      end
+   rescue Exception => e      
+      RDoc::usage("usage")
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ORC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+
+   if @command == "" then
+      usage
+      exit(99)
+   end
+
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   require 'orc/OrchestratorIngester'
+
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("IC", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
+		exit(99)
+   end
+
+
+   case @command
+      when "start"   then start         
+      when "stop"    then stopIngestor
+      when "status"  then status 
+      when "abort"   then puts "abort"
+   else
+      puts "wrong command argument #{@command}"
+      usage
+      exit(99)
+   end
+end
+
+
+#===============================================================================
+
+private
+
+def start     
+
+   # Check input parameters
+   if (@intervalSeconds == 0) then
+      puts
+      puts "daemon polling interval is missing ! :-("
+      puts
+      exit(99)
+   end
+ 
+   if (@pollingDir == "") then
+      puts
+      puts "the polling directory is missing ! :-("
+      puts
+      exit(99)
+   end
+   
+   @logger.debug("Started ORC Ingester with freq #{@intervalSeconds} s")
+       
+   @OrcIng = ORC::OrchestratorIngester.new(@pollingDir, @intervalSeconds, @isDebugMode, @logger, @pid) 
+        
+   # Create our lovely listener and start it.
+   listener = CUC::Listener.new(File.basename($0), "", @intervalSeconds, @OrcIng.method("poll").to_proc)
+
+puts "start3"
+
+   trap("SIGHUP") {  
+                     @logger.debug("Restart, Ingestor, Polling Requested for #{@pollingDir}")
+                     self.restart
+                  }   
+
+   if @isDebugMode == true
+      listener.setDebugMode
+   end
+		   
+   # start server
+   listener.run
+end
+
+#===============================================================================
+
+# It stops the Orchestrator Ingestor 
+
+def stopIngestor
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   pid     = checker.getRunningPID
+
+   if pid == false then
+#      if @isDebugMode == true then
+         puts "There was no #{File.basename(File.expand_path(__FILE__))} daemon running !"
+#      end
+   else
+#      if @isDebugMode == true then
+         puts "Sending SIGKILL to Process #{pid} to stop IngesterComponent"
+#      end      
+      @logger.debug("Sending SIGKILL to Process #{pid} to stop IngesterComponent")
+      Process.kill(9, pid.to_i)
+      checker.release
+   end
+end
+
+#===============================================================================
+
+
+# It stops the Orchestrator Ingestor 
+def restart
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   pid     = checker.getRunningPID
+
+   if pid == false then
+      @logger.debug("There was not an ingesterComponent daemon running !")
+   else         
+      @logger.debug("Sending signal SIGTERM to Process #{pid} to kill the ingesterComponent")         
+      Process.kill(15, pid.to_i)
+      checker = CUC::CheckerProcessUniqueness.new("schedulerComponent.rb", "", true)
+      pid     = checker.getRunningPID
+      @OrcIng = ORC::OrchestratorIngester.new(@pollingDir, @intervalSeconds, @isDebugMode, @logger, pid)     
+   end
+end
+
+#===============================================================================
+
+# It checks whether the Listener is running or not
+def status   
+    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+
+    if @isDebugMode == true then
+       checker.setDebugMode
+    end
+    ret = checker.isRunning
+    if ret == false then
+#       if @isDebugMode == true then
+         puts "No daemon for #{File.basename(File.expand_path(__FILE__))} is running"
+#       end          
+#       @logger.debug("No daemon for IngesterComponent is running")            
+    else
+#       if @isDebugMode == true then
+         puts "There is a daemon running for the #{File.basename(File.expand_path(__FILE__))} with pid #{checker.getRunningPID}"
+#       end  
+#       @logger.debug("There is a daemon running for the IngesterComponent with pid #{checker.getRunningPID}")         
+    end
+end
+
+#===============================================================================
+
+
+# Check that everything required by the executable is present.  
+def checkModuleIntegrity
+   bDefined = true           
+   if !ENV['ORC_CONFIG'] then
+      @logger.debug("$ORC_CONFIG environment variable not defined !")
+      bDefined = false
+   end      
+   if bDefined == false then
+      @logger.error("Error in ingesterComponent.rb::checkModuleIntegrity")
+      exit(99)
+   end                             
+end
+
+#===============================================================================
+
+# -------------------------------------------------------------
+
+def usage
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -33 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+
+#-------------------------------------------------------------
+
+
+# ===============================================================================
+# Start of the main body
+main
+# End of the main body
+# ===============================================================================
