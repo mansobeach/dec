@@ -184,8 +184,7 @@ class ORCTestCase < Test::Unit::TestCase
    # --------------------------------------------------------
 
    def test_commandline_helpers
-      
-      
+            
       @@conf.wrapper_unset_config
       
       cmd = "orcIngeter"
@@ -227,93 +226,42 @@ class ORCTestCase < Test::Unit::TestCase
    end
    #-------------------------------------------------------------
 
-   def test_decValidateConfig
-      cmd = "decValidateConfig -v"
+   def test_command_orcIngester
+      cmd = "orcIngester"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcIngester -v"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -h"
+      cmd = "orcIngester -u"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -e"
+      cmd = "orcIngester -h"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -i"
+      cmd = "orcIngester -c status"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -o"
+      cmd = "orcIngester -c stop"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcIngester -c start"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcIngester -c start -i 60 -d /tmp"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -m"
+      sleep(5.0)
+
+      cmd = "orcIngester -c stop"
       assert(system(cmd), cmd)
 
-      cmd = "decValidateConfig -l"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -t"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -g"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -a"
-      assert(system(cmd), cmd)
 
    end
    # -------------------------------------------------------------
    # -------------------------------------------------------------
 
    def test_checkConfig
-
-      cmd = "chmod 500 ~/Sandbox/dec/dec_sent_file"
-      puts cmd
-      system(cmd)
-
-      cmd = "decCheckConfig -e -D"
-      assert(!system(cmd), cmd)
-
-      cmd = "chmod 755 ~/Sandbox/dec/dec_sent_file"
-      puts cmd
-      system(cmd)
-
-      cmd = "decCheckConfig -e -D"
-      assert(system(cmd), cmd)
-
-
-      cmd = "decCheckConfig -h"
-      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -e --nodb"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -i"
-      assert(system(cmd), cmd)
-
-#      # ----------------------
-#      # not integrated yet
-#      cmd = "decCheckConfig -o"
-#      assert(!system(cmd), cmd)
-#      #
-#      
-#      # only mail delivery is checked so far
-#      cmd = "decCheckConfig -m"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -l"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -t"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -a"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -a --nodb"
-#      assert(system(cmd), cmd)
-
-
 
       
    end

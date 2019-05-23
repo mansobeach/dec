@@ -36,7 +36,7 @@
 #
 # === MDS-LEGOS -> Orchestrator
 #
-# CVS: $Id: ingesterComponent.rb,v 1.2 2009/03/17 12:47:03 decdev Exp $
+# CVS: $Id: orcIngester,v 1.2 2009/03/17 12:47:03 decdev Exp $
 #
 #########################################################################
 
@@ -102,8 +102,7 @@ def main
             when "--version"     then     @bShowVersion        = true
          end
       end
-   rescue Exception => e      
-      RDoc::usage("usage")
+   rescue Exception => e
       exit(99)
    end
 
@@ -199,7 +198,6 @@ def start
    # Create our lovely listener and start it.
    listener = CUC::Listener.new(File.basename($0), "", @intervalSeconds, @OrcIng.method("poll").to_proc)
 
-puts "start3"
 
    trap("SIGHUP") {  
                      @logger.debug("Restart, Ingestor, Polling Requested for #{@pollingDir}")
@@ -223,9 +221,8 @@ def stopIngestor
    pid     = checker.getRunningPID
 
    if pid == false then
-#      if @isDebugMode == true then
-         puts "There was no #{File.basename(File.expand_path(__FILE__))} daemon running !"
-#      end
+      puts "There was no #{File.basename(File.expand_path(__FILE__))} daemon running !"
+      exit(99)
    else
 #      if @isDebugMode == true then
          puts "Sending SIGKILL to Process #{pid} to stop IngesterComponent"
