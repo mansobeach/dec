@@ -6,51 +6,90 @@
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === MDS-LEGOS -> ORC Component
+# === ORC Component
 # 
-# CVS: $Id: ORC_DataModel.rb,v 1.9 2008/12/17 17:47:57 decdev Exp $
+# CVS: $Id: ORC_DataModel.rb,v 1.14 2009/03/18 11:15:49 decdev Exp $
 #
 # module ORC
 #
 #########################################################################
 
-
-require "rubygems"
-require "active_record"
+require 'rubygems'
+require 'active_record'
 
 dbAdapter   = ENV['ORC_DB_ADAPTER']
 dbName      = ENV['ORC_DATABASE_NAME']
 dbUser      = ENV['ORC_DATABASE_USER']
 dbPass      = ENV['ORC_DATABASE_PASSWORD']
 
-ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+ActiveRecord::Base.establish_connection(
+                                          :adapter    => dbAdapter,
+                                          :host       => "localhost", 
+                                          :database   => dbName,
+                                          :username   => dbUser, 
+                                          :password   => dbPass, 
+                                          :timeout    => 100000,
+                                          :cast       => false,
+                                          :pool       => 10
+                                          )
+
 
 #=====================================================================
 
 class TriggerProduct < ActiveRecord::Base
    validates_presence_of   :filename
-   validates_uniqueness_of :filename
+   # validates_uniqueness_of :filename
    validates_presence_of   :filetype  
    validates_presence_of   :detection_date
    validates_presence_of   :sensing_start
    validates_presence_of   :sensing_stop
    validates_presence_of   :runtime_status
    validates_presence_of   :initial_status
+   
+   #----------------------------------------------
+   
+   # Currently we sort by start-time
+   def <=>(other)
+      return self.sensing_start <=> other.sensing_start
+   end
+   #----------------------------------------------
+   
 end
 
 #=====================================================================
 # Class OrchestratorQueue tables
 
 class OrchestratorQueue < ActiveRecord::Base
-   set_table_name :orchestrator_queue
-   set_primary_key :trigger_product_id
+   self.table_name   = 'orchestrator_queue'
+   self.primary_key  = 'trigger_product_id'
+
+
+#   set_table_name :orchestrator_queue
+#   set_primary_key :trigger_product_id
 
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
                :foreign_key   => "trigger_product_id"
    #----------------------------------------------   
+   
+   def OrchestratorQueue.getAllQueuedByName(filename)
+      arrFiles     = Array.new
+      triggerFiles = TriggerProduct.find(:all)
+      queuedFiles  = OrchestratorQueue.find(:all)
+
+      triggerFiles.each{|triggerFile|
+         if triggerFile.filename != filename then
+            next
+         end
+         queuedFiles.each{|queuedFile|
+            if triggerFile.id == queuedFile.trigger_product_id then
+               arrFiles << triggerFile
+            end
+         }         
+      }
+      return arrFiles   
+   end
+   #----------------------------------------------
    
    def OrchestratorQueue.getQueuedFiles
       arrFiles     = Array.new
@@ -68,12 +107,23 @@ class OrchestratorQueue < ActiveRecord::Base
    end
    #----------------------------------------------   
 
+   def OrchestratorQueue.getQueuedFile(jobId)
+      queuedFile = OrchestratorQueue.find_by_trigger_product_id(jobId)
+      if queuedFile == nil then
+         return nil
+      end
+      aTrigger   = TriggerProduct.find_by_id(jobId)
+      return aTrigger
+   end
+   #----------------------------------------------
+
 end
 
 #=====================================================================
 
 class FailingTriggerProduct < ActiveRecord::Base
-   set_primary_key :trigger_product_id
+   self.primary_key  = 'trigger_product_id'
+   
 
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
@@ -84,7 +134,17 @@ end
 #=====================================================================
 
 class SuccessfulTriggerProduct < ActiveRecord::Base
-   set_primary_key :trigger_product_id
+   self.primary_key  = 'trigger_product_id'
+   
+   belongs_to  :trigger_products,
+               :class_name    => "TriggerProduct",
+               :foreign_key   => "trigger_product_id"
+end
+
+#=====================================================================
+
+class DiscardedTriggerProduct < ActiveRecord::Base
+   self.primary_key  = 'trigger_product_id'
    
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
@@ -94,7 +154,7 @@ end
 #=====================================================================
 
 class ObsoleteTriggerProduct < ActiveRecord::Base
-   set_primary_key :trigger_product_id   
+   self.primary_key  = 'trigger_product_id'   
 
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
@@ -123,10 +183,21 @@ end
 #=====================================================================
 
 class Pending2QueueFile < ActiveRecord::Base
-   set_table_name :pending2queue_files
+   self.table_name   = 'pending2queue_files'
+
    validates_presence_of   :filename
    validates_presence_of   :filetype
    validates_presence_of   :detection_date
+   #---------------------------------------------- 
+   
+   def Pending2QueueFile.getPendingFiles
+      arrFiles       = Array.new
+      pendingFiles   = Pending2QueueFile.find(:all) 
+
+      pendingFiles.each{|pendingFile| arrFiles << pendingFile }
+      return arrFiles
+   end   
+   #----------------------------------------------
 end
 
 #=====================================================================
@@ -136,12 +207,29 @@ class ProductionTimeline < ActiveRecord::Base
    validates_presence_of   :sensing_start
    validates_presence_of   :sensing_stop
 
+   # -----------------------------------------------------------------
+
    def ProductionTimeline.addSegment(type, start, stop)
+      oneSecond = 1/(24.0*60.0*59.0)
 
-      s_start = start.strftime("%Y%m%d%H%M%S")
-      s_stop  = stop.strftime("%Y%m%d%H%M%S")
+      # Add one second to the boundaries to merge consecutive segments if any
+      # -------       -------
+      #        -------
+      #
+      # ---------------------
+      #
 
-      #look for a timeline that completely covers the new segment
+      expandedStart = start - oneSecond
+      expandedStop  = stop  + oneSecond
+
+#       s_start = start.strftime("%Y%m%d%H%M%S")
+#       s_stop  = stop.strftime("%Y%m%d%H%M%S")
+
+      s_start = expandedStart.strftime("%Y%m%d%H%M%S")
+      s_stop  = expandedStop.strftime("%Y%m%d%H%M%S")
+      
+
+      # Look for a timeline that completely covers the new segment
       arrTimeLines = ProductionTimeline.find(:all, :conditions=> "file_type = '#{type}' AND (sensing_start <= #{s_start} AND sensing_stop >= #{s_stop})")
 
       if (arrTimeLines.size > 0) then
@@ -149,7 +237,9 @@ class ProductionTimeline < ActiveRecord::Base
          return
       end
 
-      #look for timeline bounds inside the new segment's time interval
+      # Look for timeline bounds inside the new segment's time interval
+      # If there are any, we merge them.
+
       arrTimeLines = ProductionTimeline.find(:all, :conditions=> "file_type = '#{type}' AND ((sensing_start >= #{s_start} AND sensing_start <= #{s_stop}) OR (sensing_stop >= #{s_start} AND sensing_stop <= #{s_stop}))")
 
       ProductionTimeline.transaction do
@@ -157,7 +247,8 @@ class ProductionTimeline < ActiveRecord::Base
          if (arrTimeLines.size > 0) then
    
             arrTimeLines.each{|seg|
-               #merge
+               
+               # Merge Timeline segments
                seg.destroy
                
                tmp = seg.sensing_start
@@ -182,7 +273,7 @@ class ProductionTimeline < ActiveRecord::Base
 
       end
    end
-
+   # -----------------------------------------------------------------
 
    def ProductionTimeline.searchAllWithinInterval(filetype, start, stop, bIncStart=false, bIncEnd=false)
       arrFiles    = Array.new
@@ -238,6 +329,7 @@ class ProductionTimeline < ActiveRecord::Base
       return arrResult
 
    end
+   # -----------------------------------------------------------------
 
 end
 #=====================================================================
@@ -248,11 +340,11 @@ end
 #=====================================================================
 
 class OrchestratorMessage < ActiveRecord::Base
-   set_table_name :orchestrator_messages
+   self.table_name   = 'orchestrator_messages'
 end
 
 class MessageParameter < ActiveRecord::Base
-   set_table_name :message_parameters
+   self.table_name   = 'message_parameters'
 
    belongs_to  :orchestrator_messages,
                :class_name    => "OrchestratorMessage",
