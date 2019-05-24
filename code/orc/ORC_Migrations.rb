@@ -6,31 +6,37 @@
 #
 # === Written by DEIMOS Space S.L. (rell)
 #
-# === MDS-LEGOS -> ORC Component
+# === ORC Component
 # 
-# CVS: $Id: ORC_Migrations.rb,v 1.7 2008/12/17 17:49:24 decdev Exp $
+# CVS: $Id: ORC_Migrations.rb,v 1.8 2009/03/18 11:13:48 decdev Exp $
 #
 # module ORC
 #
 #########################################################################
 
 
-require "rubygems"
-require "active_record"
-require "MigrationHelpers"
+require 'rubygems'
+require 'active_record'
 
 dbAdapter   = ENV['ORC_DB_ADAPTER']
 dbName      = ENV['ORC_DATABASE_NAME']
 dbUser      = ENV['ORC_DATABASE_USER']
 dbPass      = ENV['ORC_DATABASE_PASSWORD']
 
-ActiveRecord::Base.establish_connection(:adapter => dbAdapter,
-         :host => "localhost", :database => dbName,
-         :username => dbUser, :password => dbPass)
+ActiveRecord::Base.establish_connection(
+                                          :adapter    => dbAdapter,
+                                          :host       => "localhost", 
+                                          :database   => dbName,
+                                          :username   => dbUser, 
+                                          :password   => dbPass, 
+                                          :timeout    => 100000,
+                                          :cast       => false,
+                                          :pool       => 10
+                                          )
 
 #=====================================================================
 
-class CreateTriggerProducts < ActiveRecord::Migration
+class CreateTriggerProducts < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:trigger_products) do |t|
          t.column :filename,            :string,  :limit => 100
@@ -50,14 +56,13 @@ end
 
 #=====================================================================
 
-class CreateOrchestratorQueue < ActiveRecord::Migration
-   extend MigrationHelpers
-
+class CreateOrchestratorQueue < ActiveRecord::Migration[5.1]
+  
    def self.up
       create_table(:orchestrator_queue, :id => false) do |t|
          t.primary_key :trigger_product_id
       end
-      foreign_key(:orchestrator_queue, :trigger_product_id, :trigger_products, 1)
+      add_foreign_key :orchestrator_queue, :trigger_product_id, :trigger_products
    end
 
    def self.down
@@ -67,15 +72,14 @@ end
 
 #=====================================================================
 
-class CreateFailingTriggerProducts < ActiveRecord::Migration
-   extend MigrationHelpers
-
+class CreateFailingTriggerProducts < ActiveRecord::Migration[5.1]
+   
    def self.up
       create_table(:failing_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :failure_date,      :datetime
       end
-      foreign_key(:failing_trigger_products, :trigger_product_id, :trigger_products, 2)
+      add_foreign_key :failing_trigger_products, :trigger_product_id, :trigger_products
    end
 
    def self.down
@@ -85,15 +89,14 @@ end
 
 #=====================================================================
 
-class CreateSuccessfulTriggerProducts < ActiveRecord::Migration
-   extend MigrationHelpers
+class CreateSuccessfulTriggerProducts < ActiveRecord::Migration[5.1]
 
    def self.up
       create_table(:successful_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :success_date,      :datetime
       end
-      foreign_key(:successful_trigger_products, :trigger_product_id, :trigger_products, 3)
+      add_foreign_key :successful_trigger_products, :trigger_product_id, :trigger_products
    end
 
    def self.down
@@ -103,15 +106,31 @@ end
 
 #=====================================================================
 
-class CreateObsoleteTriggerProducts < ActiveRecord::Migration
-   extend MigrationHelpers
+class CreateDiscardedTriggerProducts < ActiveRecord::Migration[5.1]
+
+   def self.up
+      create_table(:discarded_trigger_products, :id => false) do |t|
+         t.primary_key :trigger_product_id
+         t.column      :discarded_date,      :datetime
+      end
+      add_foreign_key :discarded_trigger_products, :trigger_product_id, :trigger_products
+   end
+
+   def self.down
+      drop_table :discarded_trigger_products
+   end
+end
+
+#=====================================================================
+
+class CreateObsoleteTriggerProducts < ActiveRecord::Migration[5.1]
 
    def self.up
       create_table(:obsolete_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :obsolete_date,      :datetime
       end
-      foreign_key(:obsolete_trigger_products, :trigger_product_id, :trigger_products, 4)
+      add_foreign_key :obsolete_trigger_products, :trigger_product_id, :trigger_products
    end
 
    def self.down
@@ -139,7 +158,7 @@ end
 #    end
 # end
 
-class CreateProductionTimelines < ActiveRecord::Migration
+class CreateProductionTimelines < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:production_timelines) do |t|
          t.column :file_type,      :string
@@ -154,7 +173,7 @@ class CreateProductionTimelines < ActiveRecord::Migration
 end
 #=====================================================================
 
-class CreateRunningJobs < ActiveRecord::Migration
+class CreateRunningJobs < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:running_jobs) do |t|
          t.column :proc_id,     :integer
@@ -169,7 +188,7 @@ end
 
 #=====================================================================
 
-class CreatePending2QueueFiles < ActiveRecord::Migration
+class CreatePending2QueueFiles < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:pending2queue_files) do |t|
          t.column :filename,            :string,  :limit => 100
@@ -185,7 +204,7 @@ end
 
 #=====================================================================
 
-class CreateOrchestratorMessages < ActiveRecord::Migration
+class CreateOrchestratorMessages < ActiveRecord::Migration[5.1]
    def self.up
       create_table(:orchestrator_messages) do |t|
          t.column :source_type,      :string,   :limit => 100
@@ -203,8 +222,7 @@ end
 
 #=====================================================================
 
-class CreateMessageParameters < ActiveRecord::Migration
-   extend MigrationHelpers
+class CreateMessageParameters < ActiveRecord::Migration[5.1]
 
    def self.up
       create_table(:message_parameters) do |t|
@@ -212,7 +230,7 @@ class CreateMessageParameters < ActiveRecord::Migration
          t.column :param_name,              :string,   :limit => 100
          t.column :param_value,             :string,   :limit => 150
       end
-      foreign_key(:message_parameters, :orchestrator_message_id, :orchestrator_messages, 5)
+      add_foreign_key :message_parameters, :orchestrator_message_id, :orchestrator_messages
    end
 
    def self.down

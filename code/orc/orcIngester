@@ -124,12 +124,12 @@ def main
 
    # -------------------------------------------------------
 
-
    if @command == "" then
       usage
       exit(99)
    end
 
+   # -------------------------------------------------------
 
    if self.checkEnvironmentEssential == false then
       puts
@@ -137,6 +137,8 @@ def main
       puts
       exit(99)
    end
+
+   # -------------------------------------------------------
 
    require 'orc/OrchestratorIngester'
 
@@ -167,6 +169,9 @@ def main
       usage
       exit(99)
    end
+   
+   exit(0)
+   
 end
 
 
@@ -255,7 +260,8 @@ end
 #===============================================================================
 
 # It checks whether the Listener is running or not
-def status   
+def status
+    @logger.debug("Checking status of daemon #{File.basename(File.expand_path(__FILE__))}")
     checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
 
     if @isDebugMode == true then
@@ -263,15 +269,13 @@ def status
     end
     ret = checker.isRunning
     if ret == false then
-#       if @isDebugMode == true then
-         puts "No daemon for #{File.basename(File.expand_path(__FILE__))} is running"
-#       end          
-#       @logger.debug("No daemon for IngesterComponent is running")            
+       msg = "No daemon for #{File.basename(File.expand_path(__FILE__))} is running"
+       puts msg
+       @logger.debug(msg) 
     else
-#       if @isDebugMode == true then
-         puts "There is a daemon running for the #{File.basename(File.expand_path(__FILE__))} with pid #{checker.getRunningPID}"
-#       end  
-#       @logger.debug("There is a daemon running for the IngesterComponent with pid #{checker.getRunningPID}")         
+       msg = "There is a daemon running for the #{File.basename(File.expand_path(__FILE__))} with pid #{checker.getRunningPID}"
+       puts msg
+       @logger.debug(msg)
     end
 end
 

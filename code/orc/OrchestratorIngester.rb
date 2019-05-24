@@ -6,7 +6,7 @@
 #
 # === Written by DEIMOS Space S.L. (algk)
 #
-# === MDS-LEGOS => ORC Component
+# === ORC Component
 # 
 # CVS: $Id: OrchestratorIngester.rb,v 1.7 2009/03/31 08:42:53 decdev Exp $
 #
@@ -16,7 +16,6 @@
 
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
-require 'cuc/EE_ReadFileName'
 
 require 'orc/ReadOrchestratorConfig'
 require 'orc/ORC_DataModel'
@@ -34,13 +33,13 @@ class OrchestratorIngester
 
    def initialize(pollDir, interval, debugMode, log, pid)
       checkModuleIntegrity
-      @pollingDir = pollDir
-      @intervalSeconds = interval
-      @isDebugMode = debugMode            
-      @logger = log
-      @observerPID = pid
-      @newFile = false
-      @ftReadConf = ORC::ReadOrchestratorConfig.instance
+      @pollingDir          = pollDir
+      @intervalSeconds     = interval
+      @isDebugMode         = debugMode            
+      @logger              = log
+      @observerPID         = pid
+      @newFile             = false
+      @ftReadConf          = ORC::ReadOrchestratorConfig.instance
       if @isDebugMode == true then
          @ftReadConf.setDebugMode
       end
@@ -61,42 +60,44 @@ class OrchestratorIngester
    def ingest(arrPolledFiles)
 
       # Log all files found in the polling dir
-      # in current iteration
       arrPolledFiles.each{|polledFile|   
          @logger.debug(%Q{Found #{polledFile}})
       }
 
       arrPolledFiles.each{|polledFile|
          
+         # Put protection mechanism for S2 files only
          # Discard "temp" files
-         if polledFile.to_s.slice(0,1) == "_" then
+         if polledFile.to_s.slice(0,1) == "_" or polledFile.to_s.slice(0,2) != "S2" then
             @logger.debug(%Q{Discarded #{polledFile}})
             next
          end         
 
-         decoder     = CUC::EE_ReadFileName.new(polledFile)
-         filetype    = decoder.getFileType      
+         cmd         = "minArcFile -t S2PDGS -f #{polledFile}"         
+         filetype    = `#{cmd}`.chop
+         
+         @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})
+                        
          bIngested   = false
    
          if @ftReadConf.isValidFileType?(filetype) == true then
             @newFile = true
-            cmd      = "minArcStore.rb -m -f #{@pollingDir}/#{polledFile}"
-            @logger.debug("\n#{cmd}")
+            cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
+            @logger.info("#{cmd}")
             retVal   = system(cmd)
                   
             if retVal == true then               
                bIngested = true
                
                # @logger.debug("#{polledFile} archived on MINARC")
-
                # If Trigger file, add it to PENDING2QUEUEFILES
                
                if @ftReadConf.isFileTypeTrigger?(filetype) == true then
-                  cmd = "queueOrcProduct.rb -f #{polledFile} -P -s NRT"
-                  @logger.debug("\n#{cmd}")
-                  retVal = system(cmd)
-                  if retVal == false then
-                     @logger.error("Could not PRE-QUEUE #{polledFile}")
+                  cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
+                  retVal   = system(cmd)
+                  @logger.info("#{cmd} / #{retVal}")
+                  if retVal != true then
+                     @logger.error("Could not queue #{polledFile}")
                   end
                else
                   # @logger.debug("#{polledFile} is not trigger")

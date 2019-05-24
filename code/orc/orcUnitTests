@@ -32,9 +32,10 @@ require 'orc/ORC_Environment'
 # 2.2 - inventory database is destroyed
 
 
-#  1  - test_decConfigInterface2DB
-#  2  - test_decGetFromInterface
-#  3  - test_decListener
+#  1  - test_commandline_helpers
+#  2  - test_parsers
+#  3  - test_command_orcIngester
+#  4  - test_command_orcIngester
 
 
 # Select a single test of the suite
@@ -113,6 +114,7 @@ class ORCTestCase < Test::Unit::TestCase
       
       orcConfig = ORC::ReadOrchestratorConfig.instance
       
+      system("minArcDB -c")
             
    end
    
@@ -137,15 +139,15 @@ class ORCTestCase < Test::Unit::TestCase
       
       @path = "#{ENV['MINARC_BASE']}/code/orc"
       
-#      cmd = "decManageDB -c"
-#      ret = system(cmd)
-#      
-#      if ret == false then
-#         puts
-#         puts "Error when creating the minarc inventory ! :-("
-#         puts
-#         # exit(99)
-#      end
+      cmd = "orcManageDB -c"
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when creating the orchestrator inventory ! :-("
+         puts
+         # exit(99)
+      end
 #      
 #      cmd = "decConfigInterface2DB -p EXTERNAL"
 #      
@@ -171,15 +173,28 @@ class ORCTestCase < Test::Unit::TestCase
 
       @@conf.wrapper_load_config_development
 
-#      cmd = "decManageDB -d"
-#      puts cmd
-#      ret = system(cmd)
-#       
-#      if ret == false then
-#         puts "Error when dropping the dec inventory ! :-("
-#         puts
-#         exit(99)
-#      end
+      cmd = "orcManageDB -d"
+      puts cmd
+      ret = system(cmd)
+       
+      if ret == false then
+         puts "Error when dropping the orchestrator inventory ! :-("
+         puts
+         exit(99)
+      end
+      
+      cmd = "minArcPurge -Y"
+
+      puts cmd
+      ret = system(cmd)
+       
+      if ret == false then
+         puts "Error when cleaning the minarc inventory / archive ! :-("
+         puts
+         exit(99)
+      end
+      
+      
    end
    # --------------------------------------------------------
 
@@ -190,10 +205,24 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngeter"
       assert(!system(cmd), cmd)
 
+      cmd = "orcQueueInput"
+      assert(!system(cmd), cmd)
+
+
       @@conf.wrapper_load_config_development
 
       cmd = "orcIngester -v"
       assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -v"
+      assert(system(cmd), cmd)
+
+      cmd = "orcIngester -h"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -h"
+      assert(system(cmd), cmd)
+
 
    end
    # --------------------------------------------------------
@@ -222,9 +251,23 @@ class ORCTestCase < Test::Unit::TestCase
       puts orcConf.getAllMiscelanea
       puts "==========================================="
 
+      assert(orcConf.isValidFileType?("REP_OPDPC_"), "REP_OPDPC_ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDPC_"), "REP_OPDPC_ file-type is trigger type")
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+
+   def test_command_orcQueueInput
+      cmd = "orcQueueInput"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcQueueInput -P -s NRT -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      puts cmd
+      assert(system(cmd), cmd)
+
+   end
+
+   # -------------------------------------------------------------
 
    def test_command_orcIngester
       cmd = "orcIngester"
@@ -248,10 +291,26 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngester -c start"
       assert(!system(cmd), cmd)
 
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
       cmd = "orcIngester -c start -i 60 -d /tmp"
       assert(system(cmd), cmd)
 
       sleep(5.0)
+
+      cmd = "orcIngester -c stop"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcPurge -Y"
+      assert(system(cmd), cmd)
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000002\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000002.EOF")
+
+      cmd = "orcIngester -c start -i 60 -d /tmp -D"
+      assert(system(cmd), cmd)
+
+      sleep(10.0)
 
       cmd = "orcIngester -c stop"
       assert(system(cmd), cmd)
@@ -290,102 +349,6 @@ class ORCTestCase < Test::Unit::TestCase
    end
    #--------------------------------------------------------
 
-   def test_decGetFromInterface
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-
-      cmd = "decGetFromInterface -v"
-      assert(system(cmd), cmd)
-
-      dec_tmp = ENV['DEC_TMP']
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
-
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
-
-      @entityConfig     = CTC::ReadInterfaceConfig.instance
-      @finalDir         = @entityConfig.getIncomingDir("IERS")
-      
-      checkDirectory(@finalDir)
-
-      # finals.all / tai-utc.dat
-            
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-            
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      cmd = "decGetFromInterface -m IERS --nodb --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-
-      cmd = "decGetFromInterface -m IERS --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
-
-      cmd = "decStats -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decStats -f non_received_file.kk"
-      assert(!system(cmd), cmd)
-      
-      cmd = "decStats -f finals.all"
-      assert(system(cmd), cmd)
-
-      cmd = "decStats -f tai-utc.dat"
-      assert(system(cmd), cmd)
-
-      cmd = "decStats"
-      assert(system(cmd), cmd)
-
-      cmd = "decGetFromInterface -m IERS --no-intray"
-      puts
-      assert(system(cmd), cmd)
-
-      assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")
-      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve twice tai-utc.dat")
-
-      cmd = "decStats -H 1"
-      assert(system(cmd), cmd)
-      
-      cmd = "decStats -H 2"
-      assert(system(cmd), cmd)
-      
-
-   end
-   #--------------------------------------------------------
-
-   #-------------------------------------------------------------
-
-   #--------------------------------------------------------
-
-
-   #-------------------------------------------------------------
 
    #-------------------------------------------------------------
 
