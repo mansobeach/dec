@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.28'
+  s.version     = '1.0.30'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.executables   = [ 
                      'minArcStore', \
                      'minArcDB', \
+                     'minArcFile', \
                      'minArcDelete', \
                      'minArcPurge', \
                      'minArcReallocate', \
