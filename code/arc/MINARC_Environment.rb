@@ -20,11 +20,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.28"
+   @@version = "1.0.30dev"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.30" =>    "Integration version with DEC / generic Orchestrator\n", \
+      "1.0.29" =>    "minArcFile new tool to decode filename is included supported by Handler_S2PDGS\n", \
       "1.0.28" =>    "Handler_VIDEO updated to handle mkv (matrioska) files\n", \
       "1.0.27" =>    "Handler_VIDEO replaces M2TS & updated to handle wmv files\n", \
       "1.0.26" =>    "minArcStore --delete fix in remote mode\n          Fix to minArcRetrieve list with wildcards in remote mode", \

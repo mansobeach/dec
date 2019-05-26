@@ -1,0 +1,225 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a MINARC command line tool that archives a given file. 
+# If such file or a file with exactly same filename is already 
+# archived in the system, an error will be raised.
+# 
+#
+# == Usage
+# minArcFile -f <filename> -T <type-of-the-file | minArc plug-in>
+#     --type                     it reports the file-type
+#     --start                    it reports the file validity start
+#     --end                      it reports the file validity stop / end
+#     --help                     shows this help
+#     --Usage                    shows the usage
+#     --Debug                    shows Debug info during the execution
+#     --Profile                  shows execution time profiling information
+#     --version                  shows version number
+# 
+# == Author
+# DEIMOS-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2019 ESA - DEIMOS Space S.L.
+#
+
+#########################################################################
+#
+# === Mini Archive Component (MinArc)
+#
+# Git: $Id: minArcFile 1.13 2008/09/25 11:37:23 decdev Exp $
+#
+#########################################################################
+
+require 'rubygems'
+require 'getoptlong'
+
+require 'arc/MINARC_Environment'
+require 'arc/FileArchiver'
+require 'arc/MINARC_Client'
+
+
+# Global variables
+@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
+                                       # of this script
+                                       # execution showing Debug Info
+
+
+# MAIN script function
+def main
+   @full_path_location     = nil
+   @full_path_filename     = ""
+   @filename               = ""
+   @filetype               = ""
+   @isDebugMode            = false
+   @isProfileMode          = false
+   @isSuperbulk            = false
+   @bDelete                = false
+   @bMove                  = false
+   @bUnpack                = false
+   bShowFileTypes          = false
+   showVersion             = false
+   @arrAddFields           = Array.new
+   @bHardLink              = false
+   @bUpdate                = false
+   @bInventoryOnly         = false
+   @bNoServer              = false
+   @bShowVersion           = false
+   @bShowUsage             = false
+
+   @fileType               = nil
+   @bfileType              = false
+   @bStart                 = false
+   @bEnd                   = false
+   
+   opts = GetoptLong.new(
+     ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--type", "-t",               GetoptLong::NO_ARGUMENT],
+     ["--start", "-s",              GetoptLong::NO_ARGUMENT],
+     ["--end", "-e",                GetoptLong::NO_ARGUMENT],
+     ["--Inventory", "-I",          GetoptLong::NO_ARGUMENT],
+     ["--Type", "-T",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--delete", "-d",             GetoptLong::NO_ARGUMENT],
+     ["--update", "-u",             GetoptLong::NO_ARGUMENT],
+     ["--move", "-m",               GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
+     ["--Profile", "-P",            GetoptLong::NO_ARGUMENT],
+     ["--Superbulk", "-S",          GetoptLong::NO_ARGUMENT],
+     ["--Unpack", "-U",             GetoptLong::NO_ARGUMENT],
+     ["--Usage", "-g",              GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",            GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",               GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt      
+            when "--Debug"             then @isDebugMode          = true
+            when "--version"           then @bShowVersion         = true
+	         when "--file"              then @filename             = arg.to_s
+	         when "--type"              then @bfileType            = true
+            when "--start"             then @bStart               = true
+            when "--end"               then @bEnd                 = true
+            when "--additional-fields" then @arrAddFields         = arg.to_s.split(":")
+            when "--Type"              then @fileType             = arg.to_s
+			   when "--help"              then @bShowUsage           = true
+	         when "--Usage"             then @bShowUsage           = true
+         end
+      end
+   rescue Exception
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   # -------------------------------------------------------
+
+   if @fileType == nil then
+      puts
+      puts "please specify the plug-in to decode file (flag -t <type>)"
+      puts
+      exit(99)
+   end
+   # -------------------------------------------------------
+
+   handler = ""
+   rubylibs = ENV['RUBYLIB'].split(':')
+      
+   rubylibs.each {|path|
+	      name = "#{path}/arc/plugins/Handler_#{@fileType.upcase}.rb"
+	    
+         if File.exists?(name) == true then
+            handler = "Handler_#{@fileType.upcase}"
+            break
+         end
+      }
+
+      if handler == "" then
+         puts
+         puts "Could not find handler-file for file-type #{@fileType.upcase} ! :-("
+         puts
+         exit(99)
+      end
+      
+      bInventory = false
+         
+      require "arc/plugins/#{handler}"
+      nameDecoderKlass  = eval(handler)
+      nameDecoder       = nameDecoderKlass.new(@filename)
+            
+      # --------------------------------------------------------
+            
+      if nameDecoder == nil or nameDecoder.isValid == false then
+         puts "Plug-in #{handler} not found ! :-("
+         puts
+         exit(99)
+      end
+      
+      # --------------------------------------------------------      
+            
+      fileType       = nameDecoder.fileType.upcase
+      start          = nameDecoder.str_start
+      stop           = nameDecoder.str_stop
+      
+      if @bfileType == true then 
+         puts fileType
+      end
+
+      if @bStart == true then 
+         puts start
+      end
+
+      if @bEnd == true then 
+         puts stop
+      end
+
+      
+      exit(0)
+      
+end
+
+#-------------------------------------------------------------
+
+
+
+#-------------------------------------------------------------
+
+   
+#-------------------------------------------------------------
+
+def usage
+
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -24 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+#-------------------------------------------------------------
+
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================

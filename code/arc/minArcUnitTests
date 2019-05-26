@@ -46,7 +46,7 @@ require 'arc/MINARC_Status'
 # 12  - test_local_and_remote_status_global
 # 13  - test_handler_m2ts_local
 # 14  - test_handler_m2ts_local_mp4
-
+# 15  - test_local_minArcFile
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -229,9 +229,12 @@ class TestCaseStore < Test::Unit::TestCase
    end
    # --------------------------------------------------------
 
-   def test_commmandline_helpers
+   def test_commandline_helpers
    
       @@conf.wrapper_unset_config
+
+      cmd = "minArcFile -v"
+      assert(system(cmd), cmd)
    
       cmd = "minArcDelete -v"
       assert(system(cmd), cmd)
@@ -264,6 +267,9 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -h"
+      assert(system(cmd), cmd)
+
+      cmd = "minArcFile -h"
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -u"
@@ -315,6 +321,9 @@ class TestCaseStore < Test::Unit::TestCase
       assert(!system(cmd), cmd)
 
       cmd = "minArcStore"
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcFile"
       assert(!system(cmd), cmd)
 
       @@conf.wrapper_load_config_development
@@ -771,6 +780,36 @@ class TestCaseStore < Test::Unit::TestCase
    end
    # -------------------------------------------------------------
 
+   def test_local_minArcFile
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "minArcFile -t S2PDGS"
+      puts cmd
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcFile -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF"
+      puts cmd
+      assert(!system(cmd), cmd)
+
+      cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF -t"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -e"
+      puts cmd
+      assert(system(cmd), cmd)
+
+
+   end
+   # -------------------------------------------------------------
 
 end
 

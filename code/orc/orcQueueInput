@@ -269,7 +269,7 @@ def main
    end
    #----------------------------------------------
 
-   cmd            = "minArcFile -t S2PDGS -f #{@filename}"         
+   cmd            = "minArcFile -T S2PDGS -f #{@filename} -t"         
    @filetype      = `#{cmd}`.chop         
    # @logger.debug(%Q{#{cmd} / #{@filetype} => #{$?}})
 
@@ -314,8 +314,12 @@ def main
       exit(99)
    end
 
-   tmpStart = nameDecoder.getStrDateStart
-   tmpStop  = nameDecoder.getStrDateStop
+
+   cmd            = "minArcFile -T S2PDGS -f #{@filename} -s"         
+   tmpStart       = `#{cmd}`.chop         
+
+   cmd            = "minArcFile -T S2PDGS -f #{@filename} -e"         
+   tmpStop        = `#{cmd}`.chop         
 
    
    # If stop-date is EOM set a valid date
@@ -349,8 +353,8 @@ def main
 
    else    
 
-      @sensing_start  = nameDecoder.getStrDateStart
-      @sensing_stop  = nameDecoder.getStrDateStop
+      @sensing_start    = tmpStart
+      @sensing_stop     = tmpStop
       
       # If stop-date is EOM set a valid date
       if @sensing_stop == "99999999T999999" then
@@ -360,17 +364,17 @@ def main
    end
    @detectionDate = Time.now()
 
-   #Validation
-   triggerFiles = TriggerProduct.find(:all, :conditions => {:filename => @filename})
-
-   triggerFiles.each { |trigFile|
-               if trigFile.sensing_start.strftime("%Y%m%dT%H%M%S") == @sensing_start then
-                  if trigFile.sensing_stop.strftime("%Y%m%dT%H%M%S") == @sensing_stop then
-                     puts "Validation failed: File allready exist with the exact start and stop time"
-                     exit(99)
-                  end
-               end
-               }
+#   #Validation
+#   triggerFiles = TriggerProduct.find(:all, :conditions => {:filename => @filename})
+#
+#   triggerFiles.each { |trigFile|
+#               if trigFile.sensing_start.strftime("%Y%m%dT%H%M%S") == @sensing_start then
+#                  if trigFile.sensing_stop.strftime("%Y%m%dT%H%M%S") == @sensing_stop then
+#                     puts "Validation failed: File already exist with the exact start and stop time"
+#                     exit(99)
+#                  end
+#               end
+#               }
 
    
    ################################ Database insertion ################################
@@ -428,7 +432,7 @@ end
 # It provides the list of trigger-files to be processed [queued]
 def list
 
-   triggerFiles   = TriggerProduct.find(:all)
+   triggerFiles   = TriggerProduct.all
 
    if @bQueued == true then
       puts

@@ -32,7 +32,7 @@ module ORC
    def load_config_development
       ENV['ORC_DB_ADAPTER']               = "sqlite3"
       ENV['TMPDIR']                       = "#{ENV['HOME']}/Sandbox/minarc/tmp"
-      ENV['ORC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
+      ENV['ORC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/inventory/orc_inventory"
       ENV['ORC_DATABASE_USER']            = "root"
       ENV['ORC_DATABASE_PASSWORD']        = "1mysql"
       ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
@@ -95,6 +95,34 @@ module ORC
          puts "ORC_DB_ADAPTER environment variable is not defined !\n"
          puts
       end
+
+      isToolPresent = `which orcManageDB`
+      
+      if isToolPresent[0,1] != '/' then
+         puts "orcManageDB tool not present in PATH !  :-(\n"
+         bCheckOK = false
+      end
+
+      isToolPresent = `which orcQueueInput`
+      
+      if isToolPresent[0,1] != '/' then
+         puts "orcQueueInput tool not present in PATH !  :-(\n"
+         bCheckOK = false
+      end
+
+      isToolPresent = `which orcIngester`
+      
+      if isToolPresent[0,1] != '/' then
+         puts "orcIngester tool not present in PATH !  :-(\n"
+         bCheckOK = false
+      end
+
+      isToolPresent = `which orcScheduler`
+      
+      if isToolPresent[0,1] != '/' then
+         puts "orcScheduler tool not present in PATH !  :-(\n"
+         bCheckOK = false
+      end
      
       if bCheck == false then
          puts "ORC environment variables configuration not complete"
@@ -102,6 +130,11 @@ module ORC
          return false
       end
       return true
+   end
+   # -----------------------------------------------------------------
+
+   def printEnvironmentError
+      puts "Execution environment not suited for ORC"
    end
    # -----------------------------------------------------------------
    

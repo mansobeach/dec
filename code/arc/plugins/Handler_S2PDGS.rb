@@ -51,7 +51,7 @@ class Handler_S2PDGS
    @size                = 0
    @size_in_disk        = 0
 
-   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :start, :stop, :str_start, :str_stop
 
    #-------------------------------------------------------------
 
@@ -59,6 +59,13 @@ class Handler_S2PDGS
    
    # Name now must be a full_path one
    def initialize (name, destination = nil, args = {})
+      
+      if name[0,1] != '/' then
+         @bDecodeNameOnly = true
+      else
+         @bDecodeNameOnly = false
+      end
+      
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
       @filename      = File.basename(name, ".*")
       @archive_path  = ""
@@ -67,6 +74,8 @@ class Handler_S2PDGS
       # ----------------------------------------------------
       # E2ESPM Analytics Reports 
       if @filename.length == 72 then
+         @str_start        = @filename.slice(41, 15)
+         @str_stop         = @filename.slice(57, 15)
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(41, 15))
@@ -88,6 +97,8 @@ class Handler_S2PDGS
       # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 
       if @filename.length == 73 or @filename.length == 88 or @filename.length == 77 then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(58, 15)      
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(42, 15))
@@ -98,6 +109,8 @@ class Handler_S2PDGS
       # ----------------------------------------------------     
          
       if @filename.length == 56 then
+         @str_start        = @filename.slice(20, 15)
+         @str_stop         = @filename.slice(36, 15)      
          @type             = @filename.slice(9,10)         
          @start            = self.str2date(@filename.slice(20, 15))
          @generation_date  = @start
@@ -114,6 +127,8 @@ class Handler_S2PDGS
       
       # S2__OPER_REP_OPDHUS_DHUS_20180404T165255
       if @filename.length == 40 then
+         @str_start        = @filename.slice(25, 15)
+         @str_stop         = @filename.slice(25, 15)            
          @type             = @filename.slice(9,10)         
          @start            = self.str2date(@filename.slice(25, 15))
          @generation_date  = @start
@@ -129,6 +144,8 @@ class Handler_S2PDGS
       # S2__OPER_REP_ARC__A_UPA__20170427T090404_V20170418T020822_99999999T999999_26864.EOF
       
       if @filename.include?("REP_ARC__A") == true then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(58, 15)      
          @type             = @filename.slice(9,10)
          @generation_date  = self.str2date(@filename.slice(25, 15))
          @start            = self.str2date(@filename.slice(42, 15))
@@ -144,6 +161,15 @@ class Handler_S2PDGS
          puts
          exit(99)
       end
+
+      # ----------------------------------------------------
+
+      if @bDecodeNameOnly == true then
+         return
+      end
+
+      # ----------------------------------------------------
+
 
       @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
 

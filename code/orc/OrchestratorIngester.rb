@@ -73,7 +73,7 @@ class OrchestratorIngester
             next
          end         
 
-         cmd         = "minArcFile -t S2PDGS -f #{polledFile}"         
+         cmd         = "minArcFile -T S2PDGS -f #{polledFile} -t"         
          filetype    = `#{cmd}`.chop
          
          @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})

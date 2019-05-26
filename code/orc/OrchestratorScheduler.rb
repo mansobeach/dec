@@ -15,9 +15,6 @@
 #########################################################################
 
 require 'cuc/Log4rLoggerFactory'
-require 'cuc/EE_ReadFileName'
-
-require 'minarc/FileRetriever'
 
 require 'orc/ReadOrchestratorConfig'
 require 'orc/ORC_DataModel'
@@ -72,7 +69,13 @@ class OrchestratorScheduler
 
    # Get all Queued Files
    def loadQueue
-      @arrQueuedFiles = OrchestratorQueue.getQueuedFiles           
+      @logger.debug("OrchestratorScheduler::loadQueue") 
+      @arrQueuedFiles = OrchestratorQueue.getQueuedFiles 
+      puts 
+      @arrQueuedFiles.each{|item|
+         puts item.filename
+      }
+      puts          
    end
    #-------------------------------------------------------------   
 
@@ -80,9 +83,17 @@ class OrchestratorScheduler
    # table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
 
+      @logger.debug("Orchestrator::enqueuePendingFiles is in da house")
+
       # Get Pending files pre-queued by the ingesterComponent.rb
       # They are referenced in PENDING2QUEUEFILE table
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
+
+      if @arrPendingFiles.empty? == true then
+         @logger.debug("No input files are pending to be queued")
+         return
+      end
+
 
       @arrPendingFiles.each{|fileToQueue|
          @logger.debug("Queueing #{fileToQueue.filename}") 
@@ -92,15 +103,25 @@ class OrchestratorScheduler
       # in Pending2QueueFiles (ingester Queue)
       
       @arrPendingFiles.each{ |pf|
-         decoder  = CUC::EE_ReadFileName.new(pf.filename)
-         fileType = decoder.getFileType
-         startVal = decoder.getStrDateStart
-         stopVal  = decoder.getStrDateStop
 
-         # If stop-date is EOM set a valid date
-         if stopVal == "99999999T999999" then
-            stopVal = "99991231T235959"
-         end
+         puts pf.filename
+
+         cmd         = "minArcFile -T S2PDGS -f #{pf.filename}"
+         puts cmd      
+         fileType    = `#{cmd}`.chop
+
+
+         puts
+         puts fileType
+         puts
+         
+#         startVal = decoder.getStrDateStart
+#         stopVal  = decoder.getStrDateStop
+#
+#         # If stop-date is EOM set a valid date
+#         if stopVal == "99999999T999999" then
+#            stopVal = "99991231T235959"
+#         end
        
          # Extract trigger-type coverage mode
          coverMode = @ftReadConf.getTriggerCoverageByInputDataType(@ftReadConf.getDataType(fileType))
@@ -125,12 +146,12 @@ class OrchestratorScheduler
                @logger.warn("FUTURE product detected ! :-|")
                @logger.warn("Verify system time coherency with PDGS time")
             end
-            cmd = "queueOrcProduct.rb -f #{pf.filename} -s #{nrtType}"
+            cmd = "orcQueueInput -f #{pf.filename} -s #{nrtType}"
          else
-            cmd = "queueOrcProduct.rb -f #{pf.filename} -s UKN"
+            cmd = "orcQueueInput -f #{pf.filename} -s UKN"
          end
          
-         @logger.debug("\n#{cmd}")
+         @logger.debug("#{cmd}")
          
          if @isDebugMode == true then
             puts cmd
@@ -142,7 +163,7 @@ class OrchestratorScheduler
             @logger.warn("Could not queue #{pf.filename}")
          end
 
-         Pending2QueueFile.delete_all "filename = '#{pf.filename}'"
+         Pending2QueueFile.where(filename: pf.filename).destroy_all
 
       }
 
@@ -154,8 +175,10 @@ class OrchestratorScheduler
    # - 
    def schedule
 
+      @logger.debug("Orchestrator::schedule is in da house")
+
       # Verify Database connection
-      ActiveRecord::Base.verify_active_connections!
+      # ActiveRecord::Base.verify_active_connections!
 
       @logger.debug("Loading Queue List")
       
@@ -290,6 +313,8 @@ class OrchestratorScheduler
    # and in case it has lower prio than one incoming, 
    # it shall be aborted
    def dispatch
+   
+      @logger.debug("OrchestratorScheduler::dispatch")
    
       ret = canDispatchNewTrigger?
    
@@ -431,11 +456,11 @@ private
          bDefined = false
       end
 
-      if !ENV['NRTP_HMI_TMP'] then
-         puts "NRTP_HMI_TMP environment variable not defined !  :-(\n"
-         bCheckOK = false
-         bDefined = false
-      end
+#      if !ENV['NRTP_HMI_TMP'] then
+#         puts "NRTP_HMI_TMP environment variable not defined !  :-(\n"
+#         bCheckOK = false
+#         bDefined = false
+#      end
 
       if bCheckOK == false then
          puts "OrchestratorScheduler::checkModuleIntegrity FAILED !\n\n"
@@ -486,9 +511,9 @@ private
    # This method checks whether a new generated file by a Processor
    # is a Trigger file and there it must be queued
    def handleNewProducedFile(aFile)     
-      decoder = CUC::EE_ReadFileName.new(aFile)            
-         
-      fileType = decoder.getFileType
+      
+      cmd         = "minArcFile -T S2PDGS -f #{polledFile}"         
+      filetype    = `#{cmd}`.chop
          
       if @ftReadConf.isFileTypeTrigger?(fileType) == true then
          coverMode = @ftReadConf.getTriggerCoverageByInputDataType(@ftReadConf.getDataType(fileType))
@@ -514,15 +539,15 @@ private
                @logger.warn("Verify system time coherency with NRT Processor implementation")
             end
 
-            cmd = "queueOrcProduct.rb -f #{aFile} -s #{nrtType}"
+            cmd = "orcQueueInput -f #{aFile} -s #{nrtType}"
          else
-            cmd = "queueOrcProduct.rb -f #{aFile} -s UKN"
+            cmd = "orcQueueInput -f #{aFile} -s UKN"
          end
             
          if @isDebugMode == true then
             puts cmd
          end
-         @logger.debug("\n#{cmd}")
+         @logger.debug("#{cmd}")
          retVal = system(cmd)
          if retVal == false then
             @logger.warn("Could not Queue #{aFile}")
@@ -599,8 +624,8 @@ private
       
       arrFiles.each{|aFile|
 
-         decoder  = CUC::EE_ReadFileName.new(aFile)
-         fileType = decoder.getFileType
+         cmd         = "minArcFile -T S2PDGS -f #{polledFile}"         
+         filetype    = `#{cmd}`.chop
 
          # Archive output file
          cmd    = "minArcStore.rb -m -f #{outputsDir}/#{aFile}"

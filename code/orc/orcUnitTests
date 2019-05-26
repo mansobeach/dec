@@ -34,9 +34,10 @@ require 'orc/ORC_Environment'
 
 #  1  - test_commandline_helpers
 #  2  - test_parsers
-#  3  - test_command_orcIngester
+#  3  - test_command_orcQueueInput
 #  4  - test_command_orcIngester
-
+#  5  - test_command_orcScheduler
+#  6  - test_command_orcBolg
 
 # Select a single test of the suite
 
@@ -171,34 +172,58 @@ class ORCTestCase < Test::Unit::TestCase
       puts "ORC_UnitTests::#{__method__.to_s}"
       puts
 
-      @@conf.wrapper_load_config_development
-
-      cmd = "orcManageDB -d"
-      puts cmd
-      ret = system(cmd)
-       
-      if ret == false then
-         puts "Error when dropping the orchestrator inventory ! :-("
-         puts
-         exit(99)
-      end
-      
-      cmd = "minArcPurge -Y"
-
-      puts cmd
-      ret = system(cmd)
-       
-      if ret == false then
-         puts "Error when cleaning the minarc inventory / archive ! :-("
-         puts
-         exit(99)
-      end
+#      @@conf.wrapper_load_config_development
+#
+#      cmd = "orcManageDB -d"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when dropping the orchestrator inventory ! :-("
+#         puts
+#         exit(99)
+#      end
+#
+#      system("minArcDB -c")
+#      
+#      cmd = "minArcPurge -Y"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when cleaning the minarc inventory / archive ! :-("
+#         puts
+#         exit(99)
+#      end
       
       
    end
    # --------------------------------------------------------
 
    def test_commandline_helpers
+   
+   
+      cmd = "orcIngester"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcIngester -v"
+      assert(system(cmd), cmd)
+
+      cmd = "orcIngester -u"
+      assert(system(cmd), cmd)
+
+      cmd = "orcIngester -h"
+      assert(system(cmd), cmd)
+
+      cmd = "orcIngester -c status"
+      assert(system(cmd), cmd)
+
+      cmd = "orcIngester -c stop"
+      assert(!system(cmd), cmd)
+
+      cmd = "orcIngester -c start"
+      assert(!system(cmd), cmd)
+   
             
       @@conf.wrapper_unset_config
       
@@ -265,31 +290,49 @@ class ORCTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
+      cmd = "orcQueueInput -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s UKN"
+      puts cmd
+      assert(system(cmd), cmd)
+
+
    end
 
    # -------------------------------------------------------------
 
-   def test_command_orcIngester
-      cmd = "orcIngester"
-      assert(!system(cmd), cmd)
-
-      cmd = "orcIngester -v"
+   def test1
+   
+      @@conf.wrapper_load_config_development
+   
+      system("minArcPurge -Y")
+      # system("minArcDB -d")
+      system("minArcDB -c")
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+      
+      cmd = "orcScheduler -c start"
       assert(system(cmd), cmd)
 
-      cmd = "orcIngester -u"
+      sleep(15.0)
+      
+            
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      
+      cmd = "orcIngester -c start -i 60 -d /tmp -D"
       assert(system(cmd), cmd)
-
-      cmd = "orcIngester -h"
-      assert(system(cmd), cmd)
-
-      cmd = "orcIngester -c status"
-      assert(system(cmd), cmd)
-
+      sleep(10.0)
+      
       cmd = "orcIngester -c stop"
-      assert(!system(cmd), cmd)
+      assert(system(cmd), cmd)
 
-      cmd = "orcIngester -c start"
-      assert(!system(cmd), cmd)
+      sleep(10.0)
+
+      
+
+   end
+   # -------------------------------------------------------------
+
+   def test_command_orcIngester
 
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
@@ -315,12 +358,46 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngester -c stop"
       assert(system(cmd), cmd)
 
+      sleep(5.0)
+
 
    end
    # -------------------------------------------------------------
+   
+   def test_command_orcScheduler
+
+#      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+#
+#      cmd = "orcScheduler"
+#      assert(!system(cmd), cmd)
+#
+#      cmd = "orcScheduler -c status"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "orcScheduler -c stop"
+#      assert(!system(cmd), cmd)
+
+      test_command_orcIngester
+
+      cmd = "orcScheduler -c start"
+      assert(system(cmd), cmd)
+
+      sleep(10.0)
+
+      cmd = "orcScheduler -c stop"
+      assert(system(cmd), cmd)
+      
+   end
+   
    # -------------------------------------------------------------
 
-   def test_checkConfig
+   def test_command_orcBolg
+
+      cmd = "orcBolg -c status"
+      assert(system(cmd), cmd)
+
+      cmd = "orcBolg -c stop"
+      assert(system(cmd), cmd)
 
       
    end

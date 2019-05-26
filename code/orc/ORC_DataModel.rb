@@ -74,8 +74,8 @@ class OrchestratorQueue < ActiveRecord::Base
    
    def OrchestratorQueue.getAllQueuedByName(filename)
       arrFiles     = Array.new
-      triggerFiles = TriggerProduct.find(:all)
-      queuedFiles  = OrchestratorQueue.find(:all)
+      triggerFiles = TriggerProduct.all
+      queuedFiles  = OrchestratorQueue.all
 
       triggerFiles.each{|triggerFile|
          if triggerFile.filename != filename then
@@ -93,8 +93,8 @@ class OrchestratorQueue < ActiveRecord::Base
    
    def OrchestratorQueue.getQueuedFiles
       arrFiles     = Array.new
-      triggerFiles = TriggerProduct.find(:all)
-      queuedFiles  = OrchestratorQueue.find(:all)
+      triggerFiles = TriggerProduct.all
+      queuedFiles  = OrchestratorQueue.all
 
       triggerFiles.each{|triggerFile|
          queuedFiles.each{|queuedFile|
@@ -164,8 +164,8 @@ class ObsoleteTriggerProduct < ActiveRecord::Base
    
    def ObsoleteTriggerProduct.getObsoleteFiles
       arrFiles       = Array.new
-      triggerFiles   = TriggerProduct.find(:all)
-      obsoleteFiles  = ObsoleteTriggerProduct.find(:all)
+      triggerFiles   = TriggerProduct.all
+      obsoleteFiles  = ObsoleteTriggerProduct.all
 
       triggerFiles.each{|triggerFile|
          obsoleteFiles.each{|queuedFile|
@@ -192,7 +192,7 @@ class Pending2QueueFile < ActiveRecord::Base
    
    def Pending2QueueFile.getPendingFiles
       arrFiles       = Array.new
-      pendingFiles   = Pending2QueueFile.find(:all) 
+      pendingFiles   = Pending2QueueFile.all 
 
       pendingFiles.each{|pendingFile| arrFiles << pendingFile }
       return arrFiles
