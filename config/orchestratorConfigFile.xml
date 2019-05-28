@@ -1,177 +1,100 @@
 <OrchestratorConfiguration>
+
    <List_of_DataProviders>
+
+      <DataProvider isTriggerType='no'>
+	      <DataType>MPC</DataType>
+	      <FileType>S2?_OPER_REP???????_MPC?_???????????????_V???????????????_???????????????*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>DPC</DataType>
+	      <FileType>*REP_OPDPC_*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>REPARC</DataType>
+	      <FileType>*REP_ARC___*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>OPAI</DataType>
+	      <FileType>*REP_OPAI__*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>REPACQ</DataType>
+	      <FileType>*REP_STNACQ*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
    
       <DataProvider isTriggerType='yes'>
-	      <DataType>HKTM0</DataType>
-	      <FileType>TLM_MIRA0_</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-      
-      <DataProvider isTriggerType='yes'>
-	      <DataType>SC_D</DataType>
-	      <FileType>MIR_SC_D0_</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-      
-      <DataProvider isTriggerType='yes'>
-	      <DataType>SC_F</DataType>
-	      <FileType>MIR_SC_F0_</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-            
-      <DataProvider isTriggerType='no'>
-	      <DataType>SORB</DataType>
-	      <FileType>MPL_ORBSCT</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>
-      
-      <DataProvider isTriggerType='no'>
-	      <DataType>PLM</DataType>
-	      <FileType>AUX_PLM___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>
-      
-      <DataProvider isTriggerType='no'>
-	      <DataType>FAIL</DataType>
-	      <FileType>AUX_FAIL__</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>NRTMASK</DataType>
-	      <FileType>AUX_NRTMSK</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>NRTAPD</DataType>
-	      <FileType>AUX_APDNRT</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>BWGHT</DataType>
-	      <FileType>AUX_BWGHT_</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>PATT</DataType>
-	      <FileType>AUX_PATT__</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>DGG</DataType>
-	      <FileType>AUX_DGG___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>LSMASK</DataType>
-	      <FileType>AUX_LSMASK</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>RFI</DataType>
-	      <FileType>AUX_RFI___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>SPAR</DataType>
-	      <FileType>AUX_SPAR__</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>LCF</DataType>
-	      <FileType>AUX_LCF___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>PMS</DataType>
-	      <FileType>AUX_PMS___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>NIR</DataType>
-	      <FileType>AUX_NIR___</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>FLATT</DataType>
-	      <FileType>AUX_FLATT_</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>FTTD</DataType>
-	      <FileType>MIR_FTTD__</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>CORD0</DataType>
-	      <FileType>MIR_CORD0_</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>    
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>CRD1A</DataType>
-	      <FileType>MIR_CRSD1A</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>UNCD0</DataType>
-	      <FileType>MIR_UNCD0_</FileType>
-	      <Directory>[update]/data/adf/</Directory>
-      </DataProvider>            
-
-      <DataProvider isTriggerType='yes'>
-	      <DataType>HKTM1A</DataType>
-	      <FileType>TLM_MIRA1A</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>JMAT</DataType>
-	      <FileType>MIR_JMATD_</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>GMAT</DataType>
-	      <FileType>MIR_GMATD_</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>NRT_L1C_D</DataType>
-	      <FileType>MIR_SCND1C</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType='no'>
-	      <DataType>NRT_L1C_F</DataType>
-	      <FileType>MIR_SCNF1C</FileType>
+	      <DataType>NPPF</DataType>
+	      <FileType>*MPL__NPPF_*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
       <DataProvider isTriggerType='yes'>
-	      <DataType>FWF1A</DataType>
-	      <FileType>MIR_AFWD1A</FileType>
+	      <DataType>PLANDFEP</DataType>
+	      <FileType>*MPL_SP????*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>PLANANTENNA</DataType>
+	      <FileType>*MPL_FS????*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+      
+      <DataProvider isTriggerType='yes'>
+	      <DataType>DFEPREP</DataType>
+	      <FileType>*REP_PASS_?*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+      
+      <DataProvider isTriggerType='yes'>
+	      <DataType>SRAEDRS</DataType>
+	      <FileType>*SRA_EDRS_?*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>OPDAM</DataType>
+	      <FileType>*REP_OPDAM?*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>OPLTA</DataType>
+	      <FileType>*REP_OPLTA_*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>OPAI</DataType>
+	      <FileType>*REP_OPAI__*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+                  
+      <DataProvider isTriggerType='yes'>
+	      <DataType>OPLTAS</DataType>
+	      <FileType>*REP_OPLTAS*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType='yes'>
+	      <DataType>ORBPRE</DataType>
+	      <FileType>*MPL_ORBPRE*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
       <DataProvider isTriggerType='no'>
-	      <DataType>CNFL1P</DataType>
-	      <FileType>CNF_L1OP__</FileType>
+	      <DataType>S2_UNKNOWN</DataType>
+	      <FileType>S2*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
@@ -183,10 +106,19 @@
    <!-- ====================================================== -->
 
    <List_of_PriorityRules>
-      <PriorityRule rank="1" class='SensingDelay' value="110000" unit='s' />
-      <PriorityRule rank="2" class='DataType' type='NRT_L1C_D' />
-      <PriorityRule rank="3" class='DataType' type='NRT_L1C_F' />
-      <PriorityRule rank="4" class='DataType' type='HKTM1A' />
+      <PriorityRule rank="1"     class='DataType' type='NPPF' />
+      <PriorityRule rank="2"     class='DataType' type='ORBPRE' />
+      <PriorityRule rank="3"     class='DataType' type='DFEPREP' />
+      <PriorityRule rank="6"     class='DataType' type='REPACQ' />
+      <PriorityRule rank="7"     class='DataType' type='PLANDFEP' />
+      <PriorityRule rank="8"     class='DataType' type='PLANANTENNA' />
+      <PriorityRule rank="9"     class='DataType' type='SRAEDRS' />
+      <PriorityRule rank="10"    class='DataType' type='DPC' />
+      <PriorityRule rank="11"    class='DataType' type='REPARC' />
+      <PriorityRule rank="12"    class='DataType' type='OPAI' />
+      <PriorityRule rank="13"    class='DataType' type='OPLTA' />
+      <PriorityRule rank="14"    class='DataType' type='OPLTAS' />
+      <PriorityRule rank="15"    class='DataType' type='OPDAM' />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -196,8 +128,8 @@
       <ProcessingRule dataType='NRT_CRD1A' triggerType='HKTM1A' coverage='SAME'>
 	      <executable>TBD</executable>
 	      <List_of_Inputs>
-            <Input dataType='HKTM1A'    coverage='SAME'      mandatory='true'  />
-            <Input dataType='CRD1A'    coverage='PREV'      mandatory='false' />
+            <Input dataType='HKTM1A'      coverage='SAME'      mandatory='true'  />
+            <Input dataType='CRD1A'       coverage='PREV'      mandatory='false' />
 	      </List_of_Inputs>
       </ProcessingRule>   
 
@@ -215,17 +147,6 @@
             <Input dataType='FAIL'     coverage='ALL'       mandatory='true' />
             <Input dataType='NIR'      coverage='ALL'       mandatory='true' />
             <Input dataType='LCF'      coverage='ALL'       mandatory='true' />
-	      </List_of_Inputs>
-      </ProcessingRule>   
-
-
-      <ProcessingRule dataType='GMAT'  triggerType='FWF1A'  coverage='SAME'>
-	      <executable>cec_launcher.rb -p G_MAT__02_01.exe %j %P</executable>
-	      <List_of_Inputs>
-            <Input dataType='FWF1A'    coverage='SAME'      mandatory='true' />
-            <Input dataType='CNFL1P'   coverage='ALL'       mandatory='true' />
-            <Input dataType='PATT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PLM'      coverage='ALL'       mandatory='true' />
 	      </List_of_Inputs>
       </ProcessingRule>   
 
@@ -252,22 +173,6 @@
             <Input dataType='UNCD0'    coverage='INTERSECT' mandatory='true' />
             <Input dataType='FTTD'     coverage='LAST'      mandatory='true' />
             <Input dataType='JMAT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='GMAT'     coverage='ALL'       mandatory='true' />
-	         <Input dataType='SORB'     coverage='ALL'       mandatory='true' />
-            <Input dataType='BWGHT'    coverage='ALL'       mandatory='true' />
-            <Input dataType='FAIL'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PATT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PLM'      coverage='ALL'       mandatory='true' />
-            <Input dataType='DGG'      coverage='ALL'       mandatory='true' />
-            <Input dataType='LSMASK'   coverage='ALL'       mandatory='true' />
-            <Input dataType='RFI'      coverage='ALL'       mandatory='true' />
-            <Input dataType='SPAR'     coverage='ALL'       mandatory='true' />
-            <Input dataType='LCF'      coverage='ALL'       mandatory='true' />
-            <Input dataType='PMS'      coverage='ALL'       mandatory='true' />
-            <Input dataType='NIR'      coverage='ALL'       mandatory='true' />
-            <Input dataType='NRTMASK'  coverage='ALL'       mandatory='true' />
-            <Input dataType='NRTAPD'   coverage='ALL'       mandatory='true' />
-
 	      </List_of_Inputs>
       </ProcessingRule>   
 
@@ -281,38 +186,9 @@
             <Input dataType='UNCD0'    coverage='INTERSECT' mandatory='true' />
             <Input dataType='FTTD'     coverage='LAST'      mandatory='true' />
             <Input dataType='JMAT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='GMAT'     coverage='ALL'       mandatory='true' />
-	         <Input dataType='SORB'     coverage='ALL'       mandatory='true' />
-            <Input dataType='BWGHT'    coverage='ALL'       mandatory='true' />
-            <Input dataType='FAIL'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PATT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PLM'      coverage='ALL'       mandatory='true' />
-            <Input dataType='DGG'      coverage='ALL'       mandatory='true' />
-            <Input dataType='LSMASK'   coverage='ALL'       mandatory='true' />
-            <Input dataType='RFI'      coverage='ALL'       mandatory='true' />
-            <Input dataType='SPAR'     coverage='ALL'       mandatory='true' />
-            <Input dataType='LCF'      coverage='ALL'       mandatory='true' />
-            <Input dataType='PMS'      coverage='ALL'       mandatory='true' />
-            <Input dataType='NIR'      coverage='ALL'       mandatory='true' />
-            <Input dataType='NRTMASK'  coverage='ALL'       mandatory='true' />
-            <Input dataType='NRTAPD'   coverage='ALL'       mandatory='true' />
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='NRT_CRD1A' triggerType='CORD0' coverage='SAME'>
-	      <executable>TBD</executable>
-	      <List_of_Inputs>
-            <Input dataType='CORD0'    coverage='SAME'      mandatory='true'  />
-            <Input dataType='CRD1A'    coverage='PREV'      mandatory='false' />
-	      </List_of_Inputs>
-      </ProcessingRule>   
-
-      <ProcessingRule dataType='NRT_CRD1A' triggerType='CORD0' coverage='SAME'>
-	      <executable>TBD</executable>
-	      <List_of_Inputs>
-            <Input dataType='CORD0'    coverage='SAME'      mandatory='true'  />
-            <Input dataType='CRD1A'    coverage='PREV'      mandatory='false' />
-	      </List_of_Inputs>
       </ProcessingRule>   
 
 -->
@@ -328,13 +204,13 @@
    </List_of_Breakpoints>
    
    <Miscelanea>
-      <PollingDir>/nrt_data/bolf/data/pollingDir</PollingDir>
-      <PollingFreq unit="s">1</PollingFreq>
-      <ProcWorkingDir>/nrt_data/bolf/data/processorWd</ProcWorkingDir>
-      <SuccessDir>/nrt_data/bolf/data/success</SuccessDir>
-      <FailureDir>/nrt_data/bolf/data/failure</FailureDir>
-      <BreakPointDir>/nrt_data/bolf/data/breakpoints</BreakPointDir>
-      <TmpDir>/nrt_data/bolf/data/tmp</TmpDir>
+      <PollingDir>/tmp</PollingDir>
+      <PollingFreq unit="s">5</PollingFreq>
+      <ProcWorkingDir>/tmp/processorWd</ProcWorkingDir>
+      <SuccessDir>/tmp/success</SuccessDir>
+      <FailureDir>/tmp/failure</FailureDir>
+      <BreakPointDir>/tmp/breakpoints</BreakPointDir>
+      <TmpDir>/tmp/tmp</TmpDir>
    </Miscelanea>
    
 </OrchestratorConfiguration>

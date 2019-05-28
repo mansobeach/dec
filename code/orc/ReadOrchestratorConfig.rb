@@ -4,7 +4,7 @@
 #
 # ===Ruby source for #ReadOrchestratorConfig class          
 #
-# === Written by DEIMOS Space S.L. (algk)
+# === Written by DEIMOS Space S.L.
 #
 # === MDS-LEGOS => ORC Component
 # 
@@ -104,7 +104,14 @@ class ReadOrchestratorConfig
    # Checks if a fileType is trigger, if its not a valid value returns nil.
    def isFileTypeTrigger?(fileType_)
       @@arrOrchDataProvider.each { |x|
-         if x[:fileType] == fileType_ then
+      
+#         puts fileType_
+#         puts x[:fileType]
+#         puts File.fnmatch(x[:fileType], fileType_)
+#         puts x[:isTrigger]
+      
+         if x[:fileType] == fileType_ or \
+               File.fnmatch(x[:fileType], fileType_) == true then
             if x[:isTrigger] == "yes" then
                return true
             end
@@ -138,9 +145,17 @@ class ReadOrchestratorConfig
    # Checks if the fileType provided exists
    def isValidFileType?(fileType_)
       @@arrOrchDataProvider.each { |x|
-         if x[:fileType] == fileType_ then
+      
+#         puts "checking #{x[:fileType]} => #{fileType_}"
+#         puts File.fnmatch(x[:fileType], fileType_)
+      
+      
+         if x[:fileType] == fileType_ or \
+               File.fnmatch(x[:fileType], fileType_) == true then
             return true
          end
+         
+         
       }
       return false
    end

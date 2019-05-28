@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
 
   s.executables   = [ 
+                     'orcBolg', \
                      'orcIngester', \
                      'orcManageDB', \
                      'orcQueueInput', \

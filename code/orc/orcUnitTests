@@ -19,8 +19,9 @@ require 'fileutils'
 require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
 require 'ctc/ReadInterfaceConfig'
-require 'orc/ORC_Environment'
 
+require 'orc/ORC_Environment'
+require 'arc/MINARC_Environment'
 
 # Preconditions:
 # 1 - setup 
@@ -96,18 +97,24 @@ class ORCTestCase < Test::Unit::TestCase
 
 =end      
       
-      @@conf = ORC_Environment.new
-      
+      @@conf = ORC_Environment.new      
       @@conf.wrapper_load_config_development
-
 
       puts      
       @@conf.wrapper_print_environment
       puts
-      
-      
+            
       @@conf.createEnvironmentDirs
       
+      
+      @@conf = MINARC_Environment.new
+
+      @@conf.wrapper_load_config_development
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+
       
       require 'orc/ORC_DataModel'
             
@@ -116,6 +123,28 @@ class ORCTestCase < Test::Unit::TestCase
       orcConfig = ORC::ReadOrchestratorConfig.instance
       
       system("minArcDB -c")
+      
+      
+      @@arrInputFiles = [ \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
             
    end
    
@@ -276,8 +305,89 @@ class ORCTestCase < Test::Unit::TestCase
       puts orcConf.getAllMiscelanea
       puts "==========================================="
 
+      assert(orcConf.isValidFileType?("MPL_ORBPRE"), "MPL_ORBPRE file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_ORBPRE"), "MPL_ORBPRE file-type configuration")
+
+      assert(orcConf.isValidFileType?("MPL_SPMPS_"), "MPL_SP???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_SPMPS_"), "MPL_SP???? file-type is trigger type")
+      assert(orcConf.isValidFileType?("MPL_SPMTI_"), "MPL_SP???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_SPMTI_"), "MPL_SP???? file-type is trigger type")
+      assert(orcConf.isValidFileType?("MPL_SPSGS_"), "MPL_SP???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_SPSGS_"), "MPL_SP???? file-type is trigger type")
+
+      assert(orcConf.isValidFileType?("MPL_FSMTI_"), "MPL_FS???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_FSMTI_"), "MPL_FS???? file-type is trigger type")
+      assert(orcConf.isValidFileType?("MPL_FSMPS_"), "MPL_FS???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_FSMPS_"), "MPL_FS???? file-type is trigger type")
+      assert(orcConf.isValidFileType?("MPL_FSSGS_"), "MPL_FS???? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("MPL_FSSGS_"), "MPL_FS???? file-type is trigger type")
+
+      assert(orcConf.isValidFileType?("REP_PASS_E"), "REP_PASS_? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_PASS_E"), "REP_PASS_? file-type configuration")
+      
+      assert(orcConf.isValidFileType?("REP_PASS_2"), "REP_PASS_? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_PASS_2"), "REP_PASS_? file-type configuration")
+      
+      assert(orcConf.isValidFileType?("REP_PASS_5"), "REP_PASS_? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_PASS_5"), "REP_PASS_? file-type configuration")
+      
       assert(orcConf.isValidFileType?("REP_OPDPC_"), "REP_OPDPC_ file-type configuration")
-      assert(orcConf.isFileTypeTrigger?("REP_OPDPC_"), "REP_OPDPC_ file-type is trigger type")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDPC_"), "REP_OPDPC_ file-type configuration")
+
+      assert(orcConf.isValidFileType?("REP_OPAI__"), "REP_OPDPC_ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPAI__"), "REP_OPDPC_ file-type configuration")
+
+      assert(orcConf.isValidFileType?("REP_ARC___"), "REP_ARC___ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_ARC___"), "REP_ARC___ file-type configuration")
+
+      assert(orcConf.isValidFileType?("REP_STNACQ"), "REP_STNACQ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_STNACQ"), "REP_STNACQ file-type configuration")
+      
+      assert(orcConf.isValidFileType?("SRA_EDRS_A"), "SRA_EDRS_? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("SRA_EDRS_A"), "SRA_EDRS_? file-type configuration")
+      assert(orcConf.isValidFileType?("SRA_EDRS_C"), "SRA_EDRS_? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("SRA_EDRS_C"), "SRA_EDRS_? file-type configuration")
+      
+      assert(orcConf.isValidFileType?("REP_OPDAM1"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM1"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isValidFileType?("REP_OPDAM2"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM2"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isValidFileType?("REP_OPDAM3"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM3"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isValidFileType?("REP_OPDAM4"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM4"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isValidFileType?("REP_OPDAM5"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM5"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isValidFileType?("REP_OPDAM6"), "REP_OPDAM? file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPDAM6"), "REP_OPDAM? file-type configuration")
+     
+      assert(orcConf.isValidFileType?("REP_OPLTA_"), "REP_OPLTA_ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPLTA_"), "REP_OPLTA_ file-type configuration")
+
+      assert(orcConf.isValidFileType?("REP_OPLTAS"), "REP_OPLTAS file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("REP_OPLTAS"), "REP_OPLTAS file-type configuration")
+      
+      assert(orcConf.isValidFileType?("S2A_OPER_REP_OPDPC__MPC__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
+      assert(!orcConf.isFileTypeTrigger?("S2A_OPER_REP_OPDPC__MPC__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
+
+      assert(orcConf.isValidFileType?("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
+      assert(orcConf.isFileTypeTrigger?("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
+
+      puts
+      
+      @@arrInputFiles.each{|file|
+         puts file
+               
+         assert(orcConf.isValidFileType?(file), "wild-card configuration")
+
+         if file.include?("MPC_") == true then
+            assert(!orcConf.isFileTypeTrigger?(file), "wild-card configuration")
+         else
+            assert(orcConf.isFileTypeTrigger?(file), "wild-card configuration")
+         end
+      }
+
+      puts
 
    end
    # -------------------------------------------------------------
@@ -315,6 +425,7 @@ class ORCTestCase < Test::Unit::TestCase
 
       sleep(15.0)
       
+      
             
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       
@@ -336,30 +447,55 @@ class ORCTestCase < Test::Unit::TestCase
 
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      
+      system("orcIngester -c stop")
+      
       cmd = "orcIngester -c start -i 60 -d /tmp"
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
-      cmd = "orcIngester -c stop"
-      assert(system(cmd), cmd)
+      @@arrInputFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/#{filename}")
+         sleep(3.0)
 
-      cmd = "minArcPurge -Y"
-      assert(system(cmd), cmd)
+      }
 
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000002\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000002.EOF")
-
-      cmd = "orcIngester -c start -i 60 -d /tmp -D"
-      assert(system(cmd), cmd)
-
-      sleep(10.0)
+      sleep(60.0)
 
       cmd = "orcIngester -c stop"
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
+      cmd = "orcIngester -c start -i 60 -d /tmp"
+      assert(system(cmd), cmd)
+
+      sleep(40.0)
+
+      cmd = "minArcRetrieve -A -l --noserver"
+      arrFiles = `#{cmd}`
+
+      puts arrFiles
+      puts arrFiles.split("\n").length
+      puts @@arrInputFiles.length
+
+      puts
+      puts
+      
+      cmd = "orcQueueInput -l -P"
+      arrFiles = `#{cmd}`
+      puts arrFiles
+      
+      assert(!arrFiles.to_s.include?("_MPC_"), "no MPC files queued")
+      
 
    end
    # -------------------------------------------------------------
@@ -390,12 +526,78 @@ class ORCTestCase < Test::Unit::TestCase
    end
    
    # -------------------------------------------------------------
+   
+   def test_command_orcQueueInput
+
+      cmd = "orcQueueInput -l -Q"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -O"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -F"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -S"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -I"
+      assert(system(cmd), cmd)
+
+
+   end   
+   
+   # -------------------------------------------------------------
+
+   def test_11
+      cmd = "minArcPurge -Y"
+      assert(system(cmd), cmd)
+
+      system("minArcDB -d")
+      system("minArcDB -c")      
+      assert(system(cmd), cmd)
+
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+   end
+   # -------------------------------------------------------------
 
    def test_command_orcBolg
 
-      cmd = "orcBolg -c status"
+      cmd = "minArcPurge -Y"
       assert(system(cmd), cmd)
 
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+
+#      cmd = "orcBolg -c status"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "orcBolg -c stop"
+#      assert(system(cmd), cmd)
+
+      cmd = "orcBolg -c start"
+      assert(system(cmd), cmd)
+
+      sleep(20.0)
+ 
       cmd = "orcBolg -c stop"
       assert(system(cmd), cmd)
 
@@ -403,38 +605,17 @@ class ORCTestCase < Test::Unit::TestCase
    end
    # -------------------------------------------------------------
 
-   def test_decConfigInterface2DB
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      @@conf.wrapper_load_config_development
-
-      cmd = "decManageDB -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decConfigInterface2DB -v"
-      assert(system(cmd), cmd)
-            
-      cmd = "decConfigInterface2DB --add IF_1"
-      assert(system(cmd), "decConfigInterface2DB --add IF_1")
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
-   end
-   #--------------------------------------------------------
+   # --------------------------------------------------------
 
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end
 
 
-#=====================================================================
+# =====================================================================
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 
 

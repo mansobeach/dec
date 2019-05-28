@@ -35,10 +35,29 @@ class OrchestratorScheduler
 
       checkModuleIntegrity
       
-      # Register Signals Handlers
-      registerSignals
       
       @logger           = log
+      
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("Orchestrator", "#{ENV['ORC_CONFIG']}/orchestrator_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger   
+   if @logger == nil then
+      puts
+		puts "Error in OrchestratorIngester::initialize"
+     	puts "Could not initialize logging system !  :-("
+      puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
+ 	   puts
+   	exit(99)
+   end
+      
+      
+      
+      
       @orcTmpDir        = ENV['ORC_TMP']
       @isDebugMode      = debug
       @arrQueuedFiles   = Array.new
@@ -58,6 +77,11 @@ class OrchestratorScheduler
       @bExit            = false      
 
       @@ss              = 0
+      
+      # Register Signals Handlers
+      registerSignals
+
+      
    end
    #-------------------------------------------------------------
 
@@ -83,20 +107,20 @@ class OrchestratorScheduler
    # table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
 
-      @logger.debug("Orchestrator::enqueuePendingFiles is in da house")
+      # @logger.debug("Orchestrator::enqueuePendingFiles is in da house")
 
       # Get Pending files pre-queued by the ingesterComponent.rb
       # They are referenced in PENDING2QUEUEFILE table
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
 
       if @arrPendingFiles.empty? == true then
-         @logger.debug("No input files are pending to be queued")
+         # @logger.debug("No input files are pending to be queued")
          return
       end
 
 
       @arrPendingFiles.each{|fileToQueue|
-         @logger.debug("Queueing #{fileToQueue.filename}") 
+         # @logger.debug("Queueing #{fileToQueue.filename}") 
       }
       
       # Queue in Orchestrator_Queue new files referenced 
@@ -175,12 +199,12 @@ class OrchestratorScheduler
    # - 
    def schedule
 
-      @logger.debug("Orchestrator::schedule is in da house")
+      # @logger.debug("Orchestrator::schedule is in da house")
 
       # Verify Database connection
       # ActiveRecord::Base.verify_active_connections!
 
-      @logger.debug("Loading Queue List")
+      # @logger.debug("Loading Queue List")
       
       # Get Pending files pre-queued by the ingesterComponent.rb
       # They are referenced in PENDING2QUEUEFILE table
@@ -932,7 +956,7 @@ private
       # Processor Signal Status management
       if (usr == "usr2") then
          bHandled = true
-         @logger.debug("Scheduler received SIGUSR2 from Processor")
+         # @logger.debug("Scheduler received SIGUSR2 from Processor")
          @sleepSigUsr2 = true
          manageProcesor
       end
@@ -942,10 +966,12 @@ private
       # Ingester Signal Status management      
       if (usr == "usr1") then
          bHandled = true
-         @logger.debug("Scheduler received SIGUSR1 from Ingester")
+         msg = "Scheduler received SIGUSR1 from Ingester"
+         puts msg
+         # @logger.debug(msg)
          if @sleepSigUsr2 == true then
             @sig1flag = true
-            @logger.debug("Scheduler is managing a Processor")
+            # @logger.debug("Scheduler is managing a Processor")
             # manageProcesor
             schedule
          else
@@ -958,7 +984,7 @@ private
       if (usr == "sigterm") then
          bHandled = true
          @bExit   = true
-         @logger.warn("Scheduler requested to finish")
+         # @logger.warn("Scheduler requested to finish")
       end
 
       # --------------------------------

@@ -79,7 +79,7 @@ class TestCaseStore < Test::Unit::TestCase
          exit(99)
       end
       
-      @@conf = ARC_Manage_Config_Development.new
+      @@conf = MINARC_Environment.new
       
       @@conf.wrapper_load_config_development
 

@@ -92,7 +92,7 @@ class OrchestratorIngester
                # @logger.debug("#{polledFile} archived on MINARC")
                # If Trigger file, add it to PENDING2QUEUEFILES
                
-               if @ftReadConf.isFileTypeTrigger?(filetype) == true then
+               if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
                   cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
                   retVal   = system(cmd)
                   @logger.info("#{cmd} / #{retVal}")
@@ -100,7 +100,7 @@ class OrchestratorIngester
                      @logger.error("Could not queue #{polledFile}")
                   end
                else
-                  # @logger.debug("#{polledFile} is not trigger")
+                  @logger.debug("#{polledFile} is not trigger")
                end
             else
                bIngested = false

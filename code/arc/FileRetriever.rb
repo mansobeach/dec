@@ -454,7 +454,10 @@ class FileRetriever
       retVal = true
       
       @arrInv.each{|aFile|
-         puts aFile.filename
+         puts aFile.name
+         if @bListOnly == true then
+            next
+         end
          ret = self.retrieve_by_name(full_path_target, aFile.filename, bDelete, bHardLink, bUnpack)  
          if ret == false then
             retVal = false

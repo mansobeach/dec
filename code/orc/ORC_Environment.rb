@@ -16,6 +16,7 @@
 
 require 'cuc/DirUtils'
 
+
 module ORC
    
    include CUC::DirUtils
@@ -28,6 +29,7 @@ module ORC
       "0.0.1"  =>    "First version of the orchestrator" \
    }
    # -----------------------------------------------------------------
+   
    
    def load_config_development
       ENV['ORC_DB_ADAPTER']               = "sqlite3"

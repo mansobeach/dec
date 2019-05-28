@@ -238,7 +238,7 @@ class Handler_S2PDGS
 
 private
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def compressFile(full_path_name)
       filename       = File.basename(full_path_name, ".*")
@@ -266,6 +266,8 @@ private
          puts
          File.delete("#{full_path}/#{filename}.7z")
          exit(99)
+      else
+         File.delete(full_path_name)
       end
             
       @full_path_filename  = "#{full_path}/#{filename}.7z"
@@ -423,6 +425,6 @@ private
          
       end
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
 end

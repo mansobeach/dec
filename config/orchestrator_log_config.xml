@@ -6,7 +6,7 @@
  
    <outputter name="orchestrator_log">
     <type>FileOutputter</type>
-    <filename>/tmp/orchestrator_log.log</filename>
+    <filename>/tmp/dec_orchestrator.log</filename>
     <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
     </formatter>

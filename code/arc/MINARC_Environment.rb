@@ -135,15 +135,37 @@ module ARC
    # -----------------------------------------------------------------
    
    def checkToolsRemoteMode
+      
+      bCheck = true
+      
       isToolPresent = `which curl`
    
       if isToolPresent[0,1] != '/' or $? != 0 then
          puts "\nMINARC_Environment::checkToolsRemoteMode\n"
          puts "Fatal Error: curl not present in PATH   :-(\n"
+         bCheck = false
+      end
+
+      isToolPresent = `which 7z`
+
+      if isToolPresent[0,1] != '/' or $? != 0 then
+         puts "\nMINARC_Environment::checkToolsRemoteMode\n"
+         puts "Fatal Error: 7z not present in PATH   :-(\n"
+         bCheck = false
+      end
+
+      if bCheck == false then
+         puts "minArc environment configuration not complete"
+         puts
          return false
       end
+
       return true
+      
    end
+   
+   # -----------------------------------------------------------------
+
    
 end # module
 
@@ -151,7 +173,7 @@ end # module
 
 # Wrapper to make use within unit tests since it is not possible inherit mixins
 
-class ARC_Manage_Config_Development
+class MINARC_Environment
    
    include ARC
    
