@@ -248,7 +248,7 @@ class ORCTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "orcIngester -c stop"
-      assert(!system(cmd), cmd)
+      assert(system(cmd), cmd)
 
       cmd = "orcIngester -c start"
       assert(!system(cmd), cmd)
@@ -373,6 +373,18 @@ class ORCTestCase < Test::Unit::TestCase
       assert(orcConf.isValidFileType?("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
       assert(orcConf.isFileTypeTrigger?("S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336"), "REP_OPDPC_ file-type configuration")
 
+      assert(orcConf.isValidFileType?("S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ"), "REP_OPDPC_ file-type configuration")
+      assert(!orcConf.isFileTypeTrigger?("S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ"), "REP_OPDPC_ file-type configuration")
+
+      assert(orcConf.isValidFileType?("S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ"), "REP_OPDPC_ file-type configuration")
+      assert(!orcConf.isFileTypeTrigger?("S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ"), "REP_OPDPC_ file-type configuration")
+
+      # assert(orcConf.isValidFileType?("GIP_PROBAS"), "REP_OPDPC_ file-type configuration")
+
+
+
+
+
       puts
       
       @@arrInputFiles.each{|file|
@@ -388,6 +400,23 @@ class ORCTestCase < Test::Unit::TestCase
       }
 
       puts
+      puts "============================================="
+      
+      dataType = orcConf.getDataType("MPL__NPPF_")
+      procCmd  = orcConf.getExecutable(dataType)
+      puts dataType
+      puts procCmd
+      puts
+      
+      dataType = orcConf.getDataType("S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ")
+      procCmd  = orcConf.getExecutable(dataType)
+      puts dataType
+      puts procCmd
+      puts
+      
+      puts orcConf.getPollingFreq
+      puts
+      puts orcConf.getSchedulingFreq.to_f
 
    end
    # -------------------------------------------------------------
@@ -403,10 +432,19 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcQueueInput -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s UKN"
       puts cmd
       assert(system(cmd), cmd)
-
-
    end
 
+   # -------------------------------------------------------------
+
+   def joder
+      system("minArcPurge -Y")
+      # system("minArcDB -d")
+      system("minArcDB -c")
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+   end
    # -------------------------------------------------------------
 
    def test1
@@ -456,7 +494,7 @@ class ORCTestCase < Test::Unit::TestCase
       
       system("orcIngester -c stop")
       
-      cmd = "orcIngester -c start -i 60 -d /tmp"
+      cmd = "orcIngester -c start -i 5 -d /tmp"
       assert(system(cmd), cmd)
 
       sleep(5.0)
@@ -475,7 +513,7 @@ class ORCTestCase < Test::Unit::TestCase
 
       sleep(5.0)
 
-      cmd = "orcIngester -c start -i 60 -d /tmp"
+      cmd = "orcIngester -c start -i 5 -d /tmp"
       assert(system(cmd), cmd)
 
       sleep(40.0)
@@ -502,23 +540,19 @@ class ORCTestCase < Test::Unit::TestCase
    
    def test_command_orcScheduler
 
-#      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-#
-#      cmd = "orcScheduler"
-#      assert(!system(cmd), cmd)
-#
-#      cmd = "orcScheduler -c status"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "orcScheduler -c stop"
-#      assert(!system(cmd), cmd)
-
       test_command_orcIngester
+
+      sleep(10.0)
 
       cmd = "orcScheduler -c start"
       assert(system(cmd), cmd)
 
-      sleep(10.0)
+      sleep(60.0)
+
+      cmd = "orcIngester -c stop"
+      assert(system(cmd), cmd)
+
+      sleep(180.0)
 
       cmd = "orcScheduler -c stop"
       assert(system(cmd), cmd)
@@ -527,7 +561,98 @@ class ORCTestCase < Test::Unit::TestCase
    
    # -------------------------------------------------------------
    
-   def test_command_orcQueueInput
+   def test_command_orcScheduler2
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      
+      system("orcIngester -c stop")
+      
+#      cmd = "orcIngester -c start -i 5 -d /tmp"
+#      assert(system(cmd), cmd)
+#
+#      sleep(5.0)
+#      
+      cmd = "orcBolg -c start -D"
+      assert(system(cmd), cmd)
+
+      sleep(10.0)
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+
+      sleep(60.0)
+
+      cmd = "orcBolg -c stop"
+      assert(system(cmd), cmd)
+
+
+   end
+   # -------------------------------------------------------------
+
+   def test_command_orcScheduler3
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      
+      system("orcBolg -c stop")
+                 
+      cmd = "orcBolg -c start"
+      assert(system(cmd), cmd)
+
+
+      @@arrInputFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/#{filename}")
+         sleep(5.0)
+
+      }
+
+      sleep(120.0)
+
+      cmd = "orcBolg -c stop"
+      assert(system(cmd), cmd)
+
+      sleep(2.0)
+
+      puts 
+      puts "===================================================="
+      puts "Archived Items"
+      cmd = "minArcRetrieve --noserver -A -l"
+      assert(system(cmd), cmd)
+      puts "===================================================="
+      puts
+
+
+      cmd = "orcQueueInput -l -Q"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -F"
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -S"
+      assert(system(cmd), cmd)
+
+
+
+   end
+   
+   
+   
+   # -------------------------------------------------------------
+   
+   def test_command_orcQueueInputhelpers
 
       cmd = "orcQueueInput -l -Q"
       assert(system(cmd), cmd)

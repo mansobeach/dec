@@ -15,9 +15,6 @@
 #########################################################################
 
 require 'cuc/DirUtils'
-require 'cuc/Log4rLoggerFactory'
-require 'cuc/EE_ReadFileName'
-require 'cuc/EE_DateConverter'
 
 require 'orc/ReadOrchestratorConfig'
 require 'orc/ORC_DataModel'
@@ -30,7 +27,6 @@ module ORC
 class PriorityRulesSolver
    
    include CUC::DirUtils
-   include CUC::EE_DateConverter
 
    #-------------------------------------------------------------
   
@@ -166,12 +162,10 @@ private
    
    # Sort Queued Files
    def sortQueue
-   
       @arrArrCandidates = Array.new
-   
-      currentRule   = nil
-      @nextTrigger  = nil
-      @queuedFiles  = OrchestratorQueue::getQueuedFiles
+      currentRule       = nil
+      @nextTrigger      = nil
+      @queuedFiles      = OrchestratorQueue::getQueuedFiles
         
       if @queuedFiles.empty? == true then
          return
@@ -181,16 +175,17 @@ private
       # For each File-Type Rule
       
       @rules.each{|aRule|
-      
+            
          arrCandidates = Array.new
          currentRule   = aRule
          
-         if @isDebugMode == true then
-            print "Rule[", aRule.rank, "] - ", aRule.fileType, " - ", aRule.sort, "\n"
-         end
+#         if @isDebugMode == true then
+#            print "Rule[", aRule.rank, "] - ", aRule.fileType, " - ", aRule.sort, "\n"
+#         end
       
          @queuedFiles.each{|queuedFile|
-            if queuedFile.filetype == aRule.fileType then
+            if queuedFile.filetype == aRule.fileType or \
+                  File.fnmatch(aRule.fileType, queuedFile.filename) == true then
                arrCandidates << queuedFile
             end
          }
@@ -210,9 +205,9 @@ private
       return @arrArrCandidates
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    def areDependenciesSolved?(triggerFile)
       cmd = "createJobOrderFile.rb -f #{triggerFile}"
@@ -235,7 +230,7 @@ private
          return true
       end
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end #end class
 

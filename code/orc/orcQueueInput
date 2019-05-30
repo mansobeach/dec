@@ -84,8 +84,6 @@
 
 require 'getoptlong'
 
-require 'cuc/EE_ReadFileName'
-
 require 'orc/ORC_Environment'
 
 
@@ -164,19 +162,19 @@ def main
             when "--delete"         then           @filename            = File.basename(arg.to_s)
                                                    @bDelete             = true
             when "--Report"         then           @reportfilename      =  arg.to_s
-            when "--start"         then @pStart              =  arg.to_s
-                                        @bStart              =  true  
-            when "--stop"          then @pStop               =  arg.to_s
-                                        @bStop               =  true
-            when "--list"          then @bList               =  true
-            when "--Obsolete"      then @bObsolete           =  true
-            when "--Queued"        then @bQueued             =  true
-            when "--Trigger"       then @bTrigger            =  true
-            when "--Pending"       then @bPending            =  true
-            when "--Success"       then @bSuccess            =  true
-            when "--Failed"        then @bFailed             =  true
-            when "--dIscarded"     then @bDiscarded          =  true
-            when "--status"        then @initialStatus       = (arg.to_s).upcase[0..2]
+            when "--start"          then           @pStart              =  arg.to_s
+                                                   @bStart              =  true  
+            when "--stop"          then            @pStop               =  arg.to_s
+                                                   @bStop               =  true
+            when "--list"          then            @bList               =  true
+            when "--Obsolete"      then            @bObsolete           =  true
+            when "--Queued"        then            @bQueued             =  true
+            when "--Trigger"       then            @bTrigger            =  true
+            when "--Pending"       then            @bPending            =  true
+            when "--Success"       then            @bSuccess            =  true
+            when "--Failed"        then            @bFailed             =  true
+            when "--dIscarded"     then            @bDiscarded          =  true
+            when "--status"        then            @initialStatus       = (arg.to_s).upcase[0..2]
          end
       end
    rescue Exception
@@ -190,6 +188,12 @@ def main
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
       }
+      exit(0)
+   end
+
+
+   if @bShowUsage == true then
+      usage
       exit(0)
    end
 
@@ -290,8 +294,22 @@ def main
    end
 
 
+
    if @filename != "" and @bPending == true then
-      begin                                 
+      
+      row = Pending2QueueFile.where(filename: @filename)
+      
+      if row != nil then      
+         if row.to_a.length > 0 then
+            puts
+            puts "File #{row.to_a[0].filename} was already in pending queue"
+            puts
+            exit(127)
+         end
+      end
+
+      
+      begin                
          line = Pending2QueueFile.new                                   
          line.filename = @filename
          line.filetype = @filetype                
@@ -308,6 +326,24 @@ def main
       end     
       exit (0)
    end
+  
+   ret = TriggerProduct.where(filename: @filename)
+
+   if ret != nil then
+      if ret.to_a.length > 0 then 
+ 
+         orcFile = OrchestratorQueue.find_by_trigger_product_id(ret.to_a[0].id)
+
+         if orcFile != nil then
+            puts
+            puts "#{ret.to_a[0].filename} was already queued :-|"
+            puts 
+            exit(127)
+         end
+      end
+   end
+
+ 
  
    if (@bStart == true and @bStop == false) or (@bStart == false and @bStop == true) then
       puts "-start and -stop options must go together"
@@ -376,6 +412,8 @@ def main
 #               end
 #               }
 
+
+
    
    ################################ Database insertion ################################
    TriggerProduct.transaction do
@@ -421,8 +459,10 @@ def main
          exit(99)
       end
 
+      Pending2QueueFile.where(filename: @filename).destroy_all
+
       puts
-      puts "The file #{@filename} has been successfully registered and queued as a trigger product :-)" 
+      puts "#{@filename} has been successfully queued :-)" 
       puts  
    end
 end
@@ -475,7 +515,7 @@ def list
    end
 
    if @bSuccess == true then
-      print "SUCCESS_DATE------ID---FILENAME-------------------------------------------------------START------------STOP--------------INI---RUN", "\n"
+      print "SUCCESS_DATE-----DETECTION_DATE----ID---FILENAME-------------------------------------------------------START------------STOP--------------INI---RUN", "\n"
 
 
       successFiles  = SuccessfulTriggerProduct.order(success_date: :asc).all # find(:all, :order => "success_date")
@@ -487,6 +527,7 @@ def list
                else
                   print "                "
                end
+               print triggerFile.detection_date.strftime("%Y%m%dT%H%M%S ").ljust(17)
                print triggerFile.id.to_s.center(4).ljust(6),
                      triggerFile.filename.slice(0..59).ljust(63),
                      triggerFile.sensing_start.strftime("%Y%m%dT%H%M%S ").ljust(17), 

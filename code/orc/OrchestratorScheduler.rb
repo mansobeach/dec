@@ -38,22 +38,22 @@ class OrchestratorScheduler
       
       @logger           = log
       
-   # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("Orchestrator", "#{ENV['ORC_CONFIG']}/orchestrator_log_config.xml")
+      # initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("Orchestrator", "#{ENV['ORC_CONFIG']}/orchestrator_log_config.xml")
    
-   if @isDebugMode then
-      loggerFactory.setDebugMode
-   end
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
       
-   @logger = loggerFactory.getLogger   
-   if @logger == nil then
-      puts
-		puts "Error in OrchestratorIngester::initialize"
-     	puts "Could not initialize logging system !  :-("
-      puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
- 	   puts
-   	exit(99)
-   end
+      @logger = loggerFactory.getLogger   
+      if @logger == nil then
+         puts
+		   puts "Error in OrchestratorIngester::initialize"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
       
       
       
@@ -73,6 +73,7 @@ class OrchestratorScheduler
       @procWorkingDir   = @ftReadConf.getProcWorkingDir  
       @successDir       = @ftReadConf.getSuccessDir
       @failureDir       = @ftReadConf.getFailureDir   
+      @freqScheduling   = @ftReadConf.getSchedulingFreq.to_f
       
       @bExit            = false      
 
@@ -88,6 +89,7 @@ class OrchestratorScheduler
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+      puts "OrchestratorScheduler debug mode is on"
    end
    #-------------------------------------------------------------   
 
@@ -95,11 +97,14 @@ class OrchestratorScheduler
    def loadQueue
       @logger.debug("OrchestratorScheduler::loadQueue") 
       @arrQueuedFiles = OrchestratorQueue.getQueuedFiles 
-      puts 
-      @arrQueuedFiles.each{|item|
-         puts item.filename
-      }
-      puts          
+#      if @isDebugMode == true then
+#         puts "--------------------"
+#         puts "queue:"
+#         @arrQueuedFiles.each{|item|
+#            puts item.filename
+#         }
+#         puts "---------------------"
+#      end         
    end
    #-------------------------------------------------------------   
 
@@ -107,88 +112,30 @@ class OrchestratorScheduler
    # table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
 
-      # @logger.debug("Orchestrator::enqueuePendingFiles is in da house")
-
       # Get Pending files pre-queued by the ingesterComponent.rb
       # They are referenced in PENDING2QUEUEFILE table
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
 
       if @arrPendingFiles.empty? == true then
-         # @logger.debug("No input files are pending to be queued")
+         @logger.debug("No new input files are pending to be queued")
          return
       end
-
-
-      @arrPendingFiles.each{|fileToQueue|
-         # @logger.debug("Queueing #{fileToQueue.filename}") 
-      }
       
       # Queue in Orchestrator_Queue new files referenced 
       # in Pending2QueueFiles (ingester Queue)
       
       @arrPendingFiles.each{ |pf|
 
-         puts pf.filename
-
-         cmd         = "minArcFile -T S2PDGS -f #{pf.filename}"
-         puts cmd      
-         fileType    = `#{cmd}`.chop
-
-
-         puts
-         puts fileType
-         puts
-         
-#         startVal = decoder.getStrDateStart
-#         stopVal  = decoder.getStrDateStop
-#
-#         # If stop-date is EOM set a valid date
-#         if stopVal == "99999999T999999" then
-#            stopVal = "99991231T235959"
-#         end
-       
-         # Extract trigger-type coverage mode
-         coverMode = @ftReadConf.getTriggerCoverageByInputDataType(@ftReadConf.getDataType(fileType))
-         
-         # In case it is coverage mode NRT, it is required to evaluate its classification.
-         # This is whether it is:
-         # OLD  => OLD     products
-         # MIX  => MIXED   products
-         # NRT  => NRT     products
-         # FUT  => FUTURE  products
-         # In case coverage is NOT NRT, trigger product is marked UKN
-
-         if coverMode == "NRT" then
-            depSolver = DependenciesSolver.new(pf.filename)
-            depSolver.init    
-            nrtType   = depSolver.getNRTType
-            if nrtType == nil then
-               @logger.warn("Unable to determine NRT-type for #{pf.filename} ! :-|")
-               nrtType = "UKN"
-            end
-            if nrtType == "FUT" then
-               @logger.warn("FUTURE product detected ! :-|")
-               @logger.warn("Verify system time coherency with PDGS time")
-            end
-            cmd = "orcQueueInput -f #{pf.filename} -s #{nrtType}"
-         else
-            cmd = "orcQueueInput -f #{pf.filename} -s UKN"
-         end
-         
+         cmd = "orcQueueInput -f #{pf.filename} -s UKN"          
          @logger.debug("#{cmd}")
-         
-         if @isDebugMode == true then
-            puts cmd
-         end
-         
+                  
          ret = system(cmd)
          
          if ret == false then
-            @logger.warn("Could not queue #{pf.filename}")
+            @logger.error("Could not queue #{pf.filename}")
          end
 
          Pending2QueueFile.where(filename: pf.filename).destroy_all
-
       }
 
    end
@@ -199,7 +146,9 @@ class OrchestratorScheduler
    # - 
    def schedule
 
-      # @logger.debug("Orchestrator::schedule is in da house")
+      @bScheduling = false
+
+      @logger.debug("Orchestrator::schedule new inputs")
 
       # Verify Database connection
       # ActiveRecord::Base.verify_active_connections!
@@ -226,8 +175,8 @@ class OrchestratorScheduler
    # It will sort @arrQueuedFiles object to trigger pending jobs
    # sorted by priority
    def sortPendingJobs
-      
-      @logger.debug("Sorting Pending jobs")
+           
+      @logger.debug("Sorting Pending jobs / PriorityRulesSolver")
       
       resolver = ORC::PriorityRulesSolver.new
       
@@ -257,7 +206,63 @@ class OrchestratorScheduler
       @logger.debug("Aborting current job #{@currentTrigger.filename}")
       sleep(5)
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+   
+   def triggerJobS2(selectedQueuedFile)
+      @bJobJustTriggered = true
+      
+      @logger.debug("*** Triggering Job => #{selectedQueuedFile.filename} ***")
+      
+      cmd = ""
+      if selectedQueuedFile.filename.include?(".TGZ") == true then      
+         cmd = "minArcRetrieve --noserver -f #{selectedQueuedFile.filename} -L #{@procWorkingDir} -H"
+      else
+         cmd = "minArcRetrieve --noserver -f #{selectedQueuedFile.filename} -L #{@procWorkingDir} -H -U"
+      end
+
+      if @isDebugMode == true then
+         puts cmd
+      end
+
+      @logger.debug(cmd)
+
+      ret = system(cmd)
+
+      if ret == false then
+         @logger.debug("Failed to retrieve input")
+      end
+     
+      dataType = @ftReadConf.getDataType(selectedQueuedFile.filetype)
+      procCmd  = @ftReadConf.getExecutable(dataType)
+      procCmd  = procCmd.gsub("%F", "#{@procWorkingDir}/#{selectedQueuedFile.filename}")
+      @logger.debug(procCmd)
+      
+      # --------------------------------
+      # TRIGGER PROCESSOR !!  :-)
+  
+      retVal = system(procCmd)
+      
+      # fork { exec(cmd) }
+      # --------------------------------
+   
+      # Update Trigger status with SUCCESS
+      
+      retVal = true
+
+      if retVal == true then
+         cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s SUCCESS"
+         @logger.debug(cmd)
+         system(cmd)
+      else
+         cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s FAILURE"
+         @logger.debug(cmd)
+         system(cmd)      
+      end
+   
+      sleep(@freqScheduling)
+   
+   end
+   # -------------------------------------------------------------
    
    # Class method that triggers the Processor Execution 
    def triggerJob(selectedQueuedFile)
@@ -363,7 +368,12 @@ class OrchestratorScheduler
       # For each trigger in the queue, see whether its 
       # dependencies are resolved, and if they are
       # Trigger the Job 
-      @arrQueuedFiles.each{|queuedFile|                         
+      @arrQueuedFiles.each{|queuedFile|
+      
+         @logger.debug("#{queuedFile.filename} solved its dependencies :-)")
+         @selectedQueuedFile = queuedFile
+         break
+                               
          cmd = "createJobOrderFile.rb -f #{queuedFile.filename} -O -i #{queuedFile.id} -L #{@procWorkingDir}"
          puts
          puts cmd
@@ -425,8 +435,13 @@ class OrchestratorScheduler
             abortCurrentJob
          end
          
-         triggerJob(@selectedQueuedFile)
+         # triggerJob(@selectedQueuedFile)
+         
+         triggerJobS2(@selectedQueuedFile)
+         
+         
          @selectedQueuedFile = nil
+         
          schedule
       else
          loadQueue
@@ -965,26 +980,76 @@ private
       # --------------------------------
       # Ingester Signal Status management      
       if (usr == "usr1") then
+         
+         # Ignore additional SIGUSR1 from Ingester
+         Signal.trap("SIGUSR1", "IGNORE")
+
+      
+         @bScheduling = false
          bHandled = true
-         msg = "Scheduler received SIGUSR1 from Ingester"
+         msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
          puts msg
+         puts @sleepSigUsr2
+         puts @bScheduling
          # @logger.debug(msg)
          if @sleepSigUsr2 == true then
             @sig1flag = true
             # @logger.debug("Scheduler is managing a Processor")
             # manageProcesor
-            schedule
+            # schedule
          else
             @sig1flag = false
-            schedule
+            
+            if @bScheduling == false then
+            
+               puts "SIGUSR to call scheduling"
+            
+               @bScheduling = true
+               
+               puts "SIGUSR to call scheduling2"
+               
+            #   mutex = Mutex.new
+               
+            #   mutex.synchronize do
+               
+               aThread = Thread.new{
+                  puts "I'm the thread in"
+                  @logger.debug(msg) 
+                  schedule
+                  puts "I'm the thread out" 
+               }
+                            
+             aThread.join
+             
+
+
+
+             
+               
+               @bScheduling = false
+            else
+               puts "I'm scheduling already"
+            end
+            # 
          end
+         
+         registerSignals
+         
       end
       # --------------------------------
      
       if (usr == "sigterm") then
          bHandled = true
+         
+         Thread.new{
+               @logger.info("SIGTERM received / sayonara baby") 
+            }
+         
          @bExit   = true
-         # @logger.warn("Scheduler requested to finish")
+         
+         exit(0)
+         
+         
       end
 
       # --------------------------------

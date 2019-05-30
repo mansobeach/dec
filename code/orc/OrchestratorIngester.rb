@@ -80,7 +80,8 @@ class OrchestratorIngester
                         
          bIngested   = false
    
-         if @ftReadConf.isValidFileType?(filetype) == true then
+         # if @ftReadConf.isValidFileType?(filetype) == true then
+         if @ftReadConf.isValidFileType?(polledFile) == true then
             @newFile = true
             cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
             @logger.info("#{cmd}")

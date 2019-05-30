@@ -181,6 +181,11 @@ def start
    puts msg
    @logger.debug(msg)        
    @OrcSch  = ORC::OrchestratorScheduler.new(@logger, @isDebugMode)
+   
+   if @isDebugMode == true
+      @OrcSch.setDebugMode
+   end
+
    listener = CUC::Listener.new(File.basename($0), "", 0, @OrcSch.method("schedule").to_proc)       
 
    if @isDebugMode == true
@@ -208,7 +213,7 @@ end
          @logger.debug("Sending signal SIGKILL to Process #{pid} to kill the SchedulerComponent")
          Process.kill(9, pid.to_i)         
 	      checker.release
-         puts "Scheduler Stoped"
+         puts "Scheduler Stopped"
       end
    end
 #-------------------------------------------------------------
