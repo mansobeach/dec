@@ -6,7 +6,7 @@
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === MDS-LEGOS => ORC Component
+# === Orchestrator => ORC Component
 # 
 # CVS: $Id: OrchestratorScheduler.rb,v 1.9 2009/04/30 11:58:52 decdev Exp $
 #
@@ -74,6 +74,7 @@ class OrchestratorScheduler
       @successDir       = @ftReadConf.getSuccessDir
       @failureDir       = @ftReadConf.getFailureDir   
       @freqScheduling   = @ftReadConf.getSchedulingFreq.to_f
+      @resourceManager  = @ftReadConf.getResourceManager
       
       @bExit            = false      
 
@@ -95,7 +96,9 @@ class OrchestratorScheduler
 
    # Get all Queued Files
    def loadQueue
-      @logger.debug("OrchestratorScheduler::loadQueue") 
+      msg = "OrchestratorScheduler::loadQueue"
+      # puts msg
+      @logger.debug(msg) 
       @arrQueuedFiles = OrchestratorQueue.getQueuedFiles 
 #      if @isDebugMode == true then
 #         puts "--------------------"
@@ -112,17 +115,25 @@ class OrchestratorScheduler
    # table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
 
-      # Get Pending files pre-queued by the ingesterComponent.rb
-      # They are referenced in PENDING2QUEUEFILE table
+      msg = "OrchestratorScheduler::enqueuePendingFiles"
+      # puts msg
+      @logger.debug(msg) 
+
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
 
       if @arrPendingFiles.empty? == true then
-         @logger.debug("No new input files are pending to be queued")
+         msg = "No new input files are pending to be queued"
+         # puts msg
+         @logger.debug(msg)
          return
       end
       
       # Queue in Orchestrator_Queue new files referenced 
       # in Pending2QueueFiles (ingester Queue)
+      
+      # Ignore additional SIGUSR1 from Ingester
+      Signal.trap("SIGUSR1", "IGNORE")
+
       
       @arrPendingFiles.each{ |pf|
 
@@ -137,6 +148,11 @@ class OrchestratorScheduler
 
          Pending2QueueFile.where(filename: pf.filename).destroy_all
       }
+      
+      
+      # Register Signals Handlers
+      registerSignals
+
 
    end
    #-------------------------------------------------------------
@@ -148,7 +164,9 @@ class OrchestratorScheduler
 
       @bScheduling = false
 
-      @logger.debug("Orchestrator::schedule new inputs")
+      msg = "Orchestrator::schedule new inputs"
+      # puts msg
+      @logger.debug(msg)
 
       # Verify Database connection
       # ActiveRecord::Base.verify_active_connections!
@@ -167,6 +185,11 @@ class OrchestratorScheduler
       # Method that trigger the new job
       dispatch
 
+      if @arrQueuedFiles.empty? then
+         sleep(@freqScheduling)
+      end
+
+
    end
    #-------------------------------------------------------------
 
@@ -175,8 +198,10 @@ class OrchestratorScheduler
    # It will sort @arrQueuedFiles object to trigger pending jobs
    # sorted by priority
    def sortPendingJobs
-           
-      @logger.debug("Sorting Pending jobs / PriorityRulesSolver")
+      
+      msg = "Sorting Pending jobs / PriorityRulesSolver"
+      # puts msg
+      @logger.debug(msg)
       
       resolver = ORC::PriorityRulesSolver.new
       
@@ -245,21 +270,23 @@ class OrchestratorScheduler
       # fork { exec(cmd) }
       # --------------------------------
    
-      # Update Trigger status with SUCCESS
-      
-      retVal = true
+      # # Update Trigger status with SUCCESS
+      # retVal = true
 
       if retVal == true then
          cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s SUCCESS"
          @logger.debug(cmd)
-         system(cmd)
+         retVal = system(cmd)
+         if retVal == false then
+            @logger.error("Failed exec of #{cmd}")
+         end
       else
          cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s FAILURE"
          @logger.debug(cmd)
          system(cmd)      
       end
    
-      sleep(@freqScheduling)
+      # sleep(@freqScheduling)
    
    end
    # -------------------------------------------------------------
@@ -335,7 +362,7 @@ class OrchestratorScheduler
       # Wait for Processor information
       sleep
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # Method in charge of dispatching new jobs
    # Now it shall take into account whether there is a job running
@@ -343,127 +370,45 @@ class OrchestratorScheduler
    # it shall be aborted
    def dispatch
    
-      @logger.debug("OrchestratorScheduler::dispatch")
-   
-      ret = canDispatchNewTrigger?
-   
-      if ret == false then
-         @logger.debug("Active Job running with status #{@initProcStatus}")
-         return
-      end
-   
-      @logger.debug("Dispatching new job(s)")
+      msg = "OrchestratorScheduler::dispatch => Dispatching new job(s)"
+      @logger.debug(msg)
       @@ss = @@ss + 1
-      # @logger.debug("[#{@@ss}]Orchestrator Scheduling jobs")        
+
       @procWorkingdir   = ""
       inputsDir         = ""
 
+      # --------------------------------
+      
       # Scheduler sorting algorithm
       sortPendingJobs
-      
-      @selectedQueuedFile  = nil
-      firstOldSelected     = nil
-      bAbort               = false
-
-      # For each trigger in the queue, see whether its 
-      # dependencies are resolved, and if they are
-      # Trigger the Job 
-      @arrQueuedFiles.each{|queuedFile|
-      
-         @logger.debug("#{queuedFile.filename} solved its dependencies :-)")
-         @selectedQueuedFile = queuedFile
-         break
-                               
-         cmd = "createJobOrderFile.rb -f #{queuedFile.filename} -O -i #{queuedFile.id} -L #{@procWorkingDir}"
-         puts
-         puts cmd
-         @logger.debug("\n#{cmd}")
-         begin
-            retVal = system(cmd)
-            if retVal == true then
-               if queuedFile.initial_status == "OLD" then
-                  if firstOldSelected == nil then
-                     firstOldSelected = queuedFile
-                  end
-               else
-                  @selectedQueuedFile = queuedFile
-               end
-               
-               # No processor is running and selected file is not OLD
-               if @bProcRunning == false and queuedFile.initial_status != "OLD" then
-                  @logger.debug("#{queuedFile.filename} solved its dependencies :-)")
-                  break
-               else
-               
-                  # We leave "UKN" to as well apropiate processor
-                  # In this way calibration shall be performed as well first
-                  # than OLD production.
-                  if queuedFile.initial_status == "OLD" then
-                     @logger.debug("Postponed execution of OLD job-id #{queuedFile.id}")
-                  else
-                     if @bProcRunning == true then
-                        @logger.debug("Appropiative trigger #{queuedFile.filename} solved its dependencies :-)")
-                        bAbort = true
-                     end
-                     break
-                  end
-               end
-            else
-               @logger.debug("#{queuedFile.filename} not solved its dependencies :-|")
-            end
-         rescue Exception => e
-            @logger.error("Error when triggering createJobOrderFile.rb")
-            @logger.error("Execute in the console:")
-            @logger.error("\n#{cmd} -D")
-         end
-      }
       
       # --------------------------------
       # Trigger Job
       
-      if @selectedQueuedFile == nil and firstOldSelected != nil then
-         @logger.debug("No other jobs pending - Selecting OLD #{firstOldSelected.id}")
-         @selectedQueuedFile = firstOldSelected
-      end
       
-      if @selectedQueuedFile != nil then
-               
-         # If job is running (it is an OLD one)
-         # already checked at the beginning of the method 
-         # by invoking canDispatchNewTrigger?
-         if bAbort == true then
-            abortCurrentJob
+      while !@arrQueuedFiles.empty? do
+
+         triggerJobS2(@arrQueuedFiles.shift)
+
+         if @isDebugMode == true then
+            puts "#queue length: #{@arrQueuedFiles.length}"
+         end
+
+         cmd = "#{@resourceManager}"
+         
+         retVal = system(cmd)
+         
+         while (retVal == false) do
+            @logger.debug("No resources available / queue length: #{@arrQueuedFiles.length} / sleeping #{@freqScheduling} s")
+            sleep(@freqScheduling)
+            retVal = system(cmd)
          end
          
-         # triggerJob(@selectedQueuedFile)
-         
-         triggerJobS2(@selectedQueuedFile)
-         
-         
-         @selectedQueuedFile = nil
-         
-         schedule
-      else
-         loadQueue
-         
-         @logger.debug("No more pending jobs can be executed")
-  
-         # If there is pending notification from the Ingester
-         # invoke the scheduler
-         if @sig1flag == true then
-            @sig1flag = false
-            @logger.debug("Look for new ingested files")          
-            schedule
-         else
-            sleep
-         end
-      end         
-      # --------------------------------
-      @selectedQueuedFile = nil      
+      end
          
       @@ss = @@ss - 1
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # This method checks whether it is possible to dispatch a new job
    def canDispatchNewTrigger?
@@ -479,7 +424,7 @@ class OrchestratorScheduler
          end
       end
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 
 private
@@ -547,204 +492,10 @@ private
    end
    #-------------------------------------------------------------
 
-   # This method checks whether a new generated file by a Processor
-   # is a Trigger file and there it must be queued
-   def handleNewProducedFile(aFile)     
-      
-      cmd         = "minArcFile -T S2PDGS -f #{polledFile}"         
-      filetype    = `#{cmd}`.chop
-         
-      if @ftReadConf.isFileTypeTrigger?(fileType) == true then
-         coverMode = @ftReadConf.getTriggerCoverageByInputDataType(@ftReadConf.getDataType(fileType))
-         # If Cover is equal to NRT
-         # It  must be calculated with DependenciesSolver whether it is
-         # OLD | MIXED | NRT | FUTURE
-         # TO BE DONE !!!!
 
-         cmd = ""
-
-         if coverMode == "NRT" then
-            depSolver = DependenciesSolver.new(aFile)
-            depSolver.init    
-            nrtType   = depSolver.getNRTType
-
-            if nrtType == nil then
-               @logger.warn("Unable to determine NRT-type for #{aFile} ! :-|")
-               nrtType = "UKN"
-            end
-
-            if nrtType == "FUT" then
-               @logger.warn("FUTURE product generated ! :-|")
-               @logger.warn("Verify system time coherency with NRT Processor implementation")
-            end
-
-            cmd = "orcQueueInput -f #{aFile} -s #{nrtType}"
-         else
-            cmd = "orcQueueInput -f #{aFile} -s UKN"
-         end
-            
-         if @isDebugMode == true then
-            puts cmd
-         end
-         @logger.debug("#{cmd}")
-         retVal = system(cmd)
-         if retVal == false then
-            @logger.warn("Could not Queue #{aFile}")
-         end
-      else
-         @logger.debug("New file #{aFile} is not trigger")
-      end
-   end
    #-------------------------------------------------------------
 
-   # This method manages Processor outputs accordingly to the status
-   # If success it archives all outputs and job-order from control
-   # directory
-   def manageProcOutputs(jobId)
-      prevDir = Dir.pwd
-      
-      controlDir = "#{@procWorkingDir}/#{jobId}/control"
-      outputsDir = "#{@procWorkingDir}/#{jobId}/outputs"
-      workingDir = "#{@procWorkingDir}/#{jobId}"
-      
-      # --------------------------------
-      # Store content of the Control directory.
-      # This is mainly the job-order file
-      
-      begin
-         Dir.chdir(controlDir)
-      rescue Exception => e
-         @logger.warn("Could not access into #{controlDir}")
-         return
-      end
 
-      arrFiles = Dir["*"]
-      
-      arrFiles.each{|aFile|
-         
-         # -----------------------------------------------------------      
-         # NOW PRODUCTION_TIMELINE is based on job-order sensing windows
-         
-         cmd = "registerProduction.rb -f #{controlDir}/#{aFile}"
-         @logger.debug("\n#{cmd}")
-         
-         retVal = system(cmd)
-         if retVal == false then
-            @logger.fatal("Could not register production for #{aFile}")
-            exit(99)
-         end
-         # -----------------------------------------------------------
-
-         cmd    = "minArcStore.rb -m -f #{controlDir}/#{aFile}"
-         @logger.debug("\n#{cmd}")
-         retVal = system(cmd)
-         
-         if retVal == false then
-            @logger.warn("Could not archive #{aFile}")
-         end
-                  
-      }
-      
-      # --------------------------------
-      
-      # --------------------------------
-      # Store content of the Outputs directory.
-      # This is the result of the Processor succesful execution
-      # Such files are placed as well in the "Success" folder
-      
-      begin
-         Dir.chdir(outputsDir)
-      rescue Exception => e
-         @logger.warn("Could not access into #{outputsDir}")
-         return
-      end
-
-      arrFiles = Dir["*"]
-      
-      arrFiles.each{|aFile|
-
-         cmd         = "minArcFile -T S2PDGS -f #{polledFile}"         
-         filetype    = `#{cmd}`.chop
-
-         # Archive output file
-         cmd    = "minArcStore.rb -m -f #{outputsDir}/#{aFile}"
-         @logger.debug("\n#{cmd}")
-         retVal = system(cmd)
-         
-         if retVal == false then
-            @logger.warn("Could not archive #{aFile}")
-            
-            retrFile = MINARC::FileRetriever.new(true)
-            
-            ret = retrFile.retrieve_by_name(nil, aFile)
-            
-            if ret == true then
-               @logger.warn("#{aFile} was already present in Archive")
-            else
-               # @logger.error("PRODUCTION Timeline will not be updated")
-               next
-            end
-         end
-         
-         # ---------------------------------------
-         # Queue new File if Trigger
-         handleNewProducedFile(aFile)
-
-         # ---------------------------------------
-         # Place just Archived file in Success folder
-
-         if @ftReadConf.isFileTypeOutput?(fileType) == true or aFile.slice(0,5) == "miras" then
-            cmd = "minArcRetrieve.rb -H -f #{aFile} -L #{@successDir}"
-            @logger.debug("\n#{cmd}")
-            retVal = system(cmd)
-         
-            if retVal == false then
-               @logger.warn("Could not retrieve #{aFile} from MINARC")
-               next
-            end
-         else
-            @logger.debug("#{aFile} not configured as output")
-         end         
-         # ---------------------------------------
-
-         # ---------------------------------------
-         # Register generated Production
-         
-         # DO NOT REGISTER PRODUCTION_TIMELINE BASED 
-         # ON REAL PRODUCTION ANYMORE
-         # BUT BASED ON REQUESTED PRODUCTION (JOB ORDER CONTENT)
-         
-#          cmd = "registerProduction.rb -f #{aFile}"
-#          @logger.debug("\n#{cmd}")
-#          retVal = system(cmd)
-#          if retVal == false then
-#             @logger.warn("Could not register production for #{aFile}")
-#          end
-         
-         #------------------------------------
-         #------------------------------------
-
-         
-         # ---------------------------------------
-         
-      }      
-      # --------------------------------
-      
-      # Back to previous directory
-      Dir.chdir(prevDir)
-      
-      # Clean-up Processing Working Directory
-      cmd = "\\rm -rf #{workingDir}"
-      @logger.debug("Removing #{workingDir} directory")
-      ret = system(cmd)
-      
-      if ret == false then
-         @logger.debug("\n#{cmd}")
-         @logger.warn("Could not remove #{workingDir} directory")
-      end
-      # --------------------------------      
-      
-   end
    #-------------------------------------------------------------
 
    # This method changes Job Status
@@ -988,7 +739,7 @@ private
          @bScheduling = false
          bHandled = true
          msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
-         puts msg
+         # puts msg
          puts @sleepSigUsr2
          puts @bScheduling
          # @logger.debug(msg)
@@ -1002,28 +753,18 @@ private
             
             if @bScheduling == false then
             
-               puts "SIGUSR to call scheduling"
+               # puts "SIGUSR to call scheduling"
             
                @bScheduling = true
-               
-               puts "SIGUSR to call scheduling2"
-               
-            #   mutex = Mutex.new
-               
-            #   mutex.synchronize do
-               
+                              
                aThread = Thread.new{
-                  puts "I'm the thread in"
+                  # puts "I'm the thread in"
                   @logger.debug(msg) 
                   schedule
-                  puts "I'm the thread out" 
+                  # puts "I'm the thread out" 
                }
                             
-             aThread.join
-             
-
-
-
+               aThread.join
              
                
                @bScheduling = false

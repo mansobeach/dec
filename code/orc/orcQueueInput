@@ -275,7 +275,6 @@ def main
 
    cmd            = "minArcFile -T S2PDGS -f #{@filename} -t"         
    @filetype      = `#{cmd}`.chop         
-   # @logger.debug(%Q{#{cmd} / #{@filetype} => #{$?}})
 
    if @filetype == nil or @filetype == "" then
       puts
@@ -284,7 +283,6 @@ def main
       exit(99)
    end
 
-
    if @arrStatus.include?(@initialStatus) == false then
       puts
       puts "Status \"#{@initialStatus}\" is not a valid status :-("
@@ -292,7 +290,6 @@ def main
       puts
       exit(99)
    end
-
 
 
    if @filename != "" and @bPending == true then
@@ -329,10 +326,11 @@ def main
   
    ret = TriggerProduct.where(filename: @filename)
 
+
    if ret != nil then
       if ret.to_a.length > 0 then 
  
-         orcFile = OrchestratorQueue.find_by_trigger_product_id(ret.to_a[0].id)
+         orcFile = OrchestratorQueue.where(trigger_product_id: ret.to_a[0].id)
 
          if orcFile != nil then
             puts

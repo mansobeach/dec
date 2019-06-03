@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.1dev'
+  s.version     = '0.0.1'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -25,8 +25,11 @@ Gem::Specification.new do |s|
   s.executables   = [ 
                      'orcBolg', \
                      'orcIngester', \
+                     'orc_eboa_triggering', \
                      'orcManageDB', \
                      'orcQueueInput', \
+                     'orcQueueUpdate', \
+                     'orcResourceChecker', \
                      'orcScheduler', \
                      'orcUnitTests'
                      ]

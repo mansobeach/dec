@@ -32,11 +32,11 @@ class OrchestratorIngester
    # Class constructor
 
    def initialize(pollDir, interval, debugMode, log, pid)
+      @logger              = log
       checkModuleIntegrity
       @pollingDir          = pollDir
       @intervalSeconds     = interval
-      @isDebugMode         = debugMode            
-      @logger              = log
+      @isDebugMode         = debugMode
       @observerPID         = pid
       @newFile             = false
       @ftReadConf          = ORC::ReadOrchestratorConfig.instance
@@ -166,8 +166,11 @@ class OrchestratorIngester
                @logger.debug("Success Polling #{@pollingDir}  !")
             end
          end      
-      rescue SystemCallError
-         @logger.debug("Could not Poll #{@pollingDir}  !")
+      rescue SystemCallError => e
+         puts e.to_s
+         puts
+         puts e.backtrace
+         @logger.error("Could not Poll #{@pollingDir}  !")
       end    
       Dir.chdir(prevDir)
 
@@ -206,12 +209,6 @@ private
    
    def checkModuleIntegrity
    
-      if !ENV['ORC_BASE'] then
-         @logger.debug("ORC_BASE environment variable not defined")
-         bCheckOK = false
-         bDefined = false
-      end
-
       if !ENV['ORC_TMP'] then
          @logger.debug("ORC_TMP environment variable not defined")
          bCheckOK = false

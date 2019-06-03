@@ -126,12 +126,6 @@ class ORCTestCase < Test::Unit::TestCase
       
       
       @@arrInputFiles = [ \
-                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
-                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
-                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
-                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
-                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
-                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
                            "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
                            "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
                            "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
@@ -139,8 +133,20 @@ class ORCTestCase < Test::Unit::TestCase
                            "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
                            "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
                            "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
-                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
                            "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
                            "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
                            "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
                            "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
@@ -248,7 +254,7 @@ class ORCTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "orcIngester -c stop"
-      assert(system(cmd), cmd)
+      assert(!system(cmd), cmd)
 
       cmd = "orcIngester -c start"
       assert(!system(cmd), cmd)
@@ -417,6 +423,20 @@ class ORCTestCase < Test::Unit::TestCase
       puts orcConf.getPollingFreq
       puts
       puts orcConf.getSchedulingFreq.to_f
+      puts
+      puts orcConf.getResourceManager
+
+
+      triggers = orcConf.getAllTriggerTypeInputs
+      
+      triggers.each{|trigger|
+         executable = orcConf.getExecutable(trigger)
+         cmd = "which #{executable}"
+         isToolPresent = `#{cmd}`
+         assert(isToolPresent[0,1] == '/', "#{executable} not in path")
+         
+      }
+      
 
    end
    # -------------------------------------------------------------
@@ -429,9 +449,18 @@ class ORCTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
+      cmd = "orcQueueInput -P -s NRT -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      puts cmd
+      assert(!system(cmd), cmd)
+
       cmd = "orcQueueInput -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s UKN"
       puts cmd
       assert(system(cmd), cmd)
+      
+      cmd = "orcQueueInput -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s UKN"
+      puts cmd
+      assert(!system(cmd), cmd)
+      
    end
 
    # -------------------------------------------------------------
@@ -558,6 +587,61 @@ class ORCTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
       
    end
+
+   # -------------------------------------------------------------
+
+   def test_11
+      cmd = "minArcPurge -Y"
+      assert(system(cmd), cmd)
+
+      system("minArcDB -d")
+      system("minArcDB -c")      
+      assert(system(cmd), cmd)
+
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+   end
+   # -------------------------------------------------------------
+
+   def test_command_orcBolg
+
+      cmd = "minArcPurge -Y"
+      assert(system(cmd), cmd)
+
+
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+
+
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+
+#      cmd = "orcBolg -c status"
+#      assert(system(cmd), cmd)
+#
+#      cmd = "orcBolg -c stop"
+#      assert(system(cmd), cmd)
+
+      cmd = "orcBolg -c start"
+      assert(system(cmd), cmd)
+
+      sleep(20.0)
+ 
+      cmd = "orcBolg -c stop"
+      assert(system(cmd), cmd)
+
+      
+   end
+   # -------------------------------------------------------------
    
    # -------------------------------------------------------------
    
@@ -597,6 +681,8 @@ class ORCTestCase < Test::Unit::TestCase
 
    def test_command_orcScheduler3
 
+      system("mkdir -p /tmp/orc_tmp")
+      
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
       system("minArcPurge -Y")
@@ -608,18 +694,21 @@ class ORCTestCase < Test::Unit::TestCase
       
       system("orcBolg -c stop")
                  
-      cmd = "orcBolg -c start"
+      cmd = "orcBolg -c start -D"
+      # cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
-
 
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/#{filename}")
-         sleep(5.0)
+         system("echo \'#{filename}\' > /tmp/orc_tmp/#{filename}")
+         sleep(1.5)
 
       }
 
-      sleep(120.0)
+      sleep(400.0)
+
+#      system("echo \'#{@@arrInputFiles[0]}\' > /tmp/#{@@arrInputFiles[0]}")
+#      sleep(30.0)
 
       cmd = "orcBolg -c stop"
       assert(system(cmd), cmd)
@@ -675,60 +764,6 @@ class ORCTestCase < Test::Unit::TestCase
 
    end   
    
-   # -------------------------------------------------------------
-
-   def test_11
-      cmd = "minArcPurge -Y"
-      assert(system(cmd), cmd)
-
-      system("minArcDB -d")
-      system("minArcDB -c")      
-      assert(system(cmd), cmd)
-
-
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-
-      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-
-
-      system("orcManageDB -d")
-      system("orcManageDB -c")
-
-   end
-   # -------------------------------------------------------------
-
-   def test_command_orcBolg
-
-      cmd = "minArcPurge -Y"
-      assert(system(cmd), cmd)
-
-
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-
-      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-
-
-      system("orcManageDB -d")
-      system("orcManageDB -c")
-
-
-#      cmd = "orcBolg -c status"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "orcBolg -c stop"
-#      assert(system(cmd), cmd)
-
-      cmd = "orcBolg -c start"
-      assert(system(cmd), cmd)
-
-      sleep(20.0)
- 
-      cmd = "orcBolg -c stop"
-      assert(system(cmd), cmd)
-
-      
-   end
-   # -------------------------------------------------------------
 
    # --------------------------------------------------------
 

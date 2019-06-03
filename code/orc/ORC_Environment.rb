@@ -2,11 +2,11 @@
 
 #########################################################################
 #
-# === Ruby source for #FileArchiver class
+# === Ruby source for #ORC_Environment class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === Mini Archive Component (MinArc)
+# === Orchestrator (MinArc)
 # 
 # Git: $Id: ORC_Environment.rb $Date$
 #
@@ -16,24 +16,25 @@
 
 require 'cuc/DirUtils'
 
+require 'orc/ReadOrchestratorConfig'
 
 module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.1dev"
+   @@version = "0.0.1"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.1"  =>    "First version of the orchestrator" \
+      "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
    # -----------------------------------------------------------------
    
    
    def load_config_development
       ENV['ORC_DB_ADAPTER']               = "sqlite3"
-      ENV['TMPDIR']                       = "#{ENV['HOME']}/Sandbox/minarc/tmp"
+      ENV['ORC_TMP']                      = "/tmp"
       ENV['ORC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/inventory/orc_inventory"
       ENV['ORC_DATABASE_USER']            = "root"
       ENV['ORC_DATABASE_PASSWORD']        = "1mysql"
@@ -48,6 +49,7 @@ module ORC
       ENV.delete('ORC_DATABASE_USER')
       ENV.delete('ORC_DATABASE_PASSWORD')
       ENV.delete('ORC_CONFIG')
+      ENV.delete('ORC_TMP')
    end
    # -----------------------------------------------------------------
    
@@ -57,7 +59,7 @@ module ORC
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
-      puts "TMPDIR                        => #{ENV['TMPDIR']}"
+      puts "ORC_TMP                       => #{ENV['ORC_TMP']}"
       puts "ORC_DB_ADAPTER                => #{ENV['ORC_DB_ADAPTER']}"
       puts "ORC_DATABASE_NAME             => #{ENV['ORC_DATABASE_NAME']}"
       puts "ORC_DATABASE_USER             => #{ENV['ORC_DATABASE_USER']}"
@@ -67,13 +69,13 @@ module ORC
    # -----------------------------------------------------------------
 
    def check_environment_dirs
-      checkDirectory(ENV['TMPDIR'])
+      checkDirectory(ENV['ORC_TMP'])
    end
    
    # -----------------------------------------------------------------
 
    def createEnvironmentDirs
-      checkDirectory(ENV['TMPDIR'])
+      checkDirectory(ENV['ORC_TMP'])
    end
 
    # -----------------------------------------------------------------
@@ -96,6 +98,13 @@ module ORC
          bCheck = false
          puts "ORC_DB_ADAPTER environment variable is not defined !\n"
          puts
+      end
+
+      isToolPresent = `which sqlite3`
+      
+      if isToolPresent[0,1] != '/' then
+         puts "sqlite3 tool not present in PATH !  :-(\n"
+         bCheckOK = false
       end
 
       isToolPresent = `which orcManageDB`
@@ -125,9 +134,36 @@ module ORC
          puts "orcScheduler tool not present in PATH !  :-(\n"
          bCheckOK = false
       end
-     
+ 
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+
+      resMan = orcConf.getResourceManager
+
+      cmd = "which #{resMan}"
+
+      isToolPresent = `#{cmd}`
+
+      if isToolPresent[0,1] != '/' then
+         puts "#{resMan} not present in PATH !  :-(\n"
+         puts "check orchestratorConfigFile.xml => ResourceManager configuration"
+         bCheckOK = false
+      end
+
+      triggers = orcConf.getAllTriggerTypeInputs
+      
+      triggers.each{|trigger|
+         executable = orcConf.getExecutable(trigger)
+         cmd = "which #{executable}"
+         isToolPresent = `#{cmd}`
+         if isToolPresent[0,1] != '/' then
+            puts "#{executable} not in path / rule #{trigger}"
+            bCheckOK = false
+         end
+      }
+      
       if bCheck == false then
-         puts "ORC environment variables configuration not complete"
+         puts "ORC environment / configuration not complete"
          puts
          return false
       end
@@ -143,16 +179,6 @@ module ORC
 
    # -----------------------------------------------------------------
    
-   def checkToolsRemoteMode
-      isToolPresent = `which curl`
-   
-      if isToolPresent[0,1] != '/' or $? != 0 then
-         puts "\nMINARC_Environment::checkToolsRemoteMode\n"
-         puts "Fatal Error: curl not present in PATH   :-(\n"
-         return false
-      end
-      return true
-   end
    
 end # module
 

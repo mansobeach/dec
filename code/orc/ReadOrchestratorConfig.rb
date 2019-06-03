@@ -47,9 +47,9 @@ class ReadOrchestratorConfig
    # Reload data from files
    # This is the method called when the config files are modified
    def update
-      if @isDebugMode then
-         print("\nReceived Notification that the config files have changed\n")
-      end
+#      if @isDebugMode then
+#         print("\nReceived Notification that the config files have changed\n")
+#      end
       loadData
    end
    #-------------------------------------------------------------
@@ -327,58 +327,63 @@ class ReadOrchestratorConfig
 
 
 
-   #----------------Miscelanea Methods---------------------------
-   #-------------------------------------------------------------
+   # ----------------Miscelanea Methods---------------------------
+   # -------------------------------------------------------------
    
    def getAllMiscelanea
       return @@miscelanea
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getPollingDir
       return @@miscelanea[:pollingDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getSchedulingFreq
       return @@miscelanea[:schedulingFreq]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+
+   def getResourceManager
+      return @@miscelanea[:resourceManager]
+   end
+   # -------------------------------------------------------------
 
    def getPollingFreq
       return @@miscelanea[:pollingFreq]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getProcWorkingDir
       return @@miscelanea[:procWorkingDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getSuccessDir
       return @@miscelanea[:successDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getFailureDir
       return @@miscelanea[:failureDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getBreakPointDir
       return @@miscelanea[:breakPointDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getTmpDir
       return @@miscelanea[:tmpDir]
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 
-   #-------------------------------------------------------------
-   #---------------Private section-------------------------------
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+   # ---------------Private section-------------------------------
+   # -------------------------------------------------------------
 
 private
 
@@ -387,7 +392,7 @@ private
    @@arrOrchProcessRule     = nil
    @@miscelanea             = nil
    @@configDirectory        = ""
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # This method defines all the structs used in this class
    def defineStructs
@@ -395,20 +400,20 @@ private
       Struct.new("OrchPriorityRule", :rank, :dataType, :fileType, :sort)
       Struct.new("OrchProcessRule", :output, :triggerInput, :coverage, :executable, :listOfInputs)  #output is dataType on the orchestratorConfig.xml (processing rules)
       Struct.new("OrchListOfInputs", :dataType, :coverage, :mandatory, :excludeDataType)
-      Struct.new("OrchMiscelanea", :pollingDir, :pollingFreq, :schedulingFreq, :procWorkingDir, :successDir, :failureDir, :breakPointDir, :tmpDir)
+      Struct.new("OrchMiscelanea", :pollingDir, :pollingFreq, :schedulingFreq, :resourceManager, :procWorkingDir, :successDir, :failureDir, :breakPointDir, :tmpDir)
       Struct.new("OrchProcParameter", :name, :value, :unit)
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def fillProcParameter(name, value, unit)
       return Struct::OrchProcParameter.new(name, value, unit)
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def fillDataProvider(isTrigger, dataType, fileType)
       return Struct::OrchDataProvider.new(isTrigger, dataType, fileType)
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def fillPriorityRule(rank, dataType, fileType, sort)
       if sort.upcase != "ASC" and sort.upcase != "DESC" and sort.upcase != "" then
@@ -431,8 +436,8 @@ private
    end
    #-------------------------------------------------------------
 
-   def fillMiscelanea(pollingDir, pollingFreq, schedulingFreq, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
-      return Struct::OrchMiscelanea.new(pollingDir, pollingFreq, schedulingFreq, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+   def fillMiscelanea(pollingDir, pollingFreq, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+      return Struct::OrchMiscelanea.new(pollingDir, pollingFreq, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
    end
    #-------------------------------------------------------------
 
@@ -602,7 +607,7 @@ private
          @@listOfProcParameters << fillProcParameter(name, value, unit)
       }
    end
-   #-------------------------------------------------------------------------
+   # -------------------------------------------------------------------------
 
 
    # Process File, Miscelanea Module
@@ -620,21 +625,22 @@ private
    # for each data provider...
       XPath.each(xmlFile,"OrchestratorConfiguration/Miscelanea"){
          |mc|
-            #gets the 7 children on the xml tree
-      pollingDir     = mc.elements[1].text
-      pollingFreq    = mc.elements[2].text
-      schedulingFreq = mc.elements[3].text
-      procWorkingDir = mc.elements[4].text
-      successDir     = mc.elements[5].text
-      failureDir     = mc.elements[6].text
-      breakPointDir  = mc.elements[7].text
-      tmpDir         = mc.elements[8].text
+            #gets the 9 children on the xml tree
+      pollingDir        = mc.elements[1].text
+      pollingFreq       = mc.elements[2].text
+      schedulingFreq    = mc.elements[3].text
+      resourceManager   = mc.elements[4].text
+      procWorkingDir    = mc.elements[5].text
+      successDir        = mc.elements[6].text
+      failureDir        = mc.elements[7].text
+      breakPointDir     = mc.elements[8].text
+      tmpDir            = mc.elements[9].text
 
-      @@miscelanea = fillMiscelanea(pollingDir, pollingFreq, schedulingFreq, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
-      } #fin del bloque  de data provider
+      @@miscelanea = fillMiscelanea(pollingDir, pollingFreq, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+      } 
 
-   end #end of method parseFile
-   #---------------------------------------------------------------
+   end 
+   # ---------------------------------------------------------------
 
 
    # Check that everything needed is present

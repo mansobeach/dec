@@ -315,12 +315,6 @@ private
    
    def checkModuleIntegrity
    
-      if !ENV['ORC_BASE'] then
-         puts "ORC_BASE environment variable not defined !  :-(\n"
-         bCheckOK = false
-         bDefined = false
-      end
-
       if !ENV['ORC_TMP'] then
          puts "ORC_TMP environment variable not defined !  :-(\n"
          bCheckOK = false

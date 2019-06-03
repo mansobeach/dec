@@ -97,8 +97,6 @@
 	      <FileType>S2*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
-
-
       
    </List_of_DataProviders>
 
@@ -106,93 +104,104 @@
    <!-- ====================================================== -->
 
    <List_of_PriorityRules>
-      <PriorityRule rank="1"     class='DataType' type='NPPF' />
-      <PriorityRule rank="2"     class='DataType' type='ORBPRE' />
-      <PriorityRule rank="3"     class='DataType' type='DFEPREP' />
-      <PriorityRule rank="6"     class='DataType' type='REPACQ' />
-      <PriorityRule rank="7"     class='DataType' type='PLANDFEP' />
-      <PriorityRule rank="8"     class='DataType' type='PLANANTENNA' />
-      <PriorityRule rank="9"     class='DataType' type='SRAEDRS' />
-      <PriorityRule rank="10"    class='DataType' type='DPC' />
-      <PriorityRule rank="11"    class='DataType' type='REPARC' />
-      <PriorityRule rank="12"    class='DataType' type='OPAI' />
-      <PriorityRule rank="13"    class='DataType' type='OPLTA' />
-      <PriorityRule rank="14"    class='DataType' type='OPLTAS' />
-      <PriorityRule rank="15"    class='DataType' type='OPDAM' />
+      <PriorityRule rank="1"     class='DataType' type='ORBPRE'      sort='DESC' />
+      <PriorityRule rank="2"     class='DataType' type='NPPF'        sort='DESC' />
+      <PriorityRule rank="3"     class='DataType' type='PLANDFEP'    sort='DESC' />
+      <PriorityRule rank="4"     class='DataType' type='PLANANTENNA' sort='DESC' />
+      <PriorityRule rank="5"     class='DataType' type='DFEPREP'     sort='DESC' />
+      <PriorityRule rank="6"     class='DataType' type='REPACQ'      sort='DESC' />
+      <PriorityRule rank="7"     class='DataType' type='SRAEDRS'     sort='DESC' />
+      <PriorityRule rank="8"     class='DataType' type='DPC'         sort='DESC' />
+      <PriorityRule rank="9"     class='DataType' type='REPARC'      sort='DESC' />
+      <PriorityRule rank="10"    class='DataType' type='OPAI'        sort='DESC' />
+      <PriorityRule rank="11"    class='DataType' type='OPLTA'       sort='DESC' />
+      <PriorityRule rank="12"    class='DataType' type='OPLTAS'      sort='DESC' />
+      <PriorityRule rank="13"    class='DataType' type='OPDAM'       sort='DESC' />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
   
    <List_of_ProcessingRules>
    
-      <ProcessingRule dataType='NRT_CRD1A' triggerType='HKTM1A' coverage='SAME'>
-	      <executable>TBD</executable>
+      <ProcessingRule dataType='ORBPRE' triggerType='ORBPRE' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
 	      <List_of_Inputs>
-            <Input dataType='HKTM1A'      coverage='SAME'      mandatory='true'  />
-            <Input dataType='CRD1A'       coverage='PREV'      mandatory='false' />
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='FWF1A'  triggerType='CORD0'  coverage='SAME'>
-	      <executable>cec_launcher.rb -p FWFCPL_02_01.exe %j %P</executable>
+      <ProcessingRule dataType='NPPF' triggerType='NPPF' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
 	      <List_of_Inputs>
-            <Input dataType='CORD0'    coverage='SAME'      mandatory='true' />
-            <Input dataType='UNCD0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='HKTM1A'   coverage='ALL'       mandatory='true' />
-            <Input dataType='CNFL1P'   coverage='ALL'       mandatory='true' />
-            <Input dataType='SORB'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PLM'      coverage='ALL'       mandatory='true' />
-            <Input dataType='PMS'      coverage='ALL'       mandatory='true' />
-            <Input dataType='SPAR'     coverage='ALL'       mandatory='true' />
-            <Input dataType='FAIL'     coverage='ALL'       mandatory='true' />
-            <Input dataType='NIR'      coverage='ALL'       mandatory='true' />
-            <Input dataType='LCF'      coverage='ALL'       mandatory='true' />
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='JMAT'  triggerType='GMAT'   coverage='SAME'>
-	      <executable>cec_launcher.rb -p J_MAT__02_01.exe %j %P</executable>
+      <ProcessingRule dataType='DFEPREP' triggerType='DFEPREP' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
 	      <List_of_Inputs>
-            <Input dataType='FWF1A'    coverage='SAME'      mandatory='true' />
-            <Input dataType='CNFL1P'   coverage='ALL'       mandatory='true' />
-            <Input dataType='PATT'     coverage='ALL'       mandatory='true' />
-            <Input dataType='PLM'      coverage='ALL'       mandatory='true' />
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='REPACQ' triggerType='REPACQ' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='PLANDFEP' triggerType='PLANDFEP' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='PLANANTENNA' triggerType='PLANANTENNA' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='SRAEDRS' triggerType='SRAEDRS' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='DPC' triggerType='DPC' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='REPARC' triggerType='REPARC' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='OPAI' triggerType='OPAI' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='OPLTA' triggerType='OPLTA' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='OPLTAS' triggerType='OPLTAS' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType='OPDAM' triggerType='OPDAM' coverage='SAME'>
+	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
 
-
-<!--
-
-      <ProcessingRule dataType='NRT_L1C_D' triggerType='SC_D' coverage='SAME'>
-	      <executable>nrtp_launcher.rb %H -p nrtp_L1C_Dual.bin %j %P</executable>
-	      <List_of_Inputs>
-            <Input dataType='SC_D'     coverage='SAME'      mandatory='true' />
-            <Input dataType='HKTM0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='CORD0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='UNCD0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='FTTD'     coverage='LAST'      mandatory='true' />
-            <Input dataType='JMAT'     coverage='ALL'       mandatory='true' />
-	      </List_of_Inputs>
-      </ProcessingRule>   
-
-
-      <ProcessingRule dataType='NRT_L1C_F' triggerType='SC_F' coverage='SAME'>
-	      <executable>nrtp_launcher.rb %H -p nrtp_L1C_Full.bin %j %P</executable>
-	      <List_of_Inputs>
-            <Input dataType='SC_F'     coverage='SAME'      mandatory='true' />
-            <Input dataType='HKTM0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='CORD0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='UNCD0'    coverage='INTERSECT' mandatory='true' />
-            <Input dataType='FTTD'     coverage='LAST'      mandatory='true' />
-            <Input dataType='JMAT'     coverage='ALL'       mandatory='true' />
-	      </List_of_Inputs>
-      </ProcessingRule>   
-
-      </ProcessingRule>   
-
--->
-   
    </List_of_ProcessingRules>
    
    <List_of_Breakpoints>
@@ -204,8 +213,10 @@
    </List_of_Breakpoints>
    
    <Miscelanea>
-      <PollingDir>/tmp</PollingDir>
-      <PollingFreq unit="s">5</PollingFreq>
+      <PollingDir>/tmp/orc_tmp</PollingDir>
+      <PollingFreq unit="s">3</PollingFreq>
+      <SchedulingFreq unit="s">10</SchedulingFreq>
+      <ResourceManager>orcResourceChecker</ResourceManager>
       <ProcWorkingDir>/tmp/processorWd</ProcWorkingDir>
       <SuccessDir>/tmp/success</SuccessDir>
       <FailureDir>/tmp/failure</FailureDir>
