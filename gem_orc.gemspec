@@ -13,7 +13,9 @@ Gem::Specification.new do |s|
                   Dir['code/orc/orcIngester'] + \
                   Dir['code/orc/orcUnitTests'] + \
                   Dir['code/cuc/*.rb'] + \
-                  Dir['config/profile_orc_sqlite3'] # + \
+                  Dir['config/orchestratorConfigFile.xml'] + \
+                  Dir['config/orchestrator_log_config.xml'] + \
+                  Dir['install/profile_orc_sqlite3'] # + \
 
 
   s.require_paths = ['code', 'code/orc']
