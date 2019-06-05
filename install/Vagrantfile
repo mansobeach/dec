@@ -41,6 +41,13 @@ Vagrant.configure("2") do |config|
    SCRIPT
    # ----------------------------------------------------------------------
 
+   # ----------------------------------------------------------------------
+   # gem install with vagrant non-root user
+   $script_orc = <<-SCRIPT
+   gem install --local /vagrant/gems/orc.gem
+   SCRIPT
+   # ----------------------------------------------------------------------
+
 
   
    config.vm.define "vagrantbox" do |vagrantbox|
@@ -53,7 +60,7 @@ Vagrant.configure("2") do |config|
       
       vagrantbox.vm.hostname     = "vagrantbox"
       
-      vagrantbox.vm.boot_timeout = 400
+      vagrantbox.vm.boot_timeout = 600
       
       vagrantbox.vm.network "public_network"
       
@@ -75,6 +82,8 @@ Vagrant.configure("2") do |config|
       vagrantbox.vm.provision :shell, inline: $script_bundler, privileged: false
       
       vagrantbox.vm.provision :shell, inline: $script_minarc, privileged: false
+
+      vagrantbox.vm.provision :shell, inline: $script_orc, privileged: false
       
       # --------------------------------------------------------------
    
