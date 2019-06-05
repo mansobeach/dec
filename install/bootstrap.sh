@@ -61,6 +61,8 @@ sudo apt-get -y install jq
 
 apt-get install libxml2-utils
 
+sudo apt-get -y install zip
+
 sudo apt-get -y install p7zip
 
 sudo apt-get -y install p7zip-full
