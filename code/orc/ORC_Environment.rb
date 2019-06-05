@@ -22,11 +22,12 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.1"
+   @@version = "0.0.2"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
       "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
    # -----------------------------------------------------------------

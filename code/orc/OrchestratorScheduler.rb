@@ -19,7 +19,7 @@ require 'cuc/Log4rLoggerFactory'
 require 'orc/ReadOrchestratorConfig'
 require 'orc/ORC_DataModel'
 require 'orc/PriorityRulesSolver'
-require 'orc/DependenciesSolver'
+#require 'orc/DependenciesSolver'
 
 
 module ORC

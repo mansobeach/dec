@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -13,7 +13,6 @@ Gem::Specification.new do |s|
                   Dir['code/orc/orcIngester'] + \
                   Dir['code/orc/orcUnitTests'] + \
                   Dir['code/cuc/*.rb'] + \
-                  Dir['code/ctc/WrapperCURL.rb'] + \
                   Dir['config/profile_orc_sqlite3'] # + \
 
 

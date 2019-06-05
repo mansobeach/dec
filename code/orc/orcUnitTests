@@ -17,8 +17,6 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
-require 'ctc/FTPClientCommands'
-require 'ctc/ReadInterfaceConfig'
 
 require 'orc/ORC_Environment'
 require 'arc/MINARC_Environment'
