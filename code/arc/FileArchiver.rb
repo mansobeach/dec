@@ -391,6 +391,7 @@ class FileArchiver
          end
       else
          handler = ""
+
 =begin
          rubylibs = ENV['RUBYLIB'].split(':')
          rubylibs.each {|path|

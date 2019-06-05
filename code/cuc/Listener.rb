@@ -187,8 +187,8 @@ private
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true     
-      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
-         puts "\nDCC_TMP environment variable not defined !\n"
+      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] and !ENV['ORC_TMP'] then
+         puts "\nDCC_TMP | DEC_TMP | ORC_TMP environment variable not defined !\n"
          bDefined = false
       end      
       if bDefined == false then
@@ -200,7 +200,14 @@ private
          @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
       else
          @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
-      end        
+      end
+      
+      if ENV['ORC_TMP'] then
+         @tmpDir   = ENV['ORC_TMP']
+      else
+         @tmpDir   = ENV['DCC_TMP']
+      end
+        
                          
    end
    #-------------------------------------------------------------

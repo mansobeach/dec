@@ -71,12 +71,14 @@ module ORC
 
    def check_environment_dirs
       checkDirectory(ENV['ORC_TMP'])
+      checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
    end
    
    # -----------------------------------------------------------------
 
    def createEnvironmentDirs
       checkDirectory(ENV['ORC_TMP'])
+      checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
    end
 
    # -----------------------------------------------------------------
@@ -100,6 +102,16 @@ module ORC
          puts "ORC_DB_ADAPTER environment variable is not defined !\n"
          puts
       end
+
+#      ret = `which`
+#
+#      if $?.exitstatus != 1 then
+#         puts "ORC_Environment::checkEnvironmentEssential"
+#         puts "which command line tool is not installed !"
+#         puts "it is needed to verify the presence of command line dependencies in $PATH"
+#         puts
+#         exit(99)
+#      end
 
       isToolPresent = `which sqlite3`
       
@@ -162,6 +174,12 @@ module ORC
             bCheckOK = false
          end
       }
+            
+      checkDirectory(orcConf.getProcWorkingDir)
+      checkDirectory(orcConf.getSuccessDir)
+      checkDirectory(orcConf.getFailureDir)
+      checkDirectory(orcConf.getBreakPointDir)
+      checkDirectory(orcConf.getTmpDir)
       
       if bCheck == false then
          puts "ORC environment / configuration not complete"
@@ -210,6 +228,11 @@ class ORC_Environment
    def wrapper_setLocalModeOnly
       setLocalModeOnly
    end
+   
+   def wrapper_createEnvironmentDirs
+      check_environment_dirs
+   end
+   
 end
 
 # ==============================================================================

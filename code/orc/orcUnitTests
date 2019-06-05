@@ -95,6 +95,16 @@ class ORCTestCase < Test::Unit::TestCase
 
 =end      
       
+#      ret = `which`
+#      
+#      puts $?.exitstatus
+#      
+#      if $?.exitstatus != 1 then
+#         puts "which command line tool is missing"
+#         puts
+#         exit(99)
+#      end
+#      
       @@conf = ORC_Environment.new      
       @@conf.wrapper_load_config_development
 
@@ -102,7 +112,7 @@ class ORCTestCase < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       puts
             
-      @@conf.createEnvironmentDirs
+      @@conf.wrapper_createEnvironmentDirs
       
       
       @@conf = MINARC_Environment.new
@@ -113,12 +123,12 @@ class ORCTestCase < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       puts
 
+      @@conf.wrapper_createEnvironmentDirs
       
       require 'orc/ORC_DataModel'
             
       require 'orc/ReadOrchestratorConfig'
       
-      orcConfig = ORC::ReadOrchestratorConfig.instance
       
       system("minArcDB -c")
       
@@ -234,8 +244,7 @@ class ORCTestCase < Test::Unit::TestCase
    # --------------------------------------------------------
 
    def test_commandline_helpers
-   
-   
+      
       cmd = "orcIngester"
       assert(!system(cmd), cmd)
 

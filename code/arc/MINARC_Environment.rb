@@ -20,7 +20,7 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.30dev"
+   @@version = "1.0.30dev4"
    
    # -----------------------------------------------------------------
    
@@ -115,6 +115,7 @@ module ARC
       checkDirectory(ENV['MINARC_TMP'])
       checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
+      checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
    end
    # -----------------------------------------------------------------
 
@@ -196,6 +197,11 @@ class MINARC_Environment
    def wrapper_setLocalModeOnly
       setLocalModeOnly
    end
+   
+   def wrapper_createEnvironmentDirs
+      check_environment_dirs
+   end
+   
 end
 
 # ==============================================================================

@@ -138,24 +138,25 @@ def main
    end
    # -------------------------------------------------------
 
-   handler = ""
+   handler  = ""
    rubylibs = ENV['RUBYLIB'].split(':')
+   handler  = "Handler_#{@fileType.upcase}"
       
-   rubylibs.each {|path|
-	      name = "#{path}/arc/plugins/Handler_#{@fileType.upcase}.rb"
-	    
-         if File.exists?(name) == true then
-            handler = "Handler_#{@fileType.upcase}"
-            break
-         end
-      }
-
-      if handler == "" then
-         puts
-         puts "Could not find handler-file for file-type #{@fileType.upcase} ! :-("
-         puts
-         exit(99)
-      end
+#   rubylibs.each {|path|
+#	      name = "#{path}/arc/plugins/Handler_#{@fileType.upcase}.rb"
+#	    
+#         if File.exists?(name) == true then
+#            handler = "Handler_#{@fileType.upcase}"
+#            break
+#         end
+#      }
+#
+#      if handler == "" then
+#         puts
+#         puts "Could not find handler-file for file-type #{@fileType.upcase} ! :-("
+#         puts
+#         exit(99)
+#      end
       
       bInventory = false
          

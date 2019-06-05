@@ -208,8 +208,8 @@ private
    # tools are in the $PATH
    def checkModuleIntegrity
 
-     if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
-        puts "\nDEC_TMP / DCC_TMP environment variable not defined !\n"
+     if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] and !ENV['ORC_TMP'] then
+        puts "\nDCC_TMP | DEC_TMP | ORC_TMP environment variable not defined !\n"
         bDefined = false
      end
           
@@ -228,7 +228,7 @@ private
      if isToolPresent[0,1] != '/' then
        puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
        puts "Fatal Error: gzip not present in PATH !!   :-(\n\n\n"
-       exit(-1)
+       bDefined = fase
      end     
           
      #check zip tool
@@ -237,7 +237,7 @@ private
      if isToolPresent[0,1] != '/' then
        puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
        puts "Fatal Error: zip not present in PATH !!   :-(\n\n\n"
-       exit(-1)
+       bDefined = fase
      end     
           
      #check unzip tool
@@ -246,7 +246,7 @@ private
      if isToolPresent[0,1] != '/' then
        puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
        puts "Fatal Error: unzip not present in PATH !!   :-(\n\n\n"
-       exit(-1)
+       bDefined = fase
      end          
 
      #check tar tool
@@ -255,7 +255,7 @@ private
      if isToolPresent[0,1] != '/' then
        puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
        puts "Fatal Error: tar not present in PATH !!   :-(\n\n\n"
-       exit(-1)
+       bDefined = fase
      end
 
      #check 7za tool
@@ -264,7 +264,7 @@ private
      if isToolPresent[0,1] != '/' then
        puts "\n\nFT_PackageUtils::checkModuleIntegrity\n"
        puts "Fatal Error: 7za not present in PATH !!   :-(\n\n\n"
-       exit(-1)
+       bDefined = fase
      end
 
      
@@ -276,15 +276,15 @@ private
      time      = Time.new
      str       = time.strftime("%Y%m%d_%H%M%S")
      
-     configDir = nil
-
-      if ENV['DEC_CONFIG'] then
-         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      else
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
-      end
-                                     
-     @localDir = %Q{#{configDir}/.#{str}_packager}                 
+#     configDir = nil
+#
+#      if ENV['DEC_CONFIG'] then
+#         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+#      else
+#         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+#      end
+#                                     
+#     @localDir = %Q{#{configDir}/.#{str}_packager}                 
    end
    
    #------------------------------------------------------------- 
