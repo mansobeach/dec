@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.2'
+  s.version     = '0.0.3'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -15,7 +15,8 @@ Gem::Specification.new do |s|
                   Dir['code/cuc/*.rb'] + \
                   Dir['config/orchestratorConfigFile.xml'] + \
                   Dir['config/orchestrator_log_config.xml'] + \
-                  Dir['install/profile_orc_sqlite3'] # + \
+                  Dir['install/orc_test.env'] + \
+                  Dir['install/orc_test.bash']
 
 
   s.require_paths = ['code', 'code/orc']

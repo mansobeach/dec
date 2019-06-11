@@ -14,6 +14,8 @@
 #
 #########################################################################
 
+require 'dotenv'
+
 require 'cuc/DirUtils'
 
 require 'orc/ReadOrchestratorConfig'
@@ -22,16 +24,46 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.2"
+   @@version = "0.0.3dev"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.3"  =>    "Check of tool dependencies done in the unit tests\n         Dotenv gem has been added to the Gemfile", \
       "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
       "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
    # -----------------------------------------------------------------
    
+   @@arrEnv = [ \
+               "ORC_TMP", \
+               "ORC_CONFIG", \
+               "ORC_DB_ADAPTER", \
+               "ORC_DATABASE_NAME", \
+               "ORC_DATABASE_USER", \
+               "ORC_DATABASE_PASSWORD" \
+              ]
+   
+   # -----------------------------------------------------------------
+   
+   @@arrTools = [ \
+                 "sqlite3", \
+                 "orcManageDB", \
+                 "orcQueueInput", \
+                 "orcIngester", \
+                 "orcScheduler", \
+                 "orcBolg" \
+                ]
+   
+   # -----------------------------------------------------------------
+   
+   def load_environment_test
+      env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_test.env')
+      Dotenv.overload(env_file)
+      ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+   end
+   
+   # -----------------------------------------------------------------
    
    def load_config_development
       ENV['ORC_DB_ADAPTER']               = "sqlite3"
@@ -45,16 +77,15 @@ module ORC
    # -----------------------------------------------------------------
    
    def unset_config
-      ENV.delete('ORC_DB_ADAPTER')
-      ENV.delete('ORC_DATABASE_NAME')
-      ENV.delete('ORC_DATABASE_USER')
-      ENV.delete('ORC_DATABASE_PASSWORD')
-      ENV.delete('ORC_CONFIG')
-      ENV.delete('ORC_TMP')
+      @@arrEnv.each{|vble|
+         ENV.delete(vble)
+      }
    end
    # -----------------------------------------------------------------
    
    def load_config_production
+      env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_production.env')
+      Dotenv.load(env_file)   
    end 
    # -----------------------------------------------------------------
    
@@ -68,10 +99,29 @@ module ORC
       puts "ORC_CONFIG                    => #{ENV['ORC_CONFIG']}"
    end
    # -----------------------------------------------------------------
+  
+   def check_environment
+      check_environment_dirs
+      retVal = checkEnvironmentEssential
+      if retVal == true then
+         return checkToolDependencies
+      else
+         return false
+      end
+   end
+   # -----------------------------------------------------------------
 
    def check_environment_dirs
       checkDirectory(ENV['ORC_TMP'])
       checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      
+      checkDirectory(orcConf.getProcWorkingDir)
+      checkDirectory(orcConf.getSuccessDir)
+      checkDirectory(orcConf.getFailureDir)
+      checkDirectory(orcConf.getBreakPointDir)
+      checkDirectory(orcConf.getTmpDir)    
    end
    
    # -----------------------------------------------------------------
@@ -85,69 +135,16 @@ module ORC
 
    def checkEnvironmentEssential
       bCheck = true
-      if !ENV['ORC_CONFIG'] then
-         bCheck = false
-         puts "ORC_CONFIG environment variable is not defined !\n"
-         puts
-      end
-
-      if !ENV['ORC_TMP'] then
-         bCheck = false
-         puts "ORC_TMP environment variable is not defined !\n"
-         puts
-      end
-
-      if !ENV['ORC_DB_ADAPTER'] then
-         bCheck = false
-         puts "ORC_DB_ADAPTER environment variable is not defined !\n"
-         puts
-      end
-
-#      ret = `which`
-#
-#      if $?.exitstatus != 1 then
-#         puts "ORC_Environment::checkEnvironmentEssential"
-#         puts "which command line tool is not installed !"
-#         puts "it is needed to verify the presence of command line dependencies in $PATH"
-#         puts
-#         exit(99)
-#      end
-
-      isToolPresent = `which sqlite3`
+      bCheck = true
+            
+      @@arrEnv.each{|vble|
+         if !ENV.include?(vble) then
+            bCheck = false
+            puts "orchestrator environment variable #{vble} is not defined !\n"
+            puts
+         end
+      }
       
-      if isToolPresent[0,1] != '/' then
-         puts "sqlite3 tool not present in PATH !  :-(\n"
-         bCheckOK = false
-      end
-
-      isToolPresent = `which orcManageDB`
-      
-      if isToolPresent[0,1] != '/' then
-         puts "orcManageDB tool not present in PATH !  :-(\n"
-         bCheckOK = false
-      end
-
-      isToolPresent = `which orcQueueInput`
-      
-      if isToolPresent[0,1] != '/' then
-         puts "orcQueueInput tool not present in PATH !  :-(\n"
-         bCheckOK = false
-      end
-
-      isToolPresent = `which orcIngester`
-      
-      if isToolPresent[0,1] != '/' then
-         puts "orcIngester tool not present in PATH !  :-(\n"
-         bCheckOK = false
-      end
-
-      isToolPresent = `which orcScheduler`
-      
-      if isToolPresent[0,1] != '/' then
-         puts "orcScheduler tool not present in PATH !  :-(\n"
-         bCheckOK = false
-      end
- 
       orcConf = ORC::ReadOrchestratorConfig.instance
       orcConf.update
 
@@ -171,16 +168,10 @@ module ORC
          isToolPresent = `#{cmd}`
          if isToolPresent[0,1] != '/' then
             puts "#{executable} not in path / rule #{trigger}"
-            bCheckOK = false
+            bCheck = false
          end
       }
-            
-      checkDirectory(orcConf.getProcWorkingDir)
-      checkDirectory(orcConf.getSuccessDir)
-      checkDirectory(orcConf.getFailureDir)
-      checkDirectory(orcConf.getBreakPointDir)
-      checkDirectory(orcConf.getTmpDir)
-      
+                  
       if bCheck == false then
          puts "ORC environment / configuration not complete"
          puts
@@ -193,6 +184,34 @@ module ORC
    def printEnvironmentError
       puts "Execution environment not suited for ORC"
    end
+   # -----------------------------------------------------------------
+
+   # -----------------------------------------------------------------
+   
+   def checkToolDependencies
+      
+      bCheck = true
+      bCheckOK = true
+      
+      @@arrTools.each{|tool|
+         isToolPresent = `which #{tool}`
+               
+         if isToolPresent[0,1] != '/' then
+            puts "\n\nORC_Environment::checkToolDependencies\n"
+            puts "Fatal Error: #{tool} not present in PATH !!   :-(\n\n\n"
+            bCheckOK = false
+         end
+
+      }
+
+      if bCheckOK == false then
+         puts "orchestrator environment configuration is not complete"
+         puts
+         return false
+      end
+      return true      
+   end
+   
    # -----------------------------------------------------------------
    
 
@@ -208,6 +227,10 @@ end # module
 class ORC_Environment
    
    include ORC
+
+   def wrapper_load_environment_test
+      load_environment_test
+   end
    
    def wrapper_load_config_development
       load_config_development
@@ -215,6 +238,10 @@ class ORC_Environment
 
    def wrapper_print_environment
       print_environment
+   end
+
+   def wrapper_check_environment
+      return check_environment
    end
 
    def wrapper_unset_config

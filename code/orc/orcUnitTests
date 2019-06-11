@@ -106,24 +106,37 @@ class ORCTestCase < Test::Unit::TestCase
 #      end
 #      
       @@conf = ORC_Environment.new      
-      @@conf.wrapper_load_config_development
+      @@conf.wrapper_load_environment_test
 
       puts      
       @@conf.wrapper_print_environment
       puts
+     
             
       @@conf.wrapper_createEnvironmentDirs
-      
+
+      if @@conf.wrapper_check_environment == false then
+         puts "orchestrator environment not suited for ORC unit tests"
+         puts
+         exit(99)
+      end
       
       @@conf = MINARC_Environment.new
 
-      @@conf.wrapper_load_config_development
+      # @@conf.wrapper_load_config_development
 
       puts      
       @@conf.wrapper_print_environment
       puts
 
       @@conf.wrapper_createEnvironmentDirs
+      
+      if @@conf.wrapper_check_environment == false then
+         puts "minArc environment not suited for ORC unit tests"
+         puts
+         exit(99)
+      end
+       
       
       require 'orc/ORC_DataModel'
             
@@ -179,7 +192,8 @@ class ORCTestCase < Test::Unit::TestCase
       puts "ORC_UnitTests::#{__method__.to_s}"
       puts
       
-      @@conf.wrapper_load_config_development
+      @@conf = ORC_Environment.new      
+      @@conf.wrapper_load_environment_test
       
       @path = "#{ENV['MINARC_BASE']}/code/orc"
       
@@ -216,7 +230,8 @@ class ORCTestCase < Test::Unit::TestCase
       puts
 
 #      @@conf.wrapper_load_config_development
-#
+#      @@conf.wrapper_load_environment_test
+
 #      cmd = "orcManageDB -d"
 #      puts cmd
 #      ret = system(cmd)
@@ -266,7 +281,7 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngester -c start"
       assert(!system(cmd), cmd)
    
-            
+      @@conf = ORC_Environment.new      
       @@conf.wrapper_unset_config
       
       cmd = "orcIngeter"
@@ -276,7 +291,7 @@ class ORCTestCase < Test::Unit::TestCase
       assert(!system(cmd), cmd)
 
 
-      @@conf.wrapper_load_config_development
+      @@conf.wrapper_load_environment_test
 
       cmd = "orcIngester -v"
       assert(system(cmd), cmd)
@@ -484,8 +499,8 @@ class ORCTestCase < Test::Unit::TestCase
    # -------------------------------------------------------------
 
    def test1
-   
-      @@conf.wrapper_load_config_development
+      @@conf = ORC_Environment.new 
+      @@conf.wrapper_load_environment_test
    
       system("minArcPurge -Y")
       # system("minArcDB -d")
