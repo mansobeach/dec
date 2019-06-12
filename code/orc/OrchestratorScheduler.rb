@@ -390,9 +390,9 @@ class OrchestratorScheduler
 
          triggerJobS2(@arrQueuedFiles.shift)
 
-         if @isDebugMode == true then
-            puts "#queue length: #{@arrQueuedFiles.length}"
-         end
+#         if @isDebugMode == true then
+#            puts "#queue length: #{@arrQueuedFiles.length}"
+#         end
 
          cmd = "#{@resourceManager}"
          
@@ -740,8 +740,8 @@ private
          bHandled = true
          msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
          # puts msg
-         puts @sleepSigUsr2
-         puts @bScheduling
+         # puts @sleepSigUsr2
+         # puts @bScheduling
          # @logger.debug(msg)
          if @sleepSigUsr2 == true then
             @sig1flag = true

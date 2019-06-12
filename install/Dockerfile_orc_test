@@ -19,7 +19,7 @@ FROM ruby:2.4.1-slim
 RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
 
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends build-essential gcc make p7zip-full zip sqlite3 libsqlite3-dev exiftool curl lsof
+  apt-get install -y --no-install-recommends build-essential gcc make p7zip-full zip unzip sqlite3 libsqlite3-dev exiftool curl lsof
 
 # ------------------------------------------------
     

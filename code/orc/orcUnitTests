@@ -52,6 +52,8 @@ class ORCTestCase < Test::Unit::TestCase
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
    
+   @my_argv = ARGV.dup
+   
    #--------------------------------------------------------
    
    Test::Unit.at_start do      
@@ -70,12 +72,23 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       puts
       
-      c = STDIN.getc
-            
+      bBatchmode = false
       
-      if c != 'Y' then
-         exit(99)
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            bBatchmode = true
+            break
+         end
+      }
+      
+      if bBatchmode == false then
+         c = STDIN.getc
+                  
+         if c != 'Y' then
+            exit(99)
+         end
       end
+      
       
 =begin
       puts
@@ -123,7 +136,7 @@ class ORCTestCase < Test::Unit::TestCase
       
       @@conf = MINARC_Environment.new
 
-      # @@conf.wrapper_load_config_development
+      @@conf.wrapper_load_environment_test
 
       puts      
       @@conf.wrapper_print_environment

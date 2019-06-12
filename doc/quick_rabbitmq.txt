@@ -1,0 +1,12 @@
+
+
+brew services start rabbitmq
+
+http://localhost:15672
+
+guest / guest
+
+
+# List the queues
+
+sudo rabbitmqctl list_queues

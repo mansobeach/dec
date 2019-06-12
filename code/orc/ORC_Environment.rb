@@ -29,7 +29,8 @@ module ORC
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.3"  =>    "Check of tool dependencies done in the unit tests\n         Dotenv gem has been added to the Gemfile", \
+      "0.0.3"  =>    "Check of tool dependencies done in the unit tests\n\
+         Dotenv gem has been added to the Gemfile", \
       "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
       "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
@@ -85,7 +86,7 @@ module ORC
    
    def load_config_production
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_production.env')
-      Dotenv.load(env_file)   
+      Dotenv.overload(env_file)   
    end 
    # -----------------------------------------------------------------
    

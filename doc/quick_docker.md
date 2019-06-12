@@ -57,8 +57,13 @@ This section contains the cheat-list of commands to handle docker *containers*.
 -	Run a container with a bash/console:  
 	`docker container run --name minarc -it app_minarc:latest /bin/bash`
 
+-	Run a container with defined environment variables:  
+	`sudo docker container run --name orchestrator -it --env-file ./orc_test.env  app_orc:latest /bin/bash`
+
 -	To obtain a console / bash from a container already in running state:  
 	`docker container exec -i -t <container_id> /bin/bash`
+
+-	To obtain a root console / bash from a container already in running state:`sudo docker container exec --user='root' -i -t dec /bin/bash`
 
 -	To delete all Containers exited:  
 	`docker rm $(docker ps --all -q -f status=exited)`
