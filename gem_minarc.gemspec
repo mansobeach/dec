@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.30'
+  s.version     = '1.0.31'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -20,9 +20,8 @@ Gem::Specification.new do |s|
                   Dir['code/arc/plugins/test/example_1.mp4'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
-                  Dir['config/profile_minarc_sqlite3'] + \
-                  Dir['config/profile_gem_minarc_sqlite3'] # + \
-
+                  Dir['install/minarc_test.env'] + \
+                  Dir['install/minarc_test.bash']
 
   s.require_paths = ['code', 'code/arc']
 

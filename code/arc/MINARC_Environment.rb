@@ -20,12 +20,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.30"
+   @@version = "1.0.31dev"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.30" =>    "Integration version with DEC / generic Orchestrator\n", \
+      "1.0.31" =>    "Check of tool dependencies done in the unit tests", \
+      "1.0.30" =>    "Integration version with DEC / generic Orchestrator", \
       "1.0.29" =>    "minArcFile new tool to decode filename is included supported by Handler_S2PDGS\n", \
       "1.0.28" =>    "Handler_VIDEO updated to handle mkv (matrioska) files\n", \
       "1.0.27" =>    "Handler_VIDEO replaces M2TS & updated to handle wmv files\n", \
@@ -59,10 +60,31 @@ module ARC
    }
    # -----------------------------------------------------------------
    
+   @@arrENV = [ \
+                  "MINARC_TMP", \
+                  "MINARC_ARCHIVE_ROOT", \
+                  "MINARC_DB_ADAPTER", \
+                  "MINARC_ARCHIVE_ERROR", \
+                  "MINARC_DATABASE_NAME", \
+                  "MINARC_DATABASE_USER", \
+                  "MINARC_DATABASE_PASSWORD" \
+                  ]
+
+   # -----------------------------------------------------------------
+
+   @@arrTools = [ \
+                  "curl", \
+                  "7z", \
+                  "gzip", \
+                  "tar", \
+                  "zip", \
+                  "unzip" \
+                  ]
+
+   # -----------------------------------------------------------------
+   
    def load_config_development
-      ENV['MINARC_VERSION']               = "DEPRECATED_ENVIRONMENT_VARIABLE_01.00.00"
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
-      ENV['MINARC_BASE']                  = "#{ENV['HOME']}/Projects/dec"
       ENV['MINARC_SERVER']                = "http://localhost:4567"
       ENV['MINARC_ARCHIVE_ROOT']          = "#{ENV['HOME']}/Sandbox/minarc/archive_root"
       ENV['MINARC_ARCHIVE_ERROR']         = "#{ENV['HOME']}/Sandbox/minarc/error"
@@ -78,7 +100,6 @@ module ARC
    
    def unset_config
       ENV.delete('MINARC_DB_ADAPTER')
-      ENV.delete('MINARC_BASE')
       ENV.delete('MINARC_SERVER')
       ENV.delete('MINARC_ARCHIVE_ROOT')
       ENV.delete('MINARC_ARCHIVE_ERROR')
@@ -98,7 +119,6 @@ module ARC
       puts "HOME                          => #{ENV['HOME']}"
       puts "RACK_ENV                      => #{ENV['RACK_ENV']}"
       puts "TMPDIR                        => #{ENV['TMPDIR']}"
-      puts "MINARC_BASE                   => #{ENV['MINARC_BASE']}"
       puts "MINARC_DB_ADAPTER             => #{ENV['MINARC_DB_ADAPTER']}"
       puts "MINARC_SERVER                 => #{ENV['MINARC_SERVER']}"
       puts "MINARC_TMP                    => #{ENV['MINARC_TMP']}"
@@ -120,7 +140,7 @@ module ARC
    # -----------------------------------------------------------------
 
    def setRemoteModeOnly
-      ENV.delete('MINARC_ARCHIVE_ROOT')
+      ENV.delete('MINARC_TMP')
       ENV.delete('MINARC_DB_ADAPTER')
       ENV.delete('MINARC_ARCHIVE_ROOT')
       ENV.delete('MINARC_ARCHIVE_ERROR')
@@ -135,28 +155,64 @@ module ARC
    end
    # -----------------------------------------------------------------
    
-   def checkToolsRemoteMode
-      
+   def load_environment_test
+      env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'minarc_test.env')
+      Dotenv.overload(env_file)
+   end
+   
+   # -----------------------------------------------------------------
+   
+   def check_environment
+      check_environment_dirs
+      retVal = checkEnvironmentEssential
+      if retVal == true then
+         return checkToolDependencies
+      else
+         return false
+      end
+   end
+   # -----------------------------------------------------------------
+   
+   def checkEnvironmentEssential
       bCheck = true
       
-      isToolPresent = `which curl`
-   
-      if isToolPresent[0,1] != '/' or $? != 0 then
-         puts "\nMINARC_Environment::checkToolsRemoteMode\n"
-         puts "Fatal Error: curl not present in PATH   :-(\n"
-         bCheck = false
-      end
-
-      isToolPresent = `which 7z`
-
-      if isToolPresent[0,1] != '/' or $? != 0 then
-         puts "\nMINARC_Environment::checkToolsRemoteMode\n"
-         puts "Fatal Error: 7z not present in PATH   :-(\n"
-         bCheck = false
-      end
-
+      @@arrENV.each{|vble|
+         if !ENV.include?(vble) then
+            bCheck = false
+            puts "MINARC environment variable #{vble} is not defined !\n"
+            puts
+         end
+      }
+      
       if bCheck == false then
-         puts "minArc environment configuration not complete"
+         puts "MINARC environment / configuration not complete"
+         puts
+         return false
+      end
+      return true
+      
+      
+   end
+   # -----------------------------------------------------------------
+   
+   def checkToolDependencies
+      
+      bCheck = true
+      bCheckOK = true
+      
+      @@arrTools.each{|tool|
+         isToolPresent = `which #{tool}`
+               
+         if isToolPresent[0,1] != '/' then
+            puts "\n\nMINARC_Environment::checkToolDependencies\n"
+            puts "Fatal Error: #{tool} not present in PATH !!   :-(\n\n\n"
+            bCheckOK = false
+         end
+
+      }
+
+      if bCheckOK == false then
+         puts "minArc environment configuration is not complete"
          puts
          return false
       end
@@ -177,6 +233,10 @@ end # module
 class MINARC_Environment
    
    include ARC
+
+   def wrapper_load_environment_test
+      load_environment_test
+   end
    
    def wrapper_load_config_development
       load_config_development
@@ -184,6 +244,10 @@ class MINARC_Environment
 
    def wrapper_print_environment
       print_environment
+   end
+
+   def wrapper_check_environment
+      return check_environment
    end
 
    def wrapper_unset_config

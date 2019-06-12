@@ -155,7 +155,7 @@ class MINARC_Server < Sinatra::Base
       
       listTypes = `#{cmd}`
 
-      if $? == 0 then
+      if $?.exitstatus == 0 then
          "#{listTypes}"
       else
          logger.error "failure of #{cmd}"
@@ -193,14 +193,14 @@ class MINARC_Server < Sinatra::Base
       listFiles = `#{cmd}`
 
 #      puts
-#      puts $?
+#      puts $?.exitstatus
 #      puts
 
       if settings.isDebugMode == true then
          logger.debug listFiles
       end
       
-      if $? == 0 then
+      if $?.exitstatus == 0 then
          "#{listFiles}"
       else
          logger.info "#{params[:filename]} / files not found"
@@ -255,7 +255,7 @@ class MINARC_Server < Sinatra::Base
 
       listFiles = `#{cmd}`
       
-      if $? == 0 then
+      if $?.exitstatus == 0 then
          "#{listFiles}"
       else
          logger.info "#{params[:filename]} / files not found"
@@ -316,7 +316,7 @@ class MINARC_Server < Sinatra::Base
    
       retStr = `#{cmd}`
 
-      if $? != 0 then
+      if $?.existatus != 0 then
          "#{retStr}"
          status API_RESOURCE_ERROR
       end

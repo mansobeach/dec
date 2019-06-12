@@ -211,7 +211,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       
       cmd = "minArcRetrieve --noserver -N #{queryDate.strftime("%Y%m%dT%H%M%S")}"
       puts cmd
-      assert(system(cmd), "#{cmd} => ${$?}")
+      assert(system(cmd), "#{cmd} => ${$?.exitstatus}")
       
       puts
       puts Dir["S2*"]
@@ -228,7 +228,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
             
       cmd = "minArcRetrieve --noserver -N 21000101T000000"
       puts cmd
-      assert(system(cmd), "#{cmd} => ${$?}")   
+      assert(system(cmd), "#{cmd} => ${$?.exitstatus}")   
 
       puts
       puts Dir["S2*"]
@@ -256,7 +256,7 @@ class MINARC_SmokeTestLocal < Test::Unit::TestCase
       puts
       cmd = "minArcRetrieve --noserver -f toto"
       puts cmd
-      assert(!system(cmd), "#{cmd} => ${$?}")      
+      assert(!system(cmd), "#{cmd} => ${$?.exitstatus}")      
    end
 
    # --------------------------------------------------------

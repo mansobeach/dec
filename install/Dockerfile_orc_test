@@ -16,33 +16,14 @@ FROM ruby:2.4.1-slim
 
 # RUN apt-get update && apt-get install -y net-tools
 
+RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends build-essential gcc make p7zip-full sqlite3 libsqlite3-dev exiftool curl lsof
+  apt-get install -y --no-install-recommends build-essential gcc make p7zip-full zip sqlite3 libsqlite3-dev exiftool curl lsof
 
 # ------------------------------------------------
     
 # ================================================
-
-# MINARC Environment Variables into a single layer
-
-#ENV   RACK_ENV=production \
-#      ORC_DB_ADAPTER=sqlite3 \
-#      ORC_DATABASE_NAME=/home/vagrant/Volumes/orc_inventory
-#      ORC_DATABASE_USER=root \
-#      ORC_DATABASE_PASSWORD=1mysql \
-#      ORC_CONFIG=/home/vagrant/Volumes/orc_config \
-#      ORC_TMP=/tmp/orc_tmp \
-#      MINARC_VERSION=DEPRECATED_VARIABLE \
-#      MINARC_SERVER=http://localhost:4567 \
-#      MINARC_DB_ADAPTER=sqlite3 \
-#      MINARC_DATABASE_USER=root \
-#      MINARC_DATABASE_PASSWORD=1mysql \
-#      DEC_TMP=/home/vagrant/Volumes/0.tmp \
-#      TMP_DIR=/home/vagrant/Volumes/0.tmp \
-#      MINARC_TMP=/home/vagrant/Volumes/0.tmp \
-#      MINARC_ARCHIVE_ROOT=/home/vagrant/Volumes/orc_archive \
-#      MINARC_ARCHIVE_ERROR=/home/vagrant/Volumes/orc_error \
-#      MINARC_DATABASE_NAME=/home/vagrant/Volumes/minarc_inventory
 
 RUN env
 # ================================================
@@ -79,6 +60,11 @@ COPY ./gems/orc.gem .
 RUN gem install --local orc.gem
 # ------------------------------------------------
 
+COPY orc_test.env .
+COPY orc_test.bash .
+
+COPY minarc_test.env .
+COPY minarc_test.bash .
 
 # ------------------------------------------------
 

@@ -88,6 +88,12 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       puts
  
+      if @@conf.wrapper_check_environment == false then
+         puts "minArc environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+ 
 #      puts "call start teardown"
 #      self.teardown
 #      puts "call end teardown"

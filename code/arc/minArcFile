@@ -41,12 +41,6 @@ require 'arc/FileArchiver'
 require 'arc/MINARC_Client'
 
 
-# Global variables
-@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
-                                       # of this script
-                                       # execution showing Debug Info
-
-
 # MAIN script function
 def main
    @full_path_location     = nil
@@ -138,10 +132,7 @@ def main
    end
    # -------------------------------------------------------
 
-   handler  = ""
-   rubylibs = ENV['RUBYLIB'].split(':')
-   handler  = "Handler_#{@fileType.upcase}"
-      
+#   rubylibs = ENV['RUBYLIB'].split(':')      
 #   rubylibs.each {|path|
 #	      name = "#{path}/arc/plugins/Handler_#{@fileType.upcase}.rb"
 #	    
@@ -159,7 +150,9 @@ def main
 #      end
       
       bInventory = false
-         
+      
+      
+      handler           = "Handler_#{@fileType.upcase}"   
       require "arc/plugins/#{handler}"
       nameDecoderKlass  = eval(handler)
       nameDecoder       = nameDecoderKlass.new(@filename)
