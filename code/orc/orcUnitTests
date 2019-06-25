@@ -37,6 +37,7 @@ require 'arc/MINARC_Environment'
 #  4  - test_command_orcIngester
 #  5  - test_command_orcScheduler
 #  6  - test_command_orcBolg
+#  7  - test_all_at_once
 
 # Select a single test of the suite
 
@@ -54,7 +55,7 @@ class ORCTestCase < Test::Unit::TestCase
    
    @my_argv = ARGV.dup
    
-   #--------------------------------------------------------
+   # --------------------------------------------------------
    
    Test::Unit.at_start do      
       puts
@@ -476,6 +477,37 @@ class ORCTestCase < Test::Unit::TestCase
    end
    # -------------------------------------------------------------
 
+   def test_allatonce
+     
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+      system("mkdir -p /tmp/orc_polling_dir/tmp")
+      
+      system("orcBolg -c stop")
+      sleep(5.0)
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      
+      @@arrInputFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/orc_polling_dir/tmp/#{filename}")
+      }
+
+      system("mv -f /tmp/orc_polling_dir/tmp/S2* /tmp/orc_polling_dir/")
+
+      cmd = "orcBolg -c start"
+      assert(system(cmd), cmd)
+
+      sleep(100)
+
+   end
+   
+   # -------------------------------------------------------------
+
    def test_command_orcQueueInput
       cmd = "orcQueueInput"
       assert(!system(cmd), cmd)
@@ -500,49 +532,6 @@ class ORCTestCase < Test::Unit::TestCase
 
    # -------------------------------------------------------------
 
-   def joder
-      system("minArcPurge -Y")
-      # system("minArcDB -d")
-      system("minArcDB -c")
-      system("orcManageDB -d")
-      system("orcManageDB -c")
-      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-   end
-   # -------------------------------------------------------------
-
-   def test1
-      @@conf = ORC_Environment.new 
-      @@conf.wrapper_load_environment_test
-   
-      system("minArcPurge -Y")
-      # system("minArcDB -d")
-      system("minArcDB -c")
-      system("orcManageDB -d")
-      system("orcManageDB -c")
-      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-      
-      cmd = "orcScheduler -c start"
-      assert(system(cmd), cmd)
-
-      sleep(15.0)
-      
-      
-            
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      
-      cmd = "orcIngester -c start -i 60 -d /tmp -D"
-      assert(system(cmd), cmd)
-      sleep(10.0)
-      
-      cmd = "orcIngester -c stop"
-      assert(system(cmd), cmd)
-
-      sleep(10.0)
-
-      
-
-   end
    # -------------------------------------------------------------
 
    def test_command_orcIngester
@@ -604,8 +593,10 @@ class ORCTestCase < Test::Unit::TestCase
    
    def test_command_orcScheduler
 
-      test_command_orcIngester
+      system("orcBolg -c stop")
+      sleep(5.0)
 
+      test_command_orcIngester
       sleep(10.0)
 
       cmd = "orcScheduler -c start"
@@ -647,9 +638,11 @@ class ORCTestCase < Test::Unit::TestCase
 
    def test_command_orcBolg
 
+      system("orcBolg -c stop")
+      sleep(5.0)
+
       cmd = "minArcPurge -Y"
       assert(system(cmd), cmd)
-
 
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
 
@@ -684,6 +677,9 @@ class ORCTestCase < Test::Unit::TestCase
 
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
+      system("orcBolg -c stop")
+      sleep(5.0)
+
       system("minArcPurge -Y")
       system("minArcDB -d")
       system("minArcDB -c")
@@ -716,7 +712,7 @@ class ORCTestCase < Test::Unit::TestCase
 
    def test_command_orcScheduler3
 
-      system("mkdir -p /tmp/orc_tmp")
+      system("mkdir -p /tmp/orc_polling_dir")
       
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
@@ -735,7 +731,7 @@ class ORCTestCase < Test::Unit::TestCase
 
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/orc_tmp/#{filename}")
+         system("echo \'#{filename}\' > /tmp/orc_polling_dir/#{filename}")
          sleep(1.5)
 
       }

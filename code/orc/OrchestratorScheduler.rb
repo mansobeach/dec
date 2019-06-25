@@ -55,30 +55,28 @@ class OrchestratorScheduler
    	   exit(99)
       end
       
-      
-      
-      
-      @orcTmpDir        = ENV['ORC_TMP']
-      @isDebugMode      = debug
-      @arrQueuedFiles   = Array.new
-      @arrPendingFiles  = Array.new
-      @sleepSigUsr2     = false
-      @sig1flag         = false
-      @bJobJustTriggered= false
-      @bProcRunning     = false
+      @bFirstSchedule      = true
+      @orcTmpDir           = ENV['ORC_TMP']
+      @isDebugMode         = debug
+      @arrQueuedFiles      = Array.new
+      @arrPendingFiles     = Array.new
+      @sleepSigUsr2        = false
+      @sig1flag            = false
+      @bJobJustTriggered   = false
+      @bProcRunning        = false
 
-      @ftReadConf       = ORC::ReadOrchestratorConfig.instance
+      # --------------------------------
+      # Get Orchestrator Configuration
+      @ftReadConf          = ORC::ReadOrchestratorConfig.instance
+      @procWorkingDir      = @ftReadConf.getProcWorkingDir  
+      @successDir          = @ftReadConf.getSuccessDir
+      @failureDir          = @ftReadConf.getFailureDir   
+      @freqScheduling      = @ftReadConf.getSchedulingFreq.to_f
+      @resourceManager     = @ftReadConf.getResourceManager
+      # --------------------------------
 
-      # Get Orchestrator Configuration Dirs
-      @procWorkingDir   = @ftReadConf.getProcWorkingDir  
-      @successDir       = @ftReadConf.getSuccessDir
-      @failureDir       = @ftReadConf.getFailureDir   
-      @freqScheduling   = @ftReadConf.getSchedulingFreq.to_f
-      @resourceManager  = @ftReadConf.getResourceManager
-      
-      @bExit            = false      
-
-      @@ss              = 0
+      @bExit               = false      
+      @@ss                 = 0
       
       # Register Signals Handlers
       registerSignals
@@ -176,7 +174,11 @@ class OrchestratorScheduler
       # Get Pending files pre-queued by the ingesterComponent.rb
       # They are referenced in PENDING2QUEUEFILE table
 
-      enqueuePendingFiles
+      if @bFirstSchedule == true then
+         @bFirstSchedule = false
+      else
+         enqueuePendingFiles
+      end
 
       # After registering all new trigger products
       # the processing queue is loaded
@@ -186,9 +188,9 @@ class OrchestratorScheduler
       dispatch
 
       if @arrQueuedFiles.empty? then
-         sleep(@freqScheduling)
+         @logger.info("Waiting for new inputs")
+         sleep
       end
-
 
    end
    #-------------------------------------------------------------

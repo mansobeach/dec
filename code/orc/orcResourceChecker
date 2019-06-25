@@ -84,7 +84,7 @@ def main
    # -------------------------------------------------------
 
 
-   iValue = Kernel.rand(0..3)
+   iValue = Kernel.rand(0..19)
    puts iValue
  
    if iValue == 0 then

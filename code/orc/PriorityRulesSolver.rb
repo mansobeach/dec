@@ -20,7 +20,6 @@ require 'orc/ReadOrchestratorConfig'
 require 'orc/ORC_DataModel'
 
 
-
 module ORC
 
 
@@ -28,7 +27,7 @@ class PriorityRulesSolver
    
    include CUC::DirUtils
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
   
    # Class constructor
 
@@ -46,20 +45,22 @@ class PriorityRulesSolver
 
       @rules = @ftReadConf.getPriorityRules
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "PriorityRulesSolver debug mode is on"
    end
-   #-------------------------------------------------------------
+   
+   # -------------------------------------------------------------
 
    # Get queue files
    def getQueue
       return OrchestratorQueue::getQueuedFiles
    end
-   #-------------------------------------------------------------
+   
+   # -------------------------------------------------------------
    
    # Main method of this class that performs the dependencies
    # checker
@@ -75,9 +76,9 @@ class PriorityRulesSolver
       end
       return @nextTrigger
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getSortedQueue
       arrFiles = sortQueue
@@ -88,7 +89,7 @@ class PriorityRulesSolver
       end
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getNextResolved
       sortQueue
@@ -109,11 +110,11 @@ class PriorityRulesSolver
       return nil
    end
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 private
   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    # Check that everything needed by the class is present.
    
    def checkModuleIntegrity
@@ -133,7 +134,7 @@ private
       end
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getQueuedFiles
       
@@ -152,7 +153,7 @@ private
       return listFiles
     
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Sort Queued Files
    def sortQueue

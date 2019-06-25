@@ -52,11 +52,13 @@ Gem::Specification.new do |s|
   # ----------------------------------------------
   
   s.add_dependency('activerecord', '~> 5.1')
+  s.add_dependency('dotenv')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('json', '~> 2.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('sinatra', '~> 2.0')
+  s.add_dependency('sqlite3', '~> 1.3')
   s.add_dependency('test-unit', '~> 3.2')
   s.add_dependency('thin', '~> 1.7')
   s.add_dependency('writeexcel', '~> 1.0')
@@ -66,7 +68,7 @@ Gem::Specification.new do |s|
   # database specific gems which can differ
   
   # s.add_dependency('pg', '~> 1.0')
-  s.add_dependency('sqlite3', '~> 1.3')
+
   
   
   # you did document with RDoc, right?

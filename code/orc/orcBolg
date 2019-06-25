@@ -197,7 +197,7 @@ def start
       fork { exec(cmd) }
       
       # Give time to the process to register its PID
-      sleep(10)
+      sleep(20)
 
       pid = @schedulerChecker.getRunningPID
       puts "Scheduler started with pid #{pid}"
