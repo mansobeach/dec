@@ -102,11 +102,7 @@ require 'dec/DEC_Environment'
 # checkSent2Entity checks what it has been sent to a given entity.
 # It checks in the UploadDir and UploadTemp directories 
 
-# Global variables
-@dateLastModification = "$Date: 2007/12/18 18:21:36 $" 
-                                    # to keep control of the last modification
-                                    # of this script
-@isDebugMode      = false               # execution showing Debug Info
+@isDebugMode      = false
 @isVerboseMode    = false
 @isSecure         = false
 @checkUploadTmp   = false
@@ -120,6 +116,7 @@ require 'dec/DEC_Environment'
 @bTrays           = false
 @isNoDB           = false
 @bLog             = false
+@interface        = ""
 
 # MAIN script function
 def main
@@ -136,7 +133,7 @@ def main
      ["--incoming", "-i",       GetoptLong::NO_ARGUMENT],
      ["--outgoing", "-o",       GetoptLong::NO_ARGUMENT],
      ["--tray", "-t",           GetoptLong::NO_ARGUMENT],
-     ["--entities", "-e",       GetoptLong::NO_ARGUMENT],
+     ["--entities", "-e",       GetoptLong::OPTIONAL_ARGUMENT],
      ["--mail", "-m",           GetoptLong::NO_ARGUMENT],
      ["--services", "-s",       GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
@@ -157,7 +154,8 @@ def main
             when "--nodb"     then @isNoDB         = true
             when "--incoming" then @bIncoming      = true
             when "--outgoing" then @bOutgoing      = true
-            when "--entities" then @bEntities      = true
+            when "--entities" then @interface      = arg.to_s
+                                   @bEntities      = true
             when "--services" then @bServices      = true
 	         when "--mail"     then @bMail          = true
             when "--all"      then @bAll           = true
@@ -214,7 +212,10 @@ def main
    if @bEntities == true or @bAll == true then
       puts "================================================"
       puts "Checking interfaces.xml Configuration ..."
-      arrEnts.each{|x|
+      arrEnts.each{|x|         
+         if @interface != "" and @interface != x then
+            next
+         end
          puts "Verification of interface #{x}"
          bEnabled4Send = ftConfig.isEnabled4Sending?(x)
          bEnabled4Recv = ftConfig.isEnabled4Receiving?(x)
@@ -251,7 +252,7 @@ def main
          # Perform the check against the Inventory
          puts "Checking DEC/Inventory entries ..."
          checkerInventory = CTC::CheckerInventoryConfig.new
-         ret = checkerInventory.check
+         ret = checkerInventory.check(@interface)
          puts "================================================"
          if ret == false then
             puts "\ntry registering them with decConfigInterface2DB tool !  ;-) \n\n"
@@ -440,7 +441,7 @@ def main
    
 end
 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 # Print command line help
 def usage
@@ -454,23 +455,22 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 def checkOutgoingConfig
    puts "To be done !"
    exit(98)
 end
-
-#-------------------------------------------------------------
+# -------------------------------------------------------------
    
 # Check that everything needed by the class is present.
 def checkModuleIntegrity
    return
 end 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
-#==========================================================================
+## =============================================================================
 # Start of the main body
 main
 # End of the main body
-#===============================================================================
+## =============================================================================

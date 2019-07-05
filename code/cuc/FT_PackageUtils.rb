@@ -208,10 +208,10 @@ private
    # tools are in the $PATH
    def checkModuleIntegrity
 
-     if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] and !ENV['ORC_TMP'] then
-        puts "\nDCC_TMP | DEC_TMP | ORC_TMP environment variable not defined !\n"
-        bDefined = false
-     end
+      if !ENV.include?('DCC_TMP') and !ENV.include?('DEC_TMP') and !ENV.include?('ORC_TMP') then
+         puts "\nDCC_TMP | DEC_TMP | ORC_TMP environment variable not defined !\n"
+         bDefined = false
+      end      
           
      #      # check UNIX compress tool
      #      isToolPresent = `which compress`

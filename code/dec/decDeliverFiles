@@ -313,7 +313,7 @@ def deliver2Interfaces
       end
 
       pid     = Process.wait
-      resCode = $? >> 8         
+      resCode = $?.exitstatus >> 8         
       
       if resCode != 0 then
          print("\nFAILED to Send the files to ", processInfo[pid], " I/F !\n\n")

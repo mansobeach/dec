@@ -22,12 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.9dev"
+   @@version = "1.0.9"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.9"  =>    "working version", \
+      "1.0.9"  =>    "decUnitTests support batchmode to avoid prompting for confirmation", \
       "1.0.8"  =>    "decListener command line flags fixed", \
       "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
       "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \
@@ -81,6 +81,7 @@ module DEC
       puts "HOME                          => #{ENV['HOME']}"
       puts "DEC_DB_ADAPTER                => #{ENV['DEC_DB_ADAPTER']}"
       puts "DEC_TMP                       => #{ENV['DEC_TMP']}"
+      puts "DEC_DELIVERY_ROOT             => #{ENV['DEC_DELIVERY_ROOT']}"
       puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
       puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
       puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
@@ -93,6 +94,24 @@ module DEC
       puts "RPFBIN                        => #{ENV['RPFBIN']}"
       puts "RPF_ARCHIVE_ROOT              => #{ENV['RPF_ARCHIVE_ROOT']}"
       puts "FTPROOT                       => #{ENV['FTPROOT']}"
+   end
+   # -----------------------------------------------------------------
+
+   def check_environment_dirs
+      checkDirectory(ENV['DEC_TMP'])
+      checkDirectory(ENV['DEC_DELIVERY_ROOT'])
+   end
+
+   # -----------------------------------------------------------------
+
+   def check_environment
+      check_environment_dirs
+      retVal = checkEnvironmentEssential
+      if retVal == true then
+         return checkToolDependencies
+      else
+         return false
+      end
    end
    # -----------------------------------------------------------------
 
@@ -241,7 +260,7 @@ module DEC
       #check the commands needed
                    
       if bCheckOK == false then
-         puts "\nnDEC_Environment::checkToolDependencies FAILED !\n\n"
+         puts "\nDEC_Environment::checkToolDependencies FAILED !\n\n"
       end      
    
       return bCheckOK
@@ -295,6 +314,10 @@ class DEC_Environment
 
    def wrapper_load_config_developmentRPF
       load_config_developmentRPF
+   end
+
+   def wrapper_check_environment
+      return check_environment
    end
 
    def wrapper_unset_config

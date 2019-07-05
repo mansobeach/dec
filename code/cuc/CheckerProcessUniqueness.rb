@@ -178,7 +178,7 @@ private
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] and !ENV['ORC_TMP'] and @tmpDir == nil then
+      if !ENV.include?('DCC_TMP') and !ENV.include?('DEC_TMP') and !ENV.include?('ORC_TMP') and @tmpDir == nil then
          puts "\nDCC_TMP | DEC_TMP | ORC_TMP environment variable not defined !\n"
          bDefined = false
       end
@@ -189,20 +189,21 @@ private
       end
       
       if @tmpDir == nil then
-         if ENV['DEC_TMP'] then
-            @tmpDir   = ENV['DEC_TMP']
-         else
+         
+         if ENV.include?('DCC_TMP') then
             @tmpDir   = ENV['DCC_TMP']
          end
+
+         if ENV.include?('DEC_TMP') then
+            @tmpDir   = ENV['DEC_TMP']
+         end
          
-         if ENV['ORC_TMP'] then
+         if ENV.include?('ORC_TMP') then
             @tmpDir   = ENV['ORC_TMP']
-         else
-            @tmpDir   = ENV['DCC_TMP']
          end
          
       end
-      
+            
       checkDirectory(@tmpDir)
       
       if @args == nil then 

@@ -60,12 +60,13 @@ class DCC_ReceiverFromInterface
 
    # Class constructor.
    # * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false)
+   def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false, isDebug = false)
       @entity        = entity
       @drivenByDB    = drivenByDB
       @isNoDB        = isNoDB
       @isNoInTray    = isNoInTray
       @isDelUnknown  = isDelUnknown
+      @isDebugMode   = isDebug
       checkModuleIntegrity
       @isBenchmarkMode = false
 
@@ -86,6 +87,11 @@ class DCC_ReceiverFromInterface
       end
 
       checker     = CTC::CheckerInterfaceConfig.new(entity, true, false)
+      
+      if @isDebugMode == true then
+         checker.setDebugMode
+      end
+      
       retVal      = checker.check
 
       if retVal == true then
@@ -276,7 +282,7 @@ class DCC_ReceiverFromInterface
          if type != "-" then
             next
          end
-
+                  
          newFile = currentDir + "/" + element.split(" ").at(-1)
          
          if @isDebugMode == true then
@@ -287,7 +293,7 @@ class DCC_ReceiverFromInterface
       }
       return
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def getNonSecureFileList(bPassive)
       @newArrFile    = Array.new
@@ -361,7 +367,7 @@ class DCC_ReceiverFromInterface
       @ftp.close
       return @newArrFile
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def exploreNonSecureTree(relativePath)
       arrTmp  = relativePath.split(" ")
@@ -921,6 +927,9 @@ private
    
    # Download a file from the I/F
    def downloadFile(filename)
+      
+#      puts filename
+#      exit
       
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
@@ -1867,7 +1876,7 @@ private
    # Check if there are some temp dirs for this entity that stayed unremoved from a previous execution
    # - entity (IN): name of the currently processed entity
    def removePreviousTempDirs
-      cmd = %Q{find #{ENV['DCC_TMP']}/ -name '.*\\_#{@entity}' -type d -exec rm -rf {} \\;}
+      cmd = %Q{find #{@tmpDir}/ -name '.*\\_#{@entity}' -type d -exec rm -rf {} \\;}
 
       if @isDebugMode == true then
          puts "\nRemoving previous temporary dirs if any..."

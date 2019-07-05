@@ -52,7 +52,7 @@ module FTPClientCommands
       end
       return command         
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def createNcFtpPut_FJLH1(host, port, user, pass, dir, tdir, file, verbose)
       filename = File.basename(file)
@@ -107,7 +107,11 @@ module FTPClientCommands
    # - verbose (IN): boolean for activating or not the verbose mode.
    def createNcFtpGet(host, port, user, pass, dir, file, delete, verbose)      
       if dir[0,1] == '/' then
-         dir='%2F'+dir
+         dir = '%2F'+dir
+      end      
+
+      if file[0,1] == '/' then
+         file = '%2F'+file
       end      
 
       command = %Q{ncftpget -P #{port} -u #{user} -p #{pass} -F}
@@ -164,9 +168,9 @@ module FTPClientCommands
 #         options= options+" -T #{prefix}"
 #      end
       command = %Q{ncftpput -t 10 -u #{user} -p #{pass} -P #{port} #{optionPassive} -m #{options} -X "RNFR #{file}" -X "RNTO #{dir}/#{file}" #{host} #{tmpDir} #{file} }
-      puts
-      puts command
-      puts
+#      puts
+#      puts command
+#      puts
       return command
    end
    #-------------------------------------------------------------

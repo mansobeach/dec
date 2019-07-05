@@ -1,0 +1,120 @@
+#########################################################################
+#
+# Git:
+#     Dockerfile_dec_test     $DEC    $Author: bolf$
+#                             $Date: 2018-11-15T16:49:35+01:00$ 
+#                             $Committer: bolf$
+#                             $Hash: f3afa7c$
+#
+#########################################################################
+
+# ENVIRONMENT ONLY SUITED FOR TESTING PURPOSES
+# NEVER USE IT IN PRODUCTION / OPERATIONS
+
+########################################
+#FROM ruby:2.6.3-slim
+#FROM ruby:2.4.1-slim
+#ARG DEBIAN_FRONTEND=noninteractive
+#RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+########################################
+
+FROM ubuntu:disco
+
+RUN apt-get update && apt-get install -y apt-utils
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+                     apt-utils \
+                     build-essential \
+                     ftp \
+                     gcc \
+                     gosu \
+                     make \ 
+                     ncftp \
+                     net-tools \
+                     ruby-full \
+                     openssh-server \
+                     libxml2-utils \
+                     p7zip-full \
+                     vim \
+                     vsftpd \
+                     zip \
+                     unzip \
+                     sqlite3 \
+                     libsqlite3-dev \
+                     exiftool \
+                     curl \
+                     lsof
+                     
+# ------------------------------------------------
+
+RUN printf "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+
+# ================================================
+#
+# Create vsftpd configuration file
+RUN echo 'listen=YES\n\
+ssl_enable=NO\n\
+local_enable=YES\n\
+anonymous_enable=YES\n\
+userlist_deny=NO\n\
+write_enable=YES\n\
+allow_writeable_chroot=YES\n\
+anon_root=/root\n\
+anon_world_readable_only=NO\n\
+write_enable=YES\n\
+anon_upload_enable=YES\n\
+anon_mkdir_write_enable=YES\n\
+anon_other_write_enable=YES\n\
+chroot_local_user=NO\n\
+secure_chroot_dir=/root' > /etc/vsftpd.conf
+
+# ================================================
+
+RUN echo '#!/bin/bash\n\
+vsftpd &' > /usr/sbin/entrypoint.sh
+
+RUN chmod a+x /usr/sbin/entrypoint.sh
+# ================================================
+    
+# ================================================
+
+RUN env
+# ================================================
+
+
+# ------------------------------------------------
+# Install ruby gem dependencies
+RUN gem install bundler
+
+
+COPY Gemfile .
+RUN bundle install
+# ------------------------------------------------
+#
+# ================================================
+# Install the minarc gem
+
+COPY dec.gem .
+RUN gem install --local dec.gem
+# ------------------------------------------------
+#
+#
+# Create user dectest
+
+RUN useradd --create-home --shell /bin/bash dectest
+RUN echo 'dectest:dectest' | chpasswd
+# ------------------------------------------------
+
+
+COPY dec_test.env .
+COPY dec_test.bash .
+
+ENTRYPOINT service vsftpd start && bash
+
+#USER dectest
+#WORKDIR /home/dectest
+
+# ------------------------------------------------
+
+

@@ -112,7 +112,7 @@ def queryFile
    files = ReceivedFile.where("filename LIKE ?", aFile)
    
    if files == nil or files.empty? == true then
-      puts "File not found in the inventory"
+      puts "File #{aFile} not found in the inventory"
       exit(99)
    end
    

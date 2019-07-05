@@ -111,13 +111,6 @@ class DECTestCase < Test::Unit::TestCase
       end
 
 =end      
-
-
-      @@arrDownloadFiles = [ \
-                           "finals.all", \
-                           "tai-utc.dat" \
-                           ]
-
       
       @@conf = DEC_Environment.new
       
@@ -169,18 +162,6 @@ class DECTestCase < Test::Unit::TestCase
                cmd = "mkdir -p #{downloadDir}"
                puts cmd
                system(cmd)
- 
-               cmd = "mkdir -p /home/dectest/#{dir}"
-               puts cmd
-               system(cmd)
-
-               
-               @@arrDownloadFiles.each{|filename|
-                  puts filename
-                  system("echo \'#{filename}\' > #{downloadDir}/#{filename}")
-               }
-
-               
             }
          end
                   
@@ -277,190 +258,8 @@ class DECTestCase < Test::Unit::TestCase
    end
    # --------------------------------------------------------
 
-   def test_commandline_helpers
-      @@conf.wrapper_unset_config
-      
-      cmd = "decConfigInterface2DB"
-      assert(!system(cmd), cmd)
 
-      cmd = "decConfigInterface2DB -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decConfigInterface2DB -h"
-      assert(system(cmd), cmd)
-
-      cmd = "decListener"
-      assert(!system(cmd), cmd)
-
-      cmd = "decListener -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decListener -h"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig"
-      assert(!system(cmd), cmd)
-
-      cmd = "decCheckConfig -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -h"
-      assert(system(cmd), cmd)
-
-      cmd = "decGetFromInterface"
-      assert(!system(cmd), cmd)
-
-      cmd = "decGetFromInterface -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decGetFromInterface -h"
-      assert(system(cmd), cmd)
-
-
-      @@conf.wrapper_load_config_development
-   end
    # --------------------------------------------------------
-
-   def test_parsers
-      
-      require 'ctc/ReadInterfaceConfig'
-      
-      
-      ftReadConf = CTC::ReadInterfaceConfig.instance
-      ftReadConf.update
-      ftpRecv    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
-      
-      puts
-      puts ftpRecv
-      puts
-
-      # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
-   end
-   #-------------------------------------------------------------
-
-   def test_decValidateConfig
-      cmd = "decValidateConfig -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -h"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -e"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -i"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -o"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -m"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -l"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -t"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -g"
-      assert(system(cmd), cmd)
-
-      cmd = "decValidateConfig -a"
-      assert(system(cmd), cmd)
-
-   end
-   # -------------------------------------------------------------
-   # -------------------------------------------------------------
-
-   def test_checkConfig
-
-      cmd = "decManageDB -c"
-      ret = system(cmd)
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      ret = system(cmd)      
-
-      cmd = "chmod 500 ~/Sandbox/dec/dec_sent_file"
-      puts cmd
-      system(cmd)
-
-      cmd = "decCheckConfig -e -D"
-      puts cmd
-      assert(!system(cmd), cmd)
-
-      cmd = "chmod 755 ~/Sandbox/dec/dec_sent_file"
-      puts cmd
-      system(cmd)
-
-# To avoid check of the IERS interface
-# whose connectivity might change
-
-      cmd = "decCheckConfig -e LOCALHOST_NOT_SECURE -D"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -e LOCALHOST_NOT_SECURE --nodb"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -h"
-      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -i"
-      assert(system(cmd), cmd)
-
-#      # ----------------------
-#      # not integrated yet
-#      cmd = "decCheckConfig -o"
-#      assert(!system(cmd), cmd)
-#      #
-#      
-#      # only mail delivery is checked so far
-#      cmd = "decCheckConfig -m"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -l"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -t"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -a"
-#      assert(system(cmd), cmd)
-#
-#      cmd = "decCheckConfig -a --nodb"
-#      assert(system(cmd), cmd)
-
-
-
-      
-   end
-   # -------------------------------------------------------------
-
-   def test_decConfigInterface2DB
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      @@conf.wrapper_load_config_development
-
-      cmd = "decManageDB -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decConfigInterface2DB -v"
-      assert(system(cmd), cmd)
-            
-      cmd = "decConfigInterface2DB --add IF_1"
-      assert(system(cmd), "decConfigInterface2DB --add IF_1")
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
-   end
-   #--------------------------------------------------------
 
    def test_decGetFromInterface
       puts __method__.to_s
@@ -484,7 +283,7 @@ class DECTestCase < Test::Unit::TestCase
 
       ENV.delete('DEC_TMP')
       
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
+      cmd = "decGetFromInterface -m IERS -l --nodb"
       puts cmd
       assert(!system(cmd), cmd)
       
@@ -495,20 +294,20 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
       @entityConfig     = CTC::ReadInterfaceConfig.instance
-      @finalDir         = @entityConfig.getIncomingDir("LOCALHOST_NOT_SECURE")
+      @finalDir         = @entityConfig.getIncomingDir("IERS")
       
       checkDirectory(@finalDir)
 
       # finals.all / tai-utc.dat
             
       FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
-                  
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+            
+      cmd = "decGetFromInterface -m IERS -l --nodb -D"
       puts cmd
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --nodb --no-intray"
+      cmd = "decGetFromInterface -m IERS --nodb --no-intray"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -516,9 +315,9 @@ class DECTestCase < Test::Unit::TestCase
       assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
 
       FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+      FileUtils.rm_f("#{@finalDir}/finals.all")
 
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray"
+      cmd = "decGetFromInterface -m IERS --no-intray"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -532,132 +331,34 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "decStats -f non_received_file.kk"
-      puts cmd
       assert(!system(cmd), cmd)
       
       cmd = "decStats -f finals.all"
-      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decStats -f tai-utc.dat"
-      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decStats"
-      puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray"
-      puts cmd
+      cmd = "decGetFromInterface -m IERS --no-intray"
+      puts
       assert(system(cmd), cmd)
 
       assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")
       assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve twice tai-utc.dat")
 
       cmd = "decStats -H 1"
-      puts cmd
       assert(system(cmd), cmd)
       
       cmd = "decStats -H 2"
-      puts cmd
       assert(system(cmd), cmd)
+      
 
    end
-   #--------------------------------------------------------
-
-   def test_decListener
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-
-      cmd = "decListener -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decListener -s non_existing_interface"
-      assert(!system(cmd), cmd)
-   
-      dec_tmp = ENV['DEC_TMP']
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
-      
-      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
-      assert(system(cmd), cmd)
-   
-      sleep(10)
-
-      cmd = "decListener -s LOCALHOST_NOT_SECURE"
-      assert(system(cmd), cmd)
-
-      sleep(10)
-      
-      cmd = "decListener -c"
-      assert(!system(cmd), cmd)
-       
-      cmd = "decListener -S"
-      assert(system(cmd), cmd)
-      
-      sleep(10)
-  
-      cmd = "decListener -a"
-      assert(system(cmd), cmd)
-
-      sleep(10)
-
-      cmd = "decListener -a -R"
-      assert(system(cmd), cmd)
-
-      sleep(10)
-            
-      cmd = "decListener -S"
-      assert(system(cmd), cmd)
-      
-      sleep(20)
-      
-   end
-
-   # -------------------------------------------------------------
-
    # --------------------------------------------------------
 
-   def test_decSend2Interface
-
-      cmd = "decSend2Interface -v"
-      assert(system(cmd), cmd)
-
-      cmd = "decSend2Interface -S"
-      assert(system(cmd), cmd)
-
-      cmd = "decSend2Interface -m non_existing_if"
-      assert(!system(cmd), cmd)
-
-      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
-      assert(system(cmd), cmd)
-
-      dec_tmp = ENV['DEC_TMP']
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
-
-   end
-
-   #-------------------------------------------------------------
-
-   def test_decNotify2Interface
-      cmd = "decNotify2Interface -v"
-      assert(system(cmd), cmd)
-
-   end
-   #-------------------------------------------------------------
 
 end
 

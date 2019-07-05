@@ -312,7 +312,13 @@ private
             @ftp.login(user, pass)
             @ftp.passive = true
             @ftp.chdir(dir)
-         rescue Exception
+         rescue Exception => e
+            if @isDebugMode == true then
+               puts e.to_s
+               puts
+               puts e.backtrace
+               puts
+            end
             return false
          end
          return true

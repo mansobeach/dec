@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.8'
+  s.version     = '1.0.9'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
                   Dir['config/interfaces.xml'] + \
                   Dir['config/ft_incoming_files.xml'] + \
                   Dir['config/ft_outgoing_files.xml'] + \
+                  Dir['config/ft_mail_config.xml'] + \
                   Dir['config/dec_log_config.xml'] + \
                   Dir['config/dcc_config.xml'] + \
                   Dir['config/ddc_config.xml'] + \
@@ -37,10 +38,12 @@ Gem::Specification.new do |s|
                      'decGetFromInterface', \
                      'decListener', \
                      'decManageDB', \
+                     'decNotify2Interface', \
                      'decSend2Interface', \
                      'decSmokeTests', \
                      'decStats', \
                      'decUnitTests', \
+                     'decUnitTests_IERS', \
                      'decUnitTests_ncftpput', \
                      'decUnitTests_mail' \
                      ]
@@ -51,19 +54,19 @@ Gem::Specification.new do |s|
   # ----------------------------------------------
   
   s.add_dependency('activerecord', '~> 5.1')
+  s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 4.2')
+  s.add_dependency('sqlite3', '~> 1.3')
   s.add_dependency('test-unit', '~> 3.0')
   
   # ----------------------------------------------
   
-  # database specific gems which can differ
-  
+  # database specific gems which can differ  
   # s.add_dependency('pg', '~> 1.0')
-  # s.add_dependency('sqlite3', '~> 1.3')
   
   
   # you did document with RDoc, right?

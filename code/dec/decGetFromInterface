@@ -303,7 +303,7 @@ end
 # The process is registered and checked with #CheckerProcessUniqueness
 # class.
 def init  
-   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true) 
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true, nil) 
    if @locker.isRunning == true then
       puts "\n#{File.basename($0)} to #{@entity} is already running !\n\n"
       exit(99)

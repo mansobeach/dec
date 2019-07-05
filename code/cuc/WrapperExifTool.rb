@@ -13,6 +13,9 @@
 #########################################################################
 
 require 'rubygems'
+
+require 'date'
+
 require 'cuc/Converters'
 
 module CUC
@@ -28,7 +31,7 @@ class WrapperExifTool
    def initialize(fullpathfile, debugMode = false)
       @fullpathfile        = fullpathfile
       @isDebugMode         = debugMode
-      @cmd                 = "exiftool #{@fullpathfile}"
+      @cmd                 = "exiftool -api largefilesupport=1 #{@fullpathfile}"
       @result              = `#{@cmd}`
       if @isDebugMode == true then
          puts @cmd
@@ -121,7 +124,54 @@ class WrapperExifTool
       
    end
  
+   ## ------------------------------------------------
 
+   def width
+      str = nil
+      
+      begin
+         str   = @result.split("Image Width")[1].lines[0].strip.split(":")[1].strip
+      rescue Exception
+         puts "Error in WrapperExifTool / Could not retrieve metadata Image Width"
+         return nil
+      end
+    
+      return str.to_i
+    
+   end
+   ## ------------------------------------------------
+
+   def height
+      str = nil
+      
+      begin
+         str   = @result.split("Image Height")[1].lines[0].strip.split(":")[1].strip
+      rescue Exception
+         puts "Error in WrapperExifTool / Could not retrieve metadata Image Height"
+         return nil
+      end
+    
+      return str.to_i
+    
+   end
+   ## ------------------------------------------------
+
+   def duration
+      str = nil
+      
+      begin
+         str   = @result.split("Duration")[1].lines[0].strip.split(" ")[1]
+      rescue Exception
+         puts "Error in WrapperExifTool / Could not retrieve metadata Duration"
+         return nil
+      end
+    
+#      dt = DateTime.parse(str)
+#      return dt.hour * 3600 + dt.min * 60 + dt.sec
+    
+      return str
+    
+   end
    ## ------------------------------------------------
 
 private
@@ -134,8 +184,6 @@ private
    end
    # --------------------------------------------------------
    
-
-
 end # class
 
 end # module

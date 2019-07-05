@@ -74,7 +74,7 @@ class SFTPBatchClient
       @output = `#{@cmd}`    
       STDERR.reopen(STDOUT)
       
-      if $? !=0 then
+      if $?.exitstatus !=0 then
          retVal = false
       else
          retVal = true
