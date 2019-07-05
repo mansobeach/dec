@@ -44,6 +44,7 @@
             <xs:element name="maxtime"       type="xs:integer" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
+         <xs:attribute name="level" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="outputters" type="xs:string"/>
