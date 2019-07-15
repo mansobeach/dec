@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <File Type="S2*">
+      <Description>All Sentinel-2 files located in shadow directory @ E2ESPM-ESRIN</Description>
+      <FromList>
+         <Interface>E2ESPM-ESRIN</Interface>
+      </FromList>
+   </File>
+
+</FileList>

@@ -1,0 +1,31 @@
+<log4r_config>
+ 
+ <pre_config>
+  <parameter name="mainLoggerName" value="SHADOW"/>
+ </pre_config>
+ 
+ <outputter name="meteo_casale_log" level="INFO">
+  
+  <type>RollingFileOutputter</type>
+
+  <filename>/s2mpa-storage/e2edc/data/log/e2espm-dc.log</filename>
+
+  <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+  </formatter>
+
+  <trunc>false</trunc>
+
+  <maxsize>10000000</maxsize>
+
+  <max_backups>4</max_backups>
+
+  <maxtime>2592000</maxtime>
+
+ </outputter>
+
+ <logger name="SHADOW" level="DEBUG" trace="false">
+   <outputters>meteo_casale_log</outputters>
+ </logger>
+ 
+</log4r_config>
