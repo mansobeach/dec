@@ -34,7 +34,7 @@ ActiveRecord::Base.establish_connection(
                                           )
 
 
-#=====================================================================
+## =====================================================================
 
 class TriggerProduct < ActiveRecord::Base
    validates_presence_of   :filename
@@ -46,31 +46,57 @@ class TriggerProduct < ActiveRecord::Base
    validates_presence_of   :runtime_status
    validates_presence_of   :initial_status
    
-   #----------------------------------------------
+   # ----------------------------------------------
    
    # Currently we sort by start-time
    def <=>(other)
       return self.sensing_start <=> other.sensing_start
    end
-   #----------------------------------------------
+   # ----------------------------------------------
    
 end
 
-#=====================================================================
-# Class OrchestratorQueue tables
+
+## =====================================================================
+
+class Pending2QueueFile < ActiveRecord::Base
+   self.table_name   = 'pending2queue_files'
+   self.primary_key  = 'trigger_product_id'   
+
+   belongs_to  :trigger_products,
+               :class_name    => "TriggerProduct",
+               :foreign_key   => "trigger_product_id"
+   
+   # ----------------------------------------------   
+   
+   def Pending2QueueFile.getPendingFiles
+      arrFiles       = Array.new
+      pendingFiles   = Pending2QueueFile.all 
+
+      pendingFiles.each{|pendingFile| arrFiles << pendingFile }
+      return arrFiles
+   end   
+   # ----------------------------------------------
+
+
+end
+
+## =====================================================================
+
+
+## ========================================================================
+##
+## Class OrchestratorQueue tables
 
 class OrchestratorQueue < ActiveRecord::Base
    self.table_name   = 'orchestrator_queue'
    self.primary_key  = 'trigger_product_id'
 
-
-#   set_table_name :orchestrator_queue
-#   set_primary_key :trigger_product_id
-
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
                :foreign_key   => "trigger_product_id"
-   #----------------------------------------------   
+   
+   # ----------------------------------------------   
    
    def OrchestratorQueue.getAllQueuedByName(filename)
       arrFiles     = Array.new
@@ -96,7 +122,9 @@ class OrchestratorQueue < ActiveRecord::Base
       triggerFiles = TriggerProduct.all
       queuedFiles  = OrchestratorQueue.all
 
+ 
       triggerFiles.each{|triggerFile|
+
          queuedFiles.each{|queuedFile|
             if triggerFile.id == queuedFile.trigger_product_id then
                arrFiles << triggerFile
@@ -151,7 +179,7 @@ class DiscardedTriggerProduct < ActiveRecord::Base
                :foreign_key   => "trigger_product_id"
 end
 
-#=====================================================================
+## =====================================================================
 
 class ObsoleteTriggerProduct < ActiveRecord::Base
    self.primary_key  = 'trigger_product_id'   
@@ -160,7 +188,7 @@ class ObsoleteTriggerProduct < ActiveRecord::Base
                :class_name    => "TriggerProduct",
                :foreign_key   => "trigger_product_id"
    
-   #----------------------------------------------   
+   # ----------------------------------------------   
    
    def ObsoleteTriggerProduct.getObsoleteFiles
       arrFiles       = Array.new
@@ -176,29 +204,27 @@ class ObsoleteTriggerProduct < ActiveRecord::Base
       }
       return arrFiles
    end   
-   #----------------------------------------------   
+   # ----------------------------------------------   
 
 end
 
-#=====================================================================
-
-class Pending2QueueFile < ActiveRecord::Base
-   self.table_name   = 'pending2queue_files'
-
-   validates_presence_of   :filename
-   validates_presence_of   :filetype
-   validates_presence_of   :detection_date
-   #---------------------------------------------- 
-   
-   def Pending2QueueFile.getPendingFiles
-      arrFiles       = Array.new
-      pendingFiles   = Pending2QueueFile.all 
-
-      pendingFiles.each{|pendingFile| arrFiles << pendingFile }
-      return arrFiles
-   end   
-   #----------------------------------------------
-end
+#class Pending2QueueFile_OLD_TO_BE_REMOVED < ActiveRecord::Base
+#   self.table_name   = 'pending2queue_files'
+#
+#   validates_presence_of   :filename
+#   validates_presence_of   :filetype
+#   validates_presence_of   :detection_date
+#   #---------------------------------------------- 
+#   
+#   def Pending2QueueFile.getPendingFiles
+#      arrFiles       = Array.new
+#      pendingFiles   = Pending2QueueFile.all 
+#
+#      pendingFiles.each{|pendingFile| arrFiles << pendingFile }
+#      return arrFiles
+#   end   
+#   #----------------------------------------------
+#end
 
 #=====================================================================
 

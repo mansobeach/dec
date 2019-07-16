@@ -75,6 +75,12 @@ git config core.bare false
 
 git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
 
+
+### Retrieve a file from the repository
+
+git checkout master -- <filename>
+
+
 Delete a file
 =============
 

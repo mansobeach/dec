@@ -132,20 +132,29 @@ class OrchestratorScheduler
       # Ignore additional SIGUSR1 from Ingester
       Signal.trap("SIGUSR1", "IGNORE")
 
-      
-      @arrPendingFiles.each{ |pf|
-
-         cmd = "orcQueueInput -f #{pf.filename} -s UKN"          
-         @logger.debug("#{cmd}")
+      cmd = "orcQueueInput --Bulk"          
+      @logger.debug("#{cmd}")
                   
-         ret = system(cmd)
+      ret = system(cmd)
          
-         if ret == false then
-            @logger.error("Could not queue #{pf.filename}")
-         end
+      if ret == false then
+         @logger.error("Could not queue PENDING files")
+      end
 
-         Pending2QueueFile.where(filename: pf.filename).destroy_all
-      }
+      
+#      @arrPendingFiles.each{ |pf|
+#
+#         cmd = "orcQueueInput -f #{pf.filename} -s UKN"          
+#         @logger.debug("#{cmd}")
+#                  
+#         ret = system(cmd)
+#         
+#         if ret == false then
+#            @logger.error("Could not queue #{pf.filename}")
+#         end
+#
+#         Pending2QueueFile.where(filename: pf.filename).destroy_all
+#      }
       
       
       # Register Signals Handlers

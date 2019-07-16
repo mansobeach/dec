@@ -6,7 +6,7 @@
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === Orchestrator (MinArc)
+# === Orchestrator (generic orchestrator)
 # 
 # Git: $Id: ORC_Environment.rb $Date$
 #
@@ -24,11 +24,13 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.3"
+   @@version = "0.0.4"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.4"  =>    "orcQueueInput bulk mode support of pending triggers\n\
+         OrchestratorScheduler now uses such bulk mode", \
       "0.0.3"  =>    "Check of tool dependencies done in the unit tests\n\
          Dotenv gem has been added to the Gemfile", \
       "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
@@ -164,7 +166,7 @@ module ORC
       triggers = orcConf.getAllTriggerTypeInputs
       
       triggers.each{|trigger|
-         executable = orcConf.getExecutable(trigger)
+         executable = orcConf.getExecutable(trigger).split(" ")[0]
          cmd = "which #{executable}"
          isToolPresent = `#{cmd}`
          if isToolPresent[0,1] != '/' then

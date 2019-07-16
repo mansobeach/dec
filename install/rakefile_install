@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC repository management
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component (DEC) repository
+# 
+# Git: rakefile,v $Id$ $Date$
+#
+# module DEC
+#
+#########################################################################
+
+require 'rake'
+
+## =============================================================================
+##
+## Task associated to DEC component
+
+namespace :dec do
+
+   ## -----------------------------
+   ## DEC Config files
+   
+   @arrConfigFiles = [\
+      "interfaces.xml",\
+      "ft_incoming_files.xml",\
+      "ft_outgoing_files.xml",\
+      "files2InTrays.xml",\
+      "ft_mail_config.xml",\
+      "dec_log_config.xml",\
+      "dcc_config.xml",\
+      "ddc_config.xml"]
+   ## -----------------------------
+   
+   @rootConf = "config/oper_dec"
+   
+   ## ----------------------------------------------------------------
+   
+   desc "install DEC gem"
+
+   task :install => :uninstall do
+      cmd = "sudo gem install dec.gem"
+      puts cmd
+      system(cmd)         
+   end
+
+   ## ----------------------------------------------------------------
+   
+   desc "uninstall DEC gem"
+   
+   task :uninstall do
+      cmd = "sudo gem uninstall dec.gem"
+      puts cmd
+      system(cmd)      
+   end
+   ## ----------------------------------------------------------------
+
+
+
+end
+## =============================================================================
+
+
+## =============================================================================
+##
+## Task associated to minArc component
+
+namespace :minarc do
+
+   ## ----------------------------------------------------------------
+   
+   desc "build minArc gem"
+
+   task :build, [:user, :host] => :load_config do |t, args|
+   
+   end
+   ## ----------------------------------------------------------------
+
+end
+
+## =============================================================================
+
+# ==============================================================================
+
+task :default do
+   puts "DEC repository management"
+   cmd = "rake -T"
+   system(cmd)
+end
+
+# ==============================================================================
+

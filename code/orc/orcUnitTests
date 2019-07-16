@@ -37,7 +37,7 @@ require 'arc/MINARC_Environment'
 #  4  - test_command_orcIngester
 #  5  - test_command_orcScheduler
 #  6  - test_command_orcBolg
-#  7  - test_all_at_once
+#  7  - test_allatonce
 
 # Select a single test of the suite
 
@@ -74,17 +74,17 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       
       bBatchmode = false
-      
+            
       @my_argv.each{|arg|
          if arg == "batchmode" then
+            puts "batch mode execution on"
             bBatchmode = true
             break
          end
       }
       
       if bBatchmode == false then
-         c = STDIN.getc
-                  
+         c = STDIN.getc   
          if c != 'Y' then
             exit(99)
          end
@@ -186,6 +186,12 @@ class ORCTestCase < Test::Unit::TestCase
                            "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
                            "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
                            ]
+                           
+           @@arrInputFiles2 = [ \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
+                      
             
    end
    
@@ -798,6 +804,37 @@ class ORCTestCase < Test::Unit::TestCase
 
    # --------------------------------------------------------
 
+
+   def test_bulk_pending
+   
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+   
+   
+      @@arrInputFiles.each{|file|
+         cmd = "orcQueueInput -P -s NRT -f #{file}"
+         puts cmd
+         assert(system(cmd), cmd)
+      }
+   
+      cmd = "orcQueueInput -P -l"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "orcQueueInput --Bulk"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "orcQueueInput -P -l"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "orcQueueInput -Q -l"
+      puts cmd
+      assert(system(cmd), cmd)
+
+   
+   end
 
    # -------------------------------------------------------------
 

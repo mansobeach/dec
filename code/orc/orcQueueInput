@@ -40,7 +40,13 @@
 # -d flag:
 #
 # This is the delete flag. It deletes from the processing queue the specified file.
+#
+#
+# --Bulk flag:
+#
+# This is the bulk flag to load pending files into the queue
 #  
+#
 #
 # == Usage
 # orcQueueInput -f <file-name> -s <file-status> | -l --Report <full_path_report_file>
@@ -115,6 +121,7 @@ def main
    @bStop                  = false
    @pStart                 = ""
    @pStop                  = ""
+   @bBulk                  = false
 
    # Data generated or extracted from filename
    @filetype               = ""
@@ -136,6 +143,7 @@ def main
      ["--delete",    "-d",    GetoptLong::REQUIRED_ARGUMENT],
      ["--start",     "-a",    GetoptLong::REQUIRED_ARGUMENT],
      ["--stop",      "-b",    GetoptLong::REQUIRED_ARGUMENT],
+     ["--Bulk",      "-B",    GetoptLong::NO_ARGUMENT],
      ["--Queued",    "-Q",    GetoptLong::NO_ARGUMENT],
      ["--Success",   "-S",    GetoptLong::NO_ARGUMENT],
      ["--Failed",    "-F",    GetoptLong::NO_ARGUMENT],
@@ -153,28 +161,29 @@ def main
    begin
       opts.each do |opt, arg|
          case opt
-            when "--help"           then           @bShowUsage          = true
-	         when "--usage"          then           @bShowUsage          = true
-            when "--Debug"          then           @isDebugMode         = true
-            when "--version"        then	         @bShowVersion        = true
-	         when "--file"           then           @filename            = File.basename(arg.to_s)
-                                                   @bIngest             = true
-            when "--delete"         then           @filename            = File.basename(arg.to_s)
-                                                   @bDelete             = true
-            when "--Report"         then           @reportfilename      =  arg.to_s
-            when "--start"          then           @pStart              =  arg.to_s
-                                                   @bStart              =  true  
-            when "--stop"          then            @pStop               =  arg.to_s
-                                                   @bStop               =  true
-            when "--list"          then            @bList               =  true
-            when "--Obsolete"      then            @bObsolete           =  true
-            when "--Queued"        then            @bQueued             =  true
-            when "--Trigger"       then            @bTrigger            =  true
-            when "--Pending"       then            @bPending            =  true
-            when "--Success"       then            @bSuccess            =  true
-            when "--Failed"        then            @bFailed             =  true
-            when "--dIscarded"     then            @bDiscarded          =  true
-            when "--status"        then            @initialStatus       = (arg.to_s).upcase[0..2]
+            when "--help"           then            @bShowUsage            = true
+	         when "--usage"          then            @bShowUsage            = true
+            when "--Debug"          then            @isDebugMode           = true
+            when "--version"        then	          @bShowVersion          = true
+	         when "--file"           then            @filename              = File.basename(arg.to_s)
+                                                    @bIngest               = true
+            when "--delete"         then            @filename              = File.basename(arg.to_s)
+                                                    @bDelete               = true
+            when "--Report"         then            @reportfilename        =  arg.to_s
+            when "--start"          then            @pStart                =  arg.to_s
+                                                    @bStart                =  true  
+            when "--stop"           then            @pStop                 =  arg.to_s
+                                                    @bStop                 =  true
+            when "--list"           then            @bList                 =  true
+            when "--Bulk"           then            @bBulk                 =  true
+            when "--Obsolete"       then            @bObsolete             =  true
+            when "--Queued"         then            @bQueued               =  true
+            when "--Trigger"        then            @bTrigger              =  true
+            when "--Pending"        then            @bPending              =  true
+            when "--Success"        then            @bSuccess              =  true
+            when "--Failed"         then            @bFailed               =  true
+            when "--dIscarded"      then            @bDiscarded            =  true
+            when "--status"         then            @initialStatus         = (arg.to_s).upcase[0..2]
          end
       end
    rescue Exception
@@ -224,12 +233,12 @@ def main
       exit(99)
    end
 
-   if @reportfilename != "" and @bList == false then
+   if @reportfilename != "" and @bList == false and @bBulk == false then
       usage      
       exit(99)
    end
 
-   if (@filename == "" or @filename.length > 100) and @bList == false and @reportfilename == "" then
+   if (@filename == "" or @filename.length > 100) and @bList == false and @reportfilename == "" and @bBulk == false then
       usage
       exit(99)
    end
@@ -250,28 +259,38 @@ def main
    require 'orc/ReportQueuedFiles'
 
 
-   #----------------------------------------------
+   ## ----------------------------------------------
+   ## if just list the files queued
+   
+   if @bBulk == true then
+      bulkQueueing
+      exit(0)
+   end
+   ## ----------------------------------------------
+
+
+   ## ----------------------------------------------
    # if just list the files queued
    
    if @bDelete == true then
       deleteFile
       exit(0)
    end
-   #----------------------------------------------
+   ## ----------------------------------------------
    # if just list the files queued
    
    if @bList == true and @reportfilename == "" then
       list
       exit(0)
    end
-   #----------------------------------------------
+   # ----------------------------------------------
    # Generate the report
 
    if @bList == true and @reportfilename != "" then
       generateReport
       exit(0)
    end
-   #----------------------------------------------
+   # ----------------------------------------------
 
    cmd            = "minArcFile -T S2PDGS -f #{@filename} -t"         
    @filetype      = `#{cmd}`.chop         
@@ -292,6 +311,8 @@ def main
    end
 
 
+   ## ------------------------------------------------------
+
    if @filename != "" and @bPending == true then
       
       row = Pending2QueueFile.where(filename: @filename)
@@ -304,37 +325,23 @@ def main
             exit(127)
          end
       end
-
       
-      begin                
-         line = Pending2QueueFile.new                                   
-         line.filename = @filename
-         line.filetype = @filetype                
-         line.detection_date = Time.now
-         line.save!                    
-      rescue Exception => e
-         puts e
-         if @isDebugMode == true then
-            puts
-            puts e.backtrace
-            puts
-         end
-         exit(99)
-      end     
-      exit (0)
+
    end
   
-   ret = TriggerProduct.where(filename: @filename)
+   ## ------------------------------------------------------  
+  
+   oldTrigger = TriggerProduct.where(filename: @filename)
 
 
-   if ret != nil then
-      if ret.to_a.length > 0 then 
- 
-         orcFile = OrchestratorQueue.where(trigger_product_id: ret.to_a[0].id)
+   if oldTrigger != nil then
+      if oldTrigger.to_a.length > 0 then 
+  
+         orcFile = OrchestratorQueue.where(trigger_product_id: oldTrigger.to_a[0].id)
 
-         if orcFile != nil then
+         if orcFile != nil and orcFile.to_a.length > 0 then
             puts
-            puts "#{ret.to_a[0].filename} was already queued :-|"
+            puts "#{oldTrigger.to_a[0].filename} was already queued :-|"
             puts 
             exit(127)
          end
@@ -415,6 +422,11 @@ def main
    
    ################################ Database insertion ################################
    TriggerProduct.transaction do
+   
+   newProd = nil
+   
+      if oldTrigger.to_a.length == 0 then
+   
       # Trigger Product registration :
       newProd = TriggerProduct.new(:filename => @filename,
                                    :filetype => @filetype, 
@@ -434,11 +446,16 @@ def main
          puts
          exit(99)
       end
+      
+      else
+         newProd = oldTrigger.to_a[0]
+      end
 
-     if @initialStatus == "OBS" then
-         newQueuedProd = ObsoleteTriggerProduct.new
-         newQueuedProd.trigger_products = newProd
-         newQueuedProd.obsolete_date    = @detectionDate
+      if @bPending == true
+         newQueuedProd = Pending2QueueFile.new
+         newQueuedProd.filename           = @filename
+         newQueuedProd.detection_date     = Time.now
+         newQueuedProd.trigger_products   = newProd
       else
          newQueuedProd = OrchestratorQueue.new
          newQueuedProd.trigger_products = newProd
@@ -446,7 +463,16 @@ def main
 
       begin
          newQueuedProd.save!
-      rescue
+      rescue Exception => e
+      
+                     puts e
+               if @isDebugMode == true then
+                  puts
+                  puts e.backtrace
+                  puts
+               end
+
+      
          #unregistering the trigger product
          newProd.destroy
 
@@ -457,11 +483,17 @@ def main
          exit(99)
       end
 
-      Pending2QueueFile.where(filename: @filename).destroy_all
+      if @bPending == false then
+         Pending2QueueFile.where(filename: @filename).destroy_all
+         puts
+         puts "#{@filename} has been successfully queued :-)" 
+         puts
+      else
+         puts
+         puts "#{@filename} is classified as pending :-)" 
+         puts      
+      end
 
-      puts
-      puts "#{@filename} has been successfully queued :-)" 
-      puts  
    end
 end
 
@@ -470,7 +502,7 @@ end
 # It provides the list of trigger-files to be processed [queued]
 def list
 
-   triggerFiles   = TriggerProduct.all
+   triggerFiles   = TriggerProduct.all.to_a
 
    if @bQueued == true then
       puts
@@ -706,12 +738,41 @@ def deleteFile
 end
 #-------------------------------------------------------------
 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
+
+def bulkQueueing
+   puts "bulk mode"
+   
+   require 'activerecord-import'
+   
+   @arrPendingFiles = Pending2QueueFile.getPendingFiles     
+
+   if @arrPendingFiles.empty? == true then
+      msg = "No new input files are pending to be queued"
+      puts msg 
+      return
+   end
+  
+   arrIds = Array.new
+  
+   @arrPendingFiles.each{|file|
+      ids = Array.new
+      ids << file.id
+      arrIds << ids
+   }
+
+   OrchestratorQueue.transaction do
+      OrchestratorQueue.import [:trigger_product_id], arrIds, validate: false
+      Pending2QueueFile.destroy_all
+   end
+   
+end
+## -------------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -75 #{fullpathFile}"}`
+   value = `#{"head -81 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

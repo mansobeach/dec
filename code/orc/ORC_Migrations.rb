@@ -121,7 +121,7 @@ class CreateDiscardedTriggerProducts < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## =====================================================================
 
 class CreateObsoleteTriggerProducts < ActiveRecord::Migration[5.1]
 
@@ -137,6 +137,41 @@ class CreateObsoleteTriggerProducts < ActiveRecord::Migration[5.1]
       drop_table :obsolete_trigger_products
    end
 end
+
+## =====================================================================
+
+class CreatePending2QueueFiles < ActiveRecord::Migration[5.1]
+   def self.up
+      create_table(:pending2queue_files, :id => false) do |t|
+         t.primary_key  :trigger_product_id
+         t.column       :filename,            :string,  :limit => 100
+         t.column       :detection_date,      :datetime
+      end
+      add_foreign_key :pending2queue_files, :trigger_product_id, :trigger_products
+   end
+
+   def self.down
+      drop_table :pending2queue_files
+   end
+end
+
+## =====================================================================
+
+#class CreatePending2QueueFiles_OLD_TO_BE_REMOVED < ActiveRecord::Migration[5.1]
+#   def self.up
+#      create_table(:pending2queue_files) do |t|
+#         t.column :filename,            :string,  :limit => 100
+#         t.column :filetype,            :string,  :limit => 20
+#         t.column :detection_date,      :datetime
+#      end
+#   end
+#
+#   def self.down
+#      drop_table :pending2queue_files
+#   end
+#end
+
+## =====================================================================
 
 # class CreateGeneratedProducts < ActiveRecord::Migration
 #    extend MigrationHelpers
@@ -188,19 +223,6 @@ end
 
 #=====================================================================
 
-class CreatePending2QueueFiles < ActiveRecord::Migration[5.1]
-   def self.up
-      create_table(:pending2queue_files) do |t|
-         t.column :filename,            :string,  :limit => 100
-         t.column :filetype,            :string,  :limit => 20
-         t.column :detection_date,      :datetime
-      end
-   end
-
-   def self.down
-      drop_table :pending2queue_files
-   end
-end
 
 #=====================================================================
 
