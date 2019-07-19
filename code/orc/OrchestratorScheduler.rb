@@ -21,9 +21,7 @@ require 'orc/ORC_DataModel'
 require 'orc/PriorityRulesSolver'
 #require 'orc/DependenciesSolver'
 
-
 module ORC
-
 
 class OrchestratorScheduler
 
@@ -34,8 +32,7 @@ class OrchestratorScheduler
    def initialize(log, debug)
 
       checkModuleIntegrity
-      
-      
+            
       @logger           = log
       
       # initialize logger
@@ -80,17 +77,15 @@ class OrchestratorScheduler
       
       # Register Signals Handlers
       registerSignals
-
-      
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "OrchestratorScheduler debug mode is on"
    end
-   #-------------------------------------------------------------   
+   # -------------------------------------------------------------   
 
    # Get all Queued Files
    def loadQueue
@@ -107,7 +102,7 @@ class OrchestratorScheduler
 #         puts "---------------------"
 #      end         
    end
-   #-------------------------------------------------------------   
+   # -------------------------------------------------------------   
 
    # This method gets all files referenced in Pending2QueueFile
    # table and adds them to Orchestrator_Queue table
@@ -129,8 +124,8 @@ class OrchestratorScheduler
       # Queue in Orchestrator_Queue new files referenced 
       # in Pending2QueueFiles (ingester Queue)
       
-      # Ignore additional SIGUSR1 from Ingester
-      Signal.trap("SIGUSR1", "IGNORE")
+#      # Ignore additional SIGUSR1 from Ingester
+#      Signal.trap("SIGUSR1", "IGNORE")
 
       cmd = "orcQueueInput --Bulk"          
       @logger.debug("#{cmd}")
@@ -157,52 +152,64 @@ class OrchestratorScheduler
 #      }
       
       
-      # Register Signals Handlers
-      registerSignals
+#      # Register Signals Handlers
+#      registerSignals
 
 
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Main method of this class:
-   # - Get all Pending2Queue Files
-   # - 
+   ## Main method of this class:
+   ## 
+   ##  
    def schedule
-
-      @bScheduling = false
-
-      msg = "Orchestrator::schedule new inputs"
-      # puts msg
+      msg = "Orchestrator::schedule started"
+      puts msg
       @logger.debug(msg)
+
+      @@bScheduling      = false
 
       # Verify Database connection
       # ActiveRecord::Base.verify_active_connections!
 
       # @logger.debug("Loading Queue List")
       
-      # Get Pending files pre-queued by the ingesterComponent.rb
-      # They are referenced in PENDING2QUEUEFILE table
+#      # Get Pending files pre-queued by the ingesterComponent.rb
+#      # They are referenced in PENDING2QUEUEFILE table
+#
+#      if @bFirstSchedule == true then
+#         @bFirstSchedule = false
+##      else
+##         enqueuePendingFiles
+#      end
 
-      if @bFirstSchedule == true then
-         @bFirstSchedule = false
-      else
+      
+      ## ---------------------------------------------------
+      ## Method that trigger all the new job(s)
+      begin
+         loadQueue
+         dispatch
          enqueuePendingFiles
-      end
+      end while !@arrPendingFiles.empty?
+      ## ---------------------------------------------------
 
-      # After registering all new trigger products
-      # the processing queue is loaded
-      loadQueue
-
-      # Method that trigger the new job
-      dispatch
-
-      if @arrQueuedFiles.empty? then
+      if @arrQueuedFiles.empty? and @arrPendingFiles.empty? then
          @logger.info("Waiting for new inputs")
-         sleep
+      else
+         @logger.error("schedule inconsistency / queued or pending do exist")
       end
+
+      msg = "Orchestrator::schedule completed"
+      puts msg
+      @logger.debug(msg)
+
+      Signal.trap("SIGUSR1") { signalHandler("usr1") }     
+
+
+      sleep
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 
    # This method will implement Processing Rule Priorities.
@@ -694,12 +701,16 @@ private
    #-------------------------------------------------------------
 
    def registerSignals
+      @logger.debug("Registering signals")
+      puts
+      puts "OrchestratorScheduler::registerSignals"
+      
       trap("SIGTERM") { 
                         signalHandler("sigterm")
                       }                                         
 
 
-      trap("SIGUSR1") {                          
+      Signal.trap("SIGUSR1") {                          
                         signalHandler("usr1")               
                       }     
 
@@ -727,81 +738,61 @@ private
    # because scheduler will look for new files after Processor execution.
 
    def signalHandler(usr)
-      bHandled = false
       
-      # --------------------------------
-      # Processor Signal Status management
+      puts
+      puts "signalHandler=>#{usr}"
+      puts
+            
+      ## --------------------------------
+      ## Processor Signal Status management
       if (usr == "usr2") then
-         bHandled = true
-         # @logger.debug("Scheduler received SIGUSR2 from Processor")
-         @sleepSigUsr2 = true
-         manageProcesor
+         Thread.new{
+            @logger.debug("Scheduler received SIGUSR2 from Processor")
+            schedule
+         }
+         
+         # Process.waitall
+#         bHandled = true
+#         # @logger.debug("Scheduler received SIGUSR2 from Processor")
+#         @sleepSigUsr2 = true
+#         manageProcesor
       end
-      # --------------------------------
+      ## --------------------------------
       
-      # --------------------------------
-      # Ingester Signal Status management      
+      ## --------------------------------
+      ## Ingester Signal Status management
+          
       if (usr == "usr1") then
-         
-         # Ignore additional SIGUSR1 from Ingester
-         Signal.trap("SIGUSR1", "IGNORE")
-
       
-         @bScheduling = false
-         bHandled = true
-         msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
-         # puts msg
-         # puts @sleepSigUsr2
-         # puts @bScheduling
-         # @logger.debug(msg)
-         if @sleepSigUsr2 == true then
-            @sig1flag = true
-            # @logger.debug("Scheduler is managing a Processor")
-            # manageProcesor
-            # schedule
-         else
-            @sig1flag = false
-            
-            if @bScheduling == false then
-            
-               # puts "SIGUSR to call scheduling"
-            
-               @bScheduling = true
-                              
-               aThread = Thread.new{
-                  # puts "I'm the thread in"
-                  @logger.debug(msg) 
-                  schedule
-                  # puts "I'm the thread out" 
-               }
-                            
-               aThread.join
-             
-               
-               @bScheduling = false
-            else
-               puts "I'm scheduling already"
-            end
-            # 
+         if @@bScheduling == true then
+            puts "SIGUSR1 received whilst processing previous"
+            sleep
          end
-         
-         registerSignals
-         
+            
+                                   
+         aThread = Thread.new{
+            @@bScheduling = true
+            Signal.trap("SIGUSR1", "IGNORE")
+            msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
+            puts msg
+            @logger.debug(msg)
+            @logger.debug("Invoking schedule") 
+            schedule
+            @logger.debug("End of schedule call")
+            # Signal.trap("SIGUSR1", signalHandler("usr1")) 
+            @@bScheduling = false
+         }
+                                     
       end
-      # --------------------------------
+      ## --------------------------------
      
       if (usr == "sigterm") then
          bHandled = true
          
          Thread.new{
-               @logger.info("SIGTERM received / sayonara baby") 
-            }
-         
-         @bExit   = true
-         
+            @logger.info("SIGTERM received / sayonara baby") 
+         }
          exit(0)
-         
-         
       end
 
       # --------------------------------

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.4'
+  s.version     = '0.0.5'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"

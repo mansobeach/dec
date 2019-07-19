@@ -228,7 +228,7 @@ def main
       puts
       puts "#{@filename} is not registered as a trigger product :-("
       puts
-      # RDoc::usage("usage")
+      # usage
       puts
       exit(99)
    else
@@ -269,7 +269,7 @@ def main
 #             puts
 #             puts "Please specify generated file-type as it is not an Earth-Explorer file :-("
 #             puts
-#             RDoc::usage("usage")
+#             usage
 #             puts
 #             exit(99)
 #          end
@@ -289,7 +289,7 @@ def main
 #             puts
 #             puts "Could not find handler-file for file-type #{@genFileType} :-("
 #             puts
-#             RDoc::usage("usage")
+#             usage
 #             puts
 #             exit(99)
 #          else
@@ -308,7 +308,7 @@ def main
 #                puts "The file #{@genFileName} could not be identified as a valid #{@genFileType} file..."
 #                puts "Unable to proceed :-("
 #                puts
-#                RDoc::usage("usage")
+#                usage
 #                puts
 #                exit(99)
 #             end 
@@ -413,17 +413,15 @@ def set_product_to_success
 
 end
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def set_product_to_failure
 
    #check that the file is not allready present in the failing products list
    tmpProd = FailingTriggerProduct.find_by_trigger_product_id(@trigger_prod_id)
    if tmpProd != nil then
       puts
-      puts "The trigger product is registered in both 'orchestrator queue' and 'failing trigger products' :-("
-      puts "Incoherent orchestrator status !"
+      puts "The trigger product is already registered 'failing trigger products' :-("
       puts
-      RDoc::usage("usage")
       puts
       exit(99)
    end
@@ -431,8 +429,8 @@ def set_product_to_failure
    OrchestratorQueue.transaction do
 
       tmpProd = FailingTriggerProduct.new
-      tmpProd.trigger_products = @triggerProd
-      tmpProd.failure_date = Time.now
+      tmpProd.trigger_products   = @triggerProd
+      tmpProd.failure_date       = Time.now
       
       begin
         tmpProd.save!
@@ -445,7 +443,7 @@ def set_product_to_failure
          exit(99)
       end
 
-      OrchestratorQueue.delete_all(:trigger_product_id => @trigger_prod_id)
+      OrchestratorQueue.where(:trigger_product_id => @trigger_prod_id).delete_all
 
    end
 
@@ -471,7 +469,6 @@ def set_product_to_obsolete
       puts "The trigger product is registered in both 'orchestrator queue' and 'obsolete trigger products' :-("
       puts "Incoherent orchestrator status !"
       puts
-      RDoc::usage("usage")
       puts
       exit(99)
    end
@@ -522,7 +519,7 @@ def set_product_to_discarded
       puts "The trigger product is registered in both 'orchestrator queue' and 'discarded trigger products' :-("
       puts "Incoherent orchestrator status !"
       puts
-      RDoc::usage("usage")
+      # usage
       puts
       exit(99)
    end

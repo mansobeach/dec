@@ -24,11 +24,12 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.4"
+   @@version = "0.0.5"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.5"  =>    "orcQueueUpdate fixed to fit with the new data-model", \
       "0.0.4"  =>    "orcQueueInput bulk mode support of pending triggers\n\
          OrchestratorScheduler now uses such bulk mode", \
       "0.0.3"  =>    "Check of tool dependencies done in the unit tests\n\

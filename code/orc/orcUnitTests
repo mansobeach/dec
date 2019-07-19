@@ -33,7 +33,7 @@ require 'arc/MINARC_Environment'
 
 #  1  - test_commandline_helpers
 #  2  - test_parsers
-#  3  - test_command_orcQueueInput
+#  3  - test_states
 #  4  - test_command_orcIngester
 #  5  - test_command_orcScheduler
 #  6  - test_command_orcBolg
@@ -295,6 +295,8 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngester -c status"
       assert(system(cmd), cmd)
 
+      system("orcIngester -c stop")
+
       cmd = "orcIngester -c stop"
       assert(!system(cmd), cmd)
 
@@ -304,7 +306,7 @@ class ORCTestCase < Test::Unit::TestCase
       @@conf = ORC_Environment.new      
       @@conf.wrapper_unset_config
       
-      cmd = "orcIngeter"
+      cmd = "orcIngester"
       assert(!system(cmd), cmd)
 
       cmd = "orcQueueInput"
@@ -483,6 +485,63 @@ class ORCTestCase < Test::Unit::TestCase
    end
    # -------------------------------------------------------------
 
+   def test_train
+     
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
+      system("mkdir -p /tmp/orc_polling_dir/tmp")
+      
+      system("orcBolg -c stop")
+      sleep(5.0)
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+      cmd = "orcBolg -c start -D"
+      assert(system(cmd), cmd)
+   
+      @@arrInputFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/orc_tmp/#{filename}")
+         sleep(5)
+      }
+      
+      sleep(180)
+      
+      
+      cmd = "orcQueueInput -l -Q"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -F"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -S"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
+   
+   end
+   # -------------------------------------------------------------
+
    def test_allatonce
      
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
@@ -514,7 +573,11 @@ class ORCTestCase < Test::Unit::TestCase
    
    # -------------------------------------------------------------
 
-   def test_command_orcQueueInput
+   def test_states
+   
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+      
       cmd = "orcQueueInput"
       assert(!system(cmd), cmd)
 
@@ -533,7 +596,45 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcQueueInput -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s UKN"
       puts cmd
       assert(!system(cmd), cmd)
-      
+
+      cmd = "orcQueueUpdate -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s SUCCESS"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -P -s NRT -f S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.EOF"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -f S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.EOF -s UKN"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueUpdate -f S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.EOF -s FAILURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -Q"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -F"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -S"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
    end
 
    # -------------------------------------------------------------
@@ -593,6 +694,12 @@ class ORCTestCase < Test::Unit::TestCase
       
       assert(!arrFiles.to_s.include?("_MPC_"), "no MPC files queued")
       
+      
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}")       
+
+      
 
    end
    # -------------------------------------------------------------
@@ -623,6 +730,9 @@ class ORCTestCase < Test::Unit::TestCase
    # -------------------------------------------------------------
 
    def test_11
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
       cmd = "minArcPurge -Y"
       assert(system(cmd), cmd)
 
@@ -636,8 +746,6 @@ class ORCTestCase < Test::Unit::TestCase
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
 
-      system("orcManageDB -d")
-      system("orcManageDB -c")
 
    end
    # -------------------------------------------------------------
@@ -712,6 +820,9 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcBolg -c stop"
       assert(system(cmd), cmd)
 
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
 
    end
    # -------------------------------------------------------------
@@ -761,6 +872,9 @@ class ORCTestCase < Test::Unit::TestCase
       puts
 
 
+      cmd = "orcQueueInput -l -P"
+      assert(system(cmd), cmd)
+
       cmd = "orcQueueInput -l -Q"
       assert(system(cmd), cmd)
 
@@ -769,6 +883,10 @@ class ORCTestCase < Test::Unit::TestCase
 
       cmd = "orcQueueInput -l -S"
       assert(system(cmd), cmd)
+
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
 
 
 
@@ -809,7 +927,6 @@ class ORCTestCase < Test::Unit::TestCase
    
       system("orcManageDB -d")
       system("orcManageDB -c")
-   
    
       @@arrInputFiles.each{|file|
          cmd = "orcQueueInput -P -s NRT -f #{file}"
