@@ -215,6 +215,7 @@
    <Miscelanea>
       <PollingDir>/tmp/orc_tmp</PollingDir>
       <PollingFreq unit="s">3</PollingFreq>
+      <ParallelIngestions>1</ParallelIngestions>
       <SchedulingFreq unit="s">10</SchedulingFreq>
       <ResourceManager>orcResourceChecker</ResourceManager>
       <ProcWorkingDir>/tmp/processorWd</ProcWorkingDir>

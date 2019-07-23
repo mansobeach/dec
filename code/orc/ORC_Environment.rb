@@ -24,11 +24,12 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.5"
+   @@version = "0.0.6"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.6"  =>    "ingestion parallelised (new configuration ParallelIngestions)", \
       "0.0.5"  =>    "orcQueueUpdate fixed to fit with the new data-model", \
       "0.0.4"  =>    "orcQueueInput bulk mode support of pending triggers\n\
          OrchestratorScheduler now uses such bulk mode", \

@@ -202,7 +202,7 @@ def start
       pid = @schedulerChecker.getRunningPID
       puts "Scheduler started with pid #{pid}"
       puts
-   #   @logger.debug("Scheduler started with pid #{pid}")
+      @logger.debug("Scheduler started with pid #{pid}")
    else                                         
       puts "Scheduler is already running"
       @logger.warn("Scheduler is already running")
@@ -217,6 +217,7 @@ def start
    if @ingesterChecker.isRunning == false then
       cmd= "orcIngester -c start -d #{@pollingDir} -i #{@intervalSeconds} -p #{pid}" 
       if @isDebugMode == true
+         cmd = "#{cmd} -D"
          puts cmd
       end
       
@@ -228,7 +229,7 @@ def start
       
       pid = @ingesterChecker.getRunningPID
       puts "Ingester started with pid #{pid}"
- #     @logger.debug("Ingester started with pid #{pid}")
+      @logger.debug("Ingester started with pid #{pid}")
    else
       puts "Ingester is already running"
       @logger.warn("Ingester is already running")

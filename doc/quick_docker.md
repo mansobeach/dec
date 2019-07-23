@@ -1,5 +1,7 @@
 ### Shortcuts
 
+`sudo docker container run -dit --name minarc --hostname minarc -v /home/vagrant/Volumes:/home/vagrant/Volumes/minarc_homevideo/ --init --publish 4567:4567 app_minarc:latest /bin/bash`
+
 `sudo docker container run -dit --name minarc --hostname minarc --mount source=volume_minarc_homevideo,target=/home/vagrant/Volumes/minarc_homevideo --init --publish 4567:4567 app_minarc:latest /bin/bash`
 
 ### Docker for mac tips
@@ -46,6 +48,9 @@ This section contains the cheat-list of commands to handle docker *images*.
 This section contains the cheat-list of commands to handle docker *containers*.  
 - Run a container by executing an interactive bash (no ENTRYPOINT should have been defined)  
 `sudo docker container run --name dec -i -t app_dec /bin/bash`
+
+-	Run a container with an ENTRYPOINT to execute one command with argument(s):  
+	`sudo docker container run --name dec  app_dec decUnitTests batchmode`
 
 -	Run a container liaised to a given network:  
 	`docker container run -d --name minarc
@@ -182,6 +187,12 @@ Docker volumes are created in the *host* directory /var/lib/docker/volumes/<volu
 
 ---
 
+Tools & Tips
+============
+
+`docker cp orc-0.0.6dev1_boa_app_s2boa@e2espm-inputhub.gem boa_app_s2boa:/tmp`
+
+
 Test Procedure
 ==============
 
@@ -207,3 +218,8 @@ docker run -dit --name minarc --mount source=volume_minarcroot,destination=/volu
 docker run -d --name minarc --mount source=volume_minarcroot,destination=/volume/minarc_root app_minarc:latest
 
 docker run -d \\ --name devtest \\ --mount source=volume_minarcroot,target=/volume \\ minarc:latest
+
+References
+==========
+
+[how to start services in containers](https://stackoverflow.com/questions/25135897/how-to-automatically-start-a-service-when-running-a-docker-container)

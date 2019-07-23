@@ -79,6 +79,11 @@ docker run -d \
 
 # ================================================
 
+# COPY
+
+docker cp orc-0.0.6dev1_boa_app_s2boa@e2espm-inputhub.gem boa_app_s2boa:/tmp
+
+
 # NETWORK
 
 docker network ls

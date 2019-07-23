@@ -487,6 +487,10 @@ class ORCTestCase < Test::Unit::TestCase
 
    def test_train
      
+      puts
+      puts "#{__method__.to_s}"
+      puts
+     
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
       system("mkdir -p /tmp/orc_polling_dir/tmp")
       
@@ -562,12 +566,46 @@ class ORCTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > /tmp/orc_polling_dir/tmp/#{filename}")
       }
 
-      system("mv -f /tmp/orc_polling_dir/tmp/S2* /tmp/orc_polling_dir/")
+      
+      require 'orc/ReadOrchestratorConfig'
+      
+      @ftReadConf          = ORC::ReadOrchestratorConfig.instance
+      pollingDir           = @ftReadConf.getPollingDir
 
-      cmd = "orcBolg -c start"
+      system("mv -f /tmp/orc_polling_dir/tmp/S2* #{pollingDir}")
+
+      cmd = "orcBolg -c start -D"
       assert(system(cmd), cmd)
 
-      sleep(100)
+      sleep(300)
+
+      cmd = "orcQueueInput -l -Q"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -F"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -S"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
+
 
    end
    

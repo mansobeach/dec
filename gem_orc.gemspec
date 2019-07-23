@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.5'
+  s.version     = '0.0.6'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
 
   # ----------------------------------------------
   
-  s.add_dependency('minarc', '>= 1.0.30a')
+  #s.add_dependency('minarc', '>= 1.0.30a')
   #s.add_runtime_dependency('minarc', '>= 1.0.30')
   # ----------------------------------------------
     

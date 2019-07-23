@@ -30,9 +30,40 @@ ActiveRecord::Base.establish_connection(
                                           :password   => dbPass, 
                                           :timeout    => 100000,
                                           :cast       => false,
-                                          :pool       => 10
+                                          :pool       => 30
                                           )
 
+
+## =====================================================================
+
+class HandleDBConnection
+
+   def initialize
+      dbAdapter   = ENV['ORC_DB_ADAPTER']
+      dbName      = ENV['ORC_DATABASE_NAME']
+      dbUser      = ENV['ORC_DATABASE_USER']
+      dbPass      = ENV['ORC_DATABASE_PASSWORD']
+
+      ActiveRecord::Base.connection.close
+
+      ActiveRecord::Base.connection.disconnect!
+
+      ActiveRecord::Base.establish_connection(
+                                          :adapter    => dbAdapter,
+                                          :host       => "localhost", 
+                                          :database   => dbName,
+                                          :username   => dbUser, 
+                                          :password   => dbPass, 
+                                          :timeout    => 500000,
+                                          :cast       => false,
+                                          :pool       => 30
+                                          )
+
+      ## ActiveRecord::Base.connection.execute("BEGIN TRANSACTION; END;")
+
+   end
+
+end
 
 ## =====================================================================
 
@@ -115,13 +146,12 @@ class OrchestratorQueue < ActiveRecord::Base
       }
       return arrFiles   
    end
-   #----------------------------------------------
+   ## ----------------------------------------------
    
    def OrchestratorQueue.getQueuedFiles
       arrFiles     = Array.new
       triggerFiles = TriggerProduct.all
       queuedFiles  = OrchestratorQueue.all
-
  
       triggerFiles.each{|triggerFile|
 
@@ -133,7 +163,7 @@ class OrchestratorQueue < ActiveRecord::Base
       }
       return arrFiles
    end
-   #----------------------------------------------   
+   ## ----------------------------------------------   
 
    def OrchestratorQueue.getQueuedFile(jobId)
       queuedFile = OrchestratorQueue.find_by_trigger_product_id(jobId)

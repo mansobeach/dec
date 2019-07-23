@@ -67,10 +67,6 @@ def main
    @pid                = nil
    @bShowVersion       = false
    @bShowUsage         = false
-
-   
-   # Check environment pre-requisites
-   checkModuleIntegrity  
    
    @orcConfigDir       = ENV['ORC_CONFIG']
 
@@ -88,14 +84,10 @@ def main
    begin
       opts.each do |opt, arg|
          case opt
-            when "--command" then
-               @command = arg
-            when "--dir"  then
-               @pollingDir = arg
-            when "--interval" then
-               @intervalSeconds = arg.to_i
-            when "--pid"      then
-               @pid = arg.to_i                         
+            when "--command"     then     @command             = arg
+            when "--dir"         then     @pollingDir          = arg
+            when "--interval"    then     @intervalSeconds     = arg.to_i
+            when "--pid"         then     @pid                 = arg.to_i                         
             when "--Debug"       then     @isDebugMode         = true                                    	                  
             when "--help"        then     @bShowUsage          = true
             when "--usage"       then     @bShowUsage          = true
@@ -148,6 +140,9 @@ def main
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
+
+   # Check environment pre-requisites
+   checkModuleIntegrity  
       
    @logger = loggerFactory.getLogger
    
@@ -157,7 +152,6 @@ def main
       puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
 		exit(99)
    end
-
 
    case @command
       when "start"   then start         
@@ -173,7 +167,6 @@ def main
    exit(0)
    
 end
-
 
 #===============================================================================
 

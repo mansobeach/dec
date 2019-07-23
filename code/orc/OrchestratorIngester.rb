@@ -4,7 +4,7 @@
 #
 # === Ruby source for #OrchestratorIngester class
 #
-# === Written by DEIMOS Space S.L. (algk)
+# === Written by DEIMOS Space S.L. (bolf)
 #
 # === ORC Component
 # 
@@ -43,97 +43,129 @@ class OrchestratorIngester
       if @isDebugMode == true then
          @ftReadConf.setDebugMode
       end
+      if ENV['ORC_DB_ADAPTER'] == "sqlite3" then
+         @parallelIngest      = 1
+      else
+         @parallelIngest      = @ftReadConf.getParallelIngest
+      end
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "OrchestratorIngester debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   def ingestFile(polledFile)
+      bIngested   = false
+      cmd         = "minArcFile -T S2PDGS -f #{polledFile} -t"         
+      filetype    = `#{cmd}`.chop
+         
+      @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})
+                                 
+      if @ftReadConf.isValidFileType?(polledFile) == true then
+         @newFile = true
+         cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
+         @logger.info("#{cmd}")
+         retVal   = system(cmd)
+                  
+         if retVal == true then               
+            bIngested = true
+                              
+            if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
+               cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
+               retVal   = system(cmd)
+               @logger.info("#{cmd} / #{retVal}")
+               if retVal != true then
+                  @logger.error("Could not queue #{polledFile}")
+                  return false
+               end
+            else
+               @logger.debug("#{polledFile} is not trigger")
+            end
+         else
+            bIngested = false
+            @logger.warn("Could not Archive #{polledFile} File on MINARC")
+         end  
+      else
+         bIngested = false
+         @logger.error("File-type #{filetype} not present in configuration !")
+      end
+         
+      # Move to ingestionError folder in case of error
+      if bIngested == false then      
+         command = "\\mv -f #{@pollingDir}/#{polledFile} #{@orcTmpDir}/_ingestionError"      
+         if @isDebugMode == true then
+            @logger.debug(%Q{\n#{command}})
+         end
+            
+         retVal = system(command)          
+            
+         if retVal == true then
+            @logger.warn("File #{polledFile} moved to #{@orcTmpDir}/_ingestionError")
+         else
+            @logger.warn("Failed to move #{polledFile} to #{@orcTmpDir}/_ingestionError")
+            command = "\\rm -rf #{@pollingDir}/#{polledFile}"
+            if @isDebugMode == true then
+               @logger.debug(%Q{\n#{command}})
+            end
+            system(command)
+         end               
+      end
+         
+      return bIngested
+           
+   end
+   ## -------------------------------------------------------------
 
    # Method that checks on the given array of files which one is a 
    # valid type and stores or delete it accordingly to the result
    def ingest(arrPolledFiles)
-
+      @newFile = false
+      
       # Log all files found in the polling dir
       arrPolledFiles.each{|polledFile|   
          @logger.debug(%Q{Found #{polledFile}})
       }
 
-      arrPolledFiles.each{|polledFile|
+      loop do
          
-         # Put protection mechanism for S2 files only
-         # Discard "temp" files
-         if polledFile.to_s.slice(0,1) == "_" or polledFile.to_s.slice(0,2) != "S2" then
-            @logger.debug(%Q{Discarded #{polledFile}})
-            next
-         end         
+         break if arrPolledFiles.empty?
+         
+         1.upto(@parallelIngest) {|i|
+         
+            break if arrPolledFiles.empty?
+            
+            file = arrPolledFiles.shift
 
-         cmd         = "minArcFile -T S2PDGS -f #{polledFile} -t"         
-         filetype    = `#{cmd}`.chop
-         
-         @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})
-                        
-         bIngested   = false
-   
-         # if @ftReadConf.isValidFileType?(filetype) == true then
-         if @ftReadConf.isValidFileType?(polledFile) == true then
-            @newFile = true
-            cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
-            @logger.info("#{cmd}")
-            retVal   = system(cmd)
-                  
-            if retVal == true then               
-               bIngested = true
-               
-               # @logger.debug("#{polledFile} archived on MINARC")
-               # If Trigger file, add it to PENDING2QUEUEFILES
-               
-               if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
-                  cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
-                  retVal   = system(cmd)
-                  @logger.info("#{cmd} / #{retVal}")
-                  if retVal != true then
-                     @logger.error("Could not queue #{polledFile}")
-                  end
-               else
-                  @logger.debug("#{polledFile} is not trigger")
-               end
-            else
-               bIngested = false
-               @logger.warn("Could not Archive #{polledFile} File on MINARC")
-            end  
-         else
-            bIngested = false
-            @logger.warn("File-type #{filetype} not present in configuration !")
-         end
-         
-         # Move to ingestionError folder in case of error
-         if bIngested == false then          
-            command = "\\mv -f #{@pollingDir}/#{polledFile} #{@orcTmpDir}/_ingestionError"      
-            if @isDebugMode == true then
-               @logger.debug(%Q{\n#{command}})
+            if file.to_s.slice(0,1) == "_" or file.to_s.slice(0,2) != "S2" then
+               @logger.warn(%Q{Discarded #{file}})
+               next
             end
-            retVal = system(command)          
-            if retVal == true then
-               @logger.warn("File #{polledFile} moved to #{@orcTmpDir}/_ingestionError")
+            
+            fork{
+            	ret = ingestFile(file)
+               if ret == false then
+                  exit(1)
+               else
+                  exit(0)
+               end 
+            }
+         }
+         arr = Process.waitall
+         arr.each{|child|
+            if child[1].exitstatus == 0 then
+               @newFile = true
             else
-               @logger.warn("Failed to move #{polledFile} to #{@orcTmpDir}/_ingestionError")
-               command = "\\rm -rf #{@pollingDir}/#{polledFile}"
-               if @isDebugMode == true then
-                  @logger.debug(%Q{\n#{command}})
-               end
-               system(command)
-            end               
-         end
-   
-      }
+               @logger.error("Problem(s) during file ingestion")
+            end
+         }
+      end
 
-      # Notify scheduler if a new file has been detected
+      ## ---------------------------------------------------
+      ## Notify to the scheduler if a new file has been detected
 
       if (@observerPID != nil) and (@newFile == true) then
          @logger.debug("Sending SIGUSR1 to Observer with pid #{@observerPID}")                                
@@ -141,11 +173,12 @@ class OrchestratorIngester
          @logger.debug(ret)
          puts ret
       end
+      ## ---------------------------------------------------
       
       @newFile = false   
   
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Method triggered by Listener 
    def poll
@@ -171,6 +204,8 @@ class OrchestratorIngester
          puts
          puts e.backtrace
          @logger.error("Could not Poll #{@pollingDir}  !")
+         @logger.error(e.to_s)
+         @logger.error(e.backtrace)
       end    
       Dir.chdir(prevDir)
 
@@ -204,7 +239,7 @@ class OrchestratorIngester
 
 private
   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    # Check that everything needed by the class is present.
    
    def checkModuleIntegrity
@@ -224,7 +259,7 @@ private
       end
 
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end #end class
 

@@ -89,18 +89,19 @@ class OrchestratorScheduler
 
    # Get all Queued Files
    def loadQueue
-      msg = "OrchestratorScheduler::loadQueue"
-      # puts msg
+      msg = "OrchestratorScheduler::loadQueue begin"
+      @logger.debug(msg)
+      
+      HandleDBConnection.new      
+      
+      @arrQueuedFiles = OrchestratorQueue.getQueuedFiles
+      
+      @arrQueuedFiles.each{|item|
+         @logger.debug("queued : #{item.filename}")
+      }
+      
+      msg = "OrchestratorScheduler::loadQueue completed"
       @logger.debug(msg) 
-      @arrQueuedFiles = OrchestratorQueue.getQueuedFiles 
-#      if @isDebugMode == true then
-#         puts "--------------------"
-#         puts "queue:"
-#         @arrQueuedFiles.each{|item|
-#            puts item.filename
-#         }
-#         puts "---------------------"
-#      end         
    end
    # -------------------------------------------------------------   
 
@@ -108,7 +109,7 @@ class OrchestratorScheduler
    # table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
 
-      msg = "OrchestratorScheduler::enqueuePendingFiles"
+      msg = "OrchestratorScheduler::enqueuePendingFiles begin"
       # puts msg
       @logger.debug(msg) 
 
@@ -199,12 +200,11 @@ class OrchestratorScheduler
          @logger.error("schedule inconsistency / queued or pending do exist")
       end
 
+      Signal.trap("SIGUSR1") { signalHandler("usr1") }     
+
       msg = "Orchestrator::schedule completed"
       puts msg
       @logger.debug(msg)
-
-      Signal.trap("SIGUSR1") { signalHandler("usr1") }     
-
 
       sleep
 
@@ -765,17 +765,18 @@ private
       if (usr == "usr1") then
       
          if @@bScheduling == true then
-            puts "SIGUSR1 received whilst processing previous"
+            msg = "SIGUSR1 received whilst processing previous"
+            puts msg
+            @logger.debug(msg)
             sleep
          end
-            
-                                   
+                                               
          aThread = Thread.new{
-            @@bScheduling = true
-            Signal.trap("SIGUSR1", "IGNORE")
             msg = "Scheduler received SIGUSR1 from Ingester / invoke schedule"
             puts msg
             @logger.debug(msg)
+            @@bScheduling = true
+            Signal.trap("SIGUSR1", "IGNORE")
             @logger.debug("Invoking schedule") 
             schedule
             @logger.debug("End of schedule call")
@@ -790,6 +791,7 @@ private
          bHandled = true
          
          Thread.new{
+            puts("SIGTERM received / sayonara baby")
             @logger.info("SIGTERM received / sayonara baby") 
          }
          exit(0)
