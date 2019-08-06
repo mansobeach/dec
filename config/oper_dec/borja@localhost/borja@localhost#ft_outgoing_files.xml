@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <File Type="GIP_PROBA2"> 
+      <Description></Description>
+      <ToList>
+         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+   <File Type="S2A*">
+      <Description></Description>
+      <ToList>
+         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+   <File Type="S2B*">
+      <Description></Description>
+      <ToList>
+         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+      </ToList>
+   </File>
+
+</FileList>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- ================================================================ -->
+ 
+
+  <Interface Name="LOCALHOST_NOT_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <IncomingDir>/tmp/dec/if_localhost_in_basket</IncomingDir>
+    <OutgoingDir>/tmp/dec/if_localhost_out_basket</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <FTPServer>
+      <Protocol>FTP</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>21</Port>      
+      <User>borja</User>
+      <Pass>perrillo</Pass>
+      <UploadDir>Sandbox/dec/dec_sent_file</UploadDir>
+      <UploadTemp>Sandbox/dec/dec_sent_file/_TEMP_</UploadTemp>
+      <DownloadDirs>
+		   <Directory DepthSearch="0">Sandbox/dec/interface_local_us/</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="IERS">
+    <Desc>IERS Interface</Desc>
+    <IncomingDir>$HOME/Sandbox/dec/dec_basket</IncomingDir>
+    <OutgoingDir>$HOME</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <FTPServer>
+      <Protocol>FTP</Protocol>
+      <Hostname>maia.usno.navy.mil</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <UploadDir>./</UploadDir>
+      <UploadTemp>./_TEMP_</UploadTemp>
+      <DownloadDirs>
+		   <Directory DepthSearch="0">ser7</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+     -->    
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo \':-\)\'"/>
+         
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+
+  <!-- ================================================================ -->
+
+
+</Interfaces>

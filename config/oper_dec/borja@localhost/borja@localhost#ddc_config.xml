@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>Data Exchange Component PUSH</Name>
+      <Id>DEC</Id>
+      <Mission>DEC UNIT TESTS</Mission>
+   </Project>
+   <Filters>
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+   </Filters>
+   <Options>
+      <DeleteSourceFiles>true</DeleteSourceFiles>
+   </Options>
+   
+   <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+   
+   <SatPrefix>S2</SatPrefix>
+   
+   <ReportDir>/tmp/dec_reports</ReportDir>
+   
+   <Reports>
+      
+      <Report Name="DeliveredFiles">
+         <Enabled>true</Enabled>
+         <Desc>List of Files Delivered</Desc>
+         <FileType>DEC_F_SENT</FileType>
+      </Report>
+
+      <Report Name="EmergencyDeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered in Emergency Mode</Desc>
+         <FileType>MMPF_FT_EM</FileType>
+      </Report>
+
+   </Reports>
+</Configuration>
