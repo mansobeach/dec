@@ -96,7 +96,7 @@ RUN bundle install
 # Install the minarc gem
 
 COPY dec.gem .
-RUN gem install --local dec.gem
+RUN gem install --local dec_dectest@localhost.gem 
 # ------------------------------------------------
 #
 #
