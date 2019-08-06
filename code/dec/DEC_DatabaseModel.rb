@@ -36,31 +36,31 @@ ActiveRecord::Base.establish_connection(
          :timeout    => 60000
          )
 
-#=====================================================================
+## ===================================================================
 
 class Interface < ActiveRecord::Base
    validates_presence_of   :name
    validates_uniqueness_of :name
 end
 
-#=====================================================================
+## ===================================================================
 
 class ReceivedFile < ActiveRecord::Base
    belongs_to  :interface
    # attr_accessor :filename, size, reception_date, protocol
 end
 
-#=====================================================================
+## ===================================================================
 
 class TrackedFile < ActiveRecord::Base
    belongs_to  :interface
 end
 
-#=====================================================================
+## ===================================================================
 
 
-#=====================================================================
-# Class SentFile that maps SENT_FILES tables
+## ===================================================================
+## Class SentFile that maps SENT_FILES tables
 
 class SentFile < ActiveRecord::Base
    # belongs_to  :interface
@@ -85,11 +85,11 @@ class SentFile < ActiveRecord::Base
       }
    end
    
-   #-----------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   def SentFile.setBeenSent(file, interface, deliveryMethod, hParams=nil)
+   def SentFile.setBeenSent(file, interface, deliveryMethod, size = nil, hParams=nil)
      
-      puts "DEC_DatabaseModel::SentFile.setBeenSent #{file}, #{interface}, #{deliveryMethod}, #{hParams}"
+      puts "DEC_DatabaseModel::SentFile.setBeenSent #{file}, #{interface}, #{deliveryMethod}, , #{size}, #{hParams}"
  
       # Verify all the "extra" params exist in SENT_FILES table 
       if hParams != nil then
@@ -157,7 +157,9 @@ class SentFile < ActiveRecord::Base
       sentFile                   = SentFile.new
       sentFile.filename          = file
       sentFile.interface_id      = interface.id
+      sentFile.interface         = interface.name
       sentFile.delivered_using   = %Q{#{deliveryMethod};}
+      sentFile.size              = size
       sentFile.delivery_date     = Time.now
       if hParams != nil then
          # Update all optional params in the database
@@ -167,18 +169,19 @@ class SentFile < ActiveRecord::Base
       end
       sentFile.save!
    end
-   #-----------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end
-#=====================================================================
+
+## ===================================================================
 
 
 
-#-----------------------------------------------------------
-# RPF "Legacy" Tables
+## -----------------------------------------------------------
+## RPF  / MMPF "Legacy" Tables
 
 
-#=====================================================================
+## ===================================================================
 
 class InventoryFile < ActiveRecord::Base
    self.table_name   = 'FILE_TB'
@@ -187,15 +190,14 @@ class InventoryFile < ActiveRecord::Base
    STATUS_NEW                 = 0
    STATUS_VALIDATED           = 1
 
-   
 end
-#=====================================================================
+## ===================================================================
 
 class InventoryROPFile < ActiveRecord::Base
    self.table_name = 'FILE_ROP_TB'
    # set_primary_key 'ROP_ID', 'FILE_ID'
 end
-#=====================================================================
+## ===================================================================
 
 class InventoryROP < ActiveRecord::Base
    self.table_name   = 'ROP_TB'
@@ -248,18 +250,18 @@ class InventoryROP < ActiveRecord::Base
 
 end
 
-#=====================================================================
+## ===================================================================
 
 class InventoryROPFileView < ActiveRecord::Base
    self.table_name = 'ROP_FILE_VW'
 end
-#=====================================================================
+## ===================================================================
 
 class InventoryParams < ActiveRecord::Base
    self.table_name   = 'PARAMETERS_TB'
    self.primary_key  = 'KEYWORD'
 end
-#=====================================================================
+## ===================================================================
 
 
 

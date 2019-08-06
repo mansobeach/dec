@@ -34,7 +34,8 @@ class DDC_FileSender
    include CUC::DirUtils
    include DDC
    include DEC
-   #-------------------------------------------------------------
+   
+   ## -------------------------------------------------------------
    
    attr_reader :listFileSent, :listFileError, :listFileToBeSent
    
@@ -110,7 +111,7 @@ class DDC_FileSender
       @sender.setUploadPrefix(DDC::ReadConfigDDC.instance.getUploadFilePrefix)
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
   
    # Set the flag for debugging on.
    def setDebugMode
@@ -118,7 +119,7 @@ class DDC_FileSender
       puts "DDC_FileSender debug mode is on"
       @sender.setDebugMode
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
  
    # Set the outbox directory where the files to be sent are placed.
    #
@@ -175,7 +176,8 @@ class DDC_FileSender
 
       @listFileToBeSent = @arrFiles      
    end
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
 
    # Main function of the class which performs the File delivery
    # to the given entity
@@ -208,6 +210,8 @@ class DDC_FileSender
 
             puts "Sending #{file} to #{@entity} via #{@protocol}"
             
+            size = File.size("#{@outboxDir}/#{File.basename(file)}")
+            
             bRet = sendFile(file)
             
             if bRet == false then
@@ -224,7 +228,7 @@ class DDC_FileSender
                # Now we register the files sent even if we allow them to be re-send
                # (deliveryOnce equal to false)
                # Registry of Files sent
-               SentFile.setBeenSent(file, @interface, "ftp", hParams)
+               SentFile.setBeenSent(file, @interface, "ftp", size, hParams)
             end
             
          }
@@ -254,7 +258,8 @@ class DDC_FileSender
       end
       return bSent
    end
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
    
    def createReportFile(directory, bDeliver = true, bForceCreation = false, bNominal = true)
 	   bFound      = false
@@ -311,7 +316,7 @@ class DDC_FileSender
          return
       end
 
-	   writer = CTC::DeliveryListWriter.new(directory, true, fileClass, fileType)
+	   writer = CTC::ListWriterDelivery.new(directory, true, fileClass, fileType)
          
       if @isDebugMode == true then
 		   writer.setDebugMode
@@ -344,13 +349,14 @@ class DDC_FileSender
    #-------------------------------------------------------------
 
 private
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
    
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       return
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def sendFile(file)
 
@@ -399,7 +405,7 @@ private
       Dir.chdir(prevDir)
       return false     
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 
 end # class

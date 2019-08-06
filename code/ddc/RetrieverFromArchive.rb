@@ -67,7 +67,7 @@ class RetrieverFromArchive
       if bJustList == true then
          puts
          puts "==============================="
-         puts "DDC Source Archive:" 
+         puts "Source Directory of files to be pushed:" 
          puts "#{@sourceDirectory}"
          puts "==============================="
          puts
@@ -91,7 +91,7 @@ class RetrieverFromArchive
       if bJustList == true then
          puts
          puts "==============================="
-         puts "DDC Source Archive:" 
+         puts "Source Directory:" 
          puts "#{@sourceDirectory}"
          puts "==============================="
          puts
@@ -264,7 +264,7 @@ class RetrieverFromArchive
       if bJustList == true then
          puts
          puts "==============================="
-         puts "DDC Source Archive:" 
+         puts "Source Directory:" 
          puts "#{@sourceDirectory}"
          puts "==============================="
          puts
@@ -359,7 +359,7 @@ private
       end 
       return bRet
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    # This Method extracts all files to be delivered from the DCC Archive
    # Optionally by a configuration flag it deletes them.
@@ -389,7 +389,7 @@ private
          rescue Exception
             if @isDebugMode == true then
                puts
-               puts "Directory #{filetype} does not exist in DDC_ARCHIVE_ROOT"
+               puts "Directory #{filetype} does not exist in source directory (#{@sourceDirectory})"
             end
             next
          end
@@ -470,7 +470,8 @@ private
 
       Dir.chdir(prevDir)
    end
-   #-------------------------------------------------------------
+   
+   ## -------------------------------------------------------------
 
    # Copy the files from the target Directory to all outboxes
    def deliverFilesOrNames(bJustList = false, bDeliverOnce = false)
@@ -490,20 +491,24 @@ private
          arrFiles = Dir["#{filetype}"]
       end
 
-         arrEntities = @confDest.getEntitiesReceivingOutgoingFile(filetype)      
+      arrEntities = @confDest.getEntitiesReceivingOutgoingFile(filetype)      
+      
+      
       
          arrFiles.each{|afile|
+            
             if !arrEntities.empty? then
                puts
                puts afile
             end
+            
             arrEntities.each{|anEntity|
                dir         = @entityConfig.getOutgoingDir(anEntity)
 
                if @bNames == false then
                   arrMethods  = @confDest.getDeliveryMethods(anEntity, filetype)
                else
-                   arrMethods  = @confDest.getDeliveryMethodsForNames(anEntity, filetype)
+                  arrMethods  = @confDest.getDeliveryMethodsForNames(anEntity, filetype)
                end
 
                arrMethods.each{|aMethod|
