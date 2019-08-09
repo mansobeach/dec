@@ -15,7 +15,6 @@
 #
 #########################################################################
 
-
 module CTC
 
 class ListWriterDelivery
@@ -23,7 +22,7 @@ class ListWriterDelivery
    #-------------------------------------------------------------
    
    # Class contructor
-   def initialize(directory, bIsOutgoingDelivery=false, fileType = "")
+   def initialize(directory, bIsOutgoingDelivery=false, fileClass ="", fileType = "")
 	   @targetDirectory = directory
       @realname        = ""
       @bIsOutgoing     = bIsOutgoingDelivery
@@ -31,6 +30,7 @@ class ListWriterDelivery
       @isDebugMode     = false
       @bSetup          = false
       @fileType        = fileType
+      @fileClass       = fileClass
    end
    #-------------------------------------------------------------
    
@@ -109,7 +109,7 @@ private
       end
       
    	@filename = %Q{#{@satPrefix}_OPER_#{fileType}_#{@pollingTime}_#{@pollingTime}_0001}
-      @realname = %Q{#{@filename}.EEF}
+      @realname = %Q{#{@filename}.xml}
       @theFile  = nil
       
       if @isDebugMode == true then

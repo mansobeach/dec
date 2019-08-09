@@ -85,16 +85,17 @@ require 'rdoc'
 
 require 'cuc/Log4rLoggerFactory'
 require 'ctc/ReadInterfaceConfig'
+require 'ctc/ReadFileDestination'
 require 'ctc/ReadFileSource'
 require 'ctc/CheckerMailConfig'
 require 'ctc/CheckerInterfaceConfig'
 require 'ctc/CheckerIncomingFileConfig'
 require 'ctc/CheckerOutgoingFileConfig'
 require 'dcc/ReadInTrayConfig'
-require 'dcc/ReadConfigDCC'
 require 'dcc/CheckerInTrayConfig'
 require 'dcc/CheckerServiceConfig'
 require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
 
 # Conditional require driven by --nodb flag
 # require 'ctc/CheckerInventoryConfig'
@@ -199,8 +200,8 @@ def main
    # Check Module Integrity
    checkModuleIntegrity
 
-   @projectName = DCC::ReadConfigDCC.instance.getProjectName
-   @projectID   = DCC::ReadConfigDCC.instance.getProjectID
+   @projectName = ReadConfigDEC.instance.getProjectName
+   @projectID   = ReadConfigDEC.instance.getProjectID
    
    ftConfig = CTC::ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllMnemonics
@@ -266,8 +267,13 @@ def main
    # in interfaces.xml
    
    if @bOutgoing == true  then
-      # TO BE DONE
-      checkOutgoingConfig
+      ret = checkOutgoingConfig
+      
+      if ret == true then
+         exit(0)
+      else
+         exit(99)
+      end
    end
    
    if @bIncoming == true or @bAll == true then
@@ -455,13 +461,83 @@ def usage
       puts line[2, len]
    }
 end
-# -------------------------------------------------------------
+
+## -------------------------------------------------------------
 
 def checkOutgoingConfig
-   puts "To be done !"
-   exit(98)
+
+   failed               = Array.new
+   ftReadOutgoing       = CTC::ReadFileDestination.instance   
+   arrOutgoingFiles     = ftReadOutgoing.getAllOutgoingFiles
+   arrOutgoingFileNames =  ftReadOutgoing.getAllOutgoingFileNames
+      
+   puts
+   puts "================================================"
+   puts "Checking ft_outgoing_files.xml Configuration ..."
+   puts
+      
+   ret = true
+   
+   arrOutgoingFiles.each{|x|
+         puts "Check outgoing filetype #{x} \n"
+	 
+	      checker = CTC::CheckerOutgoingFileConfig.new(x)
+	 
+         retVal  = checker.check
+         
+         if retVal == false then ret = false end
+         
+         if retVal == true then
+            puts "#{x} - OK"
+         else
+            failed << "Error: in #{x} :-("
+         end
+         
+         if x.length != 10 then
+            failed << "Warning: the fileType #{x} is not a ten char value :-|"
+         end
+   }
+      
+      if arrOutgoingFileNames.empty? == false then
+         puts
+         puts "Wildcards: "
+      end
+
+      ret = true
+      arrOutgoingFileNames.each{|x|
+         puts "Check incoming files like #{x} \n"
+
+         # A boolean is passed so the checker knows its a wildcard.
+	      # It will check with the specific wildcard methods
+	      checker = CTC::CheckerOutgoingFileConfig.new(x,true)
+	 
+         retVal  = checker.check
+         
+         if retVal == false then ret = false end
+         
+         if retVal == true then
+            puts "#{x} - OK"
+         else
+            failed << "Error: in #{x} :-("
+         end
+      }
+
+      if !failed.empty? then
+         puts     
+         puts "Consider revising the following types/wildcards:"
+         puts failed  
+      end
+      if ret == true then
+         puts "\nft_outgoing_files.xml is configured correctly ! :-) \n"
+      else
+         puts "\nError: ft_outgoing_files.xml is not configured correctly ! :-( \n"
+      end     
+      puts "================================================"
+   
+      return ret
 end
-# -------------------------------------------------------------
+
+## -------------------------------------------------------------
    
 # Check that everything needed by the class is present.
 def checkModuleIntegrity

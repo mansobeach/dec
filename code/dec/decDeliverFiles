@@ -72,7 +72,6 @@ require 'getoptlong'
 
 require 'cuc/CheckerProcessUniqueness'
 require 'ctc/ReadInterfaceConfig'
-require 'ddc/ReadConfigDDC'
 require 'dec/DEC_Environment'
 
 # Global variables
@@ -84,7 +83,9 @@ require 'dec/DEC_Environment'
 # MAIN script function
 def main
 
-   #======================================================================
+   include           DEC
+   
+   ## ======================================================================
    
    def SIGTERMHandler
       puts "\n[#{File.basename($0)}] SIGTERM signal received ... sayonara, baby !\n"
@@ -92,7 +93,7 @@ def main
       @locker.release
       exit(0)
    end
-   #======================================================================
+   ## ======================================================================
 
    # It sends SIGTERM signal to the in-progress send2Entity <I/F> processes
    def killInProgressSend2Interfaces
@@ -119,7 +120,7 @@ def main
          end         
       }
    end   
-   #======================================================================
+   ## ======================================================================
    @isDeliveredOnce  = false
    @isNoDB           = false 
    @skipGetFiles     = false
@@ -128,6 +129,7 @@ def main
    bKill             = false
    timeout           = 0
    @bShowVersion     = false
+   @bShowUsage       = false
 
    opts = GetoptLong.new(
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
@@ -151,8 +153,8 @@ def main
             when "--Debug"       then @isDebugMode             = true
             when "--version"     then @bShowVersion            = true
             when "--Report"      then @createReport            = true
-            when "--help"        then usage
-            when "--usage"       then usage
+            when "--help"        then @bShowUsage              = true
+            when "--usage"       then @bShowUsage              = true
             when "--params"      then @strParams               = arg.to_s
             when "--Kill"        then bKill                    = true
             when "--nodb"        then @isNoDB                  = true
@@ -164,15 +166,26 @@ def main
    end
 
    if @bShowVersion == true then
-      projectName = DDC::ReadConfigDDC.instance
-      print("\nESA - DEIMOS-Space S.L. ", \
-            File.basename($0), \
-            " Version: [#{DEC.class_variable_get(:@@version)}]", \
-            " | #{projectName.getProjectName}", \
-            "\n\n" \
-            )
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = DEC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }      
       exit(0)
    end
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
 
    if @strParams != "" and @isDeliveredOnce == false then
       puts "params argument -p requires -O option enabled ! :-p"

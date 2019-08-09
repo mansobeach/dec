@@ -2,7 +2,7 @@
 
 # == Synopsis
 #
-# This is a DCC command line tool that polls the I/Fs for retrieving 
+# This is a DEC command line tool that polls the I/Fs for retrieving 
 # files of registered filetypes. As well It retrieves the I/F 
 # exchange directory file content linked to a time-stamp.
 # 
@@ -14,7 +14,7 @@
 #
 # -R flag:
 #
-# With this option (Reporting), DCC Reports will be created (see dcc_config.xml). 
+# With this option (Reporting), DEC Reports will be created (see dcc_config.xml). 
 # Report files are initally placed in the Interface local inbox and
 # if configured in files2InTrays.xml disseminated as nominal retrieved file.
 #
@@ -33,7 +33,7 @@
 #     --del-unknown it deletes remote files not configured in ft_incoming_files.xmls
 #     --receipt   create only receipt file-list with the content available
 #     --Report    create a Report when new files have been retrieved
-#     --Show      it shows all available I/Fs registered in the DCC Inventory
+#     --Show      it shows all available I/Fs registered in the DEC Inventory
 #     --help      shows this help
 #     --usage     shows the usage
 #     --Debug     shows Debug info during the execution
@@ -64,10 +64,10 @@ require 'cuc/Log4rLoggerFactory'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ListWriterDelivery'
 require 'ctc/EventManager'
-require 'dcc/DCC_ReceiverFromInterface'
-require 'dcc/FileDeliverer2InTrays'
-require 'dcc/ReadConfigDCC'
+require 'dec/ReadConfigDEC'
 require 'dec/DEC_Environment'
+require 'dec/DEC_ReceiverFromInterface'
+require 'dec/FileDeliverer2InTrays'
 
 # Global variables
 @dateLastModification = "$Date: 2008/11/25 16:55:04 $"   # to keep control of the last modification
@@ -189,7 +189,7 @@ def main
    end
 
    if @isDelUnknown == nil then
-      @isDelUnknown = DCC::ReadConfigDCC.instance.getDeleteUnknown
+      @isDelUnknown = ReadConfigDEC.instance.getDeleteUnknown
    end
 
    checkEnvironmentEssential
@@ -272,15 +272,17 @@ def main
    init
    
    begin
-   	@receiver = DCC::DCC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray, @isDelUnknown)
+   	@receiver = DEC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray, @isDelUnknown, @isDebugMode)
    rescue Exception => e
-      puts "ERROR in DCC::DCC_ReceiverFromInterface.new(#{@entity})"
-      puts
-   	puts e.to_s
-      puts
-      puts e.backtrace
-      puts
-   	exit(99)
+      if @isDebugMode == true then
+         puts "ERROR in DEC_ReceiverFromInterface.new(#{@entity})"
+         puts
+   	   puts e.to_s
+         puts
+         puts e.backtrace
+         puts
+      end
+      exit(99)
    end
       
    if @isDebugMode == true then
@@ -432,12 +434,19 @@ def body
 
       end
 
-      # Creating Reports if configured
+      ## ---------------------------------------------------
+      ## Creating Reports if configured
+      ## reports associated to Pull operations are now created in a directory
+      ## instead of the interface incoming-directory
       if @listOnly == false then
-         @receiver.createReportFile(@incomingDir, true, @createReport)
+         @receiver.createReportFile(ReadConfigDEC.instance.getReportDir, \
+                                    true, \
+                                    @createReport \
+                                    )
       end
+      ## ---------------------------------------------------
 
-      # Now, "nominal" dissemination is performed in DCC_ReceiverFromInterface
+      # Now, "nominal" dissemination is performed in DEC_ReceiverFromInterface
       # for each file received. But we want the possibility to try again the inbox
       # in case some files are placed there from previous polling
 
@@ -445,7 +454,7 @@ def body
       # Disseminate files retrieved to In-Trays
 #      if bNewFiles == true and @listOnly == false then
       if @listOnly == false and @isNoIntray == false and bNewFiles == true then
-         deliverer = DCC::FileDeliverer2InTrays.new
+         deliverer = FileDeliverer2InTrays.new
 # 	      if @isDebugMode == true then
 # 	         deliverer.setDebugMode
 # 	      end
@@ -457,9 +466,9 @@ def body
    
    
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-# Print command line help
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
@@ -471,11 +480,11 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

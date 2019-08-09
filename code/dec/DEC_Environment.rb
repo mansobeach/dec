@@ -22,11 +22,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.9"
+   @@version = "1.0.10dev"
    
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.10" =>    "configuration dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
+          unit tests updated to verify the PUSH mode to send files",
       "1.0.9"  =>    "decUnitTests support batchmode to avoid prompting for confirmation", \
       "1.0.8"  =>    "decListener command line flags fixed", \
       "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
@@ -38,16 +40,16 @@ module DEC
       "1.0.1"  =>    "decStats -H <hours> has been integrated", \
       "1.0.0"  =>    "first version of the dec installer created" \
    }
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def load_config_development
       ENV['DEC_VERSION']                  = DEC.class_variable_get(:@@version)
       ENV['DEC_DB_ADAPTER']               = "sqlite3"
-      ENV['DEC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/dec/dec_inventory"
+      ENV['DEC_DATABASE_NAME']            = "/tmp/dec_inventory"
       ENV['DEC_DATABASE_USER']            = "root"
       ENV['DEC_DATABASE_PASSWORD']        = "1mysql"
-      ENV['DEC_TMP']                      = "#{ENV['HOME']}/Sandbox/dec/tmp"
-      ENV['DEC_DELIVERY_ROOT']            = "#{ENV['HOME']}/Sandbox/dec/delivery_root"
+      ENV['DEC_TMP']                      = "/tmp/dec_tmp"
+      ENV['DEC_DELIVERY_ROOT']            = "/tmp/dec_delivery_root"
       # ENV['DEC_CONFIG']                   = "#{ENV['HOME']}/Projects/dec/config"
       ENV['DEC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       ENV['HOSTNAME']                     = `hostname`
@@ -55,7 +57,7 @@ module DEC
       ENV.delete('DCC_TMP')
    end
    
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def load_config_developmentRPF
       ENV['RPF_ARCHIVE_ROOT']             = "#{ENV['HOME']}/Sandbox/dec/rpf_archive_root"
@@ -127,14 +129,33 @@ module DEC
          bCheck = false
          puts "DEC_TMP environment variable is not defined !\n"
          puts
+      else
+         checkDirectory(ENV['DEC_TMP'])
       end
       
       if bCheck == false then
-         puts "DEC environment variables configuration not complete"
+         puts "DEC Essential environment variables configuration not complete"
          puts
          return false
       end
       return true
+   end
+   # -----------------------------------------------------------------
+
+   def checkEnvironmentPUSH
+      bCheck = true
+      if !ENV['DEC_DELIVERY_ROOT'] then
+         bCheck = false
+         puts "DEC_DELIVERY_ROOT environment variable is not defined !\n"
+         puts
+      end
+      
+      if bCheck == false then
+         puts "DEC PUSH environment variables configuration not complete"
+         puts
+         return false
+      end
+      return true      
    end
    # -----------------------------------------------------------------
 

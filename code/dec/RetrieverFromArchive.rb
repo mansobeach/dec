@@ -8,26 +8,25 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: RetrieverFromArchive.rb,v 1.13 2008/07/03 11:38:26 decdev Exp $
+# Git: $Id: RetrieverFromArchive.rb,v 1.13 2008/07/03 11:38:26 decdev Exp $
 #
-# Module Data Distributor Component
-# This class retrieves files to be transferred from the DDC Archive.
-# DDC Archive is pointed by DDC_ARCHIVE_ROOT Environment variable.
+## Module Data Distributor Component
+## This class retrieves files to be transferred is pointed by 
+## DEC_DELIVERY_ROOT Environment variable and files are placed into 
+## dec_config.xml GlobalOutbox directory
 #
 #########################################################################
+
+require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/FT_PackageUtils'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadFileDestination'
-require 'ddc/ReadConfigDDC'
+require 'dec/ReadConfigDEC'
 
 
-require 'fileutils'
-
-
-module DDC
-
+module DEC
 
 class RetrieverFromArchive
 
@@ -45,25 +44,25 @@ class RetrieverFromArchive
       
    # Class constructor.
    def initialize
-      ddcConfig            = DDC::ReadConfigDDC.instance
+      decConfig            = DEC::ReadConfigDEC.instance
       @confDest            = CTC::ReadFileDestination.instance
       @arrFileTypes        = @confDest.getAllOutgoingTypes
       @arrFileNames        = @confDest.getAllOutgoingFileNames
-      @arrFilters          = ddcConfig.getOutgoingFilters      
-      @bDeleteSourceFiles  = ddcConfig.deleteSourceFiles?
-      @globalOutbox        = ddcConfig.getGlobalOutbox
+      @arrFilters          = decConfig.getOutgoingFilters      
+      @bDeleteSourceFiles  = decConfig.deleteSourceFiles?
+      @globalOutbox        = decConfig.getGlobalOutbox
       @isDebugMode         = false
-      @uploadDirs          = ddcConfig.getUploadDirs
+      @uploadDirs          = decConfig.getUploadDirs
       checkModuleIntegrity
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
-      puts "DDC_RetrieverFromArchive debug mode is on"
+      puts "RetrieverFromArchive debug mode is on"
       @isDebugMode = true
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Public retrieve method that will call private method retrieveFilesOrNames two times:
    # Once for the file-types files and another for the non-file types (wildcards)
@@ -236,7 +235,7 @@ class RetrieverFromArchive
    end
    #-------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Public deliver method that will call private method deliverFilesOrNames two times:
    # Once for the file-types files and another for the non-file types (wildcards)
@@ -260,7 +259,7 @@ class RetrieverFromArchive
          system(cmd)
       end
    end
-   #-----------------------------------------------------------   
+   ## ----------------------------------------------------------- 
 
    # Public retrieve method that will call private method retrieveFilesOrNames two times:
    # Once for the file-types files and another for the non-file types (wildcards)
@@ -285,26 +284,25 @@ class RetrieverFromArchive
       @arrFileTypesOrNames = @arrFileNames.clone
       retrieveFilesOrNames(bJustList)
    end
-   #-------------------------------------------------------------
-   #-------------------------------------------------------------
-
+   ## -----------------------------------------------------------
+   
 private
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Check that everything needed by the class is present.
    def checkModuleIntegrity 
       bDefined = true
       bCheckOK = true
    
-      if !ENV['DDC_ARCHIVE_ROOT'] and !ENV['DEC_DELIVERY_ROOT'] then
+      if !ENV['DEC_DELIVERY_ROOT'] then
          puts "\nDEC_DELIVERY_ROOT environment variable not defined !  :-(\n\n"
          bCheckOK = false
          bDefined = false
       end
 
       if bCheckOK == false then
-         puts "DDC_RetrieverFromArchive::checkModuleIntegrity FAILED !\n\n"
+         puts "RetrieverFromArchive::checkModuleIntegrity FAILED !\n\n"
          exit(99)
       end
       
@@ -312,8 +310,6 @@ private
       
       if ENV['DEC_DELIVERY_ROOT'] then
          @sourceDirectory = ENV['DEC_DELIVERY_ROOT']
-      else
-         @sourceDirectory = ENV['DDC_ARCHIVE_ROOT']
       end
       
       @targetDirectory = @globalOutbox
@@ -325,8 +321,8 @@ private
     
       checkDirectory(@sourceDirectory)
       checkDirectory(@targetDirectory)
-  end
-   #-------------------------------------------------------------
+   end
+   ## -----------------------------------------------------------
 
    def packFile(file, srcPath, method, bUnPack = false)
       bRet = false
@@ -606,7 +602,7 @@ private
       Dir.chdir(prevDir)
 
    end
-   #-------------------------------------------------------------
+   ## ------------------------------------------------------------
 
       
 end # class

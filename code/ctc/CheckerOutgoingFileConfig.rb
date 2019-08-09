@@ -8,7 +8,7 @@
 #
 # == Data Exchange Component -> Common Transfer Component
 # 
-# CVS:$Id: CheckerOutgoingFileConfig.rb,v 1.7 2007/12/19 06:08:03 decdev Exp $
+# CVS:$Id: CheckerOutgoingFileConfig.rb,v 1.9 2009/10/21 13:36:46 algs Exp $
 #
 # === module Common Transfer Component (CTC)
 # This class is in charge of verify that the Configuration
@@ -36,12 +36,13 @@ class CheckerOutgoingFileConfig
 
    # Class constructor.
    # IN (string) configuration outgoing file-type to be checked.
-   def initialize(filetype)
+   def initialize(filetype, wildcard = false)
 #     puts "initialize CheckerOutgoingFileConfig ..."
       checkModuleIntegrity
       @ftReadConf = ReadInterfaceConfig.instance
       @ftReadFile = ReadFileDestination.instance
       @filetype   = filetype
+      @wildcard   = wildcard
    end
    #-------------------------------------------------------------
    
@@ -85,17 +86,22 @@ private
           
      arrDissEntities.each{|x|
          if arrClients.include?(x) == false then
-            puts "Outgoing Type #{@filetype} is Sent to #{x}"
-            puts "#{x} is not a configured I/F ! :-("
+            puts "Error: Outgoing Type #{@filetype} is Sent to #{x}: #{x} is not a configured I/F ! :-("
             puts
             bReturn = false
             return bReturn
          end
          # Check whether there is a proper mail account configured
-         arrDelMethods = @ftReadFile.getDeliveryMethods(x, @filetype)
-         
+
+         if @wildcard == false then
+            arrDelMethods = @ftReadFile.getDeliveryMethods(x, @filetype)
+         else
+            arrDelMethods = @ftReadFile.getDeliveryMethodsForNames(x, @filetype)
+         end 
+
          arrAllowedMethods = @ftReadFile.getAllowedDeliveryMethods
-       
+
+
          arrDelMethods.each{|method|
             
             if arrAllowedMethods.include?(method) == false then
@@ -106,14 +112,12 @@ private
             if method == "email" or method == "mailbody" then
                listMail = @ftReadConf.getMailList(x)
                if listMail == nil then
-                  puts "Missing Email address(es) for #{x} I/F."
-                  puts "Email delivery of #{@filetype} WILL FAIL ! :-("
+                  puts "Error: Missing Email address(es) for #{x} I/F. Email delivery of #{@filetype} will fail ! :-("
                   puts
                   bReturn = false
                else
                   if listMail.length == 0 then
-                     puts "Missing Email address(es) for #{x} I/F."
-                     puts "Email delivery of #{@filetype} WILL FAIL ! :-("
+                     puts "Error: Missing Email address(es) for #{x} I/F. Email delivery of #{@filetype} will fail ! :-("
                      puts
                      bReturn = false
                   end               
@@ -129,8 +133,13 @@ private
       arrDissEntities = @ftReadFile.getEntitiesReceivingOutgoingFile(@filetype)
       
       arrDissEntities.each{|x|
-         compressMethod = @ftReadFile.getCompressMethod(x, @filetype)
-        
+
+         if @wildcard == false then
+            compressMethod = @ftReadFile.getCompressMethod(x, @filetype)
+         else
+            compressMethod = @ftReadFile.getCompressMethodForNames(x, @filetype)
+         end
+
          if CompressMethods.include?(compressMethod) == false then
             puts
             puts "Compress Method #{compressMethod} for #{@filetype} when sending to #{x} is not recognized ! :-("

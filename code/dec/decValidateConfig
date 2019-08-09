@@ -13,9 +13,8 @@
 #
 # -g flag:
 #
-# With the main DEC configuration file (dcc_config.xml)
-# is validated using the schema dcc_config.xsd
-# and (ddc_config.xml) is validated using the schema ddc_config.xsd
+# With the main DEC configuration file (dec_config.xml)
+# is validated using the schema dec_config.xsd
 #
 # -i flag:
 #
@@ -49,7 +48,7 @@
 #
 # == Usage
 #  -a     Check all DEC configuration files
-#  -g     Check DEC's general configuration files dcc_config.xml & ddc_config.xml
+#  -g     Check DEC's general configuration file dec_config.xml
 #  -e     Check the Entities Configuration file interfaces.xml
 #  -m     Check the mail configuration file ft_mail_config.xml
 #  -i     Check the incoming file-types configuration file ft_incoming_files.xml
@@ -160,27 +159,17 @@ def main
 
    bReturn = true
 
-   # Check DEC's general configuration files dcc_config.xml
+   # Check DEC's general configuration files dec_config.xml
    
    if @bGeneral == true or @bAll == true then
       puts "================================================"
-      puts "Checking dcc_config.xml..."
+      puts "Checking dec_config.xml..."
       
-      ret = validate("dcc_config")
+      ret = validate("dec_config")
 
       if !bReturn or !ret then
          bReturn = false
       end
-      
-      puts
-      puts "Checking ddc_config.xml..."
-      
-      ret = validate("ddc_config")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
-
 
       puts "================================================"
    end
@@ -316,7 +305,7 @@ end
 
 #-------------------------------------------------------------
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 # Print command line help
 def usage
@@ -330,11 +319,11 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#==========================================================================
-# Start of the main body
+## ========================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ========================================================================

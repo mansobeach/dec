@@ -264,7 +264,7 @@ private
             dir = element[:directory]
             retVal = checkRemoteDirectory(dir)
             if retVal == false then
-               puts "\nError: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n"
+               puts "Error: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n\n"
                bError = true
             end
          }
@@ -313,8 +313,10 @@ private
             @ftp.passive = true
             @ftp.chdir(dir)
          rescue Exception => e
+            puts
+            puts e.to_s
+            puts
             if @isDebugMode == true then
-               puts e.to_s
                puts
                puts e.backtrace
                puts

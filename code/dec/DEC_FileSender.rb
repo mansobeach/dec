@@ -24,15 +24,14 @@ require 'cuc/EE_ReadFileName'
 require 'ctc/ReadInterfaceConfig'
 require 'ctc/FileSender'
 require 'ctc/ListWriterDelivery'
-require 'ddc/ReadConfigDDC'
+require 'dec/ReadConfigDEC'
 require 'dec/DEC_Environment'
 
-module DDC
+module DEC
 
-class DDC_FileSender
+class DEC_FileSender
 
    include CUC::DirUtils
-   include DDC
    include DEC
    
    ## -------------------------------------------------------------
@@ -50,6 +49,9 @@ class DDC_FileSender
       if @isNoDB == false then
          require 'dec/DEC_DatabaseModel'
          @interface   = Interface.where(name: @entity).to_a[0]
+#         puts
+#         puts @interface
+#         puts
 #         puts @interface
 #         puts @interface.to_a[0].name
 #         puts @interface.to_a[0].description
@@ -57,27 +59,24 @@ class DDC_FileSender
       else
          @interface   = @entity
       end
-
-
-      # initialize logger
       
       configDir = nil
 
       if ENV['DEC_CONFIG'] then
-         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}
       else
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+         puts self.backtrace
+         exit(99)
       end
-      
-      
-      loggerFactory = CUC::Log4rLoggerFactory.new("DDC_FileSender", "#{configDir}/dec_log_config.xml")
+            
+      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_FileSender", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
       @logger = loggerFactory.getLogger
       if @logger == nil then
          puts
-			puts "Error in DDC_FileSender::initialize"
+			puts "Error in DEC_FileSender::initialize"
 			puts "Could not set up logging system !  :-("
          puts "Check DEC logs configuration under \"#{configDir}/dec_log_config.xml\"" 
 			puts
@@ -85,30 +84,32 @@ class DDC_FileSender
 			exit(99)
       end
 
-      @ftReadConf  = CTC::ReadInterfaceConfig.instance
-      @ftpserver    = @ftReadConf.getFTPServer4Send(@entity)
-      txparams     = @ftReadConf.getTXRXParams(@entity)
-      @delay       = @ftReadConf.getLoopDelay(@entity).to_i
-      @loops       = @ftReadConf.getLoopRetries(@entity).to_i
-      @retries     = @ftReadConf.getImmediateRetries(@entity).to_i
-      @sender      = CTC::FileSender.new(@ftpserver, protocol)
+      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
+      txparams       = @ftReadConf.getTXRXParams(@entity)
+      @delay         = @ftReadConf.getLoopDelay(@entity).to_i
+      @loops         = @ftReadConf.getLoopRetries(@entity).to_i
+      @retries       = @ftReadConf.getImmediateRetries(@entity).to_i
+      @sender        = CTC::FileSender.new(@ftpserver, protocol)
+      
       if isDebug == true then
          setDebugMode
       end
+      
       @outboxDir   = @ftReadConf.getOutgoingDir(@entity)
       @outboxDir   = "#{@outboxDir}/ftp"
       checkDirectory(@outboxDir)
-      @ddcConfig   = DDC::ReadConfigDDC.instance
-      @arrFilters  = @ddcConfig.getOutgoingFilters
+      @decConfig   = DEC::ReadConfigDEC.instance
+      @arrFilters  = @decConfig.getOutgoingFilters
       @arrFiles    = Array.new
       loadFileList
       @sender.setFileList(@arrFiles, @outboxDir)
                   
-      @satPrefix   = DDC::ReadConfigDDC.instance.getSatPrefix
-      @prjName     = DDC::ReadConfigDDC.instance.getProjectName
-      @prjID       = DDC::ReadConfigDDC.instance.getProjectID
-      @mission     = DDC::ReadConfigDDC.instance.getMission
-      @sender.setUploadPrefix(DDC::ReadConfigDDC.instance.getUploadFilePrefix)
+      @satPrefix   = DEC::ReadConfigDEC.instance.getSatPrefix
+      @prjName     = DEC::ReadConfigDEC.instance.getProjectName
+      @prjID       = DEC::ReadConfigDEC.instance.getProjectID
+      @mission     = DEC::ReadConfigDEC.instance.getMission
+      @sender.setUploadPrefix(DEC::ReadConfigDEC.instance.getUploadFilePrefix)
 
    end
    ## -----------------------------------------------------------
@@ -116,7 +117,7 @@ class DDC_FileSender
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "DDC_FileSender debug mode is on"
+      puts "DEC_FileSender debug mode is on"
       @sender.setDebugMode
    end
    ## -----------------------------------------------------------
@@ -279,7 +280,7 @@ class DDC_FileSender
          reportType = "EMERGENCYDELIVEREDFILES"
       end
 
-      arrReports = @ddcConfig.getReports
+      arrReports = @decConfig.getReports
 
       arrReports.each{|aReport|
          if aReport[:name] == reportType then

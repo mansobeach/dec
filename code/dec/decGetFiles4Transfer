@@ -2,8 +2,16 @@
 
 # == Synopsis
 #
-# This is a DDC command line tool that retrieves files to be transfer
-# from a the Project source Archive.
+# This is a DEC command line tool that retrieves files to be transferred (push)
+# from a source directory specified by <DEC_DELIVERY_ROOT> environment variable.
+#
+# Files present in the source directory are filtered according to the rules 
+# defined in ft_outgoing_files.xml
+# => wildcards such as  <File Type="S2A*">
+# => children directories, such as <File Type="GIP_PROBA2"> 
+# 
+# Files gathered are finally placed into the directory defined in the 
+# configuration <GlobalOutbox> present in dec_config.xml 
 # 
 # -O flag:
 # The "ONCE" flag registers in the Inventory all the files sent. As well it checks
@@ -28,7 +36,7 @@
 
 #########################################################################
 #
-# === Ruby script getFilesToBeTransferred for sending all files to an Entity
+# === Ruby script decGetFiles4Transfer for sending all files to an Entity
 # 
 # === Written by DEIMOS Space S.L.   (bolf)
 #
@@ -40,23 +48,24 @@
 
 require 'getoptlong'
 
-require 'ddc/RetrieverFromArchive'
-require 'ctc/ReadInterfaceConfig'
+require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Logger.rb'
 require 'cuc/DirUtils'
+require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
+require 'dec/RetrieverFromArchive'
 
 @isDebugMode      = false
 @bList            = false
 @bShowVersion     = false
+@bShowUsage       = false
 @bOnce            = false
 
 # MAIN script function
 def main
 
-
-   include           DDC
    include           CUC::DirUtils
+   include           DEC
    
    opts = GetoptLong.new(
      ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
@@ -74,61 +83,98 @@ def main
             when "--version"        then @bShowVersion      = true
             when "--list"           then @bList             = true
             when "--ONCE"           then @bOnce             = true
-            when "--help"           then usage
-            when "--usage"          then usage
+            when "--help"           then @bShowUsage        = true
+            when "--usage"          then @bShowUsage        = true
          end
       end
    rescue Exception
       exit(99)
-   end   
+   end
 
    if @bShowVersion == true then
-      projectName = DDC::ReadConfigDDC.instance
-      print("\nESA - DEIMOS-Space S.L. ", \
-            File.basename($0), \
-            " Version: [#{DEC.class_variable_get(:@@version)}]", \
-            " | #{projectName.getProjectName}", \
-            "\n\n" \
-            )
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = DEC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }      
       exit(0)
    end
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   checkModuleIntegrity
+   
+   locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   if locker.isRunning == true then
+      puts "\n#{File.basename($0)} is already running !\n\n"
+      exit(99)
+   end
+   # Register in lock file the process
+   locker.setRunning
 
    @archiveRetriever = RetrieverFromArchive.new
    if @isDebugMode == true then
       @archiveRetriever.setDebugMode
    end
+   
    @archiveRetriever.retrieve(@bList)
+   
    @archiveRetriever.deliver(@bList, @bOnce)
+   
    puts
+   
+   locker.release
    
 end
 
-#---------------------------------------------------------------------
+## ---------------------------------------------------------------------
 
-#---------------------------------------------------------------------
-#-------------------------------------------------------------
+## ---------------------------------------------------------------------
 
-# Print command line help
+def checkModuleIntegrity
+   ret = checkEnvironmentEssential
+   
+   if ret == true then
+      ret = checkEnvironmentPUSH
+   else
+      checkEnvironmentPUSH
+   end
+   
+   if ret == false then
+      puts "#{File.basename($0)} failed the configuration check :-("
+      puts
+      exit(99)
+   end 
+end
+
+## -------------------------------------------------------------
+
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
-   value = `#{"head -25 #{fullpathFile}"}`
+   value = `#{"head -35 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
    }
-   exit   
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-
-#---------------------------------------------------------------------
-
-
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

@@ -6,7 +6,7 @@
 #
 # = Written by DEIMOS Space S.L. (bolf)
 #
-# = Data Exchange Component -> Data Collector Component
+# = Data Exchange Component -> Data Exchnge Component
 # 
 # CVS:
 #   $Id: FileDeliverer2InTrays.rb,v 1.16 2008/07/03 11:38:07 decdev Exp $
@@ -23,19 +23,20 @@ require 'ctc/ReadInterfaceConfig'
 require 'ctc/EventManager'
 require 'cuc/EE_ReadFileName'
 require 'dcc/ReadInTrayConfig'
-require 'dcc/ReadConfigDCC'
+require 'dec/ReadConfigDEC'
 
  # This class moves all files from the I/Fs local inboxes
  # to the configured In-Trays  
 
-module DCC
+module DEC
 
 class FileDeliverer2InTrays
 
    include CUC::DirUtils
    include CUC::CommandLauncher
    include CUC::PackageUtils
-   #-------------------------------------------------------------   
+   
+   ## -------------------------------------------------------------   
    
    # Class contructor
    def initialize(debugMode = false)
@@ -62,9 +63,10 @@ class FileDeliverer2InTrays
 			exit(99)
       end
 
-      @satPrefix = DCC::ReadConfigDCC.instance.getSatPrefix
+      # Not used by this class at the time being
+      # @satPrefix = DEC::ReadConfigDEC.instance.getSatPrefix
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode

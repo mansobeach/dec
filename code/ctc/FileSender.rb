@@ -165,8 +165,10 @@ class FileSender
    
    end
 
-
-   # Send File now just sends the file
+   ## ------------------------------------------------------
+   ##
+   ## Send File now just sends the file
+   ##
    def sendFile(file, bDeleteSource=true)
 
       getUploadTargets(file)
@@ -183,7 +185,9 @@ class FileSender
          @password   =  @ftpServer[:password]
       end
 
-      if @secureMode then @protocol= "SFTP" end 
+      if @secureMode then 
+         @protocol= "SFTP" 
+      end 
 
       #secureMode should be changed for protocol; backwards compatibility
       case @protocol
@@ -327,11 +331,16 @@ class FileSender
     
       Dir.chdir(prevDir)
       
+      ## -----------------------------------------
+      
       if retVal == true and bDeleteSource == true then
          File.delete(%Q{#{@srcDirectory}/#{file}})
       end
 
+      ## -----------------------------------------
+
       return retVal
+      
    end
 
 

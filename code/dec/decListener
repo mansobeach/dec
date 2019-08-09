@@ -52,14 +52,13 @@ require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/CommandLauncher'
 require 'ctc/ReadInterfaceConfig'
-require 'dcc/ReadConfigDCC'
 require 'dec/DEC_Environment'
-
-# Global variables
-@dateLastModification = "$Date: 2008/07/03 11:38:07 $"   
+require 'dec/ReadConfigDEC'
 
 
-# MAIN script function
+## 
+## MAIN script function
+##
 def main
 
    include DEC
@@ -193,10 +192,9 @@ def main
       checkListeners
       exit(0)
    end
-
  
-   @projectName = DCC::ReadConfigDCC.instance.getProjectName
-   @projectID   = DCC::ReadConfigDCC.instance.getProjectID
+   @projectName = ReadConfigDEC.instance.getProjectName
+   @projectID   = ReadConfigDEC.instance.getProjectID
 
    if @launchAllListeners == true then
       if @isReload == false then
@@ -573,8 +571,8 @@ end
 
 
 
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

@@ -31,10 +31,12 @@ require 'dec/DEC_Environment'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-
-#  1  - test_decConfigInterface2DB
-#  2  - test_decGetFromInterface
-#  3  - test_decListener
+#  1  - test_dec_config
+#  2  - test_commandline_helpers
+#  3  - test_decConfigInterface2DB
+#  4  - test_decGetFromInterface
+#  5  - test_decListener
+#  6  - test_decGetFiles4Transfer
 
 
 # Select a single test of the suite
@@ -117,6 +119,34 @@ class DECTestCase < Test::Unit::TestCase
                            "finals.all", \
                            "tai-utc.dat" \
                            ]
+
+      @@arrPushFiles = [ \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
+
 
       
       @@conf = DEC_Environment.new
@@ -265,17 +295,37 @@ class DECTestCase < Test::Unit::TestCase
 
       @@conf.wrapper_load_config_development
 
-      cmd = "decManageDB -d"
-      puts cmd
-      ret = system(cmd)
-       
-      if ret == false then
-         puts "Error when dropping the dec inventory ! :-("
-         puts
-         exit(99)
-      end
+#      cmd = "decManageDB -d"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when dropping the dec inventory ! :-("
+#         puts
+#         exit(99)
+#      end
    end
-   # --------------------------------------------------------
+   ## -------------------------------------------------------------
+
+   ## Need to document all DEC options
+
+   def test_dec_config
+      require 'dec/ReadConfigDEC'
+      
+      puts DEC::ReadConfigDEC.instance.getSatPrefix
+      puts DEC::ReadConfigDEC.instance.getProjectName
+      puts DEC::ReadConfigDEC.instance.getProjectID
+      puts DEC::ReadConfigDEC.instance.getMission
+      puts DEC::ReadConfigDEC.instance.getOutgoingFilters
+      puts DEC::ReadConfigDEC.instance.getReports
+      puts DEC::ReadConfigDEC.instance.deleteSourceFiles?
+      puts
+      puts DEC::ReadConfigDEC.instance.getIncomingFilters
+      puts DEC::ReadConfigDEC.instance.getDeleteUnknown
+      puts DEC::ReadConfigDEC.instance.getDeleteDuplicated
+      puts DEC::ReadConfigDEC.instance.getDownloadDirs
+   end
+   ## -------------------------------------------------------------
 
    def test_commandline_helpers
       @@conf.wrapper_unset_config
@@ -315,6 +365,44 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decGetFromInterface -h"
       assert(system(cmd), cmd)
+
+      cmd = "decGetFiles4Transfer -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFiles4Transfer -u"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFiles4Transfer -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface -m non_existing_if"
+      assert(!system(cmd), cmd)
+
+      dec_tmp = ENV['DEC_TMP']
+
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      assert(!system(cmd), cmd)
+      
+      ENV['DEC_TMP'] = dec_tmp
+
+      cmd = "decDeliverFiles -v"
+      assert(system(cmd), cmd)
+
+      cmd = "decDeliverFiles -u"
+      assert(system(cmd), cmd)
+
+      cmd = "decDeliverFiles -h"
+      assert(system(cmd), cmd)
+
+      ENV.delete('DEC_TMP')
+      
+      cmd = "decDeliverFiles"
+      assert(!system(cmd), cmd)
 
 
       @@conf.wrapper_load_config_development
@@ -471,14 +559,27 @@ class DECTestCase < Test::Unit::TestCase
 
       @@conf.wrapper_load_config_development
 
-      puts
-      puts
-      @@conf.print_environment
-      puts
-      puts
+#      puts
+#      puts
+#      @@conf.print_environment
+#      puts
+#      puts
 
-      cmd = "decGetFromInterface -v"
-      assert(system(cmd), cmd)
+      require 'dec/ReadConfigDEC'
+
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /tmp/dec*")
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
 
       dec_tmp = ENV['DEC_TMP']
 
@@ -562,8 +663,22 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
+      require 'dcc/ReadInTrayConfig'
+      
+      reportDir = DCC::ReadInTrayConfig.instance.getDIMInTray("DEC_REPORTS")
+
+      arr = Dir["#{reportDir}/*"]
+      assert(arr.length>0, "delivery report generation")
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+
    end
-   #--------------------------------------------------------
+   ## --------------------------------------------------------
 
    def test_decListener
       puts __method__.to_s
@@ -621,14 +736,65 @@ class DECTestCase < Test::Unit::TestCase
       
    end
 
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # --------------------------------------------------------
+   def test_decGetFiles4Transfer
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
 
-   def test_decSend2Interface
+      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
 
-      cmd = "decSend2Interface -v"
+      @@arrPushFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decCheckConfig -o"
       assert(system(cmd), cmd)
+
+      cmd = "decGetFiles4Transfer -l"
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFiles4Transfer -D"
+      assert(system(cmd), cmd)
+
+   end
+   
+   ## --------------------------------------------------------
+   ##
+   ## test for pushing files towards a remote interface
+   ##
+   ## 
+   
+   def test_decSend2Interface
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      require 'dec/ReadConfigDEC'
+
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
 
       cmd = "decSend2Interface -S"
       assert(system(cmd), cmd)
@@ -636,28 +802,82 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decSend2Interface -m non_existing_if"
       assert(!system(cmd), cmd)
 
+      test_decGetFiles4Transfer
+
       cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
       assert(system(cmd), cmd)
 
-      dec_tmp = ENV['DEC_TMP']
+      cmd = "decStats"
+      assert(system(cmd), cmd)
 
-      ENV.delete('DEC_TMP')
+      arr = Dir["#{reportDir}/*"]
+      assert(arr.length>0, "delivery report generation")
+
+
+      arr = Dir["/tmp/DEC*.log"]
       
-      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
    end
 
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
+
+   ## test for pushing files towards a remote interface
+   ##
+   ## 
+   
+   def test_decDeliverFiles
+
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      require 'dec/ReadConfigDEC'
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
+
+      @@arrPushFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decDeliverFiles -D"
+      puts cmd
+      assert(system(cmd), cmd)
+
+   end
+   ## -------------------------------------------------------------
 
    def test_decNotify2Interface
       cmd = "decNotify2Interface -v"
       assert(system(cmd), cmd)
 
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
+
+
 
 end
 

@@ -92,6 +92,7 @@ class CreateSentFiles < ActiveRecord::Migration[5.1]
       create_table(:sent_files) do |t|
          t.column :filename,         :string,  :limit => 255
          t.index  :filename
+         t.column :size,             :integer
          t.column :interface,        :string,  :limit => 100
          t.column :interface_id,     :integer
          t.column :delivered_using,  :string,  :limit => 100

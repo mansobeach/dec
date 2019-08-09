@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# === Ruby source for #DCC_ReceiverFromInterface class
+# === Ruby source for #DEC_ReceiverFromInterface class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# CVS: $Id: DCC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
+# CVS: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 #
 # Module Data Collector Component
 # This class polls a given Interface and gets all registered available files
@@ -37,16 +37,16 @@ require 'ctc/ReadFileSource'
 require 'ctc/EventManager'
 require 'ctc/LocalInterfaceHandler'
 require 'dcc/EntityContentWriter'
-require 'dcc/FileDeliverer2InTrays'
-require 'dcc/ReadConfigDCC'
+require 'dec/FileDeliverer2InTrays'
+require 'dec/ReadConfigDEC'
 
 # Conditional require driven by --nodb flag
 # require 'dbm/DatabaseModel'
 
 
-module DCC
+module DEC
 
-class DCC_ReceiverFromInterface
+class DEC_ReceiverFromInterface
 
    include Benchmark
    include Process
@@ -72,14 +72,14 @@ class DCC_ReceiverFromInterface
       @isBenchmarkMode = false
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DCC_ReceiverFromInterface", "#{@@configDirectory}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_ReceiverFromInterface", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
       @logger = loggerFactory.getLogger
       if @logger == nil then
          puts
-			puts "Error in DCC_ReceiverFromInterface::initialize"
+			puts "Error in DEC_ReceiverFromInterface::initialize"
 			puts "Could not set up logging system !  :-("
          puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
 			puts
@@ -100,7 +100,7 @@ class DCC_ReceiverFromInterface
             puts "#{entity} I/F is configured correctly\n"
 	      end
       else
-         raise "\nError in DCC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
+         raise "\nError in DEC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
       end
      
       @entityConfig     = CTC::ReadInterfaceConfig.instance
@@ -135,20 +135,21 @@ class DCC_ReceiverFromInterface
 
       removePreviousTempDirs
 
-      @dccConfig   = DCC::ReadConfigDCC.instance
-      @arrFilters  = @dccConfig.getIncomingFilters
+      @decConfig   = ReadConfigDEC.instance
+      @arrFilters  = @decConfig.getIncomingFilters
 
-      @satPrefix   = DCC::ReadConfigDCC.instance.getSatPrefix
-      @prjName     = DCC::ReadConfigDCC.instance.getProjectName
-      @prjID       = DCC::ReadConfigDCC.instance.getProjectID
-      @mission     = DCC::ReadConfigDCC.instance.getMission
+      @satPrefix   = ReadConfigDEC.instance.getSatPrefix
+      @prjName     = ReadConfigDEC.instance.getProjectName
+      @prjID       = ReadConfigDEC.instance.getProjectID
+      @mission     = ReadConfigDEC.instance.getMission
+      checkDirectory(ReadConfigDEC.instance.getReportDir)
    end   
    #-------------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "DCC_ReceiverFromInterface debug mode is on"
+      puts "DEC_ReceiverFromInterface debug mode is on"
    end
    #-------------------------------------------------------------
    
@@ -182,7 +183,7 @@ class DCC_ReceiverFromInterface
             
             puts "FTPS not integrated yet from ALGK"
             puts
-            puts "DCC_ReceiverFromInterface::check4NewFiles"
+            puts "DEC_ReceiverFromInterface::check4NewFiles"
             puts
             exit(99)
             
@@ -196,7 +197,7 @@ class DCC_ReceiverFromInterface
           
             begin
                
-               @local = CTC::LocalInterfaceHandler.new(@entity, true, false, @dccConfig.getDownloadDirs)
+               @local = CTC::LocalInterfaceHandler.new(@entity, true, false, @decConfig.getDownloadDirs)
                
                if @isDebugMode then 
                   @local.setDebugMode
@@ -658,11 +659,11 @@ class DCC_ReceiverFromInterface
       time        = Time.now
       now         = time.strftime("%Y%m%dT%H%M%S")
                
-      arrReports = @dccConfig.getReports
+      arrReports = @decConfig.getReports
 
       bIsEnabled = false
 
-      #-----------------------------------------------------
+      # -----------------------------------------------------
       # Create RetrievedFiles Report
 
       if @fileList.length > 0 then
@@ -700,12 +701,12 @@ class DCC_ReceiverFromInterface
             puts "Created Report File #{filename}"
    
             if filename == "" then
-               puts "Error in DCC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
+               puts "Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
                exit(99)
             end
          
             if bDeliver == true then
-               deliverer = DCC::FileDeliverer2InTrays.new
+               deliverer = FileDeliverer2InTrays.new
    
                if @isDebugMode == true then
                   deliverer.setDebugMode
@@ -755,12 +756,12 @@ class DCC_ReceiverFromInterface
             puts "Created Report File #{filename}"
    
             if filename == "" then
-               puts "Error in DCC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
+               puts "Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
                exit(99)
             end
          
             if bDeliver == true then
-               deliverer = DCC::FileDeliverer2InTrays.new
+               deliverer = FileDeliverer2InTrays.new
    
                if @isDebugMode == true then
                   deliverer.setDebugMode
@@ -823,7 +824,7 @@ private
       @@configDirectory = configDir
      
       if bDefined == false then
-         puts "\nError in DCC_ReceiverFromInterface::checkModuleIntegrity :-(\n\n"
+         puts "\nError in DEC_ReceiverFromInterface::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
                   
@@ -1118,7 +1119,7 @@ private
    #-------------------------------------------------------------
 
    def disseminateFile(file)
-      deliverer = DCC::FileDeliverer2InTrays.new
+      deliverer = FileDeliverer2InTrays.new
 	   if @isDebugMode == true then
 	      deliverer.setDebugMode
 	   end
@@ -1177,7 +1178,7 @@ private
 			else
            # ncftpget performs the retrieval and delete operation in just one call
            # so additional commands are not required
-# 			   puts "DCC_ReceiverFromInterface::deleteFromEntity not implemented for non secure"
+# 			   puts "DEC_ReceiverFromInterface::deleteFromEntity not implemented for non secure"
 # 				exit(99)
 			end      
 		else
@@ -1599,7 +1600,7 @@ private
       rescue Exception => e
          puts
          puts e.to_s
-         @logger.error("DCC_ReceiverFromInterface::setReceivedFromEntity when updating database")
+         @logger.error("DEC_ReceiverFromInterface::setReceivedFromEntity when updating database")
          @logger.error("FATAL ERROR when updating database RECEIVED_FILES #{filename},#{@interface} I/F")
          puts
          exit(99)
@@ -1624,7 +1625,7 @@ private
          if retVal == false then
             if @isDebugMode == true then
                puts "#{cmd} Failed !"
-               puts "\nError in DCC_ReceiverFromInterface::copyFileToInBox :-(\n"
+               puts "\nError in DEC_ReceiverFromInterface::copyFileToInBox :-(\n"
             else
                puts "\nError when removing empty file #{filename} :-("
             end
@@ -1656,7 +1657,7 @@ private
       if retVal == false then
          if @isDebugMode == true then
             puts "#{cmd} Failed !"
-            puts "\nError in DCC_ReceiverFromInterface::copyFileToInBox :-(\n"
+            puts "\nError in DEC_ReceiverFromInterface::copyFileToInBox :-(\n"
          else
             puts "\nError when copying file to #{@entity} local Inbox :-("
          end
@@ -1685,7 +1686,7 @@ private
       if retVal == false then
          if @isDebugMode == true then
             puts "#{cmd} Failed !"
-            puts "\nError in DCC_ReceiverFromInterface::deleteFileFromTemp :-(\n"
+            puts "\nError in DEC_ReceiverFromInterface::deleteFileFromTemp :-(\n"
          else
             puts "\nError when deleting temporary file #{@localDir}/#{filename}"
          end
@@ -1770,12 +1771,12 @@ private
          puts "Created Content File #{filename}"
    
          if filename == "" then
-            puts "Error in DCC_ReceiverFromInterface::createContentFile !!!! =:-O \n\n"
+            puts "Error in DEC_ReceiverFromInterface::createContentFile !!!! =:-O \n\n"
             exit(99)
          end
          
          if bDeliver == true then
-            deliverer = DCC::FileDeliverer2InTrays.new
+            deliverer = FileDeliverer2InTrays.new
    
             if @isDebugMode == true then
                deliverer.setDebugMode
@@ -1825,7 +1826,7 @@ private
                   puts
                   puts e.to_s
                   puts
-                  @logger.error("DCC_ReceiverFromInterface::filterAlreadyCheckedFiles when updating database")
+                  @logger.error("DEC_ReceiverFromInterface::filterAlreadyCheckedFiles when updating database")
                   @logger.error("FATAL ERROR when updating database TRACKED_FILES #{File.basename(afile)},#{@interface} I/F")
                   next
                   exit(99)
@@ -1862,7 +1863,7 @@ private
       
       if retVal == false then
          puts "#{cmd} Failed !"
-         puts "\nError in DCC_ReceiverFromInterface::deleteTempDir :-(\n\n"
+         puts "\nError in DEC_ReceiverFromInterface::deleteTempDir :-(\n\n"
       end
    end
    #-------------------------------------------------------------
