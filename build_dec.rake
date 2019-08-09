@@ -32,8 +32,7 @@ namespace :dec do
       "files2InTrays.xml",\
       "ft_mail_config.xml",\
       "dec_log_config.xml",\
-      "dcc_config.xml",\
-      "ddc_config.xml"]
+      "dec_config.xml"]
    ## -----------------------------
    
    @rootConf = "config/oper_dec"

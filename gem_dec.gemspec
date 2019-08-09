@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.9'
+  s.version     = '1.0.10'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
                   Dir['config/ft_outgoing_files.xml'] + \
                   Dir['config/ft_mail_config.xml'] + \
                   Dir['config/dec_log_config.xml'] + \
+                  Dir['config/dec_config.xml'] + \
                   Dir['config/dcc_config.xml'] + \
                   Dir['config/ddc_config.xml'] + \
                   Dir['config/files2InTrays.xml'] + \
@@ -34,7 +35,10 @@ Gem::Specification.new do |s|
   s.executables   = [ 
                      'decValidateConfig', \
                      'decCheckConfig', \
+                     'decCheckSent', \
                      'decConfigInterface2DB', \
+                     'decDeliverFiles', \
+                     'decGetFiles4Transfer', \
                      'decGetFromInterface', \
                      'decListener', \
                      'decManageDB', \

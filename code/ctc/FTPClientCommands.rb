@@ -21,19 +21,23 @@ module CTC
 
 module FTPClientCommands
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Create ncftpls command. 
-   # %2F literal slash character is required for managing full path directories
-   # - host (IN): string containing the host name.
-   # - port (IN): string containing the port number.
-   # - user (IN): string containing the user name.
-   # - pass (IN): string containing the password.
-   # - dir  (IN): string containing the dir required for the ls cmd.
-   # - passive (IN): boolean to switch between Passive or Port mode.
-   # - filter (IN): optional filtering in the directory.
-   # * Returns the ncftpls command line statement created.
+   ## Create ncftpls command. 
+   ## %2F literal slash character is required for managing full path directories
+   ## - host (IN): string containing the host name.
+   ## - port (IN): string containing the port number.
+   ## - user (IN): string containing the user name.
+   ## - pass (IN): string containing the password.
+   ## - dir  (IN): string containing the dir required for the ls cmd.
+   ## - passive (IN): boolean to switch between Passive or Port mode.
+   ## - filter (IN): optional filtering in the directory.
+   ## * Returns the ncftpls command line statement created.
    def createNcFtpLs(host,port,user,pass,dir,passive = nil, filter = nil)
+
+      if dir[0,1] == '/' then
+         dir = '%2F' + dir
+      end
       
       # --------------------------------
       # Switch between FTP passive or port mode
@@ -52,7 +56,7 @@ module FTPClientCommands
       end
       return command         
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def createNcFtpPut_FJLH1(host, port, user, pass, dir, tdir, file, verbose)
       filename = File.basename(file)
