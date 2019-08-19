@@ -21,14 +21,13 @@ require 'fileutils'
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 require 'cuc/EE_ReadFileName'
-
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadMailConfig'
 require 'ctc/CheckerMailConfig'
 # require 'ctc/FileMailer'
 require 'ctc/MailSender'
-
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
 
 module DEC
 
@@ -70,7 +69,7 @@ class DEC_FileMailer
       end
       
       # Load Mail Params for this I/F.
-      decConf       = CTC::ReadInterfaceConfig.instance
+      decConf       = ReadInterfaceConfig.instance
       ftReadConf    = CTC::ReadMailConfig.instance
       
       @delay        = decConf.getLoopDelay(@entity).to_i
@@ -82,7 +81,7 @@ class DEC_FileMailer
 
       @listFiles   = Array.new
 
-      @outboxDir   = decConf.getOutgoingDir(@entity)
+      @outboxDir   = ReadConfigOutgoing.instance.getOutgoingDir(@entity)
       @outboxDir   = "#{@outboxDir}/email"
       
       checkDirectory(@outboxDir)
@@ -123,7 +122,7 @@ class DEC_FileMailer
         end
       end
    end   
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
@@ -133,7 +132,7 @@ class DEC_FileMailer
       end
       puts "DEC_FileMailer debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    def loadFileList
       @listFileToBeSent = Array.new
@@ -186,7 +185,7 @@ class DEC_FileMailer
    
       @listFileToBeSent = @arrFiles
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def deliver(hParams=nil, bDelete = true)
       bRet           = true
@@ -224,7 +223,7 @@ class DEC_FileMailer
       arrMailed.each{|x| @arrFiles.delete(x)}
       return bRet
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def mailFile(file)
       fileType = CUC::EE_ReadFileName.new(File.basename(file)).fileType

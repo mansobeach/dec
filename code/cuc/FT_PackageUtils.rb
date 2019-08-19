@@ -15,25 +15,26 @@
 #
 #########################################################################
 
+require 'fileutils'
+
 require 'cuc/DirUtils'
 
-require 'fileutils'
-#
-# Supported tools are: TAR, ZIP, GZIP, COMPRESS, NONE
-
 class FT_PackageUtils
+
+   attr_reader :CompressMethods
+   CompressMethods = ["NONE", "7Z", "TGZ", "ZIP", "TAR", "GZIP", "COMPRESS", "UNPACK", "UNPACK_HDR", "UNPACK_DBL"]
 
    include CUC::DirUtils
 
    include FileUtils::NoWrite
     
-   #--------------------------------------------------------------
+   ## --------------------------------------------------------------
 
-   # Class constructor. It is called only once as this is a singleton class
-   #
-   # - file (IN): File basename
-   # - path (IN): File directory
-   # - bDeleteSrc (IN): flag for deleting source file
+   ## Class constructor. It is called only once as this is a singleton class
+   ##
+   ## - file (IN): File basename
+   ## - path (IN): File directory
+   ## - bDeleteSrc (IN): flag for deleting source file
    def initialize(file, path, bDeleteSrc)
      @isModuleOK        = false
      @isModuleChecked   = false
@@ -52,7 +53,7 @@ class FT_PackageUtils
         exit(99)
      end       
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Unpack file -> it can generate from 1 to n files
    def unpack
@@ -99,11 +100,13 @@ class FT_PackageUtils
       end
       return bRet
    end
-   #-------------------------------------------------------------   
+   ## -------------------------------------------------------------   
    
-   #
+   ##
    def pack
+      puts "FT_PackageUtils::pack(#{@compressMethod})"
       case @compressMethod
+         when "7Z"         then bRet = perform7z
          when "TGZ"        then bRet = performTGZ
          when "ZIP"        then bRet = performZip
          when "GZIP"       then bRet = performGzip
@@ -115,7 +118,7 @@ class FT_PackageUtils
             bRet = false  
       end
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    # Get package and  return a list with all files into the packed file.
    def getPackageContent
@@ -503,7 +506,8 @@ private
       Dir.chdir(prevDir)
       return targetName
    end
-   #-------------------------------------------------------------
+   
+   ## -------------------------------------------------------------
    
    def executeGzip(filename=@srcFile)
       prevDir = Dir.pwd
@@ -528,7 +532,47 @@ private
       Dir.chdir(prevDir)
       return %Q{#{filename}.GZ}
    end
-   #------------------------------------------------------------- 
+   ## ------------------------------------------------------------- 
    
-   #=============================================================
+   ## --------------------------------------------------------------
+
+   ## compress a single file into 7z
+   ##
+   ## - full_path_file   (IN): File to be compressed
+   ## - deleteSourceFile (IN): Flag to delete the source file
+   
+   def perform7z(filename=@srcFile)
+      prevDir = Dir.pwd
+      Dir.chdir(@srcPath)
+            
+      newname = getFilenameWithoutExtension(@srcFile)
+
+      if FileTest.directory?(@srcFile) == true then
+         cmd  = %Q{7za a #{newname}.7z #{@fullpathFile}/*}
+      else
+         cmd  = %Q{7za a #{newname}.7z #{@fullpathFile}}
+      end
+
+#      if bDeleteSourceFile == true then
+#         cmd = "#{cmd} -sdel"
+#      end
+
+      if @isDebugMode == true then
+         puts(cmd)
+      end
+
+      retVal = system(cmd)
+
+      if retVal == true then
+         FileUtils.rm_f(filename)
+      else
+         puts "Failed FT_PackageUtils::pack7z"
+         puts
+      end
+
+      Dir.chdir(prevDir)
+      return retVal
+   end  
+   ## -------------------------------------------------------------
+   
 end

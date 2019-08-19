@@ -42,9 +42,9 @@ require 'cuc/Logger.rb'
 require 'cuc/DirUtils'
 require 'cuc/FT_PackageUtils'
 require 'cuc/CheckerProcessUniqueness'
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/CheckerOutgoingFileConfig'
 require 'ddc/RetrieverFromArchive'
+require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_DatabaseModel'
 require 'dec/DEC_Environment'
 
@@ -132,7 +132,7 @@ def main
 
    checkModuleIntegrity
 
-   @configFileManager  = CTC::ReadInterfaceConfig.instance
+   @configFileManager  = ReadInterfaceConfig.instance
    @fileDestination    = CTC::ReadFileDestination.instance 
 
 

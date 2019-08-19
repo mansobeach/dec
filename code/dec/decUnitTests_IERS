@@ -18,9 +18,8 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
-require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
-
+require 'dec/ReadInterfaceConfig'
 
 # Preconditions:
 # 1 - setup 
@@ -30,7 +29,6 @@ require 'dec/DEC_Environment'
 # 2 - teardown
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
-
 
 #  1  - test_decConfigInterface2DB
 #  2  - test_decGetFromInterface
@@ -131,13 +129,10 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
       
-      
       require 'dec/DEC_DatabaseModel'
+      require 'dec/ReadInterfaceConfig'
       
-      
-      require 'ctc/ReadInterfaceConfig'
-      
-      ftConfig = CTC::ReadInterfaceConfig.instance
+      ftConfig = ReadInterfaceConfig.instance
       arrEnts  = ftConfig.getAllMnemonics
 
       arrEnts.each{|x|
@@ -293,7 +288,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
-      @entityConfig     = CTC::ReadInterfaceConfig.instance
+      @entityConfig     = ReadInterfaceConfig.instance
       @finalDir         = @entityConfig.getIncomingDir("IERS")
       
       checkDirectory(@finalDir)

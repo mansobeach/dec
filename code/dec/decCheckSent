@@ -39,12 +39,11 @@
 
 require 'getoptlong'
 
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
-
+require 'dec/ReadInterfaceConfig'
                                    
-# MAIN script function
+## MAIN script function
 def main
    
    include CTC::FTPClientCommands
@@ -147,7 +146,7 @@ def main
    # Check Module Integrity
    checkModuleIntegrity
    
-   @configFile = CTC::ReadInterfaceConfig.instance
+   @configFile = ReadInterfaceConfig.instance
 
    if @configFile.exists?(@entity) == false then
      print("\n#{@entity} is not a registered I/F in the interfaces.xml config file !  :-(\n\n")

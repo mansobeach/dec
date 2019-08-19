@@ -6,11 +6,11 @@
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === Data Exchange Component -> Data Collector Component
+# === Data Exchange Component
 # 
 # CVS: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 #
-# Module Data Collector Component
+# Module Data Exchange Component
 # This class polls a given Interface and gets all registered available files
 # via FTP or SFTP.
 #
@@ -21,7 +21,6 @@ require 'net/ssh'
 require 'net/sftp'
 require 'timeout'
 require 'benchmark'
-# require 'Process'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
@@ -32,17 +31,13 @@ require 'ctc/ListWriterDelivery'
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerInterfaceConfig'
-require 'ctc/ReadInterfaceConfig'
-require 'ctc/ReadFileSource'
 require 'ctc/EventManager'
 require 'ctc/LocalInterfaceHandler'
 require 'dcc/EntityContentWriter'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
-
-# Conditional require driven by --nodb flag
-# require 'dbm/DatabaseModel'
-
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
 
 module DEC
 
@@ -57,10 +52,10 @@ class DEC_ReceiverFromInterface
    
    attr_accessor :isBenchmarkMode
 
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Class constructor.
-   # * entity (IN):  Entity textual name (i.e. FOS)
+   ## Class constructor.
+   ## * entity (IN):  Entity textual name (i.e. FOS)
    def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false, isDebug = false)
       @entity        = entity
       @drivenByDB    = drivenByDB
@@ -103,26 +98,32 @@ class DEC_ReceiverFromInterface
          raise "\nError in DEC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
       end
      
-      @entityConfig     = CTC::ReadInterfaceConfig.instance
+      @entityConfig     = ReadInterfaceConfig.instance
       @protocol         = @entityConfig.getProtocol(@entity)
-      @finalDir         = @entityConfig.getIncomingDir(@entity)
-      checkDirectory(@finalDir)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
-      # -------------------------------------
-      # 2016 currently hardcoded number of files handled on each iteration in case
-      # it is not defined in the configuration
+      ## -------------------------------------
+      
+      @dimConfig        = ReadConfigIncoming.instance
+      @finalDir         = @dimConfig.getIncomingDir(@entity)
+      checkDirectory(@finalDir)
+      ## @finalDir         = @entityConfig.getIncomingDir(@entity)
+      ## -------------------------------------
+      
+      ## 2016 currently hardcoded number of files handled on each iteration in case
+      ## it is not defined in the configuration
       if @pollingSize == nil then
          @pollingSize      = 150
       else
          @pollingSize = @pollingSize.to_i
       end
-      # -------------------------------------      
+      ## -------------------------------------      
             
       @parallelDownload = @entityConfig.getTXRXParams(@entity)[:parallelDownload]      
-                        
-      @fileSource       = CTC::ReadFileSource.instance
+      
+      @fileSource       = ReadConfigIncoming.instance                  
+      ##@fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
          # require 'dbm/DatabaseModel'
@@ -144,14 +145,14 @@ class DEC_ReceiverFromInterface
       @mission     = ReadConfigDEC.instance.getMission
       checkDirectory(ReadConfigDEC.instance.getReportDir)
    end   
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "DEC_ReceiverFromInterface debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Check whether there are new files waiting.
    # * Returns true if there are new files availables.
@@ -642,13 +643,13 @@ class DEC_ReceiverFromInterface
       Dir.chdir(currentDir)
       return @retValFilesReceived
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
 	# createListFile
 	def createListFile(directory, bDeliver = true)
 	   createContentFile(directory, bDeliver)
 	end
-	#-------------------------------------------------------------
+	## -------------------------------------------------------------
 	
    def createReportFile(directory, bDeliver = true, bForceCreation = false)
 	   bFound      = false
@@ -680,7 +681,7 @@ class DEC_ReceiverFromInterface
 
          if bForceCreation == true and bFound == false then
             puts "Explicit Request creation of RetrievedFiles Report"
-            puts "Warning: RetrievedFiles Report is not configured in dcc_config.xml :-|"
+            puts "Warning: RetrievedFiles Report is not configured in dec_config.xml :-|"
             puts
             return
          end
@@ -704,17 +705,18 @@ class DEC_ReceiverFromInterface
                puts "Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
                exit(99)
             end
-         
-            if bDeliver == true then
-               deliverer = FileDeliverer2InTrays.new
-   
-               if @isDebugMode == true then
-                  deliverer.setDebugMode
-               end
-               puts "Creating and Deliver Report File"
-               deliverer.deliverFile(directory, filename)
-               puts
-            end
+
+## Report files are not disseminated but placed in the directory <ReportDir> defined in dec_config.xml         
+#            if bDeliver == true then
+#               deliverer = FileDeliverer2InTrays.new
+#   
+#               if @isDebugMode == true then
+#                  deliverer.setDebugMode
+#               end
+#               # puts "Creating and Deliver Report File"
+#               deliverer.deliverFile(directory, filename)
+#               puts
+#            end
          end
 
       end
@@ -796,29 +798,26 @@ private
    @finalDir      = ""
    @fileList      = nil
    @fileListErr   = nil
-   #-------------------------------------------------------------
+   
+   ## -------------------------------------------------------------
    
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_TMP'] and !ENV['DEC_TMP'] then
-         puts "\nDCC_TMP environment variable not defined !\n"
+      if !ENV['DEC_TMP'] then
+         puts "\nDEC_TMP environment variable not defined !\n"
          bDefined = false
       end
       
       if ENV['DEC_TMP'] then
          @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
-      else
-         @tmpDir         = %Q{#{ENV['DCC_TMP']}}  
       end        
       
       configDir = nil
          
       if ENV['DEC_CONFIG'] then
          configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      else
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
       end        
             
       @@configDirectory = configDir
@@ -827,9 +826,7 @@ private
          puts "\nError in DEC_ReceiverFromInterface::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
-                  
-      # @@FileLog = %Q{#{ENV['DCC_TMP']}/ft_incoming.log}   # should this line not be removed ? (rell)
-      
+                        
       time = Time.new
       time.utc
       str  = time.strftime("%Y%m%d_%H%M%S")
@@ -907,8 +904,10 @@ private
 
          event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, nil, @logger)
 
-         # rename the file if AddMnemonic2Name enabled
-         ret = renameFile(File.basename(filename))
+         ## ------------------------------------------------
+         ## rename the file if AddMnemonic2Name enabled
+         ## ret = renameFile(File.basename(filename))
+         ## ------------------------------------------------
 
          disFile = ""
          if ret != false then
@@ -927,9 +926,10 @@ private
       end     
       
    end
-   #-------------------------------------------------------------
-   
-   # Download a file from the I/F
+   ## -------------------------------------------------------------
+   ##
+   ## Download a file from the I/F
+   ##
    def downloadFile(filename)
       
 #      puts filename
@@ -1056,18 +1056,23 @@ private
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
          event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, @logger)
+         
+         disFile = File.basename(filename)
+         
+         ## ------------------------------------------------
+         ##
+         ## rename the file if AddMnemonic2Name enabled
+         ## ret = renameFile(File.basename(filename))
+         ##
+         ## if ret != false then
+         ##   disFile = ret
+         ## else
+         ##   disFile = File.basename(filename)
+         ## end
+         ##
+         ## ------------------------------------------------
 
-         # rename the file if AddMnemonic2Name enabled
-         ret = renameFile(File.basename(filename))
-
-         disFile = ""
-         if ret != false then
-            disFile = ret
-         else
-            disFile = File.basename(filename)
-         end
-
-         # disseminate the file to the In-Trays
+         ## disseminate the file to the In-Trays
 
          if @isNoInTray == false then
             disseminateFile(disFile)
@@ -1076,8 +1081,10 @@ private
          return true
       end
    end	
-	#-------------------------------------------------------------
-	
+	## -------------------------------------------------------------
+	## 
+   ## method not used for the time being / configuration addMnemonic not supported
+   ##
    def renameFile(file)
 
       bRename  = false
@@ -1116,18 +1123,18 @@ private
       end
       return false
    end
-   #-------------------------------------------------------------
-
+   ## -------------------------------------------------------------
+   ##
+   ## disseminate file
+   ##
    def disseminateFile(file)
       deliverer = FileDeliverer2InTrays.new
 	   if @isDebugMode == true then
 	      deliverer.setDebugMode
 	   end
-	   
-      deliverer.deliverFile(@finalDir, file)
-               
+      deliverer.deliverFile(@finalDir, file)          
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
 	# This method is invoked after placing the files into the operational
 	# directory. It deletes the file in the remote Entity if the Config
@@ -1240,7 +1247,7 @@ private
       # ------------------------------------------
 
       # - Remove files which do not match with filters defined in dcc_config.xml
-      # - Remove files which file-type are not defined in the ft_incoming_files.xml
+      # - Remove files which file-type are not defined in the dec_incoming_files.xml
       
       arrDelete = Array.new
       tmpList   = list
@@ -1261,7 +1268,7 @@ private
                   puts
                   puts "#{filename} matched filter #{ext}"
                end
-               # Here it is checked the file vs ft_incoming_files.xml 
+               # Here it is checked the file vs dec_incoming_files.xml 
                # file-types and filenames (wildcards)
                if checkFileSource(filename) == false then
                   if @isDebugMode == true then
@@ -1489,7 +1496,57 @@ private
       return arrFile
    end
 
-   #-------------------------------------------------------------
+	## -------------------------------------------------------------
+
+   ## Check if source for incoming file is the current entity
+   ## - fileName (IN): Incoming file basename
+   ##
+   ## Return
+   ## - true if source in dec_incoming_files.xml is current entity
+   ## - false otherwise
+   def checkFileSource(fileName)
+
+      sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
+
+      if sources == nil then
+         if @isDebugMode == true then
+            puts "\nNo File-Name matchs with #{fileName} in dec_incoming_files.xml ! \n"
+         end
+         return false
+      else
+         return sources.include?(@entity)
+      end
+
+#      # Second we perform EE file-type matching in ft_incoming_files
+#      
+#      # Maybe it would be nice to force every file to extract its file-type but
+#      # with LTA files this method will fail  _EX.xml
+#      # There would not be a manner to distinguish normal file with its LTA receipt
+#
+#      if  CUC::EE_ReadFileName.new(fileName).isEarthExplorerFile? == true then
+#         fileType = CUC::EE_ReadFileName.new(fileName).fileType
+#         sources  = @fileSource.getEntitiesSendingIncomingFileType(fileType)
+# 
+#         # If Earth Explorer file matchs by file-type      
+#         if sources != nil then
+#            if sources.include?(@interface.name) == true then
+#               return true
+#            else
+#               return false
+#            end
+#         else
+#            if @isDebugMode == true then
+#               puts "\nNo File-Type matchs with #{fileName} in ft_incoming_files.xml ! \n\n"
+#            end
+#            return false
+#         end
+#      else
+#         return false
+#      end
+#      return false
+   end   
+   
+   ## -------------------------------------------------------------
    
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
@@ -1695,61 +1752,7 @@ private
 			puts
       end
 	end
-	#-------------------------------------------------------------
 
-   # Check if source for incoming file is the current entity
-   # - fileName (IN): Incoming file basename
-   #
-   # Return
-   # - true if source in ft_incoming_files.xml is current entity
-   # - false otherwise
-   def checkFileSource(fileName)
-
-      # puts "DCC_ReceiverFromEntity::checkFileSource(#{fileName})"
-      
-      
-      # First we try perform filename matching vs wildcards in ft_incoming_files 
-      sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
-
-      # puts sources
-
-      if sources == nil then
-         if @isDebugMode == true then
-            puts "\nNo File-Name matchs with #{fileName} in ft_incoming_files.xml ! \n"
-         end
-      else
-         return sources.include?(@entity)
-      end
-
-      # Second we perform EE file-type matching in ft_incoming_files
-      
-      # Maybe it would be nice to force every file to extract its file-type but
-      # with LTA files this method will fail  _EX.xml
-      # There would not be a manner to distinguish normal file with its LTA receipt
-
-      if  CUC::EE_ReadFileName.new(fileName).isEarthExplorerFile? == true then
-         fileType = CUC::EE_ReadFileName.new(fileName).fileType
-         sources  = @fileSource.getEntitiesSendingIncomingFileType(fileType)
- 
-         # If Earth Explorer file matchs by file-type      
-         if sources != nil then
-            if sources.include?(@interface.name) == true then
-               return true
-            else
-               return false
-            end
-         else
-            if @isDebugMode == true then
-               puts "\nNo File-Type matchs with #{fileName} in ft_incoming_files.xml ! \n\n"
-            end
-            return false
-         end
-      else
-         return false
-      end
-      return false
-   end   
-   #-------------------------------------------------------------
    
 	# It creates a file with the list of files of the remote I/F 
 	def createContentFile(directory, bDeliver = true)

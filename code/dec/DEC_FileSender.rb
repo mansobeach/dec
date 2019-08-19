@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# === Ruby source for #DDC_FileSender class
+# === Ruby source for #DEC_FileSender class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
-# === Data Exchange Component -> Data Distributor Component
+# === Data Exchange Component
 # 
-# CVS: $Id: DDC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
+# CVS: $Id: DEC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
 #
 # Module Data Distributor Component
 # This class performs the file(s) FTP/SFTP delivery to a given Entity.
@@ -21,10 +21,11 @@
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/EE_ReadFileName'
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/FileSender'
 require 'ctc/ListWriterDelivery'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
 require 'dec/DEC_Environment'
 
 module DEC
@@ -49,13 +50,6 @@ class DEC_FileSender
       if @isNoDB == false then
          require 'dec/DEC_DatabaseModel'
          @interface   = Interface.where(name: @entity).to_a[0]
-#         puts
-#         puts @interface
-#         puts
-#         puts @interface
-#         puts @interface.to_a[0].name
-#         puts @interface.to_a[0].description
-#         puts
       else
          @interface   = @entity
       end
@@ -84,7 +78,7 @@ class DEC_FileSender
 			exit(99)
       end
 
-      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftReadConf    = ReadInterfaceConfig.instance
       @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
       txparams       = @ftReadConf.getTXRXParams(@entity)
       @delay         = @ftReadConf.getLoopDelay(@entity).to_i
@@ -96,7 +90,7 @@ class DEC_FileSender
          setDebugMode
       end
       
-      @outboxDir   = @ftReadConf.getOutgoingDir(@entity)
+      @outboxDir   = ReadConfigOutgoing.instance.getOutgoingDir(@entity)
       @outboxDir   = "#{@outboxDir}/ftp"
       checkDirectory(@outboxDir)
       @decConfig   = DEC::ReadConfigDEC.instance
@@ -180,8 +174,8 @@ class DEC_FileSender
    
    ## -----------------------------------------------------------
 
-   # Main function of the class which performs the File delivery
-   # to the given entity
+   ## Main function of the class which performs the File delivery
+   ## to the given entity
    def deliver(deliverOnce=false, hParams=nil)
       @deliverOnce = deliverOnce
            
@@ -261,7 +255,8 @@ class DEC_FileSender
    end
    
    ## -----------------------------------------------------------
-   
+   ##
+   ##
    def createReportFile(directory, bDeliver = true, bForceCreation = false, bNominal = true)
 	   bFound      = false
       bIsEnabled  = false
@@ -295,7 +290,7 @@ class DEC_FileSender
 
       if bForceCreation == true and bFound == false then
          puts "Explicit Request creation of RetrievedFiles Report"
-         puts "Warning: DeliveredFiles Report is not configured in ddc_config.xml :-|"
+         puts "Warning: DeliveredFiles Report is not configured in dec_config.xml :-|"
          puts
          return
       end
@@ -332,7 +327,7 @@ class DEC_FileSender
       @logger.info("#{@entity} - created Report File #{filename}")
    
       if filename == "" then
-         puts "Error in DDC_FileSender::createContentFile !!!! =:-O \n\n"
+         puts "Error in DEC_FileSender::createContentFile !!!! =:-O \n\n"
          exit(99)
       end
          
@@ -347,7 +342,7 @@ class DEC_FileSender
 #          puts
 #       end   
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
    
@@ -376,20 +371,6 @@ private
          else
             bRetVal = @sender.sendFile(file)
          end
-
-#         if !bRetVal and @ftpserver[:FTPServerMirror] != nil then
-#            puts "Warning: Main host did not respond ( #{@ftpserver[:hostname]} ). Trying to use the Mirror server"
-#            @logger.warn("Main host did not respond ( #{@ftpserver[:hostname]} ). Trying to use the Mirror server")         
-#            if File.directory?(file) then
-#               bRetVal = @sender.useMirrorServer(file, false)
-#            else
-#               bRetVal = @sender.useMirrorServer(file)
-#            end
-#            if !bRetVal then
-#               puts "Error: Mirror host did not respond neither ( #{@ftpserver[:FTPServerMirror][:hostname]} )"
-#               @logger.error("[DEC_201] Mirror host did not respond neither ( #{@ftpserver[:FTPServerMirror][:hostname]} )")
-#            end
-#         end
 
          if bRetVal then
             Dir.chdir(prevDir)

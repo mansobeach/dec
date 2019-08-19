@@ -40,9 +40,8 @@ require 'getoptlong'
 
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
-require 'ctc/ReadInterfaceConfig'
 require 'ddc/DDC_Notifier2Interface'
-
+require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
 
@@ -166,7 +165,7 @@ def main
  
    
    # Check that the given mnemonic is present in the config file   
-   ftReadConf  = CTC::ReadInterfaceConfig.instance
+   ftReadConf  = ReadInterfaceConfig.instance
    arrEntities = ftReadConf.getAllExternalMnemonics
    numEntities = arrEntities.length
    arrSenders  = Array.new

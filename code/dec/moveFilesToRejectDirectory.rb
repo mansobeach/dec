@@ -18,7 +18,7 @@
 require 'getoptlong'
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
-require 'ctc/ReadInterfaceConfig'
+require 'dec/ReadInterfaceConfig'
 require 'rpf/FT_ReportHandler'
 
 def main  
@@ -42,7 +42,7 @@ include CUC::DirUtils
 
   #Directory incoming files of mnemonic 
   if @directory == nil then
-     @directory=CTC::ReadInterfaceConfig.instance()::getIncomingDir(@mnemonic)
+     @directory=ReadInterfaceConfig.instance()::getIncomingDir(@mnemonic)
   end
   
   @_rejectDirectory=expandPathValue("$RPF_ARCHIVE_ROOT/Files/_discardedFiles")

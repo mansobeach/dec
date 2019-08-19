@@ -21,9 +21,9 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/FT_PackageUtils'
-require 'ctc/ReadInterfaceConfig'
-require 'ctc/ReadFileDestination'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
 
 
 module DEC
@@ -42,10 +42,10 @@ class RetrieverFromArchive
    
    ## -----------------------------------------------------------
       
-   # Class constructor.
+   ## Class constructor.
    def initialize
       decConfig            = DEC::ReadConfigDEC.instance
-      @confDest            = CTC::ReadFileDestination.instance
+      @confDest            = ReadConfigOutgoing.instance
       @arrFileTypes        = @confDest.getAllOutgoingTypes
       @arrFileNames        = @confDest.getAllOutgoingFileNames
       @arrFilters          = decConfig.getOutgoingFilters      
@@ -57,15 +57,15 @@ class RetrieverFromArchive
    end   
    ## -----------------------------------------------------------
    
-   # Set the flag for debugging on
+   ## Set the flag for debugging on
    def setDebugMode
       puts "RetrieverFromArchive debug mode is on"
       @isDebugMode = true
    end
    ## -----------------------------------------------------------
    
-   # Public retrieve method that will call private method retrieveFilesOrNames two times:
-   # Once for the file-types files and another for the non-file types (wildcards)
+   ## Public retrieve method that will call private method retrieveFilesOrNames two times:
+   ## Once for the file-types files and another for the non-file types (wildcards)
    def retrieve(bJustList = false)
       puts
       puts "**** RETRIEVING ****"
@@ -79,6 +79,8 @@ class RetrieverFromArchive
          puts
       end
 
+      ## Strategy is two iterations which can be optimised
+
       @bNames = false
       @arrFileTypesOrNames = @arrFileTypes.clone
       retrieveFilesOrNames(bJustList)
@@ -87,10 +89,11 @@ class RetrieverFromArchive
       @arrFileTypesOrNames = @arrFileNames.clone
       retrieveFilesOrNames(bJustList)
    end
-   #-------------------------------------------------------------   
+   ## -------------------------------------------------------------   
    
-   # This Method extracts all files to be delivered from the DCC Archive
-   # Optionally by a configuration flag it deletes them.
+   ## This Method extracts all files to be delivered from the DCC Archive
+   ## Optionally by a configuration flag it deletes them.
+   
    def retrieve_bolf_old(bJustList = false)
       prevDir = Dir.pwd
       
@@ -145,96 +148,7 @@ class RetrieverFromArchive
       Dir.chdir(prevDir)
 
    end
-   #-------------------------------------------------------------
    
-   # Copy the files from the target Directory to all outboxes
-   def deliver_BOLF_OLD(bJustList = false, bDeliverOnce = false)
-      
-      @entityConfig = CTC::ReadInterfaceConfig.instance
-      arrEntity     = @entityConfig.getAllExternalMnemonics
-   
-      arrEntity.each{|entity|
-         dir = @entityConfig.getIncomingDir(entity)
-         checkDirectory(dir)
-         dir = @entityConfig.getOutgoingDir(entity)
-         checkDirectory(dir)
-      }
-            
-      prevDir = Dir.pwd
-      
-      Dir.chdir(@targetDirectory)
-      puts @targetDirectory
-      
-            
-      @arrFileTypes.each{|filetype|
-         arrFiles    = Dir["*#{filetype}*"]
-         
-         arrEntities = @confDest.getEntitiesReceivingOutgoingFile(filetype)
-         
-         arrFiles.each{|afile|
-            puts
-            puts afile
-            arrEntities.each{|anEntity|
-               puts anEntity
-               dir         = @entityConfig.getOutgoingDir(anEntity)
-               puts "direcx  #{dir} "
-               if dir == "" or dir == nil then
-                  puts "#{anEntity} is not configured to receive #{afile}"
-                  next
-               end
-
-               arrMethods  = @confDest.getDeliveryMethods(anEntity, filetype)
-               
-               puts arrMethods
-               
-               arrMethods.each{|aMethod|
-               
-               puts aMethod
-               
-                  aDir = %Q{#{dir}/#{aMethod}}
-                  checkDirectory(aDir)
-                  if bJustList == false then
-		               begin
-                        # cmd = "\\cp -Rf #{afile} #{aDir}/#{afile}"
-                        cmd = "\\cp -Rf #{afile} #{aDir}/"
-                        if @isDebugMode == true then
-                           puts cmd
-                        end
-                        system(cmd)
-                        #FileUtils.cp_r(afile, %Q{#{aDir}/#{afile}})
-			               puts "Copied to #{anEntity} #{aMethod} outbox"
-			
-			               # Apply Compress Method
-			               ext        = getFileExtension(afile)
-			               compMethod = @confDest.getCompressMethod(anEntity, filetype)
-			               packFile(afile, aDir, compMethod)
-			
-                     rescue Exception => e
-		     	            puts e.to_s
-			               exit(99)
-			               #puts e.backtrace
-		               end
-		     
-                  else
-                     puts "Would be Copied to #{anEntity} #{aMethod} outbox"
-                  end
-               }
-               
-            }
-         
-	      }
-      }
-      Dir.chdir(prevDir)
-
-      #Delete global outbox folder unless we run in debug mode
-      if @isDebugMode == false then
-         cmd = "\\rm -rf #{@targetDirectory}"
-         system(cmd)
-      end
-
-   end
-   #-------------------------------------------------------------
-
    ## -----------------------------------------------------------
 
    # Public deliver method that will call private method deliverFilesOrNames two times:
@@ -323,7 +237,9 @@ private
       checkDirectory(@targetDirectory)
    end
    ## -----------------------------------------------------------
-
+   
+   ## 
+   ##
    def packFile(file, srcPath, method, bUnPack = false)
       bRet = false
       if @isDebugMode == true then
@@ -333,11 +249,12 @@ private
       if @isDebugMode == true then
          package.setDebugMode
       end
+      
       bMethod = package.setCompressMethod(method)
    
       if bMethod == false then
-         puts "\nFATAL Error in getFilesToBeTransferred::packFile"
-         puts "\nError in Compression Method for #{file} !! =:-O\n"
+         puts "\nFATAL Error in RetrieverFromArchive"
+         puts "\nError in Compression Method for #{file} - #{method} !! =:-O\n"
          puts
          exit(99)
       end
@@ -364,8 +281,9 @@ private
    end
    ## -------------------------------------------------------------
 
-   # This Method extracts all files to be delivered from the DCC Archive
-   # Optionally by a configuration flag it deletes them.
+   ## This Method extracts all files to be delivered from the source directory
+   ## Optionally by a configuration flag it deletes them.
+   ##
    def retrieveFilesOrNames(bJustList = false)
       prevDir = Dir.pwd
           
@@ -397,8 +315,10 @@ private
             next
          end
 
-
-         # If bNames is false we gather type-files; if its true we gather non-type files (recursively)
+         ##
+         ## If bNames is false we gather type-files; if its true we gather non-type files (recursively)
+         ## or UploadDirs content
+         
          if @bNames == false || @uploadDirs then
             arrFiles = Dir["*#{filetype}*"]
          else
@@ -406,8 +326,7 @@ private
             arrFiles = Dir.glob(recursive)
          end
 
-
-         # Filtering of DDC_config.xml
+         # Filtering of dec_config.xml
          if !@arrFilters.empty? then
             arrFilesAux = Array.new
    
@@ -475,29 +394,43 @@ private
    end
    
    ## -------------------------------------------------------------
-
-   # Copy the files from the target Directory to all outboxes
+   ##
+   ## Copy the files from the target Directory to all outboxes
+   ##
+   ##
    def deliverFilesOrNames(bJustList = false, bDeliverOnce = false)
       
-      @entityConfig = CTC::ReadInterfaceConfig.instance
-      arrEntity     = @entityConfig.getAllExternalMnemonics
+      @entityConfig  = ReadInterfaceConfig.instance
+      arrEntity      = @entityConfig.getAllExternalMnemonics
+
+      @outConfig     = ReadConfigOutgoing.instance
 
       prevDir = Dir.pwd
       Dir.chdir(@targetDirectory)
 
       @arrFileTypesOrNames.each{|filetype|
 
-      # If bNames is false we get filetype-like files; if its true we get non-type files
-      if @bNames == false then
-         arrFiles = Dir["*#{filetype}*"]
-      else
-         arrFiles = Dir["#{filetype}"]
-      end
+         if @isDebugMode == true then
+            puts "xxxxxxxxx"      
+            puts filetype
+            puts "xxxxxxxxx" 
+         end 
 
-      arrEntities = @confDest.getEntitiesReceivingOutgoingFile(filetype)      
+         # If bNames is false we get filetype-like files; if its true we get non-type files
+         if @bNames == false then
+            arrFiles = Dir["*#{filetype}*"]
+         else
+            arrFiles = Dir["#{filetype}"]
+         end
+
+         if @isDebugMode == true then
+            puts "+++++++++"      
+            puts arrFiles
+            puts "+++++++++"             
+         end
       
-      
-      
+         arrEntities = @confDest.getEntitiesReceivingOutgoingFile(filetype)      
+           
          arrFiles.each{|afile|
             
             if !arrEntities.empty? then
@@ -506,14 +439,14 @@ private
             end
             
             arrEntities.each{|anEntity|
-               dir         = @entityConfig.getOutgoingDir(anEntity)
-
-               if @bNames == false then
-                  arrMethods  = @confDest.getDeliveryMethods(anEntity, filetype)
-               else
-                  arrMethods  = @confDest.getDeliveryMethodsForNames(anEntity, filetype)
+               dir        = @outConfig.getOutgoingDir(anEntity[:mnemonic])
+               arrMethods = anEntity[:deliveryMethods]
+               if @isDebugMode == true then
+                  puts
+                  puts "outgoing dir for #{anEntity[:mnemonic]} is #{dir}"
+                  puts
                end
-
+               
                arrMethods.each{|aMethod|
                   aDir = %Q{#{dir}/#{aMethod}}
                   checkDirectory(aDir)
@@ -534,20 +467,24 @@ private
                            byInterface = false
                         end
 
-                        # If delivery once has been selected, check whether the file
-                        # has already been delivered
+                        ## ---------------------------------
+                        ## If delivery once has been selected, check whether the file
+                        ## has already been delivered
                         if bDeliverOnce then
-                           if SentFile.hasAlreadyBeenSent?(thefile, anEntity, aMethod) == true then
-                              puts "#{thefile} already sent to #{anEntity} via #{aMethod}"
+                           if SentFile.hasAlreadyBeenSent?(thefile, anEntity[:mnemonic], aMethod) == true then
+                              puts "#{thefile} already sent to #{anEntity[:mnemonic]} via #{aMethod}"
                               next
                            end
                         end 
-        
+                        ## ---------------------------------
+                        
                         if @isDebugMode == true then
                            puts cmd
                         end
 
-                        #if the hard link does not work make a copy
+                        ## ---------------------------------
+
+                        # if the hard link does not work make a copy
                         valRet = system(cmd)			
                         if !valRet then
                            if byInterface then
@@ -555,42 +492,57 @@ private
                            else
                               cmd = "\\cp -Rf #{thefile} #{aDir}/"
                            end
+                           if @isDebugMode == true then
+                              puts
+                              puts cmd
+                              puts
+                           end
                            system(cmd)
                         end
 
                         #FileUtils.cp_r(thefile, %Q{#{aDir}/#{thefile}})
-			               puts "Copied to #{anEntity} outbox / Protocol: #{aMethod}"
+			               puts "Copied to #{anEntity[:mnemonic]} outbox / Protocol: #{aMethod}"
 			
-                        puts
-                        puts "#{aDir}"
-                        puts
+                        if @isDebugMode == true then
+                           puts
+                           puts "#{aDir}"
+                           puts
+                        end
          
-			               # Apply Compress Method
-                        if @entityConfig.isCompressed?(anEntity) then
-   			               ext        = getFileExtension(thefile)
-
-                           if @bNames == false then
-   			                  compMethod = @confDest.getCompressMethod(anEntity, filetype)
-                           else
-                              compMethod = @confDest.getCompressMethodForNames(anEntity, filetype)
-                           end
-                  
-                        #check if the file is not already compressed and has a valid compress method: pack.
-                           extension = thefile.split('.').last
-                           if (compMethod != "NONE") and (compMethod != extension) then
-                              packFile(thefile, aDir, compMethod)
+                        ## 
+			               ## Apply Compress Method
+                        
+                        compMethod = @confDest.getCompressMethod(anEntity[:mnemonic], filetype)
+                        
+                        if @isDebugMode == true then
+                           puts compMethod
+                        end
+                                                
+                        extension = thefile.split('.').last
+                           
+                        if (compMethod != "NONE") and (compMethod.downcase != extension.downcase) then
+                           ret = packFile(thefile, aDir, compMethod)
+                           
+                           if ret == false then
+                              puts
+                              puts "failed to pack #{thefile} into #{aDir} with compress method #{compMethod}"
+                              puts
                            end
                         end
 			
                      rescue Exception => e
 		     	            puts e.to_s
-			               exit(99)
-			               #puts e.backtrace
+                        if @isDebugMode == true then
+                           puts e.backtrace
+			               end
+                        exit(99)
+			               
 		               end
 		     
                   else
                      puts "Would be Copied to #{anEntity} #{aMethod} outbox"
                   end
+                  
                }  #end of arrMethods.each block
                
             }  #end of arrEntities.each block

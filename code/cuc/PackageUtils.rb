@@ -24,7 +24,6 @@ require 'cuc/DirUtils'
 # through external compressors
 # Supported tools are: TAR, ZIP, GZIP, COMPRESS
 
-
 module CUC
 
 module PackageUtils
@@ -33,14 +32,14 @@ module PackageUtils
    # include FileUtils::NoWrite
    include FileUtils 
    
-   CompressMethods = ["NONE", "7z", "TGZ", "ZIP", "TAR", "GZIP", "COMPRESS", "UNPACK", "UNPACK_HDR", "UNPACK_DBL"]
+   CompressMethods = ["NONE", "7Z", "TGZ", "ZIP", "TAR", "GZIP", "COMPRESS", "UNPACK", "UNPACK_HDR", "UNPACK_DBL"]
     
-   #--------------------------------------------------------------
+   ## --------------------------------------------------------------
 
-   # compress a single file into ZIP
-   #
-   # - full_path_file   (IN): File to be compressed
-   # - deleteSourceFile (IN): Flag to delete the source file
+   ## compress a single file into ZIP
+   ##
+   ## - full_path_file   (IN): File to be compressed
+   ## - deleteSourceFile (IN): Flag to delete the source file
    def packZIP(full_path_file, bDeleteSourceFile=true)
       checkModuleIntegrity
       if FileTest.exist?(full_path_file) == false then
@@ -68,7 +67,7 @@ module PackageUtils
       Dir.chdir(prevDir)
       remove_dir(@localDir, true)
    end
-   #--------------------------------------------------------------
+   ## --------------------------------------------------------------
 
    # compress a single file into 7z
    #

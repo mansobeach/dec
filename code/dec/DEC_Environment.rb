@@ -27,7 +27,10 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.10" =>    "configuration dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
+      "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
+          new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
+          new dec_outgoing_files.xml deprecates ft_outgoing_files.xml\n\
+          Earth Explorer / Earth Observation file-types are deprecated\n\
           unit tests updated to verify the PUSH mode to send files",
       "1.0.9"  =>    "decUnitTests support batchmode to avoid prompting for confirmation", \
       "1.0.8"  =>    "decListener command line flags fixed", \
@@ -65,7 +68,7 @@ module DEC
       ENV['RPFBIN']                       = File.dirname(File.expand_path(__FILE__))
    end
 
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def unset_config
       ENV.delete('DEC_VERSION')
@@ -77,7 +80,7 @@ module DEC
       ENV.delete('DEC_DELIVERY_ROOT')
    end
 
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
@@ -90,21 +93,21 @@ module DEC
       puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def print_environmentRPF
       puts "RPFBIN                        => #{ENV['RPFBIN']}"
       puts "RPF_ARCHIVE_ROOT              => #{ENV['RPF_ARCHIVE_ROOT']}"
       puts "FTPROOT                       => #{ENV['FTPROOT']}"
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def check_environment_dirs
       checkDirectory(ENV['DEC_TMP'])
       checkDirectory(ENV['DEC_DELIVERY_ROOT'])
    end
 
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def check_environment
       check_environment_dirs
@@ -115,7 +118,7 @@ module DEC
          return false
       end
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def checkEnvironmentEssential
       bCheck = true
@@ -140,7 +143,7 @@ module DEC
       end
       return true
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def checkEnvironmentPUSH
       bCheck = true
@@ -157,7 +160,7 @@ module DEC
       end
       return true      
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def checkEnvironmentMail
       bCheck = true
@@ -176,7 +179,7 @@ module DEC
       end
       return true
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def checkEnvironmentDB
       bCheck = true
@@ -201,7 +204,7 @@ module DEC
       end
       return true
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def checkEnvironmentRPF
       bCheck = true
@@ -227,12 +230,12 @@ module DEC
       return true
    
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def printEnvironmentError
       puts "Execution environment not suited for DEC"
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def createEnvironmentDirs
       checkDirectory(ENV['DEC_TMP'])
@@ -247,13 +250,47 @@ module DEC
       checkDirectory("/tmp/dec/log")
      
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
 
    def createEnvironmentDirsRPF
       checkDirectory(ENV['RPF_ARCHIVE_ROOT'])      
       checkDirectory(ENV['FTPROOT'])
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
+   
+   def checkConfigFilesIncoming
+      arrFiles = [ \
+                  "interfaces.xml", \
+                  "dec_incoming_files.xml"
+                  ]
+      bRet = true
+      arrFiles.each{|file|
+         if File.exist?("#{ENV['DEC_CONFIG']}/#{file}") == false then
+            bRet = false
+            puts "#{ENV['DEC_CONFIG']}/#{file} not found !"
+         end
+      }
+      return bRet
+   end
+
+   ## -----------------------------------------------------------------  
+
+   def checkConfigFilesOutgoing
+      arrFiles = [ \
+                  "interfaces.xml", \
+                  "dec_outgoing_files.xml"
+                  ]
+      bRet = true
+      arrFiles.each{|file|
+         if File.exist?("#{ENV['DEC_CONFIG']}/#{file}") == false then
+            bRet = false
+            puts "#{ENV['DEC_CONFIG']}/#{file} not found !"
+         end
+      }
+      return bRet   
+   end
+   
+   ## -----------------------------------------------------------------   
    
    def checkToolDependencies
 
@@ -272,7 +309,7 @@ module DEC
                
          if isToolPresent[0,1] != '/' then
             puts "\n\nDEC_Environment::checkToolDependencies\n"
-            puts "Fatal Error: #{tool} not present in PATH !!   :-(\n\n\n"
+            puts "Fatal Error: #{tool} not present in PATH   :-(\n\n\n"
             bCheckOK = false
          end
 
@@ -286,7 +323,7 @@ module DEC
    
       return bCheckOK
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def checkToolDependenciesRPF
       bCheckOK = true
@@ -317,13 +354,13 @@ module DEC
    
       return bCheckOK
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
 end # module
 
-# ==============================================================================
+## ==============================================================================
 
-# Wrapper to make use within unit tests since it is not possible inherit mixins
+## Wrapper to make use within unit tests since it is not possible inherit mixins
 
 class DEC_Environment
    
@@ -345,6 +382,14 @@ class DEC_Environment
       unset_config
    end
 
+   def wrapper_check_config_files_incoming
+      return checkConfigFilesIncoming
+   end
+
+   def wrapper_check_config_files_outgoing
+      return checkConfigFilesOutgoing
+   end
+
    def wrapper_print_environment
       print_environment
    end
@@ -355,4 +400,4 @@ class DEC_Environment
    
 end
 
-# ==============================================================================
+## ==============================================================================

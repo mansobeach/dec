@@ -18,13 +18,13 @@
 #
 # -i flag:
 #
-# With this option the Incoming file-types configuration file (ft_incoming_files.xml)
-# is validated using the schema ft_incoming_files.xsd
+# With this option the Incoming file-types configuration file (dec_incoming_files.xml)
+# is validated using the schema dec_incoming_files.xsd
 #
 # -o flag:
 #
-# With this option the Outgoing file-types configuration file (ft_outgoing_files.xml)
-# is validated using the schema ft_outgoing_files.xsd
+# With this option the Outgoing file-types configuration file (dec_outgoing_files.xml)
+# is validated using the schema dec_outgoing_files.xsd
 #
 # -m flag:
 #
@@ -36,11 +36,6 @@
 # With this option the DEC Logs configuration file (dec_log_config.xml) is
 # validated using the schema dec_log_config.xsd
 #
-# -t flag:
-#
-# With this option the (DIM)In-Trays configuration file (files2InTrays.xml) is
-# validated using the schema files2InTrays.xsd
-#
 # -a flag:
 #
 # This is the all flag, which performs all the checks described before.
@@ -49,11 +44,10 @@
 # == Usage
 #  -a     Check all DEC configuration files
 #  -g     Check DEC's general configuration file dec_config.xml
-#  -e     Check the Entities Configuration file interfaces.xml
+#  -e     Check the Entities Configuration file dec_interfaces.xml
 #  -m     Check the mail configuration file ft_mail_config.xml
-#  -i     Check the incoming file-types configuration file ft_incoming_files.xml
-#  -i     Check the outgoing file-types configuration file ft_outgoing_files.xml
-#  -t     Check the In-Trays configuration file files2InTrays.xml
+#  -i     Check the incoming file-types configuration file dec_incoming_files.xml
+#  -i     Check the outgoing file-types configuration file dec_outgoing_files.xml
 #  -h     shows this help
 #  -v     shows version number
 #    
@@ -99,7 +93,6 @@ def main
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
      ["--incoming", "-i",        GetoptLong::NO_ARGUMENT],
      ["--outgoing", "-o",        GetoptLong::NO_ARGUMENT],
-     ["--tray", "-t",            GetoptLong::NO_ARGUMENT],
      ["--entities", "-e",        GetoptLong::NO_ARGUMENT],
      ["--log", "-l",             GetoptLong::NO_ARGUMENT],     
      ["--mail", "-m",            GetoptLong::NO_ARGUMENT],
@@ -123,7 +116,6 @@ def main
 	         when "--mail"     then @bMail             = true
 	         when "--general"  then @bGeneral          = true
             when "--all"      then @bAll              = true
-            when "--tray"     then @bTrays            = true
             when "--usage"    then @bShowUsage        = true
          end
       end
@@ -157,6 +149,10 @@ def main
       exit(66)
    end
 
+   if self.checkToolDependencies == false then
+      exit(66)
+   end
+
    bReturn = true
 
    # Check DEC's general configuration files dec_config.xml
@@ -178,9 +174,9 @@ def main
    
    if @bEntities == true or @bAll == true then
       puts "================================================"
-      puts "Checking interfaces.xml..."
+      puts "Checking dec_interfaces.xml..."
       
-      ret = validate("interfaces")
+      ret = validate("dec_interfaces")
 
       if !bReturn or !ret then
          bReturn = false
@@ -189,15 +185,15 @@ def main
       puts "================================================"
    end
 
-   # Check the incoming file-types configuration file ft_incoming_files.xml
+   # Check the incoming file-types configuration file dec_incoming_files.xml
    
    if @bIncoming == true or @bAll == true then
       puts
       puts "================================================"
-      puts "Checking ft_incoming_files.xml..."
+      puts "Checking dec_incoming_files.xml..."
       puts
       
-      ret = validate("ft_incoming_files")
+      ret = validate("dec_incoming_files")
 
       if !bReturn or !ret then
          bReturn = false
@@ -207,15 +203,15 @@ def main
       puts "================================================"
    end
 
-   # Check the incoming file-types configuration file ft_outgoing_files.xml
+   # Check the incoming file-types configuration file dec_outgoing_files.xml
    
    if @bOutgoing == true or @bAll == true then
       puts
       puts "================================================"
-      puts "Checking ft_outgoing_files.xml..."
+      puts "Checking dec_outgoing_files.xml..."
       puts
       
-      ret = validate("ft_outgoing_files")
+      ret = validate("dec_outgoing_files")
 
       if !bReturn or !ret then
          bReturn = false
@@ -223,22 +219,6 @@ def main
 
 
       puts "================================================"
-   end
-
-   # Check the In-Trays configuration file files2InTrays.xml
-
-   if @bAll == true or @bTrays == true then
-      puts "================================================"
-      puts "Checking files2InTrays.xml..."
-      puts
-      
-      ret = validate("files2InTrays")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
-      
-      puts "================================================"            
    end
 
    # Check the mail configuration file ft_mail_config.xml
@@ -281,8 +261,8 @@ def main
    end
    
 end
-#-------------------------------------------------------------
-# Check the given XML file using the corresponding XSD schema file
+## -------------------------------------------------------------
+## Check the given XML file using the corresponding XSD schema file
 
 def validate (fileName)
    rootPath = File.join(File.dirname(File.expand_path(__FILE__)), "../../schemas")
@@ -301,9 +281,8 @@ def validate (fileName)
    
    return ret   
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-#-------------------------------------------------------------
 
 ## -------------------------------------------------------------
 
@@ -311,7 +290,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -67 #{fullpathFile}"}`
+   value = `#{"head -60 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

@@ -2,31 +2,31 @@
 
 # == Synopsis
 #
-# This is a DCC command line tool that checks the coherency of the DCC configuration.
-# DCC configuration is distributed among different XMl files. The information set up
+# This is a command line tool that checks the coherency of the DEC configuration.
+# DEC configuration is distributed amongst different XML files. The information set up
 # must be coherent. This tool ensures that all configuration critical elements are correct.
-# (All DCC config files must be placed in the $DCC_CONFIG directory). 
+# (All DEC config files must be placed in the $DEC_CONFIG directory). 
 # So, run this tool everytime a configuration change is performed.
 #
 # -e flag:
 #
-# With this option the Interfaces (Entities) configuration placed in interfaces.xml
-# is checked. As well it is checked the coherency between the interfaces.xml
-# configuration file and the DCC Inventory (DCC Database).
+# With this option the Interfaces (Entities) configuration placed in dec_interfaces.xml
+# is checked. As well it is checked the coherency between the dec_interfaces.xml
+# configuration file and the DEC Inventory (DEC Database).
 # (Note: if the network link to a given I/F is broken, the tool will not be able to connect and it
 # will report a configuration error of this I/F).
 #
 #
 # -i flag:
 #
-# With this option the Incoming file-types registered in the ft_incoming_files.xml are checked.
+# With this option the Incoming file-types registered in the dec_incoming_files.xml are checked.
 # Mainly what it is done is to check that the interfaces from a File is retrieved are configured in 
-# the interfaces.xml file.
+# the dec_interfaces.xml file.
 #
 #
 # -m flag:
 #
-# With this option the DCC Mail configuration placed in the ft_mail_config.xml is checked.
+# With this option the DEC Mail configuration placed in the ft_mail_config.xml is checked.
 #
 #
 # -s flag:
@@ -38,9 +38,9 @@
 #
 # -t flag:
 #
-# With this option the (DIM)In-Trays configured in the files2InTrays.xml file are checked.
+# With this option the In-Trays configured in the files2InTrays.xml file are checked.
 # Mainly it is checked the consistency of the files2InTrays.xml config file.
-# As well it is checked the coherency between file2Dims.xml and ft_incoming_files.xml
+# As well it is checked the coherency between file2Dims.xml and dec_incoming_files.xml
 # warning when an incoming file is not disseminated to any In-Tray.
 #
 #
@@ -51,10 +51,11 @@
 #
 # == Usage
 # decCheckConfig [--nodb]
-#     -a    checks all DCC configuration
-#     -e    checks entities configuration in interfaces.xml
+#     -a    checks all DEC configuration
+#     -e    checks entities configuration in dec_interfaces.xml
 #    --nodb no Inventory checks
-#     -i    checks incoming file-types configured in ft_incoming_files.xml
+#     -i    checks incoming file-types configured in dec_incoming_files.xml
+#     -o    checks outgoing file-types configured in dec_outgoing_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
 #     -t    checks the In-Trays configuration placed in files2InTrays.xml
 #     -l    checks the log configuration
@@ -73,9 +74,9 @@
 
 #########################################################################
 #
-# Data Collector Component
+# Data Exchange Component
 # 
-# Git: $Id: checkConfigDCC.rb,v 1.7 2007/12/18 18:21:36 decdev Exp $
+# Git: $Id: decCheckConfig,v 1.7 2007/12/18 18:21:36 decdev Exp $
 #
 #########################################################################
 
@@ -84,21 +85,20 @@ require 'getoptlong'
 require 'rdoc'
 
 require 'cuc/Log4rLoggerFactory'
-require 'ctc/ReadInterfaceConfig'
-require 'ctc/ReadFileDestination'
-require 'ctc/ReadFileSource'
 require 'ctc/CheckerMailConfig'
-require 'ctc/CheckerInterfaceConfig'
-require 'ctc/CheckerIncomingFileConfig'
-require 'ctc/CheckerOutgoingFileConfig'
-require 'dcc/ReadInTrayConfig'
-require 'dcc/CheckerInTrayConfig'
+
 require 'dcc/CheckerServiceConfig'
+
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/CheckerInterfaceConfig'
+require 'dec/CheckerOutgoingFileConfig'
+require 'dec/CheckerIncomingFileConfig'
+require 'dec/CheckerInTrayConfig'
 
 # Conditional require driven by --nodb flag
-# require 'ctc/CheckerInventoryConfig'
+# require 'dec/CheckerInventoryConfig'
 
 # checkSent2Entity checks what it has been sent to a given entity.
 # It checks in the UploadDir and UploadTemp directories 
@@ -197,22 +197,21 @@ def main
       exit(99)
    end
     
-   # Check Module Integrity
    checkModuleIntegrity
 
    @projectName = ReadConfigDEC.instance.getProjectName
    @projectID   = ReadConfigDEC.instance.getProjectID
    
-   ftConfig = CTC::ReadInterfaceConfig.instance
+   ftConfig = ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllMnemonics
 
-   puts "\nChecking #{@projectName} Data Collector Component \n\n"
+   puts "\nChecking #{@projectName} retrieval of files \n\n"
 
    # Check of the Entities Configuration
    
    if @bEntities == true or @bAll == true then
       puts "================================================"
-      puts "Checking interfaces.xml Configuration ..."
+      puts "Checking dec_interfaces.xml Configuration ..."
       arrEnts.each{|x|         
          if @interface != "" and @interface != x then
             next
@@ -229,7 +228,7 @@ def main
             puts "#{x} is disabled for sending files"
          end
 
-		   checker = CTC::CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send)
+		   checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send)
                  
          if @isDebugMode == true or @isVerboseMode then
             checker.setDebugMode
@@ -248,11 +247,11 @@ def main
 
       if @isNoDB == false then
          
-         require 'ctc/CheckerInventoryConfig'
+         require 'dec/CheckerInventoryConfig'
       
          # Perform the check against the Inventory
          puts "Checking DEC/Inventory entries ..."
-         checkerInventory = CTC::CheckerInventoryConfig.new
+         checkerInventory = CheckerInventoryConfig.new
          ret = checkerInventory.check(@interface)
          puts "================================================"
          if ret == false then
@@ -264,7 +263,7 @@ def main
    end
 
    # Check that all Incoming File Types have associated Entities registered
-   # in interfaces.xml
+   # in dec_interfaces.xml
    
    if @bOutgoing == true  then
       ret = checkOutgoingConfig
@@ -277,17 +276,17 @@ def main
    end
    
    if @bIncoming == true or @bAll == true then
-      ftReadIncoming   = CTC::ReadFileSource.instance   
+      ftReadIncoming   = ReadConfigIncoming.instance   
       arrIncomingFiles = ftReadIncoming.getAllIncomingFiles  
       puts
       puts "================================================"
-      puts "Checking ft_incoming_files.xml Configuration ..."
+      puts "Checking dec_incoming_files.xml Configuration ..."
       puts
       ret = true
       arrIncomingFiles.each{|x|
          puts "Check incoming filetype #{x} \n"
 
-	      checker = CTC::CheckerIncomingFileConfig.new(x)
+	      checker = CheckerIncomingFileConfig.new(x)
 	 
          retVal  = checker.check
          
@@ -302,12 +301,12 @@ def main
          end
       }
    
-      arrIncomingFiles = ftReadIncoming.getAllIncomingFileNames  
+      arrIncomingFiles = ftReadIncoming.getAllIncomingFiles  
 
       arrIncomingFiles.each{|x|
          puts "Check incoming files like #{x} \n"
 
-	      checker = CTC::CheckerIncomingFileConfig.new(x)
+	      checker = CheckerIncomingFileConfig.new(x)
 	 
          retVal  = checker.check
          
@@ -322,43 +321,31 @@ def main
          end
       }
 
-
-      if ret == true then
-         puts "\nft_incoming_files.xml is configured correctly ! :-) \n"
-      else
-         puts "\nft_incoming_files.xml is not configured correctly ! :-( \n"
-      end     
-      puts "================================================"
-   end
-
-#==============================================================================
-
-#==============================================================================
-
-   if @bAll == true or @bTrays == true then
-      puts "================================================"
-      puts "Checking files2InTrays.xml Configuration ..."
-      puts
-      
-      checker = DCC::CheckerInTrayConfig.new
+      checker = CheckerInTrayConfig.new
 	   
       if @isDebugMode == true then
          checker.setDebugMode
       end
       
       retVal  = checker.check
-      
-      if retVal == true then
-         puts "\nfiles2InTrays.xml is configured correctly ! :-) \n"
+
+      if retVal == false then 
+         ret      = false
+         @retVal  = retVal
+      end
+
+      if ret == true then
+         puts "\ndec_incoming_files.xml is configured correctly ! :-) \n"
       else
-         puts "\nfiles2InTrays.xml is not configured correctly ! :-( \n"
-         @retVal = retVal        
-      end      
-      
-      puts "================================================"            
+         puts "\ndec_incoming_files.xml is not configured correctly ! :-( \n"
+      end     
+      puts "================================================"
    end
 
-#==============================================================================
+## ==============================================================================
+
+
+## ==============================================================================
 
    if @bAll == true or @bMail == true then
       puts "================================================"
@@ -385,8 +372,7 @@ def main
       end
       puts "================================================"         
    end
-	
-	
+
 	if @bAll == true or @bLog == true then
 		puts "Checking log configuration"
       begin
@@ -406,8 +392,6 @@ def main
 
          @logger.info("I can write :o)")
 
-         puts "I can write ! :o)"
-         puts
 		rescue Exception => e
 		   puts
       	puts e.to_s
@@ -467,49 +451,29 @@ end
 def checkOutgoingConfig
 
    failed               = Array.new
-   ftReadOutgoing       = CTC::ReadFileDestination.instance   
-   arrOutgoingFiles     = ftReadOutgoing.getAllOutgoingFiles
-   arrOutgoingFileNames =  ftReadOutgoing.getAllOutgoingFileNames
+   ftReadOutgoing       = ReadConfigOutgoing.instance   
+   arrOutgoingFiles     = ftReadOutgoing.getAllOutgoingTypes
       
    puts
    puts "================================================"
-   puts "Checking ft_outgoing_files.xml Configuration ..."
+   puts "Checking dec_outgoing_files.xml Configuration ..."
    puts
       
    ret = true
    
-   arrOutgoingFiles.each{|x|
-         puts "Check outgoing filetype #{x} \n"
-	 
-	      checker = CTC::CheckerOutgoingFileConfig.new(x)
-	 
-         retVal  = checker.check
-         
-         if retVal == false then ret = false end
-         
-         if retVal == true then
-            puts "#{x} - OK"
-         else
-            failed << "Error: in #{x} :-("
-         end
-         
-         if x.length != 10 then
-            failed << "Warning: the fileType #{x} is not a ten char value :-|"
-         end
-   }
       
-      if arrOutgoingFileNames.empty? == false then
+      if arrOutgoingFiles.empty? == false then
          puts
          puts "Wildcards: "
       end
 
       ret = true
-      arrOutgoingFileNames.each{|x|
-         puts "Check incoming files like #{x} \n"
+      arrOutgoingFiles.each{|x|
+         puts "Check outgoing files like #{x} \n"
 
          # A boolean is passed so the checker knows its a wildcard.
 	      # It will check with the specific wildcard methods
-	      checker = CTC::CheckerOutgoingFileConfig.new(x,true)
+	      checker = CheckerOutgoingFileConfig.new(x,true)
 	 
          retVal  = checker.check
          
@@ -528,9 +492,9 @@ def checkOutgoingConfig
          puts failed  
       end
       if ret == true then
-         puts "\nft_outgoing_files.xml is configured correctly ! :-) \n"
+         puts "\ndec_outgoing_files.xml is configured correctly ! :-) \n"
       else
-         puts "\nError: ft_outgoing_files.xml is not configured correctly ! :-( \n"
+         puts "\nError: dec_outgoing_files.xml is not configured correctly ! :-( \n"
       end     
       puts "================================================"
    
@@ -539,14 +503,14 @@ end
 
 ## -------------------------------------------------------------
    
-# Check that everything needed by the class is present.
+## Check that everything needed by the class is present.
 def checkModuleIntegrity
    return
 end 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 ## =============================================================================
-# Start of the main body
+## Start of the main body
 main
-# End of the main body
+## End of the main body
 ## =============================================================================

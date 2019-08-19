@@ -58,26 +58,23 @@
 
 #########################################################################
 #
-# === Ruby script ddcDeliverFiles for sending all files to an Entity
+# === Ruby script decDeliverFiles for sending all files to an Entity
 # 
 # === Written by DEIMOS Space S.L.   (bolf)
 #
-# === Data Exchange Component -> Data Distributor Component
+# === Data Exchange Component
 # 
-# CVS: $Id: ddcDeliverFiles.rb,v 1.8 2008/06/09 12:55:34 decdev Exp $
+# CVS: $Id: decDeliverFiles,v 1.8 2008/06/09 12:55:34 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
 
 require 'cuc/CheckerProcessUniqueness'
-require 'ctc/ReadInterfaceConfig'
+require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
-# Global variables
-@dateLastModification = "$Date: 2008/06/09 12:55:34 $"     # to keep control of the last modification
-                                                            # of this script
-                                                            # execution showing Debug Info
+
 @isDebugMode      = false                  
 
 # MAIN script function
@@ -97,7 +94,7 @@ def main
 
    # It sends SIGTERM signal to the in-progress send2Entity <I/F> processes
    def killInProgressSend2Interfaces
-      ddcIntConfig  = CTC::ReadInterfaceConfig.instance
+      ddcIntConfig  = ReadInterfaceConfig.instance
       arrInterfaces = ddcIntConfig.getAllMnemonics
    
       arrInterfaces.each{|x|
@@ -121,6 +118,7 @@ def main
       }
    end   
    ## ======================================================================
+   
    @isDeliveredOnce  = false
    @isNoDB           = false 
    @skipGetFiles     = false
@@ -185,7 +183,6 @@ def main
       puts
       exit(99)
    end
-
 
    if @strParams != "" and @isDeliveredOnce == false then
       puts "params argument -p requires -O option enabled ! :-p"
@@ -264,13 +261,14 @@ def main
    
 end
 
-#---------------------------------------------------------------------
+## ---------------------------------------------------------------------
 
-#---------------------------------------------------------------------
+## ---------------------------------------------------------------------
+##
+## Deliver 2 all interfaces
 
-# Deliver 2 all interfaces
 def deliver2Interfaces
-   ddcIntConfig  = CTC::ReadInterfaceConfig.instance
+   ddcIntConfig  = ReadInterfaceConfig.instance
    arrInterfaces = ddcIntConfig.getAllMnemonics
    processInfo   = Hash.new
    
@@ -336,11 +334,11 @@ def deliver2Interfaces
    }
    return bSuccess
 end
-#---------------------------------------------------------------------
+## ---------------------------------------------------------------------
 
-#==========================================================================
-
-# It sends SIGTERM signal to the active in-progress ddcDeliverFiles process
+## ==========================================================================
+##
+## It sends SIGTERM signal to the active in-progress decDeliverFiles process
 def killInProgressDelivery
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), nil, true)
    if @isDebugMode == true then
@@ -356,11 +354,13 @@ def killInProgressDelivery
       exit(0)
    end
 end
-#==========================================================================
+##
+## ==========================================================================
 
-#-------------------------------------------------------------
-
-# Print command line help
+## -------------------------------------------------------------
+##
+## Print command line help
+##
 def usage
    fullpathFile = File.expand_path(__FILE__)   
    
@@ -372,10 +372,10 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

@@ -25,14 +25,14 @@
 
 #########################################################################
 #
-# Ruby script notify2Interface for sending all files to an Entity
+# Ruby script decNotify2Interface for sending all files to an Entity
 # 
 # Written by DEIMOS Space S.L.   (bolf)
 #
-# Data Exchange Component -> Data Distributor Component
+# Data Exchange Component
 # 
 # CVS:
-#   $Id: notify2Interface.rb,v 1.6 2007/11/06 16:33:54 decdev Exp $
+#   $Id: decNotify2Interface,v 1.6 2007/11/06 16:33:54 decdev Exp $
 #
 #########################################################################
 
@@ -40,9 +40,9 @@ require 'getoptlong'
 
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
-require 'ctc/ReadInterfaceConfig'
 require 'ddc/DDC_Notifier2Interface'
 require 'dec/DEC_Environment'
+require 'dec/ReadInterfaceConfig'
 
 # MAIN script function
 def main
@@ -158,7 +158,7 @@ def main
  
    
    # Check that the given mnemonic is present in the config file   
-   ftReadConf  = CTC::ReadInterfaceConfig.instance
+   ftReadConf  = ReadInterfaceConfig.instance
    arrEntities = ftReadConf.getAllExternalMnemonics
    numEntities = arrEntities.length
    arrSenders  = Array.new
@@ -243,9 +243,9 @@ def notifyFailure2Entity
 end
 #---------------------------------------------------------------------
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# Print command line help
+## Print command line help
 def usage
    fullpathFile = `which #{File.basename($0)}`    
    
@@ -257,10 +257,10 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

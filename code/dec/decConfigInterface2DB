@@ -38,13 +38,16 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
-require 'ctc/ReadInterfaceConfig'
+require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
 
 
 # MAIN script function
-def main   
+def main
+
+   include DEC
+
    @verboseMode      = 0                
    @mnemonic         = ""
    @bShowMnemonics   = false
@@ -166,8 +169,8 @@ def main
    # process External|Internal Entities
 	arrEnt = nil
    if process==1 then
-      cnf    = CTC::ReadInterfaceConfig.instance     
-      if @process=="EXTERNAL" then
+      cnf    = ReadInterfaceConfig.instance     
+      if @process == "EXTERNAL" then
          arrEnt = cnf.getAllExternalMnemonics
       else
          arrEnt = cnf.getAllInternalMnemonics
@@ -190,9 +193,9 @@ def main
    
 end
 
-#-------------------------------------------------------------
-
-# Print command line help
+## ---------------------------------------------------------
+##
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)   
    
@@ -204,11 +207,10 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

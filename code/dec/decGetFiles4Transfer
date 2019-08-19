@@ -51,7 +51,6 @@ require 'getoptlong'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Logger.rb'
 require 'cuc/DirUtils'
-require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 require 'dec/RetrieverFromArchive'
 

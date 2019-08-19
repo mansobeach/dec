@@ -18,9 +18,8 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
-require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
-
+require 'dec/ReadInterfaceConfig'
 
 # Preconditions:
 # 1 - setup 
@@ -429,7 +428,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)        
       
-      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftReadConf    = ReadInterfaceConfig.instance
       @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
       @uploadDir     = @ftpServer[:uploadDir]
       
@@ -504,7 +503,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)        
       
-      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftReadConf    = ReadInterfaceConfig.instance
       @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
       @uploadDir     = @ftpServer[:uploadDir]
       
@@ -622,7 +621,7 @@ class DECTestCase < Test::Unit::TestCase
 
       
             
-      @ftReadConf    = CTC::ReadInterfaceConfig.instance
+      @ftReadConf    = ReadInterfaceConfig.instance
       @ftpServer     = @ftReadConf.getFTPServer4Send("LOCALHOST_NOT_SECURE")
       @uploadDir     = @ftpServer[:uploadDir]
       

@@ -20,11 +20,11 @@ require 'fileutils'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/ReadMailConfig'
 require 'ctc/CheckerMailConfig'
 require 'ctc/MailSender'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
 
 module DEC
 
@@ -33,12 +33,13 @@ class DEC_BodyMailer
    include CUC::DirUtils
    include FileUtils::NoWrite
    
-   ## -------------------------------------------------------------
-
    attr_reader :listFileToBeSent
-      
-   # Class constructor.
-   # * entity (IN):  Entity textual name (i.e. FOS)
+   
+   ## -------------------------------------------------------------
+   ##
+   ##  
+   ## Class constructor.
+   ## * entity (IN):  Entity textual name (i.e. FOS)
    def initialize(entity, deliverOnce, isDebug=false)
 
       @entity   = entity
@@ -65,7 +66,7 @@ class DEC_BodyMailer
       end
       
       # Load Mail Params for this I/F.
-      ddcConf       = CTC::ReadInterfaceConfig.instance
+      ddcConf       = ReadInterfaceConfig.instance
       ftReadConf    = CTC::ReadMailConfig.instance
       
       @delay        = ddcConf.getLoopDelay(@entity).to_i
@@ -77,7 +78,7 @@ class DEC_BodyMailer
 
       @listFiles   = Array.new
 
-      @outboxDir   = ddcConf.getOutgoingDir(@entity)
+      @outboxDir   = ReadConfigOutgoing.instance.getOutgoingDir(@entity)
       @outboxDir   = "#{@outboxDir}/mailbody"
       
       checkDirectory(@outboxDir)

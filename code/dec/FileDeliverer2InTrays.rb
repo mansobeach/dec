@@ -8,7 +8,7 @@
 #
 # = Data Exchange Component -> Data Exchnge Component
 # 
-# CVS:
+# Git:
 #   $Id: FileDeliverer2InTrays.rb,v 1.16 2008/07/03 11:38:07 decdev Exp $
 #
 #########################################################################
@@ -19,11 +19,11 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/CommandLauncher'
 require 'cuc/DirUtils'
 require 'cuc/PackageUtils'
-require 'ctc/ReadInterfaceConfig'
 require 'ctc/EventManager'
 require 'cuc/EE_ReadFileName'
-require 'dcc/ReadInTrayConfig'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
 
  # This class moves all files from the I/Fs local inboxes
  # to the configured In-Trays  
@@ -38,15 +38,16 @@ class FileDeliverer2InTrays
    
    ## -------------------------------------------------------------   
    
-   # Class contructor
+   ## Class contructor
+   ##
    def initialize(debugMode = false)
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = debugMode
       checkModuleIntegrity
-	   @entConfig = CTC::ReadInterfaceConfig.instance
-		@dimConfig = DCC::ReadInTrayConfig.instance
-      
+	   @entConfig = ReadInterfaceConfig.instance
+		@dimConfig = ReadConfigIncoming.instance
+                  
       # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("FileDeliverer2InTrays", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
@@ -68,17 +69,17 @@ class FileDeliverer2InTrays
    end
    ## -----------------------------------------------------------
    
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "FileDeliverer2InTrays debug mode is on"
 	   @entConfig.setDebugMode
 		@dimConfig.setDebugMode
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Main method of the class which delivers the incoming files
-   # from the local Entities In-Boxes to the DIMs In-Trays
+   ## Main method of the class which delivers the incoming files
+   ## from the local Entities In-Boxes to the DIMs In-Trays
    def deliver(mnemonic = "")
 #	   setDebugMode
       
@@ -95,7 +96,7 @@ class FileDeliverer2InTrays
          end
          
          @logger.info("Dissemination of files received from #{entity}")
-         dir = @entConfig.getIncomingDir(entity)
+         dir = @dimConfig.getIncomingDir(entity)
          
          if @isDebugMode == true then
             puts "================================================"          
@@ -194,9 +195,9 @@ class FileDeliverer2InTrays
       }
       
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # It Deliver Files present in a given directory
+   ## It Deliver Files present in a given directory
    def deliverFromDirectory(directory)
 			puts
          arrFiles = getFilenamesFromDir(directory, "*")
@@ -210,7 +211,7 @@ class FileDeliverer2InTrays
             deliverFile(directory, file)
 			}
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # It delivers a given file
    def deliverFile(directory, file)
@@ -258,7 +259,7 @@ class FileDeliverer2InTrays
          end
                   
          if @isDebugMode == true then
-			   puts "#{file} is placed in:"
+			   puts "#{file} is disseminated in:"
 				puts dimsDirs
 		   else
 			#   puts file
@@ -301,7 +302,9 @@ class FileDeliverer2InTrays
          @logger.debug("#{file} is not disseminated to any In-Tray")
          # @logger.warn("#{file} is still placed in #{directory}")
          @logger.debug("#{file} is still placed in #{directory}")
-         puts "#{file} is not disseminated to any In-Tray"
+         # if @isDebugMode == true then
+            puts "#{file} is not disseminated to any Intray"
+         # end
       end
    end
    #-------------------------------------------------------------

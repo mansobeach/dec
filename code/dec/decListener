@@ -29,7 +29,7 @@
 
 #########################################################################
 #
-# === Data Exchange Component -> Data Collector Component
+# === Data Exchange Component
 #
 # CVS: $Id: decListener,v 1.8 2008/07/03 11:38:07 decdev Exp $
 #
@@ -37,10 +37,10 @@
 
 
 
- # DCC Daemon process which listens to incoming files and dispatches them
- # into the proper directories, depending on the configuration file
- # ft_incoming_files.xml.
- # It agregates #DCC_Listener to implement a daemon.
+## DEC Daemon process which listens to incoming files and dispatches them
+## into the proper directories, depending on the configuration file
+## ft_incoming_files.xml.
+## It agregates #DCC_Listener to implement a daemon.
 
 
 require 'rubygems'
@@ -51,10 +51,9 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/CommandLauncher'
-require 'ctc/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
-
+require 'dec/ReadInterfaceConfig'
 
 ## 
 ## MAIN script function
@@ -104,8 +103,7 @@ def main
             when "--version"  then @bShowVersion         = true            
             when "--mnemonic" then @mnemonic             = arg            
             when "--help"     then @bShowUsage           = true
-            when "--interval" then
-               @intervalSeconds = arg.to_i
+            when "--interval" then @intervalSeconds      = arg.to_i
 	         when "--stop"     then
                if existEntity?(arg.to_s) == false then
                   puts
@@ -214,7 +212,7 @@ def main
          exit(99)
       end
    
-      ftReadConf   = CTC::ReadInterfaceConfig.instance
+      ftReadConf   = ReadInterfaceConfig.instance
    
       if ftReadConf.isEnabled4Receiving?(@mnemonic) == false then
          puts "Interface #{@mnemonic} is not configured for receiving"
@@ -354,7 +352,7 @@ end
 # all I/Fs Listeners on demand.
 def restartListeners
    
-   ftReadConf   = CTC::ReadInterfaceConfig.instance
+   ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    arrPIDs      = Array.new
    
@@ -377,7 +375,7 @@ end
 
 # It Stops all the Listeners
 def stopListeners
-   ftReadConf   = CTC::ReadInterfaceConfig.instance
+   ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    arrPIDs      = Array.new
    @logger.info("Stopping all I/Fs ...")
@@ -414,7 +412,7 @@ end
 # * 2 -> Some of them are not running
 #
 def checkListeners
-   ftReadConf   = CTC::ReadInterfaceConfig.instance
+   ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    bAll  = true
    bNone = true
@@ -449,7 +447,7 @@ end
 # By requirements it is needed one listener per I/F with an
 # independent PollingInterval for each one.
 def launchListeners      
-   ftReadConf   = CTC::ReadInterfaceConfig.instance
+   ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    
    puts "Polling #{@projectName} Interfaces ..."
@@ -473,7 +471,7 @@ end
 
 # It creates a new process Listener for the I/F.
 def launchListener(entity)
-   ftReadConf   = CTC::ReadInterfaceConfig.instance      
+   ftReadConf   = ReadInterfaceConfig.instance      
    pI = ftReadConf.getPollingInterval(entity)
    if @isDebugMode == true then
       command  = %Q{decListener --mnemonic #{entity} --interval #{pI} -D}
@@ -504,7 +502,7 @@ end
 
 # It stops getFromInterface associated to each listener
 def stopGetFromEntities
-   ftReadConf   = CTC::ReadInterfaceConfig.instance
+   ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    arrPIDs      = Array.new
    puts
@@ -536,7 +534,7 @@ end
 
 # It exists?
 def existEntity?(mnemonic)
-   ftReadConf   = CTC::ReadInterfaceConfig.instance   
+   ftReadConf   = ReadInterfaceConfig.instance   
    return ftReadConf.exists?(mnemonic)
 end
 #-------------------------------------------------------------

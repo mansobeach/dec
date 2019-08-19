@@ -50,9 +50,9 @@
 
 #########################################################################
 #
-# === Data Collector Component
+# === Data Exchange Component
 #
-# CVS: $Id: getFromInterface.rb,v 1.15 2015/09/25 16:55:04 decdev Exp $
+# $Git: $Id: decGetFromInterface,v 1.15 2015/09/25 16:55:04 decdev Exp $
 #
 #########################################################################
 
@@ -65,14 +65,12 @@ require 'ctc/ReadInterfaceConfig'
 require 'ctc/ListWriterDelivery'
 require 'ctc/EventManager'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadConfigIncoming'
 require 'dec/DEC_Environment'
 require 'dec/DEC_ReceiverFromInterface'
 require 'dec/FileDeliverer2InTrays'
 
-# Global variables
-@dateLastModification = "$Date: 2008/11/25 16:55:04 $"   # to keep control of the last modification
-                                       # of this script
-                                       # execution showing Debug Info
+
 @entity          = ""
 
 # MAIN script function
@@ -172,6 +170,8 @@ def main
       exit(99)
    end
 
+   self.checkConfigFilesIncoming
+
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("decGetFromInterface", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
@@ -256,12 +256,9 @@ def main
          exit(99)
       end
 
-   end   
+   end
 
-
-
-
-   cnf = CTC::ReadInterfaceConfig.instance
+   cnf = ReadInterfaceConfig.instance
 
    if cnf.exists?(@entity) == false
       puts "\n#{@entity} is not a configured I/F ! :-("
@@ -299,11 +296,11 @@ def main
    exit(0)
 end
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-# It sets up the process.
-# The process is registered and checked with #CheckerProcessUniqueness
-# class.
+## It sets up the process.
+## The process is registered and checked with #CheckerProcessUniqueness
+## class.
 def init  
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true, nil) 
    if @locker.isRunning == true then
@@ -312,33 +309,32 @@ def init
    end  
    # Register in lock file the daemon
    @locker.setRunning
-   @incomingDir = CTC::ReadInterfaceConfig.instance.getIncomingDir(@entity)
+   @incomingDir = ReadConfigIncoming.instance.getIncomingDir(@entity)
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def body
    puts "Polling #{@entity} Interface"
    
-   @entityConfig  = CTC::ReadInterfaceConfig.instance
+   @entityConfig  = ReadInterfaceConfig.instance
    bRegisterDir   = @entityConfig.registerDirContent?(@entity)
    
    # GOCEPMF-SPR-008 DCC must be able to track file availability without
    # download them
    bRetrieveFiles = @entityConfig.retrieveDirContent?(@entity)
    
-   #----------------------------------------------
+   ## ----------------------------------------------
    if bRegisterDir == false or @listOnly == true and @isNoDB == false then
       puts
       puts "File Tracking  is disabled"
    end
-   #----------------------------------------------   
+   ## ----------------------------------------------   
 
    if bRetrieveFiles == false or @listOnly == true then
       puts
       puts "File Retrieval is disabled"
    end
     
-
    if @listUnknown == true then
       puts
       puts "List of Unknown files:" 
@@ -350,7 +346,6 @@ def body
       puts
       exit(0)
    end
-
 
    # Track new files
 	if (@createReceipt == true) or (bRegisterDir == true) or (@listOnly == true) then
@@ -393,8 +388,8 @@ def body
       end
 	end
 
-   #----------------------------------------------
-   # Retrieve new files   
+   ## ----------------------------------------------
+   ## Retrieve new files   
    event  = CTC::EventManager.new
    if @isDebugMode == true then
       event.setDebugMode
@@ -446,21 +441,24 @@ def body
       end
       ## ---------------------------------------------------
 
-      # Now, "nominal" dissemination is performed in DEC_ReceiverFromInterface
-      # for each file received. But we want the possibility to try again the inbox
-      # in case some files are placed there from previous polling
+      ## Now, "nominal" dissemination is performed in DEC_ReceiverFromInterface
+      ## for each file received. But we want the possibility to try again the inbox
+      ## in case some files are placed there from previous polling
 
-      # 20160907 - dissemination is only activated if new files have been downloaded
-      # Disseminate files retrieved to In-Trays
-#      if bNewFiles == true and @listOnly == false then
+      ## 20160907 - dissemination is only activated if new files have been downloaded
+      ## Disseminate files retrieved to In-Trays
+
       if @listOnly == false and @isNoIntray == false and bNewFiles == true then
          deliverer = FileDeliverer2InTrays.new
-# 	      if @isDebugMode == true then
-# 	         deliverer.setDebugMode
-# 	      end
+ 	      if @isDebugMode == true then
+ 	         deliverer.setDebugMode
+ 	      end
          @logger.info("Dissemination of previous files received from #{@entity}")
 	      deliverer.deliver(@entity)         
-      end	
+      end
+      
+      ## ---------------------------------------------------
+      
    end
    #----------------------------------------------
    
