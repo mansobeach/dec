@@ -135,58 +135,6 @@ class ReadConfigOutgoing
    ## -------------------------------------------------------------
 
 
-   ## -----------------------------------------------------------
-   
-   ## Old name however API is respected wrt previous versions
-   ## regardless the fact that DIM semantic is obsolete
-   def getDIMCompress(name)
-      @@arrIntrays.each{|dim|
-         if name == dim[:name] then
-            return dim[:compress]
-         end
-      }
-      return false
-
-   end
-   ## -------------------------------------------------------------
-   
-   # Get the In-Tray directory for a given DIM Name
-   # It returns the InTray Directory if present, otherwise false
-   def getDIMInTray(name)
-      
-      # ------------------------------------------
-      # 20170601 
-      # Super - dirty patch to support compression
-      # Depending on who is invoking this method, parameter can be a String
-      # or a Hash which carries whether such DIM name is to be compressed
-      
-      dimName = ""
-      
-      if name.class.to_s == "Hash" then
-         name.each_key{|key| dimName = key}
-      else
-         dimName = name
-      end
-      # ------------------------------------------
-      
-      @@arrIntrays.each{|dim|
-         if dimName == dim[:name] then
-            return expandPathValue(dim[:directory])
-         end
-      }
-      return false
-   end
-   ## -------------------------------------------------------------
-   
-   # It returns true if the given name exists as a DIM
-   def existDim?(name)
-      @@arrIntrays.each{|dim|
-         if dim[:name] == name then
-            return true
-         end
-      }
-      return false
-   end
    ## -------------------------------------------------------------
    
    def getEntitiesSendingIncomingFileType(fileType)

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+ <xs:include schemaLocation="./common_types.xsd"/>
+
+ <xs:simpleType name="compressType">
+   <xs:restriction base="xs:string">
+     <xs:enumeration value="7Z"/>
+     <xs:enumeration value="TAR"/>
+     <xs:enumeration value="ZIP"/>
+     <xs:enumeration value="TGZ"/>
+     <xs:enumeration value="GZIP"/>
+     <xs:enumeration value="COMPRESS"/>
+     <xs:enumeration value="UNPACK"/>
+     <xs:enumeration value="UNPACK_HDR"/>
+     <xs:enumeration value="UNPACK_DBL"/>
+     <xs:enumeration value="NONE"/>
+   </xs:restriction>
+ </xs:simpleType>
+
+ <xs:simpleType name="DeliveryMethodsType">
+  <xs:restriction base="xs:string">
+   <xs:pattern value="[(EMAIL)|(FTP)|(MAILBODY)]+(;EMAIL|;FTP|;MAILBODY)*"/>
+  </xs:restriction>
+ </xs:simpleType>
+
+ <xs:complexType name="InterfaceOutgoingType">
+   <xs:attribute name="Name"              type="SimpleAcronymType"   use="required"/>
+   <xs:attribute name="Compress"          type="compressType"        use="required"/>
+   <xs:attribute name="DeliveryMethods"   type="DeliveryMethodsType" use="required"/>
+   <xs:attribute name="CleanUpAge"        type="xs:positiveInteger"/>
+ </xs:complexType> 
+
+ <xs:complexType name="DirectoryType">
+   <xs:simpleContent>
+     <xs:extension base="xs:string">
+       <xs:attribute name="DepthSearch" type="posIntType" use="required"/>
+     </xs:extension>
+   </xs:simpleContent>
+ </xs:complexType>
+
+ <xs:complexType name="DownloadDirsType">
+  <xs:sequence minOccurs="0">
+   <xs:element name="Directory" type="DirectoryType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="InterfaceDefType">
+  <xs:sequence>
+   <xs:element name="Name"             type="xs:string"/>
+   <xs:element name="LocalInbox"       type="xs:string"/>
+   <xs:element name="DownloadDirs"     type="DownloadDirsType"/>
+  </xs:sequence>
+ </xs:complexType>
+
+  <xs:complexType name="ListInterfacesType">
+   <xs:sequence>
+    <xs:element name="Interface" type="InterfaceDefType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+
+ <xs:complexType name="FromListType">
+  <xs:sequence>
+   <xs:element name="Interface" type="SimpleAcronymType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileReceivedType">
+  <xs:sequence>
+   <xs:element name="Description"   type="xs:string"/>
+   <xs:element name="FromList"      type="FromListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="xs:string" use="required"/>
+ </xs:complexType>
+
+ <xs:complexType name="FileDisseminationType">
+  <xs:sequence>
+   <xs:element name="HardLink" type="BooleanType"/>
+   <xs:element name="ToList" type="ToListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="xs:string" use="required"/>
+ </xs:complexType>
+
+  <xs:complexType name="ListFilesType">
+   <xs:sequence>
+    <xs:element name="File" type="FileReceivedType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ListFilesDisseminatedType">
+   <xs:sequence>
+    <xs:element name="File" type="FileDisseminationType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+
+ <xs:complexType name="IntrayType">
+  <xs:sequence>
+   <xs:element name="Name"       type="SimpleAcronymType"/>
+   <xs:element name="Directory"  type="xs:string"/>
+   <xs:element name="Compress"   type="xs:string" minOccurs="0" maxOccurs="1" />
+  </xs:sequence>
+ </xs:complexType>
+
+  <xs:complexType name="ListIntrayType">
+   <xs:sequence>
+    <xs:element name="Intray" type="IntrayType" maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+
+ <xs:complexType name="ToListType">
+  <xs:sequence>
+   <xs:element name="Intray" type="SimpleAcronymType" maxOccurs="unbounded"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="FileType">
+  <xs:sequence>
+   <xs:element name="HardLink" type="BooleanType"/>
+   <xs:element name="ToList" type="ToListType"/>
+  </xs:sequence>
+  <xs:attribute name="Type" type="xs:string" use="required"/>
+ </xs:complexType>
+
+  <xs:complexType name="DisseminationRulesType">
+   <xs:sequence>
+    <xs:element name="ListIntrays"           type="ListIntrayType"                     maxOccurs="unbounded"/>
+    <xs:element name="ListFilesDisseminated" type="ListFilesDisseminatedType"          maxOccurs="unbounded"/>
+   </xs:sequence>
+  </xs:complexType>
+
+ <xs:element name="Config">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="ListInterfaces"           type="ListInterfacesType"           maxOccurs="1"/>
+    <xs:element name="ListFiles"                type="ListFilesType"                maxOccurs="1"/>
+    <xs:element name="DisseminationRules"       type="DisseminationRulesType"       maxOccurs="1"/>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+</xs:schema>

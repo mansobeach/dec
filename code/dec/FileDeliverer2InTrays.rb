@@ -19,11 +19,11 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/CommandLauncher'
 require 'cuc/DirUtils'
 require 'cuc/PackageUtils'
-require 'ctc/EventManager'
 require 'cuc/EE_ReadFileName'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
+require 'dec/EventManager'
 
  # This class moves all files from the I/Fs local inboxes
  # to the configured In-Trays  
@@ -426,7 +426,7 @@ private
                arrParam << hParam1
                arrParam << hParam2
                
-               event  = CTC::EventManager.new
+               event  = EventManager.new
       
                if @isDebugMode == true then
                   event.setDebugMode
@@ -466,7 +466,7 @@ private
                   
                   @logger.info("#{file} has been disseminated into #{targetDir}")
                   
-                  event  = CTC::EventManager.new
+                  event  = EventManager.new
       
                   if @isDebugMode == true then
                      event.setDebugMode
@@ -506,7 +506,7 @@ private
                else
                   @logger.info("#{file} has been disseminated into #{targetDir}")
                   
-                  event  = CTC::EventManager.new
+                  event  = EventManager.new
       
                   if @isDebugMode == true then
                      event.setDebugMode
@@ -536,8 +536,8 @@ private
       
       dimsName.each{|dim|
       
-         inTray   = @dimConfig.getDIMInTray(dim)
-         compress = @dimConfig.getDIMCompress(dim)
+         inTray   = @dimConfig.getInTrayDir(dim)
+         compress = @dimConfig.getInTrayCompress(dim)
 
          if compress == nil then
             @logger.debug("No Compression #{dim} - #{file}")

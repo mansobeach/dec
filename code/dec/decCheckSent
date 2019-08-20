@@ -42,6 +42,7 @@ require 'getoptlong'
 require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
                                    
 ## MAIN script function
 def main
@@ -168,7 +169,7 @@ def main
                               entConf[:port],
                               entConf[:user],
                               entConf[:password],
-                              entConf[:uploadDir],
+                              ReadConfigOutgoing.instance.getUploadDir(@entity),
                               nil,   
                               nil)
    else
@@ -176,7 +177,7 @@ def main
                                   entConf[:port],
                                   entConf[:user],
                                   @batchFile,
-                                  "cd #{entConf[:uploadDir]}",
+                                  "cd #{ReadConfigOutgoing.instance.getUploadDir(@entity)}",
                                   nil,
                                   nil)
       cmd = self.createSftpCommand(entConf[:hostname],
@@ -213,14 +214,14 @@ def main
                               entConf[:port],
                               entConf[:user],
                               entConf[:password],
-                              entConf[:uploadTemp],   
+                              ReadConfigOutgoing.instance.getUploadTemp(@entity),   
                               "CS*")
    else
       cmd = self.createSftpCommand(entConf[:hostname],
                                   entConf[:port],
                                   entConf[:user],
                                   @batchFile,
-                                  "cd #{entConf[:uploadTemp]}",
+                                  "cd #{ReadConfigOutgoing.instance.getUploadTemp(@entity)}",
                                   nil,
                                   nil)
       cmd = self.createSftpCommand(entConf[:hostname],
@@ -269,8 +270,8 @@ def showInterfaceConfig(entity)
    puts "port         -> #{entity[:port]}"
    puts "user         -> #{entity[:user]}"
    puts "password     -> #{entity[:password]}"
-   puts "upload dir   -> #{entity[:uploadDir]}"
-   puts "upload tmp   -> #{entity[:uploadTemp]}"
+   puts "upload dir   -> #{ReadConfigOutgoing.instance.getUploadDir(@entity)}"
+   puts "upload tmp   -> #{ReadConfigOutgoing.instance.getUploadTemp(@entity)}"
    puts
 end
 ## ---------------------------------------------------------

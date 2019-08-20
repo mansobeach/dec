@@ -26,10 +26,9 @@ namespace :dec do
    ## DEC Config files
    
    @arrConfigFiles = [\
-      "interfaces.xml",\
-      "ft_incoming_files.xml",\
-      "ft_outgoing_files.xml",\
-      "files2InTrays.xml",\
+      "dec_interfaces.xml",\
+      "dec_incoming_files.xml",\
+      "dec_outgoing_files.xml",\
       "ft_mail_config.xml",\
       "dec_log_config.xml",\
       "dec_config.xml"]
@@ -131,9 +130,9 @@ namespace :dec do
          cp "config/#{file}", filename = "#{path}/#{prefix}#{file}"
       }
    end
-   # --------------------------------------------------------------------
+   ## --------------------------------------------------------------------
 
-   # --------------------------------------------------------------------
+   ## --------------------------------------------------------------------
 
    desc "load DEC configuration package"
 
@@ -153,7 +152,6 @@ namespace :dec do
          cp filename, "config/#{file}"
       }
    end
-   
    ## ----------------------------------------------------------------
 
    ## ----------------------------------------------------------------

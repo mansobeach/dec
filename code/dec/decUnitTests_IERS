@@ -20,6 +20,7 @@ require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
 
 # Preconditions:
 # 1 - setup 

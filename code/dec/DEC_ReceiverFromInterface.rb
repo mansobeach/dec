@@ -30,14 +30,14 @@ require 'ctc/ListWriterUnknown'
 require 'ctc/ListWriterDelivery'
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
-require 'ctc/CheckerInterfaceConfig'
-require 'ctc/EventManager'
 require 'ctc/LocalInterfaceHandler'
-require 'dcc/EntityContentWriter'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
+require 'dec/EventManager'
+require 'dec/EntityContentWriter'
+require 'dec/CheckerInterfaceConfig'
 
 module DEC
 
@@ -82,7 +82,7 @@ class DEC_ReceiverFromInterface
 			exit(99)
       end
 
-      checker     = CTC::CheckerInterfaceConfig.new(entity, true, false)
+      checker     = CheckerInterfaceConfig.new(entity, true, false)
       
       if @isDebugMode == true then
          checker.setDebugMode
@@ -101,6 +101,7 @@ class DEC_ReceiverFromInterface
       @entityConfig     = ReadInterfaceConfig.instance
       @protocol         = @entityConfig.getProtocol(@entity)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
+      @ftpserver[:arrDownloadDirs] = ReadConfigIncoming.instance.getDownloadDirs(@entity)
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
       ## -------------------------------------
@@ -154,9 +155,9 @@ class DEC_ReceiverFromInterface
    end
    ## -------------------------------------------------------------
    
-   # Check whether there are new files waiting.
-   # * Returns true if there are new files availables.
-   # * Otherwise returns false.
+   ## Check whether there are new files waiting.
+   ## * Returns true if there are new files availables.
+   ## * Otherwise returns false.
    def check4NewFiles(forCheck = false)
       cmd   = ""
       perf  = ""
@@ -296,7 +297,7 @@ class DEC_ReceiverFromInterface
       }
       return
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def getNonSecureFileList(bPassive)
       @newArrFile    = Array.new
@@ -328,7 +329,7 @@ class DEC_ReceiverFromInterface
       arrElements = @ftpserver[:arrDownloadDirs]
 
       arrElements.each{|element|
-         
+                  
          @remotePath = element[:directory]
          @maxDepth   = element[:depthSearch]
 
@@ -339,7 +340,9 @@ class DEC_ReceiverFromInterface
          end
 
          if @isDebugMode == true then
-            puts "Polling #{@remotePath}"
+            puts
+            puts "Polling directory => #{@remotePath}"
+            puts
          end
          
          begin
@@ -370,7 +373,7 @@ class DEC_ReceiverFromInterface
       @ftp.close
       return @newArrFile
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def exploreNonSecureTree(relativePath)
       arrTmp  = relativePath.split(" ")
@@ -883,7 +886,7 @@ private
          
          @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F with size #{size} bytes")
 
-         event  = CTC::EventManager.new
+         event  = EventManager.new
          
          if @isDebugMode == true then
             event.setDebugMode
@@ -1036,7 +1039,7 @@ private
             return true
          end
 
-         event  = CTC::EventManager.new
+         event  = EventManager.new
          
          if @isDebugMode == true then
             event.setDebugMode
@@ -1482,10 +1485,7 @@ private
                end
             end                     
          end
-         
-#          puts "PEDO"
-#          exit
-         
+                  
          if @pollingSize != nil and num_filesToRetrieve >= @pollingSize.to_i then
          	break
          end         

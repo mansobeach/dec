@@ -61,15 +61,15 @@ require 'getoptlong'
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
 require 'cuc/Log4rLoggerFactory'
-require 'ctc/ReadInterfaceConfig'
+
 require 'ctc/ListWriterDelivery'
-require 'ctc/EventManager'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
 require 'dec/DEC_Environment'
 require 'dec/DEC_ReceiverFromInterface'
 require 'dec/FileDeliverer2InTrays'
-
+require 'dec/EventManager'
 
 @entity          = ""
 
@@ -390,7 +390,7 @@ def body
 
    ## ----------------------------------------------
    ## Retrieve new files   
-   event  = CTC::EventManager.new
+   event  = EventManager.new
    if @isDebugMode == true then
       event.setDebugMode
    end

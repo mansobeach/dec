@@ -79,11 +79,14 @@ class DEC_FileSender
       end
 
       @ftReadConf    = ReadInterfaceConfig.instance
-      @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
       txparams       = @ftReadConf.getTXRXParams(@entity)
       @delay         = @ftReadConf.getLoopDelay(@entity).to_i
       @loops         = @ftReadConf.getLoopRetries(@entity).to_i
       @retries       = @ftReadConf.getImmediateRetries(@entity).to_i
+      @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
+      @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
+      @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
+           
       @sender        = CTC::FileSender.new(@ftpserver, protocol)
       
       if isDebug == true then

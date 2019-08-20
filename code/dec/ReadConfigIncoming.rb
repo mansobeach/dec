@@ -214,7 +214,7 @@ class ReadConfigIncoming
          return arrDirs
       end
       arrDims.each{|dim|
-         intray = getDIMInTray(dim)
+         intray = getInTrayDir(dim)
          if intray == false then
             puts "ERROR in #{@@configFile} file !"
             puts "#{dim} is not declared in the DIM_List"
@@ -222,7 +222,7 @@ class ReadConfigIncoming
             puts
             exit(99)
          end
-         arrDirs << getDIMInTray(dim)
+         arrDirs << getInTrayDir(dim)
       }
       return arrDirs      
    end

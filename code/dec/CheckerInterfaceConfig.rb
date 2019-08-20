@@ -24,10 +24,10 @@ require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerFTPConfig'
 require 'ctc/CheckerLocalConfig'
-require 'ctc/EventManager'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
 require 'dec/ReadConfigOutgoing'
+require 'dec/EventManager'
 
 module DEC
 

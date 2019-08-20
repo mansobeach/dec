@@ -22,7 +22,7 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.10dev"
+   @@version = "1.0.10RC1"
    
    ## -----------------------------------------------------------------
    
@@ -31,6 +31,7 @@ module DEC
           new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
           new dec_outgoing_files.xml deprecates ft_outgoing_files.xml\n\
           Earth Explorer / Earth Observation file-types are deprecated\n\
+          support to multiple log4r outputters\n\
           unit tests updated to verify the PUSH mode to send files",
       "1.0.9"  =>    "decUnitTests support batchmode to avoid prompting for confirmation", \
       "1.0.8"  =>    "decListener command line flags fixed", \

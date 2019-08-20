@@ -16,15 +16,12 @@ Gem::Specification.new do |s|
                   Dir['code/ctc/*.rb'] + \
                   Dir['code/dec/*.rb'] + \
                   Dir['schemas/*.xsd'] + \
-                  Dir['config/interfaces.xml'] + \
-                  Dir['config/ft_incoming_files.xml'] + \
-                  Dir['config/ft_outgoing_files.xml'] + \
+                  Dir['config/dec_interfaces.xml'] + \
+                  Dir['config/dec_outgoing_files.xml'] + \
                   Dir['config/ft_mail_config.xml'] + \
                   Dir['config/dec_log_config.xml'] + \
                   Dir['config/dec_config.xml'] + \
-                  Dir['config/dcc_config.xml'] + \
-                  Dir['config/ddc_config.xml'] + \
-                  Dir['config/files2InTrays.xml'] + \
+                  Dir['config/dec_incoming_files.xml'] + \
                   Dir['config/oper/*.xml'] + \
                   Dir['config/profile_dec'] # + \
 

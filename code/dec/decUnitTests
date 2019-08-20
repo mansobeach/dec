@@ -193,8 +193,6 @@ class DECTestCase < Test::Unit::TestCase
       
       @@conf.wrapper_load_config_development
       
-      @path = "#{ENV['MINARC_BASE']}/code/dec"
-
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
@@ -251,7 +249,7 @@ class DECTestCase < Test::Unit::TestCase
             
             if x.upcase.include?("LOCALHOST") then
                @@arrDownloadFiles.each{|filename|
-                  puts filename
+                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
                   system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
                }
             end
@@ -368,6 +366,10 @@ class DECTestCase < Test::Unit::TestCase
       puts conf.getIncomingDir("LOCALHOST_NOT_SECURE")
       puts conf.getIncomingDir("LOCALHOST_SECURE")
       puts conf.getIncomingDir("IERS")
+      puts
+      puts conf.getDownloadDirs("LOCALHOST_NOT_SECURE")
+      puts
+      puts conf.getDownloadDirs("LOCALHOST_SECURE")
       puts
       arr = conf.getEntitiesSendingIncomingFileName("S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ")
       puts arr

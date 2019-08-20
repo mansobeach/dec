@@ -62,7 +62,6 @@ require 'getoptlong'
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
-require 'ctc/EventManager'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
@@ -70,6 +69,7 @@ require 'dec/DEC_Environment'
 require 'dec/DEC_FileSender'
 require 'dec/DEC_BodyMailer'
 require 'dec/DEC_FileMailer'
+require 'dec/EventManager'
 
 
 @isDebugMode      = false                  
@@ -478,7 +478,7 @@ def deliverByFTP
    bSent       = true
    bFirst      = true
    
-   event  = CTC::EventManager.new
+   event  = EventManager.new
 
    if @isDebugMode == true then
       event.setDebugMode
