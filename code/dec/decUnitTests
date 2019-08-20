@@ -639,16 +639,20 @@ class DECTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), cmd)
 
-      cmd = "decCheckConfig -a --nodb"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
-      cmd = "decCheckConfig -a"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
+      ## -----------------------------------------
+      ## test are not performed for the flag --all since
+      ## the access slot to the interface IERS is not granted
+      ## resulting into error
+#      cmd = "decCheckConfig -a --nodb"
+#      puts cmd
+#      puts
+#      assert(system(cmd), cmd)
+#
+#      cmd = "decCheckConfig -a"
+#      puts cmd
+#      puts
+#      assert(system(cmd), cmd)
+      ## -----------------------------------------
 #      
 #      # only mail delivery is checked so far
 #      cmd = "decCheckConfig -m"
