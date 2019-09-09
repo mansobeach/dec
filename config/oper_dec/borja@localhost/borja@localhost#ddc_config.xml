@@ -25,12 +25,14 @@
       <Report Name="DeliveredFiles">
          <Enabled>true</Enabled>
          <Desc>List of Files Delivered</Desc>
+         <FileClass>OPER</FileClass>
          <FileType>DEC_F_SENT</FileType>
       </Report>
 
       <Report Name="EmergencyDeliveredFiles">
          <Enabled>false</Enabled>
          <Desc>List of Files Delivered in Emergency Mode</Desc>
+         <FileClass>OPER</FileClass>
          <FileType>MMPF_FT_EM</FileType>
       </Report>
 

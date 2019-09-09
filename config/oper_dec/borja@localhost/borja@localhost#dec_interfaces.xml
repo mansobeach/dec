@@ -5,8 +5,6 @@
  
   <Interface Name="LOCALHOST_SECURE">
     <Desc>Localhost Interface</Desc>
-    <IncomingDir>/tmp/dec/if_localhost_secure_in_basket</IncomingDir>
-    <OutgoingDir>/tmp/dec/if_localhost_secure_out_basket</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -23,11 +21,6 @@
 	   <Port>22</Port>      
       <User>borja</User>
       <Pass>N/A</Pass>
-      <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
-      <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
-      <DownloadDirs>
-		   <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download</Directory>
-      </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -69,8 +62,6 @@
  
   <Interface Name="LOCALHOST_NOT_SECURE">
     <Desc>Localhost Interface</Desc>
-    <IncomingDir>/tmp/dec/if_localhost_notsecure_in_basket</IncomingDir>
-    <OutgoingDir>/tmp/dec/if_localhost_notsecure_out_basket</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -87,11 +78,6 @@
 	   <Port>21</Port>      
       <User>borja</User>
       <Pass>perrillo</Pass>
-      <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
-      <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
-      <DownloadDirs>
-		   <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_notsecure/download</Directory>
-      </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -131,8 +117,6 @@
  
   <Interface Name="IERS">
     <Desc>IERS Interface</Desc>
-    <IncomingDir>$HOME/Sandbox/dec/dec_basket</IncomingDir>
-    <OutgoingDir>$HOME</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -149,11 +133,6 @@
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		   <Directory DepthSearch="0">ser7</Directory>
-      </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>

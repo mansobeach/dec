@@ -29,6 +29,7 @@
       <Report Name="RetrievedFiles">
          <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
          <FileType>DEC_F_RECV</FileType>
       </Report>
 
@@ -36,6 +37,7 @@
       <Report Name="UnknownFiles">
          <Enabled>false</Enabled>
          <Desc>List of unknown Files present</Desc>
+         <FileClass>OPER</FileClass>
          <FileType>DCC_UFILES</FileType>
       </Report>
 

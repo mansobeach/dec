@@ -3,16 +3,29 @@
    <DIM_List>
       <DIM>
          <Name>ALL</Name>
-         <IntrayDir>/Users/borja/Projects/dec/data/intray/ALL</IntrayDir>
+         <IntrayDir>/tmp/dec_local_dissemination/ALL</IntrayDir>
       </DIM>
       <DIM>
          <Name>REP_ARC_TCI</Name>
-         <IntrayDir>/Users/borja/Projects/dec/data/intray/REP_ARC_TCI</IntrayDir>
+         <IntrayDir>/tmp/dec_local_dissemination/REP_ARC_TCI</IntrayDir>
          <Compress>7z</Compress>
       </DIM>
+      <DIM>
+         <Name>DEC_REPORTS</Name>
+         <IntrayDir>/tmp/dec_local_dissemination/DEC_REPORTS</IntrayDir>
+      </DIM>      
    </DIM_List>
    
    <FileList>
+   
+      <!--
+      
+      SORT Rules ranking from more restrictive ones
+      
+      Only the first rule matching the file pattern is applied
+      
+      -->
+   
       <!--
       <File Type="S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.*">
       -->
@@ -54,6 +67,38 @@
          </ToList>
       </File>
       
+      <!--
+            DEC Reports
+      -->
+      
+      <File Type="*DEC_F_SENT*">
+         <HardLink>true</HardLink>
+         <ToList>
+            <DIM>DEC_REPORTS</DIM>
+         </ToList>
+      </File>
+
+      <File Type="*DEC_F_RECV*">
+         <HardLink>true</HardLink>
+         <ToList>
+            <DIM>DEC_REPORTS</DIM>
+         </ToList>
+      </File>
+
+      <File Type="*DEC_UFILES*">
+         <HardLink>true</HardLink>
+         <ToList>
+            <DIM>DEC_REPORTS</DIM>
+         </ToList>
+      </File>
+
+      <File Type="*DEMERGENCY*">
+         <HardLink>true</HardLink>
+         <ToList>
+            <DIM>DEC_REPORTS</DIM>
+         </ToList>
+      </File>
+
 
    </FileList>
 </DisseminationParams>
