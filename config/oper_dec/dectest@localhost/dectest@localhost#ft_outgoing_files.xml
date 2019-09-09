@@ -17,7 +17,7 @@
    <File Type="S2B*">
       <Description></Description>
       <ToList>
-         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="LOCALHOST_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 

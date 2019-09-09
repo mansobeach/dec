@@ -30,6 +30,7 @@
          <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
          <FileType>DEC_F_RECV</FileType>
+         <FileClass>OPER</FileClass>
       </Report>
 
 <!--  -->

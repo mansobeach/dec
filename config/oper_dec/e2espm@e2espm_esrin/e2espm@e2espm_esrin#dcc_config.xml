@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>MCF Facility</Name>
+      <Id>MCF</Id>
+      <Mission>MCF</Mission>
+   </Project>
+   <Filters>
+      <IncomingFilters>
+         <Filter>[^_][^_]*</Filter>
+      </IncomingFilters>
+   </Filters>
+   <Options>
+      <DownloadDirs>true</DownloadDirs>
+      <DeleteDuplicated>true</DeleteDuplicated>
+   </Options>  
+   <SatPrefix>MAC</SatPrefix>
+      <Reports>
+      <Report Name="RetrievedFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Retrieved</Desc>
+         <FileType>REP_DMC_IN</FileType>
+      </Report>
+      <Report Name="UnknownFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Unknown</Desc>
+         <FileType>REP_DMC_KO</FileType>
+		 <UnkDestDir>$DIMROOT/Unexpected/input</UnkDestDir>
+      </Report>
+   </Reports>
+</Configuration>
+

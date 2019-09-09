@@ -26,6 +26,7 @@
          <Enabled>true</Enabled>
          <Desc>List of Files Delivered</Desc>
          <FileType>DEC_F_SENT</FileType>
+         <FileClass>OPER</FileClass>
       </Report>
 
       <Report Name="EmergencyDeliveredFiles">

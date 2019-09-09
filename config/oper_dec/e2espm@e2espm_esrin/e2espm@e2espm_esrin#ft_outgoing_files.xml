@@ -1,0 +1,566 @@
+<FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ft_outgoing.xsd">
+  <File Type="*_REP_EOBTRN_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2ELTD_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EACQ_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EMPL_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EMPX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EL0C_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EL0B_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EL1C_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EL1T_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EL1B_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATINX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2ECAT_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MISCON_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_LLTIPR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_OCPAOC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_AOCPRO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_QUATIM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_QUADIS_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PROTIM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2ETIM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EAVA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EAVB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MEMEVO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MEMEVB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_HKTCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_HKTWOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_HKTWOB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_SADCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PODCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L0DCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L1ACIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L1BCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L1CCIR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_HKTARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_SADARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L0DARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L1BARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_L1CARC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_INGSTA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_INGVAL_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_ARCSUM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_ARSUMP_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_SUCINS_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_SUCINV_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PROWOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DARCCO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATCOM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_SATCOM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PREORW_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DFEPCO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DFEPCB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_EDRSLC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMLIN_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMLIB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PDTIMA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PDTIMB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMSTA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMSTB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMEDR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TIMEDB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DAMCOM_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MMFUCO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DAGSAC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PROWOS_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_PROWOB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_EDRPRO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_EDRPRB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EDAR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EDAB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EDAX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EDBX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATIDS_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_ACQSCH_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_ACQSCB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MACOPR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MACOPB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TLEWOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_TLEWOB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DHUSCO_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EACB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MONMAC_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_MISCOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_LOSTDA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_LOSTDB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_LOSTAX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_LOSTBX_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DFEWOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DFEWOB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_STAWOR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_STAWOB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATALA_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_DATALB_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="WEBSERVER_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+  <File Type="*_REP_E2EMPR_*.*">
+    <Description/>
+    <ToList>
+      <Interface Name="CDS_out" Compress="ZIP" DeliveryMethods="FTP"/>
+    </ToList>
+  </File>
+</FileList>

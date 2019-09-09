@@ -3,11 +3,74 @@
 
   <!-- ================================================================ -->
  
+  <Interface Name="LOCALHOST_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <IncomingDir>/tmp/dec/if_localhost_secure_in_basket</IncomingDir>
+    <OutgoingDir>/tmp/dec/if_localhost_secure_out_basket</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <FTPServer>
+      <Protocol>SFTP</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>22</Port>      
+      <User>borja</User>
+      <Pass>N/A</Pass>
+      <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
+      <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
+      <DownloadDirs>
+		   <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
 
+  <!-- ================================================================ --> 
+
+  <!-- ================================================================ -->
+ 
   <Interface Name="LOCALHOST_NOT_SECURE">
     <Desc>Localhost Interface</Desc>
-    <IncomingDir>/tmp/dec/if_localhost_in_basket</IncomingDir>
-    <OutgoingDir>/tmp/dec/if_localhost_out_basket</OutgoingDir>
+    <IncomingDir>/tmp/dec/if_localhost_notsecure_in_basket</IncomingDir>
+    <OutgoingDir>/tmp/dec/if_localhost_notsecure_out_basket</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -22,12 +85,12 @@
       <Protocol>FTP</Protocol>
       <Hostname>localhost</Hostname>
 	   <Port>21</Port>      
-      <User>dectest</User>
-      <Pass>dectest</Pass>
-      <UploadDir>Sandbox/dec/dec_sent_file</UploadDir>
-      <UploadTemp>Sandbox/dec/dec_sent_file/_TEMP_</UploadTemp>
+      <User>borja</User>
+      <Pass>perrillo</Pass>
+      <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
+      <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
       <DownloadDirs>
-		   <Directory DepthSearch="0">Sandbox/dec/interface_local_us/</Directory>
+		   <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_notsecure/download</Directory>
       </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>

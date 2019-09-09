@@ -1,0 +1,523 @@
+<Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Interface Name="REDISTRIBUTION">
+    <Desc>Redistribution intray</Desc>
+    <IncomingDir>$DCC_REDISTRIBUTION_INTRAY</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>0</ImmediateRetries>
+      <LoopRetries>0</LoopRetries>
+      <LoopDelay unit="s">0</LoopDelay>
+      <PollingInterval unit="s">100</PollingInterval>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <UploadDir>.</UploadDir>
+      <UploadTemp>.</UploadTemp>
+      <DownloadDirs>
+        <Directory DepthSearch="0">/tmp/.dummy</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <CleanUpFreq Unit="s">0</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>contact@esa.int</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>contact@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="dc_dispatcher_event -e OnReceiveNewFilesOK -i Redistribution"/>
+    </Events>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="MCF_in">
+    <Desc>Internal Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/MCF_in/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/MCF_in/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize>30</PollingSize>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/MCF/from_MCF</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events><Event Name="OnReceiveNewFilesOK" executeCmd="dc_tray_polling -i /opt/facilities/common-function/data/dmc/local/e2espm//intrays/MPI_ingestion/input -c &quot;e2espm_report_MPI_alerts -f &quot;"/>"
+         </Events>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="MCF_out">
+    <Desc>Internal Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/MCF_out/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/MCF_out/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize/>
+    </TXRXParams>
+    <FTPServer>
+      <Hostname/>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/MCF/from_MCF</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag/>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events><Event Name="OnReceiveNewFilesOK" executeCmd="dc_tray_polling -i /opt/facilities/common-function/data/dmc/local/e2espm//intrays/MPI_ingestion/input -c &quot;e2espm_report_MPI_alerts -f &quot;"/>"
+         </Events>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="INTRAY_in">
+    <Desc>Intray Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/INTRAY_in/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/INTRAY_in/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize>30</PollingSize>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/e2espm/from_e2espm</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="INTRAY_out">
+    <Desc>Intray Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/INTRAY_out/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/INTRAY_out/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize/>
+    </TXRXParams>
+    <FTPServer>
+      <Hostname/>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/e2espm/from_e2espm</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag/>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="INTERNALINTRAY_in">
+    <Desc>Intray Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/INTERNALINTRAY_in/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/INTERNALINTRAY_in/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize>30</PollingSize>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/e2espm/to_e2espm</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events><Event Name="OnReceiveNewFilesOK" executeCmd="dc_tray_polling -i /opt/facilities/common-function/data/dmc/local/e2espm//intrays/MPI_ingestion/input -c &quot;e2espm_report_MPI_alerts -f &quot;"/>"
+         </Events>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="INTERNALINTRAY_out">
+    <Desc>Intray Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/INTERNALINTRAY_out/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/INTERNALINTRAY_out/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries/>
+      <LoopRetries/>
+      <LoopDelay unit="s"/>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize/>
+    </TXRXParams>
+    <FTPServer>
+      <Hostname/>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir/>
+      <UploadTemp/>
+      <DownloadDirs>
+        <Directory DepthSearch="0">$FTPROOT/e2espm/to_e2espm</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <CompressFlag/>
+      <DeleteFlag>true</DeleteFlag>
+      <CleanUpFreq Unit="s"/>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events><Event Name="OnReceiveNewFilesOK" executeCmd="dc_tray_polling -i /opt/facilities/common-function/data/dmc/local/e2espm//intrays/MPI_ingestion/input -c &quot;e2espm_report_MPI_alerts -f &quot;"/>"
+         </Events>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="WEBSERVER_in">
+    <Desc>WebServer Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/WEBSERVER_in/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/WEBSERVER_in/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>3</LoopRetries>
+      <LoopDelay unit="s">3</LoopDelay>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize/>
+    </TXRXParams>
+    <FTPServer>
+      <Hostname/>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir>$HCI_CONF_PATH/../file_validation/[sub(9,10)]/[sub(25,4)]/[sub(29,2)]</UploadDir>
+      <UploadTemp>$HCI_CONF_PATH/../file_validation/.temporary</UploadTemp>
+      <DownloadDirs/>
+      <RegisterContentFlag/>
+      <RetrieveContentFlag/>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag/>
+      <CleanUpFreq Unit="s">0</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="WEBSERVER_out">
+    <Desc>WebServer Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/WEBSERVER_out/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/WEBSERVER_out/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>3</LoopRetries>
+      <LoopDelay unit="s">3</LoopDelay>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize>10</PollingSize>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir>$HCI_CONF_PATH/../file_validation/[sub(9,10)]/[sub(25,4)]/[sub(29,2)]</UploadDir>
+      <UploadTemp>$HCI_CONF_PATH/../file_validation/.temporary</UploadTemp>
+      <DownloadDirs>
+        <Directory DepthSearch="0"/>
+      </DownloadDirs>
+      <RegisterContentFlag/>
+      <RetrieveContentFlag/>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag/>
+      <CleanUpFreq Unit="s">0</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="CDS_in">
+    <Desc>CDS Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/CDS_in/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/CDS_in/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>3</LoopRetries>
+      <LoopDelay unit="s">3</LoopDelay>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize/>
+    </TXRXParams>
+    <FTPServer>
+      <Hostname/>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir>/data/e2espm/OUT/to_CDS</UploadDir>
+      <UploadTemp>/data/e2espm/OUT/to_CDS/.temporary</UploadTemp>
+      <DownloadDirs/>
+      <RegisterContentFlag/>
+      <RetrieveContentFlag/>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag/>
+      <CleanUpFreq Unit="s">0</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+  <Interface Name="CDS_out">
+    <Desc>CDS Interface</Desc>
+    <IncomingDir>$DCC_LOCAL_ROOT/CDS_out/in</IncomingDir>
+    <OutgoingDir>$DCC_LOCAL_ROOT/CDS_out/out</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>3</LoopRetries>
+      <LoopDelay unit="s">3</LoopDelay>
+      <PollingInterval unit="s">120</PollingInterval>
+      <PollingSize>10</PollingSize>
+    </TXRXParams>
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port/>
+      <User/>
+      <Pass/>
+      <UploadDir>/data/e2espm/OUT/to_CDS</UploadDir>
+      <UploadTemp>/data/e2espm/OUT/to_CDS/.temporary</UploadTemp>
+      <DownloadDirs>
+        <Directory DepthSearch="0"/>
+      </DownloadDirs>
+      <RegisterContentFlag/>
+      <RetrieveContentFlag/>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag/>
+      <CleanUpFreq Unit="s">0</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events/>
+    <ContactInfo>
+      <Name>Mr </Name>
+      <EMail>contact@esa.int</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>ESA</Address>
+    </ContactInfo>
+  </Interface>
+</Interfaces>

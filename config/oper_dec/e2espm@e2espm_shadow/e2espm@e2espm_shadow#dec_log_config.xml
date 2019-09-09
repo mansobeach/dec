@@ -1,0 +1,20 @@
+<log4r_config>
+ 
+ <pre_config>
+  <parameter name="mainLoggerName" value="DEC"/>
+ </pre_config>
+ 
+ <outputter name="dec_log">
+  <type>FileOutputter</type>
+  <filename>/opt/facilities/common-function/data/dc/local/e2espm/log/dec_log_file.log</filename>
+  <formatter type="PatternFormatter" pattern="%5l : (%d) %c.#{moduleName} : %m">
+     <date_pattern>%d-%b-%Y %H:%M:%S</date_pattern>
+  </formatter>
+  <trunc>false</trunc>
+ </outputter>
+
+ <logger name="DEC" level="INFO" trace="false">
+  <outputter>dec_log</outputter>
+ </logger>
+ 
+</log4r_config>

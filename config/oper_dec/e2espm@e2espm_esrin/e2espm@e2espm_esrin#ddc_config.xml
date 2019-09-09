@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
    <Project>
-      <Name>METEO CASALE BEACH</Name>
-      <Id>METEO</Id>
-      <Mission>METEO-CASALE</Mission>
+      <Name>MCF Facility</Name>
+      <Id>MCF</Id>
+      <Mission>MCF</Mission>
    </Project>
    <Filters>
       <OutgoingFilters>
@@ -12,23 +12,26 @@
    </Filters>
    <Options>
       <DeleteSourceFiles>true</DeleteSourceFiles>
+      <UploadFilePrefix>__</UploadFilePrefix>
+      <UploadDirs>true</UploadDirs>
    </Options>
-   <GlobalOutbox>$HOME/Projects/weather/data/archive</GlobalOutbox>
-   <SatPrefix>AE</SatPrefix>
-   <ReportDir>$HOME/Projects/weather/data/archive</ReportDir>
+   <GlobalOutbox>$DMC_CONF_PATH/../tmp</GlobalOutbox>
+   <SatPrefix>MAC</SatPrefix>
+      <ReportDir>$DC_CONF_PATH/../tmp</ReportDir>
    <Reports>
       
       <Report Name="DeliveredFiles">
          <Enabled>false</Enabled>
          <Desc>List of Files Delivered</Desc>
-         <FileType>MMPF_FTOUT</FileType>
+         <FileType>REP_DMCOUT</FileType>
       </Report>
 
       <Report Name="EmergencyDeliveredFiles">
          <Enabled>false</Enabled>
          <Desc>List of Files Delivered in Emergency Mode</Desc>
-         <FileType>MMPF_FT_EM</FileType>
+         <FileType>REP_DMC_EM</FileType>
       </Report>
 
    </Reports>
 </Configuration>
+

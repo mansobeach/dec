@@ -1,0 +1,985 @@
+<DisseminationParams>
+  <DIM_List>
+    <DIM>
+      <Name>z09_Reroute</Name>
+      <IntrayDir>$DDC_ARCHIVE_ROOT</IntrayDir>
+    </DIM>
+    <DIM>
+      <Name>z09_Validation_intray</Name>
+      <IntrayDir>$WEB_VALIDATION_INTRAY</IntrayDir>
+    </DIM>
+    <DIM>
+      <Name>Automatic_Ingestion</Name>
+      <IntrayDir>/opt/facilities/common-function/data/dmc/local/e2espm//intrays/Automatic_ingestion/input</IntrayDir>
+    </DIM>
+    <DIM>
+      <Name>DMC_Ingestion</Name>
+      <IntrayDir>/opt/facilities/common-function/data/dmc/local/e2espm//intrays/DMC_ingestion/input</IntrayDir>
+    </DIM>
+    <DIM>
+      <Name>SDM_Ingestion</Name>
+      <IntrayDir>/opt/facilities/common-function/data/dmc/local/e2espm//intrays/SDM_ingestion/Input</IntrayDir>
+    </DIM>
+    <DIM>
+      <Name>MPI_Ingestion</Name>
+      <IntrayDir>/opt/facilities/common-function/data/dmc/local/e2espm//intrays/MPI_ingestion/input</IntrayDir>
+    </DIM>
+  </DIM_List>
+  <FileList>
+    <File Type="*.xfbd">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>SDM_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MTD_SAFL1B_????_????????T??????_????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPOLQC_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDPC__????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>Automatic_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDAX__????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPAI___????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_METARC_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_METDEL_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_METUP__????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDAM?_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_ARC____????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2__OPER_REP_ARCTCI_ESA__???????????????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPLTA__????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPLTAS_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_METUPD_MPC__????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_METUPD_PDMC_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL_SP????_PDMC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL_PP????_PDMC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL_FS????_PDMC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL__NPPF__*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL__NPIF__*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_STNACQ_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_MPL_ORBPRE_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_PASS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_SRA_EDRS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP__CHF___????????T??????_????????T??????_????.TGZ">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP__CHF___????????T??????_????????T??????_????.EOF">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDC___????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDAGB_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_OPDAGS_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP__SUP___????????T??????_????????T??????_????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_STNUNV_????_????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_REP_EDRUNV_EDRS__????????T??????_V????????T??????_????????T??????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="S2?_????_TLM__REQ_?_????????T??????_????????T??????_????.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_EOBTRN_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2ELTD_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EACQ_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EMPL_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EMPX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EL0C_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EL0B_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EL1C_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EL1T_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EL1B_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATINX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2ECAT_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MISCON_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_LLTIPR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_OCPAOC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_AOCPRO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_QUATIM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_QUADIS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PROTIM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2ETIM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EAVA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EAVB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MEMEVO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MEMEVB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_HKTCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_HKTWOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_HKTWOB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_SADCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PODCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L0DCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L1ACIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L1BCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L1CCIR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_HKTARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_SADARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L0DARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L1BARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_L1CARC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_INGSTA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_INGVAL_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_ARCSUM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_ARSUMP_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_SUCINS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_SUCINV_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PROWOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DARCCO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATCOM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_SATCOM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PREORW_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DFEPCO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DFEPCB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_EDRSLC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMLIN_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMLIB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PDTIMA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PDTIMB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMSTA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMSTB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMEDR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TIMEDB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DAMCOM_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MMFUCO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DAGSAC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PROWOS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_PROWOB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_EDRPRO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_EDRPRB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EDAR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EDAB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EDAX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EDBX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATIDS_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_ACQSCH_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_ACQSCB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MACOPR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MACOPB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TLEWOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_TLEWOB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DHUSCO_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EACB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MONMAC_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_MISCOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_LOSTDA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_LOSTDB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_LOSTAX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_LOSTBX_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DFEWOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DFEWOB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_STAWOR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_STAWOB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATALA_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_DATALB_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+        <DIM>MPI_Ingestion</DIM>
+      </ToList>
+    </File>
+    <File Type="*_REP_E2EMPR_*.*">
+      <HardLink>False</HardLink>
+      <ToList>
+        <DIM>z09_Reroute</DIM>
+        <DIM>DMC_Ingestion</DIM>
+      </ToList>
+    </File>
+  </FileList>
+</DisseminationParams>

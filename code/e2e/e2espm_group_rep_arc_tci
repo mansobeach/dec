@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# Script to group the REP_ARC files for TCIs
+
+USAGE="Wrong input parameters. Usage: `basename $0` -i input_dir -o output_dir [-o output_dir]\n
+   -i input directory where the REP_ARC for TCIs are stored\n
+   -o output directory (it can be specified several times) where the generated grouped file is stored
+"
+
+# Directory where the REP_ARC for TCIs are stored
+INPUT_DIR=""
+OUTPUT_DIRs=""
+
+while getopts i:o:? name
+do
+  case $name in
+      i)   INPUT_DIR="$OPTARG";;
+      o)   OUTPUT_DIRs+=" ""$OPTARG";;
+      ?)   echo -e $USAGE
+          exit 2;;
+  esac
+done
+
+if [ ! -d "$INPUT_DIR" ]; then
+   echo -e $USAGE
+   exit 2
+fi
+
+if [ "$OUTPUT_DIRs" == "" ]; then
+   echo -e $USAGE
+   exit 2
+fi
+
+for output_dir in $OUTPUT_DIRs
+do
+	if [ ! -d "$output_dir" ]; then
+	   echo -e $USAGE
+	   exit 2
+	fi
+done
+
+INGESTION_TIME=`date +%Y%m%dT%H%M%S`
+# Temporal file for the output
+XMLFILE=`mktemp`
+chmod 664 $XMLFILE
+
+FILES=$INPUT_DIR/*.EOF
+
+echo '<list_of_tci>' > $XMLFILE
+
+varEmpty=true
+
+for file in $FILES
+do
+   [ -f "$file" ] || continue
+   
+   # echo "processing $file"
+
+   varEmpty=false   
+
+   tci_name=$(xml_grep --text_only 'archive:Pdi-id' $file)
+   tci_size=$(xml_grep --text_only 'Data_Size' $file)
+   tci_centre=$(xml_grep --text_only '/Earth_Explorer_File/Earth_Explorer_Header/Fixed_Header/Source/System' $file)
+   tci_date=$(xml_grep --text_only 'Creation_Date' $file)
+   echo '<tci><name>'"$tci_name"'</name><size>'"$tci_size"'</size><centre>'"$tci_centre"'</centre><date>'"$tci_date"'</date></tci>' >> $XMLFILE
+
+   rm -f $file
+
+done
+
+echo '</list_of_tci>' >> $XMLFILE
+
+if [ "$varEmpty" = false ] ; then
+	for output_dir in $OUTPUT_DIRs
+	do
+		cp -f $XMLFILE $output_dir"/S2__OPER_REP_ARCTCI_ESA__"$INGESTION_TIME"_V"$INGESTION_TIME"_"$INGESTION_TIME".xml";
+	done
+fi
+
+# Remove temporal file
+rm $XMLFILE

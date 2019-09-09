@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MailParams>
+ 
+  <SendMailParams>
+    <SMTPServer>127.0.0.1</SMTPServer>
+    <Port>25</Port>
+    <User>noreplay@dmc.esa.int</User>
+    <Pass>N/A</Pass>
+  </SendMailParams>
+ 
+  <ReceiveMailParams>
+    <POPServer>127.0.0.1</POPServer>
+    <Port>110</Port>
+    <EMail>SuperDupont@baguette.net</EMail>
+    <User>noreplay@dmc.esa.int</User>
+    <Pass>N/A</Pass>
+  </ReceiveMailParams>  
+
+</MailParams>
