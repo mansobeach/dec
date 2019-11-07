@@ -58,7 +58,7 @@ require 'arc/ReadMinarcConfig'
 require 'arc/MINARC_DatabaseModel'
 
 # Global variables
-@dateLastModification = "$Date: 2008/09/24 10:18:26 $"   
+@dateLastModification = "$Date$"   
 
 
 # MAIN script function
@@ -122,6 +122,7 @@ def main
       exit(0)
    end
 
+   # -----------------
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("minArcCleanup", "#{ENV['MINARC_CONFIG']}/minarc_log_config.xml")
    if @isDebugMode then

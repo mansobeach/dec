@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# ===Ruby source for #ReadOrchestratorConfig class          
+# === Ruby source for #ReadOrchestratorConfig class          
 #
 # === Written by DEIMOS Space S.L.
 #
-# === MDS-LEGOS => ORC Component
+# ===  ORC Component
 # 
-# CVS: $Id: ReadOrchestratorConfig.rb,v 1.11 2009/03/24 16:35:22 decdev Exp $
+# $Id: ReadOrchestratorConfig.rb,v 1.11 2009/03/24 16:35:22 decdev Exp $
 #
 # This class processes $ORC_CONFIG/orchestratorConfigFile.xml
 # which contain all the configuration related to the ORCHESTRATOR
@@ -25,34 +25,33 @@ class ReadOrchestratorConfig
    include Singleton
    include REXML
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Class constructor
+   ## Class constructor
    def initialize
       @isDebugMode        = true
       checkModuleIntegrity
       defineStructs
       loadData
    end
-   #-------------------------------------------------------------
-
-
-   # Set the flag for debugging on
+   ## -----------------------------------------------------------
+   
+   ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "ReadOrchestratorConfig debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Reload data from files
-   # This is the method called when the config files are modified
+   ## Reload data from files
+   ## This is the method called when the config files are modified
    def update
 #      if @isDebugMode then
 #         print("\nReceived Notification that the config files have changed\n")
 #      end
       loadData
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 
    #----------------Data Provider Methods------------------------
@@ -333,12 +332,12 @@ class ReadOrchestratorConfig
    def getAllMiscelanea
       return @@miscelanea
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def getPollingDir
       return @@miscelanea[:pollingDir]
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def getSchedulingFreq
       return @@miscelanea[:schedulingFreq]

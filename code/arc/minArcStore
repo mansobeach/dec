@@ -88,11 +88,12 @@
 #
 #
 # == Usage
-# minArcStore -f <full_path_file> [-t type-of-the-file] [-d] [-L <full_path_location>
+# minArcStore -f <full_path_file> [-t type-of-the-file] [-d] [-L <full_path_location> | <suffix> ]
 #     --noserver                 operations are performed locally
 #     --file <full_path_file>    it specifies the file to be archived
 #     --type <file-type>         it specifies the file-type of the file to be archived
-#     --Location <path>          it specifies the path desired archive location
+#     --Location <path>|<suffix> it specifies the path desired archive location
+#                                either it specifies the suffix used to build the final filename
 #     --delete                   enable delete flag
 #     --move                     it moves the file to the Archive
 #     --update                   it updates the Archive with new file if previously present

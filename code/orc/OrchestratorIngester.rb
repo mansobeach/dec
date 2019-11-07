@@ -68,8 +68,8 @@ class OrchestratorIngester
       if @ftReadConf.isValidFileType?(polledFile) == true then
          @newFile = true
          cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
-         @logger.info("#{cmd}")
          retVal   = system(cmd)
+         @logger.info("#{cmd} => #{$?}")
                   
          if retVal == true then               
             bIngested = true
@@ -87,7 +87,7 @@ class OrchestratorIngester
             end
          else
             bIngested = false
-            @logger.warn("Could not Archive #{polledFile} File on MINARC")
+            @logger.error("Could not Archive #{polledFile} File on MINARC")
          end  
       else
          bIngested = false

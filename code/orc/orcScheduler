@@ -49,9 +49,9 @@ require 'cuc/CommandLauncher'
 
 require 'orc/ORC_Environment'
 
-
-
-# MAIN script function
+## ---------------------------------------------------------
+##
+## MAIN script function
 def main
 
    include ORC
@@ -102,8 +102,7 @@ def main
       }
       exit(0)
    end
-          
-     
+
    if @command == "" and @bQueueFiles == false then
       usage
       exit(66)
@@ -114,7 +113,7 @@ def main
       exit(66)
    end 
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    if self.checkEnvironmentEssential == false then
       puts
@@ -123,11 +122,10 @@ def main
       exit(99)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    require 'orc/OrchestratorScheduler'
 
-   # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("SC", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
@@ -143,9 +141,9 @@ def main
 		exit(99)
    end
 
-   # ---------------------------------------------
-   
-   # Just queue files present in Pending2QueueFiles
+   ## ---------------------------------------------
+   ##
+   ## Just queue files present in Pending2QueueFiles
    if @bQueueFiles == true then
       puts "Queueing new files"
       @OrcSch = ORC::OrchestratorScheduler.new(@logger, @isDebugMode)
@@ -157,9 +155,7 @@ def main
       @OrcSch.enqueuePendingFiles
       exit(0)
    end
-   # ---------------------------------------------
-
-
+   ## ---------------------------------------------
    case @command
       when "start"   then start         
       when "stop"    then stopScheduler
@@ -170,9 +166,14 @@ def main
       usage
       exit(99)
    end
+   ## ---------------------------------------------
+   
+end 
 
-end #main
-#-------------------------------------------------------------
+## main
+##
+## -------------------------------------------------------------
+
 private
 
 
@@ -196,82 +197,83 @@ def start
    listener.run
    
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
+##
 
-
-# It stops the Orchestrator scheduler 
-   def stopScheduler
-      checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
-      pid     = checker.getRunningPID
+## It stops the Orchestrator scheduler 
+   
+def stopScheduler
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   pid     = checker.getRunningPID
       
-      if pid == false then
+   if pid == false then
          msg = "There was no #{File.basename(File.expand_path(__FILE__))} daemon running"
          puts msg
          @logger.debug(msg)
          exit(99)
-      else
+   else
          @logger.debug("Sending signal SIGKILL to Process #{pid} to kill the SchedulerComponent")
          Process.kill(9, pid.to_i)         
 	      checker.release
          puts "Scheduler Stopped"
-      end
    end
-#-------------------------------------------------------------
-
-
-# It restarts the Orchestrator scheduler 
-   def restart
-      checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
-      pid     = checker.getRunningPID
+end
+## -------------------------------------------------------------
+##
+##
+## It restarts the Orchestrator scheduler 
+def restart
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   pid     = checker.getRunningPID
       
-      if pid == false then
-         msg = "There was no #{File.basename(File.expand_path(__FILE__))} daemon running"
-         puts msg
-         @logger.debug(msg)
-         exit(99)
-      else
-         @logger.debug("Sending signal SIGTERM to Process #{pid} to kill schedulerComponent")
-         Process.kill(15, pid.to_i)
-         @OrcSch = ORC::OrchestratorScheduler.new(@logger, @isDebugMode)
-      end
+   if pid == false then
+      msg = "There was no #{File.basename(File.expand_path(__FILE__))} daemon running"
+      puts msg
+      @logger.debug(msg)
+      exit(99)
+   else
+      @logger.debug("Sending signal SIGTERM to Process #{pid} to kill schedulerComponent")
+      Process.kill(15, pid.to_i)
+      @OrcSch = ORC::OrchestratorScheduler.new(@logger, @isDebugMode)
    end
-#-------------------------------------------------------------
-
-
-# It checks whether the Listener is running or not
-   def status   
-       checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
-       if @isDebugMode == true then
-          checker.setDebugMode
-       end
-       ret = checker.isRunning
-       if ret == false then
-          msg = "There was no #{File.basename(File.expand_path(__FILE__))} daemon running"
-          puts msg
-          @logger.debug(msg)
-       else
-          puts "There is a daemon running for the SchedulerComponent with pid #{checker.getRunningPID}"
-          @logger.debug("There is a daemon running for the SchedulerComponent with pid #{checker.getRunningPID}")           
-       end
+end
+## -----------------------------------------------------------
+##
+## It checks whether the Listener is running or not
+   
+def status   
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
+   if @isDebugMode == true then
+      checker.setDebugMode
    end
-#-------------------------------------------------------------
-
-
-# Check that everything needed by the class is present.
-   def checkModuleIntegrity
-      bDefined = true     
-      if !ENV['ORC_CONFIG'] then
-         puts "\nORC_CONFIG environment variable not defined !\n"
-         bDefined = false
-      end      
-      if bDefined == false then
-         puts "\nError in schedulerComponent.rb::checkModuleIntegrity :-(\n\n"
-         exit(99)
-      end                             
+   ret = checker.isRunning
+       
+   if ret == false then
+      msg = "There was no #{File.basename(File.expand_path(__FILE__))} daemon running"
+      puts msg
+      @logger.debug(msg)
+   else
+      puts "There is a daemon running for the SchedulerComponent with pid #{checker.getRunningPID}"
+      @logger.debug("There is a daemon running for the SchedulerComponent with pid #{checker.getRunningPID}")           
    end
-#-------------------------------------------------------------
+end
+## -------------------------------------------------------------
+##
+## Check that everything needed by the class is present.
+def checkModuleIntegrity
+   bDefined = true     
+   if !ENV['ORC_CONFIG'] then
+      puts "\nORC_CONFIG environment variable not defined !\n"
+      bDefined = false
+   end      
+   if bDefined == false then
+      puts "\nError in schedulerComponent.rb::checkModuleIntegrity :-(\n\n"
+      exit(99)
+   end                             
+end
+## -------------------------------------------------------------
 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -285,11 +287,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

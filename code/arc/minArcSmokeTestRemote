@@ -108,7 +108,7 @@ class MINARC_SmokeTestRemote < Test::Unit::TestCase
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       Dir.chdir(prevDir)
 
-      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d"
+      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} -d -D"
       puts cmd
       assert(system(cmd), "minArcStore")
    end

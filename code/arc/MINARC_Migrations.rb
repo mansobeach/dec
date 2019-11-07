@@ -34,7 +34,7 @@ ActiveRecord::Base.establish_connection(
 
 ## =====================================================================
 
-class CreateUsers < ActiveRecord::Migration[5.1]
+class CreateUsers < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:users) do |t|
          t.column :name,                :string,  :limit => 255, :unique => true
@@ -52,7 +52,7 @@ end
 
 ## =====================================================================
 
-class CreateArchivedFiles < ActiveRecord::Migration[5.1]
+class CreateArchivedFiles < ActiveRecord::Migration[6.0]
    
    def self.up
       create_table(:archived_files) do |t|
@@ -83,9 +83,9 @@ class CreateArchivedFiles < ActiveRecord::Migration[5.1]
    end
 end
 
-# =====================================================================
+## ===================================================================
 
-class AddNewColumns < ActiveRecord::Migration[5.1]
+class AddNewColumns < ActiveRecord::Migration[6.0]
 
   def change
      # size_original of the file before archive in bytes
@@ -108,25 +108,25 @@ class AddNewColumns < ActiveRecord::Migration[5.1]
   
 end
 
-# =====================================================================
+## ===================================================================
 
-class AddIndexFilename < ActiveRecord::Migration[5.1]
+class AddIndexFilename < ActiveRecord::Migration[6.0]
    def change
       add_index :archived_files, :filename
    end
 end
 
-# =====================================================================
+## ===================================================================
 
-class AddIndexName < ActiveRecord::Migration[5.1]
+class AddIndexName < ActiveRecord::Migration[6.0]
    def change
       add_index :archived_files, :name
    end
 end
 
-# =====================================================================
+## ===================================================================
 
-class ModifySizeColumns < ActiveRecord::Migration[5.1]
+class ModifySizeColumns < ActiveRecord::Migration[6.0]
    def change
       change_column :archived_files, :size,           :bigint
       change_column :archived_files, :size_in_disk,   :bigint
@@ -135,30 +135,30 @@ class ModifySizeColumns < ActiveRecord::Migration[5.1]
    end
 end
 
-# =====================================================================
+## ===================================================================
 
 class Export2CSV
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------
    
-   # Class contructor
+   ## Class contructor
    def initialize
       checkModuleIntegrity
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "Export2CSV debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
 
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true
       bCheckOK = true
@@ -177,9 +177,9 @@ private
       @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
       return
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 
 end
 
-#=====================================================================
+## ===================================================================

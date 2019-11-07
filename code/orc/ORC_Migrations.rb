@@ -4,11 +4,11 @@
 #
 # === Ruby source for #ORC_Migrations class
 #
-# === Written by DEIMOS Space S.L. (rell)
+# === Written by DEIMOS Space S.L. (bolf)
 #
 # === ORC Component
 # 
-# CVS: $Id: ORC_Migrations.rb,v 1.8 2009/03/18 11:13:48 decdev Exp $
+# $Id: ORC_Migrations.rb,v 1.8 2009/03/18 11:13:48 decdev Exp $
 #
 # module ORC
 #
@@ -36,7 +36,7 @@ ActiveRecord::Base.establish_connection(
 
 #=====================================================================
 
-class CreateTriggerProducts < ActiveRecord::Migration[5.1]
+class CreateTriggerProducts < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:trigger_products) do |t|
          t.column :filename,            :string,  :limit => 100
@@ -56,13 +56,13 @@ end
 
 #=====================================================================
 
-class CreateOrchestratorQueue < ActiveRecord::Migration[5.1]
+class CreateOrchestratorQueue < ActiveRecord::Migration[6.0]
   
    def self.up
       create_table(:orchestrator_queue, :id => false) do |t|
          t.primary_key :trigger_product_id
       end
-      add_foreign_key :orchestrator_queue, :trigger_product_id, :trigger_products
+      add_foreign_key :orchestrator_queue, :trigger_products
    end
 
    def self.down
@@ -70,16 +70,16 @@ class CreateOrchestratorQueue < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateFailingTriggerProducts < ActiveRecord::Migration[5.1]
+class CreateFailingTriggerProducts < ActiveRecord::Migration[6.0]
    
    def self.up
       create_table(:failing_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :failure_date,      :datetime
       end
-      add_foreign_key :failing_trigger_products, :trigger_product_id, :trigger_products
+      add_foreign_key :failing_trigger_products, :trigger_products
    end
 
    def self.down
@@ -87,16 +87,16 @@ class CreateFailingTriggerProducts < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateSuccessfulTriggerProducts < ActiveRecord::Migration[5.1]
+class CreateSuccessfulTriggerProducts < ActiveRecord::Migration[6.0]
 
    def self.up
       create_table(:successful_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :success_date,      :datetime
       end
-      add_foreign_key :successful_trigger_products, :trigger_product_id, :trigger_products
+      add_foreign_key :successful_trigger_products, :trigger_products 
    end
 
    def self.down
@@ -104,16 +104,16 @@ class CreateSuccessfulTriggerProducts < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateDiscardedTriggerProducts < ActiveRecord::Migration[5.1]
+class CreateDiscardedTriggerProducts < ActiveRecord::Migration[6.0]
 
    def self.up
       create_table(:discarded_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :discarded_date,      :datetime
       end
-      add_foreign_key :discarded_trigger_products, :trigger_product_id, :trigger_products
+      add_foreign_key :discarded_trigger_products, :trigger_products
    end
 
    def self.down
@@ -123,14 +123,14 @@ end
 
 ## =====================================================================
 
-class CreateObsoleteTriggerProducts < ActiveRecord::Migration[5.1]
+class CreateObsoleteTriggerProducts < ActiveRecord::Migration[6.0]
 
    def self.up
       create_table(:obsolete_trigger_products, :id => false) do |t|
          t.primary_key :trigger_product_id
          t.column      :obsolete_date,      :datetime
       end
-      add_foreign_key :obsolete_trigger_products, :trigger_product_id, :trigger_products
+      add_foreign_key :obsolete_trigger_products, :trigger_products
    end
 
    def self.down
@@ -140,14 +140,14 @@ end
 
 ## =====================================================================
 
-class CreatePending2QueueFiles < ActiveRecord::Migration[5.1]
+class CreatePending2QueueFiles < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:pending2queue_files, :id => false) do |t|
          t.primary_key  :trigger_product_id
          t.column       :filename,            :string,  :limit => 100
          t.column       :detection_date,      :datetime
       end
-      add_foreign_key :pending2queue_files, :trigger_product_id, :trigger_products
+      add_foreign_key :pending2queue_files, :trigger_products
    end
 
    def self.down
@@ -157,7 +157,7 @@ end
 
 ## =====================================================================
 
-#class CreatePending2QueueFiles_OLD_TO_BE_REMOVED < ActiveRecord::Migration[5.1]
+#class CreatePending2QueueFiles_OLD_TO_BE_REMOVED < ActiveRecord::Migration[6.0]
 #   def self.up
 #      create_table(:pending2queue_files) do |t|
 #         t.column :filename,            :string,  :limit => 100
@@ -193,7 +193,7 @@ end
 #    end
 # end
 
-class CreateProductionTimelines < ActiveRecord::Migration[5.1]
+class CreateProductionTimelines < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:production_timelines) do |t|
          t.column :file_type,      :string
@@ -208,7 +208,7 @@ class CreateProductionTimelines < ActiveRecord::Migration[5.1]
 end
 #=====================================================================
 
-class CreateRunningJobs < ActiveRecord::Migration[5.1]
+class CreateRunningJobs < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:running_jobs) do |t|
          t.column :proc_id,     :integer
@@ -221,12 +221,12 @@ class CreateRunningJobs < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## =====================================================================
 
 
 #=====================================================================
 
-class CreateOrchestratorMessages < ActiveRecord::Migration[5.1]
+class CreateOrchestratorMessages < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:orchestrator_messages) do |t|
          t.column :source_type,      :string,   :limit => 100
@@ -244,7 +244,7 @@ end
 
 #=====================================================================
 
-class CreateMessageParameters < ActiveRecord::Migration[5.1]
+class CreateMessageParameters < ActiveRecord::Migration[6.0]
 
    def self.up
       create_table(:message_parameters) do |t|
@@ -252,7 +252,7 @@ class CreateMessageParameters < ActiveRecord::Migration[5.1]
          t.column :param_name,              :string,   :limit => 100
          t.column :param_value,             :string,   :limit => 150
       end
-      add_foreign_key :message_parameters, :orchestrator_message_id, :orchestrator_messages
+      add_foreign_key :message_parameters, :orchestrator_messages
    end
 
    def self.down

@@ -16,6 +16,7 @@
 
 module ARC
    API_URL_VERSION            = '/dec/arc/version'
+   API_URL_STORE_OLD          = '/OLD/dec/arc/minArcStore'
    API_URL_STORE              = '/dec/arc/minArcStore'
    API_URL_RETRIEVE           = '/dec/arc/minArcRetrieve'
    API_URL_LIST_FILENAME      = '/dec/arc/minArcList/filename'
@@ -27,5 +28,6 @@ module ARC
    API_URL_STAT_GLOBAL        = '/dec/arc/minArcStatGlobal.json'
    API_RESOURCE_NOT_FOUND     = 404
    API_RESOURCE_FOUND         = 200
+   API_RESOURCE_CREATED       = 201
    API_RESOURCE_ERROR         = 500
 end

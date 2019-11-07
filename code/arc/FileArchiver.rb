@@ -132,6 +132,7 @@ class FileArchiver
                size           = nameDecoder.size
                size_in_disk   = nameDecoder.size_in_disk
                size_original  = nameDecoder.size_original
+               newFilename    = nameDecoder.filename
                
                puts "Detected #{filename} for bulk import"
                               
@@ -265,6 +266,12 @@ class FileArchiver
    def remote_archive(full_path_file, fileType, bDelete, destination)
       arc = ARC::MINARC_Client.new(@isDebugMode)
       ret = arc.storeFile(full_path_file, fileType, bDelete, destination)
+
+      # ------------------------------------------
+      #
+      # 20190620 - TO BE DEVELOPED
+      # The name of the file can be modified at the server
+      # therefore an update is needed here
 
       if ret == true then
          puts "(Archived) : " << File.basename(full_path_file, ".*")
@@ -453,6 +460,7 @@ class FileArchiver
                size           = nameDecoder.size
                size_in_disk   = nameDecoder.size_in_disk
                size_original  = nameDecoder.size_original
+               newFilename    = nameDecoder.filename
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -493,7 +501,9 @@ class FileArchiver
       end
       
       if retVal == true then
-         puts "(Archived) : " << fileName
+         # code commented since plug-ins can now modify the final filename used for the archive
+         # puts "(Archived) : " << fileName
+         puts "(Archived) : " << newFilename
       end
       
       
@@ -580,10 +590,10 @@ private
       end
 
    end
-   #--------------------------------------------------------
+   # -------------------------------------------------------
    
    
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    def inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
   
@@ -660,13 +670,14 @@ private
    
    end
   
+   # -------------------------------------------------------
   
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
    # Performs the file archiving.
    # Copies/Moves the source file to the proper directory
    # Sets access rights
    # Registers the file in the database
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
    def store(  
                full_path_filename, 
                type, 

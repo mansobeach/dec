@@ -22,14 +22,16 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.31dev"
+   @@version = "1.0.32"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.32" =>    "Migration to ActiveRecord 6", \
       "1.0.31" =>    "Check of tool dependencies done in the unit tests\n\
-          Environment variables for tests defined inminarc_test.env\n\
-          Dotenv gem has been added to the Gemfile", \
+          Environment variables for tests defined in minarc_test.env\n\
+          Dotenv gem has been added to the Gemfile\n\
+          Handler_VIDEO new supports largefiles > 4 GBs\n", \
       "1.0.30" =>    "Integration version with DEC / generic Orchestrator", \
       "1.0.29" =>    "minArcFile new tool to decode filename is included supported by Handler_S2PDGS\n", \
       "1.0.28" =>    "Handler_VIDEO updated to handle mkv (matrioska) files\n", \
@@ -78,7 +80,7 @@ module ARC
 
    @@arrTools = [ \
                   "curl", \
-                  "7z", \
+                  "7za", \
                   "gzip", \
                   "tar", \
                   "zip", \

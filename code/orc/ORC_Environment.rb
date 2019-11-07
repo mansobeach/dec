@@ -24,11 +24,13 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.6"
+   @@version = "0.0.8"
    
    # -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.8"  =>    "fixed S2MPASUP-292 / migration to ActiveRecord 6", \
+      "0.0.7"  =>    "fixed S2MPASUP-277 regarding race conditions when triggering jobs", \
       "0.0.6"  =>    "ingestion parallelised (new configuration ParallelIngestions)", \
       "0.0.5"  =>    "orcQueueUpdate fixed to fit with the new data-model", \
       "0.0.4"  =>    "orcQueueInput bulk mode support of pending triggers\n\
@@ -68,7 +70,7 @@ module ORC
       ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
    end
    
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def load_config_development
       ENV['ORC_DB_ADAPTER']               = "sqlite3"
@@ -79,20 +81,20 @@ module ORC
       ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
    end
    
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def unset_config
       @@arrEnv.each{|vble|
          ENV.delete(vble)
       }
    end
-   # -----------------------------------------------------------------
+   ## -----------------------------------------------------------------
    
    def load_config_production
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_production.env')
       Dotenv.overload(env_file)   
    end 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
@@ -103,7 +105,7 @@ module ORC
       puts "ORC_DATABASE_PASSWORD         => #{ENV['ORC_DATABASE_PASSWORD']}"
       puts "ORC_CONFIG                    => #{ENV['ORC_CONFIG']}"
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
   
    def check_environment
       check_environment_dirs
@@ -114,14 +116,16 @@ module ORC
          return false
       end
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def check_environment_dirs
+      
       checkDirectory(ENV['ORC_TMP'])
       checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
       
       orcConf = ORC::ReadOrchestratorConfig.instance
       
+      checkDirectory(orcConf.getPollingDir)
       checkDirectory(orcConf.getProcWorkingDir)
       checkDirectory(orcConf.getSuccessDir)
       checkDirectory(orcConf.getFailureDir)
@@ -129,14 +133,14 @@ module ORC
       checkDirectory(orcConf.getTmpDir)    
    end
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def createEnvironmentDirs
       checkDirectory(ENV['ORC_TMP'])
       checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
    end
 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def checkEnvironmentEssential
       bCheck = true
@@ -184,14 +188,14 @@ module ORC
       end
       return true
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def printEnvironmentError
       puts "Execution environment not suited for ORC"
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def checkToolDependencies
       
@@ -217,17 +221,14 @@ module ORC
       return true      
    end
    
-   # -----------------------------------------------------------------
-   
-
-   # -----------------------------------------------------------------
-   
+   ## ----------------------------------------------------------------
+      
    
 end # module
 
-# ==============================================================================
+## =============================================================================
 
-# Wrapper to make use within unit tests since it is not possible inherit mixins
+## Wrapper to make use within unit tests since it is not possible inherit mixins
 
 class ORC_Environment
    
@@ -267,4 +268,4 @@ class ORC_Environment
    
 end
 
-# ==============================================================================
+## =============================================================================

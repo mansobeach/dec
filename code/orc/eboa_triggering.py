@@ -48,6 +48,7 @@ def main
    opts = GetoptLong.new(
      ["--file", "-f",	               GetoptLong::REQUIRED_ARGUMENT],
      ["--export-rows",     "-e",       GetoptLong::NO_ARGUMENT],
+     ["--remiendo",     "-r",          GetoptLong::NO_ARGUMENT],
      ["--version", "-v",               GetoptLong::NO_ARGUMENT],
      ["--usage",   "-u",               GetoptLong::NO_ARGUMENT],
      ["--help",            "-h",       GetoptLong::NO_ARGUMENT]

@@ -44,6 +44,8 @@ class HandleDBConnection
       dbUser      = ENV['ORC_DATABASE_USER']
       dbPass      = ENV['ORC_DATABASE_PASSWORD']
 
+   ###   ActiveRecord::Base.clear_active_connections! ###
+
       ActiveRecord::Base.connection.close
 
       ActiveRecord::Base.connection.disconnect!
@@ -58,6 +60,9 @@ class HandleDBConnection
                                           :cast       => false,
                                           :pool       => 30
                                           )
+
+
+
 
       ## ActiveRecord::Base.connection.execute("BEGIN TRANSACTION; END;")
 
@@ -127,7 +132,7 @@ class OrchestratorQueue < ActiveRecord::Base
                :class_name    => "TriggerProduct",
                :foreign_key   => "trigger_product_id"
    
-   # ----------------------------------------------   
+   ## ----------------------------------------------   
    
    def OrchestratorQueue.getAllQueuedByName(filename)
       arrFiles     = Array.new

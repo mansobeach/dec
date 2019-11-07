@@ -494,7 +494,11 @@ def main
    
       if ret == false then
          puts
-         puts "#{File.basename(filename, ".*")} not present in the archive :-|"
+         if @bNoServer == false then
+            puts "#{File.basename(filename, ".*").gsub("%2A", "*")} not present in the archive :-|"
+         else
+            puts "#{File.basename(filename, ".*").gsub("%", "*")} not present in the archive :-|"
+         end
          puts
       end
             

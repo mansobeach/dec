@@ -57,7 +57,10 @@ class ORCTestCase < Test::Unit::TestCase
    
    # --------------------------------------------------------
    
-   Test::Unit.at_start do      
+   Test::Unit.at_start do
+      
+      system("clear")
+        
       puts
       puts "======================================"
       puts "ORC Unit Test Cases"
@@ -135,6 +138,7 @@ class ORCTestCase < Test::Unit::TestCase
          exit(99)
       end
       
+      
       @@conf = MINARC_Environment.new
 
       @@conf.wrapper_load_environment_test
@@ -195,16 +199,16 @@ class ORCTestCase < Test::Unit::TestCase
             
    end
    
-   #--------------------------------------------------------
+   ## ------------------------------------------------------
    
    Test::Unit.at_exit do
       puts "End of ORC tests"
    end
    
-   #--------------------------------------------------------   
+   ## ------------------------------------------------------ 
    
-   # Setup before every test-case
-   #
+   ## Setup before every test-case
+   ##
    def setup
       puts __method__.to_s
       puts
@@ -226,59 +230,24 @@ class ORCTestCase < Test::Unit::TestCase
          puts
          # exit(99)
       end
-#      
-#      cmd = "decConfigInterface2DB -p EXTERNAL"
-#      
-#      ret = system(cmd)
-#      
-#      if ret == false then
-#         puts
-#         puts "Error when adding interface configuration to the database ! :-("
-#         puts
-#         # exit(99)
-#      end
-      
+
    end
-   # --------------------------------------------------------
-   # After every test case
+   ## --------------------------------------------------------
+   ## After every test case
 
    def teardown
       puts __method__.to_s
       puts
       puts "================================================"
       puts "ORC_UnitTests::#{__method__.to_s}"
-      puts
-
-#      @@conf.wrapper_load_config_development
-#      @@conf.wrapper_load_environment_test
-
-#      cmd = "orcManageDB -d"
-#      puts cmd
-#      ret = system(cmd)
-#       
-#      if ret == false then
-#         puts "Error when dropping the orchestrator inventory ! :-("
-#         puts
-#         exit(99)
-#      end
-#
-#      system("minArcDB -c")
-#      
-#      cmd = "minArcPurge -Y"
-#      puts cmd
-#      ret = system(cmd)
-#       
-#      if ret == false then
-#         puts "Error when cleaning the minarc inventory / archive ! :-("
-#         puts
-#         exit(99)
-#      end
-      
-      
+      puts           
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
    def test_commandline_helpers
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
       
       cmd = "orcIngester"
       assert(!system(cmd), cmd)
@@ -329,9 +298,12 @@ class ORCTestCase < Test::Unit::TestCase
 
 
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
    def test_parsers
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
       
       require 'orc/ReadOrchestratorConfig'
       
@@ -483,16 +455,21 @@ class ORCTestCase < Test::Unit::TestCase
       
 
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   def test_train
-     
+   def test_train_slow
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
       puts
-      puts "#{__method__.to_s}"
-      puts
+
+      require 'orc/ReadOrchestratorConfig'
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
      
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
-      system("mkdir -p /tmp/orc_polling_dir/tmp")
       
       system("orcBolg -c stop")
       sleep(5.0)
@@ -509,11 +486,11 @@ class ORCTestCase < Test::Unit::TestCase
    
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/orc_tmp/#{filename}")
-         sleep(5)
+         system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
+         sleep(25)
       }
       
-      sleep(180)
+      sleep(10)
       
       
       cmd = "orcQueueInput -l -Q"
@@ -543,13 +520,95 @@ class ORCTestCase < Test::Unit::TestCase
       puts cmd
       assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
    
-   end
-   # -------------------------------------------------------------
+      system("orcBolg -c stop")
+      sleep(5.0)
 
-   def test_allatonce
+   
+   end
+
+   ## -----------------------------------------------------------
+
+   def test_train
+     
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+
+      require 'orc/ReadOrchestratorConfig'
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
      
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
-      system("mkdir -p /tmp/orc_polling_dir/tmp")
+      
+      system("orcBolg -c stop")
+      sleep(5.0)
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+
+      cmd = "orcBolg -c start -D"
+      assert(system(cmd), cmd)
+   
+      @@arrInputFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
+         sleep(4)
+      }
+      
+      sleep(250)
+      
+      
+      cmd = "orcQueueInput -l -Q"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -F"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+
+      cmd = "orcQueueInput -l -S"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      
+      cmd = "grep ERROR /tmp/dec_orchestrator.log"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
+   
+      system("orcBolg -c stop")
+      sleep(5.0)
+
+   
+   end
+   ## -----------------------------------------------------------
+
+   def test_allatonce
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+     
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+          
+      FileUtils.rm_f("/tmp/dec_orchestrator.log")
       
       system("orcBolg -c stop")
       sleep(5.0)
@@ -563,16 +622,10 @@ class ORCTestCase < Test::Unit::TestCase
       
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/orc_polling_dir/tmp/#{filename}")
+         system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
       }
 
-      
-      require 'orc/ReadOrchestratorConfig'
-      
-      @ftReadConf          = ORC::ReadOrchestratorConfig.instance
-      pollingDir           = @ftReadConf.getPollingDir
-
-      system("mv -f /tmp/orc_polling_dir/tmp/S2* #{pollingDir}")
+      sleep(3.0)
 
       cmd = "orcBolg -c start -D"
       assert(system(cmd), cmd)
@@ -606,13 +659,19 @@ class ORCTestCase < Test::Unit::TestCase
       puts cmd
       assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
 
+      cmd = "orcBolg -c stop"
+      assert(system(cmd), cmd)
 
    end
    
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def test_states
    
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+
       system("orcManageDB -d")
       system("orcManageDB -c")
       
@@ -675,11 +734,13 @@ class ORCTestCase < Test::Unit::TestCase
 
    end
 
-   # -------------------------------------------------------------
-
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def test_command_orcIngester
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
@@ -740,9 +801,13 @@ class ORCTestCase < Test::Unit::TestCase
       
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    def test_command_orcScheduler
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       system("orcBolg -c stop")
       sleep(5.0)
@@ -765,9 +830,14 @@ class ORCTestCase < Test::Unit::TestCase
       
    end
 
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def test_11
+   
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+   
       system("orcManageDB -d")
       system("orcManageDB -c")
 
@@ -786,9 +856,13 @@ class ORCTestCase < Test::Unit::TestCase
 
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def test_command_orcBolg
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       system("orcBolg -c stop")
       sleep(5.0)
@@ -821,11 +895,15 @@ class ORCTestCase < Test::Unit::TestCase
 
       
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    def test_command_orcScheduler2
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
@@ -863,9 +941,13 @@ class ORCTestCase < Test::Unit::TestCase
       assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def test_command_orcScheduler3
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       system("mkdir -p /tmp/orc_polling_dir")
       
@@ -929,12 +1011,14 @@ class ORCTestCase < Test::Unit::TestCase
 
 
    end
-   
-   
-   
-   # -------------------------------------------------------------
+      
+   ## -------------------------------------------------------------
    
    def test_command_orcQueueInputhelpers
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
 
       cmd = "orcQueueInput -l -Q"
       assert(system(cmd), cmd)
@@ -957,11 +1041,14 @@ class ORCTestCase < Test::Unit::TestCase
 
    end   
    
-
-   # --------------------------------------------------------
+   ## --------------------------------------------------------
 
 
    def test_bulk_pending
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
    
       system("orcManageDB -d")
       system("orcManageDB -c")

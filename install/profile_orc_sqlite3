@@ -28,7 +28,7 @@ export MINARC_ARCHIVE_ROOT=$HOME/Sandbox/minarc_root
 
 export MINARC_ARCHIVE_ERROR=$HOME/Sandbox/minarc_root/0.errors
 
-export ORC_CONFIG=$ORC_BASE/config
+export ORC_CONFIG=$HOME/Projects/dec/config
 
 export ORC_TMP=/tmp/orc_tmp
 

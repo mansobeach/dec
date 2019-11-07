@@ -316,7 +316,7 @@ class MINARC_Server < Sinatra::Base
    
       retStr = `#{cmd}`
 
-      if $?.existatus != 0 then
+      if $?.exitstatus != 0 then
          "#{retStr}"
          status API_RESOURCE_ERROR
       end

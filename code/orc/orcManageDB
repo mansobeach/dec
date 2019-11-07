@@ -2,7 +2,7 @@
 
 #
 # == Usage
-# minArcDB --create-tables | --drop-tables
+# orcManageDB --create-tables | --drop-tables
 #     --create-tables   create all minarc required tables
 #     --drop-tables     drops all minarc tables
 #     --Update-tables   performs a migration update of minarc tables
@@ -84,14 +84,14 @@ def main
       exit(0)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    if @bShowUsage == true then
       usage
       exit(0)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    if @bDown and @bUp then
       usage
@@ -103,7 +103,7 @@ def main
       exit(66)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    if self.checkEnvironmentEssential == false then
       puts
@@ -112,7 +112,7 @@ def main
       exit(99)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
 
    require 'orc/ORC_Migrations'
    require 'orc/ORC_DataModel'
@@ -122,10 +122,6 @@ def main
    if @bDown then
       begin
       
-         if TriggerProduct.table_exists?() == true then
-            CreateTriggerProducts.down
-         end
-
          if Pending2QueueFile.table_exists?() == true then
             CreatePending2QueueFiles.down
          end
@@ -154,14 +150,18 @@ def main
             CreateObsoleteTriggerProducts.down
          end
 
-         if OrchestratorMessage.table_exists?() == true then
-            CreateOrchestratorMessages.down
+         if TriggerProduct.table_exists?() == true then
+            CreateTriggerProducts.down
          end
-         
+
          if MessageParameter.table_exists?() == true then
             CreateMessageParameters.down
          end
 
+         if OrchestratorMessage.table_exists?() == true then
+            CreateOrchestratorMessages.down
+         end
+         
          if RunningJob.table_exists?() == true then
             CreateRunningJobs.down
          end
@@ -241,7 +241,7 @@ def main
 
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -255,11 +255,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 
-#=====================================================================
-# Start of the main body
+## ===================================================================
+## Start of the main body
 main
-# End of the main body
-#=====================================================================
+## End of the main body
+## ===================================================================
