@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.6'
+  s.version     = '0.0.8final'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
   
-  s.required_ruby_version = '>= 2.2'
+  s.required_ruby_version = '>= 2.5'
   
   s.files       = Dir['code/orc/*.rb'] + \
                   Dir['code/orc/orcIngester'] + \
@@ -41,6 +41,8 @@ Gem::Specification.new do |s|
   
 
   # ----------------------------------------------
+  
+  # s.add_dependency('activerecord', '~> 6.0')
   
   #s.add_dependency('minarc', '>= 1.0.30a')
   #s.add_runtime_dependency('minarc', '>= 1.0.30')
