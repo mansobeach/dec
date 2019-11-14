@@ -6,7 +6,7 @@
 #
 # = Written by DEIMOS Space S.L. (bolf)
 #
-# = Data Exchange Component -> Data Exchnge Component
+# = Data Exchange Component
 # 
 # Git:
 #   $Id: FileDeliverer2InTrays.rb,v 1.16 2008/07/03 11:38:07 decdev Exp $
@@ -161,11 +161,12 @@ class FileDeliverer2InTrays
 
 					ret = disseminate(file, dir, dimsDirs, hdlinked)
 					
-               # ---------------------------------
+               ## ---------------------------------
                # 20170601 - Patch to compress locally disseminated files               
-               ret = compressFile(dimsName, file)
-               
-               # ---------------------------------
+               if ret == true then
+                  ret = compressFile(dimsName, file)
+               end
+               ## ---------------------------------
                
                # The original file is only deleted if the dissemination has been
                # performed successfully, otherwise it is kept in order to not loose
@@ -524,12 +525,13 @@ private
 		Dir.chdir(prevDir)
       return bReturn
    end
-	#-------------------------------------------------------------
+	# -------------------------------------------------------------
 
-   # -----------------------------------------------------
-   # 20170601 Eventual compression upon local dissemination
-   #
-   #
+   ## -----------------------------------------------------
+   ##
+   ## 20170601 Eventual compression upon local dissemination
+   ##
+   ##
 
    def compressFile(dimsName, file)
       retVal = true         
@@ -577,7 +579,7 @@ private
       # -----------------------------------------------------
       return retVal
    end   
-   #-------------------------------------------------------------   
+   ## -------------------------------------------------------------   
       
 end # class
 

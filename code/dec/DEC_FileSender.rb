@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component
 # 
-# CVS: $Id: DEC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
+# Git: $Id: DEC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
 #
 # Module Data Distributor Component
 # This class performs the file(s) FTP/SFTP delivery to a given Entity.

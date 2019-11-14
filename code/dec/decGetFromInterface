@@ -334,6 +334,8 @@ def body
       puts
       puts "File Retrieval is disabled"
    end
+   
+   ## ----------------------------------------------
     
    if @listUnknown == true then
       puts
@@ -347,7 +349,12 @@ def body
       exit(0)
    end
 
-   # Track new files
+   ## ----------------------------------------------
+
+   ## Track new files
+
+   ## 
+   
 	if (@createReceipt == true) or (bRegisterDir == true) or (@listOnly == true) then
       bNewFiles = @receiver.check4NewFiles(true)
 

@@ -1,31 +1,51 @@
+<!--
+http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
+-->
+
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="METEO"/>
+  <parameter name="mainLoggerName" value="DEC_TEST_NODE_1"/>
  </pre_config>
+
+<!-- ============================================= -->
+
+<outputter name="console"  level="INFO" >
+   <type>StdoutOutputter</type>
+	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+	</formatter>
+</outputter>
+
+<!-- ============================================= -->
  
- <outputter name="meteo_casale_log" level="ERROR">
-      
-      <type>RollingFileOutputter</type>
-      
-      <filename>/tmp/MeteoCasale.log</filename>
-      
-      <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-         <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
-      </formatter>
-      
-      <trunc>false</trunc>
-      
-      <maxsize>5000000</maxsize>
+ <outputter name="dec_log" level="DEBUG">
   
-      <max_backups>3</max_backups>
- 
-      <maxtime>2592000</maxtime>
- 
+  <type>RollingFileOutputter</type>
+
+  <filename>/tmp/DEC.log</filename>
+
+  <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+  </formatter>
+
+  <trunc>false</trunc>
+
+  <maxsize>10000000</maxsize>
+
+  <max_backups>4</max_backups>
+
+  <maxtime>2592000</maxtime>
+
  </outputter>
 
- <logger name="METEO" level="ERROR" trace="false">
-  <outputters>meteo_casale_log</outputters>
+<!-- ============================================= -->
+
+ <logger name="DEC_TEST_NODE_1" level="DEBUG" trace="false">
+   <outputter>console</outputter>
+   <outputter>dec_log</outputter>
  </logger>
+ 
+<!-- ============================================= --> 
  
 </log4r_config>

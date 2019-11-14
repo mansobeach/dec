@@ -22,11 +22,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.10"
+   @@version = "1.0.11"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.11" =>    "Migration to ActiveRecord 6", \
       "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
           new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
           new dec_outgoing_files.xml deprecates ft_outgoing_files.xml\n\

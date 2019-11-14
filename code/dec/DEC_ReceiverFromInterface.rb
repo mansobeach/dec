@@ -30,7 +30,7 @@ require 'ctc/ListWriterUnknown'
 require 'ctc/ListWriterDelivery'
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
-require 'ctc/LocalInterfaceHandler'
+require 'dec/LocalInterfaceHandler'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
@@ -199,7 +199,7 @@ class DEC_ReceiverFromInterface
           
             begin
                
-               @local = CTC::LocalInterfaceHandler.new(@entity, true, false, @decConfig.getDownloadDirs)
+               @local = DEC::LocalInterfaceHandler.new(@entity, true, false, @decConfig.getDownloadDirs)
                
                if @isDebugMode then 
                   @local.setDebugMode
@@ -820,7 +820,10 @@ private
       configDir = nil
          
       if ENV['DEC_CONFIG'] then
-         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}
+      else
+         puts "Fatal ERROR ::DEC_ReceiverFromInterface::checkModuleIntegrity DEC_CONFIG not defined"
+         exit(99)
       end        
             
       @@configDirectory = configDir
@@ -855,7 +858,7 @@ private
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def downloadFileLocal(filename)
       retVal = @local.downloadFile(filename)
@@ -905,19 +908,19 @@ private
          @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
-         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, nil, @logger)
+         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, @logger)
 
          ## ------------------------------------------------
          ## rename the file if AddMnemonic2Name enabled
          ## ret = renameFile(File.basename(filename))
          ## ------------------------------------------------
 
-         disFile = ""
-         if ret != false then
-            disFile = ret
-         else
-            disFile = File.basename(filename)
-         end
+##         disFile = ""
+##         if ret != false then
+##            disFile = ret
+##         else
+##            disFile = File.basename(filename)
+##         end
 
          # disseminate the file to the In-Trays
 

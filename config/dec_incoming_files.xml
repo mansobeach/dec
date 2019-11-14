@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            
+      <Interface>
+         <Name>LOCALHOST_SECURE</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_secure</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download1</Directory>
+            <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download2</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
+         <Name>LOCALHOST_NOT_SECURE</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_notsecure</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_notsecure/download</Directory>
+         </DownloadDirs>
+      </Interface>
+      
+      <Interface>
+         <Name>IERS</Name>
+         <LocalInbox>/tmp/dec/if_iers_in_basket</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">ser7</Directory>
+         </DownloadDirs>
+      </Interface>
+      
+      <Interface>
+         <Name>FILESYSTEM</Name>
+         <LocalInbox>/tmp/dec/if_local_filesystem</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/filesystem/download</Directory>
+         </DownloadDirs>
+      </Interface>
+      
+      
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+   <ListFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+      <File Type="tai-utc*">
+         <Description>TAI UTC correlation</Description>
+         <FromList>
+            <Interface>IERS</Interface>
+            <Interface>LOCALHOST_NOT_SECURE</Interface>
+            <Interface>FILESYSTEM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="finals.a*">
+         <Description>TAI UTC correlation</Description>
+         <FromList>
+            <Interface>IERS</Interface>
+            <Interface>LOCALHOST_NOT_SECURE</Interface>
+            <Interface>FILESYSTEM</Interface>
+         </FromList>
+      </File>
+     
+      <File Type="S2?_*">
+         <Description>Sentinel-2 Ground Segment</Description>
+         <FromList>
+            <Interface>LOCALHOST_SECURE</Interface>
+            <Interface>LOCALHOST_NOT_SECURE</Interface>
+         </FromList>
+      </File>
+     
+   </ListFiles>
+
+   <!-- =========================================================== -->
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+
+         <Intray>
+            <Name>S2ALL</Name>
+            <Directory>/tmp/dec_local_dissemination/S2ALL</Directory>
+         </Intray>
+
+         <Intray>
+            <Name>S2A</Name>
+            <Directory>/tmp/dec_local_dissemination/S2A</Directory>
+            <Compress>7z</Compress>
+         </Intray>
+
+         <Intray>
+            <Name>S2B</Name>
+            <Directory>/tmp/dec_local_dissemination/S2B</Directory>
+         </Intray>
+
+         <Intray>
+            <Name>GPS</Name>
+            <Directory>/tmp/dec_local_dissemination/GPS</Directory>
+         </Intray>
+      
+         <Intray>
+            <Name>DEC_REPORTS</Name>
+            <Directory>/tmp/dec_local_dissemination/DEC_Reports</Directory>
+         </Intray>
+      
+                
+      </ListIntrays>
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+   
+         <File Type="tai-utc*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="finals*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="S2A_*.*">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>S2A</Intray>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S2B_*.*">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>S2B</Intray>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="S2__*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*DEC_F_RECV*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS</Intray>
+            </ToList>
+         </File>
+
+      </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+</Config>
+

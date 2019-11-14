@@ -24,23 +24,24 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
-# Preconditions:
-# 1 - setup 
-# 1.1 - load_config_development
-# 1.2 - inventory database is created
-
-# 2 - teardown
-# 2.1 - purge archive
-# 2.2 - inventory database is destroyed
-
-#  1  - test_dec_config
-#  2  - test_commandline_helpers
-#  3  - test_decConfigInterface2DB
-#  4  - test_decGetFromInterface
-#  5  - test_decListener
-#  6  - test_decGetFiles4Transfer
-#  7  - test_decSend2Interface
-#  8  - test_decDeliverFiles
+### Preconditions:
+### 1 - setup 
+### 1.1 - load_config_development
+### 1.2 - inventory database is created
+##
+### 2 - teardown
+### 2.1 - purge archive
+### 2.2 - inventory database is destroyed
+##
+###  1  - test_dec_config
+###  2  - test_commandline_helpers
+###  3  - test_decConfigInterface2DB
+###  4  - test_decGetFromInterface
+###  4.1  - test_decGetFromInterface_LOCAL
+###  5  - test_decListener
+###  6  - test_decGetFiles4Transfer
+###  7  - test_decSend2Interface
+###  8  - test_decDeliverFiles
 
 # Select a single test of the suite
 
@@ -51,6 +52,19 @@ require 'dec/ReadConfigIncoming'
 
 # Stop FTP Server
 # launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+##To use chroot, vsftpd requires root privileges, so you will need to run
+##`sudo vsftpd`.
+##You should be certain that you trust any software you grant root privileges.
+##
+##The vsftpd.conf file must be owned by root or vsftpd will refuse to start:
+##  sudo chown root /usr/local/etc/vsftpd.conf
+##
+##To have launchd start vsftpd now and restart at startup:
+##  sudo brew services start vsftpd
+##Or, if you don't want/need a background service you can just run:
+##  sudo vsftpd
+
 
 class DECTestCase < Test::Unit::TestCase
 
@@ -206,7 +220,7 @@ class DECTestCase < Test::Unit::TestCase
       arrEnts     = ftConfig.getAllMnemonics
 
       arrEnts.each{|x|
-         
+                  
          bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
          bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
 
@@ -215,6 +229,10 @@ class DECTestCase < Test::Unit::TestCase
          if bEnabled4Send == true then
          
             uploadDir = configOut.getUploadDir(x)
+         
+            if uploadDir == nil or uploadDir == "" then
+               next
+            end
          
             if uploadDir[0,1] != '/' then
                uploadDir = '~/' + uploadDir
@@ -247,7 +265,9 @@ class DECTestCase < Test::Unit::TestCase
                checkDirectory(downloadDir)
             }
             
-            if x.upcase.include?("LOCALHOST") then
+            ## create the files available for pulling
+            
+            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
                @@arrDownloadFiles.each{|filename|
                   puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
                   system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
@@ -806,8 +826,63 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
-
    end
+   ## --------------------------------------------------------
+
+   ## verification of the protocol LOCAL using interface "FILESYSTEM"
+
+   def test_decGetFromInterface_LOCAL
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("FILESYSTEM")
+      
+      checkDirectory(@finalDir)
+
+      # finals.all / tai-utc.dat
+            
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "decGetFromInterface -m FILESYSTEM --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+
+      cmd = "decStats -f finals.all"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.dat"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+   end
+   
    ## --------------------------------------------------------
 
    ## --no-intray not used / dissemination to intrays active

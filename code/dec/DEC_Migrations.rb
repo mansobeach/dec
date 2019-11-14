@@ -6,7 +6,7 @@
 #
 # === Written by Borja Lopez Fernandez
 #
-# === Casale & Beach
+# === DEIMOS
 # 
 #
 #
@@ -15,10 +15,9 @@
 require 'rubygems'
 require 'active_record'
 
+## ===================================================================
 
-#=====================================================================
-
-class CreateTrackedFiles < ActiveRecord::Migration[5.1]
+class CreateTrackedFiles < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:tracked_files) do |t|
          t.column :filename,            :string,  :limit => 255
@@ -33,9 +32,9 @@ class CreateTrackedFiles < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateReceivedFiles < ActiveRecord::Migration[5.1]
+class CreateReceivedFiles < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:received_files) do |t|
          t.column :filename,            :string,  :limit => 255
@@ -52,26 +51,26 @@ class CreateReceivedFiles < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class AddSizeToReceivedFiles < ActiveRecord::Migration[5.1]
+class AddSizeToReceivedFiles < ActiveRecord::Migration[6.0]
   # size of the file in bytes
   def change
      add_column :received_files, :size, :integer, {:default=>0, :null=>true}
   end
 end
 
-#=====================================================================
+## ===================================================================
 
-class AddProtocolToReceivedFiles < ActiveRecord::Migration[5.1]
+class AddProtocolToReceivedFiles < ActiveRecord::Migration[6.0]
   def change
      add_column :received_files, :protocol, :string, {:limit => 64, :default=>"", :null=>true }
   end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateInterfaces < ActiveRecord::Migration[5.1]
+class CreateInterfaces < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:interfaces) do |t|
          t.column :name,                :string,  :limit => 255
@@ -84,9 +83,9 @@ class CreateInterfaces < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class CreateSentFiles < ActiveRecord::Migration[5.1]
+class CreateSentFiles < ActiveRecord::Migration[6.0]
 
    def self.up
       create_table(:sent_files) do |t|
@@ -105,39 +104,38 @@ class CreateSentFiles < ActiveRecord::Migration[5.1]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
-class Add_ROP_ID_ToSentFiles < ActiveRecord::Migration[5.1]
+class Add_ROP_ID_ToSentFiles < ActiveRecord::Migration[6.0]
   def change
      add_column :sent_files, :ROP_ID, :integer, { :null => true }
   end
 end
 
 
-# =====================================================================
+## ===================================================================
 
-class AddIndexFilename2SentFiles < ActiveRecord::Migration[5.1]
+class AddIndexFilename2SentFiles < ActiveRecord::Migration[6.0]
    def change
       add_index :sent_files,     :filename
    end
 end
 
-# =====================================================================
+## ===================================================================
 
-class AddIndexFilename2ReceivedFiles < ActiveRecord::Migration[5.1]
+class AddIndexFilename2ReceivedFiles < ActiveRecord::Migration[6.0]
    def change
       add_index :received_files, :filename
    end
 end
 
+## ===================================================================
 
-# =====================================================================
-
-class AddIndexFilename2TrackedFiles < ActiveRecord::Migration[5.1]
+class AddIndexFilename2TrackedFiles < ActiveRecord::Migration[6.0]
    def change
       add_index :tracked_files, :filename
    end
 end
 
-# =====================================================================
+## ===================================================================
 
