@@ -50,11 +50,12 @@ class StatisticDDC
          return
       end
                   
-      lastHourFiles     = SentFile.select("filename, interface_id, interface, delivery_date, size").where('delivery_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
+      lastHourFiles     = SentFile.select("filename, interface_id, interface, delivery_date, size, delivered_using").where('delivery_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
       
       lastHourFiles.load.to_a.each{|item|
          puts item.filename
          puts item.interface
+         puts item.delivered_using
          puts item.delivery_date
          puts item.size
          puts

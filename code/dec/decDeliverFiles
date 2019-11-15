@@ -238,6 +238,9 @@ def main
    # ---------------------------------------------
 
    if @skipGetFiles == false then
+      
+      ## -------------------------------
+      ## Get files to be transferred
       cmd = "decGetFiles4Transfer"
    
       if @isDebugMode == true then
@@ -246,6 +249,8 @@ def main
    
       ret = system(cmd)
    
+      ## -------------------------------
+      
       if ret == false then
          puts
          puts "Error executing #{cmd}"

@@ -292,6 +292,8 @@ private
          puts
       end
 
+      arrLiteral = Array.new
+
       @arrFileTypesOrNames.each{|filetype|
 
          Dir.chdir(@sourceDirectory)
@@ -302,10 +304,14 @@ private
                puts "------------------------------------------------------"
                puts "Wildcard [#{filetype}] - Gathering files"
             else
-               Dir.chdir(filetype)
-               puts
-               puts "------------------------------------------------------"
-               puts "[#{filetype}] - Gathering files"
+               if File.exist?(filetype) == false then
+                  Dir.chdir(filetype)
+                  puts
+                  puts "------------------------------------------------------"
+                  puts "[#{filetype}] - Gathering files"
+               else
+                  puts "File #{filetype} detected"
+               end
             end
          rescue Exception
             if @isDebugMode == true then
@@ -322,8 +328,8 @@ private
          if @bNames == false || @uploadDirs then
             arrFiles = Dir["*#{filetype}*"]
          else
-            recursive = File.join("**","#{filetype}")
-            arrFiles = Dir.glob(recursive)
+            recursive   = File.join("**","#{filetype}")
+            arrFiles    = Dir.glob(recursive)
          end
 
          # Filtering of dec_config.xml
@@ -347,7 +353,7 @@ private
 
          # Process matched files
          arrFiles.each{|afile|
-   
+      
             # We dont want to copy a full directory
             if File.directory?(afile) and !@uploadDirs then
                next

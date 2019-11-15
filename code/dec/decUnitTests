@@ -41,6 +41,7 @@ require 'dec/ReadConfigIncoming'
 ###  5  - test_decListener
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
+###  7.1  - test_decSend2Interface_LOCAL
 ###  8  - test_decDeliverFiles
 
 # Select a single test of the suite
@@ -1101,7 +1102,6 @@ class DECTestCase < Test::Unit::TestCase
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
-
       cmd = "decManageDB -d"
       ret = system(cmd)
 
@@ -1115,7 +1115,7 @@ class DECTestCase < Test::Unit::TestCase
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
-
+      
       @@arrPushFiles.each{|filename|
          puts filename
          system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
@@ -1131,12 +1131,68 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decCheckSent -m LOCALHOST_NOT_SECURE -t"
       assert(system(cmd), cmd)
-      puts   
+      puts      
 
       cmd = "decStats"
       assert(system(cmd), cmd)
 
    end
+   ## -------------------------------------------------------------
+
+   ## test for pushing files with LOCAL protocol towards the interfaces
+   ##
+   ##
+
+   def test_decSend2Interface_LOCAL
+
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
+
+      ## for LOCAL protocol the same files for download are used
+      
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decGetFiles4Transfer"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+#      cmd = "decDeliverFiles -D"
+#      puts cmd
+#      assert(system(cmd), cmd)
+
+      cmd = "decCheckSent -m FILESYSTEM -t"
+      assert(system(cmd), cmd)
+      puts      
+
+      cmd = "decStats"
+      assert(system(cmd), cmd)
+
+   end
+
    ## -------------------------------------------------------------
 
    def test_decNotify2Interface

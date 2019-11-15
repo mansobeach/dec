@@ -42,6 +42,7 @@ class DEC_FileSender
    def initialize(entity, protocol, deliverOnce, isDebug=false, isNoDB=false)
       @entity      = entity
       @protocol    = protocol
+      
       @deliverOnce = deliverOnce
       checkModuleIntegrity
       @isDebugMode = false
@@ -86,7 +87,7 @@ class DEC_FileSender
       @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
       @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
-           
+      @protocol      = @ftpserver[:protocol]     
       @sender        = CTC::FileSender.new(@ftpserver, protocol)
       
       if isDebug == true then
@@ -148,9 +149,9 @@ class DEC_FileSender
       # has already been delivered
       if @deliverOnce then
          arrTmp.each { |file|
-            if SentFile.hasAlreadyBeenSent?(file, @entity, "ftp") == true then
+            if SentFile.hasAlreadyBeenSent?(file, @entity, @ftpserver[:protocol]) == true then
                if @isDebugMode then
-                  puts "#{file} already sent to #{@entity} via ftp"
+                  puts "#{file} already sent to #{@entity} via #{@ftpserver[:protocol]}"
                end
                File.delete(%Q{#{@outboxDir}/#{file}})
             else
@@ -206,7 +207,7 @@ class DEC_FileSender
          puts         
          @arrFiles.each{|file|
 
-            puts "Sending #{file} to #{@entity} via #{@protocol}"
+            puts "Sending #{file} to #{@entity} via #{@ftpserver[:protocol]}"
             
             size = File.size("#{@outboxDir}/#{File.basename(file)}")
             
@@ -226,7 +227,7 @@ class DEC_FileSender
                # Now we register the files sent even if we allow them to be re-send
                # (deliveryOnce equal to false)
                # Registry of Files sent
-               SentFile.setBeenSent(file, @interface, "ftp", size, hParams)
+               SentFile.setBeenSent(file, @interface, @ftpserver[:protocol], size, hParams)
             end
             
          }

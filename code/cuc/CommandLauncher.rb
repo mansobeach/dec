@@ -24,8 +24,8 @@ module CUC
 
 module CommandLauncher
 
-   #-------------------------------------------------------------   
-   # It performs the execution of a system command.
+   ## -----------------------------------------------------------
+   ## It performs the execution of a system command.
    
    def execute(cmd, subSystem = "", bAbort = false, bPrintConsole = false, bLogResult = true, bCaptureStdError = true)
       bRet   = false
@@ -66,24 +66,21 @@ module CommandLauncher
       end
       return(bRet)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
    
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Log the execution of the command
+   ## Log the execution of the command
    def log_execution(msg, header)
 
       configDir = nil
 
       if ENV['DEC_CONFIG'] then
          configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      else
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
       end
 
-      # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("CommandLauncher:#{header}", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
@@ -101,7 +98,7 @@ private
 
       logger.error(msg)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 end # module
 

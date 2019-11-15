@@ -64,14 +64,14 @@ class FileSender
          @local = CTC::LocalInterfaceHandler.new(@entity, false, true, DDC::ReadConfigDDC.instance.getUploadDirs)
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "FileSender debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Set the flag for debugging on
    def setUploadPrefix(prefix)
@@ -167,6 +167,7 @@ class FileSender
    ##
    ## Send File now just sends the file
    ##
+   
    def sendFile(file, bDeleteSource=true)
 
       getUploadTargets(file)

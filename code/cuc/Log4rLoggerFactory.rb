@@ -38,7 +38,7 @@ class Log4rLoggerFactory
    # logConfigFile : full path and name of the log4r log-module configuration file.
    # 
    def initialize(modName = "", logConfigFile = "")
-      
+            
       if ( logConfigFile != nil and logConfigFile.slice(0,1) == "/" ) then
          Configurator['moduleName'] = modName
          Configurator.load_xml_file(logConfigFile)

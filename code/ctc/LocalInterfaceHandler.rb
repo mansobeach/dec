@@ -18,7 +18,7 @@
 require 'cuc/Log4rLoggerFactory'
 #require 'ctc/CheckerLocalConfig'
 require 'ctc/CheckerInterfaceConfig'
-require 'ctc/ReadInterfaceConfig'
+require 'dec/ReadInterfaceConfig'
 
 require 'fileutils'
 
@@ -31,7 +31,21 @@ class LocalInterfaceHandler
    def initialize(entity, bDCC=true, bDDC=true, manageDirs=false)
       @entity     = entity
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("LocalInterfaceHandler", "#{ENV['DCC_CONFIG']}/dec_log_config.xml")
+      
+      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
+      end
+      
+      configDir = nil
+         
+      if ENV['DEC_CONFIG'] then
+         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      else
+         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
+      end
+
+            
+      loggerFactory = CUC::Log4rLoggerFactory.new("LocalInterfaceHandler", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -40,7 +54,7 @@ class LocalInterfaceHandler
          puts
 			puts "Error in LocalInterfaceHandler::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DCC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
 			puts
 			exit(99)
       end
@@ -58,14 +72,14 @@ class LocalInterfaceHandler
 #       end
 
    end   
-   #-------------------------------------------------------------
-   
-   # Set the flag for debugging on
+   ## -----------------------------------------------------------
+   ##
+   ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "LocalInterfaceHandler debug mode is on"
    end
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------
 
    def checkConfigLocal (entity, bDCC, bDDC)
 #       #check if I/F is correcly configured      
@@ -134,7 +148,7 @@ class LocalInterfaceHandler
       }
       return @newArrFile
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def exploreLocalTree(relativeFile)
 
@@ -182,9 +196,9 @@ class LocalInterfaceHandler
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Download a file from the I/F
+   ## Download a file from the I/F
    def downloadFile(filename)      
        #we are placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
       if File.directory?(filename) then
@@ -206,10 +220,9 @@ class LocalInterfaceHandler
       end
       return true
    end	
-	#-------------------------------------------------------------
+	## -----------------------------------------------------------
 
-
-   # Download a file from the I/F
+   ## Download a file from the I/F
    def downloadDir(filename)      
        #we are placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
       if  @manageDirs then
@@ -229,13 +242,11 @@ class LocalInterfaceHandler
       #everything ik ok
       return true
    end	
-	#-------------------------------------------------------------
+	## -----------------------------------------------------------
 
-
-
-	# This method is invoked after placing the files into the operational
-	# directory. It deletes the file in the remote Entity if the Config
-	# flag DeleteFlag is enable.
+	## This method is invoked after placing the files into the operational
+	## directory. It deletes the file in the remote Entity if the Config
+	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename)
 	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
 		# if true proceed to remove the files from the remote I/F
@@ -251,7 +262,7 @@ class LocalInterfaceHandler
 		   if @isDebugMode then puts "DeleteFlag is disabled for #{@entity} I/F" end
 		end
 	end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 
 # DDC =============================================================
@@ -274,9 +285,9 @@ class LocalInterfaceHandler
       end
       return true
    end
-	#-------------------------------------------------------------
+	## -----------------------------------------------------------
 
-  # Upload a file to the I/F  (DDC)
+   ## Upload a file to the I/F  (DDC)
    def uploadDir(dirname,targetDir,targetTemp)      
        #we are placed on the right directory (sourceDir): sendFile->self  (DDC) 
       if @manageDirs then
@@ -295,7 +306,7 @@ class LocalInterfaceHandler
       #everything ok
       return true
    end
-	#-------------------------------------------------------------
+	## -------------------------------------------------------------
 
 
 

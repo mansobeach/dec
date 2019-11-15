@@ -300,6 +300,7 @@ module DEC
       bCheckOK = true
       
       arrTools = [ \
+                  "7za", \
                   "xmllint", \
                   "ncftp", \
                   "ncftpput", \
@@ -316,9 +317,7 @@ module DEC
          end
 
       }
-      
-      #check the commands needed
-                   
+                         
       if bCheckOK == false then
          puts "\nDEC_Environment::checkToolDependencies FAILED !\n\n"
       end      
