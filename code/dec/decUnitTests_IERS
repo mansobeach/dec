@@ -19,8 +19,10 @@ require 'fileutils'
 require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
 
 # Preconditions:
 # 1 - setup 
@@ -57,7 +59,8 @@ class DECTestCase < Test::Unit::TestCase
    self.test_order = :defined
    
    @my_argv = ARGV.dup
-   #--------------------------------------------------------
+   
+   ## ------------------------------------------------------
    
    Test::Unit.at_start do      
       puts
@@ -92,6 +95,11 @@ class DECTestCase < Test::Unit::TestCase
          end
       end   
       
+            @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "gpsrapid.out" \
+                           ]
+
       
 =begin
       puts
@@ -130,73 +138,19 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
       
-      require 'dec/DEC_DatabaseModel'
-      require 'dec/ReadInterfaceConfig'
-      
-      ftConfig = ReadInterfaceConfig.instance
-      arrEnts  = ftConfig.getAllMnemonics
-
-      arrEnts.each{|x|
-         
-         puts x
-         
-         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
-         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
-         ftpSend        = ftConfig.getFTPServer(x)
-
-         if bEnabled4Recv == true and x.upcase.include?("LOCALHOST") then
-            arrDirs = ftpSend[:arrDownloadDirs]
-            arrDirs.each{|interface|
-               dir         = interface.directory
-               downloadDir = nil
-                     
-               if dir[0,1] != '/' then
-                  downloadDir='~/'+dir
-               else
-                  downloadDir=dir
-               end     
-               cmd = "mkdir -p #{downloadDir}"
-               puts cmd
-               system(cmd)
-            }
-         end
-                  
-         if bEnabled4Send == false or !x.upcase.include?("LOCALHOST") then
-            puts "#{x} is not configured for sending files or it is not local"
-            next
-         end
-         
-         uploadDir      = ftpSend[:uploadDir]
-         uploadTemp     = ftpSend[:uploadTemp]
-         
-         if uploadDir[0,1] != '/' then
-            uploadDir='~/'+uploadDir
-         end     
-         cmd = "mkdir -p #{uploadDir}"
-         puts cmd
-         system(cmd)
-            
-         if uploadTemp[0,1] != '/' then
-            uploadTemp='~/'+uploadTemp
-         end     
-         cmd = "mkdir -p #{uploadTemp}"
-         puts cmd
-         system(cmd)            
-      }
       
    end
    
-   #--------------------------------------------------------
+   ## ------------------------------------------------------
    
    Test::Unit.at_exit do
-      system("decListener -S")
-      puts "End of DEC tests"
+      puts "End of DEC test for IERS interface"
    end
    
-   #--------------------------------------------------------   
+   ## ------------------------------------------------------
    
-   # Setup before every test-case
-   #
+   ## Setup before every test-case
+   ##
    def setup
       puts __method__.to_s
       puts
@@ -205,15 +159,86 @@ class DECTestCase < Test::Unit::TestCase
       puts
       
       @@conf.wrapper_load_config_development
+            
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      ftConfig    = ReadInterfaceConfig.instance
+      configOut   = ReadConfigOutgoing.instance
+      configIn    = ReadConfigIncoming.instance
+      arrEnts     = ftConfig.getAllMnemonics
+
+      arrEnts.each{|x|
+                  
+         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
+         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
+
+         ## --------------------------------------
+
+         if bEnabled4Send == true then
+         
+            uploadDir = configOut.getUploadDir(x)
+         
+            if uploadDir == nil or uploadDir == "" then
+               next
+            end
+         
+            if uploadDir[0,1] != '/' then
+               uploadDir = '~/' + uploadDir
+            end
+            checkDirectory(uploadDir)
+
+            uploadTemp = configOut.getUploadTemp(x)
+         
+            if uploadTemp[0,1] != '/' then
+               uploadTemp = '~/' + uploadTemp
+            end
+            checkDirectory(uploadTemp)
+         end
+
+         ## --------------------------------------
+
+         if bEnabled4Recv == true then
+            arr = configIn.getDownloadDirs(x)
+            
+            arr.each{|dir|
+               
+               downloadDir = ""
+
+               if dir[:directory][0,1] != '/' then
+                  downloadDir = '~/' + dir[:directory]
+               else
+                  downloadDir = dir[:directory]
+               end
+               
+               checkDirectory(downloadDir)
+            }
+            
+#            ## create the files available for pulling
+#            
+#            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
+#               @@arrDownloadFiles.each{|filename|
+#                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
+#                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
+#               }
+#            end
+            
+         end
+
+         ## --------------------------------------
+      }
       
-      @path = "#{ENV['MINARC_BASE']}/code/dec"
       
       cmd = "decManageDB -c"
       ret = system(cmd)
       
       if ret == false then
          puts
-         puts "Error when creating the minarc inventory ! :-("
+         puts "Error when creating the DEC inventory ! :-("
          puts
          # exit(99)
       end
@@ -230,8 +255,8 @@ class DECTestCase < Test::Unit::TestCase
       end
       
    end
-   # --------------------------------------------------------
-   # After every test case
+   ## --------------------------------------------------------
+   ## After every test case
 
    def teardown
       puts __method__.to_s
@@ -252,10 +277,9 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
-
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
    def test_decGetFromInterface
       puts __method__.to_s
@@ -272,56 +296,47 @@ class DECTestCase < Test::Unit::TestCase
       puts
       puts
 
-      cmd = "decGetFromInterface -v"
-      assert(system(cmd), cmd)
-
-      dec_tmp = ENV['DEC_TMP']
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
 
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
       @entityConfig     = ReadInterfaceConfig.instance
-      @finalDir         = @entityConfig.getIncomingDir("IERS")
+      conf              = ReadConfigIncoming.instance
+      @finalDir         = conf.getIncomingDir("IERS")
       
       checkDirectory(@finalDir)
 
-      # finals.all / tai-utc.dat
+      # finals.all / gpsrapid.out
             
       FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
             
-      cmd = "decGetFromInterface -m IERS -l --nodb -D"
+      cmd = "decGetFromInterface -m IERS -l --nodb"
       puts cmd
       assert(system(cmd), cmd)
+      
+      sleep(2.0)
       
       cmd = "decGetFromInterface -m IERS --nodb --no-intray"
       puts cmd
       assert(system(cmd), cmd)
 
       assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+      assert(File.exist?("#{@finalDir}/gpsrapid.out"), "retrieved gpsrapid.out")
 
       FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
 
       cmd = "decGetFromInterface -m IERS --no-intray"
       puts cmd
       assert(system(cmd), cmd)
 
       assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+      assert(File.exist?("#{@finalDir}/gpsrapid.out"), "retrieved gpsrapid.out")
 
       FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
 
       cmd = "decStats -v"
       assert(system(cmd), cmd)
@@ -332,7 +347,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decStats -f finals.all"
       assert(system(cmd), cmd)
 
-      cmd = "decStats -f tai-utc.dat"
+      cmd = "decStats -f gpsrapid.out"
       assert(system(cmd), cmd)
 
       cmd = "decStats"
@@ -343,7 +358,7 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")
-      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve twice tai-utc.dat")
+      assert(!File.exist?("#{@finalDir}/gpsrapid.out"), "should not retrieve twice gpsrapid.out")
 
       cmd = "decStats -H 1"
       assert(system(cmd), cmd)
@@ -351,17 +366,15 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decStats -H 2"
       assert(system(cmd), cmd)
       
-
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
 
 end
 
 
-#=====================================================================
+## ===================================================================
 
 
-#-----------------------------------------------------------
 
 
