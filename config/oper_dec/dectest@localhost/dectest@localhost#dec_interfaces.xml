@@ -2,6 +2,62 @@
 <Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <!-- ================================================================ -->
+
+  <Interface Name="FILESYSTEM">
+    <Desc>Local file-system Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <FTPServer>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>22</Port>      
+      <User>borja</User>
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+ 
+ 
+  <!-- ================================================================ -->
  
   <Interface Name="LOCALHOST_SECURE">
     <Desc>Localhost Interface</Desc>
@@ -19,7 +75,7 @@
       <Protocol>SFTP</Protocol>
       <Hostname>localhost</Hostname>
 	   <Port>22</Port>      
-      <User>dectest</User>
+      <User>borja</User>
       <Pass>N/A</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
@@ -76,8 +132,8 @@
       <Protocol>FTP</Protocol>
       <Hostname>localhost</Hostname>
 	   <Port>21</Port>      
-      <User>dectest</User>
-      <Pass>dectest</Pass>
+      <User>borja</User>
+      <Pass>perrillo</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -129,7 +185,7 @@
     </TXRXParams>    
     <FTPServer>
       <Protocol>FTP</Protocol>
-      <Hostname>maia.usno.navy.mil</Hostname>
+      <Hostname>ftp.iers.org</Hostname>
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>
