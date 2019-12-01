@@ -1,0 +1,174 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Install information
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+\section{Install Environment}
+
+This section covers the install of \textit{Ruby} interpreter and the \textit{gem} dependencies needed by DEC SW. It is recommended that the \textit{Ruby} interpreter is done locally for the Linux user who shall execute the DEC SW.
+
+\par
+\noindent
+
+\subsection{Install Ruby}
+ 
+The \textit{Ruby} interpreter can be obtained and installed in many different ways ; this manual describes how to install it local to the user which shall execute the DEC SW.
+
+\par
+\noindent
+The install is based on \href{https://rvm.io/}{RVM}, which is a command-line tool which allows you to easily install, manage, and work with multiple ruby environments from interpreters to sets of gems. 
+
+\par
+\inlinecode{bash}{ \$> \\curl -sSL https://get.rvm.io | bash -s stable }
+
+\subsection{Install Bundler}
+
+\par
+\noindent
+The ruby pre-requisites can be installed using on \href{https://bundler.io/}{bundler} gem, by tracking and installing the exact gems and versions which are needed by DEC. 
+
+\par
+\inlinecode{bash}{ \$> gem install bundler }
+
+\subsection{Install Gems}
+
+\par
+\noindent
+The \textit{gems} pre-requisites by DEM are defined in the \textit{Gemfile} ; in order to install the exact gems and versions which are needed by DEC from the directory in which the \textit{Gemfile} is placed execute the following command in the shell. 
+
+\par
+\inlinecode{bash}{ \$> bundle install }
+
+\section{Install DEC}
+
+In order to install DEC SW, execute the following command in the shell at the directory in which the DEC gem file is placed:
+\par
+\inlinecode{bash}{ \$> gem install --local dec_stable.gem }
+\par
+
+\section{Uninstall DEC}
+
+In order to uninstall DEC SW, execute the following command in the shell:
+\par 
+\inlinecode{bash}{ \$> gem uninstall dec.gem }
+\par 
+
+\begin{verbatim}
+Remove executables:
+decValidateConfig, decCheckConfig, decCheckSent, decConfigInterface2DB, decDeliverFiles, decGetFiles4Transfer, decGetFromInterface, decListener, decManageDB, decNotify2Interface, decSend2Interface, decSmokeTests, decStats, decUnitTests, decUnitTests_IERS, decUnitTests_ncftpput, decUnitTests_mail
+
+in addition to the gem? [Yn]
+\end{verbatim}
+
+Press 'Y' key to remove the executables as well
+
+\section{COTS Required}
+
+This section enumerates the COTS which are used by DEC SW for exchange of file by some network protocol implementation, or file transformations associated to those exchanges.
+\par
+\noindent
+It is not part of the scope of this manual how to provision these COTS ; since they can be obtained naturally with OS distribution, downloaded with its native package manager, or manually downloaded. 
+
+\subsection{Databases}
+This section enumerates the different databases which can be used by DEC SW. Only \textit{sqlite3} is \textit{mandatory} to allow the execution of the entire set of \textit{unit tests}. Below the different databases that have used at some deployment. It is recalled that it is possible to execute the DEC SW without any database by usage of flag \textit{"--nodb"}.
+\par
+\begin{itemize}
+	\item \href{https://www.sqlite.org}{\textit{sqlite3}} : is an in-process library that implements a self-contained, serverless, zero-configuration, transactional SQL database engine
+	\item \href{https://www.postgresql.org/}{\textit{PostgreSQL}} : object-relational database system with a strong reputation for reliability, feature robustness, and performance
+	\item \href{https://www.mysql.com/}{\textit{MySQL}} : a high performance, scalable database management system
+\end{itemize}
+
+\subsection{Network Tools}
+This section enumerates the network tools which can be used by DEC SW.
+\par
+\begin{itemize}
+	\item \href{https://www.ncftp.com}{\textit{ncftp}} : application programs implementing the File Transfer Protocol (FTP)
+	\item \href{https://www.openssh.com}{\textit{sftp}} : application programs implementing the Secure File Transfer Protocol (SFTP)
+	\item \href{https://curl.haxx.se}{\textit{curl}} : command line tool and library for transferring data with URLs
+\end{itemize}
+
+\subsection{File Compression Tools}
+This section enumerates the file compression tools which can be used by DEC SW.
+\par
+\begin{itemize}
+	\item \href{https://www.7-zip.org/}{\textit{7-zip}} : is a file archiver with a high compression ratio
+	\item \href{http://infozip.sourceforge.net}{\textit{zip} / \textit{unzip}} : provide free, portable, high-quality versions of the \textit{Zip} and \textit{UnZip} compressor-archiver utilities
+	\item \href{https://www.gzip.org}{\textit{gzip}} : The \textit{gzip} reduces the size of the named files using Lempel–Ziv coding (LZ77)
+	\item \href{http://man7.org/linux/man-pages/man1/compress.1p.html}{\textit{compress}} : The \textit{compress} utility reduces the size of the named files by using adaptive Lempel-Ziv coding algorithm
+\end{itemize}
+
+\subsection{File Transformation Tools}
+This section enumerates the file transformation tools which can be used by DEC SW.
+
+\begin{itemize}
+	\item \href{http://xmlsoft.org/xmllint.html}{\textit{xmllint}} : is a command line XML parser which is part of the \href{http://xmlsoft.org}{\textit{libxml2}} utils
+\end{itemize}
+
+\section{Installation Verification}
+\subsection{Verification with Unit Tests}
+This section describes how to execute the \textit{unit tests}, which have been designed to be transparent and harmless in front of the potential different execution environments (i.e. development, integration, production), being their execution a simple and effective manner to verify the correct installation of the DEC SW. \newline
+\par
+The prerequisites to be able to successfully execute the \textit{unit tests} are :
+\begin{itemize}
+	\item an OS user \textit{dectest}
+	\item SFTP server running on \textit{localhost} allowing login to \textit{dectest} using the SSH keys
+	\item FTP server running on \textit{localhost} allowing login to \textit{dectest} using the \textit{password} \textit{dectest} \newline
+\end{itemize} 
+\par
+\inlinecode{bash}{ \$> decUnitTests } \newline
+
+\noindent
+The results of the unit test should show no failures neither errors ; the execution time in a 2.66 GHz Intel Core 2 Duo is about 10 minutes approximately.
+\lstset{escapeinside={<@}{@>}}
+\begin{lstlisting}
+.
+Finished in 590.39725 seconds.
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+17 tests, 112 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+0.03 tests/s, 0.19 assertions/s
+\end{lstlisting}
+
+\subsection{Verification with Operational Interface}
+This section describes how to verify the correct installation of DEC SW by execution of a test with the IERS \textit{operational} service, for which Internet connectivity is required for the FTP protocol. Note that it is not possible to ensure the connectivity availability by such service and sometimes test may fail by reply of \textit{530 connect failed: Address already in use. No response from server.} \newline
+
+\inlinecode{bash}{ \$> decUnitTests_IERS } \newline
+
+\begin{lstlisting}
+.
+Finished in 54.38868 seconds.
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+2 tests, 25 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+0.02 tests/s, 0.33 assertions/s 
+\end{lstlisting}
+
+\noindent
+\newline
+In case of deployment without any database, the tests can be restricted to the ones which make usage of the \textit{"--nodb"} execution option:
+
+\inlinecode{bash}{ \$> decUnitTests_IERS -n test_decGetFromInterface_NODB} \newline
+
+\begin{lstlisting}
+.
+Finished in 54.38868 seconds.
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+1 tests, 18 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+<@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
+0.02 tests/s, 0.23 assertions/s
+\end{lstlisting}
+
+\end{document}
+

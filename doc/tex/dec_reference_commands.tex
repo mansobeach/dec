@@ -1,0 +1,169 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Reference commands
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+
+\newcommand{\sectionbreak}{\clearpage}
+ 
+\begin{document}
+
+\section{decCheckConfig} \label{decCheckConfig}
+ 
+\begin{verbatim}
+== Synopsis
+
+This is a command line tool that checks the coherency of the DEC configuration.
+DEC configuration is distributed amongst different XML files. The information set up
+must be coherent. This tool ensures that all configuration critical elements are correct.
+(All DEC config files must be placed in the $DEC_CONFIG directory). 
+So, run this tool everytime a configuration change is performed.
+
+-e flag:
+
+With this option the Interfaces (Entities) configuration placed in dec_interfaces.xml
+is checked. As well it is checked the coherency between the dec_interfaces.xml
+configuration file and the DEC Inventory (DEC Database).
+(Note: if the network link to a given I/F is broken, the tool will not be able to connect and it
+will report a configuration error of this I/F).
+
+
+-i flag:
+
+With this option the Incoming file-types registered in the dec_incoming_files.xml are checked.
+Mainly what it is done is to check that the interfaces from a File is retrieved are configured in 
+the dec_interfaces.xml file.
+
+
+-m flag:
+
+With this option the DEC Mail configuration placed in the ft_mail_config.xml is checked.
+
+
+-s flag:
+
+With this option the DCC Services configured in the dcc_services.xml file are checked.
+The check performed with this flag is that the executable set in the command of the service
+can be found in the $PATH environment variable.
+
+
+-t flag:
+
+With this option the In-Trays configured in the dec_incoming_files.xml file are checked.
+
+
+-a flag:
+
+This is the all flag, which performs all the checks described before.
+
+
+== Usage
+decCheckConfig [--nodb]
+-a    checks all DEC configuration
+-e    checks entities configuration in dec_interfaces.xml
+--nodb no Inventory checks
+-i    checks incoming file-types configured in dec_incoming_files.xml
+-o    checks outgoing file-types configured in dec_outgoing_files.xml
+-m    checks the mail configuration placed in ft_mail_config.xml
+-t    checks the In-Trays configuration placed in dec_incoming_files.xml
+-l    checks the log configuration
+-h    it shows the help of the tool
+-u    it shows the usage of the tool
+-v    it shows the version number
+-V    it performs the execution in Verbose mode
+-D    it performs the execution in Debug mode     
+
+== Author
+DEIMOS-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2005 ESA - DEIMOS Space S.L.
+
+\end{verbatim}
+
+
+\section{decCheckSent} \label{decCheckSent}
+
+\begin{verbatim}
+== Synopsis
+
+This is a DEC command line tool that lists the contents of the <Upload> directory
+corresponding to a given interface configured in interfaces.xml
+
+== Usage
+decCheckSent -m <Interface_Name> [-t]
+--mnemonic  <MNEMONIC> (mnemonic is case sensitive)
+--temp      it shows the content of the <UploadTemp> directory
+--Show      it shows all available I/Fs registered in the Inventory
+--help      shows this help
+--usage     shows the usage
+--Debug     shows Debug info during the execution
+--version   shows version number
+
+== Author
+Deimos-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2006 ESA - Deimos Space S.L.
+\end{verbatim}
+
+\section{decConfigInterface2DB}
+
+\begin{verbatim}
+== Synopsis
+
+This is a Data Exchange Component command line tool that synchronizes the Entities configuration file
+with DEC Inventory. It extracts all the I/Fs from the dec_interfaces.xml file and 
+inserts them in the DEC Inventory.
+
+As well it allows to specify a new I/F mnemonic to be loaded into the DEC Inventory with 
+the "--add" command line option.
+
+== Usage
+decConfigInterfaceDB --add <MNEMONIC> | --process EXTERNAL
+--add <MNEMONIC>     (mnemonic is case sensitive) add the specified Entity  
+--process EXTERNAL   process $DEC_CONFIG/dec_interfaces.xml
+--Show               it shows all I/Fs already loaded in the DCC Inventory
+--Verbose            execution in verbose mode
+--version            shows version number
+--help      shows this help
+--usage     shows the usage
+
+== Author
+Deimos-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2006 ESA - Deimos Space S.L.
+
+\end{verbatim}
+
+\section{decDeliverFiles}
+
+\section{decGetFiles4Transfer}
+
+\section{decGetFromInterface}
+
+\section{decListener}
+
+\section{decManageDB}
+
+\section{decSend2Interface}
+
+\section{decSmokeTests}
+
+\section{decStats}
+
+\section{decUnitTests}
+
+\section{decUnitTests\_IERS}
+
+\section{decValidateConfig}
+
+\end{document}
+

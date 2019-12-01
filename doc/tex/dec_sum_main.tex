@@ -1,0 +1,137 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% SUM Main file
+%
+\documentclass[oneside,openany,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{alltt}
+\usepackage{graphicx,eso-pic}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{titlepic}
+\usepackage{titlesec, blindtext, color}
+\usepackage{titling}
+\usepackage{verbatim}
+\usepackage{dashrule}
+\usepackage{fancyhdr}
+\definecolor{lightgray}{gray}{0.9}
+\graphicspath{{res/}{../res/}}
+ 
+\usepackage{blindtext}
+
+ 
+\usepackage{subfiles} % Best loaded last in the preamble
+
+\lstset{
+	showstringspaces=false,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue},
+	commentstyle=\color[grey]{0.6},
+	stringstyle=\color[RGB]{255,150,75}
+}
+
+\newcommand{\inlinecode}[2]{\colorbox{lightgray}{\lstinline[language=#1]$#2$}}
+
+
+
+% ----------------------------------------------------------
+% header
+\pagestyle{fancy} 
+\fancyhf{}
+\lhead{\includegraphics[width=2cm]{logo_elecnor_deimos.png}
+Software User Manual}
+\rhead{Data Exchange Component
+\includegraphics[width=1cm]{DEC_Logo_White.png}
+\renewcommand{\headrulewidth}{2pt}
+}
+% header end
+% ----------------------------------------------------------
+ 
+
+\setcounter{tocdepth}{6}
+\setcounter{secnumdepth}{6}
+\setcounter{chapter}{0}
+
+% --------------------------------------------------------------------
+% chapter title format 
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp}{0pt}{\Huge\bfseries}
+% --------------------------------------------------------------------
+ 
+ %% =========================================================
+ 
+ \usepackage{hyperref}
+ \hypersetup{
+ 	pdftitle={Data Exchange Component System User Manual},
+ 	pdfsubject={System Components},
+ 	pdfauthor={smiley},
+ 	pdfkeywords={DEC, SUM}
+ }
+ 
+%% =========================================================
+ 
+\begin{document}
+
+
+
+%% =========================================================
+%% TITLE
+
+\begin{titlepage}
+	\begin{center}
+		
+		\includegraphics[width=0.4\textwidth]{logo_elecnor_deimos.png}
+		
+		\vspace*{1cm}
+		\Large
+		\textbf{Data Exchange Component (DEC)}
+		
+		\textbf{Software User Manual}
+		
+		\vspace*{1cm}
+		
+		\includegraphics[width=0.4\textwidth]{DEC_Logo_White.png}
+		
+		\vspace{0.8cm}
+		
+		\today
+		
+	\end{center}
+\end{titlepage}
+	
+%% END TITLE
+
+%% =========================================================
+
+\tableofcontents
+\newpage
+
+\chapter{Acronyms}
+\subfile{dec_acronyms} 
+\newpage
+ 
+\chapter{Introduction}
+\subfile{dec_introduction}
+\newpage
+
+\chapter{Install}
+\subfile{dec_install}
+ 
+\chapter{Configuration}
+\subfile{dec_configuration}
+
+\chapter{Reference Commands}
+\subfile{dec_reference_commands}
+ 
+\end{document}

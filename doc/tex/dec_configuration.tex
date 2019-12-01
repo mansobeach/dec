@@ -1,0 +1,392 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Configuration
+%
+% dec_interfaces.xml
+% dec_incoming_files.xml
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+\section{Interfaces}
+ 
+This section covers the \textit{interfaces} configuration of a DEC node. 
+\par
+\noindent
+The configuration of every interface is defined in \textit{dec\_interfaces.xml}.
+
+\subsection{TXRXParams}
+The \textit{TXRXParams} configuration item defines the parameters which rule the circulation in pull and push mode.
+\par
+\noindent
+\begin{itemize}
+	\item \textit{Enabled4Sending} : \textit{boolean} flag for the activation of the circulations in \textit{pull} mode
+	\item \textit{Enabled4Receiving} : \textit{boolean} flag for the activation of the circulations in \textit{push} mode
+	\item \textit{ImmediateRetries} : number of retries to be applied to recover eventual \textit{upload} failures when \textit{pushing} a file
+	\item \textit{LoopRetries} : number of loops to be applied to recover eventual \textit{upload} failures when \textit{pushing} a file
+	\item \textit{LoopDelay} : delay in \textit{seconds} between two consecutive loops (if needed) for push
+	\item \textit{PollingInterval} : delay in \textit{seconds} in between consecutive iterations for \textit{pull} circulations
+	\item \textit{PollingSize} : maximum number of files to be \textit{pulled} during an iteration   
+	\item \textit{ParallelDownload} : number of simultaneous file downloads for pull circulations
+\end{itemize}
+
+\subsection{FTPServer}
+\par
+\noindent
+\begin{itemize}
+	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"} and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
+	\item \textit{Hostname} : hostname of the interface
+	\item \textit{Port} : TCP port
+	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server
+	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true, the SSH keys associated to the system user are used instead
+	\item \textit{RegisterContentFlag} : \textit{boolean} flag to activate tracking of the files available for \textit{pulling} without effective download
+	\item \textit{RetrieveContentFlag} :\textit{boolean} flag to activate the download of the files available for \textit{pull circulation} 
+	\item \textit{SecureFlag} : \textit{boolean} flag to activate \textit{encrypted} SSH communications
+	\item \textit{CompressFlag} : \textit{boolean} flag to activate \textit{compression} of the \textit{encrypted} SSH communications
+	\item \textit{DeleteFlag} : \textit{boolean} flag to delete the file upon successful circulation
+	\item \textit{PassiveFlag} : \textit{boolean} flag to activate \textit{compression} of the \textit{encrypted} SSH communications
+	\item \textit{CleanUpFreq} : defined in seconds used by the clean-up daemon if enabled to clean-up previously circulated files in \textit{push mode}	
+\end{itemize}
+
+\subsection{DeliverByMailTo}
+List of email \textit{Address} configuration items used to \textit{push} files using SMTP.
+
+\subsection{Notify}
+The \textit{Notify} configuration item serves to activate the generation and delivery of an email receipt carrying the name of the files which have been \textit{pushed} towards a given \textit{Interface}.
+\begin{itemize}
+	\item \textit{SendNotification} : \textit{boolean} flag to activate the 
+	\item \textit{To} : list of email \textit{Address} configuration items which will receive the notification
+\end{itemize}
+
+\begin{lstlisting}
+<Notify>
+	<SendNotification>true</SendNotification>
+<To>
+	<Address>mario.bros@gmail.com</Address>
+	<Address>mario.draghi@deimos-space.com</Address>
+	<Address>mario.cipollini@esa.int</Address>
+</To>
+</Notify>
+\end{lstlisting}
+
+\subsection{Events}
+The \textit{Events} configuration item host the activation and shell command associated to the event when circulating towards the interface.
+\begin{lstlisting}
+<Events>
+<Event Name="OnReceiveNewFilesOK"  executeCmd="echo :-)"/>
+<Event Name="OnReceiveError"            executeCmd="echo :-("/>
+</Events>
+\end{lstlisting}
+\par
+\par
+\noindent
+Below the possible \textit{Event Name} values which can be configured:
+\begin{itemize}
+	\item \textit{OnSendOK} : it is raised upon a successful loop to push
+	\item \textit{OnSendNewFilesOK} : it is raised upon a successful \textit{push} loop of file(s)
+	\item \textit{OnSendERROR} : it is raised if any file failed the \textit{push} circulation 
+	\item \textit{OnReceiveOK} : it is raised upon a successful loop for pull
+	\item \textit{OnReceiveNewFilesOK} : it is raised upon a successful \textit{pull} loop of file(s)
+	\item \textit{OnReceiveNewFile} : it is raised every new file \textit{pulled}
+	\item \textit{OnReceiveERROR} : it is raised if any \textit{pull} of file has failed
+	\item \textit{OnTrackOK} : it is raised upon a successful loop to check availability pull
+	\item \textit{NewFile2Intray} :	it is raised upon every new file locally disseminated after pulling it					 
+\end{itemize}
+
+\section{Pull circulations}
+
+The mechanism to \textit{select}, \textit{download} and locally \textit{disseminate} files to a DEC node is referred to \textit{pull mode}.
+\par
+\noindent
+The configuration of the pull circulation rules is defined in \textit{dec\_incoming\_files.xml}.
+
+\subsection{Interface pick-up points}
+The \textit{Interface} configuration item defines the interfaces pick-up point(s) from which the exposed files are polled.
+\par
+\noindent
+\begin{itemize}
+	\item \textit{Name} : this is the configuration item \textit{identifier} which is used to identify a given interface and refer to it in other sections of the configuration
+	\item \textit{LocalInbox} : this is the \textit{local} directory in which files are initially placed upon successful download ; if no dissemination rule is applied, this directory becomes the final destination  
+	\item \textit{DownloadDirs} : a list of \textit{Directory} configuration items to define the \textit{remote} directories of this interface from which the files will be pulled ; the attribute \textit{DepthSearch} defines the directory sub-levels which are polled.
+\end{itemize}
+
+
+\begin{lstlisting}
+<ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<Interface>
+	<Name>LOCALHOST_SECURE</Name>
+	<LocalInbox>/tmp/in_basket_if_localhost_secure</LocalInbox>
+	<DownloadDirs>
+		<Directory DepthSearch="0">/download1</Directory>
+		<Directory DepthSearch="0">/download2</Directory>
+	</DownloadDirs>
+</Interface>
+				
+<Interface>
+	<Name>IERS</Name>
+	<LocalInbox>/tmp/dec/if_iers_in_basket</LocalInbox>
+	<DownloadDirs>
+		<Directory DepthSearch="0">ser7</Directory>
+	</DownloadDirs>
+</Interface>
+		
+</ListInterfaces>
+\end{lstlisting}
+
+\par
+\noindent
+	
+\subsection{File filters}
+This configuration item defines the filters to select the files to be pulled from the interface pick-up point(s).
+\par
+\noindent
+\begin{itemize}
+	\item \textit{File Type} attribute : it defines the file to be pulled, allowing the definition of wildcards
+	\item \textit{Description} : free text to capture a human friendly definition of the interface 
+	\item \textit{FromList} : a list of \textit{Interface} identifiers from which the file will be pulled
+\end{itemize}
+\par
+\noindent
+\begin{lstlisting}
+<ListFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<File Type="tai-utc*">
+	<Description>TAI UTC correlation</Description>
+	<FromList>
+		<Interface>IERS</Interface>
+		<Interface>LOCALHOST_NOT_SECURE</Interface>
+	</FromList>
+</File>
+
+<File Type="finals.a*">
+	<Description>TAI UTC correlation consolidated</Description>
+	<FromList>
+		<Interface>IERS</Interface>
+		<Interface>LOCALHOST_NOT_SECURE</Interface>
+	</FromList>
+</File>
+
+<File Type="S2?_*">
+	<Description>Sentinel-2 Ground Segment</Description>
+	<FromList>
+		<Interface>LOCALHOST_SECURE</Interface>
+		<Interface>LOCALHOST_NOT_SECURE</Interface>
+	</FromList>
+</File>
+
+</ListFiles>
+
+\end{lstlisting}
+
+\subsection{Dissemination rules}
+This configuration item defines the local in-trays and the dissemination rules to be applied upon successful pull of files.
+\par
+\noindent
+Firstly it is defined the \textit{ListIntrays} \textit{Intray} configuration items:
+\par
+\noindent
+\begin{itemize}
+	\item \textit{Name} : this is the intray \textit{identifier} which is used to identify the final location the files pulled are placed
+ 	\item \textit{Directory} : this is the \textit{local} directory associated to the in-tray
+\end{itemize}
+
+\begin{lstlisting}
+<ListIntrays>
+
+<Intray>
+	<Name>S2ALL</Name>
+	<Directory>/local_dissemination/S2ALL</Directory>
+</Intray>
+
+<Intray>
+	<Name>S2A</Name>
+	<Directory>/local/S2A</Directory>
+	<Compress>7z</Compress>
+</Intray>
+
+<Intray>
+	<Name>S2B</Name>
+	<Directory>/local/S2B</Directory>
+</Intray>
+
+<Intray>
+	<Name>GPS</Name>
+	<Directory>/local/GPS</Directory>
+</Intray>
+
+</ListIntrays>
+
+\end{lstlisting}
+
+\par
+\noindent
+Then the rules for local dissemination of the pulled files into the in-tray(s) are defined. Only the first rule which matches the file name or wildcard defined in the \textit{File Type} attribute is applied ; as such it is recommended to sort the rules ranking from the more restrictive ones.  
+\par
+\noindent
+\begin{itemize}
+	\item \textit{Name} : this is the intray \textit{identifier} which is used to identify the final location the files pulled are placed
+	\item \textit{HardLink} : this is a \textit{boolean} flag to hardlink in the file-system a pulled file in case of definition of different in-trays for multiple dissemination into
+	\item \textit{ToList} : this is the list of \textit{Intray} identifiers configuration item the defined \textit{File Type} is disseminated into 
+\end{itemize}
+\begin{lstlisting}
+<ListFilesDisseminated>
+
+<File Type="tai-utc*">
+	<HardLink>False</HardLink>
+	<ToList>
+		<Intray>GPS</Intray>
+	</ToList>
+</File>
+
+<File Type="finals*">
+	<HardLink>false</HardLink>
+	<ToList>
+		<Intray>GPS</Intray>
+	</ToList>
+</File>
+
+<File Type="S2A_*.*">
+	<HardLink>true</HardLink>
+	<ToList>
+		<Intray>S2A</Intray>
+		<Intray>S2ALL</Intray>
+	</ToList>
+</File>
+
+<File Type="S2B_*.*">
+	<HardLink>true</HardLink>
+	<ToList>
+		<Intray>S2B</Intray>
+		<Intray>S2ALL</Intray>
+	</ToList>
+</File>
+
+<File Type="S2__*">
+	<HardLink>False</HardLink>
+	<ToList>
+		<Intray>S2ALL</Intray>
+	</ToList>
+</File>
+
+</ListFilesDisseminated>
+
+\end{lstlisting}
+	
+\section{Push circulations}
+
+The mechanism to fetch and upload files from a DEC node is referred to \textit{push mode}.
+
+\section{Environment Variables}
+
+The execution of DEC SW can be parametrised through the usage of environment variables which are loaded from the shell. This section describes them.
+\par
+\noindent
+\subsection{Database Variables} \label{Database Variables}
+This section describes the environment variables used by DEC SW to define the database settings.
+\begin{itemize}
+	\item \textit{DEC\_DB\_ADAPTER} : this is the database used for recording the operations unless execution is performed with the \textit{--nodb} execution flag is used ; values can be \textit{"postgresql"}, \textit{"sqlite3"}, etc driven by your database of choice 
+	\item \textit{DEC\_DATABASE\_NAME} : this is a database name in which the circulation operations and file availability tracking are recorded
+	\item \textit{DEC\_DATABASE\_USER} : this is the database user name
+	\item \textit{DEC\_DATABASE\_PASSWORD} : this is the database user password
+\end{itemize}
+
+\subsection{General Variables} \label{General Variables}
+This section describes the environment variables used by DEC SW to define the database settings.
+\begin{itemize}
+	\item \textit{DEC\_CONFIG} : this is the directory in which the DEC config files are present
+	\item \textit{DEC\_TMP} : this is the directory used for temporal / transient operation prior final availability in the data sinks
+	\item \textit{HOSTNAME} : this environment variable defines the current hostname which is used for mail authentication purposes	
+\end{itemize}
+
+\subsection{File Transfer for RPF}
+This section describes the specific environment variables used by DEC SW acting as File Transfer for the RPF.
+\begin{itemize}
+	\item \textit{FTPROOT} : this is the directory which is used to place the files which will be \textit{pushed} as part of each ROP delivery
+	\item \textit{RPF\_ARCHIVE\_ROOT} : this is RPF archive root directory from which the files to be transferred are gathered
+	\item \textit{RPFBIN} : this is RPF binary directory in which the RPF tools invoked by the File-Transfer are placed (i.e. \textit{put\_report.bin}, \textit{removeSchema.bin}, \textit{write2Log.bin})
+\end{itemize}
+\subsection{Push Circulations}
+This section describes the specific environment variables used by DEC SW for \textit{push circulations}.
+\begin{itemize}
+	\item \textit{DEC\_DELIVERY\_ROOT} : this is the source directory of the files to be \textit{pushed} 
+\end{itemize}
+
+\section{Database}
+This section describes how to initialise the database configuration for DEC driven by some environment variable settings described below. It is however recalled that it is possible to execute the DEC \textit{without} a database by usage of the flag \textit{"--nodb"} which precludes some features such as control flow, throughput computation however allowing essential file data circulations.
+
+
+\subsection{Creation}
+
+This section describes how to initialise the database by creation of the tables and index used by DEC SW.
+
+\par
+
+\noindent
+In order to create the database, execute the following command in the shell:
+
+\inlinecode{bash}{ \$> decManageDB --create-tables } \newline
+
+
+\par 
+
+\noindent
+In order to remove the database, execute the following command in the shell:
+
+\inlinecode{bash}{ \$> decManageDB --drop-tables }
+
+
+\subsection{Configuration of Interfaces}
+
+This section describes how to configure within the database the interface identifiers defined in the configuration file \textit{dec\_interfaces.xml} :
+
+\inlinecode{bash}{ \$> decConfigInterfaceDB  --process EXTERNAL } \newline
+
+\par
+
+\noindent
+It is also possible to register the interface identifiers according to its name definition in \textit{dec\_interfaces.xml}: \begin{verbatim}<Interface Name="IERS">\end{verbatim} 
+
+\par 
+\noindent
+\noindent
+The following command can be used to register an interface identifier in the database:
+
+\inlinecode{bash}{ \$> decConfigInterfaceDB  --add IERS } \newline
+
+\section{Configuration Verification}
+This section describes how to verify the DEC configuration settled according to the previous sections. 
+
+\subsection{Validation}
+To validate the XML files of the DEC configuration, there is an associated a DEC command line tool called \textit{decValidateConfig} which verifies the syntax and semantics associated to  configuration items. \newline
+
+\par 
+\noindent
+Execute the following command in the shell to verify the configuration:
+
+\inlinecode{bash}{ \$> decValidateConfig  --all } \newline
+
+\par 
+
+\subsection{Check Interfaces}
+\noindent
+In order to check the entire configuration defined and the connectivity to the different configured interfaces execute the following command:
+
+\inlinecode{bash}{ \$> decCheckConfig  --all } \newline
+
+
+\par 
+\noindent
+If your DEC deployment and configuration does not record the operations into the database (cf. execution with \textit{"--nodb"} flag), alternatively execute the following command in the shell to verify the configuration:
+
+\inlinecode{bash}{ \$> decCheckConfig  --all --nodb } \newline
+
+\end{document}
+
