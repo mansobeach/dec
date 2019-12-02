@@ -34,7 +34,7 @@ ActiveRecord::Base.establish_connection(
                                           :pool       => 10
                                           )
 
-#=====================================================================
+## ===================================================================
 
 class CreateTriggerProducts < ActiveRecord::Migration[6.0]
    def self.up
@@ -54,7 +54,7 @@ class CreateTriggerProducts < ActiveRecord::Migration[6.0]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
 class CreateOrchestratorQueue < ActiveRecord::Migration[6.0]
   
@@ -206,7 +206,8 @@ class CreateProductionTimelines < ActiveRecord::Migration[6.0]
       drop_table :production_timelines
    end
 end
-#=====================================================================
+
+## ===================================================================
 
 class CreateRunningJobs < ActiveRecord::Migration[6.0]
    def self.up
@@ -221,10 +222,10 @@ class CreateRunningJobs < ActiveRecord::Migration[6.0]
    end
 end
 
-## =====================================================================
+## ===================================================================
 
 
-#=====================================================================
+## ===================================================================
 
 class CreateOrchestratorMessages < ActiveRecord::Migration[6.0]
    def self.up
@@ -242,7 +243,7 @@ class CreateOrchestratorMessages < ActiveRecord::Migration[6.0]
    end
 end
 
-#=====================================================================
+## ===================================================================
 
 class CreateMessageParameters < ActiveRecord::Migration[6.0]
 
@@ -259,4 +260,4 @@ class CreateMessageParameters < ActiveRecord::Migration[6.0]
       drop_table :message_parameters
    end
 end
-#=====================================================================
+## ===================================================================

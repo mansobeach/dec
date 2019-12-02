@@ -625,12 +625,22 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)      
 
-      cmd = "decCheckConfig -e LOCALHOST_NOT_SECURE"
+      cmd = "decCheckConfig -a -e LOCALHOST_NOT_SECURE"
       puts cmd
       puts
       assert(system(cmd), cmd)
 
-      cmd = "decCheckConfig -e LOCALHOST_NOT_SECURE --nodb"
+      cmd = "decCheckConfig -a -e LOCALHOST_SECURE"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -a -e FILESYSTEM"
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -a -e LOCALHOST_NOT_SECURE --nodb"
       puts cmd
       puts
       assert(system(cmd), cmd)

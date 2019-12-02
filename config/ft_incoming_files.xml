@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-   <File Type="METEO_CASALE_2*.xml">
-      <Description></Description>
+ 
+   <File Type="tai-utc*">
+      <Description>TAI UTC correlation</Description>
       <FromList>
-         <Interface>METEO</Interface>
+         <Interface>IERS</Interface>
+         <Interface>LOCALHOST_NOT_SECURE</Interface>
       </FromList>
    </File>
 
+   <File Type="finals.a*">
+      <Description>TAI UTC correlation</Description>
+      <FromList>
+         <Interface>IERS</Interface>
+         <Interface>LOCALHOST_NOT_SECURE</Interface>
+      </FromList>
+   </File>
 
+  
 </FileList>

@@ -24,11 +24,12 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.8"
+   @@version = "0.0.9dev"
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.9"  =>    "unit tests execution environment can be parametrised with env file", \
       "0.0.8"  =>    "fixed S2MPASUP-292 / migration to ActiveRecord 6", \
       "0.0.7"  =>    "fixed S2MPASUP-277 regarding race conditions when triggering jobs", \
       "0.0.6"  =>    "ingestion parallelised (new configuration ParallelIngestions)", \
@@ -40,7 +41,7 @@ module ORC
       "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
       "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    @@arrEnv = [ \
                "ORC_TMP", \
@@ -51,7 +52,7 @@ module ORC
                "ORC_DATABASE_PASSWORD" \
               ]
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    @@arrTools = [ \
                  "sqlite3", \
@@ -62,7 +63,7 @@ module ORC
                  "orcBolg" \
                 ]
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def load_environment_test
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_test.env')
@@ -90,9 +91,16 @@ module ORC
    end
    ## -----------------------------------------------------------------
    
-   def load_config_production
-      env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_production.env')
-      Dotenv.overload(env_file)   
+   def load_environment(filename)
+      env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../config', filename)
+      
+      if File.exist?(env_file) == false then
+         puts "environment file #{env_file} not found"
+         return false
+      end
+      
+      Dotenv.overload(env_file)
+      ENV['ORC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
    end 
    ## ----------------------------------------------------------------
    
@@ -238,8 +246,8 @@ class ORC_Environment
       load_environment_test
    end
    
-   def wrapper_load_config_development
-      load_config_development
+   def wrapper_load_environment(envFile)
+      return load_environment(envFile)
    end
 
    def wrapper_print_environment

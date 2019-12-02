@@ -296,8 +296,6 @@ class DECTestCase < Test::Unit::TestCase
       puts
       puts
 
-
-
       cmd = "decConfigInterface2DB -p EXTERNAL"
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
@@ -316,11 +314,13 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
       
-      sleep(2.0)
+      sleep(5.0)
       
       cmd = "decGetFromInterface -m IERS --nodb --no-intray"
       puts cmd
       assert(system(cmd), cmd)
+
+      sleep(5.0)
 
       assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
       assert(File.exist?("#{@finalDir}/gpsrapid.out"), "retrieved gpsrapid.out")
@@ -369,6 +369,65 @@ class DECTestCase < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
+   def test_decGetFromInterface_NODB
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      assert(system(cmd), "decManageDB -d")
+
+      @entityConfig     = ReadInterfaceConfig.instance
+      conf              = ReadConfigIncoming.instance
+      @finalDir         = conf.getIncomingDir("IERS")
+      
+      checkDirectory(@finalDir)
+      
+      ENV.delete('DEC_DB_ADAPTER')
+      ENV.delete('DEC_DATABASE_NAME')
+      ENV.delete('DEC_DATABASE_USER')
+      ENV.delete('DEC_DATABASE_PASSWORD')
+
+      puts
+      puts
+      @@conf.print_environment
+      puts
+      puts
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -a -e IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+            
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      sleep(2.0)
+      
+      cmd = "decGetFromInterface -m IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      dimConfig = ReadConfigIncoming.instance
+      
+      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
+
+      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
+      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
+
+      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
+      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
+      
+   end
+   ## ------------------------------------------------------
 
 end
 

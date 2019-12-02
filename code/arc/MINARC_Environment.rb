@@ -22,11 +22,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.32"
+   @@version = "1.0.33dev"
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.33" =>    "to be defined", \
       "1.0.32" =>    "Migration to ActiveRecord 6", \
       "1.0.31" =>    "Check of tool dependencies done in the unit tests\n\
           Environment variables for tests defined in minarc_test.env\n\
@@ -64,7 +65,8 @@ module ARC
       "1.0.1"  =>    "Handler for m2ts files of Sony Camcorders", \
       "1.0.0"  =>    "First version of the minarc installer created" \
    }
-   # -----------------------------------------------------------------
+   
+   ## ----------------------------------------------------------------
    
    @@arrENV = [ \
                   "MINARC_TMP", \
@@ -76,7 +78,7 @@ module ARC
                   "MINARC_DATABASE_PASSWORD" \
                   ]
 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    @@arrTools = [ \
                   "curl", \
@@ -87,7 +89,7 @@ module ARC
                   "unzip" \
                   ]
 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def load_config_development
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
@@ -102,7 +104,7 @@ module ARC
       ENV['RACK_ENV']                     = "development"
    end
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def unset_config
       ENV.delete('MINARC_DB_ADAPTER')
@@ -114,12 +116,12 @@ module ARC
       ENV.delete('MINARC_DATABASE_PASSWORD')
       ENV.delete('MINARC_TMP')
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def load_config_production
       ENV['RACK_ENV']                     = "production"
    end 
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
@@ -134,7 +136,7 @@ module ARC
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
       puts "MINARC_ARCHIVE_ERROR          => #{ENV['MINARC_ARCHIVE_ERROR']}"
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def check_environment_dirs
       checkDirectory(ENV['TMPDIR'])
@@ -143,7 +145,7 @@ module ARC
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
       checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    def setRemoteModeOnly
       ENV.delete('MINARC_TMP')
@@ -154,19 +156,19 @@ module ARC
       ENV.delete('MINARC_DATABASE_USER')
       ENV.delete('MINARC_DATABASE_PASSWORD')
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def setLocalModeOnly
       ENV.delete('MINARC_SERVER')
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def load_environment_test
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'minarc_test.env')
       Dotenv.overload(env_file)
    end
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def check_environment
       check_environment_dirs
@@ -177,7 +179,7 @@ module ARC
          return false
       end
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def checkEnvironmentEssential
       bCheck = true
@@ -199,7 +201,7 @@ module ARC
       
       
    end
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
    
    def checkToolDependencies
       
@@ -227,14 +229,15 @@ module ARC
       
    end
    
-   # -----------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    
 end # module
 
-# ==============================================================================
-
-# Wrapper to make use within unit tests since it is not possible inherit mixins
+## ==============================================================================
+##
+## Wrapper to make use within unit tests since it is not possible inherit mixins
+##
 
 class MINARC_Environment
    
@@ -274,4 +277,4 @@ class MINARC_Environment
    
 end
 
-# ==============================================================================
+## ==============================================================================

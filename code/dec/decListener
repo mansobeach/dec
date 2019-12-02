@@ -2,7 +2,16 @@
 
 # == Synopsis
 #
-# This is a Data Exxchange Component command line tool that manages the I/Fs listeners for data retrieval
+# This is a Data Exchange Component (DEC) command line tool 
+# that manages the I/Fs listeners for data retrieval.
+#
+# The DEC listeners automates the file pulling from the configured interface.
+# One listener is devoted for every interface configured.
+# 
+# The behaviour of the listener is driven by the settings defined
+# in the configuration file $DEC_CONFIG/dec_interfaces.xml
+#
+# Alternatively the listener settings can be overriden with the command line options.
 #
 # == Usage
 # decListener  --all [-R]| --mnemonic <MNEMONIC> --interval <seconds>
@@ -237,10 +246,10 @@ def main
       listener.run
    end
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-# By requirements it is needed one listener per I/F with an
-# independent PollingInterval for each one.
+## By requirements it is needed one listener per I/F with an
+## independent PollingInterval for each one.
 def pollInterface
    startTime = Time.new
    startTime.utc   
@@ -261,7 +270,7 @@ def pollInterface
 
 #   command  = %Q{#{command} --del-unknown} 
 
-   # ----------------------------------------------------------
+   ## ------------------------------------------------------
    
    if @isNoDB == true then
       command  = %Q{#{command} --nodb}
@@ -272,7 +281,7 @@ def pollInterface
    end
 
 
-   # ----------------------------------------------------------
+   ## ------------------------------------------------------
 
    if @isDebugMode == true then
       puts "#{command}"
@@ -343,13 +352,13 @@ def pollInterface
    end
    
 end
-#-------------------------------------------------------------
-
-# By requirements it is needed one listener per I/F with an
-# independent PollingInterval for each one.
-#
-# It is required to provide a method to trigger and restart
-# all I/Fs Listeners on demand.
+## ---------------------------------------------------------
+##
+## By requirements it is needed one listener per I/F with an
+## independent PollingInterval for each one.
+##
+## It is required to provide a method to trigger and restart
+## all I/Fs Listeners on demand.
 def restartListeners
    
    ftReadConf   = ReadInterfaceConfig.instance
@@ -371,9 +380,9 @@ def restartListeners
    }   
    
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It Stops all the Listeners
+## It Stops all the Listeners
 def stopListeners
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
@@ -387,9 +396,9 @@ def stopListeners
    }   
    stopGetFromEntities
 end
-#-------------------------------------------------------------
-
-# It stops the listener for the given I/F
+##----------------------------------------------------------
+##
+## It stops the listener for the given I/F
 def stopListener(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
    pid     = checker.getRunningPID
@@ -403,14 +412,14 @@ def stopListener(mnemonic)
       @logger.info("Listener for #{mnemonic} I/F has been disabled")
    end
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It checks whether the Listeners are running or not
-# It returns:
-# * 0 -> All listeners are running
-# * 1 -> All listeners are not running
-# * 2 -> Some of them are not running
-#
+## It checks whether the Listeners are running or not
+## It returns:
+## * 0 -> All listeners are running
+## * 1 -> All listeners are not running
+## * 2 -> Some of them are not running
+##
 def checkListeners
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
@@ -442,10 +451,10 @@ def checkListeners
    end
    exit(2)
 end
-#-------------------------------------------------------------
-
-# By requirements it is needed one listener per I/F with an
-# independent PollingInterval for each one.
+## ---------------------------------------------------------
+##
+## By requirements it is needed one listener per I/F with an
+## independent PollingInterval for each one.
 def launchListeners      
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
@@ -467,9 +476,9 @@ def launchListeners
    puts
    return 0   
 end
-#-------------------------------------------------------------
-
-# It creates a new process Listener for the I/F.
+## ---------------------------------------------------------
+##
+## It creates a new process Listener for the I/F.
 def launchListener(entity)
    ftReadConf   = ReadInterfaceConfig.instance      
    pI = ftReadConf.getPollingInterval(entity)
@@ -498,9 +507,9 @@ def launchListener(entity)
    }
    #---------------------------------------------
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It stops getFromInterface associated to each listener
+## It stops getFromInterface associated to each listener
 def stopGetFromEntities
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
@@ -514,9 +523,9 @@ def stopGetFromEntities
       end
    } 
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It stops getFromInterface for a given I/F
+## It stops getFromInterface for a given I/F
 def stopGetFromEntity(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new("decGetFromInterface", mnemonic, true)
    pid     = checker.getRunningPID
@@ -530,16 +539,16 @@ def stopGetFromEntity(mnemonic)
       @logger.info("Polling for #{mnemonic} I/F has been aborted")
    end
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It exists?
+## It exists?
 def existEntity?(mnemonic)
    ftReadConf   = ReadInterfaceConfig.instance   
    return ftReadConf.exists?(mnemonic)
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# Check that everything needed by the class is present.
+## Check that everything needed by the class is present.
 def checkModuleIntegrity
    
    bDefined = checkEnvironmentEssential
@@ -549,15 +558,15 @@ def checkModuleIntegrity
       exit(99)
    end                             
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-#-------------------------------------------------------------
-
-# Print command line help
+## ---------------------------------------------------------
+##
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)   
    
-   value = `#{"head -27 #{fullpathFile}"}`
+   value = `#{"head -36 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
@@ -565,7 +574,7 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 
 

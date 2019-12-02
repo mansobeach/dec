@@ -92,7 +92,6 @@ class AddNewColumns < ActiveRecord::Migration[6.0]
      add_column :archived_files, :size_original, :integer, {:default=>0, :null=>true}
   end
 
-
   def change_20170301
      # size of the file in bytes
      add_column :archived_files, :size, :integer, {:default=>0, :null=>true}
@@ -104,7 +103,6 @@ class AddNewColumns < ActiveRecord::Migration[6.0]
      add_column :archived_files, :name, :string, {:limit=>255, :null=>true}
      add_index :archived_files, :name
   end
-  
   
 end
 

@@ -7,14 +7,15 @@
     <Port>25</Port>
     <User>borja.esa</User>
     <Pass>perrillo.pwd</Pass>
+    <isSecure>true</isSecure>
   </SendMailParams>
  
   <ReceiveMailParams>
     <POPServer>pop3.deimos-space.com</POPServer>
     <Port>110</Port>
-    <EMail>goce_dcc@kaka.com</EMail>
     <User>goce_dcc.deimos-space.com</User>
     <Pass>1goce_dcc</Pass>
+    <isSecure>true</isSecure>
   </ReceiveMailParams>  
   
 </MailParams>

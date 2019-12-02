@@ -717,7 +717,7 @@ class DEC_ReceiverFromInterface
 #                  deliverer.setDebugMode
 #               end
 #               # puts "Creating and Deliver Report File"
-#               deliverer.deliverFile(directory, filename)
+#               deliverer.deliverFile(@entity, directory, filename)
 #               puts
 #            end
          end
@@ -772,7 +772,7 @@ class DEC_ReceiverFromInterface
                   deliverer.setDebugMode
                end
                puts "Creating and Deliver Report File"
-               deliverer.deliverFile(directory, filename)
+               deliverer.deliverFile(@entity, directory, filename)
                puts
             end
          end
@@ -1138,7 +1138,7 @@ private
 	   if @isDebugMode == true then
 	      deliverer.setDebugMode
 	   end
-      deliverer.deliverFile(@finalDir, file)          
+      deliverer.deliverFile(@entity, @finalDir, file)          
    end
    ## -------------------------------------------------------------
 
@@ -1788,7 +1788,7 @@ private
                deliverer.setDebugMode
             end
             puts "Creating and Deliver Content File"
-            deliverer.deliverFile(directory, filename)
+            deliverer.deliverFile(@entity, directory, filename)
             puts
          end
 #		end

@@ -1,57 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FileList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <File Type="METEO">
+   <File Type="GIP_PROBA2"> 
       <Description></Description>
       <ToList>
-         <Interface Name="METEO"             Compress="NONE" DeliveryMethods="FTP" />
-         <Interface Name="METEO"             Compress="NONE" DeliveryMethods="LOCAL" />
-         <Interface Name="METEO_LEON"        Compress="NONE" DeliveryMethods="FTP" />
-         <Interface Name="METEO_MONTEUALLA"  Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 
-   <File Type="METEO_LEON">
+   <File Type="S2A*">
       <Description></Description>
       <ToList>
-         <Interface Name="METEO_LEON"  Compress="NONE" DeliveryMethods="FTP" />
+         <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 
-   <File Type="METEO_CASALE">
+   <File Type="S2B*">
       <Description></Description>
       <ToList>
-         <Interface Name="METEO2"  Compress="NONE" DeliveryMethods="FTP" />
-      </ToList>
-   </File>
-
-
-   <File Type="METEO_MONTEUALLA">
-      <Description></Description>
-      <ToList>
-         <Interface Name="METEO_MONTEUALLA"  Compress="NONE" DeliveryMethods="FTP" />
-      </ToList>
-   </File>
-
-
-   <File Type="METEO_HISTORIC">
-      <Description></Description>
-      <ToList>
-         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
-      </ToList>
-   </File>
-
-   <File Type="*stats*png">
-      <Description></Description>
-      <ToList>
-         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" />
-      </ToList>
-   </File>
-
-
-   <File Type="METEO_PNG">
-      <Description></Description>
-      <ToList>
-         <Interface Name="METEO"  Compress="NONE" DeliveryMethods="FTP" CleanUpAge="86400" />
+         <Interface Name="LOCALHOST_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
       </ToList>
    </File>
 

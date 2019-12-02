@@ -20,7 +20,7 @@
 # -i flag:
 #
 # With this option the Incoming file-types registered in the dec_incoming_files.xml are checked.
-# Mainly what it is done is to check that the interfaces from a File is retrieved are configured in 
+# Mainly what it is done is to check that the interface a File is pulled from is configured in 
 # the dec_interfaces.xml file.
 #
 #
@@ -38,10 +38,7 @@
 #
 # -t flag:
 #
-# With this option the In-Trays configured in the files2InTrays.xml file are checked.
-# Mainly it is checked the consistency of the files2InTrays.xml config file.
-# As well it is checked the coherency between file2Dims.xml and dec_incoming_files.xml
-# warning when an incoming file is not disseminated to any In-Tray.
+# With this option the In-Trays configured in the dec_incoming_files.xml file are checked.
 #
 #
 # -a flag:
@@ -54,10 +51,10 @@
 #     -a    checks all DEC configuration
 #     -e    checks entities configuration in dec_interfaces.xml
 #    --nodb no Inventory checks
-#     -i    checks incoming file-types configured in dec_incoming_files.xml
-#     -o    checks outgoing file-types configured in dec_outgoing_files.xml
+#     -i    checks incoming pulled file-types configured in dec_incoming_files.xml
+#     -o    checks outgoing pushed file-types configured in dec_outgoing_files.xml
 #     -m    checks the mail configuration placed in ft_mail_config.xml
-#     -t    checks the In-Trays configuration placed in files2InTrays.xml
+#     -t    checks the In-Trays configuration placed in dec_incoming_files.xml
 #     -l    checks the log configuration
 #     -h    it shows the help of the tool
 #     -u    it shows the usage of the tool
@@ -431,21 +428,6 @@ def main
    
 end
 
-# -------------------------------------------------------------
-
-# Print command line help
-def usage
-   fullpathFile = File.expand_path(__FILE__)
-   
-   value = `#{"head -72 #{fullpathFile}"}`
-      
-   value.lines.drop(1).each{
-      |line|
-      len = line.length - 1
-      puts line[2, len]
-   }
-end
-
 ## -------------------------------------------------------------
 
 def checkOutgoingConfig
@@ -507,6 +489,22 @@ end
 def checkModuleIntegrity
    return
 end 
+
+## -------------------------------------------------------------
+##
+## Print command line help
+def usage
+   fullpathFile = File.expand_path(__FILE__)
+   
+   value = `#{"head -70 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+
 ## -------------------------------------------------------------
 
 ## =============================================================================

@@ -41,7 +41,9 @@
       </To>
     </Notify>
     <Events>
+         <!--
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+    -->
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
     <!--     
          <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
@@ -185,7 +187,7 @@
     </TXRXParams>    
     <FTPServer>
       <Protocol>FTP</Protocol>
-      <Hostname>maia.usno.navy.mil</Hostname>
+      <Hostname>ftp.iers.org</Hostname>
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>
@@ -207,13 +209,15 @@
       </To>
     </Notify>
     <Events>
-    <!--
          <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
-     -->    
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo \':-\)\'"/>
-         
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
     
     </Events>
     <ContactInfo>

@@ -1,467 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
- <!-- ================================================================ -->
+  <!-- ================================================================ -->
+ 
 
-  <Interface Name="S2PDGS">
-    <Desc>S2PDGS</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/casale</OutgoingDir>
+  <Interface Name="LOCALHOST_NOT_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <IncomingDir>$HOME/Sandbox/dec/dec_basket</IncomingDir>
+    <OutgoingDir>$HOME/Sandbox/dec/out_basket</OutgoingDir>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <FTPServer>
+      <Protocol>FTP</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>21</Port>
+      <User><!--e2edctest-->borja</User>
+      <Pass><!--e2edctest-->perrillo</Pass>
+      <UploadDir>Sandbox/dec/dec_sent_file</UploadDir>
+      <UploadTemp>Sandbox/dec/dec_sent_file/_TEMP_</UploadTemp>
+      <DownloadDirs>
+		   <Directory DepthSearch="0">Sandbox/dec/interface_local_us/</Directory>
+      </DownloadDirs>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </FTPServer>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="IERS">
+    <Desc>IERS Interface</Desc>
+    <IncomingDir>$HOME/Sandbox/dec/dec_basket</IncomingDir>
+    <OutgoingDir>$HOME</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
-	   <Port>22</Port>
-      <User>e2espm</User>
-      <Pass>N/A</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT</Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>true</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <!-- <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/> -->
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo OK!"/>
-         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-
-  <!-- ================================================================ -->
- 
-  <Interface Name="METEO_CASALE">
-    <Desc>Meteo Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/casale</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-      <PollingSize>30</PollingSize>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>meteomonteporzio.altervista.org</Hostname>
-	   <Port>21</Port>
-      <User>meteomonteporzio</User>
-      <Pass>pecgegitke38</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="4"></Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"  executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-
-  <!-- ================================================================ -->
-
-  <Interface Name="METEO_LEON">
-    <Desc>Meteo Leon Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/leon</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>meteoleon.altervista.org</Hostname>
-	   <Port>21</Port>
-      <User>meteoleon</User>
-      <Pass>casalebeach</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="4"></Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"  executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-  <!-- ================================================================ -->
-
-  <Interface Name="METEO_CARMENES">
-    <Desc>Meteo Carmenes Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray/carmenes</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/carmenes</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>meteoleoncarmenes.altervista.org</Hostname>
-	   <Port>21</Port>
-      <User>meteoleoncarmenes</User>
-      <Pass>seftufotka44</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="4"></Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"      executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"           executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-  
-    <!-- ================================================================ -->
-
-  <Interface Name="METEO_PROHU">
-    <Desc>Meteo Sardegna Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/prohu</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>prohu.altervista.org</Hostname>
-	   <Port>21</Port>
-      <User>prohu</User>
-      <Pass>poison79</Pass>
-
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-
-      <!--
-      <UploadDir>./webcambruncu</UploadDir>
-      <UploadTemp>./webcambruncu/_TEMP_</UploadTemp>
-      -->
-      
-      <DownloadDirs>
-		 <Directory DepthSearch="4"></Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"  executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-   <!-- ================================================================ -->
- 
-  <Interface Name="METEO_LOCAL">
-    <Desc>Meteo Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray/my_host_local</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray/my_host_local</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
-      <LoopRetries>1</LoopRetries>
-      <LoopDelay unit="s">10</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <Hostname>localhost</Hostname>
-	   <Port>21</Port>
-      <User>borja</User>
-      <Pass>perrillo.pwd</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="4"></Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"      executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"           executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
- 
-  
-  
-  <Interface Name="METEO2">
-    <Desc>Meteo Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray_meteo2</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray_meteo2</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
-      <LoopRetries>3</LoopRetries>
-      <LoopDelay unit="s">30</LoopDelay>
-      <PollingInterval unit="s">10</PollingInterval>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <FTPServer>
-      <!-- <Hostname>ftp9.nofeehost.com</Hostname> -->
-      <Hostname>ftp.drivehq.com</Hostname>
+      <Protocol>FTP</Protocol>
+      <Hostname>maia.usno.navy.mil</Hostname>
 	   <Port>21</Port>
-      <User>meteomonteporzio</User>
-      <Pass>perrillo</Pass>
-      <UploadDir>meteo</UploadDir>
-      <UploadTemp>meteo/_temp_</UploadTemp>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <UploadDir>./</UploadDir>
+      <UploadTemp>./_TEMP_</UploadTemp>
       <DownloadDirs>
-		 <Directory DepthSearch="1">meteo</Directory>  <!-- /remote/ACMF/fromACMF</Directory>/remote/ACMF/fromACMF</Directory> -->
+		   <Directory DepthSearch="0">ser7</Directory>
       </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
       <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
-      <PassiveFlag>true</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
-    <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
-      </To>
-    </Notify>
-    <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"  executeCmd="echo Error on receiving file..."/>
-    </Events>
-    <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Citta Uova</Address>
-    </ContactInfo>
-  </Interface>
-
-  <!-- ================================================================ -->
-
-  <Interface Name="METEO_MONTEUALLA">
-    <Desc>Meteo Interface</Desc>
-    <IncomingDir>$HOME/Projects/weather/data/intray_meteo_monteualla</IncomingDir>
-    <OutgoingDir>$HOME/Projects/weather/data/outtray_meteo_monteualla</OutgoingDir>
-    <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
-      <ImmediateRetries>3</ImmediateRetries>
-      <LoopRetries>3</LoopRetries>
-      <LoopDelay unit="s">30</LoopDelay>
-      <PollingInterval unit="s">10</PollingInterval>
-    </TXRXParams>    
-    <FTPServer>
-      <!-- <Hostname>ftp9.nofeehost.com</Hostname> -->
-      <Hostname>ftp.monteualla.it</Hostname>
-	   <Port>21</Port>
-      <User>2163782@aruba.it</User>
-      <Pass>585061983d</Pass>
-      <UploadDir>/www.monteualla.it/meteo/meteomodighina</UploadDir>
-      <UploadTemp>/www.monteualla.it/meteo/meteomodighina/_temp_</UploadTemp>
-      <DownloadDirs>
-		 <Directory DepthSearch="0">/www.monteualla.it/meteo/meteomodighina</Directory>
-      </DownloadDirs>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>false</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
-      <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
+      <DeleteFlag>false</DeleteFlag>
       <PassiveFlag>false</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </FTPServer>
     <DeliverByMailTo>
-       <Address>borja.esa@gmail.com</Address>
+       <Address>daniel.brosnan@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
       <SendNotification>false</SendNotification>
       <To>
-       <Address>borja.lopez.fernandez@gmail.com</Address>
+       <Address>daniel.brosnan@deimos-space.com</Address>
       </To>
     </Notify>
     <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="archiveAllFiles.rb"/>
-         <Event Name="OnReceiveError"  executeCmd="echo Error on receiving file..."/>
+    <!--
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+     -->    
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo \':-\)\'"/>
+         
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    
     </Events>
     <ContactInfo>
-      <Name>Mr Me</Name>
-      <EMail>borja.lopez.fernandez@gmail.com</EMail>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
       <Tel>0039-800 454 432</Tel>
       <Fax>0039-800 454 433</Fax>
       <Address>Citta Uova</Address>
     </ContactInfo>
   </Interface>
 
+  <!-- ================================================================ -->
 
-  
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+
   <!-- ================================================================ -->
 
 

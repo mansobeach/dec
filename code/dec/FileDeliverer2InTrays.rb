@@ -209,13 +209,13 @@ class FileDeliverer2InTrays
 			end
 			
          arrFiles.each{|file|
-            deliverFile(directory, file)
+            deliverFile(nil, directory, file)
 			}
    end
    ## -------------------------------------------------------------
    
-   # It delivers a given file
-   def deliverFile(directory, file)
+   ## It delivers a given file
+   def deliverFile(entity, directory, file)
       
       bIsEEFile = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
       fileType  = CUC::EE_ReadFileName.new(file).fileType
@@ -269,7 +269,7 @@ class FileDeliverer2InTrays
 #         disseminate(file, directory, dimsDirs, hdlinked)
 #         File.delete("#{directory}/#{file}")
  
- 		   ret = disseminate(file, directory, dimsDirs, hdlinked)
+ 		   ret = disseminate(entity, file, directory, dimsDirs, hdlinked)
 
          # ---------------------------------
          # 20170601 - Patch to compress locally disseminated files               
@@ -347,14 +347,14 @@ private
          exit(99)
       end      
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
+	##
+   ## It disseminates the file from a directory to a set of target dirs.
+   ## GOCEPMF-SPR-005
+   ## First at all it copies the file hidden in the In-Tray
+   ## Once it has been completely copied, it renames it to the operational name
 	
-   # It disseminates the file from a directory to a set of target dirs.
-   # GOCEPMF-SPR-005
-   # First at all it copies the file hidden in the In-Tray
-   # Once it has been completely copied, it renames it to the operational name
-	
-   def disseminate(file, fromDir, arrToDir, hardlinked = false)
+   def disseminate(entity, file, fromDir, arrToDir, hardlinked = false)
       bReturn = true
       if hardlinked == true and arrToDir.length <2
 		   if @isDebugMode == true then
@@ -371,6 +371,21 @@ private
 		arrToDir.each{|targetDir|
          checkDirectory(targetDir)
 		   cmd = ""
+         
+         # -------------------------------------------
+         # Management of event NewFile2Intray
+         
+         arrParam             = Array.new
+         hParam1              = Hash.new
+         hParam1["filename"]  = file 
+
+         hParam2              = Hash.new
+         hParam2["directory"] = targetDir
+      
+         arrParam << hParam1
+         arrParam << hParam2
+         # -------------------------------------------  
+         
 		   if bFirst == true then
 			  
             # Move operation is not safe.
@@ -414,29 +429,20 @@ private
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
                @logger.info("#{file} has been disseminated into #{targetDir}")
-               
-               # -------------------------------------------
-               # Management of event NewFile2Intray
-               arrParam             = Array.new
-               hParam1              = Hash.new
-               hParam1["filename"]  = file 
-
-               hParam2              = Hash.new
-               hParam2["directory"] = targetDir
-      
-               arrParam << hParam1
-               arrParam << hParam2
-               
+                            
                event  = EventManager.new
+      
       
                if @isDebugMode == true then
                   event.setDebugMode
                end
       
-               event.trigger(@entity, "NEWFILE2INTRAY", arrParam)
+               
    
                @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
-               #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+               # @logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+               
+               event.trigger(entity, "NEWFILE2INTRAY", arrParam, @logger)
                
                # -------------------------------------------
             end
@@ -472,11 +478,11 @@ private
                   if @isDebugMode == true then
                      event.setDebugMode
                   end
-      
-                  event.trigger(@entity, "NEWFILE2INTRAY")
-   
+
                   #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                   @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+      
+                  event.trigger(@entity, "NEWFILE2INTRAY", arrParam, @logger)   
 
                end
 				else
@@ -513,7 +519,7 @@ private
                      event.setDebugMode
                   end
       
-                  event.trigger(@entity, "NEWFILE2INTRAY")
+                  event.trigger(entity, "NEWFILE2INTRAY")
    
                   #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                   @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            

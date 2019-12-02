@@ -51,14 +51,14 @@
 
  <xs:simpleType name="EventNameType">
    <xs:restriction base="xs:string">
-     <xs:enumeration value="OnReceiveOK"/>
-     <xs:enumeration value="OnReceiveNewFilesOK"/>
-     <xs:enumeration value="OnReceiveError"/>
-     <xs:enumeration value="OnSendOK"/>
-     <xs:enumeration value="OnSendNewFilesOK"/>
-     <xs:enumeration value="OnSendError"/>
-     <xs:enumeration value="OnTrackOK"/>
-     <xs:enumeration value="NewFile2Intray"/>
+     <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Nn][Ee][Ww][Ff][Ii][Ll][Ee][Ss][Oo][Kk]"/>
+     <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Oo][Kk]"/>
+     <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Ee][Rr][Rr][Oo][Rr]"/>
+     <xs:pattern value="[Oo][Nn][Ss][Ee][Nn][Dd][Oo][Kk]"/>
+     <xs:pattern value="[Oo][Nn][Ss][Ee][Nn][Dd][Nn][Ee][Ww][Ff][Ii][Ll][Ee][Ss][Oo][Kk]"/>
+     <xs:pattern value="[Oo][Nn][Ss][Ee][Nn][Dd][Ee][Rr][Rr][Oo][Rr]"/>
+     <xs:pattern value="[Oo][Nn][Tt][Rr][Aa][Cc][Kk][Oo][Kk]"/>
+     <xs:pattern value="[Nn][Ee][Ww][Ff][Ii][Ll][Ee][2][Ii][Nn][Tt][Rr][Aa][Yy]"/>
    </xs:restriction>
  </xs:simpleType>
 

@@ -3,7 +3,7 @@
 # == Synopsis
 #
 # This is a Data Exchange Component command line tool that synchronizes the Entities configuration file
-# with DEC Inventory. It extracts all the I/Fs from the interfaces.xml file and 
+# with DEC Inventory. It extracts all the I/Fs from the dec_interfaces.xml file and 
 # inserts them in the DEC Inventory.
 #
 # As well it allows to specify a new I/F mnemonic to be loaded into the DEC Inventory with 
@@ -12,7 +12,7 @@
 # == Usage
 # decConfigInterfaceDB --add <MNEMONIC> | --process EXTERNAL
 #   --add <MNEMONIC>     (mnemonic is case sensitive) add the specified Entity  
-#   --process EXTERNAL   process $DEC_CONFIG/interfaces.xml
+#   --process EXTERNAL   process $DEC_CONFIG/dec_interfaces.xml
 #   --Show               it shows all I/Fs already loaded in the DCC Inventory
 #   --Verbose            execution in verbose mode
 #   --version            shows version number

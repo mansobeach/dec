@@ -52,6 +52,7 @@ class EventManager
    ## -----------------------------------------------------------
    
    def trigger(interface, eventName, params = nil, log = nil)
+
       eventMgr  = @ftReadConf.getEvents(interface)
       if eventMgr == nil then
          return
@@ -65,7 +66,7 @@ class EventManager
             
       events.each{|event|
          
-         if eventName == event["name"] then
+         if eventName.upcase == event["name"].upcase then
             cmd = event["cmd"]
             # Escape special XML characters.
             # At least '&' required for background execution
@@ -84,6 +85,11 @@ class EventManager
             if retVal == false then
                puts "Error when executing #{cmd}"
             end
+         else
+#            puts "xxxxxxxx"
+#            puts eventName
+#            puts event["name"]
+#            puts "xxxxxxxx"
          end
       }
    end

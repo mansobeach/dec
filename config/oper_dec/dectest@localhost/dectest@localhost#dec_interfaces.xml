@@ -213,7 +213,7 @@
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo \':-\)\'"/>
          
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+         <Event Name="NewFile2Intray"          executeCmd="echo NEW FILE TO INTRAY" />
     
     </Events>
     <ContactInfo>

@@ -27,7 +27,7 @@
          <Name>IERS</Name>
          <LocalInbox>/tmp/dec/if_iers_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">ser7</Directory>
+		      <Directory DepthSearch="0">products/eop/rapid/standard</Directory>
          </DownloadDirs>
       </Interface>
       
@@ -52,6 +52,13 @@
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
             <Interface>FILESYSTEM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="gpsrapid*">
+         <Description>GPS data</Description>
+         <FromList>
+            <Interface>IERS</Interface>
          </FromList>
       </File>
 
@@ -115,6 +122,13 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+   
+         <File Type="gpsrapid.*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>   
    
          <File Type="tai-utc*">
             <HardLink>False</HardLink>

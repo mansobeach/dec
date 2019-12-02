@@ -123,6 +123,13 @@
             Only the first rule matching the file pattern is applied     
       -->
    
+         <File Type="gpsrapid.*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>   
+   
          <File Type="tai-utc*">
             <HardLink>False</HardLink>
             <ToList>

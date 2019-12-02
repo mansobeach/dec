@@ -106,15 +106,20 @@ module DEC
 
    def check_environment_dirs
       checkDirectory(ENV['DEC_TMP'])
+   end
+
+   ## -----------------------------------------------------------------
+
+   def check_environment_dirs_push
       checkDirectory(ENV['DEC_DELIVERY_ROOT'])
    end
 
    ## -----------------------------------------------------------------
 
    def check_environment
-      check_environment_dirs
       retVal = checkEnvironmentEssential
       if retVal == true then
+         check_environment_dirs
          return checkToolDependencies
       else
          return false
@@ -199,8 +204,22 @@ module DEC
          puts
       end
 
+      if !ENV['DEC_DATABASE_USER'] then
+         bCheck = false
+         puts
+         puts "DEC_DATABASE_USER environment variable is not defined !\n"
+         puts
+      end
+
+      if !ENV['DEC_DATABASE_PASSWORD'] then
+         bCheck = false
+         puts
+         puts "DEC_DATABASE_PASSWORD environment variable is not defined !\n"
+         puts
+      end
+
       if bCheck == false then
-         puts "DEC environment variables configuration not complete"
+         puts "DEC database environment variables configuration not complete"
          puts
          return false
       end
@@ -224,8 +243,15 @@ module DEC
          puts
       end
 
+      if !ENV['FTPROOT'] then
+         bCheck = false
+         puts
+         puts "FTPROOT environment variable is not defined !\n"
+         puts
+      end
+
       if bCheck == false then
-         puts "DEC environment variables configuration not complete"
+         puts "DEC RPF environment variables configuration not complete"
          puts
          return false
       end

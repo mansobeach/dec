@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.10'
+  s.version     = '1.0.11dev'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -52,9 +52,9 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
     
-  # ----------------------------------------------
+  ## ----------------------------------------------
   
-  s.add_dependency('activerecord', '~> 5.1')
+  s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
@@ -64,7 +64,7 @@ Gem::Specification.new do |s|
   s.add_dependency('sqlite3', '~> 1.3')
   s.add_dependency('test-unit', '~> 3.0')
   
-  # ----------------------------------------------
+  ## ----------------------------------------------
   
   # database specific gems which can differ  
   # s.add_dependency('pg', '~> 1.0')
