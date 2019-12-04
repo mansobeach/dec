@@ -76,13 +76,19 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       puts
       
-      bBatchmode = false
+      bBatchmode     = false
+      @@execEnvFile  = ""
+      
             
       @my_argv.each{|arg|
+      
+         if arg.include?(".env") == true then
+            @@execEnvFile = arg.to_s
+         end
+      
          if arg == "batchmode" then
             puts "batch mode execution on"
             bBatchmode = true
-            break
          end
       }
       
@@ -122,8 +128,17 @@ class ORCTestCase < Test::Unit::TestCase
 #         exit(99)
 #      end
 #      
-      @@conf = ORC_Environment.new      
-      @@conf.wrapper_load_environment_test
+      @@conf = ORC_Environment.new
+      
+      if @@execEnvFile != nil and @@execEnvFile != "" then
+         ret = @@conf.wrapper_load_environment(@@execEnvFile)
+         if ret == false then
+            puts "Aborting test !"
+            exit(99)
+         end
+      else     
+         @@conf.wrapper_load_environment_test
+      end
 
       puts      
       @@conf.wrapper_print_environment
@@ -138,10 +153,11 @@ class ORCTestCase < Test::Unit::TestCase
          exit(99)
       end
       
-      
       @@conf = MINARC_Environment.new
 
-      @@conf.wrapper_load_environment_test
+      if @@execEnvFile == nil or @@execEnvFile == "" then
+         @@conf.wrapper_load_environment_test
+      end
 
       puts      
       @@conf.wrapper_print_environment
@@ -215,22 +231,9 @@ class ORCTestCase < Test::Unit::TestCase
       puts "================================================"
       puts "ORC_UnitTests::#{__method__.to_s}"
       puts
-      
-      @@conf = ORC_Environment.new      
-      @@conf.wrapper_load_environment_test
-      
-      @path = "#{ENV['MINARC_BASE']}/code/orc"
-      
-      cmd = "orcManageDB -c"
-      ret = system(cmd)
-      
-      if ret == false then
-         puts
-         puts "Error when creating the orchestrator inventory ! :-("
-         puts
-         # exit(99)
-      end
-
+      puts "Nothing is done"
+      puts
+      puts
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -240,7 +243,10 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       puts "================================================"
       puts "ORC_UnitTests::#{__method__.to_s}"
-      puts           
+      puts
+      puts "Nothing is done"
+      puts
+      puts
    end
    ## ------------------------------------------------------
 
@@ -272,18 +278,6 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcIngester -c start"
       assert(!system(cmd), cmd)
    
-      @@conf = ORC_Environment.new      
-      @@conf.wrapper_unset_config
-      
-      cmd = "orcIngester"
-      assert(!system(cmd), cmd)
-
-      cmd = "orcQueueInput"
-      assert(!system(cmd), cmd)
-
-
-      @@conf.wrapper_load_environment_test
-
       cmd = "orcIngester -v"
       assert(system(cmd), cmd)
 
@@ -296,6 +290,14 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcQueueInput -h"
       assert(system(cmd), cmd)
 
+#      @@conf = ORC_Environment.new      
+#      @@conf.wrapper_unset_config
+#      
+#      cmd = "orcIngester"
+#      assert(!system(cmd), cmd)
+#
+#      cmd = "orcQueueInput"
+#      assert(!system(cmd), cmd)
 
    end
    ## ------------------------------------------------------
@@ -447,10 +449,11 @@ class ORCTestCase < Test::Unit::TestCase
       
       triggers.each{|trigger|
          executable = orcConf.getExecutable(trigger)
-         cmd = "which #{executable}"
+         puts "------------------"
+         puts executable.split(" ")[0]
+         cmd = "which #{executable.split(" ")[0]}"
          isToolPresent = `#{cmd}`
-         assert(isToolPresent[0,1] == '/', "#{executable} not in path")
-         
+         assert(isToolPresent[0,1] == "/", "#{executable.split(" ")[0]} not in path")
       }
       
 
