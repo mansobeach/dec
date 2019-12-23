@@ -147,23 +147,294 @@ Copyright (c) 2006 ESA - Deimos Space S.L.
 
 \section{decGetFiles4Transfer}
 
+\begin{verbatim}
+
+== Synopsis
+
+This is a DEC command line tool that retrieves files to be transferred (push)
+from a source directory specified by $DEC_DELIVERY_ROOT environment variable.
+
+Files present in the source directory are filtered according to the rules 
+defined in ft_outgoing_files.xml
+=> wildcards such as  <File Type="S2A*">
+=> children directories, such as <File Type="GIP_PROBA2"> 
+
+Files gathered are finally placed into the directory defined in the 
+configuration <GlobalOutbox> present in dec_config.xml 
+
+-O flag:
+The "ONCE" flag registers in the Inventory all the files sent. As well it checks
+prior to the delivery whether a files has been previously sent or not to avoid 
+delivering it twice to the same Interface.
+
+== Usage
+decGetFiles4Transfer [-O] [-l]
+--ONCE      The file is just sent once for each I/F
+--list      list only
+--help      shows this help
+--usage     shows the usage
+--Debug     shows Debug info during the execution
+--version   shows version number
+
+== Author
+Deimos-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2006 ESA - Deimos Space S.L.
+
+
+\end{verbatim}
+
 \section{decGetFromInterface}
+
+\begin{verbatim}
+
+decGetFromInterface 
+
+== Synopsis
+
+This is a DEC command line tool that polls the I/Fs for retrieving 
+files of registered filetypes. As well It retrieves the I/F 
+exchange directory file content linked to a time-stamp.
+
+-l flag:
+
+With this option, only "List" of new availables files for Retrieving and Tracking is done.
+This flag overrides configuration flags RegisterContentFlag RetrieveContentFlag in dec_interfaces.xml
+So Check ONLY of new Files is performed anyway.
+
+-R flag:
+
+With this option (Reporting), DEC Reports will be created (see dcc_config.xml). 
+Report files are initally placed in the Interface local inbox and
+if configured in files2InTrays.xml disseminated as nominal retrieved file.
+
+--del-unknown:
+
+It overrides the dcc_config.xml configuration parameter DeleteUnknown and explicitly
+commands for removal of unknown files not configured in ft_incoming_files.xml
+
+
+== Usage
+decGetFromInterface -m <MNEMONIC>  [-l] [--nodb]
+--mnemonic  <MNEMONIC> (mnemonic is case sensitive)
+--list      list only (not downloading and no ingestion)
+--nodb      no Inventory recording
+--no-intray skip step of delivery to intrays
+--del-unknown it deletes remote files not configured in ft_incoming_files.xmls
+--receipt   create only receipt file-list with the content available
+--Report    create a Report when new files have been retrieved
+--Show      it shows all available I/Fs registered in the DEC Inventory
+--help      shows this help
+--usage     shows the usage
+--Debug     shows Debug info during the execution
+--Unknown   shows Unknown files
+--Benchmark shows Benchmark info during the execution
+--version   shows version number
+
+== Author
+DEIMOS-Space S.L. (bolf)
+
+\end{verbatim}
 
 \section{decListener}
 
+\begin{verbatim}
+
+== Synopsis
+
+This is a Data Exchange Component (DEC) command line tool 
+that manages the I/Fs listeners for data retrieval.
+
+The DEC listeners automates the file pulling from the configured interface.
+One listener is devoted for every interface configured.
+
+The behaviour of the listener is driven by the settings defined
+in the configuration file $DEC_CONFIG/dec_interfaces.xml
+
+Alternatively the listener settings can be overriden with the command line options.
+
+== Usage
+decListener  --all [-R]| --mnemonic <MNEMONIC> --interval <seconds>
+--all                 starts a listener for each I/Fs
+--Reload              force a Restart of all listeners
+--stop <MNEMONIC>     it stops of the listener for the given I/F
+--Stop                it stops of all listeners
+--check               it checks whether the listeners are running
+--mnemonic <MNEMONIC> (mnemonic is case sensitive)
+--interval            the frequency it is polled I/F given by MNEMONIC (in seconds)
+--nodb                no Inventory recording
+--no-intray           skip step of delivery to intrays upon download
+--help                shows this help
+--Debug               shows Debug info during the execution
+--version             shows version number      
+
+== Author
+DEIMOS-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2005 ESA - DEIMOS Space S.L.
+
+\end{verbatim}
+
 \section{decManageDB}
 
+\begin{verbatim}
+
+== Usage
+decManageDB --create-tables | --drop-tables
+--create-tables   create all minarc required tables
+--drop-tables     drops all minarc tables
+--rpf             selector to include reference planning tables
+--Debug           shows Debug info during the execution
+--help            shows this help
+
+
+\end{verbatim}
+
 \section{decSend2Interface}
+
+\begin{verbatim}
+
+== Synopsis
+
+This is a DEC command line tool that deliver files to a given I/F in PUSH mode.
+It delivers files using the configured protocols (s)ftp and email. 
+Files sent can be registered in an Inventory and the delivery date is set to the latest one.
+
+This command can be used in order to send a given file just once 
+(for each delivery method: ftp, email) for a given Interface. 
+Use "-O" flag to enable this behaviour.
+
+-R flag:
+
+With this option (Report), a Report "List" with the new files sent is created. 
+This Report file is initally placed in the Interface local inbox.
+
+
+== Usage
+decSend2Interface -m <MNEMONIC> [-O] [--nodb]
+--mnemonic  <MNEMONIC> (mnemonic is case sensitive)
+--ONCE      The file is just sent once for that I/F
+--AUTO      local outbox Automatic management 
+--loops <n> n is the number of Loop retries to achieve the Delivery
+--delay <s> s seconds of delay between each Loop Retry
+[60 secs by default if it is not specified]
+--retries <r>  r is the number of retries on each Loop for each file
+--Report    create a Report with the list of files delivered to the Interface
+--list      list only (not downloading and no ingestion)
+--Nomail    avoids mail notification to the I/F after successfully delivery
+--Show      it shows all available I/Fs registered in the Inventory
+--nodb      no usage of the Inventory for recording operations
+--help      shows this help
+--usage     shows the usage
+--Debug     shows Debug info during the execution
+--version   shows version number
+
+== Author
+Deimos-Space S.L. (bolf)
+
+== Copyright
+Copyright (c) 2006 ESA - Deimos Space S.L.
+
+
+\end{verbatim}
 
 \section{decSmokeTests}
 
 \section{decStats}
+
+\begin{verbatim}
+
+== Synopsis
+
+This is a DEC/DCC command line tool that shows file reception statistics  
+
+== Usage
+decStats
+--Hours <hours>            status of last n hours
+--file <filename>          status of a given filename
+--help                     shows this help
+--usage                    shows the usage
+--Debug                    shows Debug info during the execution
+--version                  shows version number
+
+
+== Author
+DEIMOS-Space S.L.
+
+== Copyright
+Copyright (c) 2008 ESA - DEIMOS Space S.L.
+
+\end{verbatim}
 
 \section{decUnitTests}
 
 \section{decUnitTests\_IERS}
 
 \section{decValidateConfig}
+
+\begin{verbatim}
+
+== Synopsis
+
+This is a DEC command line tool that checks the validity of DEC configuration
+files according to DEC's XSD schemas. This tool should be run everytime a 
+configuration change is performed.
+
+-e flag:
+
+With this option the Interfaces (Entities) configuration file (interfaces.xml)
+is validated using the schema interfaces.xsd
+
+-g flag:
+
+With the main DEC configuration file (dec_config.xml)
+is validated using the schema dec_config.xsd
+
+-i flag:
+
+With this option the Incoming file-types configuration file (dec_incoming_files.xml)
+is validated using the schema dec_incoming_files.xsd
+
+-o flag:
+
+With this option the Outgoing file-types configuration file (dec_outgoing_files.xml)
+is validated using the schema dec_outgoing_files.xsd
+
+-m flag:
+
+With this option the DEC Mail configuration file (ft_mail_config.xml) is
+validated using the schema ft_mail_config.xsd
+
+-l flag:
+
+With this option the DEC Logs configuration file (dec_log_config.xml) is
+validated using the schema dec_log_config.xsd
+
+-a flag:
+
+This is the all flag, which performs all the checks described before.
+
+
+== Usage
+-a     Check all DEC configuration files
+-g     Check DEC's general configuration file dec_config.xml
+-e     Check the Entities Configuration file dec_interfaces.xml
+-m     Check the mail configuration file ft_mail_config.xml
+-i     Check the incoming file-types configuration file dec_incoming_files.xml
+-i     Check the outgoing file-types configuration file dec_outgoing_files.xml
+-h     shows this help
+-v     shows version number
+
+
+== Author
+DEIMOS-Space S.L. (rell)
+
+== Copyright
+Copyright (c) 2007 ESA - DEIMOS Space S.L.
+
+\end{verbatim}
 
 \end{document}
 

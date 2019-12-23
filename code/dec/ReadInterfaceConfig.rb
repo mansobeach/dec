@@ -12,7 +12,7 @@
 #
 # == Module Common Transfer Component
 # This class reads and decodes the interfaces configuration file 
-# interfaces.xml.
+# dec_interfaces.xml.
 #
 #########################################################################
 
@@ -35,7 +35,7 @@ class ReadInterfaceConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL"]
+      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs
       loadData
@@ -237,16 +237,16 @@ class ReadInterfaceConfig
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isRetrieved]
 	end
-	#-------------------------------------------------------------   
+	## ----------------------------------------------------------- 
 	   
-	# Get the configuration FTP config flag <DeleteFlag>
-   # - mnemonic (IN): Entity name	
+	## Get the configuration FTP config flag <DeleteFlag>
+   ## - mnemonic (IN): Entity name	
 	def deleteAfterDownload?(mnemonic)
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isDeleted]	
 	end
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 	# Get the configuration FTP config flag <CompressFlag>
    # - mnemonic (IN): Entity name

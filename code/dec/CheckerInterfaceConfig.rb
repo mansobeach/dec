@@ -22,6 +22,7 @@
 
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
+require 'ctc/CheckerWebDAVConfig'
 require 'ctc/CheckerFTPConfig'
 require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
@@ -60,8 +61,17 @@ class CheckerInterfaceConfig
       @ftpRecv[:arrDownloadDirs]       = @inConf.getDownloadDirs(@entity)
       @ftpSend[:uploadDir]             = @outConf.getUploadDir(@entity)
       @ftpSend[:uploadTemp]            = @outConf.getUploadTemp(@entity)
+            
+      @check4Recv = nil
+            
+      if @ftpRecv[:protocol].upcase == "WEBDAV" then
+         @check4Recv                      = CheckerWebDAVConfig.new(@ftpRecv, @entity)
+      else
+         @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
+      end
+      
       @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity)
-      @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
+ 
       @checkLocal4Send                 = CheckerLocalConfig.new(@ftpSend, @entity)  
       @checkLocal4Recv                 = CheckerLocalConfig.new(@ftpRecv, @entity)    
       @protocol                        = @ftReadConf.getProtocol(@entity)

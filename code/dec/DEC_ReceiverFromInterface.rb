@@ -8,15 +8,16 @@
 #
 # === Data Exchange Component
 # 
-# CVS: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
+# Git: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 #
 # Module Data Exchange Component
 # This class polls a given Interface and gets all registered available files
-# via FTP or SFTP.
+# via FTP, SFTP, WebDAV HTTP, or LOCAL.
 #
 #########################################################################
 
 require 'rubygems'
+require 'curb'
 require 'net/ssh'
 require 'net/sftp'
 require 'timeout'
@@ -164,6 +165,9 @@ class DEC_ReceiverFromInterface
       list  = nil
             
       case @protocol
+         
+         # ---------------------------------------
+         
          when "FTP"
                
             if @isDebugMode == true then
@@ -172,6 +176,7 @@ class DEC_ReceiverFromInterface
 
             perf = measure { list = getNonSecureFileList( @ftpserver[:isPassive]) }
 
+         # ---------------------------------------
 
          when "SFTP"
             
@@ -181,6 +186,8 @@ class DEC_ReceiverFromInterface
 
             perf = measure { list = getSecureFileList }
             
+         # ---------------------------------------
+         
          when "FTPS"  
             
             puts "FTPS not integrated yet from ALGK"
@@ -188,7 +195,8 @@ class DEC_ReceiverFromInterface
             puts "DEC_ReceiverFromInterface::check4NewFiles"
             puts
             exit(99)
-            
+         
+         # ---------------------------------------   
             
          when "LOCAL"
          
@@ -211,6 +219,28 @@ class DEC_ReceiverFromInterface
                   puts e
                   exit (99)
             end     
+         
+         # ---------------------------------------
+         
+         when "WEBDAV"
+
+            if @isDebugMode == true then
+               puts
+               puts "I/F #{@entity} uses #{@protocol} protocol"
+               puts
+            end
+            
+            puts list
+            
+            perf = measure { 
+               list = getWebDavFileList 
+               if @isDebugMode == true then
+                  puts "Found #{list.length} files"
+                  puts list
+               end
+            }            
+                     
+         # ---------------------------------------
             
       end
            
@@ -426,7 +456,49 @@ class DEC_ReceiverFromInterface
       end
       @depthLevel = @depthLevel - 1   
    end
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
+
+   ## retrieving of the list of files available using WebDAV protocol   
+   def getWebDavFileList
+
+      @newArrFile = Array.new
+      host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      port        = @ftpserver[:port].to_i
+      user        = @ftpserver[:user]
+      dav         = Net::DAV.new(host, :curl => false)
+      dav.verify_server = true
+      
+      @depthLevel = 0
+      arrElements = @ftpserver[:arrDownloadDirs]
+
+      arrElements.each{|element|
+         @remotePath    = element[:directory]
+         @recursive     = (element[:depthSearch].to_i > 0)
+         
+         if @isDebugMode == true then
+            puts "Checking directory #{@remotePath} - recursive search is #{@recursive}"
+         end
+         
+         begin
+            dav.find(@remotePath,:recursive => @recursive,:suppress_errors=>true) do | item |
+               if @isDebugMode == true then
+                  puts "Found #{item.url.to_s}"
+               end 
+               if item.type.to_s.downcase == "file" then
+                  @newArrFile << item.url.to_s
+               end
+            end
+         rescue Exception => e
+            puts e.to_s
+            puts e.backtrace
+            next
+         end
+      }   
+      
+      return @newArrFile
+   end
+   ## -----------------------------------------------------------
 
    def getSecureFileList
       @newArrFile = Array.new
@@ -477,9 +549,9 @@ class DEC_ReceiverFromInterface
 
       return @newArrFile
    end
-   #-------------------------------------------------------------
-   
-   # Method that recursively list the files in the directoy corresponding to the given handle.
+   ## -----------------------------------------------------------
+   ##
+   ## Method that recursively list the files in the directoy corresponding to the given handle.
    def exploreSecureTree(path, depth)
       req = Array.new
       begin
@@ -598,11 +670,11 @@ class DEC_ReceiverFromInterface
       Dir.chdir(currentDir)
       return @retValFilesReceived   
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Get all Files found in the previous polling to the I/F.
    # All files are left in a temp local directory
-   # $DCC_TMP/<current_time>_entity
+   # $DEC_TMP/<current_time>_entity
    def receiveAllFiles
    
       if @parallelDownload > 1 then
@@ -877,7 +949,7 @@ private
 			
          copyFileToInBox(File.basename(filename), size)
 			         
-			# update DCC Inventory
+			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
 			# if deleteFlag is enable delete it from remote directory
@@ -932,23 +1004,57 @@ private
       end     
       
    end
+
+   ## -------------------------------------------------------------
+   ##
+   ## download file using HTTP protocol verb GET 
+   ##
+   def downloadFile_WebDAV(url)
+      if @isDebugMode == true then
+         puts "Downloading #{url} using HTTP"
+      end
+      
+      http = Curl.get(url)
+
+      filename = getFilenameFromFullPath(url)
+      aFile = File.new(filename, "wb")
+      aFile.write(http.body_str)
+      aFile.flush
+      aFile.close
+ 
+      size = File.size("#{@localDir}/#{File.basename(filename)}")
+         
+      # @logger.debug("#{File.basename(filename)} received with size #{size} bytes")
+      # @logger.info("#{File.basename(filename)} received with size #{size} bytes")
+		
+      # File is made available at the interface inbox	
+      copyFileToInBox(File.basename(filename), size)
+			         
+		# Update DEC Inventory
+	   setReceivedFromEntity(File.basename(filename), size)
+	
+      # if deleteFlag is enable delete it from remote directory
+      ret = deleteFromEntity(url)
+
+      return true
+   end
+      
    ## -------------------------------------------------------------
    ##
    ## Download a file from the I/F
    ##
    def downloadFile(filename)
-      
-#      puts filename
-#      exit
-      
+            
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 
-      
       if @protocol == "LOCAL" then
          return downloadFileLocal(filename)
       end
       
+      if @protocol == "WEBDAV" then
+         return downloadFile_WebDAV(filename)
+      end
       
       # If secure create the sftp client.
       if @ftpserver[:isSecure] == true then
@@ -1030,7 +1136,7 @@ private
          
 			copyFileToInBox(File.basename(filename), size)
 			         
-			# update DCC Inventory
+			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
 			# if deleteFlag is enable delete it from remote directory
@@ -1141,10 +1247,33 @@ private
       deliverer.deliverFile(@entity, @finalDir, file)          
    end
    ## -------------------------------------------------------------
+   ##
+   ## it deletes a filename which must be a complete URL
+   ##
+   def deleteFromEntity_HTTP(filename, bForce = false)
+      begin
+         if @isDebugMode == true then
+            @logger.info("Deleting #{filename}")
+         end
+         http = Curl.delete(filename)
+      rescue Exception => e
+         puts
+         puts e.to_s
+         puts
+         if @isDebugMode == true then
+            puts e.backtrace
+         end
+         return false
+      end
+      msg = "#{filename} has been deleted at #{@entity}"
+      @logger.info(msg)
+      return true
+   end
+   ## -------------------------------------------------------------
 
-	# This method is invoked after placing the files into the operational
-	# directory. It deletes the file in the remote Entity if the Config
-	# flag DeleteFlag is enable.
+	## This method is invoked after placing the files into the operational
+	## directory. It deletes the file in the remote Entity if the Config
+	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename, bForce = false)
 	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
 		# if true proceed to remove the files from the remote I/F
@@ -1159,6 +1288,9 @@ private
             return
          end
 
+         if @protocol == "WEBDAV" then
+            return deleteFromEntity_HTTP(filename)
+         end
 
 		   if isSecureMode == true then
 			   sftpClient = CTC::SFTPBatchClient.new(@ftpserver[:hostname],
@@ -1200,14 +1332,16 @@ private
 			end
 		end
 	end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
+   ##
    
-   # Returns true if ftp server configuration is secure
+   ## Returns true if ftp server configuration is secure
    def isSecureMode
       return @ftpserver[:isSecure]
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
+   ##
    def filterFullPathFileList(list, forTracking)      
       arrTemp        = Array.new
       arrFiles       = Array.new
@@ -1265,6 +1399,9 @@ private
       perf = measure{
 
       tmpList.each{|fullpath|
+         if @isDebugMode == true then
+            puts "Filtering #{fullpath}"
+         end
          filename = File.basename(fullpath)
          # Check dcc_config.xml filters
          bFound = false

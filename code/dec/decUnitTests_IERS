@@ -353,6 +353,8 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decStats"
       assert(system(cmd), cmd)
 
+      sleep(5.0)
+
       cmd = "decGetFromInterface -m IERS --no-intray"
       puts
       assert(system(cmd), cmd)

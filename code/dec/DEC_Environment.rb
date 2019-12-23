@@ -22,11 +22,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.11"
+   @@version = "1.0.12dev"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.12" =>    "Basic support to WebDAV / HTTP protocol using verbs PROPFIND,GET & DELETE\n\
+          for pull mode (dec_incoming_files.xml)", \
       "1.0.11" =>    "Migration to ActiveRecord 6", \
       "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
           new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
@@ -288,7 +290,7 @@ module DEC
    
    def checkConfigFilesIncoming
       arrFiles = [ \
-                  "interfaces.xml", \
+                  "dec_interfaces.xml", \
                   "dec_incoming_files.xml"
                   ]
       bRet = true
@@ -319,7 +321,9 @@ module DEC
    end
    
    ## -----------------------------------------------------------------   
-   
+   ##
+   ## check command line tool dependencies
+   ##
    def checkToolDependencies
 
       bDefined = true
@@ -328,6 +332,7 @@ module DEC
       arrTools = [ \
                   "7za", \
                   "xmllint", \
+                  "curl", \
                   "ncftp", \
                   "ncftpput", \
                   "sftp" \

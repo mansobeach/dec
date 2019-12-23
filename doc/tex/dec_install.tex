@@ -25,10 +25,15 @@ The \textit{Ruby} interpreter can be obtained and installed in many different wa
 
 \par
 \noindent
-The install is based on \href{https://rvm.io/}{RVM}, which is a command-line tool which allows you to easily install, manage, and work with multiple ruby environments from interpreters to sets of gems. 
+The install is based on \href{https://rvm.io/}{RVM}, which is a command-line tool which allows you to easily install, manage, and work with multiple ruby environments from interpreters to sets of gems. \newline
 
 \par
-\inlinecode{bash}{ \$> \\curl -sSL https://get.rvm.io | bash -s stable }
+\inlinecode{bash}{ \$> \\curl -sSL https://get.rvm.io | bash -s stable --ruby} \newline
+\par 
+\noindent
+The following command installs a specific version of ruby interpreter ; the version specified below corresponds to the one used for the unit tests and it is required as a mandatory precondition at installation time according to the gem file definition.\newline
+
+\inlinecode{bash}{ \$> rvm install ruby-2.6.5} \newline
 
 \subsection{Install Bundler}
 
@@ -43,7 +48,7 @@ The ruby pre-requisites can be installed using on \href{https://bundler.io/}{bun
 
 \par
 \noindent
-The \textit{gems} pre-requisites by DEM are defined in the \textit{Gemfile} ; in order to install the exact gems and versions which are needed by DEC from the directory in which the \textit{Gemfile} is placed execute the following command in the shell. 
+The \textit{gems} pre-requisites by DEM are defined in the \textit{Gemfile} ; in order to install the exact gems and versions which are needed by DEC from the directory in which the \textit{Gemfile} is placed execute the following command in the shell. \newline
 
 \par
 \inlinecode{bash}{ \$> bundle install }
@@ -100,7 +105,7 @@ This section enumerates the network tools which can be used by DEC SW.
 This section enumerates the file compression tools which can be used by DEC SW.
 \par
 \begin{itemize}
-	\item \href{https://www.7-zip.org/}{\textit{7-zip}} : is a file archiver with a high compression ratio
+	\item \href{https://www.7-zip.org/}{\textit{7-zip}} : is a file archiver with a high compression ratio ; name of the package can be \textit{"p7zip"}
 	\item \href{http://infozip.sourceforge.net}{\textit{zip} / \textit{unzip}} : provide free, portable, high-quality versions of the \textit{Zip} and \textit{UnZip} compressor-archiver utilities
 	\item \href{https://www.gzip.org}{\textit{gzip}} : The \textit{gzip} reduces the size of the named files using Lempel–Ziv coding (LZ77)
 	\item \href{http://man7.org/linux/man-pages/man1/compress.1p.html}{\textit{compress}} : The \textit{compress} utility reduces the size of the named files by using adaptive Lempel-Ziv coding algorithm

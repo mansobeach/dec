@@ -3,7 +3,7 @@
 # == Synopsis
 #
 # This is a DEC command line tool that retrieves files to be transferred (push)
-# from a source directory specified by <DEC_DELIVERY_ROOT> environment variable.
+# from a source directory specified by $DEC_DELIVERY_ROOT environment variable.
 #
 # Files present in the source directory are filtered according to the rules 
 # defined in ft_outgoing_files.xml

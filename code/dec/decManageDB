@@ -118,6 +118,11 @@ def main
 #      exit(0)
 #   end
       
+   if !@bDown and !@bUp and !@bCreateDB then
+      usage
+      exit(99)
+   end
+
    if @bDown and @bUp then
       usage
       exit(99)

@@ -38,6 +38,7 @@ require 'dec/ReadConfigIncoming'
 ###  3  - test_decConfigInterface2DB
 ###  4  - test_decGetFromInterface
 ###  4.1  - test_decGetFromInterface_LOCAL
+###  4.2  - test_decGetFromInterface_WEBDAV
 ###  5  - test_decListener
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
@@ -50,6 +51,10 @@ require 'dec/ReadConfigIncoming'
 
 # Start FTP Server in MacOS Sierra
 # launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+### MacOS Catalina
+## sudo /usr/local/sbin/pure-ftpd &
+## PAMAuthentication            yes
 
 # Stop FTP Server
 # launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
@@ -191,7 +196,7 @@ class DECTestCase < Test::Unit::TestCase
    ## --------------------------------------------------------
    
    Test::Unit.at_exit do
-      system("decListener -S")
+      # system("decListener -S")
       puts "End of DEC tests"
    end
    
@@ -266,12 +271,27 @@ class DECTestCase < Test::Unit::TestCase
                checkDirectory(downloadDir)
             }
             
+            ###
+            ###
+            ### IT IS PENDING TO UPDATE THE CHECK CONFIGURATION TOOL 
+            ### TO CKECK THAT AN INTERFACE MIGHT NOT HAVE DEFINED
+            ### ANY RULE FOR PULL (OR PUSH)
+            
             ## create the files available for pulling
             
-            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
+            if x.upcase.include?("LOCALHOST") \
+               or x.upcase.include?("FILESYSTEM") \
+               or x.upcase.include?("WEBDAV") then
                @@arrDownloadFiles.each{|filename|
-                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
-                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
+                  dir = arr[0][:directory]
+                  if dir[0,1] != '/' then
+                     dir = "~/#{arr[0][:directory]}"
+                  end
+                  puts "============================"
+                  puts "#{filename}    => #{dir}/#{filename}"
+                  cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
+                  puts cmd
+                  system(cmd)
                }
             end
             
@@ -893,6 +913,105 @@ class DECTestCase < Test::Unit::TestCase
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
    
    end
+   
+   ## --------------------------------------------------------
+   
+   ## verification of the protocol WEBDAV using interface "WEBDAV"
+   
+   def test_decGetFromInterface_WEBDAV
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("WEBDAV")
+            
+      checkDirectory(@finalDir)
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "decGetFromInterface -m WEBDAV -l"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      puts
+      puts
+      
+      cmd = "decGetFromInterface -m WEBDAV --no-intray -D"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+
+      # --------------------------------    
+      # Verify that files have been deleted in the interface upon download
+      configIn    = ReadConfigIncoming.instance
+      arr         = configIn.getDownloadDirs("WEBDAV")
+        
+      arr.each{|dir|
+               
+         downloadDir = ""
+
+         if dir[:directory][0,1] != '/' then
+            downloadDir = '~/' + dir[:directory]
+         else
+            downloadDir = dir[:directory]
+         end
+         
+         puts "Checking #{downloadDir}"
+         
+         assert(!File.exist?("#{downloadDir}/finals.all"),  "checked removed finals.all")
+         assert(!File.exist?("#{downloadDir}/tai-utc.dat"),  "checked removed tai-utc.dat")
+      }
+      # --------------------------------      
+
+
+      cmd = "decStats -f finals.all"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.dat"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      # --------------------------------    
+      
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      
+      cmd = "decGetFromInterface -m WEBDAV --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      assert(!File.exist?("#{@finalDir}/finals.all"),  "should not retrieve finals.all")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve tai-utc.dat")
+      
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+
+   end   
    
    ## --------------------------------------------------------
 

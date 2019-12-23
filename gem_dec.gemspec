@@ -1,8 +1,20 @@
-# require 'code/dec/DEC_Environment'
+#########################################################################
+#
+# === Ruby source for #Gem Specification
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component (DEC)
+# 
+# Git: gem_dec.gemspec,v $Id$ $Date$
+#
+# System Component DEC
+#
+#########################################################################
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.11dev'
+  s.version     = '1.0.12dev'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -59,6 +71,7 @@ Gem::Specification.new do |s|
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
+  s.add_dependency('net_dav', '~> 0.5')
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 4.2')
   s.add_dependency('sqlite3', '~> 1.3')

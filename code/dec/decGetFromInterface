@@ -9,7 +9,7 @@
 # -l flag:
 #
 # With this option, only "List" of new availables files for Retrieving and Tracking is done.
-# This flag overrides configuration flags RegisterContentFlag RetrieveContentFlag in interfaces.xml
+# This flag overrides configuration flags RegisterContentFlag RetrieveContentFlag in dec_interfaces.xml
 # So Check ONLY of new Files is performed anyway.
 #
 # -R flag:
@@ -170,7 +170,12 @@ def main
       exit(99)
    end
 
-   self.checkConfigFilesIncoming
+   if self.checkConfigFilesIncoming == false then
+      puts
+      puts "Configuration files not found"
+      puts
+      exit(99)
+   end
 
    # initialize logger
    loggerFactory = CUC::Log4rLoggerFactory.new("decGetFromInterface", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
@@ -262,7 +267,7 @@ def main
 
    if cnf.exists?(@entity) == false
       puts "\n#{@entity} is not a configured I/F ! :-("
-      puts "\nConfigure it in interfaces.xml config file !  ;-) \n\n"
+      puts "\nConfigure it in dec_interfaces.xml config file !  ;-) \n\n"
       exit(99)      
    end 
       
@@ -350,12 +355,11 @@ def body
    end
 
    ## ----------------------------------------------
-
+   ##
    ## Track new files
-
    ## 
    
-	if (@createReceipt == true) or (bRegisterDir == true) or (@listOnly == true) then
+	if (@createReceipt == true) or (bRegisterDir == true) then
       bNewFiles = @receiver.check4NewFiles(true)
 
       if bNewFiles == false then

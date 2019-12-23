@@ -7,11 +7,10 @@
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             
       <Interface>
-         <Name>LOCALHOST_SECURE</Name>
-         <LocalInbox>/tmp/dec/in_basket_if_localhost_secure</LocalInbox>
+         <Name>WEBDAV</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_webdav</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download1</Directory>
-            <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download2</Directory>
+            <Directory DepthSearch="0">tmp</Directory>
          </DownloadDirs>
       </Interface>
 
@@ -22,6 +21,14 @@
 		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_notsecure/download</Directory>
          </DownloadDirs>
       </Interface>
+      
+      <Interface>
+         <Name>LOCALHOST_SECURE</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_secure</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download</Directory>
+         </DownloadDirs>
+      </Interface>      
       
       <Interface>
          <Name>IERS</Name>
@@ -49,6 +56,7 @@
       <File Type="tai-utc*">
          <Description>TAI UTC correlation</Description>
          <FromList>
+            <Interface>WEBDAV</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
             <Interface>FILESYSTEM</Interface>
@@ -65,6 +73,7 @@
       <File Type="finals.a*">
          <Description>TAI UTC correlation</Description>
          <FromList>
+            <Interface>WEBDAV</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
             <Interface>FILESYSTEM</Interface>
