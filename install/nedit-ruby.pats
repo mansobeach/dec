@@ -1,0 +1,66 @@
+! Syntax highlighting patterns and commenting for Ruby 
+! Version 1.0
+!
+! INSTALLATION
+!
+! Load this pattern by starting nedit with:
+!
+!       nedit -import <name of this file>
+!
+! Then, check that the patterns were loaded correctly, and choose Save Defaults
+! from the Preferences menu.  The new patterns will now be incorporated into
+! your own .nedit file, so the next time you start NEdit, you will no longer
+! need to use -import.
+!
+! These comments will not appear in your ~/.nedit
+!
+nedit.macroCommands: \
+	Ruby Comments>Comment Out Lines@Ruby:::R: {\n\
+		                replace_in_selection("^.*$", "# &", "regex")\n\
+		        }\n\
+	Ruby Comments>Uncomment Lines@Ruby:::R: {\n\
+		                replace_in_selection("(^[ \\\\t]*# ?)(.*)$", "\\\\2", "regex")\n\
+		        }\n\
+	Ruby Comments>Comment Out Sel.@Ruby:::R: {\n\
+		                beginning-of-selection()\n\
+		                mark("1")\n\
+		                deselect-all()\n\
+		                insert-string("=begin\\n")\n\
+		                goto-mark("1")\n\
+		                beginning-of-selection()\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                backward-character("extend")\n\
+		                mark("1")\n\
+		                end-of-selection()\n\
+		                deselect-all()\n\
+		                insert-string("\\n=end")\n\
+		                goto-mark("1")\n\
+		        }\n\
+	Ruby Comments>Uncomment Sel.@Ruby:::R: {\n\
+		                beginning-of-selection()\n\
+		                mark("1")\n\
+		                deselect-all()\n\
+		                replace("=begin\\n","")\n\
+		                goto-mark("1")\n\
+		                deselect-all()\n\
+		                replace("\\n=end","","backward")\n\
+		                goto-mark("1")\n\
+		        }\n
+nedit.highlightPatterns: Ruby:1:0{\n\
+		comment:"=begin":"=end"::Comment::\n\
+		comment2:"#":"$"::Comment::\n\
+		string:"""":"""":"\\n":String::\n\
+		string2:"'":"'":"\\n":String1::\n\
+		string escape chars:"\\\\(.|\\n)":::String1:string:\n\
+		character constant:"'":"'":"[^\\\\][^']":Character Const::\n\
+		numeric constant:"<((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f)?>":::Plain::D\n\
+		storage keyword:"<(class)>":::Storage Type::D\n\
+		keyword:"<(BEGIN|END|alias|and|begin|break|case|def|defined|do|else|elsif|end|ensure|false|for|if|in|module|next|nil|not|or|redo|require|rescue|retry|return|self|super|then|true|undef|unless|until|when|while|yield)>":::Keyword::D\n\
+		braces:"([{}])":::Keyword::D\n\
+	}
+nedit.languageModes: Ruby:.rb::::::".,/\\`'!|@#%^&*()-=+{}[]"":;<>?~"
