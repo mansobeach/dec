@@ -68,7 +68,7 @@
          <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
          <FileClass>OPER</FileClass>
-         <FileType>DEC_F_RECV</FileType>
+         <FileType>DEC_R_PULL</FileType>
       </Report>
 
       <Report Name="UnknownFiles">
