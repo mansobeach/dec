@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
    <Project>
-      <Name>Sentinel-2 Commissioning E2ESPM @ ESA / ESRIN</Name>
+      <Name>Sentinel-2 ESA - ESRIN E2ESPM</Name>
       <Id>ESA_</Id>
       <Mission>Sentinel-2</Mission>
    </Project>
@@ -30,15 +30,21 @@
       <DeleteUnknown>false</DeleteUnknown>
    </Options>  
 
+
+   <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
    
-   <SatPrefix>S2_</SatPrefix>
+   <SatPrefix>S2</SatPrefix>
+   
+   <!-- currently placed in S2BOA intray -->
+   
+   <ReportDir>/volumes/dec/interfaces/s2boa</ReportDir>
    
    <Reports>
 
       <Report Name="RetrievedFiles">
-         <Enabled>false</Enabled>
+         <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
-         <FileType>DCC_LFILES</FileType>
+         <FileType>DEC_R_PULL</FileType>
       </Report>
 
 <!--  -->

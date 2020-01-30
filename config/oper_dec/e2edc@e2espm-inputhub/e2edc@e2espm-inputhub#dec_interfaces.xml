@@ -5,8 +5,6 @@
  
   <Interface Name="S2PDGS">
     <Desc>S2PDGS Interface</Desc>
-    <IncomingDir>/volumes/dec/interfaces/dec_basket.s2pdgs</IncomingDir>
-    <OutgoingDir>$HOME</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -17,7 +15,7 @@
       <PollingSize>470</PollingSize>
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
-    <FTPServer>
+    <Server>
       <Protocol>SFTP</Protocol>
       <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
 	   <Port>22</Port>
@@ -35,7 +33,7 @@
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
+    </Server>
     <DeliverByMailTo>
        <Address>daniel.brosnan@deimos-space.com</Address>
     </DeliverByMailTo>
@@ -70,8 +68,6 @@
   <!-- ================================================================ -->
     <Interface Name="SUPER_TCI">
     <Desc>S2PDGS Interface</Desc>
-    <IncomingDir>/volumes/dec/interfaces/dec_basket.tci</IncomingDir>
-    <OutgoingDir>$HOME</OutgoingDir>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -82,7 +78,7 @@
       <PollingSize>100</PollingSize>
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
-    <FTPServer>
+    <Server>
       <Protocol>SFTP</Protocol>
       <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
 	   <Port>22</Port>
@@ -100,7 +96,7 @@
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </FTPServer>
+    </Server>
     <DeliverByMailTo>
        <Address>daniel.brosnan@deimos-space.com</Address>
     </DeliverByMailTo>
