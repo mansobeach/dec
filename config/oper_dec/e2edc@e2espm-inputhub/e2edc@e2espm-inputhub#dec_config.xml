@@ -21,15 +21,27 @@
          <Filter>igrg*.Z</Filter>
          -->
       </IncomingFilters>
+            
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+
+      
    </Filters>
    
    
    <Options>
-      <DownloadDirs>false</DownloadDirs>
-      <DeleteDuplicated>true</DeleteDuplicated>
-      <DeleteUnknown>false</DeleteUnknown>
-   </Options>  
-
+      <Upload>
+         <DeleteSourceFiles>true</DeleteSourceFiles>
+         <UploadFilePrefix>false</UploadFilePrefix>
+         <UploadDirs>false</UploadDirs>
+      </Upload>
+      <Download>
+         <DownloadDirs>false</DownloadDirs>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+      </Download>
+   </Options>
 
    <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
    

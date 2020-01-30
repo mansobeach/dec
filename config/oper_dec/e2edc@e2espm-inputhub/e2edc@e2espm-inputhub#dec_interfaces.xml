@@ -21,11 +21,6 @@
 	   <Port>22</Port>
       <User>e2espm</User>
       <Pass>N/A</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-	      <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT</Directory>
-      </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -84,11 +79,6 @@
 	   <Port>22</Port>
       <User>e2espm</User>
       <Pass>N/A</Pass>
-      <UploadDir>./</UploadDir>
-      <UploadTemp>./_TEMP_</UploadTemp>
-      <DownloadDirs>
-	      <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
-      </DownloadDirs>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
