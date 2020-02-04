@@ -37,11 +37,12 @@ The \textit{TXRXParams} configuration item defines the parameters which rule the
 	\item \textit{ParallelDownload} : number of simultaneous file downloads for pull circulations
 \end{itemize}
 
-\subsection{FTPServer}
+\subsection{Server}
+The \textit{Server} configuration item defines the parameters which rule the network protocol of choice selected to rule the file circulations either in \textit{pull} and \textit{push} mode.
 \par
 \noindent
 \begin{itemize}
-	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"} and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
+	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"}, \textit{"WEBDAV"}, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
 	\item \textit{Hostname} : hostname of the interface
 	\item \textit{Port} : TCP port
 	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server
@@ -80,8 +81,9 @@ The \textit{Notify} configuration item serves to activate the generation and del
 The \textit{Events} configuration item host the activation and shell command associated to the event when circulating towards the interface.
 \begin{lstlisting}
 <Events>
-<Event Name="OnReceiveNewFilesOK"  executeCmd="echo :-)"/>
+<Event Name="OnReceiveNewFilesOK"  	executeCmd="echo :-)"/>
 <Event Name="OnReceiveError"            executeCmd="echo :-("/>
+<Event Name="NewFile2Intray"            executeCmd="echo %F"/>
 </Events>
 \end{lstlisting}
 \par
@@ -97,7 +99,7 @@ Below the possible \textit{Event Name} values which can be configured:
 	\item \textit{OnReceiveNewFile} : it is raised every new file \textit{pulled}
 	\item \textit{OnReceiveERROR} : it is raised if any \textit{pull} of file has failed
 	\item \textit{OnTrackOK} : it is raised upon a successful loop to check availability pull
-	\item \textit{NewFile2Intray} :	it is raised upon every new file locally disseminated after pulling it					 
+	\item \textit{NewFile2Intray} :	it is raised upon every new file locally disseminated after pulling it ; \%f specifies the \textit{filename} disseminated ; \%F specifies the \textit{full path filename} disseminated ; \%d specifies the directory name in which the file has been disseminated 					 
 \end{itemize}
 
 \section{Pull circulations}
@@ -361,10 +363,54 @@ The following command can be used to register an interface identifier in the dat
 
 \inlinecode{bash}{ \$> decConfigInterfaceDB  --add IERS } \newline
 
+%% ========================================================= 
+%%
+%% Circulation Reports
+%%
+
+\section{Circulation Reports}
+This section describes how to configure the DEC SW to generate the \textit{circulation reports} containing information of the files pulled, pushed or which are available published by a given interface.
+
+
+\begin{itemize}
+	\item \textit{RetrievedFiles} : this report enumerates the files \textit{pulled} from a given interface during a polling loop
+	\item \textit{DeliveredFiles} : TBW
+	\item \textit{UnknownFiles} : TBW
+	\item \textit{EmergencyDeliveryFiles} : TBW
+\end{itemize}
+
+\par
+\noindent
+The configuration for the generation of the \textit{circulation reports} is defined in the configuration file \textit{dec\_config.xml}.
+
+\par
+\noindent
+The generated circulation reports are placed in directory location defined by the full path specified in the \textit{ReportDir} configuration item: \begin{verbatim}<ReportDir>/dec/dec_reports</ReportDir>\end{verbatim} 
+
+\subsection{Pulled Files}
+The DEC SW can generate a report enumerating the files which have been \textit{pulled} from a given interface during a polling loop. The name of this \textit{circulation report} is \textit{"RetrievedFiles"}. Below there are the associated configuration items: 
+
+\par
+\noindent
+
+\begin{verbatim}
+<Report Name="RetrievedFiles">
+		<Enabled>true</Enabled>
+		<Desc>List of Files Retrieved</Desc>
+		<FileClass>OPER</FileClass>
+		<FileType>DEC_R_PULL</FileType>
+	</Report>
+\end{verbatim}
+
+%% ========================================================= 
+%%
+%% VERIFICATION OF THE CONFIGURATION
+%%
+
 \section{Configuration Verification}
 This section describes how to verify the DEC configuration settled according to the previous sections. 
 
-\subsection{Validation}
+
 To validate the XML files of the DEC configuration, there is an associated a DEC command line tool called \textit{decValidateConfig} which verifies the syntax and semantics associated to  configuration items. \newline
 
 \par 
