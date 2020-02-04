@@ -161,6 +161,7 @@
             <HardLink>False</HardLink>
             <ToList>
                <Intray>GPS</Intray>
+               <Intray>S2A</Intray>
             </ToList>
          </File>
    
