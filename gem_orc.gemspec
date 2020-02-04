@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.9dev'
+  s.version     = '0.0.9'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -13,6 +13,9 @@ Gem::Specification.new do |s|
                   Dir['code/orc/orcIngester'] + \
                   Dir['code/orc/orcUnitTests'] + \
                   Dir['code/cuc/*.rb'] + \
+                  Dir['schemas/common_types.xsd'] + \
+                  Dir['schemas/orchestrator_log_config.xsd'] + \
+                  Dir['schemas/orchestratorConfigFile.xsd'] + \
                   Dir['config/orchestratorConfigFile.xml'] + \
                   Dir['config/orchestrator_log_config.xml'] + \
                   Dir['config/orc_test.env'] + \
@@ -34,7 +37,8 @@ Gem::Specification.new do |s|
                      'orcQueueUpdate', \
                      'orcResourceChecker', \
                      'orcScheduler', \
-                     'orcUnitTests'
+                     'orcUnitTests', \
+                     'orcValidateConfig'
                      ]
 
   s.homepage    = 'http://www.deimos-space.com'
@@ -43,16 +47,10 @@ Gem::Specification.new do |s|
 
   # ----------------------------------------------
   
-  # s.add_dependency('activerecord', '~> 6.0')
+  s.add_dependency('minarc', '~> 1.0.33')
   
-  #s.add_dependency('minarc', '>= 1.0.30a')
-  #s.add_runtime_dependency('minarc', '>= 1.0.30')
   # ----------------------------------------------
     
-  
-  # you did document with RDoc, right?
-  # s.has_rdoc = true  
-  
   s.post_install_message = "Elecnor Deimos Generic Orchestrator installed :-)"
   
 end

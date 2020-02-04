@@ -8,14 +8,13 @@
 #
 # === Mini Archive Component (MinArc)
 # 
-# CVS: $Id: FileDeleter.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
+# Git: $Id: FileDeleter.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
 #
 # module MINARC
 #
 #########################################################################
 
 require 'cuc/DirUtils'
-require 'cuc/EE_ReadFileName'
 
 require 'arc/MINARC_Client'
 require 'arc/ReportEditor'
@@ -26,7 +25,7 @@ module ARC
 class FileDeleter
 
    include CUC::DirUtils
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------
    
    # Class contructor
    def initialize(bListOnly = false, bNoServer = false)
@@ -44,30 +43,30 @@ class FileDeleter
       checkModuleIntegrity
       
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "FileDeleter debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def disableListMode
       @bListOnly = false
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def enableListMode
       @bListOnly = true
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def enableReporting(filePath)
       @bReport = true
       @reportFullName = filePath
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Main method of the class.
    def delete_by_type(fileType, start = nil, stop = nil, bIncStart=false, bIncStop=false)
@@ -99,11 +98,11 @@ class FileDeleter
       return retVal
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def remote_delete_by_name(filename)
       if @isDebugMode == true then
-         puts "FileRetriever::remote_delete_by_name"
+         puts "FileDeleter::remote_delete_by_name"
       end
       arc = ARC::MINARC_Client.new
       if @isDebugMode == true then
@@ -112,7 +111,7 @@ class FileDeleter
       ret = arc.deleteFile(filename)
       return ret
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def delete_by_name(filename)
       if @bRemoteMode == true then
@@ -155,12 +154,12 @@ class FileDeleter
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
 
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
@@ -181,7 +180,7 @@ private
       @archiveRoot = ENV['MINARC_ARCHIVE_ROOT']
       return
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def deleteFromArchive(aFile)
 
@@ -205,14 +204,14 @@ private
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end # class
 
 end # module
-#=====================================================================
+
+## ===================================================================
 
 
-#-----------------------------------------------------------
 
 

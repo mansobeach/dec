@@ -91,41 +91,44 @@ def main
    @isDelUnknown     = nil
    @bShowVersion     = false
    @bShowUsage       = false
+   @parallelSlots    = nil
       
    opts = GetoptLong.new(
-     ["--mnemonic", "-m",       GetoptLong::REQUIRED_ARGUMENT],
-     ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
-	  ["--Benchmark", "-B",      GetoptLong::NO_ARGUMENT],
-     ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
-     ["--version", "-v",        GetoptLong::NO_ARGUMENT],
-     ["--help", "-h",           GetoptLong::NO_ARGUMENT],
-     ["--Report", "-R",         GetoptLong::NO_ARGUMENT],
-	  ["--receipt", "-r",        GetoptLong::NO_ARGUMENT],
-     ["--Show", "-S",           GetoptLong::NO_ARGUMENT],
-     ["--Unknown", "-U",        GetoptLong::NO_ARGUMENT],
-     ["--list", "-l",           GetoptLong::NO_ARGUMENT],
-     ["--del-unknown", "-d",    GetoptLong::NO_ARGUMENT],
-     ["--no-intray", "-N",      GetoptLong::NO_ARGUMENT],
-     ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
+     ["--mnemonic", "-m",                 GetoptLong::REQUIRED_ARGUMENT],
+     ["--ParallelDownload", "-P",         GetoptLong::REQUIRED_ARGUMENT],
+     ["--Debug", "-D",                    GetoptLong::NO_ARGUMENT],
+	  ["--Benchmark", "-B",                GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",                    GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",                  GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",                     GetoptLong::NO_ARGUMENT],
+     ["--Report", "-R",                   GetoptLong::NO_ARGUMENT],
+	  ["--receipt", "-r",                  GetoptLong::NO_ARGUMENT],
+     ["--Show", "-S",                     GetoptLong::NO_ARGUMENT],
+     ["--Unknown", "-U",                  GetoptLong::NO_ARGUMENT],
+     ["--list", "-l",                     GetoptLong::NO_ARGUMENT],
+     ["--del-unknown", "-d",              GetoptLong::NO_ARGUMENT],
+     ["--no-intray", "-N",                GetoptLong::NO_ARGUMENT],
+     ["--nodb", "-n",                     GetoptLong::NO_ARGUMENT]
      )
     
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"          then @isDebugMode       = true
-            when "--Benchmark"      then @isBenchMark       = true
-            when "--version"        then @bShowVersion      = true
-	         when "--mnemonic"       then @entity            = arg
-            when "--list"           then @listOnly          = true
-            when "--nodb"           then @isNoDB            = true
-            when "--no-intray"      then @isNoIntray        = true
-            when "--del-unknown"    then @isDelUnknown      = true
-			   when "--help"           then @bShowUsage        = true 
-	         when "--usage"          then @bShowUsage        = true
-				when "--receipt"        then @createReceipt     = true
-            when "--Report"         then @createReport      = true
-            when "--Unknown"        then @listUnknown       = true
-            when "--Show"           then @bShowMnemonics    = true
+            when "--Debug"             then @isDebugMode       = true
+            when "--Benchmark"         then @isBenchMark       = true
+            when "--version"           then @bShowVersion      = true
+	         when "--mnemonic"          then @entity            = arg
+            when "--ParallelDownload"  then @parallelSlots     = arg.to_i
+            when "--list"              then @listOnly          = true
+            when "--nodb"              then @isNoDB            = true
+            when "--no-intray"         then @isNoIntray        = true
+            when "--del-unknown"       then @isDelUnknown      = true
+			   when "--help"              then @bShowUsage        = true 
+	         when "--usage"             then @bShowUsage        = true
+				when "--receipt"           then @createReceipt     = true
+            when "--Report"            then @createReport      = true
+            when "--Unknown"           then @listUnknown       = true
+            when "--Show"              then @bShowMnemonics    = true
          end
       end
    rescue Exception
@@ -295,6 +298,10 @@ def main
       @receiver.isBenchmarkMode = true
    end   
 
+   if @parallelSlots != nil then
+      @receiver.overrideParallelDownloads(@parallelSlots)
+   end
+   
    body
    
    @locker.release
@@ -319,7 +326,7 @@ end
 ## -------------------------------------------------------------
 
 def body
-   puts "Polling #{@entity} Interface"
+   @logger.info("Polling #{@entity} Interface")
    
    @entityConfig  = ReadInterfaceConfig.instance
    bRegisterDir   = @entityConfig.registerDirContent?(@entity)
@@ -329,15 +336,13 @@ def body
    bRetrieveFiles = @entityConfig.retrieveDirContent?(@entity)
    
    ## ----------------------------------------------
-   if bRegisterDir == false or @listOnly == true and @isNoDB == false then
-      puts
-      puts "File Tracking  is disabled"
+   if bRegisterDir == false or (@listOnly == true and @isNoDB == false) then
+      @logger.debug("File Tracking for #{@entity} is disabled")
    end
    ## ----------------------------------------------   
 
    if bRetrieveFiles == false or @listOnly == true then
-      puts
-      puts "File Retrieval is disabled"
+      @logger.debug("File Retrieval is disabled")
    end
    
    ## ----------------------------------------------
@@ -363,8 +368,7 @@ def body
       bNewFiles = @receiver.check4NewFiles(true)
 
       if bNewFiles == false then
-		   if @isNoDB == false then   
-            puts "\nNo file(s) available from #{@entity} I/F for tracking\n"
+		   if @isNoDB == false then
             @logger.info("No file(s) available from #{@entity} I/F for tracking")
          end
       else
@@ -372,7 +376,6 @@ def body
          listOfFiles = @receiver.getAvailablesFiles
          
          if @isNoDB == false then
-            puts "\nNew file(s) available from #{@entity} I/F for tracking\n"
             @logger.info("New file(s) available from #{@entity} I/F for tracking")            
          
             listOfFiles.each{|fullpath|
@@ -411,17 +414,19 @@ def body
    if bRetrieveFiles == true or @listOnly == true then
       bNewFiles     = @receiver.check4NewFiles
       if bNewFiles == false then
-         puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
+         # puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("No file(s) available from #{@entity} I/F for retrieving")
          event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
       else
-         puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
+         # puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("New file(s) available from #{@entity} I/F for retrieving")
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
-            puts File.basename(fullpath)
+            if @listOnly == true then
+               puts File.basename(fullpath)
+            end
          }
-         puts
+         
          if @listOnly == false and @createReceipt == false then
             ret = @receiver.receiveAllFiles
             
@@ -431,6 +436,10 @@ def body
             if ret == true then
                @logger.info("Event OnReceiveNewFilesOK triggered")
                event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
+               @receiver.createReportFile(ReadConfigDEC.instance.getReportDir, \
+                                    true, \
+                                    @createReport \
+                                    )
             else
                @logger.info("Event OnReceiveError triggered")
                event.trigger(@entity, "ONRECEIVEERROR", nil, @logger)
@@ -441,25 +450,14 @@ def body
       end
 
       ## ---------------------------------------------------
-      ## Creating Reports if configured
-      ## reports associated to Pull operations are now created in a directory
-      ## instead of the interface incoming-directory
-      if @listOnly == false then
-         @receiver.createReportFile(ReadConfigDEC.instance.getReportDir, \
-                                    true, \
-                                    @createReport \
-                                    )
-      end
-      ## ---------------------------------------------------
 
       ## Now, "nominal" dissemination is performed in DEC_ReceiverFromInterface
       ## for each file received. But we want the possibility to try again the inbox
       ## in case some files are placed there from previous polling
 
-      ## 20160907 - dissemination is only activated if new files have been downloaded
       ## Disseminate files retrieved to In-Trays
 
-      if @listOnly == false and @isNoIntray == false and bNewFiles == true then
+      if @listOnly == false and @isNoIntray == false then ## and bNewFiles == true then
          deliverer = FileDeliverer2InTrays.new
  	      if @isDebugMode == true then
  	         deliverer.setDebugMode
@@ -471,7 +469,7 @@ def body
       ## ---------------------------------------------------
       
    end
-   #----------------------------------------------
+   # ----------------------------------------------
    
    
 end

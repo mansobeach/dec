@@ -181,21 +181,28 @@ class ReadInterfaceConfig
    # Get the configuration FTP Config info for sending files.
    # - mnemonic (IN): Entity name
    def getFTPServer4Send(mnemonic)
-      return searchEntityValue(mnemonic, @@arrExtEntities, "FTPServer")
+      return searchEntityValue(mnemonic, @@arrExtEntities, "Server")
    end
    #-------------------------------------------------------------
+
+   ## Get the configuration Server Config info for receiving files.
+   ## - mnemonic (IN): Entity name
+   def getServer(mnemonic)
+      return searchEntityValue(mnemonic, @@arrExtEntities, "Server")
+   end
+   ## -----------------------------------------------------------
 
    # Get the configuration FTP Config info for receiving files.
    # - mnemonic (IN): Entity name
    def getFTPServer(mnemonic)
-      return searchEntityValue(mnemonic, @@arrExtEntities, "FTPServer")
+      return getServer(mnemonic)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Get the configuration FTP Config info for receiving files.
    # - mnemonic (IN): Entity name
    def getFTPServer4Receive(mnemonic)
-      return searchEntityValue(mnemonic, @@arrExtEntities, "FTPServer")
+      return searchEntityValue(mnemonic, @@arrExtEntities, "Server")
    end
    #-------------------------------------------------------------
    
@@ -305,14 +312,14 @@ class ReadInterfaceConfig
    def isEnabled4Receiving?(mnemonic)
       return decodeTXRXParams(getTXRXParams(mnemonic),"enabled4Receive")
    end
-   #-------------------------------------------------------------
-
-   # Get the configuration FTP Config info for sending files.
-   # - mnemonic (IN): Entity name
+   ## -----------------------------------------------------------
+   ##
+   ## Get the Server network protocol configured for circulations
+   ## - mnemonic (IN): Entity name
    def getProtocol(mnemonic)  
-      return searchEntityValue(mnemonic, @@arrExtEntities, "FTPServer").protocol
+      return searchEntityValue(mnemonic, @@arrExtEntities, "Server").protocol
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
 
@@ -366,14 +373,14 @@ private
 	## This method defines all the structs used
 	def defineStructs
 	   Struct.new("Entity", :mnemonic, :description, :incomingDir,
-                      :outgoingDir, :FTPServer, :TXRXParams,
+                      :outgoingDir, :Server, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
-		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
+		Struct.new("Server", :mnemonic, :protocol, :hostname, :port,
                    :user, :password, :isTracked, :isRetrieved, 
                    :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
 #		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
-#                   :user, :password, :FTPServerMirror, :isTracked, :isRetrieved, 
+#                   :user, :password, :ServerMirror, :isTracked, :isRetrieved, 
 #                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
 #                   :uploadTemp, :arrDownloadDirs)
       Struct.new("FTPServerMirror", :mnemonic,:protocol, :hostname, :port, :user, :password)
@@ -441,7 +448,7 @@ private
              |txrxparams|
              txrx = fillTXRXParamsStruct(entity.attributes["Name"], txrxparams)
           }
-          XPath.each(entity, "FTPServer"){
+          XPath.each(entity, "Server"){
              |remoteserver|
              remote = fillFTPServerStruct(entity.attributes["Name"], remoteserver)
           }
@@ -698,7 +705,7 @@ private
 #         arrDownloadDirs << Struct::DownloadDir.new(mnemonic, dir, depth)
 #      }
 
-	   ftpstruct   = Struct::FTPServer.new(
+	   ftpstruct   = Struct::Server.new(
                          mnemonic,
                          protocol,
                          hostname,
@@ -755,7 +762,7 @@ private
       end
 
       if !xmlstruct.elements["ParallelDownload"].nil? then
-         parallelDownload = xmlstruct.elements["ParallelDownload"].text.to_i
+         parallelDownload = expandPathValue(xmlstruct.elements["ParallelDownload"].text).to_i
       end
 
       txrxParams  = Struct::TXRXParams.new(

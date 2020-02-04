@@ -114,8 +114,8 @@ class ReadConfigIncoming
    
    ## -------------------------------------------------------------
      
-   # Get the In-Tray directory for a given DIM Name
-   # It returns the InTray Directory if present, otherwise false
+   ## Get the In-Tray directory for a given DIM Name
+   ## It returns the InTray Directory if present, otherwise false
    def getInTrayDir(name)
       
       # ------------------------------------------

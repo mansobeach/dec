@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.32final'
+  s.version     = '1.0.33'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
                   Dir['code/arc/ReportEditor.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF'] + \
-                  Dir['code/arc/plugins/test/example_1.m2ts'] + \
-                  Dir['code/arc/plugins/test/example_1.mp4'] + \
+#                  Dir['code/arc/plugins/test/example_1.m2ts'] + \
+#                  Dir['code/arc/plugins/test/example_1.mp4'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
                   Dir['install/minarc_test.env'] + \
@@ -68,11 +68,6 @@ Gem::Specification.new do |s|
   # database specific gems which can differ
   
   # s.add_dependency('pg', '~> 1.0')
-
-  
-  
-  # you did document with RDoc, right?
-  # s.has_rdoc = true  
   
   s.post_install_message = "Elecnor Deimos MINARC installed :-)"
   

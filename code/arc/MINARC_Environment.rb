@@ -22,12 +22,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.33dev"
+   @@version = "1.0.33"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.33" =>    "to be defined", \
+      "1.0.33" =>    "Fix of https://jira.elecnor-deimos.com/browse/S2MPASUP-290\n\
+          exiftool added as dependency tool for unit tests to verify plug-in Handler_VIDEO\n", \
       "1.0.32" =>    "Migration to ActiveRecord 6", \
       "1.0.31" =>    "Check of tool dependencies done in the unit tests\n\
           Environment variables for tests defined in minarc_test.env\n\
@@ -83,6 +84,7 @@ module ARC
    @@arrTools = [ \
                   "curl", \
                   "7za", \
+                  "exiftool", \
                   "gzip", \
                   "tar", \
                   "zip", \
@@ -94,10 +96,10 @@ module ARC
    def load_config_development
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
       ENV['MINARC_SERVER']                = "http://localhost:4567"
-      ENV['MINARC_ARCHIVE_ROOT']          = "#{ENV['HOME']}/Sandbox/minarc/archive_root"
-      ENV['MINARC_ARCHIVE_ERROR']         = "#{ENV['HOME']}/Sandbox/minarc/error"
-      ENV['MINARC_TMP']                   = "#{ENV['HOME']}/Sandbox/minarc/tmp"
-      ENV['TMPDIR']                       = "#{ENV['HOME']}/Sandbox/minarc/tmp"
+      ENV['MINARC_ARCHIVE_ROOT']          = "/tmp/minarc/archive_root"
+      ENV['MINARC_ARCHIVE_ERROR']         = "/tmp/minarc/error"
+      ENV['MINARC_TMP']                   = "/tmp/minarc/tmp"
+      ENV['TMPDIR']                       = "/tmp/minarc/tmp"
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
       ENV['MINARC_DATABASE_USER']         = "root"
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"

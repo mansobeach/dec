@@ -49,7 +49,7 @@
 # == Usage
 # decCheckConfig [--nodb]
 #     -a    checks all DEC configuration
-#     -e    checks entities configuration in dec_interfaces.xml
+#     -e    [entity] checks specified or all entities configuration in dec_interfaces.xml
 #    --nodb no Inventory checks
 #     -i    checks incoming pulled file-types configured in dec_incoming_files.xml
 #     -o    checks outgoing pushed file-types configured in dec_outgoing_files.xml

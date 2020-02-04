@@ -39,6 +39,11 @@ require 'dec/ReadConfigIncoming'
 ###  4  - test_decGetFromInterface
 ###  4.1  - test_decGetFromInterface_LOCAL
 ###  4.2  - test_decGetFromInterface_WEBDAV
+###  4.3  - test_decGetFromInterface_WEBDAV_SECURE => decUnitTests_WEBDAV_SECURE
+###  4.4  - test_decGetFromInterface_PARALLEL_HTTP
+###  4.5  - test_decGetFromInterface_contingency_1
+###  4.6  - test_decGetFromInterface_contingency_2
+###  4.7  - test_decGetFromInterface_contingency_3
 ###  5  - test_decListener
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
@@ -53,7 +58,8 @@ require 'dec/ReadConfigIncoming'
 # launchctl load -w /System/Library/LaunchDaemons/ftp.plist
 
 ### MacOS Catalina
-## sudo /usr/local/sbin/pure-ftpd &
+## cd $HOME (non root $PWD)
+## sudo /usr/local/sbin/pure-ftpd
 ## PAMAuthentication            yes
 
 # Stop FTP Server
@@ -117,8 +123,7 @@ class DECTestCase < Test::Unit::TestCase
             exit(99)
          end
       end   
-      
-      
+            
 =begin
       puts
       puts
@@ -136,6 +141,8 @@ class DECTestCase < Test::Unit::TestCase
       end
 
 =end      
+
+      system("\\rm -f /tmp/test_decGetFromInterface_PARALLEL_HTTP")
 
       @@arrDownloadFiles = [ \
                            "finals.all", \
@@ -174,7 +181,6 @@ class DECTestCase < Test::Unit::TestCase
       @@conf = DEC_Environment.new
       
       @@conf.wrapper_load_config_development
-
 
       puts      
       @@conf.wrapper_print_environment
@@ -350,6 +356,7 @@ class DECTestCase < Test::Unit::TestCase
    ## Need to document all DEC options
 
    def test_dec_config
+      
       require 'dec/ReadConfigDEC'
       
       puts DEC::ReadConfigDEC.instance.getSatPrefix
@@ -361,8 +368,8 @@ class DECTestCase < Test::Unit::TestCase
       puts DEC::ReadConfigDEC.instance.deleteSourceFiles?
       puts
       puts DEC::ReadConfigDEC.instance.getIncomingFilters
-      puts DEC::ReadConfigDEC.instance.getDeleteUnknown
-      puts DEC::ReadConfigDEC.instance.getDeleteDuplicated
+      puts "DeleteUnknownFiles      => #{DEC::ReadConfigDEC.instance.getDeleteUnknown}"
+      puts "DeleteDuplicatedFiles   => #{DEC::ReadConfigDEC.instance.getDeleteDuplicated}"
       puts DEC::ReadConfigDEC.instance.getDownloadDirs
    end
    ## -------------------------------------------------------------
@@ -631,6 +638,13 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decValidateConfig -a"
       assert(system(cmd), cmd)
 
+      cmd = "decValidateConfig -X /tmp/dec_config -N decUnitTests@localhost"
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("/tmp/dec_config/dec_interfaces.xml"),         "Extracted dec_interfaces.xml")
+      assert(File.exist?("/tmp/dec_config/dec_config.xml"),             "Extracted dec_config.xml")
+      assert(File.exist?("/tmp/dec_config/dec_incoming_files.xml"),     "Extracted dec_incoming_files.xml")
+      
    end
    ## -----------------------------------------------------------
 
@@ -756,6 +770,9 @@ class DECTestCase < Test::Unit::TestCase
 #      puts
 #      puts
 
+      checkDirectory(ReadConfigDEC.instance.getReportDir)
+      
+      FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
 
       cmd = "decManageDB -d"
       ret = system(cmd)
@@ -797,9 +814,18 @@ class DECTestCase < Test::Unit::TestCase
 
       assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
       assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      prevDir = Dir.pwd
+      
+      # check presence of generated report file
+      Dir.chdir(ReadConfigDEC.instance.getReportDir)
+      arr = Dir["S2_OPER_DEC_R_PULL*"]
+      assert(!arr.empty?, "report directory is not empty")
+      FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
+      
+      Dir.chdir(prevDir)
 
       cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray"
       puts cmd
@@ -807,9 +833,20 @@ class DECTestCase < Test::Unit::TestCase
 
       assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
       assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      # check presence of generated report file
+      Dir.chdir(ReadConfigDEC.instance.getReportDir)
+      arr = Dir["S2_OPER_DEC_R_PULL*"]
+      assert(!arr.empty?, "report directory is not empty")
+      FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
+      
+      cmd = "cat #{ReadConfigDEC.instance.getReportDir}/#{arr[0]}"
+      puts cmd
+      system(cmd)
+      
+      Dir.chdir(prevDir)
 
       cmd = "decStats -v"
       assert(system(cmd), cmd)
@@ -916,7 +953,7 @@ class DECTestCase < Test::Unit::TestCase
    
    ## --------------------------------------------------------
    
-   ## verification of the protocol WEBDAV using interface "WEBDAV"
+   ## verification of the protocol WEBDAV over HTTP using interface "WEBDAV"
    
    def test_decGetFromInterface_WEBDAV
       puts __method__.to_s
@@ -931,8 +968,17 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decManageDB -c"
       ret = system(cmd)
 
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+
       cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      cmd = "decCheckConfig -e WEBDAV -i"
+      puts cmd
+      assert(system(cmd), cmd)
 
       inConfig          = ReadConfigIncoming.instance
       @finalDir         = inConfig.getIncomingDir("WEBDAV")
@@ -949,12 +995,15 @@ class DECTestCase < Test::Unit::TestCase
       puts
       puts
       
-      cmd = "decGetFromInterface -m WEBDAV --no-intray -D"
+      cmd = "decGetFromInterface -m WEBDAV"
       puts cmd
       assert(system(cmd), cmd)
 
-      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("GPS")
+
+      assert(File.exist?("#{dirDissemination}/finals.all"),  "retrieved finals.all")
+      assert(File.exist?("#{dirDissemination}/tai-utc.dat"), "retrieved tai-utc.dat")
 
       # --------------------------------    
       # Verify that files have been deleted in the interface upon download
@@ -1014,8 +1063,452 @@ class DECTestCase < Test::Unit::TestCase
    end   
    
    ## --------------------------------------------------------
+   
 
-   ## --no-intray not used / dissemination to intrays active
+   
+   ## --------------------------------------------------------   
+   ##   
+   ## Performance test with the protocol WEBDAV over HTTP using interface "PARALLEL_HTTP"
+   ##
+   ## results are written in /tmp/test_decGetFromInterface_PARALLEL_HTTP
+   ##
+   
+   data("SEPARATOR",     ["Start of the Test",     0,   0,   0,    false])
+
+   data("1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     true])
+   data("2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     true])
+   data("3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     true])
+   data("4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     true])
+   data("5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    true])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+
+   data("b1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     false])
+   data("b2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     false])
+   data("b3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     false])
+   data("b4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     false])
+   data("b5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    false])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     true])
+   data("7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     true])
+   data("8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     true])
+   data("9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     true])   
+   data("10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    true])   
+
+   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+   
+   data("b6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     false])
+   data("b7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     false])
+   data("b8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     false])
+   data("b9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     false])   
+   data("b10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    false])   
+
+   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     true])
+   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     true])
+   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     true])
+   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     true])   
+   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    true])   
+
+   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+
+   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     false])
+   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     false])
+   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     false])
+   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     false])   
+   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    false])   
+
+   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("1",     ["10files_100GB_2Slots_NoDB",      10,   102400,   2,     false])
+   data("2",     ["10files_100GB_4Slots_NoDB",      10,   102400,   4,     false])
+   data("3",     ["10files_100GB_6Slots_NoDB",      10,   102400,   6,     false])
+   data("4",     ["10files_100GB_8Slots_NoDB",      10,   102400,   8,     false])
+   data("5",     ["10files_100GB_10Slots_NoDB",     10,   102400,   10,    false])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 100 GBs",     0,   0,   0,    false])
+   
+   def test_decGetFromInterface_PARALLEL_HTTP(params)
+
+      label, numFiles, numBlocks, numSlots, noDB = params
+                                 
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s} => #{label}"
+      puts
+
+      if numFiles == 0 then
+         cmd = "echo \"#{label}\" >> /tmp/test_decGetFromInterface_PARALLEL_HTTP"
+         puts cmd
+         system(cmd)
+         return
+      end
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      cmd = "decCheckConfig -e PARALLEL_HTTP -i"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      configIn          = ReadConfigIncoming.instance
+      @finalDir         = configIn.getIncomingDir("PARALLEL_HTTP")
+            
+      checkDirectory(@finalDir)
+
+      arr = configIn.getDownloadDirs("PARALLEL_HTTP")
+      
+      downloadDir = ""
+      
+      if arr[0][:directory][0,1] != '/' then
+         downloadDir = '/Users/borja/' + arr[0][:directory]
+      else
+         downloadDir = arr[0][:directory]
+      end
+
+      ## -----------------------------------------
+      ## Create test files
+      
+      # 1 GB
+      # dd if=/dev/zero of=testfile bs=1024 count=1024000
+      
+      # 100 MB
+      # dd if=/dev/zero of=testfile bs=1024 count=102400
+      
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{downloadDir}/#{filename} bs=1024 count=#{numBlocks}"
+         puts cmd
+         system(cmd)
+      end
+
+      ## -----------------------------------------
+
+      ## Download the files
+      
+      puts
+      puts
+      puts label
+      
+      cmd = "decGetFromInterface -m PARALLEL_HTTP --no-intray -B -P #{numSlots}"
+      if noDB == true then
+         cmd = "decGetFromInterface -m PARALLEL_HTTP --no-intray -B -P #{numSlots} --nodb"
+      end
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      ## Checking files presence at final dir 
+
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         assert(File.exist?("#{@finalDir}/#{filename}"), "Checking #{filename} presence at #{@finalDir}")
+         FileUtils.rm_f("#{@finalDir}/#{filename}")
+      end
+     
+      arr = Dir["/tmp/DEC*.log"]
+     
+      cmd = "grep \"Complete download\" #{arr[0]} >> /tmp/test_decGetFromInterface_PARALLEL_HTTP"
+      puts cmd
+      system(cmd)
+     
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+      
+   end
+   ## --------------------------------------------------------
+
+   ## --------------------------------------------------------   
+   ##   
+   ## Contingency test for decGetFromInterface consistency into 
+   ## @finalDir of a given interface
+   ## 
+
+   def test_decGetFromInterface_contingency_1
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("LOCALHOST_NOT_SECURE")
+      
+      checkDirectory(@finalDir)
+      
+      ## remove write permisions into final directory to force errors   
+      puts
+      puts "Changing file permissions to #{@finalDir}"
+      puts
+      
+      FileUtils.chmod("a-w", @finalDir)
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "ERROR should be logged in #{__method__.to_s}") 
+
+      system("\\rm -rf /tmp/DEC*.log")
+
+      ## restoring write permisions into final directory to avoid errors   
+      puts
+      puts "Restoring file permissions to #{@finalDir}"
+      puts
+      
+      FileUtils.chmod_R("u+w", @finalDir)
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+#      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+#      puts cmd
+#      assert(system(cmd), cmd)
+
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+      
+   end
+
+   ## --------------------------------------------------------
+
+   ## --------------------------------------------------------   
+   ##   
+   ## Contingency test for decGetFromInterface consistency during 
+   ## local dissemination into intrays (none of them is writable)
+   ## 
+
+   def test_decGetFromInterface_contingency_2
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("S2A")
+
+      checkDirectory(dirDissemination)
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Changing file permissions to #{dirDissemination}"
+      puts
+      
+      FileUtils.chmod("a-w", dirDissemination)
+
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("GPS")
+
+      checkDirectory(dirDissemination)
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Changing file permissions to #{dirDissemination}"
+      puts
+      
+      FileUtils.chmod("a-w", dirDissemination)
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "ERROR should be logged in #{__method__.to_s}") 
+      
+      ## checking presence of files into final dir previous local disseminatino
+      @finalDir         = configIn.getIncomingDir("LOCALHOST_NOT_SECURE")
+      
+      assert(File.exist?("#{@finalDir}/finals.all"), "finals.all preserved in #{@finalDir}")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "tai-utc.dat preserved in #{@finalDir}")
+
+      dirGPS  = configIn.getInTrayDir("GPS")
+      dirS2A  = configIn.getInTrayDir("S2A")
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Restoring file permissions to #{dirS2A}"
+      puts
+      FileUtils.chmod("u+w", dirS2A)
+      
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Restoring file permissions to #{dirGPS}"
+      puts
+      FileUtils.chmod("u+w", dirGPS)
+
+      system("\\rm -rf /tmp/DEC*.log")
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "no ERROR should be logged in #{__method__.to_s}") 
+
+      assert(!File.exist?("#{@finalDir}/finals.all"), "finals.all removed from #{@finalDir}")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "tai-utc.dat removed from #{@finalDir}")
+
+
+      assert(File.exist?("#{dirGPS}/finals.all"), "finals.all disseminated to #{dirGPS}")
+      assert(File.exist?("#{dirGPS}/tai-utc.dat"), "tai-utc.dat disseminated to #{dirGPS}")
+            
+      assert(File.exist?("#{dirS2A}/finals.7z"), "finals.all disseminated to #{dirS2A}")
+      assert(File.exist?("#{dirS2A}/tai-utc.7z"), "tai-utc.dat disseminated to #{dirS2A}")
+
+   end
+   ## --------------------------------------------------------
+
+   ## --------------------------------------------------------   
+   ##   
+   ## Contingency test for decGetFromInterface consistency during 
+   ## local dissemination into intrays (one of them is writable)
+   ## 
+
+   def test_decGetFromInterface_contingency_3
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("S2A")
+
+      checkDirectory(dirDissemination)
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Changing file permissions to #{dirDissemination}"
+      puts
+      
+      FileUtils.chmod("a-w", dirDissemination)
+
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("GPS")
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "ERROR should be logged in #{__method__.to_s}") 
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Restoring file permissions to #{dirDissemination}"
+      puts
+
+      FileUtils.chmod("u+w", dirDissemination)
+      
+      ## checking presence of files into final dir previous local disseminatino
+      @finalDir         = configIn.getIncomingDir("LOCALHOST_NOT_SECURE")
+      assert(File.exist?("#{@finalDir}/finals.all"), "finals.all preserved in #{@finalDir}")
+      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "tai-utc.dat preserved in #{@finalDir}")
+       
+      dirGPS  = configIn.getInTrayDir("GPS")
+      dirS2A  = configIn.getInTrayDir("S2A")
+
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Restoring file permissions to #{dirS2A}"
+      puts
+      FileUtils.chmod("u+w", dirS2A)
+      
+      ## remove write permisions into dissemination directory to force errors   
+      puts
+      puts "Restoring file permissions to #{dirGPS}"
+      puts
+      FileUtils.chmod("u+w", dirGPS)
+
+      system("\\rm -rf /tmp/DEC*.log")
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "no ERROR should be logged in #{__method__.to_s}") 
+
+      assert(!File.exist?("#{@finalDir}/finals.all"), "finals.all removed from #{@finalDir}")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "tai-utc.dat removed from #{@finalDir}")
+
+
+      assert(File.exist?("#{dirGPS}/finals.all"), "finals.all disseminated to #{dirGPS}")
+      assert(File.exist?("#{dirGPS}/tai-utc.dat"), "tai-utc.dat disseminated to #{dirGPS}")
+            
+      assert(File.exist?("#{dirS2A}/finals.7z"), "finals.all disseminated to #{dirS2A}")
+      assert(File.exist?("#{dirS2A}/tai-utc.7z"), "tai-utc.dat disseminated to #{dirS2A}")
+      
+   end
+
+
+   ## --------------------------------------------------------
+
 
    def test_decGetFromInterface2
       puts __method__.to_s
@@ -1049,6 +1542,9 @@ class DECTestCase < Test::Unit::TestCase
       
       arr = Dir["/tmp/DEC*.log"]
       
+      cmd = "grep \"Complete download\" #{arr[0]}"
+      puts `#{cmd}`
+            
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -1056,6 +1552,7 @@ class DECTestCase < Test::Unit::TestCase
       
    end
    ## --------------------------------------------------------
+
 
    def test_decListener
       puts __method__.to_s

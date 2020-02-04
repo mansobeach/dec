@@ -2,7 +2,7 @@
 
 #########################################################################
 #
-# === Ruby source for #DEC_ConfigDevelopment class
+# === Ruby source for #DEC_Environment class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
@@ -15,6 +15,7 @@
 #########################################################################
 
 require 'rubygems'
+require 'fileutils'
 
 require 'cuc/DirUtils'
 
@@ -27,8 +28,10 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.12" =>    "Basic support to WebDAV / HTTP protocol using verbs PROPFIND,GET & DELETE\n\
-          for pull mode (dec_incoming_files.xml)", \
+      "1.0.12" =>    "Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE\n\
+          for pull mode (dec_incoming_files.xml)\n\
+          satisfy https://jira.elecnor-deimos.com/browse/S2MPASUP-278\n\
+          dec_interfaces.xml replaces \"FTPServer\" with \"Server\" configuration item",
       "1.0.11" =>    "Migration to ActiveRecord 6", \
       "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
           new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
@@ -62,6 +65,35 @@ module DEC
       ENV['HOSTNAME']                     = `hostname`
       ENV.delete('DCC_CONFIG')
       ENV.delete('DCC_TMP')
+   end
+   
+   ## -----------------------------------------------------------------
+
+   ## extract DEC configuration from installation directory 
+   def copy_installed_config(destination, nodename = "")
+      
+      checkDirectory(destination)
+      ## -----------------------------
+      ## DEC Config files
+   
+      arrConfigFiles = [\
+         "dec_interfaces.xml",\
+         "dec_incoming_files.xml",\
+         "dec_outgoing_files.xml",\
+         "ft_mail_config.xml",\
+         "dec_log_config.xml",\
+         "dec_config.xml"]
+      ## -----------------------------
+
+      path = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      
+      arrConfigFiles.each{|config|
+         if File.exist?("#{path}/#{config}") == true then
+            FileUtils.cp("#{path}/#{config}", "#{destination}/#{nodename}##{config}")
+            FileUtils.ln_s("#{destination}/#{nodename}##{config}","#{destination}/#{config}")
+         end
+      }
+      
    end
    
    ## -----------------------------------------------------------------

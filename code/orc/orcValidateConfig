@@ -2,39 +2,19 @@
 
 # == Synopsis
 #
-# This is a DEC command line tool that checks the validity of DEC configuration
-# files according to DEC's XSD schemas. This tool should be run everytime a 
+# This is a command line tool that checks the validity of ORC configuration
+# files according to ORC's XSD schemas. This tool should be run everytime a 
 # configuration change is performed.
-#
-# -e flag:
-#
-# With this option the Interfaces (Entities) configuration file (dec_interfaces.xml)
-# is validated using the schema interfaces.xsd
 #
 # -g flag:
 #
-# With the main DEC configuration file (dec_config.xml)
-# is validated using the schema dec_config.xsd
-#
-# -i flag:
-#
-# With this option the Incoming file-types configuration file (dec_incoming_files.xml)
-# is validated using the schema dec_incoming_files.xsd
-#
-# -o flag:
-#
-# With this option the Outgoing file-types configuration file (dec_outgoing_files.xml)
-# is validated using the schema dec_outgoing_files.xsd
-#
-# -m flag:
-#
-# With this option the DEC Mail configuration file (ft_mail_config.xml) is
-# validated using the schema ft_mail_config.xsd
+# With the main ORC configuration file (orchestratorConfigFile.xml)
+# is validated using the schema orchestratorConfigFile.xsd
 #
 # -l flag:
 #
-# With this option the DEC Logs configuration file (dec_log_config.xml) is
-# validated using the schema dec_log_config.xsd
+# With this option the ORC Logs configuration file (orchestrator_log_config.xml) is
+# validated using the schema orchestrator_log_config.xsd
 #
 # -a flag:
 #
@@ -42,12 +22,9 @@
 #
 #
 # == Usage
-#  -a          Check all DEC configuration files
-#  -g          Check DEC's general configuration file dec_config.xml
-#  -e          Check the Entities Configuration file dec_interfaces.xml
-#  -m          Check the mail configuration file ft_mail_config.xml
-#  -i          Check the incoming file-types configuration file dec_incoming_files.xml
-#  -i          Check the outgoing file-types configuration file dec_outgoing_files.xml
+#  -a          Check all ORC configuration files
+#  -g          Check ORC's general configuration file orchestratorConfigFile.xml
+#  -l          Check the log configuration file orchestrator_log_config.xml
 #  -X <dir>    eXtract the configuration into the specified directory
 #  -N <label>  label of the node to be appended into the configuration
 #  -h          shows this help
@@ -58,26 +35,28 @@
 # DEIMOS-Space S.L. (rell)
 #
 # == Copyright
-# Copyright (c) 2007 ESA - DEIMOS Space S.L.
+# Copyright (c) 2020 ESA - DEIMOS Space S.L.
 #
 
 #########################################################################
 #
-# Data Exchange Component
+# Orchestrator Component
 # 
-# Git: $Id$: decValidateConfig,v 1.6 2007/11/30 10:11:39 decdev Exp $
+# Git: $Id$: orcValidateConfig,v 1.6 2007/11/30 10:11:39 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
 
-require 'dec/DEC_Environment'
+require 'orc/ORC_Environment'
 
+##
+## MAIN script function
+##
 
-# MAIN script function
 def main
 
-   include DEC
+   include ORC
 
    @isDebugMode      = false
    @bIncoming        = false
@@ -95,11 +74,8 @@ def main
 
    opts = GetoptLong.new(
      ["--eXtract", "-X",         GetoptLong::REQUIRED_ARGUMENT],
-     ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],   
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
-     ["--incoming", "-i",        GetoptLong::NO_ARGUMENT],
-     ["--outgoing", "-o",        GetoptLong::NO_ARGUMENT],
-     ["--entities", "-e",        GetoptLong::NO_ARGUMENT],
      ["--log", "-l",             GetoptLong::NO_ARGUMENT],     
      ["--mail", "-m",            GetoptLong::NO_ARGUMENT],
      ["--general", "-g",         GetoptLong::NO_ARGUMENT],
@@ -113,7 +89,7 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--eXtract"  then @targetDir         = arg.to_s
-            when "--Node"     then @nodeName          = arg.to_s
+            when "--Node"     then @nodeName          = arg.to_s         
             when "--version"  then @bShowVersion      = true
             when "--Debug"    then @isDebugMode       = true
             when "--help"     then @bShowUsage        = true
@@ -132,8 +108,8 @@ def main
    end
  
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
-      hRecord = DEC.class_variable_get(:@@change_record)
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = ORC.class_variable_get(:@@change_record)
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
       }      
@@ -163,22 +139,23 @@ def main
 
    ## --------------------------------------------
    ##
-   ## Extract the DEC configuration from the gem installation directory
+   ## Extract the ORC configuration from the gem installation directory
    if @targetDir != "" then
       self.copy_installed_config(@targetDir, @nodeName)
       exit(0)
    end
    ## --------------------------------------------
 
+
    bReturn = true
 
-   # Check DEC's general configuration files dec_config.xml
+   # Check ORC's general configuration files orchestratorConfigFile.xml
    
    if @bGeneral == true or @bAll == true then
       puts "================================================"
-      puts "Checking dec_config.xml..."
+      puts "Checking orchestratorConfigFile.xml..."
       
-      ret = validate("dec_config")
+      ret = validate("orchestratorConfigFile")
 
       if !bReturn or !ret then
          bReturn = false
@@ -187,81 +164,15 @@ def main
       puts "================================================"
    end
 
-   # Check the Entities Configuration file interfaces.xml
-   
-   if @bEntities == true or @bAll == true then
-      puts "================================================"
-      puts "Checking dec_interfaces.xml..."
-      
-      ret = validate("dec_interfaces")
 
-      if !bReturn or !ret then
-         bReturn = false
-      end
-
-      puts "================================================"
-   end
-
-   # Check the incoming file-types configuration file dec_incoming_files.xml
-   
-   if @bIncoming == true or @bAll == true then
-      puts
-      puts "================================================"
-      puts "Checking dec_incoming_files.xml..."
-      puts
-      
-      ret = validate("dec_incoming_files")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
-
-
-      puts "================================================"
-   end
-
-   # Check the incoming file-types configuration file dec_outgoing_files.xml
-   
-   if @bOutgoing == true or @bAll == true then
-      puts
-      puts "================================================"
-      puts "Checking dec_outgoing_files.xml..."
-      puts
-      
-      ret = validate("dec_outgoing_files")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
-
-
-      puts "================================================"
-   end
-
-   # Check the mail configuration file ft_mail_config.xml
-
-   if @bAll == true or @bMail == true then
-      puts "================================================"
-      puts "Checking ft_mail_config.xml..."
-      puts
- 
-      ret = validate("ft_mail_config")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
-
-      puts "================================================"         
-   end
-
-   # Check the mail configuration file ft_mail_config.xml
+   # Check the log configuration file orchestrator_log_config.xml
 
    if @bAll == true or @bLog == true then
       puts "================================================"
-      puts "Checking dec_log_config.xml..."
+      puts "Checking orchestrator_log_config.xml..."
       puts
  
-      ret = validate("dec_log_config")
+      ret = validate("orchestrator_log_config")
 
       if !bReturn or !ret then
          bReturn = false
@@ -278,13 +189,14 @@ def main
    end
    
 end
+
 ## -------------------------------------------------------------
 ## Check the given XML file using the corresponding XSD schema file
 
 def validate (fileName)
    rootPath = File.join(File.dirname(File.expand_path(__FILE__)), "../../schemas")
 
-   cmd = "xmllint --schema #{rootPath}/#{fileName}.xsd #{ENV['DEC_CONFIG']}/#{fileName}.xml --noout"
+   cmd = "xmllint --schema #{rootPath}/#{fileName}.xsd #{ENV['ORC_CONFIG']}/#{fileName}.xml --noout"
 
    if @isDebugMode == true then
       puts cmd
@@ -300,13 +212,14 @@ def validate (fileName)
 end
 ## -------------------------------------------------------------
 
+
 ## -------------------------------------------------------------
 
-## Print command line help
+# Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -61 #{fullpathFile}"}`
+   value = `#{"head -38 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

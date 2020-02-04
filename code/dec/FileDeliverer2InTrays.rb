@@ -84,7 +84,7 @@ class FileDeliverer2InTrays
 #	   setDebugMode
       
       if mnemonic != "" and @isDebugMode == true then
-         puts "Dissemination of files received from #{mnemonic}"
+         @logger.debug("Dissemination of files previously received from #{mnemonic}")
       end
       
       arrEnts   = @entConfig.getAllExternalMnemonics     
@@ -94,8 +94,7 @@ class FileDeliverer2InTrays
          if mnemonic != "" and entity.to_s != mnemonic then
             next
          end
-         
-         @logger.info("Dissemination of files received from #{entity}")
+
          dir = @dimConfig.getIncomingDir(entity)
          
          if @isDebugMode == true then
@@ -106,8 +105,9 @@ class FileDeliverer2InTrays
 			arrFiles = getFilenamesFromDir(dir, "*")
 			if arrFiles.empty? == true then
 			   if @isDebugMode == true then
-				   puts "There are no new files"
+				   @logger.debug("There are no previous files to disseminate")
 				end
+            next
 			end
 
 			arrFiles.each{|file|
@@ -159,8 +159,8 @@ class FileDeliverer2InTrays
 
                # main dissemination method
 
-					ret = disseminate(file, dir, dimsDirs, hdlinked)
-					
+					ret = disseminate(entity, file, dir, dimsDirs, hdlinked)
+               
                ## ---------------------------------
                # 20170601 - Patch to compress locally disseminated files               
                if ret == true then
@@ -173,26 +173,19 @@ class FileDeliverer2InTrays
                # the information and perform a later manual dissemination 
                if ret == true then
                   begin
+                     @logger.info("Removing #{dir}/#{file}")
                      FileUtils.rm_rf("#{dir}/#{file}")
+                     @logger.info("#{file} has been disseminated locally according to rules")
                   rescue Exception
                      @logger.error("Could not delete #{dir}/#{file}")
-                     puts
-                     puts "Could not delete #{dir}/#{file} ! :-("
-                     puts
                      exit(99)
                   end
                else      
                   @logger.error("#{file} has not been disseminated")
                   @logger.warn("#{file} is still placed in #{dir}")
-                  puts "#{file} has not been disseminated"
-                  puts "#{file} is still placed in #{dir}"
                end
 				end
 			}
-         if @isDebugMode == true then
-			   puts "================================================"
-            puts
-         end
       }
       
    end
@@ -273,8 +266,10 @@ class FileDeliverer2InTrays
 
          # ---------------------------------
          # 20170601 - Patch to compress locally disseminated files               
-               
-         ret = compressFile(dimsName, file)
+         
+         if ret == true then
+            ret = compressFile(dimsName, file)
+         end
                
          # ---------------------------------
 
@@ -284,19 +279,16 @@ class FileDeliverer2InTrays
          # the information and perform a later manual dissemination 
          if ret == true then
             begin
+               @logger.debug("Removing #{directory}/#{file}")
                FileUtils.rm_rf("#{directory}/#{file}")
+               @logger.debug("#{file} has been disseminated locally according to rules")
             rescue Exception
-               @logger.error("deliverFile : Could not delete #{directory}/#{file}")
-               puts
-               puts "Could not delete #{directory}/#{file} ! :-("
-               puts
+               @logger.error("dissemination : Could not delete #{directory}/#{file}")
                exit(99)
             end
          else
             @logger.error("deliverFile : #{file} has not been disseminated")
             @logger.warn("deliverFile : #{file} is still placed in #{directory}")
-            puts "#{file} has not been disseminated"
-            puts "#{file} is still placed in #{directory}"
          end       
       else
          # @logger.warn("#{file} is not disseminated to any In-Tray")
@@ -375,15 +367,11 @@ private
          # -------------------------------------------
          # Management of event NewFile2Intray
          
-         arrParam             = Array.new
-         hParam1              = Hash.new
-         hParam1["filename"]  = file 
+         hParams              = Hash.new
+         hParams["filename"]  = file 
 
-         hParam2              = Hash.new
-         hParam2["directory"] = targetDir
+         hParams["directory"] = targetDir
       
-         arrParam << hParam1
-         arrParam << hParam2
          # -------------------------------------------  
          
 		   if bFirst == true then
@@ -399,11 +387,13 @@ private
             if @isDebugMode == true then
 	   		   puts cmd
 		   	end
-            bRet = execute(cmd, "mv2DimsInTrays")
+            bRet = execute(cmd, "mv2InTrays")
             
             if bRet == false then
-               puts "Could not copy File in Target Directory "
+               @logger.error("Could not disseminate .TEMP_#{file} into intray #{targetDir}")
+               Dir.chdir(prevDir)
                bReturn = false
+               return false
             end
             
             # Remove in target directory any eventual copy of a file with the same name
@@ -415,7 +405,7 @@ private
    			if @isDebugMode == true then
 	   		   puts cmd
 		   	end
-            bRet = execute(cmd, "mv2DimsInTrays")
+            bRet = execute(cmd, "mv2InTrays")
 
             if bRet == false then
                if @isDebugMode == true then
@@ -442,7 +432,7 @@ private
                @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                # @logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
                
-               event.trigger(entity, "NEWFILE2INTRAY", arrParam, @logger)
+               event.trigger(entity, "NEWFILE2INTRAY", hParams, @logger)
                
                # -------------------------------------------
             end
@@ -455,13 +445,13 @@ private
                   cmd = "\\rm -f #{targetDir}/#{file}"
                   @logger.warn("#{file} already existed in #{targetDir}")
                   @logger.warn("Old file #{file} will be deleted first")
-                  execute(cmd, "mv2DimsInTrays")
+                  execute(cmd, "mv2InTrays")
                end
 			      cmd = "ln #{firstDir}/#{file} #{targetDir}"
                if @isDebugMode == true then
 	   		      puts cmd
 		   	   end
-               bRet = execute(cmd, "mv2DimsInTrays")
+               bRet = execute(cmd, "mv2InTrays")
 
                if bRet == false then
                   puts "Could not Link File to the Target Directory"
@@ -482,7 +472,7 @@ private
                   #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                   @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
       
-                  event.trigger(@entity, "NEWFILE2INTRAY", arrParam, @logger)   
+                  event.trigger(@entity, "NEWFILE2INTRAY", hParams, @logger)   
 
                end
 				else
@@ -491,7 +481,7 @@ private
    			   if @isDebugMode == true then
 	   		      puts cmd
 		   	   end
-               bRet = execute(cmd, "mv2DimsInTrays")
+               bRet = execute(cmd, "mv2InTrays")
             
                if bRet == false then
                   puts "Could not copy File in Target Directory"
@@ -502,14 +492,16 @@ private
    			   if @isDebugMode == true then
 	   		      puts cmd
 		   	   end
-               bRet = execute(cmd, "mv2DimsInTrays")
+               bRet = execute(cmd, "mv2InTrays")
                
                if bRet == false then
                   if @isDebugMode == true then
-                     puts "Could not place final File in Target Directory ! :-("
+                     puts "Could not disseminate into #{targetDir} intray ! :-("
                   end
-                  @logger.error("Could not place final File in In-Tray")
+                  @logger.error("Could not disseminate into #{targetDir} intray")
                   bReturn = false
+                  Dir.chdir(prevDir)
+                  return false
                else
                   @logger.info("#{file} has been disseminated into #{targetDir}")
                   
@@ -556,6 +548,13 @@ private
          targetFile =  File.basename(file, ".*")
          targetFile = "#{targetFile}.7z"
          targetFile = "#{inTray}/#{targetFile}"
+
+         if File.exist?(sourceFile) == false then
+            @logger.error("missing #{sourceFile}")
+            @logger.error("skip compression in #{compress} to #{targetFile}")
+            retVal = false
+            next
+         end
                   
          if compress == "7z" then
                   
@@ -567,7 +566,7 @@ private
             ret = pack7z(sourceFile, targetFile, true, @isDebugMode)
                      
             if ret == false then
-               @logger.error("Could not compress in #{compress} #{file}")
+               @logger.error("Could not compress in #{compress} #{targetFile}")
                File.delete(targetFile)
                retVal = false
             else

@@ -68,18 +68,27 @@ class OrchestratorIngester
       if @ftReadConf.isValidFileType?(polledFile) == true then
          @newFile = true
          cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
+         if @isDebugMode == true then
+            cmd = "#{cmd.dup} -D"
+         end
          retVal   = system(cmd)
          @logger.info("#{cmd} => #{$?}")
                   
          if retVal == true then               
-            bIngested = true
-                              
+            bIngested = true                              
             if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
                cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
                retVal   = system(cmd)
                @logger.info("#{cmd} / #{retVal}")
                if retVal != true then
                   @logger.error("Could not queue #{polledFile}")
+                  cmd      = "minArcRetrieve --noserver -f #{File.basename(polledFile, ".*")} -L #{@ftReadConf.getFailureDir}"
+                  retVal   = system(cmd)
+                  if retVal == true then
+                     @logger.info("#{polledFile} copied into failure dir #{@ftReadConf.getFailureDir}")
+                  else
+                     @logger.error("Could not place #{polledFile} into failure dir #{@ftReadConf.getFailureDir}")
+                  end
                   return false
                end
             else
@@ -93,9 +102,15 @@ class OrchestratorIngester
          bIngested = false
          @logger.error("File-type #{filetype} not present in configuration !")
       end
-         
-      # Move to ingestionError folder in case of error
-      if bIngested == false then      
+      
+      ## ---------------------------------------------------
+      ##   
+      ## Move to ingestionError folder if still present in polling dir
+      ##
+      ## 1- not configured triggers to orc are moved 
+      ## 2- theoretically minarc errors would move files into MINARC_ARCHIVE_ERROR
+      
+      if bIngested == false and File.exist?("#{@pollingDir}/#{polledFile}") == true then      
          command = "\\mv -f #{@pollingDir}/#{polledFile} #{@orcTmpDir}/_ingestionError"      
          if @isDebugMode == true then
             @logger.debug(%Q{\n#{command}})
@@ -114,6 +129,8 @@ class OrchestratorIngester
             system(command)
          end               
       end
+      
+      ## ---------------------------------------------------   
          
       return bIngested
            
@@ -168,6 +185,7 @@ class OrchestratorIngester
       ## Notify to the scheduler if a new file has been detected
 
       if (@observerPID != nil) and (@newFile == true) then
+         sleep(2.0)
          @logger.debug("Sending SIGUSR1 to Observer with pid #{@observerPID}")                                
          ret = Process.kill("SIGUSR1", @observerPID)
          @logger.debug(ret)

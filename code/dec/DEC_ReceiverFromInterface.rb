@@ -16,8 +16,17 @@
 #
 #########################################################################
 
+### IPC for children process (overall volume downloaded)
+
+### https://www.jstorimer.com/blogs/workingwithcode/7766091-introduction-to-ipc-in-ruby
+
+### https://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processeshttps://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processes
+
+### https://stackoverflow.com/questions/53646103/pipe-with-multiple-child-process
+
 require 'rubygems'
 require 'curb'
+require 'net/http'
 require 'net/ssh'
 require 'net/sftp'
 require 'timeout'
@@ -68,7 +77,7 @@ class DEC_ReceiverFromInterface
       @isBenchmarkMode = false
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_ReceiverFromInterface", "#{@@configDirectory}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_Puller", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -156,6 +165,15 @@ class DEC_ReceiverFromInterface
    end
    ## -------------------------------------------------------------
    
+   ## this method overrides the configuration item in the file
+   def overrideParallelDownloads(nSlots)
+      if (nSlots.to_i < 1) then
+         return false
+      end
+      @parallelDownload = nSlots.to_i
+   end
+   ## -------------------------------------------------------------
+   
    ## Check whether there are new files waiting.
    ## * Returns true if there are new files availables.
    ## * Otherwise returns false.
@@ -235,7 +253,7 @@ class DEC_ReceiverFromInterface
             perf = measure { 
                list = getWebDavFileList 
                if @isDebugMode == true then
-                  puts "Found #{list.length} files"
+                  @logger.debug("Found #{list.length} files")
                   puts list
                end
             }            
@@ -252,12 +270,8 @@ class DEC_ReceiverFromInterface
 #       exit
 
       if @isBenchmarkMode == true then
-         puts
-         puts "Retrieved File-Tree structure from server:"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts "Retrieved #{list.length} files to be filtered"
-         puts
+         @logger.info("File-Tree from #{@entity}: #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+         @logger.debug("Retrieved from #{@entity} #{list.length} files to be filtered")
       end
 
       perf = measure { @fileList = filterFullPathFileList(list, forCheck) }
@@ -265,12 +279,7 @@ class DEC_ReceiverFromInterface
       n = @fileList.length
 
       if @isBenchmarkMode == true then
-         puts
-         puts "Total Filtering File-Tree (filters + database) (#{list.length} elements) :"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts "Retrieved #{n} files"
-         puts
+         @logger.info("Filtered (config + database) #{list.length} items : #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
       end
 
       if n > 0 then
@@ -320,7 +329,7 @@ class DEC_ReceiverFromInterface
          newFile = currentDir + "/" + element.split(" ").at(-1)
          
          if @isDebugMode == true then
-            puts "Found #{newFile}"
+            @logger.debug("Found #{newFile}")
          end
 
          @newArrFile << newFile
@@ -463,11 +472,33 @@ class DEC_ReceiverFromInterface
    def getWebDavFileList
 
       @newArrFile = Array.new
-      host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      host        = ""
+      if isSecureMode == false then
+         host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      else
+         host        = "https://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      end
       port        = @ftpserver[:port].to_i
       user        = @ftpserver[:user]
+      pass        = @ftpserver[:password]
       dav         = Net::DAV.new(host, :curl => false)
-      dav.verify_server = true
+      
+      ## -------------------------------
+      ## new configuration item VerifyPeerSSL is needed
+      ##
+      # dav.verify_server = true
+      dav.verify_server = false
+      ## -------------------------------
+ 
+      ## -------------------------------
+      ## if credentials are not empty in the configuration file
+      if user != "" or (pass != "" and pass != nil) then
+         if @isDebugMode == true then
+            puts "Passing Credentials #{user} #{pass} to WebDAV server"
+         end
+         dav.credentials(user, pass)
+      end
+      ## -------------------------------
       
       @depthLevel = 0
       arrElements = @ftpserver[:arrDownloadDirs]
@@ -615,7 +646,7 @@ class DEC_ReceiverFromInterface
       currentDir = Dir.pwd
       checkDirectory(@localDir)
       Dir.chdir(@localDir)
-      puts "Downloading file(s) ..." # into #{@localDir} ..."
+      # puts "Downloading file(s) ..." # into #{@localDir} ..."
       @retValFilesReceived    = true
       @atLeast1FileReceived   = false
       listFiles               = Array.new(@fileList)
@@ -629,7 +660,7 @@ class DEC_ReceiverFromInterface
             # puts "Download process #{i}"
             file = listFiles.shift
             arrSent << file
-            puts File.basename(file)
+            # puts File.basename(file)
             fork{
                #@logger.info("Forking #{File.basename(file)}")
             	ret = downloadFile(file)
@@ -672,10 +703,27 @@ class DEC_ReceiverFromInterface
    end
    ## -----------------------------------------------------------
 
-   # Get all Files found in the previous polling to the I/F.
-   # All files are left in a temp local directory
-   # $DEC_TMP/<current_time>_entity
    def receiveAllFiles
+      ret = false
+      perf = measure{ ret = receiveAllFiles_forReal }
+      
+      if @isBenchmarkMode == true then
+         @logger.info("Complete download from #{@entity} in #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+#         puts
+#         puts "Complete download in:"
+#         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+#         puts
+#         puts
+      end
+
+      return ret
+   end
+   ## -----------------------------------------------------------
+   
+   ## Get all Files found in the previous polling to the I/F.
+   ## All files are left in a temp local directory
+   ## $DEC_TMP/<current_time>_entity
+   def receiveAllFiles_forReal
    
       if @parallelDownload > 1 then
          return receiveAllFilesParallel
@@ -774,10 +822,10 @@ class DEC_ReceiverFromInterface
       
             filename = writer.getFilename
          
-            puts "Created Report File #{filename}"
+            @logger.info("Created Report File #{filename}")
    
             if filename == "" then
-               puts "Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n"
+               @logger.error("Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n")
                exit(99)
             end
 
@@ -967,20 +1015,16 @@ private
             event.setDebugMode
          end
 
-         arrParam             = Array.new
-         hParam1              = Hash.new
-         hParam1["filename"]  = File.basename(filename) 
-
-         hParam2              = Hash.new
-         hParam2["directory"] = @finalDir 
-      
-         arrParam << hParam1
-         arrParam << hParam2
-         
-         @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         hParams              = Hash.new
+         hParams["filename"]  = File.basename(filename)
+         hParams["directory"] = @finalDir 
+               
+         if @isDebugMode == true then
+            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
-         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, @logger)
+         event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
 
          ## ------------------------------------------------
          ## rename the file if AddMnemonic2Name enabled
@@ -1011,10 +1055,23 @@ private
    ##
    def downloadFile_WebDAV(url)
       if @isDebugMode == true then
-         puts "Downloading #{url} using HTTP"
+         @logger.debug("Downloading #{url} using HTTP(S)")
       end
       
-      http = Curl.get(url)
+      # http = Curl.get(url)
+      http = Curl::Easy.new(url)
+      
+      # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
+      
+      http.ssl_verify_peer = false
+      
+      # Curl::Err::SSLPeerCertificateError ?????
+      http.ssl_verify_host = false
+      
+      http.perform
+
+      ## TO DO : replace in memory file with 
+      ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
 
       filename = getFilenameFromFullPath(url)
       aFile = File.new(filename, "wb")
@@ -1024,8 +1081,7 @@ private
  
       size = File.size("#{@localDir}/#{File.basename(filename)}")
          
-      # @logger.debug("#{File.basename(filename)} received with size #{size} bytes")
-      # @logger.info("#{File.basename(filename)} received with size #{size} bytes")
+      @logger.info("#{File.basename(filename)} with size #{size} bytes received from #{@entity}")
 		
       # File is made available at the interface inbox	
       copyFileToInBox(File.basename(filename), size)
@@ -1041,7 +1097,7 @@ private
       
    ## -------------------------------------------------------------
    ##
-   ## Download a file from the I/F
+   ## Download a file from the I/F and local dissemination
    ##
    def downloadFile(filename)
             
@@ -1052,9 +1108,17 @@ private
          return downloadFileLocal(filename)
       end
       
+      # ------------------------------------------
       if @protocol == "WEBDAV" then
-         return downloadFile_WebDAV(filename)
+         downloadFile_WebDAV(filename)
+         
+         if @isNoInTray == false then
+            disseminateFile(getFilenameFromFullPath(filename))
+         end     
+         
+         return true
       end
+      # ------------------------------------------
       
       # If secure create the sftp client.
       if @ftpserver[:isSecure] == true then
@@ -1105,7 +1169,7 @@ private
       
       if @ftpserver[:isSecure] == false then
          #output = `#{cmd}`
-         retVal = execute(cmd, "getFromInterface")
+         retVal = execute(cmd, "DEC_Puller")
 #          if $? != 0 then
 #             retVal = false
 #          else
@@ -1154,20 +1218,16 @@ private
             event.setDebugMode
          end
 
-         arrParam             = Array.new
-         hParam1              = Hash.new
-         hParam1["filename"]  = File.basename(filename) 
-
-         hParam2              = Hash.new
-         hParam2["directory"] = @finalDir 
-      
-         arrParam << hParam1
-         arrParam << hParam2
+         hParams              = Hash.new
+         hParams["filename"]  = File.basename(filename)
+         hParams["directory"] = @finalDir 
          
-         @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         if @isDebugMode == true then      
+            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+         end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
-         event.trigger(@entity, "ONRECEIVENEWFILE", arrParam, @logger)
+         event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
          
          disFile = File.basename(filename)
          
@@ -1219,7 +1279,7 @@ private
             puts cmd
 		   end
          
-         bRet = execute(cmd, "getFromInterface")
+         bRet = execute(cmd, "DEC_Puller")
 
          if bRet == false then
             msg = "Could not apply AddMnemonic2Name flag for #{file}"
@@ -1253,7 +1313,7 @@ private
    def deleteFromEntity_HTTP(filename, bForce = false)
       begin
          if @isDebugMode == true then
-            @logger.info("Deleting #{filename}")
+            @logger.debug("Deleting #{filename}")
          end
          http = Curl.delete(filename)
       rescue Exception => e
@@ -1265,7 +1325,7 @@ private
          end
          return false
       end
-      msg = "#{filename} has been deleted at #{@entity}"
+      msg = "#{filename} deleted at #{@entity}"
       @logger.info(msg)
       return true
    end
@@ -1279,7 +1339,7 @@ private
 		# if true proceed to remove the files from the remote I/F
 		if deleteFlag == true or bForce == true then
 		   if @isDebugMode == true then
-			   puts "DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F "
+			   @logger.debug("DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
 			end
 
          
@@ -1335,7 +1395,7 @@ private
    ## -------------------------------------------------------------
    ##
    
-   ## Returns true if ftp server configuration is secure
+   ## Returns true if server configuration is secure
    def isSecureMode
       return @ftpserver[:isSecure]
    end
@@ -1394,7 +1454,9 @@ private
       
       nStart    = list.length
 
-      @logger.info("Filtering filetypes / #{list.length} items for #{@entity}")
+      if @isDebugMode == true then
+         @logger.debug("Filtering filetypes / #{list.length} items for #{@entity}")
+      end
 
       perf = measure{
 
@@ -1462,7 +1524,7 @@ private
             # [ INFO] deleting .S2A_OPER_REP_METARC_PDMC_20160922T140422_V20160922T085940_20160922T091131.xml
             
             if File.basename(aFile).to_s.slice(0,1) == "." then
-               @logger.info("detected temporal file #{File.basename(aFile)} ?!")
+               @logger.warn("detected temporal file #{File.basename(aFile)} ?!")
                next
             end
          
@@ -1483,17 +1545,20 @@ private
       } # end of measure
 
       if @isBenchmarkMode == true then
-         puts
-         puts "Time required to filter #{nStart}/#{tmpList.length} elements (config wildcards/file-type):"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
+         @logger.info("Filtered in #{@entity} #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+#         puts
+#         puts "Time required to filter #{nStart}/#{tmpList.length} elements (config wildcards/file-type):"
+#         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+#         puts
       end
 
       # - Remove files that have already been retrieved/tracked
 
       if @isNoDB == false then
 
-      @logger.info("Filtering files #{@entity} previously recorded within db / #{list.length} items")
+      if @isDebugMode == true then
+         @logger.debug("Filtering files #{@entity} previously recorded within db / #{list.length} items")
+      end
 
       perf = measure{
 
@@ -1513,10 +1578,22 @@ private
                   @logger.info("#{File.basename(filename)} already received from #{@entity}")
                end
  
-               puts "removing duplicated #{File.basename(filename)} previously received from #{@entity}"
-               @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
-               # deleteFromEntity(fullpath, true)
-               deleteFromEntity(fullpath, false)
+               # puts "removing duplicated #{File.basename(filename)} previously received from #{@entity}"
+               
+               ## --------------------------------
+               ##
+               ## dec_config.xml <DeleteDuplicatedFiles>
+               ##
+               if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true then
+                  @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
+                  # deleteFromEntity(fullpath, true)
+                  deleteFromEntity(fullpath, false)
+               else
+                  if @isDebugMode == true then
+                     @logger.debug("Duplicated files removal is #{DEC::ReadConfigDEC.instance.getDeleteDuplicated} / #{File.basename(filename)} ")
+                  end
+               end
+               ## --------------------------------
             else
                numFilesToBeRetrieved += 1
                arrPolled << fullpath
@@ -1553,7 +1630,9 @@ private
 
       } # end of measure
 
-      @logger.info("Filtering Completed for #{@entity}")
+      if @isDebugMode == true then
+         @logger.debug("Filtering Completed for #{@entity}")
+      end
 
       end # end of if @isNoDB
 
@@ -1562,10 +1641,11 @@ private
       end
 
       if @isBenchmarkMode == true then
-         puts
-         puts "Time required to filter #{nStart}/#{tmpList.length} elements already Tracked/Received files (database):"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
+         @logger.info("Filtered in #{@entity} #{nStart}/#{tmpList.length} items in database):#{ perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+#         puts
+#         puts "Time required to filter #{nStart}/#{tmpList.length} elements already Tracked/Received files (database):"
+#         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
+#         puts
       end
 
       @fileListError = @fileListError.flatten.uniq
@@ -1688,9 +1768,11 @@ private
    
    ## -------------------------------------------------------------
    
-	# It invokes the method DCC_InventoryInfo::isFileReceived? 
+	## It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
-      puts "checking previous reception of #{filename}"
+      if @isDebugMode == true then
+         @logger.debug("checking previous reception of #{filename}")
+      end
       arrFiles = ReceivedFile.where(filename: filename)
       if arrFiles == nil then
          #@logger.info("not prev received #{filename}")
@@ -1728,9 +1810,9 @@ private
    
 	# It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived_NOT_WORKING(filename)
-      
-      puts "checking previous reception of #{filename}"
-      
+      if @isDebugMode == true then
+         puts "checking previous reception of #{filename}"
+      end
       arrFiles = ReceivedFile.where(filename: filename).to_a
       
       ## 20170917 PROBABLY RETURN IS NEVER NIL NOW !!! 
@@ -1812,12 +1894,10 @@ private
          cmd = %Q{\\rm -f \"#{@localDir}/#{filename}"}
 
          if @isDebugMode == true then
-            puts "\nRemoving #{filename} empty with size 0 received from #{@entity}"
-            puts cmd
-            puts
+            @logger.debug("Removing #{filename} empty with size 0 received from #{@entity}")
          end
       
-         retVal = execute(cmd, "getFromInterface")
+         retVal = execute(cmd, "DEC_Puller")
       
          if retVal == false then
             if @isDebugMode == true then
@@ -1844,29 +1924,27 @@ private
       cmd = %Q{\\mv -f \"#{@localDir}/#{filename}\" #{@finalDir}/}
 
       if @isDebugMode == true then
-         puts "\nCopying #{filename} received from #{@entity} to #{@finalDir}"
-         puts cmd
-         puts
+         @logger.debug("\nCopying #{filename} received from #{@entity} to #{@finalDir}")
+         @logger.debug(cmd)
+#         puts "\nCopying #{filename} received from #{@entity} to #{@finalDir}"
+#         puts cmd
+#         puts
       end
       
-      retVal = execute(cmd, "getFromInterface")
+      retVal = execute(cmd, "DEC_Puller")
       
       if retVal == false then
          if @isDebugMode == true then
-            puts "#{cmd} Failed !"
-            puts "\nError in DEC_ReceiverFromInterface::copyFileToInBox :-(\n"
-         else
-            puts "\nError when copying file to #{@entity} local Inbox :-("
+            @logger.debug("#{cmd} Failed ")
+            @logger.debug("Error in DEC_ReceiverFromInterface::copyFileToInBox :-(")
          end
          @logger.error("Could not copy #{filename} into #{@entity} local Inbox")
          @logger.warn("#{filename} is still placed in #{@localDir}")
-         @logger.info("#{size}")
-			puts "Could not copy #{filename} into #{@finalDir}"
-			puts
+         # @logger.info("#{size}")
 			exit(99)
       end
 	end
-	#-------------------------------------------------------------
+	# -------------------------------------------------------------
 	
 	# It removes the file from the temporary directory.
 	def deleteFileFromTemp(filename)
@@ -1878,7 +1956,7 @@ private
          puts
       end
       
-      retVal = execute(cmd, "getFromInterface")
+      retVal = execute(cmd, "DEC_Puller")
       
       if retVal == false then
          if @isDebugMode == true then
@@ -1991,25 +2069,27 @@ private
       return filteredFiles
    end
    #-------------------------------------------------------------
-   #-------------------------------------------------------------
-   # It removes temp directory created with the files. 
+   
+   ## -----------------------------------------------------------
+   
+   ## It removes temp directory created with the files. 
    def deleteTempDir      
       Dir.chdir("..")
       cmd = %Q{\\rm -rf #{@localDir} }
       
       if @isDebugMode == true then
-         puts "\nRemoving #{@localDir} ..."
-         puts cmd
+         @logger.debug("Removing #{@localDir} ...")
+         # puts cmd
       end
       
-      retVal = execute(cmd, "getFromInterface")
+      retVal = execute(cmd, "DEC_Puller")
       
       if retVal == false then
          puts "#{cmd} Failed !"
          puts "\nError in DEC_ReceiverFromInterface::deleteTempDir :-(\n\n"
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # It creates a dummy file just to inform new files have been received
    # This method is only invoked if FTPROOT is defined.
@@ -2018,22 +2098,21 @@ private
    def notifyNewFilesReceived
       system(%Q{touch #{@DCC_NEW_FILES_LOCK}})
    end 
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Check if there are some temp dirs for this entity that stayed unremoved from a previous execution
-   # - entity (IN): name of the currently processed entity
+   ## Check if there are some temp dirs for this entity that stayed unremoved from a previous execution
+   ## - entity (IN): name of the currently processed entity
    def removePreviousTempDirs
       cmd = %Q{find #{@tmpDir}/ -name '.*\\_#{@entity}' -type d -exec rm -rf {} \\;}
 
       if @isDebugMode == true then
-         puts "\nRemoving previous temporary dirs if any..."
-         puts cmd
+         @logger.debug("Removing old tmps for #{@entity}: #{cmd}")
       end
-      @logger.info("Removing old tmps for #{@entity}: #{cmd}")
+      
       execute(cmd, "getFromInterface", false, false, false, false)
 
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
 end # class
 

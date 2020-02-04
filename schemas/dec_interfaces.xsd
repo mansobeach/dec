@@ -87,7 +87,7 @@
    <xs:element name="User" type="xs:string"/>
    <xs:element name="Pass" type="xs:string"/>
 
- <xs:complexType name="FTPServerType">
+ <xs:complexType name="ServerType">
   <xs:sequence>
    <xs:element ref="Protocol"/>
    <xs:element ref="Hostname"/>
@@ -156,12 +156,12 @@
    <xs:element name="IncomingDir" type="xs:string"/>
    <xs:element name="OutgoingDir" type="xs:string"/>
    -->
-   <xs:element name="TXRXParams" type="TXRXParamsType"/>
-   <xs:element name="FTPServer" type="FTPServerType"/>
-   <xs:element name="DeliverByMailTo" type="DeliverByMailToType" minOccurs="0"/>
-   <xs:element name="Notify" type="NotifyType"/>
-   <xs:element name="Events" type="EventsType"/>
-   <xs:element name="ContactInfo" type="ContactInfoType"/>
+   <xs:element name="TXRXParams"       type="TXRXParamsType"/>
+   <xs:element name="Server"           type="ServerType"/>
+   <xs:element name="DeliverByMailTo"  type="DeliverByMailToType" minOccurs="0"/>
+   <xs:element name="Notify"           type="NotifyType"/>
+   <xs:element name="Events"           type="EventsType"/>
+   <xs:element name="ContactInfo"      type="ContactInfoType"/>
   </xs:sequence>
   <xs:attribute name="Name" type="SimpleAcronymType" use="required"/>
  </xs:complexType>

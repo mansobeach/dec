@@ -50,32 +50,64 @@ class EventManager
       @ftReadConf = ReadInterfaceConfig.instance
    end
    ## -----------------------------------------------------------
-   
+   ##
+   ## %f => filename
+   ## %F => full path filename
+   ## %d => directory
    def trigger(interface, eventName, params = nil, log = nil)
+
+      filename    = nil
+      directory   = nil
+      pathfile    = nil
+
+      if params != nil then
+         filename    = params["filename"]
+         directory   = params["directory"]
+         pathfile    = "#{directory}/#{filename}"
+      end
 
       eventMgr  = @ftReadConf.getEvents(interface)
       if eventMgr == nil then
          return
       end
-      
-      if @isDebugMode == true and log != nil then
-         log.debug("EventManager::trigger #{eventName} - #{interface} - #{params}")
-      end
-      
+            
       events = eventMgr[:arrEvents]
             
       events.each{|event|
          
          if eventName.upcase == event["name"].upcase then
             cmd = event["cmd"]
+
+            # --------------------------
             # Escape special XML characters.
             # At least '&' required for background execution
             anewCmd = cmd.sub!("&amp;", "&")
             if anewCmd != nil then
                cmd = anewCmd
             end
+            
+            # --------------------------
+            
+            if params != nil then            
+               anewCmd = cmd.sub!("%F", pathfile)
+               if anewCmd != nil then
+                  cmd = anewCmd
+               end
+
+               anewCmd = cmd.sub!("%f", filename)
+               if anewCmd != nil then
+                  cmd = anewCmd
+               end
+
+               anewCmd = cmd.sub!("%d", directory)
+               if anewCmd != nil then
+                  cmd = anewCmd
+               end
+            end
+            # --------------------------
+            
             if log != nil then
-               log.info(cmd)
+               log.info("#{interface} event:#{eventName} => #{cmd}")
             end
             retVal = system(cmd)
             if @isDebugMode == true then

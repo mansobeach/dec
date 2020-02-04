@@ -38,8 +38,8 @@
 #
 #     --file <file-name>         specifies the name of the file to be updated
 #     --id <job-order-id>        specifies the job-order-id to be used
-#     --set-to                   specifies the new status of the NRTP job
-#     --delete                   deletes all (-Q -O -F -S -I)
+#     --set-to                   specifies the new status of the job
+#     --delete                   deletes all (-P -Q -F -S)
 #     --help                     shows this help
 #     --usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
@@ -59,16 +59,13 @@
 #
 # === SMOS NRTP Orchestrator
 #
-# CVS: $Id: updateOrcProduct.rb,v 1.8 2009/03/18 14:33:41 algs Exp $
+# Git: $Id: orcQueueUpdate,v 1.8 2009/03/18 14:33:41 bolf Exp $
 #
 #########################################################################
 
 require 'getoptlong'
-
 require 'orc/ORC_Environment'
-
-require "orc/ORC_DataModel"
-
+require 'orc/ORC_DataModel'
 
 
 
@@ -78,6 +75,7 @@ def main
    include ORC
 
    #Hardcoded values
+   
    @arrStatus = ["SUC", "FAI", "OBS", "DIS"]
 
    # Data provided by the user
@@ -181,9 +179,8 @@ def main
       exit(0)
    end
 
-
-
    ######################## Coherency Checks & Data Extraction ########################
+   
    if @bDeleteAll == true then
       deleteAll
       exit(0)
@@ -355,10 +352,11 @@ def main
 
 end
 
-#-------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
+
 def set_product_to_success
    
-   #check that the file is not allready present in the successful products list
+   # check that the file is not already present in the successful products list
    tmpProd = SuccessfulTriggerProduct.find_by_trigger_product_id(@trigger_prod_id)
    if tmpProd != nil then
       puts
@@ -387,9 +385,6 @@ def set_product_to_success
 #       exit(99)
 #    end
 
-   puts
-   puts @triggerProd.filename
-   puts
 
    OrchestratorQueue.transaction do
       # ==> add trigger product to success
@@ -407,13 +402,20 @@ def set_product_to_success
          exit(99)
       end
 
+      puts
+      puts "File #{@triggerProd.filename} is classified as successfully processed :-)"
+      puts
+
       # ==> remove trigger product from queue
+      
       OrchestratorQueue.where(:trigger_product_id => @triggerProd.id).destroy_all
    end
 
 end
 
-# -------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------
+##
+
 def set_product_to_failure
 
    #check that the file is not allready present in the failing products list
@@ -423,6 +425,10 @@ def set_product_to_failure
       puts "The trigger product is already registered 'failing trigger products' :-("
       puts
       puts
+      
+      # ==> remove trigger product from queue
+      OrchestratorQueue.where(:trigger_product_id => @triggerProd.id).destroy_all
+
       exit(99)
    end
 
@@ -442,6 +448,10 @@ def set_product_to_failure
          puts
          exit(99)
       end
+
+      puts
+      puts "File #{@triggerProd.filename} is classified as failed processed :-|"
+      puts
 
       OrchestratorQueue.where(:trigger_product_id => @trigger_prod_id).delete_all
 
@@ -557,8 +567,7 @@ def set_product_to_discarded
  
 end
 
-#-------------------------------------------------------------------------------
-
+## -----------------------------------------------------------------------------
 
 def deleteAll
    if @bDeleteQueued == true or @bDeleteTUTTO == true then
@@ -597,7 +606,7 @@ def deleteAll
    end   
    
 end
-#-------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 # -------------------------------------------------------------
 

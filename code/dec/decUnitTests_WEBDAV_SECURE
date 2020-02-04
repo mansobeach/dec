@@ -1,0 +1,629 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
+
+### Preconditions:
+### 1 - setup 
+### 1.1 - load_config_development
+### 1.2 - inventory database is created
+##
+### 2 - teardown
+### 2.1 - purge archive
+### 2.2 - inventory database is destroyed
+##
+###  4.3  - test_decGetFromInterface_WEBDAV_SECURE
+###  4.4  - test_decGetFromInterface_PARALLEL_HTTP
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+### MacOS Catalina
+## cd $HOME (non root $PWD)
+## sudo /usr/local/sbin/pure-ftpd
+## PAMAuthentication            yes
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+##To use chroot, vsftpd requires root privileges, so you will need to run
+##`sudo vsftpd`.
+##You should be certain that you trust any software you grant root privileges.
+##
+##The vsftpd.conf file must be owned by root or vsftpd will refuse to start:
+##  sudo chown root /usr/local/etc/vsftpd.conf
+##
+##To have launchd start vsftpd now and restart at startup:
+##  sudo brew services start vsftpd
+##Or, if you don't want/need a background service you can just run:
+##  sudo vsftpd
+
+
+class DECTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do
+      system("clear")
+      puts
+      puts "======================================"
+      puts "DEC Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+            
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+
+      system("\\rm -f /tmp/test_decGetFromInterface_PARALLEL_HTTP")
+
+      @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "tai-utc.dat" \
+                           ]
+
+      @@arrPushFiles = [ \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
+
+
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+      
+      
+      @@conf.createEnvironmentDirs
+
+
+      if @@conf.wrapper_check_environment == false then
+         puts "DEC environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+      
+      
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      # system("decListener -S")
+      puts "End of DEC tests"
+   end
+   
+   ## --------------------------------------------------------   
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+      
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      ftConfig    = ReadInterfaceConfig.instance
+      configOut   = ReadConfigOutgoing.instance
+      configIn    = ReadConfigIncoming.instance
+      arrEnts     = ftConfig.getAllMnemonics
+
+      arrEnts.each{|x|
+                  
+         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
+         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
+
+         ## --------------------------------------
+
+         if bEnabled4Send == true then
+         
+            uploadDir = configOut.getUploadDir(x)
+         
+            if uploadDir == nil or uploadDir == "" then
+               next
+            end
+         
+            if uploadDir[0,1] != '/' then
+               uploadDir = '~/' + uploadDir
+            end
+            checkDirectory(uploadDir)
+
+            uploadTemp = configOut.getUploadTemp(x)
+         
+            if uploadTemp[0,1] != '/' then
+               uploadTemp = '~/' + uploadTemp
+            end
+            checkDirectory(uploadTemp)
+         end
+
+         ## --------------------------------------
+
+         if bEnabled4Recv == true then
+            arr = configIn.getDownloadDirs(x)
+            
+            arr.each{|dir|
+               
+               downloadDir = ""
+
+               if dir[:directory][0,1] != '/' then
+                  downloadDir = '~/' + dir[:directory]
+               else
+                  downloadDir = dir[:directory]
+               end
+               
+               checkDirectory(downloadDir)
+            }
+            
+            ###
+            ###
+            ### IT IS PENDING TO UPDATE THE CHECK CONFIGURATION TOOL 
+            ### TO CKECK THAT AN INTERFACE MIGHT NOT HAVE DEFINED
+            ### ANY RULE FOR PULL (OR PUSH)
+            
+            ## create the files available for pulling
+            
+            if x.upcase.include?("LOCALHOST") \
+               or x.upcase.include?("FILESYSTEM") \
+               or x.upcase.include?("WEBDAV") then
+               @@arrDownloadFiles.each{|filename|
+                  dir = arr[0][:directory]
+                  if dir[0,1] != '/' then
+                     dir = "~/#{arr[0][:directory]}"
+                  end
+                  puts "============================"
+                  puts "#{filename}    => #{dir}/#{filename}"
+                  cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
+                  puts cmd
+                  system(cmd)
+               }
+            end
+            
+         end
+
+         ## --------------------------------------
+      }
+      
+      
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when creating the DEC inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
+         puts
+         # exit(99)
+      end
+      
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+#      cmd = "decManageDB -d"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when dropping the dec inventory ! :-("
+#         puts
+#         exit(99)
+#      end
+   end
+   ## -------------------------------------------------------------
+
+   
+   ## --------------------------------------------------------
+   
+   ## verification of the protocol WEBDAV over HTTPS using interface "WEBDAV_SECURE"
+   
+   def test_decGetFromInterface_WEBDAV_SECURE
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      cmd = "decCheckConfig -e WEBDAV_SECURE -i"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("WEBDAV_SECURE")
+            
+      checkDirectory(@finalDir)
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "decGetFromInterface -m WEBDAV_SECURE -l"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      puts
+      puts
+      
+      cmd = "decGetFromInterface -m WEBDAV_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      configIn          = ReadConfigIncoming.instance
+      dirDissemination  = configIn.getInTrayDir("GPS")
+
+      assert(File.exist?("#{dirDissemination}/finals.all"),  "retrieved finals.all")
+      assert(File.exist?("#{dirDissemination}/tai-utc.dat"), "retrieved tai-utc.dat")
+
+      # --------------------------------    
+      # Verify that files have been deleted in the interface upon download
+      configIn    = ReadConfigIncoming.instance
+      arr         = configIn.getDownloadDirs("WEBDAV_SECURE")
+        
+      arr.each{|dir|
+               
+         downloadDir = ""
+
+         if dir[:directory][0,1] != '/' then
+            downloadDir = '~/' + dir[:directory]
+         else
+            downloadDir = dir[:directory]
+         end
+         
+         puts "Checking #{downloadDir}"
+         
+         assert(!File.exist?("#{downloadDir}/finals.all"),  "checked removed finals.all")
+         assert(!File.exist?("#{downloadDir}/tai-utc.dat"),  "checked removed tai-utc.dat")
+      }
+      # --------------------------------      
+
+
+      cmd = "decStats -f finals.all"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.dat"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      # --------------------------------    
+      
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      
+      cmd = "decGetFromInterface -m WEBDAV_SECURE --no-intray -D"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      assert(!File.exist?("#{@finalDir}/finals.all"),  "should not retrieve finals.all")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "should not retrieve tai-utc.dat")
+      
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+      
+   end   
+   
+   ## --------------------------------------------------------   
+   ##   
+   ## Performance test with the protocol WEBDAV over HTTPS using interface "PARALLEL_HTTP"
+   ##
+   ## results are written in /tmp/test_decGetFromInterface_PARALLEL_HTTP
+   ##
+   
+   data("SEPARATOR",     ["Start of the Test",     0,   0,   0,    false])
+
+   data("1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     true])
+   data("2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     true])
+   data("3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     true])
+   data("4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     true])
+   data("5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    true])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+
+   data("b1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     false])
+   data("b2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     false])
+   data("b3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     false])
+   data("b4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     false])
+   data("b5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    false])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     true])
+   data("7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     true])
+   data("8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     true])
+   data("9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     true])   
+   data("10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    true])   
+
+   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+   
+   data("b6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     false])
+   data("b7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     false])
+   data("b8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     false])
+   data("b9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     false])   
+   data("b10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    false])   
+
+   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     true])
+   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     true])
+   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     true])
+   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     true])   
+   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    true])   
+
+   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+
+   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     false])
+   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     false])
+   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     false])
+   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     false])   
+   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    false])   
+
+   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+
+   data("1",     ["10files_100GB_2Slots_NoDB",      10,   102400,   2,     false])
+   data("2",     ["10files_100GB_4Slots_NoDB",      10,   102400,   4,     false])
+   data("3",     ["10files_100GB_6Slots_NoDB",      10,   102400,   6,     false])
+   data("4",     ["10files_100GB_8Slots_NoDB",      10,   102400,   8,     false])
+   data("5",     ["10files_100GB_10Slots_NoDB",     10,   102400,   10,    false])
+  
+   data("SEPARATOR",     ["END OF 10 FILES of 100 GBs",     0,   0,   0,    false])
+   
+   def test_decGetFromInterface_PARALLEL_HTTP(params)
+
+      label, numFiles, numBlocks, numSlots, noDB = params
+                                 
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s} => #{label}"
+      puts
+
+      if numFiles == 0 then
+         cmd = "echo \"#{label}\" >> /tmp/test_decGetFromInterface_PARALLEL_HTTP"
+         puts cmd
+         system(cmd)
+         return
+      end
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      cmd = "decCheckConfig -e PARALLEL_HTTP -i"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      configIn          = ReadConfigIncoming.instance
+      @finalDir         = configIn.getIncomingDir("PARALLEL_HTTP")
+            
+      checkDirectory(@finalDir)
+
+      arr = configIn.getDownloadDirs("PARALLEL_HTTP")
+      
+      downloadDir = ""
+      
+      if arr[0][:directory][0,1] != '/' then
+         downloadDir = '/Users/borja/' + arr[0][:directory]
+      else
+         downloadDir = arr[0][:directory]
+      end
+
+      ## -----------------------------------------
+      ## Create test files
+      
+      # 1 GB
+      # dd if=/dev/zero of=testfile bs=1024 count=1024000
+      
+      # 100 MB
+      # dd if=/dev/zero of=testfile bs=1024 count=102400
+      
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{downloadDir}/#{filename} bs=1024 count=#{numBlocks}"
+         puts cmd
+         system(cmd)
+      end
+
+      ## -----------------------------------------
+
+      ## Download the files
+      
+      puts
+      puts
+      puts label
+      
+      cmd = "decGetFromInterface -m PARALLEL_HTTP --no-intray -B -P #{numSlots}"
+      if noDB == true then
+         cmd = "decGetFromInterface -m PARALLEL_HTTP --no-intray -B -P #{numSlots} --nodb"
+      end
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+
+      ## Checking files presence at final dir 
+
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         assert(File.exist?("#{@finalDir}/#{filename}"), "Checking #{filename} presence at #{@finalDir}")
+         FileUtils.rm_f("#{@finalDir}/#{filename}")
+      end
+     
+      arr = Dir["/tmp/DEC*.log"]
+     
+      cmd = "grep \"Complete download\" #{arr[0]} >> /tmp/test_decGetFromInterface_PARALLEL_HTTP"
+      puts cmd
+      system(cmd)
+     
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+      
+   end
+   ## --------------------------------------------------------
+
+
+   ## -------------------------------------------------------------
+
+end
+
+
+## =====================================================================
+

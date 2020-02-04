@@ -246,12 +246,14 @@ def main
 
    # -------------------------------------------------------
 
-   if self.checkEnvironmentEssential == false then
-      puts
-      self.printEnvironmentError
-      puts
-      exit(99)
-   end
+## This verification will be added into the daemons to avoid repetition everytime
+
+#   if self.checkEnvironmentEssential == false then
+#      puts
+#      self.printEnvironmentError
+#      puts
+#      exit(99)
+#   end
 
    # -------------------------------------------------------
 
@@ -313,26 +315,37 @@ def main
 
    ## ------------------------------------------------------
 
-   if @filename != "" and @bPending == true then
-      
-      row = Pending2QueueFile.where(filename: @filename)
-      
+   ## -P (Pending) - Ingestion queues as pending
+
+   if @filename != "" and @bPending == true then     
+      row = nil
+      begin
+         row = Pending2QueueFile.where(filename: @filename)      
+      rescue Exception => e
+         puts
+         puts e.to_s
+         puts
+         if @isDebugMode == true then
+            puts
+            puts e.backtrace
+            puts
+         end
+         exit(127)
+      end
+
       if row != nil then      
          if row.to_a.length > 0 then
             puts
-            puts "File #{row.to_a[0].filename} was already in pending queue"
+            puts "File #{row.to_a[0].filename} was already in pending queue :-|"
             puts
             exit(127)
          end
       end
-      
-
    end
   
    ## ------------------------------------------------------  
   
    oldTrigger = TriggerProduct.where(filename: @filename)
-
 
    if oldTrigger != nil then
       if oldTrigger.to_a.length > 0 then 
@@ -348,13 +361,10 @@ def main
       end
    end
 
- 
- 
    if (@bStart == true and @bStop == false) or (@bStart == false and @bStop == true) then
       puts "-start and -stop options must go together"
       exit(99)
    end
-
 
    cmd            = "minArcFile -T S2PDGS -f #{@filename} -s"         
    tmpStart       = `#{cmd}`.chop         
@@ -421,9 +431,10 @@ def main
 
    
    ################################ Database insertion ################################
-   TriggerProduct.transaction do
    
-   newProd = nil
+   TriggerProduct.transaction do
+      newQueuedProd  = nil
+      newProd        = nil
    
       if oldTrigger.to_a.length == 0 then
    
@@ -436,36 +447,36 @@ def main
                                    :runtime_status => "UKN",
                                    :initial_status => @initialStatus)
 
-      begin
-         newProd.save!
-      rescue Exception => e
-         puts
-         puts e.to_s
-         puts
-         puts " queue #{@filename} :-("
-         puts
-         exit(99)
-      end
+         begin
+            newProd.save!
+         rescue Exception => e
+            puts
+            puts e.to_s
+            puts
+            puts " queue #{@filename} :-("
+            puts
+            exit(99)
+         end
       
-      else
-         newProd = oldTrigger.to_a[0]
-      end
+         else
+            newProd = oldTrigger.to_a[0]
+         end
 
-      if @bPending == true
-         newQueuedProd = Pending2QueueFile.new
-         newQueuedProd.filename           = @filename
-         newQueuedProd.detection_date     = Time.now
-         newQueuedProd.trigger_products   = newProd
-      else
-         newQueuedProd = OrchestratorQueue.new
-         newQueuedProd.trigger_products = newProd
-      end
+         if @bPending == true
+            newQueuedProd = Pending2QueueFile.new
+            newQueuedProd.filename           = @filename
+            newQueuedProd.detection_date     = Time.now
+            newQueuedProd.trigger_products   = newProd
+         else
+            newQueuedProd = OrchestratorQueue.new
+            newQueuedProd.trigger_products = newProd
+         end
 
-      begin
-         newQueuedProd.save!
-      rescue Exception => e
+         begin
+            newQueuedProd.save!
+         rescue Exception => e
       
-                     puts e
+               puts e
                if @isDebugMode == true then
                   puts
                   puts e.backtrace
@@ -473,15 +484,15 @@ def main
                end
 
       
-         #unregistering the trigger product
-         newProd.destroy
+            #unregistering the trigger product
+            newProd.destroy
 
-         puts
-         puts "Unable to queue #{@filename} :-("
-         puts "The file will be removed from the trigger products list..."
-         puts
-         exit(99)
-      end
+            puts
+            puts "Unable to queue #{@filename} :-("
+            puts "The file will be removed from the trigger products list..."
+            puts
+            exit(99)
+         end
 
       if @bPending == false then
          Pending2QueueFile.where(filename: @filename).destroy_all
@@ -497,9 +508,9 @@ def main
    end
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-# It provides the list of trigger-files to be processed [queued]
+## It provides the list of trigger-files to be processed [queued]
 def list
 
    triggerFiles   = TriggerProduct.all.to_a

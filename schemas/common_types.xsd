@@ -8,9 +8,21 @@
   </xs:restriction>
  </xs:simpleType>
 
+ <xs:simpleType name="EnvironmentVariable">
+  <xs:restriction base="xs:string">
+   <xs:pattern value="($)([0-9A-Za-z_])+"/>
+  </xs:restriction>
+ </xs:simpleType>
+
  <xs:simpleType name="SimpleAcronymType">
   <xs:restriction base="xs:string">
    <xs:pattern value="([0-9A-Z_inout])+"/>
+  </xs:restriction>
+ </xs:simpleType>
+
+ <xs:simpleType name="YesNoType">
+  <xs:restriction base="xs:string">
+   <xs:pattern value="((Y|y)(E|e)(S|s))|((N|n)(O|o))"/>
   </xs:restriction>
  </xs:simpleType>
 

@@ -29,11 +29,11 @@ class FileArchiver
    include Benchmark
 
    include CUC::DirUtils
-   #------------------------------------------------  
+   ## --------------------------------------------
    
-   # Class contructor
-   # move : boolean. If true a move is made, otherwise it is moved from source
-   # debug: boolean. If true it shows debug info.
+   ## Class contructor
+   ## move : boolean. If true a move is made, otherwise it is moved from source
+   ## debug: boolean. If true it shows debug info.
    def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = false, debugMode = false)
       @bMove               = bMove
       @bHLink              = bHLink
@@ -53,7 +53,7 @@ class FileArchiver
       checkModuleIntegrity
       
    end
-   #------------------------------------------------
+   ## --------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
@@ -61,7 +61,7 @@ class FileArchiver
       puts "FileArchiver debug mode is on"
       puts "Update mode is #{@bUpdate}"
    end
-   #------------------------------------------------
+   ## --------------------------------------------
 
    # Set the flag for profiling execution time.
    def setProfileMode
@@ -69,7 +69,7 @@ class FileArchiver
       puts "FileArchiver profile mode is on"
       puts
    end
-   #------------------------------------------------
+   ## --------------------------------------------
 
    # Main method of the class.
    def bulkarchive(arrFiles, fileType = "", bDelete = false, bUnPack = false,\
@@ -260,8 +260,8 @@ class FileArchiver
             
    end
    
-   # --------------------------------------------------------
-   #
+   ## --------------------------------------------------------
+   ##
    
    def remote_archive(full_path_file, fileType, bDelete, destination)
       arc = ARC::MINARC_Client.new(@isDebugMode)
@@ -295,9 +295,11 @@ class FileArchiver
       # -------------------------------------------
       return ret
    end
-   #--------------------------------------------------------
-   #
-   # Main method of the class.
+   
+   ## ------------------------------------------------------
+   ##
+   ## Main method of the class.
+   ##
    def archive(full_path_file, \
                fileType = "", \
                bDelete = false, \
@@ -330,8 +332,6 @@ class FileArchiver
       else
          fileName = File.basename(full_path_file, ".*")
       end
-
-
 
       # ----------------------------------------------------
       # 
@@ -593,7 +593,7 @@ private
    # -------------------------------------------------------
    
    
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
   
@@ -663,21 +663,22 @@ private
          puts
          puts e.to_s
          puts
-         puts "Could not inventory #{anArchivedFile.filename} :-("
+         puts "Could not inventory #{File.basename(full_path_filename)} :-("
          puts
          return false
       end  
    
+      return true
    end
   
-   # -------------------------------------------------------
+   ## -----------------------------------------------------------
   
-   # ------------------------------------------------------------
-   # Performs the file archiving.
-   # Copies/Moves the source file to the proper directory
-   # Sets access rights
-   # Registers the file in the database
-   # ------------------------------------------------------------
+   ## ------------------------------------------------------------
+   ## Performs the file archiving.
+   ## Copies/Moves the source file to the proper directory
+   ## Sets access rights
+   ## Registers the file in the database
+   ## ------------------------------------------------------------
    def store(  
                full_path_filename, 
                type, 
@@ -701,7 +702,7 @@ private
       end
       
 
-      #-------------------------------------------
+      # -------------------------------------------
       # Define destination folder
 
       destDir =  "#{@archiveRoot}/#{type}"
@@ -876,8 +877,8 @@ private
          puts "WARNING : Could not set access rights to the archived file ! :-("
       end      
 
-      #-------------------------------------------
-      # Register the file in the inventory
+      ## -------------------------------------------
+      ## Register the file in the inventory
 
       retVal = true
 
@@ -896,20 +897,29 @@ private
             puts
          end
 
-      
-         # If could not store in the database (likely duplication)
-         
+         ## ------------------------------------------------------ 
+         ## If could not store in the database (likely duplication)
+         ## file is already at 
          if retVal == false then
-            puts "Moving file #{File.basename(full_path_filename)} into Error area "
-            cmd = "\\mv -f \"#{full_path_filename}\" \"#{@archiveError}/\""
-            if @isDebugMode then
-               puts cmd
+            puts "Copying file #{File.basename(full_path_filename)} into ERROR area "
+            if @bMove == true then
+               cmd = "\\cp -f #{destDir}/#{File.basename(full_path_filename)} #{@archiveError}/"
+               if @isDebugMode then
+                  puts cmd
+               end
+               system(cmd)
+            else
+               cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
+               if @isDebugMode then
+                  puts cmd
+               end
+               system(cmd)
             end
-      
-            ret = system(cmd)
 
             return false
          end
+
+         ## -----------------------------------------------------
 
       end
 

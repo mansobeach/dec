@@ -24,3 +24,24 @@ sudo sysctl -w net.inet6.ip6.forwarding=1
 
 echo "rdr pass inet proto tcp from any to any port 4567 -> 127.0.0.1 port 4567" | sudo pfctl -ef -
 
+diskutil unmount /Volumes/RECOVERY/
+sudo dd if=~/Desktop/rasp_ivan_pisco_sour.dmg of=/dev/disk2s1 bs=4096
+
+
+### ==========================================================================================
+
+# Create Valid Certificates
+
+https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/
+https://geekflare.com/free-ssl-tls-certificate/
+
+
+
+###
+
+# WebCam Carmenes
+
+https://carlo-hamalainen.net/2016/12/31/foscam-ip-camera-with-pi-server/
+
+s
+

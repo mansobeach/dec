@@ -62,7 +62,7 @@ namespace :dec do
       mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
       filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
       cp filename, "install/dec.gem"
-      mv filename, "install/gems"
+      cp filename, "install/gems/"
    end
 
    ## ----------------------------------------------------------------
@@ -149,7 +149,9 @@ namespace :dec do
       
       @arrConfigFiles.each{|file|
          filename = "#{path}/#{prefix}#{file}"
-         cp filename, "config/#{file}"
+         if File.exist?(filename) == true then
+            cp filename, "config/#{file}"
+         end
       }
    end
    ## ----------------------------------------------------------------

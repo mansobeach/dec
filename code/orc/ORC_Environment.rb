@@ -29,9 +29,13 @@ module ORC
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.9"  =>    "unit tests execution environment can be parametrised with env file", \
-      "0.0.8"  =>    "fixed S2MPASUP-292 / migration to ActiveRecord 6", \
-      "0.0.7"  =>    "fixed S2MPASUP-277 regarding race conditions when triggering jobs", \
+      "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n
+         orcQueueUpdate removes from the queue a previously failed product\n\
+         orcValidateConfig has been created:\n\
+         satisfy https://jira.elecnor-deimos.com/browse/S2MPASUP-288\n\
+         fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-294", \
+      "0.0.8"  =>    "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-292 / migration to ActiveRecord 6", \
+      "0.0.7"  =>    "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-277 regarding race conditions when triggering jobs", \
       "0.0.6"  =>    "ingestion parallelised (new configuration ParallelIngestions)", \
       "0.0.5"  =>    "orcQueueUpdate fixed to fit with the new data-model", \
       "0.0.4"  =>    "orcQueueInput bulk mode support of pending triggers\n\
@@ -167,11 +171,13 @@ module ORC
 
       resMan = orcConf.getResourceManager
 
-      cmd = "which #{resMan}"
+      cmd1           = "which #{resMan}"
+      isToolPresent  = `#{cmd1}`
 
-      isToolPresent = `#{cmd}`
-
-      if isToolPresent[0,1] != '/' then
+      cmd2           = "type #{resMan}"
+      ret            = `#{cmd2}`
+      
+      if isToolPresent[0,1] != '/' and ($? != 0) then
          puts "#{resMan} not present in PATH !  :-(\n"
          puts "check orchestratorConfigFile.xml => ResourceManager configuration"
          bCheckOK = false
@@ -202,6 +208,35 @@ module ORC
       puts "Execution environment not suited for ORC"
    end
    ## ----------------------------------------------------------------
+
+   ## -----------------------------------------------------------------
+
+   ## extract ORC configuration from installation directory 
+   def copy_installed_config(destination, nodename = "")
+      checkDirectory(destination)
+      ## -----------------------------
+      ## ORC Config files
+   
+      arrConfigFiles = [\
+         "orchestratorConfigFile.xml",\
+         "orchestrator_log_config.xml"]
+      ## -----------------------------
+
+      path = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      
+      arrConfigFiles.each{|config|
+         if File.exist?("#{path}/#{config}") == true then
+            FileUtils.cp("#{path}/#{config}", "#{destination}/#{nodename}##{config}")
+            if File.exist?("#{destination}/#{config}") == false then
+               FileUtils.ln_s("#{destination}/#{nodename}##{config}","#{destination}/#{config}")
+            end
+         else
+            puts "Missing config file #{config} in gem installation"
+         end
+      }
+   end
+   ## -----------------------------------------------------------------
+
 
    ## ----------------------------------------------------------------
    

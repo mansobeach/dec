@@ -60,7 +60,7 @@ namespace :orc do
       mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
       @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
       # mv filename, "install/gems"
-      cp @filename, "install/gems"
+      cp @filename, "install/gems/"
    end
 
    ## ----------------------------------------------------------------

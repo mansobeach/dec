@@ -47,6 +47,7 @@ require 'arc/MINARC_Status'
 # 13  - test_handler_m2ts_local
 # 14  - test_handler_m2ts_local_mp4
 # 15  - test_local_minArcFile
+# 16  - test_contingency
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -59,6 +60,9 @@ class TestCaseStore < Test::Unit::TestCase
    # --------------------------------------------------------
    
    Test::Unit.at_start do      
+      
+      system("clear")
+      
       puts
       puts "======================================"
       puts "MINARC Unit Test Cases"
@@ -74,7 +78,6 @@ class TestCaseStore < Test::Unit::TestCase
       
       c = STDIN.getc
             
-      
       if c != 'Y' then
          exit(99)
       end
@@ -139,6 +142,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
       @@testFile1          = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
       @@filename1_noext    = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
+      @@errorZone          = ENV['MINARC_ARCHIVE_ERROR']
 
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
       system("rm -f #{@@testDataDir}/20110204T193316_000001.m2ts")
@@ -816,6 +820,72 @@ class TestCaseStore < Test::Unit::TestCase
 
    end
    # -------------------------------------------------------------
+
+   ## -----------------------------------------------------------
+   ##
+   ## minARC inventory is not created
+   ##
+   def test_contingency
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "minArcDB -d"
+      puts cmd
+      ret = system(cmd)
+      
+      # -------------------------------------
+      ## contingency with storing with move      
+      system("echo \'#{@@testFile1}\' > /tmp/#{@@testFile1}")
+      assert(File.exist?("/tmp/#{@@testFile1}"), "test file in place")
+
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -m"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      prevDir = Dir.pwd
+      
+      Dir.chdir(@@errorZone)
+      
+      arr = Dir["#{File.basename(@@testFile1, ".*")}*"] 
+      assert(!arr.empty?, "test file in error zone")
+      assert(!File.exist?("/tmp/#{arr[0]}"), "test file removed")
+
+      Dir.chdir(prevDir)
+      # -------------------------------------
+
+      # -------------------------------------
+      ## contingency with storing without move      
+      system("echo \'#{@@testFile1}\' > /tmp/#{@@testFile1}")
+      assert(File.exist?("/tmp/#{@@testFile1}"), "test file in place")
+
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      prevDir = Dir.pwd
+      
+      Dir.chdir(@@errorZone)
+      
+      arr = Dir["#{File.basename(@@testFile1, ".*")}*"] 
+      assert(!arr.empty?, "test file in error zone")
+      assert(!File.exist?("/tmp/#{arr[0]}"), "test file removed")
+
+      Dir.chdir(prevDir)
+      # -------------------------------------
+
+      # To avoid errors at MINARC_UnitTests::teardown
+      cmd = "minArcDB -c"
+      ret = system(cmd)
+      
+   end
+   ## -----------------------------------------------------------
 
 end
 

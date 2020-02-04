@@ -149,7 +149,6 @@ class OrchestratorScheduler
          dispatch
          enqueuePendingFiles
          msg = "Orchestrator::schedule completed"
-         puts msg
          @logger.info(msg)
          if @arrPendingFiles.empty? == true and @sigUsr1Received == false then
             @logger.info("Waiting for new inputs / enabling SIGUSR1 / #{@sigUsr1Count}")
