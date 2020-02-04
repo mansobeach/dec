@@ -201,9 +201,29 @@ private
       port = @davElement[:port].to_i
       user = @davElement[:user]
       pass = @davElement[:password]
-      host = "http://#{@davElement[:hostname]}:#{@davElement[:port]}/"
+      host = ""
+      if @davElement[:isSecure] == false then
+         host = "http://#{@davElement[:hostname]}:#{@davElement[:port]}/"
+      else
+         host = "https://#{@davElement[:hostname]}:#{@davElement[:port]}/"
+      end
       dav  = Net::DAV.new(host, :curl => false)
-      dav.verify_server = true
+      
+      ## -------------------------------
+      ## new configuration item VerifyPeerSSL is needed
+      # dav.verify_server = true
+      dav.verify_server = false
+      ## -------------------------------
+
+      ## -------------------------------
+      ## if credentials are not empty in the configuration file
+      if user != "" or (pass != "" and pass != nil) then
+         if @isDebugMode == true then
+            puts "Passing Credentials #{user} #{pass} to WebDAV server"
+         end
+         dav.credentials(user, pass)
+      end
+      ## -------------------------------
 
       begin
          options  = ''

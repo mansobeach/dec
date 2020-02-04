@@ -562,7 +562,8 @@ private
       end
 
       if !xmlstruct.elements["Pass"].nil? then
-         pass    = xmlstruct.elements["Pass"].text
+         # pass    = xmlstruct.elements["Pass"].text
+         pass    = expandPathValue(xmlstruct.elements["Pass"].text)
       end
 
       if !xmlstruct.elements["SecureFlag"].nil? then

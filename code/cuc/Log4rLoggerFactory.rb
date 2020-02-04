@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# Ruby source for #Logger class
+# Ruby source for #Log4rLoggerFactory class
 #
 # Written by DEIMOS Space S.L. (bolf)
 #
 # Data Exchange Component -> Common Utils Component
 # 
-# CVS:
+# Git:
 #   $Id: Log4rLoggerFactory.rb,v 1.2 2008/07/02 10:04:07 decdev Exp $
 #
 #########################################################################
@@ -37,18 +37,24 @@ class Log4rLoggerFactory
    # modName : string used to specify additional provenance info (eg. name of the class using this logger)
    # logConfigFile : full path and name of the log4r log-module configuration file.
    # 
-   def initialize(modName = "", logConfigFile = "")
+   def initialize(modName = "", logConfigFile = "", isDebugMode = false)
             
       if ( logConfigFile != nil and logConfigFile.slice(0,1) == "/" ) then
          Configurator['moduleName'] = modName
          Configurator.load_xml_file(logConfigFile)
          mainLoggerName = Configurator['mainLoggerName']
          @mainLogger    = Log4r::Logger["#{mainLoggerName}"]
+         # -----------------------------
+         if isDebugMode == true then
+            @mainLogger.level = DEBUG
+            @mainLogger = Log4r::Logger["#{mainLoggerName}"].get('debug')
+         end
+         # -----------------------------
          @configured    = true
       end
       
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def setup(modName = "", full_path_logfile = "", bLog2Syslog = false, bLog2Console = false)
 
@@ -99,7 +105,7 @@ class Log4rLoggerFactory
       return true
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def setDebugMode
       if @configured then
@@ -109,7 +115,7 @@ class Log4rLoggerFactory
          return false
       end
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def getLogger
       if @configured then
@@ -118,17 +124,17 @@ class Log4rLoggerFactory
          return nil
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 private
    
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       return
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end # class
 

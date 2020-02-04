@@ -114,9 +114,9 @@ module DirUtils
       end
       return filename.slice(0,filename.length-val-1)
    end
-   #-------------------------------------------------------------
-
-   # Get Filename from fullPath Extension. 
+   ## -----------------------------------------------------------
+   ##
+   ## Get Filename from fullPath Extension. 
    def getFilenameFromFullPath(fullPath)
       rev = fullPath.reverse
       val = rev.index("/")
@@ -125,7 +125,7 @@ module DirUtils
       end
       return fullPath.slice(fullPath.length-val,fullPath.length-1)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 	
 	# Get filenames from a given directory
 	# - dir (IN): Directory path.
