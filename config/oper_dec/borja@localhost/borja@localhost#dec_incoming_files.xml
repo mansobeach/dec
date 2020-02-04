@@ -167,6 +167,7 @@
          <File Type="finals*">
             <HardLink>false</HardLink>
             <ToList>
+               <Intray>S2A</Intray>
                <Intray>GPS</Intray>
             </ToList>
          </File>
