@@ -45,7 +45,7 @@
 
    <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
    
-   <SatPrefix>S2</SatPrefix>
+   <SatPrefix>S2_</SatPrefix>
    
    <!-- currently placed in S2BOA intray -->
    
@@ -56,7 +56,7 @@
       <Report Name="RetrievedFiles">
          <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
-         <FileType>DEC_R_PULL</FileType>
+         <FileType>DEC_F_RECV</FileType>
       </Report>
 
 <!--  -->
