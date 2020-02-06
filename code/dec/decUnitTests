@@ -821,7 +821,7 @@ class DECTestCase < Test::Unit::TestCase
       
       # check presence of generated report file
       Dir.chdir(ReadConfigDEC.instance.getReportDir)
-      arr = Dir["S2_OPER_DEC_R_PULL*"]
+      arr = Dir["S2*_OPER_DEC_F_RECV*"]
       assert(!arr.empty?, "report directory is not empty")
       FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
       
@@ -838,7 +838,7 @@ class DECTestCase < Test::Unit::TestCase
 
       # check presence of generated report file
       Dir.chdir(ReadConfigDEC.instance.getReportDir)
-      arr = Dir["S2_OPER_DEC_R_PULL*"]
+      arr = Dir["S2*_OPER_DEC_F_RECV*"]
       assert(!arr.empty?, "report directory is not empty")
       FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
       

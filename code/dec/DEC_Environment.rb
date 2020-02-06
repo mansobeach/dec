@@ -60,7 +60,6 @@ module DEC
       ENV['DEC_DATABASE_PASSWORD']        = "1mysql"
       ENV['DEC_TMP']                      = "/tmp/dec_tmp"
       ENV['DEC_DELIVERY_ROOT']            = "/tmp/dec_delivery_root"
-      # ENV['DEC_CONFIG']                   = "#{ENV['HOME']}/Projects/dec/config"
       ENV['DEC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       ENV['HOSTNAME']                     = `hostname`
       ENV.delete('DCC_CONFIG')
@@ -120,13 +119,13 @@ module DEC
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
+      puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
       puts "DEC_DB_ADAPTER                => #{ENV['DEC_DB_ADAPTER']}"
       puts "DEC_TMP                       => #{ENV['DEC_TMP']}"
       puts "DEC_DELIVERY_ROOT             => #{ENV['DEC_DELIVERY_ROOT']}"
       puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
       puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
       puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
-      puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
@@ -163,12 +162,15 @@ module DEC
 
    def checkEnvironmentEssential
       bCheck = true
+      
+      # --------------------------------
+      # DEC_CONFIG can be defined by the customer to override 
+      # the configuration shipped with the gem
       if !ENV['DEC_CONFIG'] then
-         bCheck = false
-         puts "DEC_CONFIG environment variable is not defined !\n"
-         puts
+         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
-
+      # --------------------------------
+      
       if !ENV['DEC_TMP'] then
          bCheck = false
          puts "DEC_TMP environment variable is not defined !\n"
@@ -339,7 +341,7 @@ module DEC
 
    def checkConfigFilesOutgoing
       arrFiles = [ \
-                  "interfaces.xml", \
+                  "dec_interfaces.xml", \
                   "dec_outgoing_files.xml"
                   ]
       bRet = true
