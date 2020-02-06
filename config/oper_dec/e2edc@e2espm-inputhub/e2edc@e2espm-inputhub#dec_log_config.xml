@@ -24,7 +24,7 @@
  </outputter>
 
  <logger name="E2ESPM-ESRIN" level="DEBUG" trace="false">
-  <outputters>dec_log</outputters>
+  <outputter>dec_log</outputter>
  </logger>
  
 </log4r_config>

@@ -10,7 +10,7 @@
          <Name>S2PDGS</Name>
          <LocalInbox>/volumes/dec/interfaces/dec_basket.s2pdgs</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT</Directory>
+		 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/</Directory>
          </DownloadDirs>
       </Interface>
 
@@ -18,7 +18,7 @@
          <Name>SUPER_TCI</Name>
          <LocalInbox>/volumes/dec/interfaces/dec_basket.tci</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
+		 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
          </DownloadDirs>
       </Interface>
 
@@ -140,6 +140,10 @@
          <Directory>/volumes/dec/interfaces/s2boa</Directory>
       </Intray>
 
+      <Intray>
+         <Name>S2BOA_SHADOW</Name>
+         <Directory>/volumes/dec/interfaces/s2boa_shadow</Directory>
+      </Intray>
 
       <Intray>
       	 <Name>UNDESIRED</Name>
@@ -156,17 +160,10 @@
             Only the first rule matching the file pattern is applied     
       -->
    
-         <File Type="gpsrapid.*">
-            <HardLink>false</HardLink>
-            <ToList>
-               <Intray>GPS</Intray>
-            </ToList>
-         </File>   
-  
-        <File Type="*DEC_R_PULL*">
+        <File Type="*DEC_F_RECV*">
       	  <HardLink>False</HardLink>
 	         <ToList>
-	            <Intray>S2BOA</Intray>	  
+	            <Intray>S2BOA_SHADOW</Intray>	  
           </ToList>
          </File>
 
@@ -267,6 +264,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -277,6 +275,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -287,6 +286,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -297,6 +297,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -307,6 +308,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -317,6 +319,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -327,6 +330,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -337,6 +341,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -347,6 +352,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -357,6 +363,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -367,6 +374,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -377,6 +385,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -387,6 +396,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
  
@@ -427,6 +437,7 @@
             <Intray>ARCHIVE_S2PDGS</Intray>
             <Intray>SHADOW_S2PDGS</Intray>
             <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
          </ToList>
       </File>
 

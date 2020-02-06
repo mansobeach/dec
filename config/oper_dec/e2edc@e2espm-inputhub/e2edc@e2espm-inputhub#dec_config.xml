@@ -47,9 +47,9 @@
    
    <SatPrefix>S2_</SatPrefix>
    
-   <!-- currently placed in S2BOA intray -->
+   <!-- currently placed in DEC basket intray -->
    
-   <ReportDir>/volumes/dec/interfaces/s2boa</ReportDir>
+   <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
    
    <Reports>
 
