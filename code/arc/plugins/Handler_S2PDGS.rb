@@ -15,6 +15,9 @@
 # This class allows minarc to handle S2PDGS files:
 #
 # S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF
+# S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117.xml
+# S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml
+# S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml
 # S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.EOF
 # S2A_OPER_MPL__NPPF__20170217T110000_20170304T140000_0001.TGZ
 # S2A_OPER_REP__SUP___20151219T193158_99999999T999999_0001.EOF
@@ -53,11 +56,11 @@ class Handler_S2PDGS
 
    attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :start, :stop, :str_start, :str_stop
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Class constructor
+   ## Class constructor
    
-   # Name now must be a full_path one
+   ## Name now must be a full_path one
    def initialize (name, destination = nil, args = {})
       
       if name[0,1] != '/' then
@@ -154,6 +157,24 @@ class Handler_S2PDGS
       end
       
       # ----------------------------------------------------
+      
+      # S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml
+      # S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml
+      
+      if @filename.length > 73 and @filename.slice(3,1) == "_" and @filename.slice(8,1) == "_" &&
+         @filename.slice(19,1) == "_" and @filename.slice(24,1) == "_" and @filename.slice(40,1) == "_" &&
+         @filename.slice(41,1) == "V" 
+      then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(58, 15)      
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(42, 15))
+         @stop             = self.str2date(@filename.slice(58, 15))         
+         @validated        = true      
+      end
+      
+      # ----------------------------------------------------
          
       if @validated == false then
          puts @filename.length
@@ -198,13 +219,13 @@ class Handler_S2PDGS
 
    end
 
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
 
    def isValid
       return @validated
    end
 
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
 
    def fileType
       return @type
@@ -228,17 +249,17 @@ class Handler_S2PDGS
       return @generation_date
    end
    
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
    
    def fileName
       return @full_path_filename
    end
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
 
 
 private
 
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def compressFile(full_path_name)
       filename       = File.basename(full_path_name, ".*")
@@ -274,9 +295,9 @@ private
             
    end
 
-   #-------------------------------------------------------------
-
-   # E2ESPM analytic reports
+   ## -----------------------------------------------------------
+   ##
+   ## E2ESPM analytic reports
    
    def isTypeAnalytic?(type)
 
@@ -425,6 +446,6 @@ private
          
       end
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 end

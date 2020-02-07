@@ -19,7 +19,7 @@ module CTC
 
 class ListWriterDelivery
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Class contructor
    def initialize(directory, bIsOutgoingDelivery=false, fileClass ="", fileType = "")
@@ -32,7 +32,7 @@ class ListWriterDelivery
       @fileType        = fileType
       @fileClass       = fileClass
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def setup(satPrefix, prjName, prjID, mission)
       @bSetup = true
@@ -41,13 +41,13 @@ class ListWriterDelivery
       @prjID     = prjID
       @mission   = mission
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
    end
-   #-------------------------------------------------------------   
+   # -------------------------------------------------------------   
    
    def writeData(entity, pollingTime, arrHashData, bIsEmergencyMode=false)
       if @bSetup == false then
@@ -77,13 +77,13 @@ class ListWriterDelivery
    #-------------------------------------------------------------
 private
       
-	#-------------------------------------------------------------
+	## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       return true
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def createFile(bIsEmergencyMode)
 	   prevDir = Dir.pwd
@@ -108,7 +108,9 @@ private
          end
       end
       
-   	@filename = %Q{#{@satPrefix}_OPER_#{fileType}_#{@pollingTime}_#{@pollingTime}_0001}
+      centre = "2BOA"
+      
+   	@filename = %Q{#{@satPrefix}_OPER_#{fileType}_#{centre}_#{@pollingTime}_V#{@pollingTime}_#{@pollingTime}_#{@entity}}
       @realname = %Q{#{@filename}.xml}
       @theFile  = nil
       
@@ -132,7 +134,8 @@ private
 		@theFile.puts(%Q{<Earth_Explorer_File>})
       @theFile.flush
    end
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
    
    def writeFixedHeader(bIsEmergencyMode=false)
       @theFile.puts("    <Fixed_Header>")

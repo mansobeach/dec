@@ -28,7 +28,9 @@ module ARC
    
    @@change_record = { \
       "1.0.33" =>    "Fix of https://jira.elecnor-deimos.com/browse/S2MPASUP-290\n\
-          exiftool added as dependency tool for unit tests to verify plug-in Handler_VIDEO\n", \
+          DEC RetrievedFiles report is now supported by Handler_S2PDGS:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-308\n\
+          exiftool added as dependency tool for the unit tests to verify plug-in Handler_VIDEO\n", \
       "1.0.32" =>    "Migration to ActiveRecord 6", \
       "1.0.31" =>    "Check of tool dependencies done in the unit tests\n\
           Environment variables for tests defined in minarc_test.env\n\

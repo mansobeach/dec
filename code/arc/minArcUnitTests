@@ -44,10 +44,11 @@ require 'arc/MINARC_Status'
 # 10  - test_remote_api_retrieve_type
 # 11  - test_remote_api_delete
 # 12  - test_local_and_remote_status_global
-# 13  - test_handler_m2ts_local
-# 14  - test_handler_m2ts_local_mp4
-# 15  - test_local_minArcFile
-# 16  - test_contingency
+# 13  - test_handler_s2pdgs
+# 14  - test_handler_m2ts_local
+# 15  - test_handler_m2ts_local_mp4
+# 16  - test_local_minArcFile
+# 17  - test_contingency
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -704,6 +705,65 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
             
+   end
+
+   # -------------------------------------------------------------
+
+   def test_handler_s2pdgs
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      @@conf.wrapper_load_config_development
+      
+      testFile1 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml"
+      testFile2 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml"
+      
+      system("echo \'#{testFile1}\' > /tmp/#{testFile1}")
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile1} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      puts ret
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      puts ret
+      assert($?.exitstatus, "Decoding of the file with handler")
+        
+        
+      system("echo \'#{testFile2}\' > /tmp/#{testFile2}")
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile2} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
    end
 
    # -------------------------------------------------------------

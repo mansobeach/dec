@@ -23,7 +23,7 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.12dev"
+   @@version = "1.0.12"
    
    ## -----------------------------------------------------------------
    
@@ -31,6 +31,9 @@ module DEC
       "1.0.12" =>    "Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE\n\
           for pull mode (dec_incoming_files.xml)\n\
           satisfy https://jira.elecnor-deimos.com/browse/S2MPASUP-278\n\
+          DEC RetrievedFiles report updated to Sentinels naming convention:\n\
+          Robustification for contingencies:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-308\n\
           dec_interfaces.xml replaces \"FTPServer\" with \"Server\" configuration item",
       "1.0.11" =>    "Migration to ActiveRecord 6", \
       "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
