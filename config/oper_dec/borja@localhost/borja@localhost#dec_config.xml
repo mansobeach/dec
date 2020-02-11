@@ -42,7 +42,8 @@
    
    <SatPrefix>S2_</SatPrefix>
    
-   <ReportDir>/tmp/dec_reports</ReportDir>
+   <!-- for local dissemination -->
+   <ReportDir>/tmp/dec/in_basket_if_localhost_notsecure</ReportDir>
    
    <Reports>
             

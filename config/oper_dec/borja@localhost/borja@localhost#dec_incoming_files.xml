@@ -139,6 +139,11 @@
             <Name>DEC_REPORTS</Name>
             <Directory>/tmp/dec_local_dissemination/DEC_Reports</Directory>
          </Intray>
+
+         <Intray>
+            <Name>DEC_REPORTS_GRAVEYARD</Name>
+            <Directory>/tmp/dec_local_dissemination/DEC_Reports_Graveyard</Directory>
+         </Intray>
       
                 
       </ListIntrays>
@@ -149,6 +154,21 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+
+         <File Type="*DEC_F_RECV*LOCALHOST_NOT_SECURE*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS_GRAVEYARD</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="*DEC_F_RECV*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS</Intray>
+            </ToList>
+         </File>
+
    
          <File Type="gpsrapid.*">
             <HardLink>false</HardLink>
@@ -196,12 +216,6 @@
             </ToList>
          </File>
 
-         <File Type="*DEC_F_RECV*">
-            <HardLink>False</HardLink>
-            <ToList>
-               <Intray>DEC_REPORTS</Intray>
-            </ToList>
-         </File>
 
       </ListFilesDisseminated>
    </DisseminationRules>
