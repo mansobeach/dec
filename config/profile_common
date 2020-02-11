@@ -36,7 +36,8 @@ export DCC_TMP=$HOME/tmp
 
 # export DEC_COTS_HOME=/home/projects/decdev/cots
 
-export RUBYLIB=$DEC_BASE/code
+# DEPRECATED Variable
+# export RUBYLIB=$DEC_BASE/code
 
 export PATH=$PATH:/usr/bin:/usr/local/bin:$DEC_BASE/code/ctc
 

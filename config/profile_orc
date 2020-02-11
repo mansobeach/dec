@@ -35,7 +35,8 @@ export ORC_TMP=/tmp/orc
 
 export PATH=$PATH:$ORC_BASE/code/orc
 
-export RUBYLIB=$ORC_BASE/code
+# Deprecated Variable
+# export RUBYLIB=$ORC_BASE/code
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/pds_bin/oracle/product/9204/lib
 

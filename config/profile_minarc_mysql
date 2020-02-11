@@ -33,7 +33,8 @@ export MINARC_CONFIG=$MINARC_BASE/config
 
 export PATH=$PATH:$MINARC_BASE/code/arc
 
-export RUBYLIB=$DEC_BASE/code
+# Deprecated variable in favor of the gems installation
+# export RUBYLIB=$DEC_BASE/code
 
 
 unset USERNAME

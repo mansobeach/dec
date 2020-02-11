@@ -12,5 +12,7 @@
 #
 #########################################################################
 
-export RUBYLIB=$RUBYLIB:$DEC_BASE/code/mpl
+#
+# export RUBYLIB=$RUBYLIB:$DEC_BASE/code/mpl
+
 export PATH=$PATH:$DEC_BASE/code/mpl

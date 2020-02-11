@@ -23,7 +23,8 @@ export SDM_DATABASE_NAME=sdmdb
 export SDM_DATABASE_USER=sdm_db_e2espm
 export SDM_DATABASE_PASSWORD=sdm_db_e2espm
 
-export RUBYLIB=$DEC_BASE/code
+# No GEM for the time being / set RUBYLIB to make it work
+#export RUBYLIB=$DEC_BASE/code
 
 unset USERNAME
 

@@ -20,7 +20,8 @@ export MINARC_CONFIG=$MINARC_BASE/config
 
 export PATH=$PATH:$MINARC_BASE/code/minarc
 
-export RUBYLIB=$DEC_BASE/code
+# DEPRECATED Variable in favor of the gems installation
+# export RUBYLIB=$DEC_BASE/code
 
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/pds_bin/oracle/product/9204/lib
 

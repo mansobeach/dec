@@ -22,4 +22,6 @@
 DEC_BASE=$HOME/local/dec
 
 export EOLI_CLIENT_CONFIG=$DEC_BASE/config
-export RUBYLIB=$DEC_BASE/code
+
+# Set the variable below to make it work
+# export RUBYLIB=$DEC_BASE/code
