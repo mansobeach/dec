@@ -10,7 +10,7 @@
 # 
 # Git: rakefile,v $Id$ $Date$
 #
-# module DEC
+# module ARC
 #
 #########################################################################
 
@@ -19,24 +19,13 @@ require 'rake'
 
 ## =============================================================================
 ##
-## Task associated to ORC component
+## Task associated to minARC component
 
-namespace :orc do
-
-   ## -----------------------------
-   ## Orchestrator Config files
-   
-   @arrConfigFiles = [\
-      "orchestratorConfigFile.xml",\
-      "orchestrator_log_config.xml"]
-   ## -----------------------------
-
-
-   @rootConf = "config/oper_orc"
+namespace :minarc do
 
    ## ----------------------------------------------------------------
    
-   desc "build orc gem"
+   desc "build minarc gem"
 
    task :build, [:user, :host] => :load_config do |t, args|
       args.with_defaults(:user => :orctest, :host => "localhost")
@@ -47,30 +36,22 @@ namespace :orc do
          exit(99)
       end
    
-      cmd = "gem build gem_orc.gemspec"
+      cmd = "gem build gem_minarc.gemspec"
       ret = `#{cmd}`
-      if $? != 0 then
-         puts "Failed to build gem for Orchestrator"
+      if $?.exitstatus != 0 then
+         puts "Failed to build gem for minArc"
          exit(99)
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      cp filename, "orc.gem"
+      cp filename, "minarc.gem"
       mv "orc.gem", "install"
       mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
       @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
-      # mv filename, "install/gems"
       cp @filename, "install/gems/"
    end
 
    ## ----------------------------------------------------------------
-
-   desc "list Orchestrator configuration packages"
-
-   task :list_config do
-      cmd = "ls #{@rootConf}"
-      system(cmd)
-   end
 
    ## ----------------------------------------------------------------
 
@@ -130,15 +111,19 @@ namespace :orc do
       puts
       puts @filename
       puts
-      cmd = "gem uninstall -x orc"
+      cmd = "sudo gem uninstall orc"
       puts cmd
       system(cmd)
-      cmd = "gem install #{@filename}"
+      cmd = "sudo gem install --local #{@filename}"
       puts cmd
       system(cmd)
    end
    ## --------------------------------------------------------------------
 
+#   # to verify the installation and gem dependencies installation without gemfile
+#   task :test_install
+#   
+#   end
    ## --------------------------------------------------------------------
 
 end
@@ -147,8 +132,8 @@ end
 ## ==============================================================================
 
 task :default do
-   puts "DEC / ORC repository management"
-   cmd = "rake -f build_orc.rake -T"
+   puts "minArc repository management"
+   cmd = "rake -f build_minarc.rake -T"
    system(cmd)
 end
 

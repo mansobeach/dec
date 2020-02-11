@@ -112,7 +112,7 @@ class OrchestratorScheduler
 
    ## This method gets all files referenced in Pending2QueueFile
    ## table and adds them to Orchestrator_Queue table
-   def enqueuePendingFiles
+   def enqueuePendingFiles_BULK
 
       msg = "OrchestratorScheduler::enqueuePendingFiles begin"
       # puts msg
@@ -138,6 +138,46 @@ class OrchestratorScheduler
    end
    
    ## -------------------------------------------------------------
+   
+   ## -----------------------------------------------------------  
+
+   ## This method gets all files referenced in Pending2QueueFile
+   ## table and adds them to Orchestrator_Queue table
+   def enqueuePendingFiles
+
+      msg = "OrchestratorScheduler::enqueuePendingFiles begin"
+      @logger.debug(msg) 
+
+      @arrPendingFiles = Pending2QueueFile.getPendingFiles     
+
+      if @arrPendingFiles.empty? == true then
+         msg = "No new input files are pending to be queued"
+         @logger.debug(msg)
+         return
+      end
+      
+      arrIds = Array.new
+  
+      OrchestratorQueue.transaction do
+      
+         @arrPendingFiles.each{|file|
+             
+            new_queued_file = OrchestratorQueue.new
+            new_queued_file.trigger_product_id = file.trigger_product_id
+            new_queued_file.save
+            
+            @logger.info("queued pending file #{file.filename}")
+            
+            Pending2QueueFile.destroy_by(trigger_product_id: file.trigger_product_id)
+            
+         }
+   
+      end
+         
+   end
+   
+   ## -------------------------------------------------------------
+   
    
    def schedule
       msg = "Orchestrator::schedule started"

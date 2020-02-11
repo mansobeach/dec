@@ -138,7 +138,7 @@ class ORCTestCase < Test::Unit::TestCase
             exit(99)
          end
       else     
-         @@conf.wrapper_load_environment_test
+         @@conf.wrapper_load_config_development
       end
 
       puts      
@@ -293,6 +293,13 @@ class ORCTestCase < Test::Unit::TestCase
 
       cmd = "orcQueueInput -h"
       assert(system(cmd), cmd)
+
+      cmd = "orcManageDB -v"
+      assert(system(cmd), cmd)
+
+      cmd = "orcManageDB -h"
+      assert(system(cmd), cmd)
+
 
 #      @@conf = ORC_Environment.new      
 #      @@conf.wrapper_unset_config

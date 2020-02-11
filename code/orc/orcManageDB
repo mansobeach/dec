@@ -71,13 +71,13 @@ def main
          end
       end
    rescue Exception => e
-      # puts e.to_s
+      puts e.to_s
       exit(99)
    end
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
-      hRecord = ARC.class_variable_get(:@@change_record)
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ORC.class_variable_get(:@@change_record)
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
       }
@@ -126,9 +126,9 @@ def main
             CreatePending2QueueFiles.down
          end
 
-         if ProductionTimeline.table_exists?() == true then
-            CreateProductionTimelines.down
-         end
+#         if ProductionTimeline.table_exists?() == true then
+#            CreateProductionTimelines.down
+#         end
 
          if SuccessfulTriggerProduct.table_exists?() == true then
             CreateSuccessfulTriggerProducts.down
@@ -154,17 +154,17 @@ def main
             CreateTriggerProducts.down
          end
 
-         if MessageParameter.table_exists?() == true then
-            CreateMessageParameters.down
-         end
+#         if MessageParameter.table_exists?() == true then
+#            CreateMessageParameters.down
+#         end
 
-         if OrchestratorMessage.table_exists?() == true then
-            CreateOrchestratorMessages.down
-         end
+#         if OrchestratorMessage.table_exists?() == true then
+#            CreateOrchestratorMessages.down
+#         end
          
-         if RunningJob.table_exists?() == true then
-            CreateRunningJobs.down
-         end
+#          if RunningJob.table_exists?() == true then
+#             CreateRunningJobs.down
+#          end
 
                
          if File.exist?(@dbName) == true then
@@ -191,9 +191,9 @@ def main
             CreatePending2QueueFiles.up
          end
 
-         if ProductionTimeline.table_exists?() == false then
-            CreateProductionTimelines.up
-         end
+#         if ProductionTimeline.table_exists?() == false then
+#            CreateProductionTimelines.up
+#         end
 
          if SuccessfulTriggerProduct.table_exists?() == false then
             CreateSuccessfulTriggerProducts.up
@@ -215,17 +215,17 @@ def main
             CreateObsoleteTriggerProducts.up
          end
 
-         if OrchestratorMessage.table_exists?() == false then
-            CreateOrchestratorMessages.up
-         end
+#         if OrchestratorMessage.table_exists?() == false then
+#            CreateOrchestratorMessages.up
+#         end
 
-         if MessageParameter.table_exists?() == false then
-            CreateMessageParameters.up
-         end 
+#         if MessageParameter.table_exists?() == false then
+#            CreateMessageParameters.up
+#         end 
 
-         if RunningJob.table_exists?() == false then
-            CreateRunningJobs.up
-         end
+#         if RunningJob.table_exists?() == false then
+#            CreateRunningJobs.up
+#         end
 
 
          puts "Right !"

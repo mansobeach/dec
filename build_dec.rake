@@ -15,6 +15,7 @@
 #########################################################################
 
 require 'rake'
+#require 'RubyGems'
 
 ## =============================================================================
 ##
@@ -57,12 +58,10 @@ namespace :dec do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      cp filename, "dec_#{args[:user]}@#{args[:host]}.gem"
-      mv "dec_#{args[:user]}@#{args[:host]}.gem", "install"
       mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
-      filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
-      cp filename, "install/dec.gem"
-      cp filename, "install/gems/"
+      @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
+      cp @filename, "install/gems/dec.gem"
+      cp @filename, "install/gems/"
    end
 
    ## ----------------------------------------------------------------
@@ -155,28 +154,31 @@ namespace :dec do
       }
    end
    ## ----------------------------------------------------------------
-
-   ## ----------------------------------------------------------------
-   
-   desc "install DEC gem"
-
-   task :install => :uninstall do
-      cmd = "sudo gem install --local ./install/dec.gem"
-      puts cmd
-      system(cmd)         
-   end
-
-   ## ----------------------------------------------------------------
    
    desc "uninstall DEC gem"
    
    task :uninstall do
-      cmd = "sudo gem uninstall dec.gem"
+      cmd = "gem uninstall dec"
       puts cmd
       system(cmd)      
    end
    ## ----------------------------------------------------------------
 
+   desc "install DEC"
+
+   task :install ,[:user, :host] => :build do |t, args|
+      args.with_defaults(:user => :borja, :host => :localhost)
+      puts
+      puts @filename
+      puts
+      cmd = "gem uninstall -x dec"
+      puts cmd
+      system(cmd)
+      cmd = "gem install #{@filename}"
+      puts cmd
+      system(cmd)
+   end
+   ## --------------------------------------------------------------------
 
 
 end

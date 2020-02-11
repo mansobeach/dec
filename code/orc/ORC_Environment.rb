@@ -24,7 +24,7 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.9dev"
+   @@version = "0.0.9"
    
    ## ----------------------------------------------------------------
    
@@ -32,8 +32,10 @@ module ORC
       "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n
          orcQueueUpdate removes from the queue a previously failed product\n\
          orcValidateConfig has been created:\n\
-         satisfy https://jira.elecnor-deimos.com/browse/S2MPASUP-288\n\
-         fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-294", \
+         improved resilience and race condition problem fixed according to tickets below:\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-302\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-288\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-294", \
       "0.0.8"  =>    "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-292 / migration to ActiveRecord 6", \
       "0.0.7"  =>    "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-277 regarding race conditions when triggering jobs", \
       "0.0.6"  =>    "ingestion parallelised (new configuration ParallelIngestions)", \
@@ -49,7 +51,6 @@ module ORC
    
    @@arrEnv = [ \
                "ORC_TMP", \
-               "ORC_CONFIG", \
                "ORC_DB_ADAPTER", \
                "ORC_DATABASE_NAME", \
                "ORC_DATABASE_USER", \
@@ -120,9 +121,9 @@ module ORC
    ## ----------------------------------------------------------------
   
    def check_environment
-      check_environment_dirs
       retVal = checkEnvironmentEssential
       if retVal == true then
+         check_environment_dirs
          return checkToolDependencies
       else
          return false
@@ -156,7 +157,6 @@ module ORC
 
    def checkEnvironmentEssential
       bCheck = true
-      bCheck = true
             
       @@arrEnv.each{|vble|
          if !ENV.include?(vble) then
@@ -166,6 +166,14 @@ module ORC
          end
       }
       
+      # --------------------------------
+      # ORC_CONFIG can be defined by the customer to override 
+      # the configuration shipped with the gem
+      if !ENV['ORC_CONFIG'] then
+         ENV['ORC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
+   
       orcConf = ORC::ReadOrchestratorConfig.instance
       orcConf.update
 
@@ -173,14 +181,11 @@ module ORC
 
       cmd1           = "which #{resMan}"
       isToolPresent  = `#{cmd1}`
-
-      cmd2           = "type #{resMan}"
-      ret            = `#{cmd2}`
       
       if isToolPresent[0,1] != '/' and ($? != 0) then
          puts "#{resMan} not present in PATH !  :-(\n"
          puts "check orchestratorConfigFile.xml => ResourceManager configuration"
-         bCheckOK = false
+         bCheck = false
       end
 
       triggers = orcConf.getAllTriggerTypeInputs
@@ -276,6 +281,10 @@ end # module
 class ORC_Environment
    
    include ORC
+
+   def wrapper_load_config_development
+      load_config_development
+   end
 
    def wrapper_load_environment_test
       load_environment_test

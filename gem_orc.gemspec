@@ -42,14 +42,24 @@ Gem::Specification.new do |s|
                      ]
 
   s.homepage    = 'http://www.deimos-space.com'
+  
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
   
 
-  # ----------------------------------------------
+  ## ----------------------------------------------
   
   s.add_dependency('minarc', '~> 1.0.33')
+
+  s.add_dependency('activerecord-import', '~> 1.0')
+  s.add_dependency('log4r', '~> 1.0')  
+  s.add_dependency('pg', '~> 1')
+  ## ----------------------------------------------
   
-  # ----------------------------------------------
+  s.add_development_dependency('sqlite3', '~> 1.4')
+  s.add_development_dependency('test-unit', '~> 3.0')
+  
+  ## ----------------------------------------------  
+  
     
   s.post_install_message = "Elecnor Deimos Generic Orchestrator installed :-)"
   
