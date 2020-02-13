@@ -177,6 +177,7 @@
       <File Type="*DEC_F_RECV*">
       	  <HardLink>False</HardLink>
 	         <ToList>
+                    <Intray>S2BOA</Intray>
 	            <Intray>S2BOA_SHADOW</Intray>	  
           </ToList>
       </File>
