@@ -102,7 +102,7 @@ class DEC_ReceiverFromInterface
 
       if retVal == true then
          if @isDebugMode == true then
-            puts "#{entity} I/F is configured correctly\n"
+            @logger.debug("#{entity} I/F is configured correctly\n")
 	      end
       else
          raise "\nError in DEC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
@@ -161,7 +161,7 @@ class DEC_ReceiverFromInterface
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "DEC_ReceiverFromInterface debug mode is on"
+      @logger.debug("DEC_ReceiverFromInterface debug mode is on")
    end
    ## -------------------------------------------------------------
    
@@ -189,7 +189,7 @@ class DEC_ReceiverFromInterface
          when "FTP"
                
             if @isDebugMode == true then
-               puts "I/F #{@entity} is non secure mode / #{@protocol}"
+               @logger.debug("I/F #{@entity} is non secure mode / #{@protocol}")
             end
 
             perf = measure { list = getNonSecureFileList( @ftpserver[:isPassive]) }
@@ -199,7 +199,7 @@ class DEC_ReceiverFromInterface
          when "SFTP"
             
             if @isDebugMode == true then
-               puts "I/F #{@entity} requires secure mode / #{@protocol}"
+               @logger.debug("I/F #{@entity} requires secure mode / #{@protocol}")
             end
 
             perf = measure { list = getSecureFileList }
@@ -219,7 +219,7 @@ class DEC_ReceiverFromInterface
          when "LOCAL"
          
             if @isDebugMode == true then
-               puts "I/F #{@entity} does not use network / #{@protocol}"
+               @logger.debug("I/F #{@entity} does not use network / #{@protocol}")
             end
 
           
@@ -234,7 +234,11 @@ class DEC_ReceiverFromInterface
                perf = measure { list = @local.getLocalList }      
             
             rescue Exception => e
-                  puts e
+                  puts e.to_s
+                  puts
+                  puts e.backtrace
+                  @logger.debug(e.to_s)
+                  @logger.debug(e.backtrace)
                   exit (99)
             end     
          
@@ -243,9 +247,7 @@ class DEC_ReceiverFromInterface
          when "WEBDAV"
 
             if @isDebugMode == true then
-               puts
-               puts "I/F #{@entity} uses #{@protocol} protocol"
-               puts
+               @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
             end
             
             puts list
@@ -254,7 +256,6 @@ class DEC_ReceiverFromInterface
                list = getWebDavFileList 
                if @isDebugMode == true then
                   @logger.debug("Found #{list.length} files")
-                  puts list
                end
             }            
                      
@@ -262,13 +263,6 @@ class DEC_ReceiverFromInterface
             
       end
            
-#       puts "+++++++++++++++++++++++++++++++++"
-#       puts list
-#       puts list.length
-#       puts list.uniq.length
-#       puts "+++++++++++++++++++++++++++++++++"
-#       exit
-
       if @isBenchmarkMode == true then
          @logger.info("File-Tree from #{@entity}: #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
          @logger.debug("Retrieved from #{@entity} #{list.length} files to be filtered")
@@ -289,14 +283,12 @@ class DEC_ReceiverFromInterface
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def getWildNonSecureList(path)
 
       if @isDebugMode == true then
-         puts
-         puts "Wild-search enabled for #{path}"
-         puts
+         @logger.debug("Wild-search enabled for #{path}")
          @ftp.debug_mode = true
       end
          
@@ -349,19 +341,15 @@ class DEC_ReceiverFromInterface
 
       begin
          if @isDebugMode == true then
-            puts "FTP #{host}:#{port} #{user}:#{pass} | passive = #{bPassive}"
+            @logger.debug("FTP #{host}:#{port} #{user}:#{pass} | passive = #{bPassive}")
          end
          @ftp = Net::FTP.new(host)
          @ftp.login(user, pass)
          @ftp.passive = bPassive
       rescue Exception => e
-         puts
-         puts e.to_s
-         puts "Unable to connect to #{host}"
          @logger.error("#{@entity}: #{e.to_s}")
-         @logger.error("#{@entity}: Unable to connect to #{host}")
+         @logger.error("#{@entity}: Unable to connect to #{host} with passive mode #{bPassive}")
          @logger.error("Could not poll #{@entity} I/F")
-         puts
          exit(99)
       end
 
@@ -388,10 +376,11 @@ class DEC_ReceiverFromInterface
             @ftp.chdir(@remotePath)
          rescue Exception => e
             @ftp.chdir("/")
-#             puts
-#             puts "Error trying to reach #{@remotePath}"
-#             puts e.to_s
-#             puts
+            @logger.error("cannot reach #{@remotePath}")
+            @logger.error(e.to_s)               
+            if @isDebugMode == true then
+               @logger.error(e.backtrace)
+            end
             next
          end
 

@@ -23,11 +23,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.12"
+   @@version = "1.0.13"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.13" =>    "gem now includes the gemfile dependencies for their resolution at installation time", \
       "1.0.12" =>    "Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE\n\
           for pull mode (dec_incoming_files.xml)\n\
           satisfy https://jira.elecnor-deimos.com/browse/S2MPASUP-278\n\

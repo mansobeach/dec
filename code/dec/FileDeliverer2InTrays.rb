@@ -72,7 +72,7 @@ class FileDeliverer2InTrays
    ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "FileDeliverer2InTrays debug mode is on"
+      @logger.debug("FileDeliverer2InTrays debug mode is on")
 	   @entConfig.setDebugMode
 		@dimConfig.setDebugMode
    end
@@ -97,9 +97,8 @@ class FileDeliverer2InTrays
 
          dir = @dimConfig.getIncomingDir(entity)
          
-         if @isDebugMode == true then
-            puts "================================================"          
-            puts "#{entity} local inbox #{dir}"
+         if @isDebugMode == true then    
+            @logger.debug("#{entity} local inbox #{dir}")
          end
             	
 			arrFiles = getFilenamesFromDir(dir, "*")
@@ -149,12 +148,7 @@ class FileDeliverer2InTrays
                end
                          
                if @isDebugMode == true then
-# 					   puts "#{file} is placed in:"
-# 				      puts dimsDirs
-# 					else
-					   puts "#{file} is disseminated to:"
-                  puts dimsName
-                  puts
+					   logger.debug("#{file} is disseminated to: #{dimsName}")
 					end
 
                # main dissemination method
@@ -193,11 +187,10 @@ class FileDeliverer2InTrays
    
    ## It Deliver Files present in a given directory
    def deliverFromDirectory(directory)
-			puts
          arrFiles = getFilenamesFromDir(directory, "*")
 			if arrFiles.empty? == true then
 			   if @isDebugMode == true then
-				   puts "There are no new files"
+               logger.debug("deliverFromDirectory: there are no new files to disseminate")
 				end
 			end
 			
@@ -253,10 +246,7 @@ class FileDeliverer2InTrays
          end
                   
          if @isDebugMode == true then
-			   puts "#{file} is disseminated in:"
-				puts dimsDirs
-		   else
-			#   puts file
+			   logger.debug("#{file} is disseminated in: #{dimsDirs}")
 		   end
          
 #         disseminate(file, directory, dimsDirs, hdlinked)
@@ -295,9 +285,9 @@ class FileDeliverer2InTrays
          @logger.debug("#{file} is not disseminated to any In-Tray")
          # @logger.warn("#{file} is still placed in #{directory}")
          @logger.debug("#{file} is still placed in #{directory}")
-         # if @isDebugMode == true then
-            puts "#{file} is not disseminated to any Intray"
-         # end
+         if @isDebugMode == true then
+            @logger.debug("#{file} is not disseminated to any Intray")
+         end
       end
    end
    #-------------------------------------------------------------
@@ -311,7 +301,7 @@ private
    @@monitorCfgFiles   = nil
    @@arrExtEntities    = nil
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Check that everything needed by the class is present.
    def checkModuleIntegrity      
@@ -350,7 +340,7 @@ private
       bReturn = true
       if hardlinked == true and arrToDir.length <2
 		   if @isDebugMode == true then
-			   puts "HardLink flag is useless for one target dir"
+			   @logger.debug("HardLink flag for #{file} is useless for one target dir")
 			end
 		end
 		
@@ -385,7 +375,7 @@ private
             #cmd  = "\\mv -f #{file} #{targetDir}/.TEMP_#{file}"
             
             if @isDebugMode == true then
-	   		   puts cmd
+	   		   @logger.debug(cmd)
 		   	end
             bRet = execute(cmd, "mv2InTrays")
             
@@ -403,18 +393,14 @@ private
             
 			   cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
    			if @isDebugMode == true then
-	   		   puts cmd
+	   		   @logger.debug(cmd)
 		   	end
             bRet = execute(cmd, "mv2InTrays")
 
             if bRet == false then
-               if @isDebugMode == true then
-                  puts "Could not place final #{file} in Target Directory #{targetDir}! :-("
-                  @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
-               end
+               @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
                bReturn = false
-            else
-            
+            else  
                @logger.debug("chmod a+r #{targetDir}/#{file}")
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
@@ -449,12 +435,12 @@ private
                end
 			      cmd = "ln #{firstDir}/#{file} #{targetDir}"
                if @isDebugMode == true then
-	   		      puts cmd
+	   		      @logger.debug(cmd)
 		   	   end
                bRet = execute(cmd, "mv2InTrays")
 
                if bRet == false then
-                  puts "Could not Link File to the Target Directory"
+                  @logger.debug("Could not Link File #{file} to the Target Directory")
                   bReturn = false
                else
                   
@@ -479,25 +465,22 @@ private
 			      cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
                #cmd  = "\\cp -f #{firstDir}/#{file} #{targetDir}/.TEMP_#{file}"
    			   if @isDebugMode == true then
-	   		      puts cmd
+	   		      @logger.debug(cmd)
 		   	   end
                bRet = execute(cmd, "mv2InTrays")
             
                if bRet == false then
-                  puts "Could not copy File in Target Directory"
+                  @logger.error("Could not copy file #{file} into target Directory")
                   bReturn = false
                end
             
 			      cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
    			   if @isDebugMode == true then
-	   		      puts cmd
+	   		      @logger.debug(cmd)
 		   	   end
                bRet = execute(cmd, "mv2InTrays")
                
                if bRet == false then
-                  if @isDebugMode == true then
-                     puts "Could not disseminate into #{targetDir} intray ! :-("
-                  end
                   @logger.error("Could not disseminate into #{targetDir} intray")
                   bReturn = false
                   Dir.chdir(prevDir)
@@ -557,12 +540,7 @@ private
          end
                   
          if compress == "7z" then
-                  
-#                      puts "xxxxxxxxxxx"
-#                      puts sourceFile
-#                      puts targetFile
-#                      puts "xxxxxxxxxxx"
-                   
+                                     
             ret = pack7z(sourceFile, targetFile, true, @isDebugMode)
                      
             if ret == false then
@@ -571,11 +549,9 @@ private
                retVal = false
             else
                msg = "#{file} has been compressed in #{compress} for #{dim}"
-               puts msg
                @logger.info(msg)
             end
          else
-            puts "FileDeliverer2InTrays::deliver => Compression mode #{compress} not supported"
             @logger.error("Compression mode #{compress} not supported")
             retVal = false
          end

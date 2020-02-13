@@ -888,6 +888,13 @@ class DECTestCase < Test::Unit::TestCase
       arr = Dir["#{reportDir}/*"]
       assert(arr.length>0, "delivery report generation")
 
+      ## execute a new iteration of decGetFromInterface without flag --no-intray
+      ## to disseminate generated reports from previous iteration
+
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
+      puts cmd
+      assert(system(cmd), cmd)
+
       arr = Dir["/tmp/DEC*.log"]
       
       cmd = "grep ERROR #{arr[0]}"
