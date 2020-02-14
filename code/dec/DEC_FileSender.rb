@@ -88,7 +88,7 @@ class DEC_FileSender
       @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
       @protocol      = @ftpserver[:protocol]     
-      @sender        = CTC::FileSender.new(@ftpserver, protocol)
+      @sender        = CTC::FileSender.new(@ftpserver, protocol, @logger)
       
       if isDebug == true then
          setDebugMode
@@ -112,10 +112,10 @@ class DEC_FileSender
    end
    ## -----------------------------------------------------------
   
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "DEC_FileSender debug mode is on"
+      @logger.debug("DEC_FileSender debug mode is on")
       @sender.setDebugMode
    end
    ## -----------------------------------------------------------
@@ -132,12 +132,12 @@ class DEC_FileSender
       Dir.chdir(@outboxDir)
 
       if @isDebugMode then
-         puts "\nLoading list of files to be Sent from:#{@outboxDir}"
+         @logger.debug("Loading list of files to be Sent from:#{@outboxDir}")
       end
 
       @arrFilters.each{|filter|
          if @isDebugMode then
-            puts "Filtering outgoing files by #{filter}"
+            @logger.debug("Filtering outgoing files by #{filter}")
          end
          arrTmp << Dir[filter].sort_by{ |f| File.mtime(f)}
       }
@@ -151,7 +151,7 @@ class DEC_FileSender
          arrTmp.each { |file|
             if SentFile.hasAlreadyBeenSent?(file, @entity, @ftpserver[:protocol]) == true then
                if @isDebugMode then
-                  puts "#{file} already sent to #{@entity} via #{@ftpserver[:protocol]}"
+                  @logger.debug("#{file} already sent to #{@entity} via #{@ftpserver[:protocol]}")
                end
                File.delete(%Q{#{@outboxDir}/#{file}})
             else
@@ -163,10 +163,10 @@ class DEC_FileSender
       end
 
       if @isDebugMode and !@arrFiles.empty? then
-         puts "-------------------------------------------------------"
-         print("Files to be sent via #{@protocol} to #{@entity} are :\n")
-         puts @arrFiles
-         puts "-------------------------------------------------------"
+         @logger.debug("Files to be sent via #{@protocol} to #{@entity} are :")
+         @arrFiles.each{|file|
+            @logger.debug(file)
+         }
       end
       
       if @arrFiles.empty? then
@@ -198,16 +198,15 @@ class DEC_FileSender
 
       until bSent == true or loop < 0
          if @isDebugMode == true and loop != @loops and i != 0 then
-            puts "\nRE-Sending Loop Retry(#{i}) files to #{@entity}\n\n"
+            @logger.debug("RE-Sending Loop Retry(#{i}) files to #{@entity}")
          end 
      
          bSent          = true   
          tmpFilesSent   = Array.new
-         
-         puts         
+                  
          @arrFiles.each{|file|
 
-            puts "Sending #{file} to #{@entity} via #{@ftpserver[:protocol]}"
+            @logger.info("Sending #{file} to #{@entity} via #{@ftpserver[:protocol]}")
             
             size = File.size("#{@outboxDir}/#{File.basename(file)}")
             
@@ -215,7 +214,6 @@ class DEC_FileSender
             
             if bRet == false then
                @logger.error("[DEC_200] Failed sending #{file} to #{@entity}")
-               puts "Error sending #{file} to #{@entity}"
                @listFileError << file
                @listFileError = @listFileError.uniq
                bSent = false
@@ -231,7 +229,7 @@ class DEC_FileSender
             end
             
          }
-         puts
+         
          tmpFilesSent.each{|file| 
             @arrFiles.delete(file)
             @listFileError.delete(file)
@@ -246,11 +244,10 @@ class DEC_FileSender
       
          if @isDebugMode == true and loop >= 0 then
             pid = Process.pid
-            puts "Waiting #{@delay} seconds for sending files to #{@entity} (pid=#{pid}) "
+            @logger.debug("Waiting #{@delay} seconds for sending files to #{@entity} (pid=#{pid}) ")
          end
          
          if loop >=0 then
-            puts "\nWaiting #{@delay}s to retry file delivery to #{@entity}"
             @logger.warn("Waiting #{@delay}s to retry file delivery to #{@entity}")
             sleep(@delay)
          end
@@ -293,9 +290,7 @@ class DEC_FileSender
       }
 
       if bForceCreation == true and bFound == false then
-         puts "Explicit Request creation of RetrievedFiles Report"
-         puts "Warning: DeliveredFiles Report is not configured in dec_config.xml :-|"
-         puts
+         @logger.warn("DEC_FileSender::createReportFile: DeliveredFiles Report is not configured in dec_config.xml :-|")
          return
       end
 
@@ -327,11 +322,10 @@ class DEC_FileSender
       
       filename = writer.getFilename
          
-      puts "Created Report File #{filename} for #{@entity}"
       @logger.info("#{@entity} - created Report File #{filename}")
    
       if filename == "" then
-         puts "Error in DEC_FileSender::createContentFile !!!! =:-O \n\n"
+         @logger.error("Error in DEC_FileSender::createContentFile !!!! =:-O")
          exit(99)
       end
          
@@ -341,9 +335,7 @@ class DEC_FileSender
 #          if @isDebugMode == true then
 #             deliverer.setDebugMode
 #          end
-#          puts "Creating and Deliver Report File"
 #          deliverer.deliverFile(directory, filename)
-#          puts
 #       end   
    end
    ## -----------------------------------------------------------
@@ -384,7 +376,6 @@ private
          nRetries = nRetries - 1
          i        = i + 1
          
-         puts "RE-Sending(#{i}) #{file} to #{@entity}"
          @logger.info("RE-Sending(#{i}) #{file} to #{@entity}")
                
       end

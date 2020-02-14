@@ -45,9 +45,10 @@ class FileSender
    # Class constructor
    # - FTPServer Struct  (IN): DDC_ReadEntityConfig::fillFTPServerStruct
    # - hParameters       (IN): Hash type containing Additional Parameters   
-   def initialize(ftpServerStruct, protocol, hParameters=nil)
+   def initialize(ftpServerStruct, protocol, logger, hParameters=nil)
       @ftpServer        = ftpServerStruct
       @protocol         = protocol
+      @logger           = logger
       @hParameters      = hParameters
       checkModuleIntegrity
       @ftBatchFilename  = %Q{.BatchSenderFile4#{ftpServerStruct[:mnemonic]}}
@@ -69,7 +70,7 @@ class FileSender
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "FileSender debug mode is on"
+      @logger.debug("FileSender debug mode is on")
    end
    ## -----------------------------------------------------------
 
@@ -79,18 +80,17 @@ class FileSender
    end
    #-------------------------------------------------------------
    
-   # Set the files to be sent.
-   # - arrFiles (IN): Array of files to be sent
-   # - dirname  (IN): Outbox directory path.
+   ## Set the files to be sent.
+   ## - arrFiles (IN): Array of files to be sent
+   ## - dirname  (IN): Outbox directory path.
    def setFileList(arrFiles, outboxPath)
       checkDirectory(outboxPath)
       pwd = Dir.pwd
       Dir.chdir(outboxPath)      
       arrFiles.each{|file|
          if File.exist?(file) == false then
-            print file, " does not exist in ", outboxPath, " ! :-( \n"
-            puts "Error in FileSender::setFileList !"
-            exit(99)
+            @logger.error("Error in FileSender::setFileList #{file} does not exist in #{outboxPath}")
+            raise "#{file} does not exist in #{outboxPath}"
          end
       }
       Dir.chdir(pwd)
@@ -98,7 +98,7 @@ class FileSender
       @srcDirectory     = outboxPath
       @fileListLoaded   = true
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def useMirrorServer(file, bIsNotDir=true)
       
@@ -203,7 +203,7 @@ class FileSender
                                           "createDir",
                                           @isDebugMode) 
                if @isDebugMode then
-                  puts cmd
+                  @logger.debug(cmd)
                end
                retVal = execute(cmd, "send2interface")
             end
@@ -219,7 +219,7 @@ class FileSender
                                           @isDebugMode) 
 
             if @isDebugMode then
-               puts cmd
+               @logger.debug(cmd)
             end
             retVal = execute(cmd, "send2interface")
 
@@ -268,12 +268,8 @@ class FileSender
             output = sftpClient.output
             
             if @isDebugMode == true then
-               puts
-               puts "------------------------------------------"
-               puts "Client FT output is :\n\n"
-               puts output
-               puts "------------------------------------------"
-               puts
+               @logger.debug("Client FT output is :")
+               @logger.debug(output)
             end
 
             # After the execution we delete the batchfile
@@ -285,7 +281,7 @@ class FileSender
          when "FTPS" then
 
             if @isDebugMode then
-               puts "FTPS connecting to #{@user}@#{@hostname} getting file #{file}"
+               @logger.debug("FTPS connecting to #{@user}@#{@hostname} getting file #{file}")
             end
         
             begin
@@ -323,7 +319,7 @@ class FileSender
                ###
                retVal= @local.uploadFile(file,@targetFile,@targetTemp)
             rescue Exception => e
-               puts"#{e}"
+               @logger.error("#{e.to_s}")
                retVal= false 
             end            
       end   #end of case                                 
@@ -343,20 +339,18 @@ class FileSender
    end
 
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # It sends the directory and all its content
+   ## It sends the directory and all its content
    def sendDir(dir, bDeleteSource = true)
       if @secureMode == false then
          return sendNonSecureDir(dir, bDeleteSource)
       else
-         puts
-         puts "FileSender::sendSecureDir is not implemented ! :-p"
-         puts
-         exit(99)
+         @logger.error("FileSender::sendSecureDir is not implemented ! :-p")
+         raise "FileSender::sendSecureDir is not implemented ! :-p"
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def sendNonSecureDir(dir, bDeleteSource = true)
 
@@ -384,13 +378,9 @@ class FileSender
          @ftp.login(@user, @password)
          @ftp.passive = true
       rescue Exception => e
-         puts
-         puts e.to_s
-         puts "Unable to connect to #{@hostname}"
-         @logger.log("#{@entity}: #{e.to_s}")
-         @logger.log("#{@entity}: Unable to connect to #{@hostname}")
-         @logger.log("Could not send #{dir} to #{@entity} I/F")
-         puts
+         @logger.error("#{@entity}: #{e.to_s}")
+         @logger.error("#{@entity}: Unable to connect to #{@hostname}")
+         @logger.error("Could not send #{dir} to #{@entity} I/F")
          return false
       end
 
@@ -400,7 +390,7 @@ class FileSender
          @ftp.chdir(@ftpServer[:uploadDir])
          @ftp.mkdir("__#{dir}")
       rescue Exception => e
-         puts "Could not create __#{dir}"
+         @logger.error("Could not create __#{dir}")
          # Remove remote directory and its content
          # We rule !!!
          @ftp.chdir("__#{dir}")
@@ -418,14 +408,11 @@ class FileSender
          arrFiles = Dir["*"]
 
          arrFiles.each{|aFile|
-            # puts "sending file #{aFile}" 
             @ftp.putbinaryfile(aFile)
          }
          @ftp.chdir("..")
       rescue Exception => e
-         puts
-         puts "Could not send temp __#{dir}"
-         puts
+         @logger.error("Could not send temp __#{dir}")
          Dir.chdir(prevDir)
          return false
       end
@@ -446,9 +433,7 @@ class FileSender
       begin      
          @ftp.rename("__#{dir}", dir)
       rescue Exception => e
-         puts
-         puts "Could not send #{dir}"
-         puts
+         @logger.error("Could not send #{dir}")
          Dir.chdir(prevDir)
          return false      
       end
@@ -492,9 +477,9 @@ class FileSender
       
 private
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       
       bDefined = true
@@ -503,56 +488,54 @@ private
       #check the commands needed
       isToolPresent = `which ncftp`   
       if isToolPresent[0,1] != '/' then
-         puts "\n\nDDC_FileSender::checkModuleIntegrity\n"
+         puts "\n\nFileSender::checkModuleIntegrity\n"
          puts "Fatal Error: ncftp not present in PATH !!   :-(\n\n\n"
          bCheckOK = false
       end
 
       isToolPresent = `which ncftpput`
       if isToolPresent[0,1] != '/' then
-         puts "\n\nDDC_FileSender::checkModuleIntegrity\n"
+         puts "\n\nFileSender::checkModuleIntegrity\n"
          puts "Fatal Error: ncftpput not present in PATH !!   :-(\n\n\n"
          bCheckOK = false
       end      
  
       isToolPresent = `which sftp`   
       if isToolPresent[0,1] != '/' then
-         puts "\n\nDDC_FileSender::checkModuleIntegrity\n"
+         puts "\n\nFileSender::checkModuleIntegrity\n"
          puts "Fatal Error: sftp not present in PATH !!   :-(\n\n\n"
          bCheckOK = false
       end
                    
       if bCheckOK == false then
-         puts "\nDDC_FileSender::checkModuleIntegrity FAILED !\n\n"
+         puts "\nFileSender::checkModuleIntegrity FAILED !\n\n"
          exit(99)
       end      
    end
    
-   #-------------------------------------------------------------
-   # Check if everything is ready to perform the transfer.
-   # The following data needs to be loaded in the object:
-   # * List of files to be sent
+   ## -----------------------------------------------------------
+   ## Check if everything is ready to perform the transfer.
+   ## The following data needs to be loaded in the object:
+   ## * List of files to be sent
    def isReadyToSend(file = "")
       if @fileListLoaded == false then
-         puts "\nError in FileSender::isReadyToSend"
-         print "\nClass is not configured yet !   :-( \n\n"
-         exit(99)       
+         raise "Error in FileSender::isReadyToSend"
       end
       if file != "" then
          if File.exist?("#{@srcDirectory}/#{file}") == false then
-            puts "File {file} is not present in the outbox ! :-("
-            puts "Fatal Error in FileSender::isReadyToSend(#{file})"
-            exit(99)
+            @logger.error("File {file} is not present in the outbox ! :-(")
+            @logger.error("Fatal Error in FileSender::isReadyToSend(#{file})")
+            raise "Fatal Error in FileSender::isReadyToSend(#{file})"
          end
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # It deletes all UploadTemp content
+   ## It deletes all UploadTemp content
    def cleanUpRemoteTemp
       if @secureMode == false then
-         puts "Warning: UploadTemp cleanup not implemented for non-secure mode !"
-	      exit(99)
+         @logger.error("UploadTemp cleanup not implemented for non-secure mode !")
+         raise "UploadTemp cleanup not implemented for non-secure mode !"
       end
       uploadTemp  = @ftpServer[:uploadTemp]
        
@@ -568,7 +551,7 @@ private
       retVal = sftpClient.executeAll
       output = sftpClient.output
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 end # class
 

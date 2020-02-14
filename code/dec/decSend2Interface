@@ -81,8 +81,7 @@ def main
    ## ================================================================
 
    def SIGTERMHandler
-      puts
-      puts "\n[#{File.basename($0)} #{@entity}] SIGTERM signal received ... sayonara, baby !\n"
+      @logger.info("[#{File.basename($0)} #{@entity}] SIGTERM signal received ... sayonara, baby !")
       killInProgressNotify2Entity
       @locker.release
       exit(0)
@@ -98,11 +97,11 @@ def main
       pid = checker.getRunningPID
       if pid == false then
          if @isDebugMode == 1 then
-            puts "notify2Interface for #{@entity} I/F was not running \n"
+            @logger.debug("notify2Interface for #{@entity} I/F was not running")
          end
       else
          if @isDebugMode == 1 then
-            puts "Sending signal SIGTERM to Process #{pid} for killing notify2Interface.rb #{@entity}"
+            @logger.debug("Sending signal SIGTERM to Process #{pid} for killing notify2Interface.rb #{@entity}")
          end
          Process.kill(15, pid.to_i)
       end               
@@ -314,15 +313,15 @@ def main
    @locker.release
    
    if bSent == true then
-      puts "\nSuccess delivering files to #{@entity} ! :-)\n\n"
+      @logger.info("Success delivering files towards #{@entity} ! :-)")
       exit(0)
    else
-      puts "\nFailed to deliver files to #{@entity} ! :-(\n\n"
+      @logger.error("Failed to deliver files towards #{@entity} ! :-(")
       exit(99)   
    end
 end
 
-#---------------------------------------------------------------------
+## ---------------------------------------------------------------------
 
 # Generate and deliver Notification Mail to the given I/F
 # If for this I/F no file is sent, no mail is sent as well. 
@@ -348,10 +347,8 @@ def notifySuccess2Entity
    retVal = system(cmd)
    
    if retVal == false then
-      puts "\nWarning: Failed to send mail notification ! :-(\n"
       @logger.error("Failed to send mail notification-success to #{@entity}")
    else
-      puts "Mail notification-success sent to #{@entity} :-)"
       @logger.info("Mail notification-success sent to #{@entity}")   
    end
    if FileTest.exist?(fileListFiles)==true then
@@ -359,8 +356,8 @@ def notifySuccess2Entity
    end
    return retVal
 end
-#---------------------------------------------------------------------
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 # Generate and deliver Notification Mail to the given 
 def notifyFailure2Entity
@@ -378,19 +375,19 @@ def notifyFailure2Entity
 
    cmd = %Q{notify2Interface.rb -m #{@entity} -K -f #{fileListFilesErrors}}   
    if @isDebugMode == true then
-     cmd = %Q{#{cmd} -D}
-     puts cmd
-   end   
+      cmd = %Q{#{cmd} -D}
+      @logger.debug(cmd)
+   end
+      
    retVal = system(cmd)   
    if retVal == false then
-      puts "\n\nWarning: Failed to send mail notification ! :-(\n"
       @logger.error("Failed to send mail notification-error to #{@entity}")
    end   
    if FileTest.exist?(fileListFilesErrors)==true then
       File.delete(fileListFilesErrors)
    end
 end
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 # Decode parameters to be updated in the database
 def decodeParams
@@ -420,8 +417,7 @@ def deliverByBodyMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            puts "No files to be delivered via mailbody to #{@entity}"
-            puts
+            @logger.info("No files to be delivered via mailbody to #{@entity}")
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -455,7 +451,7 @@ def deliverByMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            puts "No files to be delivered via email to #{@entity}"
+            @logger.info("No files to be delivered via email to #{@entity}")
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -494,9 +490,7 @@ def deliverByFTP
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            puts
-            puts "No files to be delivered via ftp to #{@entity}"
-            puts
+            @logger.info("No files to be delivered via ftp to #{@entity}")
          end
       else
          bSent = sender.deliver(@isDeliveredOnce, @hParams)
@@ -511,12 +505,6 @@ def deliverByFTP
          # -------------------------------------------------
          # Notify via Mail the new files delivered
          if bSent == true then
-            puts
-            puts
-            puts
-            puts "sent is TRUE and notify is #{@bNotify} | #{mailParams[:sendNotification].to_s}"
-            puts
-            puts
             
             # ------------------------------------
             # Create the Report if applicable   

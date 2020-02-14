@@ -104,7 +104,7 @@ class LocalInterfaceHandler
  
        if retVal == true then
           if @isDebugMode == true then
-             puts "#{entity} I/F is configured correctly\n"
+             @logger.debug("#{entity} I/F is configured correctly")
  	      end
        else	
           @logger.error("[DEC_000] #{entity} I/F is not configured correctly")
@@ -128,7 +128,7 @@ class LocalInterfaceHandler
          @maxDepth   = downDir[:depthSearch]
 
          if @isDebugMode then
-            puts "Polling #{@remotePath}"
+            @logger.debug("Polling #{@remotePath}")
          end
          
          formerDir= Dir.pwd #shuold not be necessary; safety reasons
@@ -154,12 +154,12 @@ class LocalInterfaceHandler
    def exploreLocalTree(relativeFile)
 
       if @isDebugMode == true then
-         puts "LocalInterfaceHandler::exploreLocalTree #{relativeFile}"
+         @logger.debug("LocalInterfaceHandler::exploreLocalTree #{relativeFile}")
       end
 
       # Treat normal files
       if File.file?(relativeFile) then
-         if @isDebugMode == true then  puts "Found #{%Q{#{@pwd}/#{relativeFile}}}" end
+         if @isDebugMode == true then  @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
          @newArrFile << %Q{#{@pwd}/#{relativeFile}}
       else #its a dir
          #be sure if it is
@@ -170,7 +170,7 @@ class LocalInterfaceHandler
                #and the depth is okey explore dir.
                if @depthLevel < @maxDepth then
                   if @isDebugMode == true then
-                     puts "LocalInterfaceHandler::exploreLocalTree change dir to #{relativeFile}"
+                     @logger.debug("LocalInterfaceHandler::exploreLocalTree change dir to #{relativeFile}")
                   end 
                   #get into directory (stack recursion)
                   Dir.chdir(relativeFile)
@@ -189,7 +189,7 @@ class LocalInterfaceHandler
                   @depthLevel = @depthLevel - 1
                end             
             else #download whole dir
-               if @isDebugMode == true then puts "Found #{%Q{#{@pwd}/#{relativeFile}}}" end
+               if @isDebugMode == true then @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
                @newArrFile << %Q{#{@pwd}/#{relativeFile}}
             end
 
@@ -208,7 +208,7 @@ class LocalInterfaceHandler
          begin
             FileUtils.link(filename,File.basename(filename))
          rescue
-            if @isdebugMode then puts "Could not make a Hardlink of #{filename} to #{Dir.pwd}. Copying the file" end
+            if @isdebugMode then @logger.debug("Could not make a Hardlink of #{filename} to #{Dir.pwd}. Copying the file") end
             begin
                FileUtils.copy(filename,'.'+File.basename(filename))
                FileUtils.move('.'+File.basename(filename), File.basename(filename))

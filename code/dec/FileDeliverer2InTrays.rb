@@ -309,7 +309,7 @@ private
       bCheckOK = true
  
       if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
-         puts "DCC_CONFIG environment variable not defined !  :-(\n"
+         puts "DEC_CONFIG environment variable not defined !  :-(\n"
          bCheckOK = false
          bDefined = false
       end

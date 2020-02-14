@@ -89,7 +89,7 @@ class SentFile < ActiveRecord::Base
    
    def SentFile.setBeenSent(file, interface, deliveryMethod, size = nil, hParams=nil)
      
-      puts "DEC_DatabaseModel::SentFile.setBeenSent #{file}, #{interface}, #{deliveryMethod}, , #{size}, #{hParams}"
+      # puts "DEC_DatabaseModel::SentFile.setBeenSent #{file}, #{interface}, #{deliveryMethod}, , #{size}, #{hParams}"
  
       # Verify all the "extra" params exist in SENT_FILES table 
       if hParams != nil then
