@@ -28,7 +28,8 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.13" =>    "gem now includes the gemfile dependencies for their resolution at installation time", \
+      "1.0.13" =>    "Support of authentication for HTTP(S) GET and DELETE verbs\n\
+          gem now includes the gemfile dependencies for their resolution at installation time", \
       "1.0.12" =>    "Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE\n\
           for pull mode (dec_incoming_files.xml)\n\
           DEC RetrievedFiles report updated to Sentinels naming convention:\n\

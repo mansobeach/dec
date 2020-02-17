@@ -15,6 +15,14 @@
       </Interface>
 
       <Interface>
+         <Name>WEBDAV_SECURE</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_webdav_secure</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">tmp</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
          <Name>PARALLEL_HTTP</Name>
          <LocalInbox>/tmp/dec/in_basket_if_http</LocalInbox>
          <DownloadDirs>
@@ -73,6 +81,7 @@
          <Description>TAI UTC correlation</Description>
          <FromList>
             <Interface>WEBDAV</Interface>
+            <Interface>WEBDAV_SECURE</Interface>
             <Interface>PARALLEL_HTTP</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
@@ -91,6 +100,7 @@
          <Description>TAI UTC correlation</Description>
          <FromList>
             <Interface>WEBDAV</Interface>
+            <Interface>WEBDAV_SECURE</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
             <Interface>PARALLEL_HTTP</Interface>

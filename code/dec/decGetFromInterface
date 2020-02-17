@@ -328,6 +328,8 @@ end
 def body
    @logger.info("Polling #{@entity} Interface")
    
+   # @logger.info("Debug mode is #{@isDebugMode}")
+   
    @entityConfig  = ReadInterfaceConfig.instance
    bRegisterDir   = @entityConfig.registerDirContent?(@entity)
    
@@ -337,12 +339,16 @@ def body
    
    ## ----------------------------------------------
    if bRegisterDir == false or (@listOnly == true and @isNoDB == false) then
-      @logger.debug("File Tracking for #{@entity} is disabled")
+      if @isDebugMode == true then
+         @logger.debug("File Tracking for #{@entity} is disabled")
+      end
    end
    ## ----------------------------------------------   
 
    if bRetrieveFiles == false or @listOnly == true then
-      @logger.debug("File Retrieval is disabled")
+      if @isDebugMode == true then
+         @logger.debug("File Retrieval is disabled")
+      end
    end
    
    ## ----------------------------------------------
@@ -378,10 +384,11 @@ def body
          if @isNoDB == false then
             @logger.info("New file(s) available from #{@entity} I/F for tracking")            
          
-            listOfFiles.each{|fullpath|
-               puts File.basename(fullpath)
-            }
-            puts
+            if @isDebugMode == true then
+               listOfFiles.each{|fullpath|
+                  @logger.debug("#{File.basename(fullpath)} is available at #{@entity}")
+               }
+            end
          end
 
          if @listUnknown == true then
@@ -423,7 +430,7 @@ def body
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
             if @listOnly == true then
-               puts File.basename(fullpath)
+               @logger.info("#{File.basename(fullpath)} is available at #{@entity} I/F")
             end
          }
          

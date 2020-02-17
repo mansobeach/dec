@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
                      'decUnitTests', \
                      'decUnitTests_IERS', \
                      'decUnitTests_ncftpput', \
+                     'decUnitTests_WEBDAV_SECURE', \
                      'decUnitTests_mail' \
                      ]
 

@@ -98,13 +98,16 @@ class DEC_ReceiverFromInterface
          checker.setDebugMode
       end
       
-      retVal      = checker.check
+     # retVal      = checker.check
+
+      retVal = true
 
       if retVal == true then
          if @isDebugMode == true then
-            @logger.debug("#{entity} I/F is configured correctly\n")
+            @logger.debug("#{entity} I/F is configured correctly")
 	      end
       else
+         @logger.error("#{entity} I/F is not configured correctly")
          raise "\nError in DEC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
       end
      
@@ -248,11 +251,7 @@ class DEC_ReceiverFromInterface
             if @isDebugMode == true then
                @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
             end
-            
-            if @isDebugMode == true then
-               @logger.debug(list)
-            end
-            
+                        
             perf = measure { 
                list = getWebDavFileList 
                if @isDebugMode == true then
@@ -494,8 +493,9 @@ class DEC_ReceiverFromInterface
       ## if credentials are not empty in the configuration file
       if user != "" or (pass != "" and pass != nil) then
          if @isDebugMode == true then
-            @logger.debug("Passing Credentials #{user} #{pass} to WebDAV server")
+            @logger.debug("Passing Credentials to WebDAV server")
          end
+         
          dav.credentials(user, pass)
       end
       ## -------------------------------
@@ -512,7 +512,9 @@ class DEC_ReceiverFromInterface
          end
          
          begin
+            bFound = false
             dav.find(@remotePath,:recursive => @recursive,:suppress_errors=>true) do | item |
+               bFound = true
                if @isDebugMode == true then
                   @logger.debug("Found #{item.url.to_s}")
                end 
@@ -520,7 +522,13 @@ class DEC_ReceiverFromInterface
                   @newArrFile << item.url.to_s
                end
             end
+            # dirty hack since exception is not raised but Warning: 401 "Unauthorized": /tmp
+            if bFound == false then
+               @logger.error("Could not reach #{@remotePath} for #{@entity} / check credentials")
+               next
+            end
          rescue Exception => e
+            @logger.error("Could not reach #{@remotePath}")
             @logger.error(e.to_s)
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
@@ -1044,6 +1052,10 @@ private
       # Curl::Err::SSLPeerCertificateError ?????
       http.ssl_verify_host = false
       
+      http.http_auth_types = :basic
+      http.username = @ftpserver[:user]
+      http.password = @ftpserver[:password]
+      
       http.perform
 
       ## TO DO : replace in memory file with 
@@ -1288,11 +1300,54 @@ private
          if @isDebugMode == true then
             @logger.debug("Deleting #{filename}")
          end
-         http = Curl.delete(filename)
+
+      host        = ""
+      if isSecureMode == false then
+         host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      else
+         host        = "https://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      end
+         
+      port        = @ftpserver[:port].to_i
+      user        = @ftpserver[:user]
+      pass        = @ftpserver[:password]
+      dav         = Net::DAV.new(host, :curl => false)
+      
+      ## -------------------------------
+      ## new configuration item VerifyPeerSSL is needed
+      ##
+      # dav.verify_server = true
+      dav.verify_server = false
+      ## -------------------------------
+ 
+      ## -------------------------------
+      ## if credentials are not empty in the configuration file
+      if user != "" or (pass != "" and pass != nil) then
+         if @isDebugMode == true then
+            @logger.debug("Passing Credentials to WebDAV server")
+         end
+         
+         dav.credentials(user, pass)
+      end
+      ## -------------------------------         
+         
+         
+         dav.delete(filename)   
+                  
+#         c = Curl::Easy.http_delete(filename) 
+#         c.http_auth_types = :basic
+#         c.username = @ftpserver[:user]
+#         c.password = @ftpserver[:password]
+#         c.perform         
+#         @logger.debug(c.body_str)
+         
+         # http = Curl.delete(filename)
       rescue Exception => e
+         @logger.error("Could not delete #{filename}")
          @logger.error(e.to_s)
          if @isDebugMode == true then
             @logger.debug(e.backtrace)
+            puts e.backtrace
          end
          return false
       end

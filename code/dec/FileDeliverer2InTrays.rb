@@ -128,9 +128,11 @@ class FileDeliverer2InTrays
             end
             
             if dimsName != false then
-               dimsName.each{|dim|
-                  @logger.debug("#{file} is disseminated to #{dim}")
-               }
+               if @isDebugMode == true then
+                  dimsName.each{|dim|
+                     @logger.debug("#{file} is disseminated to #{dim}")
+                  }
+               end
             else
                # @logger.warn("#{file} has no In-Tray config")
                @logger.debug("#{file} has no In-Tray config")
@@ -228,9 +230,11 @@ class FileDeliverer2InTrays
       end   
                
       if dimsName != false then
-         dimsName.each{|dim|
-            @logger.debug("#{file} is disseminated to #{dim}")
-         }
+         if @isDebugMode == true then
+            dimsName.each{|dim|
+               @logger.debug("#{file} is disseminated to #{dim}")
+            }
+         end
       else
          # @logger.warn("#{file} has no In-Tray config")
          @logger.debug("#{file} has no In-Tray config")
@@ -246,7 +250,7 @@ class FileDeliverer2InTrays
          end
                   
          if @isDebugMode == true then
-			   logger.debug("#{file} is disseminated in: #{dimsDirs}")
+			   @logger.debug("#{file} is disseminated in: #{dimsDirs}")
 		   end
          
 #         disseminate(file, directory, dimsDirs, hdlinked)
@@ -269,9 +273,13 @@ class FileDeliverer2InTrays
          # the information and perform a later manual dissemination 
          if ret == true then
             begin
-               @logger.debug("Removing #{directory}/#{file}")
+               if @isDebugMode == true then
+                  @logger.debug("Removing #{directory}/#{file}")
+               end
                FileUtils.rm_rf("#{directory}/#{file}")
-               @logger.debug("#{file} has been disseminated locally according to rules")
+               if @isDebugMode == true then
+                  @logger.debug("#{file} has been disseminated locally according to rules")
+               end
             rescue Exception
                @logger.error("dissemination : Could not delete #{directory}/#{file}")
                exit(99)
@@ -400,8 +408,10 @@ private
             if bRet == false then
                @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
                bReturn = false
-            else  
-               @logger.debug("chmod a+r #{targetDir}/#{file}")
+            else
+               if @isDebugMode == true then
+                  @logger.debug("chmod a+r #{targetDir}/#{file}")
+               end
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
                @logger.info("#{file} has been disseminated into #{targetDir}")
@@ -413,9 +423,9 @@ private
                   event.setDebugMode
                end
       
-               
-   
-               @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
+               if @isDebugMode == true then
+                  @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")
+               end
                # @logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
                
                event.trigger(entity, "NEWFILE2INTRAY", hParams, @logger)
@@ -456,8 +466,11 @@ private
                   end
 
                   #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
-                  @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
-      
+                  
+                  if @isDebugMode == true then
+                     @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+                  end
+                  
                   event.trigger(@entity, "NEWFILE2INTRAY", hParams, @logger)   
 
                end
@@ -497,8 +510,9 @@ private
                   event.trigger(entity, "NEWFILE2INTRAY")
    
                   #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
-                  @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
-                  
+                  if @isDebugMode == true then
+                     @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+                  end
                end
 				end
 			end
@@ -523,7 +537,9 @@ private
          compress = @dimConfig.getInTrayCompress(dim)
 
          if compress == nil then
-            @logger.debug("No Compression #{dim} - #{file}")
+            if @isDebugMode == true then
+               @logger.debug("No Compression #{dim} - #{file}")
+            end
             next
          end
                
