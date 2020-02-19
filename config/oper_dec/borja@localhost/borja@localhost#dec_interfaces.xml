@@ -24,6 +24,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>false</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -82,6 +83,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>false</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -139,6 +141,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>false</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -194,6 +197,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>false</DeleteFlag>
       <PassiveFlag>false</PassiveFlag>
@@ -252,6 +256,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -309,6 +314,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -363,6 +369,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>

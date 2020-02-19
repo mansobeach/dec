@@ -36,6 +36,17 @@ require 'dec/ReadConfigIncoming'
 ###  4.3  - test_decGetFromInterface_WEBDAV_SECURE
 ###  4.4  - test_decGetFromInterface_PARALLEL_HTTP
 
+### openssl req -x509 -out localhost.crt -keyout localhost.key   -newkey rsa:2048 -nodes -sha256   -subj '/CN=localhost' -extensions EXT -config <( \
+###   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+
+### openssl pkcs12 -export -out certificate.pfx -inkey privateKey.key -in certificate.crt
+
+### curl -i --head -u borja:perrillo --ssl https://localhost:8080
+
+### curl -i --head -u borja:perrillo --tlsv1 https://localhost:8080
+
+### ruby -ropenssl -e 'puts OpenSSL::OPENSSL_VERSION'
+
 # Select a single test of the suite
 
 # ruby decUnitTests -n test_my_method 
@@ -365,7 +376,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
-      cmd = "decCheckConfig -e WEBDAV_SECURE -i"
+      cmd = "decCheckConfig -e WEBDAV_SECURE -i -D"
       puts cmd
       assert(system(cmd), cmd)
 

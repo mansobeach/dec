@@ -261,15 +261,23 @@ class ReadInterfaceConfig
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isCompressed]
 	end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 	
-   # Get the configuration FTP config flag <SecureFlag>
-   # - mnemonic (IN): Entity name
+   ## Get the configuration FTP config flag <SecureFlag>
+   ## - mnemonic (IN): Entity name
 	def isSecure?(mnemonic)
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isSecure]
 	end
-	#-------------------------------------------------------------
+	## -----------------------------------------------------------
+
+   ## Get the configuration FTP config flag <VerifyPeerSSL>
+   ## - mnemonic (IN): Entity name
+	def isVerifyPeerSSL?(mnemonic)
+	   ftp = getFTPServer4Receive(mnemonic)
+		return ftp[:verifyPeerSSL]
+	end
+	## -----------------------------------------------------------
 
    # Get the configuration FTP config Clean Up Freq
    # - mnemonic (IN): Entity name
@@ -375,9 +383,7 @@ private
 	   Struct.new("Entity", :mnemonic, :description, :incomingDir,
                       :outgoingDir, :Server, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
-		Struct.new("Server", :mnemonic, :protocol, :hostname, :port,
-                   :user, :password, :isTracked, :isRetrieved, 
-                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
+		Struct.new("Server", :mnemonic, :protocol, :hostname, :port, :user, :password, :isTracked, :isRetrieved, :isSecure, :verifyPeerSSL, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
                    :uploadTemp, :arrDownloadDirs)
 #		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
 #                   :user, :password, :ServerMirror, :isTracked, :isRetrieved, 
@@ -543,6 +549,7 @@ private
       bTracked       = false
 		bRetrieved     = false
       bSecure        = false
+      bVerifyPeerSSL = false
 		bCompress      = false
 		bDelete        = false      
       bErrorValue    = false
@@ -575,6 +582,14 @@ private
             bSecure = true
          else
             bSecure = false
+         end
+      end
+
+      if !xmlstruct.elements["VerifyPeerSSL"].nil? then
+         if xmlstruct.elements["VerifyPeerSSL"].text.upcase == "TRUE" then
+            bVerifyPeerSSL = true
+         else
+            bVerifyPeerSSL = false
          end
       end
 
@@ -715,6 +730,7 @@ private
 								 bTracked,
                          bRetrieved,
                          bSecure,
+                         bVerifyPeerSSL,
                          bCompress,
 								 bDelete,
                          bPassive,

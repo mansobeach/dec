@@ -485,8 +485,9 @@ class DEC_ReceiverFromInterface
       ## -------------------------------
       ## new configuration item VerifyPeerSSL is needed
       ##
-      # dav.verify_server = true
-      dav.verify_server = false
+
+      dav.verify_server = @entityConfig.isVerifyPeerSSL?(@entity)
+
       ## -------------------------------
  
       ## -------------------------------

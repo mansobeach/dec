@@ -33,6 +33,7 @@ require 'dec/ReadConfigIncoming'
 ### 2.1 - purge archive
 ### 2.2 - inventory database is destroyed
 ##
+###  0  - test_parsers
 ###  1  - test_dec_config
 ###  2  - test_commandline_helpers
 ###  3  - test_decConfigInterface2DB
@@ -601,6 +602,17 @@ class DECTestCase < Test::Unit::TestCase
       puts
       puts ftpRecv
       puts
+
+      ftReadConf = ReadInterfaceConfig.instance
+      ftReadConf.update
+      ftpRecv    = ftReadConf.getFTPServer("WEBDAV_SECURE")
+      
+      puts
+      puts ftpRecv
+      puts
+
+      puts ftReadConf.isVerifyPeerSSL?("WEBDAV_SECURE")
+      puts ftReadConf.isVerifyPeerSSL?("WEBDAV")
 
       # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
    end
