@@ -169,9 +169,11 @@ class FileDeliverer2InTrays
                # the information and perform a later manual dissemination 
                if ret == true then
                   begin
-                     @logger.info("Removing #{dir}/#{file}")
+                     if @isDebugMode == true then
+                        @logger.debug("#{file} has been disseminated locally according to rules")
+                        @logger.debug("Removing #{dir}/#{file}")
+                     end
                      FileUtils.rm_rf("#{dir}/#{file}")
-                     @logger.info("#{file} has been disseminated locally according to rules")
                   rescue Exception
                      @logger.error("Could not delete #{dir}/#{file}")
                      exit(99)

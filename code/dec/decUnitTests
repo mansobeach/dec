@@ -964,6 +964,11 @@ class DECTestCase < Test::Unit::TestCase
 
       arr = Dir["/tmp/DEC*.log"]
       
+      cmd = "grep WARN #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "WARN should be raised for previously received files  #{__method__.to_s}") 
+            
+      
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 

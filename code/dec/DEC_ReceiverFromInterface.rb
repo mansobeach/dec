@@ -1589,11 +1589,10 @@ private
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
+               @logger.warn("#{File.basename(filename)} already received from #{@entity}")
+               
                arrDelete << fullpath
-               if @isDebugMode == true or true then
-                  @logger.info("#{File.basename(filename)} already received from #{@entity}")
-               end
-                
+               
                ## --------------------------------
                ##
                ## dec_config.xml <DeleteDuplicatedFiles>
