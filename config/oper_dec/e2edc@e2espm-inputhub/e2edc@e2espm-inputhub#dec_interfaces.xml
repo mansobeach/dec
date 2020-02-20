@@ -24,6 +24,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
@@ -82,6 +83,7 @@
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
       <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
