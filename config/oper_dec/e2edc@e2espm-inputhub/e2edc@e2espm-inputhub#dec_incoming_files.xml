@@ -393,6 +393,16 @@
         </ToList>
      </File>
 
+     <File Type="*REP_OPDC__*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
+           <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
      <File Type="*REP_OPLTAS*">
         <HardLink>True</HardLink>
         <ToList>
