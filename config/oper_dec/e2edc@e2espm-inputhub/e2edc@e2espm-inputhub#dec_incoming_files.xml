@@ -399,6 +399,7 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
