@@ -182,6 +182,13 @@
           </ToList>
       </File>
 
+      <File Type="*_VGS*">
+          <HardLink>False</HardLink>
+                 <ToList>
+                    <Intray>SHADOW_S2PDGS</Intray>
+          </ToList>
+      </File>
+
       <File Type="S2__OPER_REP_OPDPC*">
           <HardLink>False</HardLink>
           <ToList>
