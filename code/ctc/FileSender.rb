@@ -78,7 +78,7 @@ class FileSender
    def setUploadPrefix(prefix)
       @prefix = prefix
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    ## Set the files to be sent.
    ## - arrFiles (IN): Array of files to be sent
@@ -321,7 +321,14 @@ class FileSender
             rescue Exception => e
                @logger.error("#{e.to_s}")
                retVal= false 
-            end            
+            end   
+         when "WEBDAV" then
+            retVal = sendFileHTTP(file, bDeleteSource)
+         when "HTTP" then
+            retVal = sendFileHTTP(file, bDeleteSource)
+         else
+            @logger.error("protocol #{@protocol} not implemented")
+            raise "protocol #{@protocol} not implemented"      
       end   #end of case                                 
     
       Dir.chdir(prevDir)
@@ -338,6 +345,13 @@ class FileSender
       
    end
 
+
+   ## -----------------------------------------------------------
+
+   def sendFileHTTP(file, bDeleteSource = true)
+      @logger.debug("FileSender::sendFileHTTP => #{file} / #{bDeleteSource}")
+      return true
+   end
 
    ## -----------------------------------------------------------
 

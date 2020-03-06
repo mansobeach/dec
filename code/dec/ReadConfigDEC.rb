@@ -327,16 +327,16 @@ private
       # Process the Configuration Download Options
       XPath.each(xmlFile, "Configuration/Options/Download"){      
          |option|  
-
+         
          XPath.each(option, "DownloadDirs"){
             |option_1|
             @downloadDirs = option_1.text.downcase
          }
-         XPath.each(option, "DeleteDuplicated"){
+         XPath.each(option, "DeleteDuplicatedFiles"){
             |option_1|
             @deleteDuplicated = option_1.text.downcase
          }
-         XPath.each(option, "DeleteUnknown"){
+         XPath.each(option, "DeleteUnknownFiles"){
             |option_1|
             @deleteUnknown = option_1.text.downcase
          }

@@ -150,7 +150,7 @@ class FileDeliverer2InTrays
                end
                          
                if @isDebugMode == true then
-					   logger.debug("#{file} is disseminated to: #{dimsName}")
+					   @logger.debug("#{file} is disseminated to: #{dimsName}")
 					end
 
                # main dissemination method
@@ -280,7 +280,7 @@ class FileDeliverer2InTrays
                end
                FileUtils.rm_rf("#{directory}/#{file}")
                if @isDebugMode == true then
-                  @logger.debug("#{file} has been disseminated locally according to rules")
+                  @logger.debug("File #{file} has been disseminated locally according to rules")
                end
             rescue Exception
                @logger.error("dissemination : Could not delete #{directory}/#{file}")
@@ -416,7 +416,7 @@ private
                end
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
-               @logger.info("#{file} has been disseminated into #{targetDir}")
+               @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
                             
                event  = EventManager.new
       
@@ -455,11 +455,12 @@ private
                   @logger.debug("Could not Link File #{file} to the Target Directory")
                   bReturn = false
                else
-                  
-                  @logger.debug("chmod a=r #{targetDir}/#{file}")
+                  if @isDebugMode == true then
+                     @logger.debug("chmod a=r #{targetDir}/#{file}")
+                  end
                   FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
                   
-                  @logger.info("#{file} has been disseminated into #{targetDir}")
+                  @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
                   
                   event  = EventManager.new
       
@@ -501,7 +502,7 @@ private
                   Dir.chdir(prevDir)
                   return false
                else
-                  @logger.info("#{file} has been disseminated into #{targetDir}")
+                  @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
                   
                   event  = EventManager.new
       
@@ -566,7 +567,7 @@ private
                File.delete(targetFile)
                retVal = false
             else
-               msg = "#{file} has been compressed in #{compress} for #{dim}"
+               msg = "[DEC_116] Compressed #{file} in #{compress} at #{inTray} Intray"
                @logger.info(msg)
             end
          else

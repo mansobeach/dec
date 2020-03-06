@@ -37,6 +37,9 @@ This section contains the cheat-list of commands to handle docker *images*.
 -	Load an Image from a tar file:  
 	`docker load --input <tarfile>`
 
+-  Download an image from the repository
+   `docker pull nginx`
+
 `docker image prune --filter "dangling=true"`
 
 `docker image prune --filter="label!=maintainer"`\`
@@ -223,3 +226,15 @@ References
 ==========
 
 [how to start services in containers](https://stackoverflow.com/questions/25135897/how-to-automatically-start-a-service-when-running-a-docker-container)
+
+
+
+
+Use Case nginx
+==============
+
+
+`docker pull nginx`
+
+`docker run --name casale-nginx -d -p 8080:80 -d nginx`
+

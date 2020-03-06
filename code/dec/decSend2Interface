@@ -279,12 +279,21 @@ def main
          
    ## ------------------------------------------------------------------
    ##  AUTOMATION FileSender Management
+   
    @bNewLoop = true
    
    while @bNewLoop
       @bNewLoop = false
 
       bSent = deliverByFTP
+
+      # Using http
+      if bSent == true then
+         bSent = deliverByHTTP
+      else
+         deliverByHTTP
+      end   
+
 
       # Deliverying files via mailbody
       if bSent == true then
@@ -417,7 +426,7 @@ def deliverByBodyMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered via mailbody to #{@entity}")
+            @logger.info("No files to be delivered using mailbody mechanism to #{@entity}")
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -451,7 +460,7 @@ def deliverByMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered via email to #{@entity}")
+            @logger.info("No files to be delivered using email to #{@entity}")
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -467,6 +476,42 @@ def deliverByMail
    end
    return bSent
 end
+## ---------------------------------------------------------
+
+def deliverByHTTP
+   bNewFiles   = true
+   bSent       = true
+   bFirst      = true
+   
+   event  = EventManager.new
+
+   if @isDebugMode == true then
+      event.setDebugMode
+   end
+
+   while bNewFiles
+      sender = DEC_FileSender.new(@entity, "HTTP", @isDeliveredOnce, @isDebugMode, @isNoDB)
+      if @isDebugMode == true then
+         sender.setDebugMode
+      end
+      
+      numFiles = sender.listFileToBeSent.length
+
+      if numFiles == 0 then
+         bNewFiles = false
+         if bFirst == true then
+            @logger.info("No files to be delivered using http to #{@entity}")
+         end
+      else
+         bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         if bSent == true then
+            @logger.info("Successful delivery of files towards #{@entity}")
+         end
+      end
+   end
+   return bSent
+end
+
 ## ---------------------------------------------------------
 
 def deliverByFTP
@@ -490,7 +535,7 @@ def deliverByFTP
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered via ftp to #{@entity}")
+            @logger.info("No files to be delivered using ftp to #{@entity}")
          end
       else
          bSent = sender.deliver(@isDeliveredOnce, @hParams)

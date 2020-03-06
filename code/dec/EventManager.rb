@@ -130,7 +130,6 @@ class EventManager
    ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "EventManager debug mode is on"
    end
    ## -----------------------------------------------------------
 

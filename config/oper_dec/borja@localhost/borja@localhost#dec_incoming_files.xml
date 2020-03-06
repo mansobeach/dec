@@ -165,6 +165,13 @@
             Only the first rule matching the file pattern is applied     
       -->
 
+         <File Type="*DECUNKNOWN*LOCALHOST_NOT_SECURE*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS_GRAVEYARD</Intray>
+            </ToList>
+         </File>
+
          <File Type="*DEC_F_RECV*LOCALHOST_NOT_SECURE*">
             <HardLink>False</HardLink>
             <ToList>
@@ -188,7 +195,7 @@
          </File>   
    
          <File Type="tai-utc*">
-            <HardLink>False</HardLink>
+            <HardLink>true</HardLink>
             <ToList>
                <Intray>GPS</Intray>
                <Intray>S2A</Intray>
@@ -196,7 +203,7 @@
          </File>
    
          <File Type="finals*">
-            <HardLink>false</HardLink>
+            <HardLink>true</HardLink>
             <ToList>
                <Intray>S2A</Intray>
                <Intray>GPS</Intray>

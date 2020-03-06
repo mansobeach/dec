@@ -21,7 +21,7 @@
 
  <xs:simpleType name="DeliveryMethodsType">
   <xs:restriction base="xs:string">
-   <xs:pattern value="[(EMAIL)|(FTP)|(MAILBODY)]+(;EMAIL|;FTP|;MAILBODY)*"/>
+   <xs:pattern value="[(EMAIL)|(FTP)|(MAILBODY)(HTTP)]+(;EMAIL|;FTP|;MAILBODY|;HTTP)*"/>
   </xs:restriction>
  </xs:simpleType>
 

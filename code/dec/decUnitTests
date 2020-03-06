@@ -49,6 +49,7 @@ require 'dec/ReadConfigIncoming'
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
 ###  7.1  - test_decSend2Interface_LOCAL
+###  7.2  - test_decSend2Interface_HTTP
 ###  8  - test_decDeliverFiles
 
 # Select a single test of the suite
@@ -78,6 +79,7 @@ require 'dec/ReadConfigIncoming'
 ##Or, if you don't want/need a background service you can just run:
 ##  sudo vsftpd
 
+### brew services start nginx
 
 class DECTestCase < Test::Unit::TestCase
 
@@ -144,6 +146,12 @@ class DECTestCase < Test::Unit::TestCase
 =end      
 
       system("\\rm -f /tmp/test_decGetFromInterface_PARALLEL_HTTP")
+
+      @@arrUnknownFiles = [ \
+                           "You-Do-Not-Know-Me_1.yet", \
+                           "You-Do-Not-Know-Me_2.yet", \
+                           ]
+
 
       @@arrDownloadFiles = [ \
                            "finals.all", \
@@ -290,6 +298,17 @@ class DECTestCase < Test::Unit::TestCase
                or x.upcase.include?("FILESYSTEM") \
                or x.upcase.include?("WEBDAV") then
                @@arrDownloadFiles.each{|filename|
+                  dir = arr[0][:directory]
+                  if dir[0,1] != '/' then
+                     dir = "~/#{arr[0][:directory]}"
+                  end
+                  puts "============================"
+                  puts "#{filename}    => #{dir}/#{filename}"
+                  cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
+                  puts cmd
+                  system(cmd)
+               }
+               @@arrUnknownFiles.each{|filename|
                   dir = arr[0][:directory]
                   if dir[0,1] != '/' then
                      dir = "~/#{arr[0][:directory]}"
@@ -839,22 +858,24 @@ class DECTestCase < Test::Unit::TestCase
       
       Dir.chdir(prevDir)
 
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray"
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
       puts cmd
       assert(system(cmd), cmd)
 
-      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+#      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
+#      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
+#      FileUtils.rm_f("#{@finalDir}/finals.all")
+#      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
 
       # check presence of generated report file
-      Dir.chdir(ReadConfigDEC.instance.getReportDir)
+      # Dir.chdir(ReadConfigDEC.instance.getReportDir)
+      Dir.chdir("/tmp/dec_local_dissemination/DEC_Reports_Graveyard")
       arr = Dir["S2*_OPER_DEC_F_RECV*"]
       assert(!arr.empty?, "report directory is not empty")
       FileUtils.rm_f("#{ReadConfigDEC.instance.getReportDir}/*")
       
-      cmd = "cat #{ReadConfigDEC.instance.getReportDir}/#{arr[0]}"
+      # cmd = "cat #{ReadConfigDEC.instance.getReportDir}/#{arr[0]}"
+      cmd = "cat /tmp/dec_local_dissemination/DEC_Reports_Graveyard/#{arr[0]}"
       puts cmd
       system(cmd)
       
@@ -897,7 +918,8 @@ class DECTestCase < Test::Unit::TestCase
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
-      arr = Dir["#{reportDir}/*"]
+      # arr = Dir["#{reportDir}/*"]
+      arr = Dir["/tmp/dec_local_dissemination/DEC_Reports_Graveyard/*"]
       assert(arr.length>0, "delivery report generation")
 
       ## execute a new iteration of decGetFromInterface without flag --no-intray
@@ -908,6 +930,11 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep WARN #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "WARN should be raised for previously received files  #{__method__.to_s}") 
+
       
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
@@ -963,11 +990,7 @@ class DECTestCase < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
 
       arr = Dir["/tmp/DEC*.log"]
-      
-      cmd = "grep WARN #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "WARN should be raised for previously received files  #{__method__.to_s}") 
-            
+                  
       
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
@@ -1839,6 +1862,53 @@ class DECTestCase < Test::Unit::TestCase
       puts      
 
       cmd = "decStats"
+      assert(system(cmd), cmd)
+
+   end
+
+   ## -------------------------------------------------------------
+
+   ## -------------------------------------------------------------
+
+   ## test for pushing files with HTTP protocol towards the interfaces
+   ##
+   ##
+
+   def test_decSend2Interface_HTTP
+
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
+
+      ## for HTTP protocol the same files for download are used
+      
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decGetFiles4Transfer"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic WEBDAV -D"
+      puts cmd
       assert(system(cmd), cmd)
 
    end

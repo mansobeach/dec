@@ -26,6 +26,13 @@
          <UploadDir>/tmp/dec_simul_if/filesystem/upload</UploadDir>
          <UploadTemp>/tmp/dec_simul_if/filesystem/upload/_TEMP_</UploadTemp>
       </Interface>      
+
+      <Interface>
+         <Name>WEBDAV</Name>
+         <LocalOutbox>$DEC_TMP/../dec/out_basket_webdav</LocalOutbox>
+         <UploadDir>/tmp/dec_simul_if/webdav/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/webdav/upload/_TEMP_</UploadTemp>
+      </Interface>
             
    </ListInterfaces>
 
@@ -36,7 +43,8 @@
       <File Type="finals.all"> 
          <Description></Description>
          <ToList>
-            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
+            <Interface Name="FILESYSTEM"     Compress="7Z"     DeliveryMethods="FTP" />
+            <Interface Name="WEBDAV"         Compress="7Z"     DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
@@ -44,6 +52,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
+            <Interface Name="WEBDAV"        Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
    

@@ -1,0 +1,98 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Troubleshooting
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Information Log Messages
+
+\section{Information Messages}
+
+\subsection{Index of Messages}
+
+\begin{itemize}
+	\item \textbf{[DEC\_105]} File "filename" is available at "interface" I/F
+	\item \textbf{[DEC\_110]} Downloaded "filename" from "interface" I/F with size "num\_bytes" bytes
+	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
+	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
+	\item \textbf{[DEC\_120]} Deleting unknown file "filename" available at "interface" I/F
+	\item \textbf{[DEC\_125]} Deleting duplicated file "filename" previously received from "interface" I/F
+\end{itemize}
+
+\subsection{[DEC\_105] File Available}
+The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
+
+\subsection{[DEC\_110] File Downloaded}
+The file referenced in the message has been downloaded from the interface and placed into the \hyperref[LocalInbox]{\textit{LocalInbox}} associated to such interface. If the same file is available again at the same interface, the DEC will detect a file duplication condition.
+
+\subsection{[DEC\_115] File Disseminated}
+The file referenced in the message met any of the and it has been moved from \hyperref[LocalInbox]{\textit{LocalInbox}} into the Intray(s) matching the first \hyperref[Dissemination rules]{\textit{dissemination rule}}.
+
+\subsection{[DEC\_116] File Compressed}
+The file referenced in the message has been compressed according to the \hyperref[Dissemination rules]{\textit{dissemination rule}} \textit{Compress} optional configuration item of the \textit{Intray} entity.
+
+\subsection{[DEC\_120] Unknown File Deleted}
+According to the configuration item \hyperref[DeleteUnknownFiles]{\textit{DeleteUnknownFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which did not match any filtering rule defined in the configuration \textit{dec\_incoming\_files.xml} has been deleted from the \textit{DownloadDirs} \textit{Directory} of such interface it was present.
+
+\subsection{[DEC\_125] Duplicated File Deleted}
+According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{DeleteDuplicatedFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which has been previously downloaded successfully such interface is considered duplicated and it is removed directly in download directory without downloading it.
+
+% ------------------------------------------------------------------------------
+% Warning Messages
+
+\section{Warning Messages}
+
+\subsection{Index of Messages}
+
+\begin{itemize}
+	\item \textbf{[DEC\_301]} Detected duplicated file "filename" already received from "interface" I/F
+	\item \textbf{[DEC\_320]} Detected unknown file "filename" available at "interface" I/F
+\end{itemize}
+
+\subsection{[DEC\_301] Duplicated File Available}
+The file reported is available again at the \textit{pull} interface ; if the inventory is active, DEC retrieves just once a given file from each interface. This message will be reported during every polling iteration unless the \textit{duplicated} file is removed from the interface.
+
+\subsection{[DEC\_320] Unknown File Available}
+The file reported is available in the \textit{pull} interface, but did not match any filtering rule defined in the configuration \textit{dec\_incoming\_files.xml}. This message will be repeated every polling iteration unless the \textit{unknown} file is removed from the interface.
+
+% ------------------------------------------------------------------------------
+% Error Messages
+
+
+\section{Error Messages}
+
+\begin{itemize}
+%	\item DEC_000 <interface> I\/F is not configured correctly: TBW
+%	\item \textit[DEC_002] Directory is unreachable: TBW
+	\item \textit{[DEC\_000] \textit{interface} I\/F is not configured correctly}: TBW
+	\item \textit{[DEC\_002] Directory is unreachable}: TBW
+	\item \textit{[DEC\_200] Failed sending filename}: TBW
+\end{itemize}
+
+\subsection{[DEC\_000]}
+\textit{Interface xxxx is not configured correctly}: TBW
+
+\subsection{[DEC\_200]}
+\textit{Failed sending  to interface}: TBW
+
+% ------------------------------------------------------------------------------
+% Debug Messages
+
+
+\section{Debug Messages}
+
+
+
+
+
+\end{document}
+

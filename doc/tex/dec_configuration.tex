@@ -42,7 +42,7 @@ The \textit{Server} configuration item defines the parameters which rule the net
 \par
 \noindent
 \begin{itemize}
-	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"}, \textit{"WEBDAV"}, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
+	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"}, \textit{"WEBDAV"} - http and http(s) -, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
 	\item \textit{Hostname} : hostname of the interface
 	\item \textit{Port} : TCP port
 	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server
@@ -113,6 +113,7 @@ The configuration of the pull circulation rules is defined in \textit{dec\_incom
 The \textit{Interface} configuration item defines the interfaces pick-up point(s) from which the exposed files are polled.
 \par
 \noindent
+\label{LocalInbox}
 \begin{itemize}
 	\item \textit{Name} : this is the configuration item \textit{identifier} which is used to identify a given interface and refer to it in other sections of the configuration
 	\item \textit{LocalInbox} : this is the \textit{local} directory in which files are initially placed upon successful download ; if no dissemination rule is applied, this directory becomes the final destination  
@@ -189,7 +190,9 @@ This configuration item defines the filters to select the files to be pulled fro
 \end{lstlisting}
 
 \subsection{Dissemination rules}
-This configuration item defines the local in-trays and the dissemination rules to be applied upon successful pull of files.
+
+\label{Dissemination rules}
+This configuration item defines the local Intrays and the dissemination rules to be applied upon successful pull of files.
 \par
 \noindent
 Firstly it is defined the \textit{ListIntrays} \textit{Intray} configuration items:
@@ -285,6 +288,10 @@ Then the rules for local dissemination of the pulled files into the in-tray(s) a
 \section{Push circulations}
 
 The mechanism to fetch and upload files from a DEC node is referred to \textit{push mode}.
+
+This needs to be written
+
+
 
 \section{Environment Variables}
 
@@ -401,6 +408,55 @@ The DEC SW can generate a report enumerating the files which have been \textit{p
 		<FileType>DEC_R_PULL</FileType>
 	</Report>
 \end{verbatim}
+
+\subsection{Unknown Files}
+The DEC SW can generate a report enumerating the files which did not match any filtering rule for their retrieval from a given interface during a polling loop. The name of this \textit{circulation report} is \textit{"UnknownFiles"}. Below there are the associated configuration items: 
+
+\par
+\noindent
+
+\begin{verbatim}
+<Report Name="UnknownFiles">
+<Enabled>true</Enabled>
+<Desc>List of unknown Files present</Desc>
+<FileClass>OPER</FileClass>
+<FileType>DECUNKNOWN</FileType>
+</Report>
+\end{verbatim}
+
+%% ========================================================= 
+%%
+%% Tweaks
+%%
+
+\section{Circulation Options}
+This section describes different circulation options or the DEC SW execution behaviour in particular cases. The associated configuration items are defined in the \textit{dec\_config.xml} configuration file.
+
+
+\subsection{Pulled Files}
+The associated configuration items are defined in \textit{Options/Download}
+
+\subsubsection{Unknown Files}
+The DEC SW is able to delete without download the files published by any interface in a \textit{Directory} \textit{DownloadDir} which do not meet any of the \textit{ListFiles} matching criteria rules defined in dec\_incoming\_files.xml. 
+
+\label{DeleteUnknownFiles}
+\begin{verbatim}
+	<DeleteUnknownFiles>false|true</DeleteUnknownFiles>
+\end{verbatim}
+
+\subsubsection{Duplicated Files}
+The DEC SW controls and blocks the retrieval of files duplication published by a given interface to avoid feeding the consumer in-trays with the same inputs previously received.\newline
+\par
+\noindent
+Those duplicated files which are not pulled can become a problem introducing performance penalties when filtering them during each iteration.
+By configuration below it is possible to instruct DEC remove these duplicated files from the interface pick-up point without downloading them using the \textit{DeleteDuplicatedFiles} configuration item:
+\label{DeleteDuplicatedFiles}
+\begin{verbatim}
+<DeleteDuplicatedFiles>false|true</DeleteDuplicatedFiles>
+\end{verbatim}
+
+\subsection{Pushed Files}
+TBW
 
 %% ========================================================= 
 %%

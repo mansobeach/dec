@@ -326,7 +326,7 @@ end
 ## -------------------------------------------------------------
 
 def body
-   @logger.info("Polling #{@entity} Interface")
+   @logger.info("Polling #{@entity} Interface - list mode is #{@listOnly}")
    
    # @logger.info("Debug mode is #{@isDebugMode}")
    
@@ -419,7 +419,7 @@ def body
    bNewFiles = false
 
    if bRetrieveFiles == true or @listOnly == true then
-      bNewFiles     = @receiver.check4NewFiles
+      bNewFiles     = @receiver.check4NewFiles(@listOnly)
       if bNewFiles == false then
          # puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("No file(s) available from #{@entity} I/F for retrieving")
@@ -430,7 +430,7 @@ def body
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
             if @listOnly == true then
-               @logger.info("#{File.basename(fullpath)} is available at #{@entity} I/F")
+               @logger.info("[DEC_105] File #{File.basename(fullpath)} is available at #{@entity} I/F")
             end
          }
          
@@ -441,14 +441,18 @@ def body
 #             @receiver.createReportFile(@incomingDir, true, @createReport)
 
             if ret == true then
-               @logger.info("Event OnReceiveNewFilesOK triggered")
+               if @isDebugMode == true then
+                  @logger.debug("Event OnReceiveNewFilesOK triggered")
+               end
                event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
                @receiver.createReportFile(ReadConfigDEC.instance.getReportDir, \
                                     true, \
                                     @createReport \
                                     )
             else
-               @logger.info("Event OnReceiveError triggered")
+               if @isDebugMode == true then
+                  @logger.debug("Event OnReceiveError triggered")
+               end
                event.trigger(@entity, "ONRECEIVEERROR", nil, @logger)
             end
 
@@ -469,7 +473,9 @@ def body
  	      if @isDebugMode == true then
  	         deliverer.setDebugMode
  	      end
-         @logger.info("Dissemination of previous files received from #{@entity}")
+         if @isDebugMode == true then
+            @logger.debug("Dissemination of previous files received from #{@entity}")
+         end
 	      deliverer.deliver(@entity)         
       end
       

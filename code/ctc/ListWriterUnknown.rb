@@ -108,8 +108,10 @@ private
          end
       end
       
-   	@filename = %Q{#{@satPrefix}_OPER_#{fileType}_#{@pollingTime}_#{@pollingTime}_0001}
-      @realname = %Q{#{@filename}.EEF}
+      centre = "2BOA"
+      
+   	@filename = %Q{#{@satPrefix}_OPER_#{fileType}_#{centre}_#{@pollingTime}_V#{@pollingTime}_#{@pollingTime}_#{@entity}}
+      @realname = %Q{#{@filename}.xml}
       @theFile  = nil
       
       if @isDebugMode == true then

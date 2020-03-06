@@ -42,11 +42,11 @@ class DEC_FileSender
    def initialize(entity, protocol, deliverOnce, isDebug=false, isNoDB=false)
       @entity      = entity
       @protocol    = protocol
-      
+      @isDebugMode = isDebug
       @deliverOnce = deliverOnce
-      checkModuleIntegrity
-      @isDebugMode = false
       @isNoDB      = isNoDB
+
+      checkModuleIntegrity
 
       if @isNoDB == false then
          require 'dec/DEC_DatabaseModel'
@@ -89,13 +89,14 @@ class DEC_FileSender
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
       @protocol      = @ftpserver[:protocol]     
       @sender        = CTC::FileSender.new(@ftpserver, protocol, @logger)
-      
+            
       if isDebug == true then
-         setDebugMode
+         self.setDebugMode
       end
       
       @outboxDir   = ReadConfigOutgoing.instance.getOutgoingDir(@entity)
-      @outboxDir   = "#{@outboxDir}/ftp"
+      # @outboxDir   = "#{@outboxDir}/ftp"
+      @outboxDir   = "#{@outboxDir}/#{protocol.downcase!}"
       checkDirectory(@outboxDir)
       @decConfig   = DEC::ReadConfigDEC.instance
       @arrFilters  = @decConfig.getOutgoingFilters
@@ -120,8 +121,8 @@ class DEC_FileSender
    end
    ## -----------------------------------------------------------
  
-   # Set the outbox directory where the files to be sent are placed.
-   #
+   ## Set the outbox directory where the files to be sent are placed.
+   ##
    def loadFileList
       @listFileSent     = Array.new
       @listFileError    = Array.new

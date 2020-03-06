@@ -3,7 +3,7 @@
    <Project>
       <Name>Data Exchange Component</Name>
       <Id>DEC</Id>
-      <Mission>DEC UNIT TESTS</Mission>
+      <Mission>UNIT TESTS</Mission>
    </Project>
    <Filters>
          <IncomingFilters>
@@ -33,8 +33,8 @@
       </Upload>
       <Download>
          <DownloadDirs>false</DownloadDirs>
-         <DeleteUnknownFiles>false</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <DeleteUnknownFiles>true</DeleteUnknownFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
       </Download>
    </Options>
    
@@ -73,10 +73,10 @@
       </Report>
 
       <Report Name="UnknownFiles">
-         <Enabled>false</Enabled>
+         <Enabled>true</Enabled>
          <Desc>List of unknown Files present</Desc>
          <FileClass>OPER</FileClass>
-         <FileType>DEC_UFILES</FileType>
+         <FileType>DECUNKNOWN</FileType>
       </Report>
 
    </Reports>

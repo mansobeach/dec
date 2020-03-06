@@ -806,7 +806,9 @@ class DEC_ReceiverFromInterface
       
             filename = writer.getFilename
          
-            @logger.info("Created Report File #{filename}")
+            if @isDebugMode == true then
+               @logger.debug("Created Report RETRIEVEDFILES named #{filename}")
+            end
    
             if filename == "" then
                @logger.error("Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n")
@@ -831,7 +833,16 @@ class DEC_ReceiverFromInterface
       #-----------------------------------------------------
       # Create UnknownFiles Report
 
+
       if @fileListError.length > 0 then
+
+         bIsEnabled  = false
+         bFound      = false
+
+         if @isDebugMode == true then
+            @logger.debug("Creation of UnknownFiles Report with #{@fileListError.length} files")
+         end
+
 
          arrReports.each{|aReport|
             if aReport[:name] == "UNKNOWNFILES" then
@@ -872,33 +883,33 @@ class DEC_ReceiverFromInterface
                exit(99)
             end
          
-            if bDeliver == true then
-               deliverer = FileDeliverer2InTrays.new
-   
-               if @isDebugMode == true then
-                  deliverer.setDebugMode
-                  @logger.debug("Creating and Deliver Report File")
-               end
-               deliverer.deliverFile(@entity, directory, filename)
-            end
+#            if bDeliver == true then
+#               deliverer = FileDeliverer2InTrays.new
+#   
+#               if @isDebugMode == true then
+#                  deliverer.setDebugMode
+#                  @logger.debug("Creating and Deliver Report File")
+#               end
+#               deliverer.deliverFile(@entity, directory, filename)
+#            end
          end
 
       end
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Get new files availables from the I/F
+   ## Get new files availables from the I/F
    def getAvailablesFiles
       return @fileList
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Get new files availables from the I/F
+   ## Get new files availables from the I/F
    def getUnknownFiles
       return @fileListError
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
    @logger        = nil
@@ -992,7 +1003,7 @@ private
    			deleteFromEntity(filename)
          end      
          
-         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F with size #{size} bytes")
+         @logger.info("[DEC_110] Downloaded #{File.basename(filename)} from #{@entity} I/F with size #{size} bytes")
 
          event  = EventManager.new
          
@@ -1194,7 +1205,7 @@ private
 			# if deleteFlag is enable delete it from remote directory
 			deleteFromEntity(filename)
          
-         @logger.info("#{File.basename(filename)} Downloaded from #{@entity} I/F with size #{size} bytes")
+         @logger.info("[DEC_110] Downloaded #{File.basename(filename)} from #{@entity} I/F with size #{size} bytes")
 
          if size.to_i == 0 then
             return true
@@ -1534,7 +1545,7 @@ private
       #
       # 2016 patch
              
-      if @isDelUnknown == true and arrDelete.uniq.length > 0 then
+      if arrDelete.uniq.length > 0 then
          
          
          arrDelete.uniq.each{|aFile|
@@ -1551,8 +1562,12 @@ private
          
             # ----------------------------------------------
             
-#             @logger.info("deleting unknown #{File.basename(aFile)}")
-#             deleteFromEntity(aFile)
+            @logger.warn("[DEC_320] Detected unknown file #{File.basename(aFile)} available at #{@entity} I/F")
+            
+            if @isDelUnknown == true and forTracking == false then
+               @logger.info("[DEC_120] Deleting unknown file #{File.basename(aFile)} available at #{@entity} I/F")
+               deleteFromEntity(aFile)
+            end
          }
       end
 
@@ -1589,8 +1604,8 @@ private
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
-               @logger.warn("#{File.basename(filename)} already received from #{@entity}")
-               
+               @logger.warn("[DEC_301] Detected duplicated file #{File.basename(filename)} already received from #{@entity} I/F")
+
                arrDelete << fullpath
                
                ## --------------------------------
@@ -1598,7 +1613,7 @@ private
                ## dec_config.xml <DeleteDuplicatedFiles>
                ##
                if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true then
-                  @logger.info("removing duplicated #{File.basename(filename)} previously received from #{@entity}")
+                  @logger.info("[DEC_125] Deleting duplicated file #{File.basename(filename)} previously received from #{@entity}")
                   # deleteFromEntity(fullpath, true)
                   deleteFromEntity(fullpath, false)
                else
@@ -1696,7 +1711,7 @@ private
                   @logger.debug("#{getFilenameFromFullPath(fileName)} already received from #{@entity}")
                end
                #2016 patch
-               @logger.info("removing duplicated #{File.basename(fileName)} previously received from #{@entity}")
+               @logger.info("[DEC_125] Deleting duplicated file #{File.basename(filename)} previously received from #{@entity}")
                # deleteFromEntity(fileName, true)
                deleteFromEntity(fileName, false)
             end
@@ -1789,8 +1804,9 @@ private
      arrFiles.to_a.each{|file|
           
          if file.interface_id == @interface.id then
-            #@logger.info("hasBeenAlreadyReceived: #{filename}")
-            @logger.debug("hasBeenAlreadyReceived: #{filename}")
+            if @isDebugMode == true then
+               @logger.debug("hasBeenAlreadyReceived: #{filename}")
+            end
             return true
          end
       }
