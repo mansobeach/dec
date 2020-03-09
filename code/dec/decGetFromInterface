@@ -326,7 +326,7 @@ end
 ## -------------------------------------------------------------
 
 def body
-   @logger.info("Polling #{@entity} Interface - list mode is #{@listOnly}")
+   @logger.info("[DEC_005] #{@entity} I/F: Polling Started - List mode is #{@listOnly}")
    
    # @logger.info("Debug mode is #{@isDebugMode}")
    
@@ -422,15 +422,15 @@ def body
       bNewFiles     = @receiver.check4NewFiles(@listOnly)
       if bNewFiles == false then
          # puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
-         @logger.info("No file(s) available from #{@entity} I/F for retrieving")
+         @logger.info("[DEC_050] #{@entity} I/F: Polling Completed / No file(s) available for pull")
          event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
       else
          # puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
-         @logger.info("New file(s) available from #{@entity} I/F for retrieving")
+         @logger.info("[DEC_060] #{@entity} I/F: Polling Completed / New file(s) available for pull")
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
             if @listOnly == true then
-               @logger.info("[DEC_105] File #{File.basename(fullpath)} is available at #{@entity} I/F")
+               @logger.info("[DEC_105] #{@entity} I/F: File #{File.basename(fullpath)} is available")
             end
          }
          

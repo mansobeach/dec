@@ -41,6 +41,7 @@ The \textit{TXRXParams} configuration item defines the parameters which rule the
 The \textit{Server} configuration item defines the parameters which rule the network protocol of choice selected to rule the file circulations either in \textit{pull} and \textit{push} mode.
 \par
 \noindent
+\label{Config_Server}
 \begin{itemize}
 	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"SFTP"}, \textit{"WEBDAV"} - http and http(s) -, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
 	\item \textit{Hostname} : hostname of the interface
@@ -114,6 +115,7 @@ The \textit{Interface} configuration item defines the interfaces pick-up point(s
 \par
 \noindent
 \label{LocalInbox}
+\label{DownloadDirs}
 \begin{itemize}
 	\item \textit{Name} : this is the configuration item \textit{identifier} which is used to identify a given interface and refer to it in other sections of the configuration
 	\item \textit{LocalInbox} : this is the \textit{local} directory in which files are initially placed upon successful download ; if no dissemination rule is applied, this directory becomes the final destination  
@@ -239,7 +241,7 @@ Then the rules for local dissemination of the pulled files into the in-tray(s) a
 \begin{itemize}
 	\item \textit{Name} : this is the intray \textit{identifier} which is used to identify the final location the files pulled are placed
 	\item \textit{HardLink} : this is a \textit{boolean} flag to hardlink in the file-system a pulled file in case of definition of different in-trays for multiple dissemination into
-	\item \textit{ToList} : this is the list of \textit{Intray} identifiers configuration item the defined \textit{File Type} is disseminated into 
+	\item \textit{ToList} : this is the list of \textit{Intray} identifiers configuration item the defined \textit{File Type} is \textit{disseminated} into 
 \end{itemize}
 \begin{lstlisting}
 <ListFilesDisseminated>

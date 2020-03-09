@@ -347,8 +347,8 @@ class DEC_ReceiverFromInterface
          @ftp.login(user, pass)
          @ftp.passive = bPassive
       rescue Exception => e
-         @logger.error("#{@entity}: #{e.to_s}")
-         @logger.error("#{@entity}: Unable to connect to #{host} with passive mode #{bPassive}")
+         @logger.error("[DEC_610] #{@entity} I/F: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_611] #{@entity} I/F: #{e.to_s}")
          @logger.error("Could not poll #{@entity} I/F")
          exit(99)
       end
@@ -374,8 +374,8 @@ class DEC_ReceiverFromInterface
             @ftp.chdir(@remotePath)
          rescue Exception => e
             @ftp.chdir("/")
-            @logger.error("cannot reach #{@remotePath}")
-            @logger.error(e.to_s)               
+            @logger.error("[DEC_612] #{@entity} I/F: Cannot reach #{@remotePath} directory")
+            @logger.error("[DEC_613] #{@entity} I/F: #{e.to_s}")               
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
@@ -674,7 +674,7 @@ class DEC_ReceiverFromInterface
                #@logger.info(arrSent)
                @atLeast1FileReceived = true
             else
-               @logger.error("Problem(s) during file download")
+               # @logger.error("Problem(s) during file download")
                @retValFilesReceived = false
             end
          }
@@ -1003,7 +1003,7 @@ private
    			deleteFromEntity(filename)
          end      
          
-         @logger.info("[DEC_110] Downloaded #{File.basename(filename)} from #{@entity} I/F with size #{size} bytes")
+         @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
 
          event  = EventManager.new
          
@@ -1205,7 +1205,7 @@ private
 			# if deleteFlag is enable delete it from remote directory
 			deleteFromEntity(filename)
          
-         @logger.info("[DEC_110] Downloaded #{File.basename(filename)} from #{@entity} I/F with size #{size} bytes")
+         @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
 
          if size.to_i == 0 then
             return true
@@ -1562,10 +1562,10 @@ private
          
             # ----------------------------------------------
             
-            @logger.warn("[DEC_320] Detected unknown file #{File.basename(aFile)} available at #{@entity} I/F")
+            @logger.warn("[DEC_320] #{@entity} I/F: Detected unknown file #{File.basename(aFile)}")
             
             if @isDelUnknown == true and forTracking == false then
-               @logger.info("[DEC_120] Deleting unknown file #{File.basename(aFile)} available at #{@entity} I/F")
+               @logger.info("[DEC_120] #{@entity} I/F: Deleting unknown file #{File.basename(aFile)}")
                deleteFromEntity(aFile)
             end
          }
@@ -1604,7 +1604,7 @@ private
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
-               @logger.warn("[DEC_301] Detected duplicated file #{File.basename(filename)} already received from #{@entity} I/F")
+               @logger.warn("[DEC_301] #{@entity} I/F: Detected duplicated file")
 
                arrDelete << fullpath
                
@@ -1613,7 +1613,7 @@ private
                ## dec_config.xml <DeleteDuplicatedFiles>
                ##
                if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true then
-                  @logger.info("[DEC_125] Deleting duplicated file #{File.basename(filename)} previously received from #{@entity}")
+                  @logger.info("[DEC_125] #{@entity} I/F: Deleting duplicated file #{File.basename(filename)} previously received")
                   # deleteFromEntity(fullpath, true)
                   deleteFromEntity(fullpath, false)
                else
@@ -1711,7 +1711,7 @@ private
                   @logger.debug("#{getFilenameFromFullPath(fileName)} already received from #{@entity}")
                end
                #2016 patch
-               @logger.info("[DEC_125] Deleting duplicated file #{File.basename(filename)} previously received from #{@entity}")
+               @logger.info("[DEC_125] #{@entity} I/F: Deleting duplicated file #{File.basename(filename)} previously received")
                # deleteFromEntity(fileName, true)
                deleteFromEntity(fileName, false)
             end
@@ -1941,8 +1941,8 @@ private
             @logger.debug("#{cmd} Failed ")
             @logger.debug("Error in DEC_ReceiverFromInterface::copyFileToInBox :-(")
          end
-         @logger.error("Could not copy #{filename} into #{@entity} local Inbox")
-         @logger.warn("#{filename} is still placed in #{@localDir}")
+         @logger.error("[DEC_620] #{@entity} I/F: Could not copy #{filename} into local #{@finalDir} Inbox")
+         @logger.warn("[DEC_330] #{filename} is stuck in #{@localDir} directory")
          # @logger.info("#{size}")
 			exit(99)
       end

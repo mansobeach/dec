@@ -179,8 +179,8 @@ class FileDeliverer2InTrays
                      exit(99)
                   end
                else      
-                  @logger.error("#{file} has not been disseminated")
-                  @logger.warn("#{file} is still placed in #{dir}")
+                  # @logger.error("#{file} has not been disseminated")
+                  @logger.warn("[DEC_331] #{file} is stuck in LocalInbox #{dir}")
                end
 				end
 			}
@@ -287,8 +287,8 @@ class FileDeliverer2InTrays
                exit(99)
             end
          else
-            @logger.error("deliverFile : #{file} has not been disseminated")
-            @logger.warn("deliverFile : #{file} is still placed in #{directory}")
+            # @logger.error("[DEC_625 XXX] #{file} has not been disseminated")
+            @logger.warn("[DEC_331] #{file} is stuck in #{directory} directory")
          end       
       else
          # @logger.warn("#{file} is not disseminated to any In-Tray")
@@ -390,7 +390,7 @@ private
             bRet = execute(cmd, "mv2InTrays")
             
             if bRet == false then
-               @logger.error("Could not disseminate .TEMP_#{file} into intray #{targetDir}")
+               @logger.error("[DEC_625] Dissemination failure of #{file} into intray #{targetDir}")
                Dir.chdir(prevDir)
                bReturn = false
                return false
@@ -452,7 +452,7 @@ private
                bRet = execute(cmd, "mv2InTrays")
 
                if bRet == false then
-                  @logger.debug("Could not Link File #{file} to the Target Directory")
+                  @logger.error("[DEC_626] Dissemination failure of #{file} into intray #{targetDir}")
                   bReturn = false
                else
                   if @isDebugMode == true then

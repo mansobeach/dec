@@ -307,6 +307,8 @@ class DECTestCase < Test::Unit::TestCase
                   cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
                   puts cmd
                   system(cmd)
+                  # FileUtils.chmod("a-x", "#{dir}/#{filename}")
+                  # FileUtils.chmod("a-r", "#{dir}/#{filename}")
                }
                @@arrUnknownFiles.each{|filename|
                   dir = arr[0][:directory]
@@ -320,6 +322,9 @@ class DECTestCase < Test::Unit::TestCase
                   system(cmd)
                }
             end
+            
+#            FileUtils.chmod("a-r", "/Users/borja/tmp/finals.all")
+#            FileUtils.chmod("a-r", "/Users/borja/tmp/tai-utc.dat")
             
          end
 

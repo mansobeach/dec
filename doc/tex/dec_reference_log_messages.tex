@@ -20,6 +20,9 @@
 \subsection{Index of Messages}
 
 \begin{itemize}
+	\item \textbf{[DEC\_005]} Polling Completed for "interface" I/F: No file(s) available for pull	
+	\item \textbf{[DEC\_050]} Polling Completed for "interface" I/F: No file(s) available for pull	
+	\item \textbf{[DEC\_060]} Polling Completed for "interface" I/F: New file(s) available for pull
 	\item \textbf{[DEC\_105]} File "filename" is available at "interface" I/F
 	\item \textbf{[DEC\_110]} Downloaded "filename" from "interface" I/F with size "num\_bytes" bytes
 	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
@@ -27,6 +30,15 @@
 	\item \textbf{[DEC\_120]} Deleting unknown file "filename" available at "interface" I/F
 	\item \textbf{[DEC\_125]} Deleting duplicated file "filename" previously received from "interface" I/F
 \end{itemize}
+
+\subsection{[DEC\_005] Interface Polling Start}
+TBW
+
+\subsection{[DEC\_050] Interface Polling Complete / No File(s) Available}
+TBW
+
+\subsection{[DEC\_060] Interface Polling Complete / New File(s) Available}
+This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database. It can be used to measure the time required to perform the filtering operations. 
 
 \subsection{[DEC\_105] File Available}
 The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
@@ -56,6 +68,8 @@ According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{Del
 \begin{itemize}
 	\item \textbf{[DEC\_301]} Detected duplicated file "filename" already received from "interface" I/F
 	\item \textbf{[DEC\_320]} Detected unknown file "filename" available at "interface" I/F
+	\item \textbf{[DEC\_330]} "filename" is stuck in "temporal" directory
+	\item \textbf{[DEC\_331]} "filename" is stuck in LocalInbox directory		
 \end{itemize}
 
 \subsection{[DEC\_301] Duplicated File Available}
@@ -63,6 +77,12 @@ The file reported is available again at the \textit{pull} interface ; if the inv
 
 \subsection{[DEC\_320] Unknown File Available}
 The file reported is available in the \textit{pull} interface, but did not match any filtering rule defined in the configuration \textit{dec\_incoming\_files.xml}. This message will be repeated every polling iteration unless the \textit{unknown} file is removed from the interface.
+
+\subsection{[DEC\_330] File Stuck in Temporal Directory}
+This warning is associated to error message \hyperref[DEC620]{\textit{[DEC\_620]}} informing that the file was successfully downloaded and stuck in the temporal directory available for contingency recovery.
+
+\subsection{[DEC\_331] File Stuck in LocalInbox Directory}
+TBW.
 
 % ------------------------------------------------------------------------------
 % Error Messages
@@ -75,7 +95,17 @@ The file reported is available in the \textit{pull} interface, but did not match
 %	\item \textit[DEC_002] Directory is unreachable: TBW
 	\item \textit{[DEC\_000] \textit{interface} I\/F is not configured correctly}: TBW
 	\item \textit{[DEC\_002] Directory is unreachable}: TBW
-	\item \textit{[DEC\_200] Failed sending filename}: TBW
+%	\item \textbf{[DEC\_200]} Failed sending filename}: TBW
+	\item \textbf{[DEC\_610]} "interface" I/F: Unable to connect to \hyperref[Config_Server]{"Hostname"} with FTP
+	\item \textbf{[DEC\_611]} "interface" I/F: reason of the connection failure
+	\item \textbf{[DEC\_612]} "interface" I/F: Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
+	\item \textbf{[DEC\_613]} "interface" I/F: server message associated to the failure associated to the change of directory
+	\item \textbf{[DEC\_620]} "interface" I/F: Could not copy "file" into local
+"directory"
+	\item \textbf{[DEC\_625]} Dissemination failure of "file" into intray
+"directory" using mv command
+	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
+"directory" using hard-links command
 \end{itemize}
 
 \subsection{[DEC\_000]}
@@ -83,6 +113,49 @@ The file reported is available in the \textit{pull} interface, but did not match
 
 \subsection{[DEC\_200]}
 \textit{Failed sending  to interface}: TBW
+
+\subsection{[DEC\_610] Unable to Connect with FTP}
+This error is raised when it is not possible to connect to \hyperref[Config_Server]{"Hostname"} with FTP.
+
+\subsection{[DEC\_611] Server Error Message}
+This error code can bring different messages associated to the connection failure [DEC\_610] is reporting. Errors can driven by miss-configuration of the \hyperref[Config_Server]{Server} associated to such interface or its unavailability due to network problems.
+
+\subsubsection{Hostname is unknown}
+\begin{verbatim}
+[DEC_611] LOCALHOST_NOT_SECURE I/F: getaddrinfo: nodename nor servname provided, or not known
+\end{verbatim}
+
+\subsubsection{Service not enabled by host}
+\begin{verbatim}
+[DEC_611] LOCALHOST_NOT_SECURE I/F: Connection refused - connect(2) for 127.0.0.1:21
+\end{verbatim}
+
+\subsubsection{Failed authentication}
+\begin{verbatim}
+[DEC_611] LOCALHOST_NOT_SECURE I/F: 530 Login authentication failed
+\end{verbatim}
+
+\subsection{[DEC\_612] Cannot Reach Interface Directory}
+\label{DEC612}
+Failed to reach one of the \textit{Directory} of the \hyperref[DownloadDirs]{"DownloadDirs"} of a given interface.
+
+\subsection{[DEC\_613] Server Error Message }
+The information replied by the server when error condition \hyperref[DEC612]{[DEC\_612]} arises is usually meaningless to understand the root reason to limit the risks of security attacks. It usually is related to file permissions on the server or miss-configuration problems referring to a non existing directory.
+\begin{verbatim}
+[DEC_613] LOCALHOST I/F: 550 Can't change directory to /a/if/local/: No such file or directory
+\end{verbatim}
+
+\subsection{[DEC\_620] Downloaded File not Copied into Final Dir}
+\label{DEC620}
+The file retrieved from the interface could not be copied into the final directory defined in the configuration. This is usually a problem of file permissions. 
+
+\subsection{[DEC\_625] File Dissemination Failure}
+\label{DEC625}
+This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using a mv command. This is usually associated to file permission problems of the \textit{Intray} directory.
+
+\subsection{[DEC\_626] File Dissemination Failure}
+\label{DEC625}
+This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using hard-links. This is usually associated to file permission problems of the \textit{Intray} directory.
 
 % ------------------------------------------------------------------------------
 % Debug Messages
