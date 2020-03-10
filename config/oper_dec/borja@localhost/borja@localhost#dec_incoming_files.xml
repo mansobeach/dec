@@ -46,6 +46,31 @@
 		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download</Directory>
          </DownloadDirs>
       </Interface>      
+            
+      <Interface>
+         <Name>FILESYSTEM</Name>
+         <LocalInbox>/tmp/dec/if_local_filesystem</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/filesystem/download</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
+         <Name>ISLR</Name>
+         <LocalInbox>/tmp/dec/if_islr_in_basket</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3a/2020</Directory>
+            <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3b/2020</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
+         <Name>NOAA</Name>
+         <LocalInbox>/tmp/dec/if_noaa_in_basket</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/pub/warehouse/2020/RSGA</Directory>
+         </DownloadDirs>
+      </Interface>
       
       <Interface>
          <Name>IERS</Name>
@@ -56,13 +81,15 @@
       </Interface>
       
       <Interface>
-         <Name>FILESYSTEM</Name>
-         <LocalInbox>/tmp/dec/if_local_filesystem</LocalInbox>
+         <Name>IGS</Name>
+         <LocalInbox>/tmp/dec/if_igs_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/tmp/dec_simul_if/filesystem/download</Directory>
+		      <Directory DepthSearch="0">/pub/gps/products/latest/final</Directory>
+            <!-- GPS Messages -->
+            <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>
          </DownloadDirs>
       </Interface>
-      
+       
       
    </ListInterfaces>
 
@@ -107,6 +134,49 @@
             <Interface>FILESYSTEM</Interface>
          </FromList>
       </File>
+
+      <File Type="ig??????.sp3*">
+         <Description>International GPS Service / GPS Orbits igswwwwd.sp3.Z</Description>
+         <FromList>
+            <Interface>IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ig??????.clk_30s*">
+         <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
+         <FromList>
+            <Interface>IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ig??????.clk_30s*">
+         <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
+         <FromList>
+            <Interface>IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="brdc*">
+         <Description>International GPS Service / GPS navigation message brdcdddf.yyn.Z</Description>
+         <FromList>
+            <Interface>IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="sentinel3*">
+         <Description>Satellite Laser Ranging data</Description>
+         <FromList>
+            <Interface>ISLR</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*RSGA*">
+         <Description>Solar flux and Geomagnetic activity</Description>
+         <FromList>
+            <Interface>NOAA</Interface>
+         </FromList>
+      </File>
+
      
       <File Type="S2?_*">
          <Description>Sentinel-2 Ground Segment</Description>

@@ -5,12 +5,12 @@ http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="DEC_TEST_NODE_1"/>
+  <parameter name="mainLoggerName" value="NODE_1"/>
  </pre_config>
 
 <!-- ============================================= -->
 
-<outputter name="console"  level="DEBUG" >
+<outputter name="console"  level="INFO" >
    <type>StdoutOutputter</type>
 	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
 		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
@@ -41,7 +41,7 @@ http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
 
 <!-- ============================================= -->
 
- <logger name="DEC_TEST_NODE_1" level="DEBUG" trace="false">
+ <logger name="NODE_1" level="DEBUG" trace="false">
    <outputter>console</outputter>
    <outputter>dec_log</outputter>
  </logger>

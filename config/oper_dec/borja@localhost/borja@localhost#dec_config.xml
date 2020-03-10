@@ -33,8 +33,10 @@
       </Upload>
       <Download>
          <DownloadDirs>false</DownloadDirs>
-         <DeleteUnknownFiles>true</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <LogUnknownFiles>false</LogUnknownFiles>
+         <LogDuplicatedFiles>false</LogDuplicatedFiles>         
       </Download>
    </Options>
    

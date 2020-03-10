@@ -1,0 +1,406 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component
+# 
+# module DEC
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
+
+# Preconditions:
+# 1 - setup 
+# 1.1 - load_config_development
+# 1.2 - inventory database is created
+
+# 2 - teardown
+# 2.1 - purge archive
+# 2.2 - inventory database is destroyed
+
+#  1  - test_decConfigInterface2DB
+#  2  - test_decGetFromInterface
+#  3  - test_decListener
+
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+class DECTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+            @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "gpsrapid.out" \
+                           ]
+
+      
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+      
+      
+      @@conf.createEnvironmentDirs
+
+
+      if @@conf.wrapper_check_environment == false then
+         puts "DEC environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+      
+      
+   end
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC test for IERS interface"
+   end
+   
+   ## ------------------------------------------------------
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+            
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      ftConfig    = ReadInterfaceConfig.instance
+      configOut   = ReadConfigOutgoing.instance
+      configIn    = ReadConfigIncoming.instance
+      arrEnts     = ftConfig.getAllMnemonics
+
+      arrEnts.each{|x|
+                  
+         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
+         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
+
+         ## --------------------------------------
+
+         if bEnabled4Send == true then
+         
+            uploadDir = configOut.getUploadDir(x)
+         
+            if uploadDir == nil or uploadDir == "" then
+               next
+            end
+         
+            if uploadDir[0,1] != '/' then
+               uploadDir = '~/' + uploadDir
+            end
+            checkDirectory(uploadDir)
+
+            uploadTemp = configOut.getUploadTemp(x)
+         
+            if uploadTemp[0,1] != '/' then
+               uploadTemp = '~/' + uploadTemp
+            end
+            checkDirectory(uploadTemp)
+         end
+
+         ## --------------------------------------
+
+         if bEnabled4Recv == true then
+            arr = configIn.getDownloadDirs(x)
+            
+            arr.each{|dir|
+               
+               downloadDir = ""
+
+               if dir[:directory][0,1] != '/' then
+                  downloadDir = '~/' + dir[:directory]
+               else
+                  downloadDir = dir[:directory]
+               end
+               
+               # checkDirectory(downloadDir)
+            }
+            
+#            ## create the files available for pulling
+#            
+#            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
+#               @@arrDownloadFiles.each{|filename|
+#                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
+#                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
+#               }
+#            end
+            
+         end
+
+         ## --------------------------------------
+      }
+      
+      
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when creating the DEC inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
+         puts
+         # exit(99)
+      end
+      
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      puts cmd
+      ret = system(cmd)
+       
+      if ret == false then
+         puts "Error when dropping the dec inventory ! :-("
+         puts
+         exit(99)
+      end
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+#   data("1",     ["ISLR"])
+#   data("2",     ["NOAA"])
+#   data("3",     ["IERS"])
+   data("3",     ["IGS"])
+
+   def test_ADP(params)
+
+      interface = params
+      interface = interface[0].to_s
+   
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s} => #{interface}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      puts
+      puts
+      @@conf.print_environment
+      puts
+      puts
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      @entityConfig     = ReadInterfaceConfig.instance
+      conf              = ReadConfigIncoming.instance
+      
+      @finalDir         = conf.getIncomingDir(interface)
+            
+      checkDirectory(@finalDir)
+      
+      cmd = "decGetFromInterface -m #{interface} -l"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m #{interface} --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m #{interface} --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)      
+      
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_decGetFromInterface_NODB
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      assert(system(cmd), "decManageDB -d")
+
+      @entityConfig     = ReadInterfaceConfig.instance
+      conf              = ReadConfigIncoming.instance
+      @finalDir         = conf.getIncomingDir("IERS")
+      
+      checkDirectory(@finalDir)
+      
+      ENV.delete('DEC_DB_ADAPTER')
+      ENV.delete('DEC_DATABASE_NAME')
+      ENV.delete('DEC_DATABASE_USER')
+      ENV.delete('DEC_DATABASE_PASSWORD')
+
+      puts
+      puts
+      @@conf.print_environment
+      puts
+      puts
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -a -e IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+            
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      sleep(2.0)
+      
+      cmd = "decGetFromInterface -m IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      dimConfig = ReadConfigIncoming.instance
+      
+      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
+
+      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
+      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
+
+      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
+      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
+      
+   end
+   ## ------------------------------------------------------
+
+end
+
+
+## ===================================================================
+
+
+
+

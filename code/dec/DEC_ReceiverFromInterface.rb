@@ -1604,7 +1604,7 @@ private
          filename = File.basename(fullpath)
          if forTracking == false then
             if hasBeenAlreadyReceived(filename) == true then
-               @logger.warn("[DEC_301] #{@entity} I/F: Detected duplicated file")
+               @logger.warn("[DEC_301] #{@entity} I/F: Detected duplicated file #{filename}")
 
                arrDelete << fullpath
                

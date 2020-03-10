@@ -406,6 +406,188 @@
 
   <!-- ================================================================ -->
 
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="ISLR">
+    <Desc>ISLR Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>2</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>cddis.gsfc.nasa.gov</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="IGS">
+    <Desc>IGS Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>2</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>cddis.gsfc.nasa.gov</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="NOAA">
+    <Desc>NOAA Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>ftp.swpc.noaa.gov</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>false</DeleteFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
 
   <!-- ================================================================ -->
 

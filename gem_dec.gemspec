@@ -56,6 +56,7 @@ Gem::Specification.new do |s|
                      'decSmokeTests', \
                      'decStats', \
                      'decUnitTests', \
+                     'decUnitTests_ADP', \
                      'decUnitTests_IERS', \
                      'decUnitTests_ncftpput', \
                      'decUnitTests_WEBDAV_SECURE', \
