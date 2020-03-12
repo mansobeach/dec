@@ -1153,22 +1153,20 @@ private
          http.password = @ftpserver[:password]
       end
 
-#      sleep(2.0)      
-#      http.perform
-#      sleep(2.0) 
+      http.perform
 
-
-      uri = URI.parse(url)
-      http = Net::HTTP.get_response(uri)
+#      uri = URI.parse(url)
+#      http = Net::HTTP.get_response(uri)
 
       ## TO DO : replace in memory file with 
       ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
 
-      @logger.debug(http.code)
+      # @logger.debug(http.code)
 
       filename = getFilenameFromFullPath(url)
       aFile = File.new(filename, "wb")
-      aFile.write(http.body)
+      # aFile.write(http.body)
+      aFile.write(http.body_str)
       aFile.flush
       aFile.close
  
@@ -1186,6 +1184,26 @@ private
       ret = deleteFromEntity(url)
 
       return true
+      
+#require 'net/http'
+#require 'uri'
+#
+#uri = URI.parse("")
+#request = Net::HTTP::Get.new(uri)
+#request.basic_auth("username", "password")
+#
+#req_options = {
+#  use_ssl: uri.scheme == "https",
+#}
+#
+#response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+#  http.request(request)
+#end
+#
+## response.code
+## response.body
+      
+      
    end
       
    ## -------------------------------------------------------------
