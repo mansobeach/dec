@@ -35,8 +35,10 @@
          <DownloadDirs>false</DownloadDirs>
          <DeleteUnknownFiles>false</DeleteUnknownFiles>
          <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <!--
          <LogUnknownFiles>false</LogUnknownFiles>
-         <LogDuplicatedFiles>false</LogDuplicatedFiles>         
+         <LogDuplicatedFiles>false</LogDuplicatedFiles>     
+         -->    
       </Download>
    </Options>
    

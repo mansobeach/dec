@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L.
+#
+# === AUX Module
+#
+# # git: auxUnitTests,v $Id$: 
+# 
+# module AUX
+#
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'aux/AUX_Environment'
+require 'aux/AUX_Parser_IGS_Broadcast_Ephemeris'
+
+# Select a single test of the suite
+
+# ruby auxUnitTests -n test_my_method 
+
+class AUXTestCase < Test::Unit::TestCase
+
+   include Test::Unit::Data
+   
+   include AUX
+   
+      
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do
+   
+      @@conf = AUX_Environment.new
+      
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC tests mail"
+   end
+   ## --------------------------------------------------------   
+   
+   ## Setup before every test-case
+   ##
+   def setup
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+   end
+   ## --------------------------------------------------------
+
+   ## This test creates every necessary directory to make the circulations succeed
+   def test_igs
+      parser = AUX_Parser_IGS_Broadcast_Ephemeris.new("/Users/borja/Projects/dec/code/aux/brdc/brdc0010.20g")
+   end
+   ## ------------------------------------------------------
+
+end
+
+## =====================================================================

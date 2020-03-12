@@ -89,6 +89,14 @@
             <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>
          </DownloadDirs>
       </Interface>
+
+      <Interface>
+         <Name>LEAP</Name>
+         <LocalInbox>/tmp/dec/if_leap_in_basket</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
+         </DownloadDirs>
+      </Interface>
        
       
    </ListInterfaces>
@@ -113,6 +121,13 @@
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
             <Interface>FILESYSTEM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="Leap_Second.dat">
+         <Description>IERS TAI UTC Time Correlation</Description>
+         <FromList>
+            <Interface>LEAP</Interface>
          </FromList>
       </File>
 
@@ -156,7 +171,7 @@
          </FromList>
       </File>
 
-      <File Type="brdc*">
+      <File Type="brdc*.*n*">
          <Description>International GPS Service / GPS navigation message brdcdddf.yyn.Z</Description>
          <FromList>
             <Interface>IGS</Interface>
@@ -255,8 +270,14 @@
                <Intray>DEC_REPORTS</Intray>
             </ToList>
          </File>
+ 
+         <File Type="Leap_Second*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>   
 
-   
          <File Type="gpsrapid.*">
             <HardLink>false</HardLink>
             <ToList>

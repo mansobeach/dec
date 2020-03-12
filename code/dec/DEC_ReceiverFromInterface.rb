@@ -26,6 +26,7 @@
 
 require 'rubygems'
 require 'curb'
+require 'uri'
 require 'net/http'
 require 'net/ssh'
 require 'net/sftp'
@@ -77,7 +78,7 @@ class DEC_ReceiverFromInterface
       @isBenchmarkMode = false
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_Puller", "#{@@configDirectory}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -259,6 +260,22 @@ class DEC_ReceiverFromInterface
                end
             }            
                      
+         # ---------------------------------------
+         
+         when "HTTP"
+
+            if @isDebugMode == true then
+               @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
+            end
+                        
+            perf = measure { 
+               list = getHTTPList 
+               if @isDebugMode == true then
+                  @logger.debug("Found #{list.length} files")
+               end
+            }            
+
+         
          # ---------------------------------------
             
       end
@@ -465,6 +482,68 @@ class DEC_ReceiverFromInterface
       @depthLevel = @depthLevel - 1   
    end
    
+   ## -----------------------------------------------------------
+   
+   def getHTTPList
+      @newArrFile = Array.new
+      host        = ""
+      url         = ""
+      if isSecureMode == false then
+         host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
+      else
+         host        = "https://#{@ftpserver[:hostname]}"
+      end
+      port        = @ftpserver[:port].to_i
+      user        = @ftpserver[:user]
+      pass        = @ftpserver[:password]
+      
+      @depthLevel = 0
+      arrElements = @ftpserver[:arrDownloadDirs]
+
+      arrElements.each{|element|
+         @remotePath    = element[:directory]
+         
+         url = "#{host}#{@remotePath}"
+         
+         if @isDebugMode == true then
+            @logger.debug("Checking URL #{url}")
+         end
+         
+         begin
+            bFound = false
+            
+            ret = Curl::Easy.http_head(url)
+
+            if @isDebugMode == true then
+               @logger.debug("#{url} => #{ret.status}")
+            end
+            
+            if ret.status.include?("200") == true then
+               @newArrFile << url
+               bFound = true
+            
+               if @isDebugMode == true then
+                  @logger.debug("Found #{File.basename(url)}")
+               end
+            end
+
+            if bFound == false then
+               @logger.error("[DEC_614] #{@entity} I/F: Cannot GET #{url}")
+               next
+            end
+         rescue Exception => e
+            @logger.error("[DEC_614] #{@entity} I/F: Cannot GET #{url}")
+            @logger.error(e.to_s)
+            if @isDebugMode == true then
+               @logger.debug(e.backtrace)
+            end
+            next
+         end
+      }   
+      
+      return @newArrFile
+      
+   end
    ## -----------------------------------------------------------
 
    ## retrieving of the list of files available using WebDAV protocol   
@@ -1065,23 +1144,37 @@ private
       http.ssl_verify_host = false
       
       http.http_auth_types = :basic
-      http.username = @ftpserver[:user]
-      http.password = @ftpserver[:password]
+
+      if @ftpserver[:user] != "" and @ftpserver[:user] != nil then
+         http.username = @ftpserver[:user]
+      end
       
-      http.perform
+      if @ftpserver[:password] != "" and @ftpserver[:password] != nil then
+         http.password = @ftpserver[:password]
+      end
+
+#      sleep(2.0)      
+#      http.perform
+#      sleep(2.0) 
+
+
+      uri = URI.parse(url)
+      http = Net::HTTP.get_response(uri)
 
       ## TO DO : replace in memory file with 
       ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
 
+      @logger.debug(http.code)
+
       filename = getFilenameFromFullPath(url)
       aFile = File.new(filename, "wb")
-      aFile.write(http.body_str)
+      aFile.write(http.body)
       aFile.flush
       aFile.close
  
       size = File.size("#{@localDir}/#{File.basename(filename)}")
          
-      @logger.info("#{File.basename(filename)} with size #{size} bytes received from #{@entity}")
+      @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
 		
       # File is made available at the interface inbox	
       copyFileToInBox(File.basename(filename), size)
@@ -1104,12 +1197,13 @@ private
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 
+      # ------------------------------------------
+
       if @protocol == "LOCAL" then
          return downloadFileLocal(filename)
-      end
-      
+      end      
       # ------------------------------------------
-      if @protocol == "WEBDAV" then
+      if @protocol == "WEBDAV" or @protocol == "HTTP" then
          downloadFile_WebDAV(filename)
          
          if @isNoInTray == false then
@@ -1118,6 +1212,9 @@ private
          
          return true
       end
+      # ------------------------------------------
+      
+      
       # ------------------------------------------
       
       # If secure create the sftp client.
@@ -1363,7 +1460,7 @@ private
          end
          return false
       end
-      msg = "#{filename} deleted at #{@entity}"
+      msg = "[DEC_126] #{@entity} I/F: Deleted downloaded #{File.basename(filename)}"
       @logger.info(msg)
       return true
    end
@@ -1744,7 +1841,6 @@ private
    ## - true if source in dec_incoming_files.xml is current entity
    ## - false otherwise
    def checkFileSource(fileName)
-
       sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
 
       if sources == nil then
@@ -1756,35 +1852,7 @@ private
          return sources.include?(@entity)
       end
 
-#      # Second we perform EE file-type matching in ft_incoming_files
-#      
-#      # Maybe it would be nice to force every file to extract its file-type but
-#      # with LTA files this method will fail  _EX.xml
-#      # There would not be a manner to distinguish normal file with its LTA receipt
-#
-#      if  CUC::EE_ReadFileName.new(fileName).isEarthExplorerFile? == true then
-#         fileType = CUC::EE_ReadFileName.new(fileName).fileType
-#         sources  = @fileSource.getEntitiesSendingIncomingFileType(fileType)
-# 
-#         # If Earth Explorer file matchs by file-type      
-#         if sources != nil then
-#            if sources.include?(@interface.name) == true then
-#               return true
-#            else
-#               return false
-#            end
-#         else
-#            if @isDebugMode == true then
-#               puts "\nNo File-Type matchs with #{fileName} in ft_incoming_files.xml ! \n\n"
-#            end
-#            return false
-#         end
-#      else
-#         return false
-#      end
-#      return false
-   end   
-   
+   end
    ## -------------------------------------------------------------
    
 	## It invokes the method DCC_InventoryInfo::isFileReceived? 

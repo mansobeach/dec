@@ -281,20 +281,20 @@ class DECTestCase < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-#   data("1",     ["ISLR"])
-#   data("2",     ["NOAA"])
-#   data("3",     ["IERS"])
-   data("3",     ["IGS"])
+   data("1",     ["ISLR",  false])
+   data("2",     ["NOAA",  false])
+   data("3",     ["IERS",  false])
+   data("4",     ["IGS",   false])
+   data("5",     ["LEAP",  true])
 
    def test_ADP(params)
 
-      interface = params
-      interface = interface[0].to_s
+      interface, noDB = params
    
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s} => #{interface}"
+      puts "DEC_UnitTests::#{__method__.to_s} => #{interface} noDB #{noDB}"
       puts
 
       @@conf.wrapper_load_config_development
@@ -315,86 +315,31 @@ class DECTestCase < Test::Unit::TestCase
             
       checkDirectory(@finalDir)
       
-      cmd = "decGetFromInterface -m #{interface} -l"
+      cmd = "decGetFromInterface -D -m #{interface} -l"
       puts cmd
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
       cmd = "decGetFromInterface -m #{interface} --no-intray"
+      if noDB == true then
+         cmd = "#{cmd} --nodb"
+      end
       puts cmd
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
-      cmd = "decGetFromInterface -m #{interface} --no-intray"
+      cmd = "decGetFromInterface -m #{interface}"
+      if noDB == true then
+         cmd = "#{cmd} --nodb"
+      end      
       puts cmd
       assert(system(cmd), cmd)      
       
    end
    ## ------------------------------------------------------
 
-   ## ------------------------------------------------------
-
-   def test_decGetFromInterface_NODB
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-
-      @@conf.wrapper_load_config_development
-
-      cmd = "decManageDB -d"
-      assert(system(cmd), "decManageDB -d")
-
-      @entityConfig     = ReadInterfaceConfig.instance
-      conf              = ReadConfigIncoming.instance
-      @finalDir         = conf.getIncomingDir("IERS")
-      
-      checkDirectory(@finalDir)
-      
-      ENV.delete('DEC_DB_ADAPTER')
-      ENV.delete('DEC_DATABASE_NAME')
-      ENV.delete('DEC_DATABASE_USER')
-      ENV.delete('DEC_DATABASE_PASSWORD')
-
-      puts
-      puts
-      @@conf.print_environment
-      puts
-      puts
-
-      cmd = "decValidateConfig -a"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -a -e IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-            
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      sleep(2.0)
-      
-      cmd = "decGetFromInterface -m IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      dimConfig = ReadConfigIncoming.instance
-      
-      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
-
-      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
-
-      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
-      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
-      
-   end
-   ## ------------------------------------------------------
 
 end
 

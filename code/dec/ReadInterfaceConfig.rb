@@ -35,7 +35,7 @@ class ReadInterfaceConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL", "WEBDAV"]
+      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL", "HTTP", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs
       loadData

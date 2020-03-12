@@ -166,10 +166,8 @@ class ReadConfigIncoming
    def getEntitiesSendingIncomingFileName(fileName)
       arrEnt = Array.new
       @@arrIncomingFiles.each{|item|
-         if item[:filetype].include?("*") or item[:filetype].include?("?") then
-            if File.fnmatch(item[:filetype], fileName) == true then
-               return item[:fromList]
-            end
+         if File.fnmatch(item[:filetype], fileName) == true then
+            return item[:fromList]
          end
       }
    end

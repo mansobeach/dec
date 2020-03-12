@@ -44,7 +44,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="FILESYSTEM"     Compress="7Z"     DeliveryMethods="FTP" />
-            <Interface Name="WEBDAV"         Compress="7Z"     DeliveryMethods="HTTP" />
+            <Interface Name="WEBDAV"         Compress="7Z"     DeliveryMethods="FTP" />
          </ToList>
       </File>
 
@@ -52,7 +52,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
-            <Interface Name="WEBDAV"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="WEBDAV"        Compress="NONE"   DeliveryMethods="FTP" />
          </ToList>
       </File>
    

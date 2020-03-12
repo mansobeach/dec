@@ -20,15 +20,16 @@
 \subsection{Index of Messages}
 
 \begin{itemize}
-	\item \textbf{[DEC\_005]} Polling Completed for "interface" I/F: No file(s) available for pull	
-	\item \textbf{[DEC\_050]} Polling Completed for "interface" I/F: No file(s) available for pull	
-	\item \textbf{[DEC\_060]} Polling Completed for "interface" I/F: New file(s) available for pull
-	\item \textbf{[DEC\_105]} File "filename" is available at "interface" I/F
-	\item \textbf{[DEC\_110]} Downloaded "filename" from "interface" I/F with size "num\_bytes" bytes
+	\item \textbf{[DEC\_005]} "interface" I/F: Polling Started
+	\item \textbf{[DEC\_050]} "interface" I/F: Polling Completed / No file(s) available for pull	
+	\item \textbf{[DEC\_060]} "interface" I/F: Polling Completed / New file(s) available for pull
+	\item \textbf{[DEC\_105]} "interface" I/F: "filename" is available
+	\item \textbf{[DEC\_110]} "interface" I/F: Downloaded "filename" with size "num\_bytes" bytes
 	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
 	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
 	\item \textbf{[DEC\_120]} Deleting unknown file "filename" available at "interface" I/F
 	\item \textbf{[DEC\_125]} Deleting duplicated file "filename" previously received from "interface" I/F
+	\item \textbf{[DEC\_126]} "interface" I/F: Deleted downloaded file "filename"  	
 \end{itemize}
 
 \subsection{[DEC\_005] Interface Polling Start}
@@ -57,6 +58,10 @@ According to the configuration item \hyperref[DeleteUnknownFiles]{\textit{Delete
 
 \subsection{[DEC\_125] Duplicated File Deleted}
 According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{DeleteDuplicatedFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which has been previously downloaded successfully such interface is considered duplicated and it is removed directly in download directory without downloading it.
+
+\subsection{[DEC\_126] Downloaded File Deleted}
+According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteFlag}} defined in \textit{dec\_interfaces.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
+
 
 % ------------------------------------------------------------------------------
 % Warning Messages
@@ -100,6 +105,7 @@ TBW.
 	\item \textbf{[DEC\_611]} "interface" I/F: reason of the connection failure
 	\item \textbf{[DEC\_612]} "interface" I/F: Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
 	\item \textbf{[DEC\_613]} "interface" I/F: server message associated to the failure associated to the change of directory
+	\item \textbf{[DEC\_614]} "interface" I/F: Cannot GET "URL"
 	\item \textbf{[DEC\_620]} "interface" I/F: Could not copy "file" into local
 "directory"
 	\item \textbf{[DEC\_625]} Dissemination failure of "file" into intray
@@ -144,6 +150,10 @@ The information replied by the server when error condition \hyperref[DEC612]{[DE
 \begin{verbatim}
 [DEC_613] LOCALHOST I/F: 550 Can't change directory to /a/if/local/: No such file or directory
 \end{verbatim}
+
+\subsection{[DEC\_614] Cannot Get URL}
+\label{DEC614}
+Failed to get the URL associated to one \textit{Directory} of the \hyperref[DownloadDirs]{"DownloadDirs"} of a given interface when using the HTTP protocol.
 
 \subsection{[DEC\_620] Downloaded File not Copied into Final Dir}
 \label{DEC620}

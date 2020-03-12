@@ -181,7 +181,7 @@ def main
    end
 
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("decGetFromInterface", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
@@ -426,13 +426,15 @@ def body
          event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
       else
          # puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
-         @logger.info("[DEC_060] #{@entity} I/F: Polling Completed / New file(s) available for pull")
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
             if @listOnly == true then
                @logger.info("[DEC_105] #{@entity} I/F: File #{File.basename(fullpath)} is available")
             end
          }
+
+         @logger.info("[DEC_060] #{@entity} I/F: Polling Completed / New file(s) available for pull")
+
          
          if @listOnly == false and @createReceipt == false then
             ret = @receiver.receiveAllFiles

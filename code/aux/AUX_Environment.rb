@@ -19,132 +19,43 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 
-module DEC
+module AUX
    
    include CUC::DirUtils
    
-   @@version = "1.0.13"
+   @@version = "0.0.0"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.13" =>    "Support of for HTTP protocol for known URLs\n\
-          Support of authentication for HTTP(S) GET and DELETE verbs\n\
-          dec_interfaces.xml defines <VerifyPeerSSL> to validate the certificate\n\
-          log messages rationalisation and clean-up\n\
-          gem now includes the gemfile dependencies for their resolution at installation time", \
-      "1.0.12" =>    "Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE\n\
-          for pull mode (dec_incoming_files.xml)\n\
-          DEC RetrievedFiles report updated to Sentinels naming convention:\n\
-          Report collision:
-          https://jira.elecnor-deimos.com/browse/S2MPASUP-308\n\
-          Robustification for contingencies:
-          https://jira.elecnor-deimos.com/browse/S2MPASUP-278\n\
-          dec_interfaces.xml replaces \"FTPServer\" with \"Server\" configuration item",
-      "1.0.11" =>    "Migration to ActiveRecord 6", \
-      "1.0.10" =>    "new dec_config.xml deprecates dcc_config.xml & ddc_config.xml\n\
-          new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml\n\
-          new dec_outgoing_files.xml deprecates ft_outgoing_files.xml\n\
-          Earth Explorer / Earth Observation file-types are deprecated\n\
-          support to multiple log4r outputters\n\
-          unit tests updated to verify the PUSH mode to send files",
-      "1.0.9"  =>    "decUnitTests support batchmode to avoid prompting for confirmation", \
-      "1.0.8"  =>    "decListener command line flags fixed", \
-      "1.0.7"  =>    "decManageDB creates an index by filename for all tables", \
-      "1.0.6"  =>    "decCheckConfig write checks for UploadDir/UploadDir for non secure FTP", \
-      "1.0.5"  =>    "notify2Interface.rb fix sending mail to first address only \n         decCheckConfig shipped in the gem", \
-      "1.0.4"  =>    "decValidateConfig shipped with the required xsd schemas", \
-      "1.0.3"  =>    "upgrade of rpf module to support ruby 2.x series", \
-      "1.0.2"  =>    "commands triggered by reception events are now logged", \
-      "1.0.1"  =>    "decStats -H <hours> has been integrated", \
-      "1.0.0"  =>    "first version of the dec installer created" \
+      "0.0.1"  =>    "decStats -H <hours> has been integrated", \
+      "0.0.0"  =>    "first version of the dec installer created" \
    }
    ## -----------------------------------------------------------------
    
    def load_config_development
-      ENV['DEC_VERSION']                  = DEC.class_variable_get(:@@version)
-      ENV['DEC_DB_ADAPTER']               = "sqlite3"
-      ENV['DEC_DATABASE_NAME']            = "/tmp/dec_inventory"
-      ENV['DEC_DATABASE_USER']            = "root"
-      ENV['DEC_DATABASE_PASSWORD']        = "1mysql"
-      ENV['DEC_TMP']                      = "/tmp/dec_tmp"
-      ENV['DEC_DELIVERY_ROOT']            = "/tmp/dec_delivery_root"
-      ENV['DEC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-      ENV['HOSTNAME']                     = `hostname`
-      ENV.delete('DCC_CONFIG')
-      ENV.delete('DCC_TMP')
+   
    end
    
    ## -----------------------------------------------------------------
 
-   ## extract DEC configuration from installation directory 
-   def copy_installed_config(destination, nodename = "")
-      
-      checkDirectory(destination)
-      ## -----------------------------
-      ## DEC Config files
-   
-      arrConfigFiles = [\
-         "dec_interfaces.xml",\
-         "dec_incoming_files.xml",\
-         "dec_outgoing_files.xml",\
-         "ft_mail_config.xml",\
-         "dec_log_config.xml",\
-         "dec_config.xml"]
-      ## -----------------------------
-
-      path = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-      
-      arrConfigFiles.each{|config|
-         if File.exist?("#{path}/#{config}") == true then
-            FileUtils.cp("#{path}/#{config}", "#{destination}/#{nodename}##{config}")
-            FileUtils.ln_s("#{destination}/#{nodename}##{config}","#{destination}/#{config}")
-         end
-      }
-      
-   end
    
    ## -----------------------------------------------------------------
 
-   def load_config_developmentRPF
-      ENV['RPF_ARCHIVE_ROOT']             = "#{ENV['HOME']}/Sandbox/dec/rpf_archive_root"
-      ENV['FTPROOT']                      = "#{ENV['HOME']}/Sandbox/dec/delivery_root"
-      ENV['RPFBIN']                       = File.dirname(File.expand_path(__FILE__))
-   end
 
    ## -----------------------------------------------------------------
 
    def unset_config
-      ENV.delete('DEC_VERSION')
-      ENV.delete('DEC_DB_ADAPTER')
-      ENV.delete('DEC_DATABASE_NAME')
-      ENV.delete('DEC_DATABASE_USER')
-      ENV.delete('DEC_DATABASE_PASSWORD')
-      ENV.delete('DEC_TMP')
-      ENV.delete('DEC_DELIVERY_ROOT')
    end
 
    ## -----------------------------------------------------------------
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
-      puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
-      puts "DEC_DB_ADAPTER                => #{ENV['DEC_DB_ADAPTER']}"
-      puts "DEC_TMP                       => #{ENV['DEC_TMP']}"
-      puts "DEC_DELIVERY_ROOT             => #{ENV['DEC_DELIVERY_ROOT']}"
-      puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
-      puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
-      puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
    
-   def print_environmentRPF
-      puts "RPFBIN                        => #{ENV['RPFBIN']}"
-      puts "RPF_ARCHIVE_ROOT              => #{ENV['RPF_ARCHIVE_ROOT']}"
-      puts "FTPROOT                       => #{ENV['FTPROOT']}"
-   end
-   ## -----------------------------------------------------------------
 
    def check_environment_dirs
       checkDirectory(ENV['DEC_TMP'])
@@ -437,16 +348,12 @@ end # module
 
 ## Wrapper to make use within unit tests since it is not possible inherit mixins
 
-class DEC_Environment
+class AUX_Environment
    
-   include DEC
+   include AUX
    
    def wrapper_load_config_development
       load_config_development
-   end
-
-   def wrapper_load_config_developmentRPF
-      load_config_developmentRPF
    end
 
    def wrapper_check_environment
@@ -457,20 +364,8 @@ class DEC_Environment
       unset_config
    end
 
-   def wrapper_check_config_files_incoming
-      return checkConfigFilesIncoming
-   end
-
-   def wrapper_check_config_files_outgoing
-      return checkConfigFilesOutgoing
-   end
-
    def wrapper_print_environment
       print_environment
-   end
-
-   def wrapper_print_environmentRPF
-      print_environmentRPF
    end
    
 end

@@ -49,7 +49,7 @@ class FileDeliverer2InTrays
 		@dimConfig = ReadConfigIncoming.instance
                   
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("FileDeliverer2InTrays", "#{@@configDirectory}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end

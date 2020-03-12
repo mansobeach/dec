@@ -282,8 +282,12 @@ class DECTestCase < Test::Unit::TestCase
                else
                   downloadDir = dir[:directory]
                end
-               
-               checkDirectory(downloadDir)
+            
+               if x.upcase.include?("LOCALHOST") \
+                  or x.upcase.include?("FILESYSTEM") \
+                  or x.upcase.include?("WEBDAV") then
+                  checkDirectory(downloadDir)
+               end
             }
             
             ###
@@ -1127,6 +1131,7 @@ class DECTestCase < Test::Unit::TestCase
    
    data("SEPARATOR",     ["Start of the Test",     0,   0,   0,    false])
 
+   data("0",     ["10files_10GB_1Slots_NoDB",      10,   10240,   1,     true])
    data("1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     true])
    data("2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     true])
    data("3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     true])
