@@ -1,0 +1,2778 @@
+<?xml version="1.0" encoding="UTF-8"?><EOP xmlns="http://www.iers.org/2003/schema/iers">
+  <version>
+    <product>gpsrapid.daily</product>
+    <date>2020-03-11</date>
+    <volume>---</volume>
+    <number>---</number>
+  </version>
+  <metaFileName/>
+  <headerLine>
+    <headerLineDate>
+      <sYear>Year</sYear>
+      <sMonth>Month</sMonth>
+      <sDay>Day</sDay>
+      <sTime>Time</sTime>
+      <sMJD>MJD</sMJD>
+    </headerLineDate>
+    <headerLineEOP>
+      <product source="BulletinA">
+        <sX>X</sX>
+        <ssigma_X>sigma_X</ssigma_X>
+        <sY>Y</sY>
+        <ssigma_Y>sigma_Y</ssigma_Y>
+        <sUT1-UTC>UT1-UTC</sUT1-UTC>
+        <ssigma_UT1-UTC>sigma_UT1-UTC</ssigma_UT1-UTC>
+        <sdPsi>dPsi</sdPsi>
+        <ssigma_dPsi>sigma_dPsi</ssigma_dPsi>
+        <sdEpsilon>dEpsilon</sdEpsilon>
+        <ssigma_dEpsilon>sigma_dEpsilon</ssigma_dEpsilon>
+      </product>
+    </headerLineEOP>
+    <headerLineUnits>
+      <product source="BulletinA">
+        <X>arcsec</X>
+        <sigma_X>arcsec</sigma_X>
+        <Y>arcsec</Y>
+        <sigma_Y>arcsec</sigma_Y>
+        <UT1-UTC>sec</UT1-UTC>
+        <sigma_UT1-UTC>sec</sigma_UT1-UTC>
+        <dPsi>arcsec</dPsi>
+        <sigma_dPsi>arcsec</sigma_dPsi>
+        <dEpsilon>arcsec</dEpsilon>
+        <sigma_dEpsilon>arcsec</sigma_dEpsilon>
+      </product>
+    </headerLineUnits>
+  </headerLine>
+  <data product="gpsrapid.daily" source="BulletinA">
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>13</dateDay>
+        <MJD>58830</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.10484</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.27203</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172458</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.11048</dPsi>
+          <sigma_dPsi>0.00029</sigma_dPsi>
+          <dEpsilon>-.00658</dEpsilon>
+          <sigma_dEpsilon>0.00011</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>14</dateDay>
+        <MJD>58831</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.10432</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.27317</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172273</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.11010</dPsi>
+          <sigma_dPsi>0.00031</sigma_dPsi>
+          <dEpsilon>-.00665</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>15</dateDay>
+        <MJD>58832</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.10325</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27413</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172097</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10971</dPsi>
+          <sigma_dPsi>0.00031</sigma_dPsi>
+          <dEpsilon>-.00656</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>16</dateDay>
+        <MJD>58833</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.10151</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.27475</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.171994</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10939</dPsi>
+          <sigma_dPsi>0.00051</sigma_dPsi>
+          <dEpsilon>-.00642</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>17</dateDay>
+        <MJD>58834</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09947</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27507</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172031</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10914</dPsi>
+          <sigma_dPsi>0.00069</sigma_dPsi>
+          <dEpsilon>-.00634</dEpsilon>
+          <sigma_dEpsilon>0.00020</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>18</dateDay>
+        <MJD>58835</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09753</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27533</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172249</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10894</dPsi>
+          <sigma_dPsi>0.00041</sigma_dPsi>
+          <dEpsilon>-.00633</dEpsilon>
+          <sigma_dEpsilon>0.00013</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>19</dateDay>
+        <MJD>58836</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09600</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27570</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.172719</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10886</dPsi>
+          <sigma_dPsi>0.00041</sigma_dPsi>
+          <dEpsilon>-.00632</dEpsilon>
+          <sigma_dEpsilon>0.00013</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>20</dateDay>
+        <MJD>58837</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09514</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27610</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.173356</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10900</dPsi>
+          <sigma_dPsi>0.00041</sigma_dPsi>
+          <dEpsilon>-.00629</dEpsilon>
+          <sigma_dEpsilon>0.00013</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>21</dateDay>
+        <MJD>58838</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09477</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27651</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.174036</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10936</dPsi>
+          <sigma_dPsi>0.00041</sigma_dPsi>
+          <dEpsilon>-.00628</dEpsilon>
+          <sigma_dEpsilon>0.00013</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>22</dateDay>
+        <MJD>58839</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09438</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27728</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.174709</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10980</dPsi>
+          <sigma_dPsi>0.00036</sigma_dPsi>
+          <dEpsilon>-.00635</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>23</dateDay>
+        <MJD>58840</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09335</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27831</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.175298</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.11009</dPsi>
+          <sigma_dPsi>0.00036</sigma_dPsi>
+          <dEpsilon>-.00647</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>24</dateDay>
+        <MJD>58841</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09185</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.27908</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.175753</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.11006</dPsi>
+          <sigma_dPsi>0.00071</sigma_dPsi>
+          <dEpsilon>-.00657</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>25</dateDay>
+        <MJD>58842</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.09025</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.27960</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176034</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10973</dPsi>
+          <sigma_dPsi>0.00061</sigma_dPsi>
+          <dEpsilon>-.00657</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>26</dateDay>
+        <MJD>58843</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.08856</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.28008</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176159</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10930</dPsi>
+          <sigma_dPsi>0.00061</sigma_dPsi>
+          <dEpsilon>-.00651</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>27</dateDay>
+        <MJD>58844</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.08687</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.28069</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176213</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10896</dPsi>
+          <sigma_dPsi>0.00061</sigma_dPsi>
+          <dEpsilon>-.00646</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>28</dateDay>
+        <MJD>58845</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.08503</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.28129</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176244</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10875</dPsi>
+          <sigma_dPsi>0.00036</sigma_dPsi>
+          <dEpsilon>-.00647</dEpsilon>
+          <sigma_dEpsilon>0.00022</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>29</dateDay>
+        <MJD>58846</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.08285</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28164</Y>
+          <sigma_Y>.00004</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176316</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10860</dPsi>
+          <sigma_dPsi>0.00057</sigma_dPsi>
+          <dEpsilon>-.00647</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>30</dateDay>
+        <MJD>58847</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.08040</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28177</Y>
+          <sigma_Y>.00004</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176490</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10850</dPsi>
+          <sigma_dPsi>0.00057</sigma_dPsi>
+          <dEpsilon>-.00645</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2019</dateYear>
+        <dateMonth>12</dateMonth>
+        <dateDay>31</dateDay>
+        <MJD>58848</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07828</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.28192</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.176771</UT1-UTC>
+          <sigma_UT1-UTC>.000012</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10851</dPsi>
+          <sigma_dPsi>0.00078</sigma_dPsi>
+          <dEpsilon>-.00643</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>01</dateDay>
+        <MJD>58849</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07657</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28231</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.177155</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10863</dPsi>
+          <sigma_dPsi>0.00090</sigma_dPsi>
+          <dEpsilon>-.00646</dEpsilon>
+          <sigma_dEpsilon>0.00010</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>02</dateDay>
+        <MJD>58850</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07463</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28271</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.177625</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10876</dPsi>
+          <sigma_dPsi>0.00090</sigma_dPsi>
+          <dEpsilon>-.00654</dEpsilon>
+          <sigma_dEpsilon>0.00010</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>03</dateDay>
+        <MJD>58851</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07274</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.28320</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.178115</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10881</dPsi>
+          <sigma_dPsi>0.00090</sigma_dPsi>
+          <dEpsilon>-.00659</dEpsilon>
+          <sigma_dEpsilon>0.00010</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>04</dateDay>
+        <MJD>58852</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07135</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.28401</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.178587</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10882</dPsi>
+          <sigma_dPsi>0.00096</sigma_dPsi>
+          <dEpsilon>-.00650</dEpsilon>
+          <sigma_dEpsilon>0.00012</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>05</dateDay>
+        <MJD>58853</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.07006</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.28481</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179073</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10890</dPsi>
+          <sigma_dPsi>0.00096</sigma_dPsi>
+          <dEpsilon>-.00626</dEpsilon>
+          <sigma_dEpsilon>0.00012</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>06</dateDay>
+        <MJD>58854</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06840</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.28524</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179419</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10909</dPsi>
+          <sigma_dPsi>0.00076</sigma_dPsi>
+          <dEpsilon>-.00595</dEpsilon>
+          <sigma_dEpsilon>0.00012</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>07</dateDay>
+        <MJD>58855</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06660</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28551</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179548</UT1-UTC>
+          <sigma_UT1-UTC>.000021</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10934</dPsi>
+          <sigma_dPsi>0.00051</sigma_dPsi>
+          <dEpsilon>-.00574</dEpsilon>
+          <sigma_dEpsilon>0.00012</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>08</dateDay>
+        <MJD>58856</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06495</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.28595</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179530</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10957</dPsi>
+          <sigma_dPsi>0.00028</sigma_dPsi>
+          <dEpsilon>-.00577</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>09</dateDay>
+        <MJD>58857</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06361</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.28661</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179376</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10973</dPsi>
+          <sigma_dPsi>0.00028</sigma_dPsi>
+          <dEpsilon>-.00605</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>10</dateDay>
+        <MJD>58858</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06264</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.28751</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179119</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10975</dPsi>
+          <sigma_dPsi>0.00028</sigma_dPsi>
+          <dEpsilon>-.00643</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>11</dateDay>
+        <MJD>58859</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06186</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.28866</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.178875</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10948</dPsi>
+          <sigma_dPsi>0.00028</sigma_dPsi>
+          <dEpsilon>-.00669</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>12</dateDay>
+        <MJD>58860</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06123</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.28985</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.178784</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10893</dPsi>
+          <sigma_dPsi>0.00027</sigma_dPsi>
+          <dEpsilon>-.00667</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>13</dateDay>
+        <MJD>58861</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06088</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.29102</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.178933</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10829</dPsi>
+          <sigma_dPsi>0.00027</sigma_dPsi>
+          <dEpsilon>-.00645</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>14</dateDay>
+        <MJD>58862</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.06049</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.29235</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179329</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10786</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00624</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>15</dateDay>
+        <MJD>58863</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05958</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.29379</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.179962</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10776</dPsi>
+          <sigma_dPsi>0.00045</sigma_dPsi>
+          <dEpsilon>-.00619</dEpsilon>
+          <sigma_dEpsilon>0.00007</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>16</dateDay>
+        <MJD>58864</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05847</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.29532</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.180789</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10790</dPsi>
+          <sigma_dPsi>0.00045</sigma_dPsi>
+          <dEpsilon>-.00627</dEpsilon>
+          <sigma_dEpsilon>0.00007</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>17</dateDay>
+        <MJD>58865</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05741</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.29671</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.181745</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10815</dPsi>
+          <sigma_dPsi>0.00045</sigma_dPsi>
+          <dEpsilon>-.00636</dEpsilon>
+          <sigma_dEpsilon>0.00007</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>18</dateDay>
+        <MJD>58866</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05650</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.29768</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.182781</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10846</dPsi>
+          <sigma_dPsi>0.00053</sigma_dPsi>
+          <dEpsilon>-.00639</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>19</dateDay>
+        <MJD>58867</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05558</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.29858</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.183753</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10882</dPsi>
+          <sigma_dPsi>0.00053</sigma_dPsi>
+          <dEpsilon>-.00639</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>20</dateDay>
+        <MJD>58868</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05461</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.29948</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.184598</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10912</dPsi>
+          <sigma_dPsi>0.00042</sigma_dPsi>
+          <dEpsilon>-.00638</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>21</dateDay>
+        <MJD>58869</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05384</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.30027</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.185279</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10922</dPsi>
+          <sigma_dPsi>0.00025</sigma_dPsi>
+          <dEpsilon>-.00636</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>22</dateDay>
+        <MJD>58870</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05328</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.30121</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.185801</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10902</dPsi>
+          <sigma_dPsi>0.00034</sigma_dPsi>
+          <dEpsilon>-.00635</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>23</dateDay>
+        <MJD>58871</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05262</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.30249</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.186159</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10862</dPsi>
+          <sigma_dPsi>0.00034</sigma_dPsi>
+          <dEpsilon>-.00639</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>24</dateDay>
+        <MJD>58872</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05205</X>
+          <sigma_X>.00005</sigma_X>
+          <Y>0.30367</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.186466</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10826</dPsi>
+          <sigma_dPsi>0.00034</sigma_dPsi>
+          <dEpsilon>-.00650</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>25</dateDay>
+        <MJD>58873</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05187</X>
+          <sigma_X>.00004</sigma_X>
+          <Y>0.30486</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.186780</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10809</dPsi>
+          <sigma_dPsi>0.00034</sigma_dPsi>
+          <dEpsilon>-.00661</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>26</dateDay>
+        <MJD>58874</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05142</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.30625</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.187186</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10807</dPsi>
+          <sigma_dPsi>0.00040</sigma_dPsi>
+          <dEpsilon>-.00667</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>27</dateDay>
+        <MJD>58875</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.05044</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.30746</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.187709</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10811</dPsi>
+          <sigma_dPsi>0.00040</sigma_dPsi>
+          <dEpsilon>-.00667</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>28</dateDay>
+        <MJD>58876</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04937</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.30868</Y>
+          <sigma_Y>.00001</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.188331</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10821</dPsi>
+          <sigma_dPsi>0.00088</sigma_dPsi>
+          <dEpsilon>-.00669</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>29</dateDay>
+        <MJD>58877</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04827</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.31016</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.189046</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10834</dPsi>
+          <sigma_dPsi>0.00046</sigma_dPsi>
+          <dEpsilon>-.00678</dEpsilon>
+          <sigma_dEpsilon>0.00005</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>30</dateDay>
+        <MJD>58878</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04702</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.31163</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.189801</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10839</dPsi>
+          <sigma_dPsi>0.00046</sigma_dPsi>
+          <dEpsilon>-.00690</dEpsilon>
+          <sigma_dEpsilon>0.00005</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>01</dateMonth>
+        <dateDay>31</dateDay>
+        <MJD>58879</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04569</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.31298</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.190517</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10826</dPsi>
+          <sigma_dPsi>0.00046</sigma_dPsi>
+          <dEpsilon>-.00697</dEpsilon>
+          <sigma_dEpsilon>0.00005</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>01</dateDay>
+        <MJD>58880</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04446</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.31444</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.191167</UT1-UTC>
+          <sigma_UT1-UTC>.000004</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10803</dPsi>
+          <sigma_dPsi>0.00044</sigma_dPsi>
+          <dEpsilon>-.00693</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>02</dateDay>
+        <MJD>58881</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04349</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.31604</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.191716</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10792</dPsi>
+          <sigma_dPsi>0.00054</sigma_dPsi>
+          <dEpsilon>-.00683</dEpsilon>
+          <sigma_dEpsilon>0.00007</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>03</dateDay>
+        <MJD>58882</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04274</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.31769</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.192184</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10799</dPsi>
+          <sigma_dPsi>0.00054</sigma_dPsi>
+          <dEpsilon>-.00670</dEpsilon>
+          <sigma_dEpsilon>0.00007</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>04</dateDay>
+        <MJD>58883</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04231</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.31943</Y>
+          <sigma_Y>.00001</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.192514</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10813</dPsi>
+          <sigma_dPsi>0.00069</sigma_dPsi>
+          <dEpsilon>-.00658</dEpsilon>
+          <sigma_dEpsilon>0.00010</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>05</dateDay>
+        <MJD>58884</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04204</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32122</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.192714</UT1-UTC>
+          <sigma_UT1-UTC>.000002</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10829</dPsi>
+          <sigma_dPsi>0.00069</sigma_dPsi>
+          <dEpsilon>-.00653</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>06</dateDay>
+        <MJD>58885</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04129</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32280</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.192848</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10856</dPsi>
+          <sigma_dPsi>0.00069</sigma_dPsi>
+          <dEpsilon>-.00669</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>07</dateDay>
+        <MJD>58886</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.04005</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32395</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.192932</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10891</dPsi>
+          <sigma_dPsi>0.00069</sigma_dPsi>
+          <dEpsilon>-.00709</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>08</dateDay>
+        <MJD>58887</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03879</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32479</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.193017</UT1-UTC>
+          <sigma_UT1-UTC>.000003</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10897</dPsi>
+          <sigma_dPsi>0.00068</sigma_dPsi>
+          <dEpsilon>-.00756</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>09</dateDay>
+        <MJD>58888</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03801</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32532</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.193267</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10844</dPsi>
+          <sigma_dPsi>0.00061</sigma_dPsi>
+          <dEpsilon>-.00776</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>10</dateDay>
+        <MJD>58889</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03763</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32607</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.193790</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10759</dPsi>
+          <sigma_dPsi>0.00061</sigma_dPsi>
+          <dEpsilon>-.00757</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>11</dateDay>
+        <MJD>58890</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03737</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.32730</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.194579</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10700</dPsi>
+          <sigma_dPsi>0.00036</sigma_dPsi>
+          <dEpsilon>-.00723</dEpsilon>
+          <sigma_dEpsilon>0.00009</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>12</dateDay>
+        <MJD>58891</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03738</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.32868</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.195547</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10698</dPsi>
+          <sigma_dPsi>0.00047</sigma_dPsi>
+          <dEpsilon>-.00705</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>13</dateDay>
+        <MJD>58892</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03731</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.33024</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.196538</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10737</dPsi>
+          <sigma_dPsi>0.00047</sigma_dPsi>
+          <dEpsilon>-.00708</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>14</dateDay>
+        <MJD>58893</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03649</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.33191</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.197429</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10779</dPsi>
+          <sigma_dPsi>0.00047</sigma_dPsi>
+          <dEpsilon>-.00719</dEpsilon>
+          <sigma_dEpsilon>0.00008</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>15</dateDay>
+        <MJD>58894</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03491</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.33320</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.198119</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10802</dPsi>
+          <sigma_dPsi>0.00075</sigma_dPsi>
+          <dEpsilon>-.00725</dEpsilon>
+          <sigma_dEpsilon>0.00006</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>16</dateDay>
+        <MJD>58895</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03310</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.33404</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.198630</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10811</dPsi>
+          <sigma_dPsi>0.00072</sigma_dPsi>
+          <dEpsilon>-.00730</dEpsilon>
+          <sigma_dEpsilon>0.00005</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>17</dateDay>
+        <MJD>58896</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03160</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.33491</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.198938</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10817</dPsi>
+          <sigma_dPsi>0.00072</sigma_dPsi>
+          <dEpsilon>-.00735</dEpsilon>
+          <sigma_dEpsilon>0.00005</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>18</dateDay>
+        <MJD>58897</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03071</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.33611</Y>
+          <sigma_Y>.00001</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199073</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10819</dPsi>
+          <sigma_dPsi>0.00067</sigma_dPsi>
+          <dEpsilon>-.00739</dEpsilon>
+          <sigma_dEpsilon>0.00004</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>19</dateDay>
+        <MJD>58898</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.03024</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.33761</Y>
+          <sigma_Y>.00001</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199123</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10809</dPsi>
+          <sigma_dPsi>0.00075</sigma_dPsi>
+          <dEpsilon>-.00742</dEpsilon>
+          <sigma_dEpsilon>0.00003</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>20</dateDay>
+        <MJD>58899</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02957</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.33898</Y>
+          <sigma_Y>.00001</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199152</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10779</dPsi>
+          <sigma_dPsi>0.00075</sigma_dPsi>
+          <dEpsilon>-.00749</dEpsilon>
+          <sigma_dEpsilon>0.00003</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>21</dateDay>
+        <MJD>58900</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02851</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.33999</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199240</UT1-UTC>
+          <sigma_UT1-UTC>.000005</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10743</dPsi>
+          <sigma_dPsi>0.00075</sigma_dPsi>
+          <dEpsilon>-.00763</dEpsilon>
+          <sigma_dEpsilon>0.00003</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>22</dateDay>
+        <MJD>58901</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02750</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.34082</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199509</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10718</dPsi>
+          <sigma_dPsi>0.00081</sigma_dPsi>
+          <dEpsilon>-.00775</dEpsilon>
+          <sigma_dEpsilon>0.00001</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>23</dateDay>
+        <MJD>58902</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02700</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.34165</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.199971</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10714</dPsi>
+          <sigma_dPsi>0.00074</sigma_dPsi>
+          <dEpsilon>-.00775</dEpsilon>
+          <sigma_dEpsilon>0.00001</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>24</dateDay>
+        <MJD>58903</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02705</X>
+          <sigma_X>.00002</sigma_X>
+          <Y>0.34283</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.200567</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10725</dPsi>
+          <sigma_dPsi>0.00074</sigma_dPsi>
+          <dEpsilon>-.00762</dEpsilon>
+          <sigma_dEpsilon>0.00001</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>25</dateDay>
+        <MJD>58904</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02740</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.34459</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.201247</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10741</dPsi>
+          <sigma_dPsi>0.00063</sigma_dPsi>
+          <dEpsilon>-.00753</dEpsilon>
+          <sigma_dEpsilon>0.00002</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>26</dateDay>
+        <MJD>58905</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02794</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.34666</Y>
+          <sigma_Y>.00003</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.201967</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10750</dPsi>
+          <sigma_dPsi>0.00028</sigma_dPsi>
+          <dEpsilon>-.00757</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>27</dateDay>
+        <MJD>58906</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02845</X>
+          <sigma_X>.00003</sigma_X>
+          <Y>0.34886</Y>
+          <sigma_Y>.00002</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.202731</UT1-UTC>
+          <sigma_UT1-UTC>.000007</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10742</dPsi>
+          <sigma_dPsi>0.00029</sigma_dPsi>
+          <dEpsilon>-.00772</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>28</dateDay>
+        <MJD>58907</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02861</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.35109</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.203517</UT1-UTC>
+          <sigma_UT1-UTC>.000006</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10716</dPsi>
+          <sigma_dPsi>0.00030</sigma_dPsi>
+          <dEpsilon>-.00787</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>02</dateMonth>
+        <dateDay>29</dateDay>
+        <MJD>58908</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02827</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.35321</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.204275</UT1-UTC>
+          <sigma_UT1-UTC>.000014</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10686</dPsi>
+          <sigma_dPsi>0.00030</sigma_dPsi>
+          <dEpsilon>-.00796</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>01</dateDay>
+        <MJD>58909</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02766</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.35520</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.204981</UT1-UTC>
+          <sigma_UT1-UTC>.000013</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10676</dPsi>
+          <sigma_dPsi>0.00031</sigma_dPsi>
+          <dEpsilon>-.00807</dEpsilon>
+          <sigma_dEpsilon>0.00015</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>02</dateDay>
+        <MJD>58910</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02697</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.35712</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.205615</UT1-UTC>
+          <sigma_UT1-UTC>.000013</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10687</dPsi>
+          <sigma_dPsi>0.00031</sigma_dPsi>
+          <dEpsilon>-.00822</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>03</dateDay>
+        <MJD>58911</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02637</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.35896</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.206163</UT1-UTC>
+          <sigma_UT1-UTC>.000013</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10698</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00832</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>04</dateDay>
+        <MJD>58912</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02610</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36056</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.206663</UT1-UTC>
+          <sigma_UT1-UTC>.000013</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10699</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00831</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>05</dateDay>
+        <MJD>58913</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02633</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36207</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.207137</UT1-UTC>
+          <sigma_UT1-UTC>.000012</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10711</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00832</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>06</dateDay>
+        <MJD>58914</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02694</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36383</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.207681</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10744</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00859</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>07</dateDay>
+        <MJD>58915</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02762</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36565</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.208380</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10762</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00908</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>08</dateDay>
+        <MJD>58916</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02801</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36739</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.209252</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10717</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00945</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>09</dateDay>
+        <MJD>58917</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02806</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.36905</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.210344</UT1-UTC>
+          <sigma_UT1-UTC>.000009</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10625</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00938</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>10</dateDay>
+        <MJD>58918</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02820</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.37068</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.211714</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10557</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00901</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>11</dateDay>
+        <MJD>58919</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="final">
+          <X>0.02863</X>
+          <sigma_X>.00009</sigma_X>
+          <Y>0.37234</Y>
+          <sigma_Y>.00009</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="final">
+          <UT1-UTC>-.213255</UT1-UTC>
+          <sigma_UT1-UTC>.000008</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="final">
+          <dPsi>-.10561</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00874</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>12</dateDay>
+        <MJD>58920</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.02909</X>
+          <sigma_X>.00061</sigma_X>
+          <Y>0.37399</Y>
+          <sigma_Y>.00040</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.214775</UT1-UTC>
+          <sigma_UT1-UTC>.000108</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10614</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00874</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>13</dateDay>
+        <MJD>58921</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.02970</X>
+          <sigma_X>.00091</sigma_X>
+          <Y>0.37560</Y>
+          <sigma_Y>.00066</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.216133</UT1-UTC>
+          <sigma_UT1-UTC>.000204</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10664</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00884</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>14</dateDay>
+        <MJD>58922</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03031</X>
+          <sigma_X>.00114</sigma_X>
+          <Y>0.37718</Y>
+          <sigma_Y>.00088</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.217254</UT1-UTC>
+          <sigma_UT1-UTC>.000303</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10680</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00890</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>15</dateDay>
+        <MJD>58923</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03091</X>
+          <sigma_X>.00135</sigma_X>
+          <Y>0.37878</Y>
+          <sigma_Y>.00109</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.218125</UT1-UTC>
+          <sigma_UT1-UTC>.000402</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10670</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00899</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>16</dateDay>
+        <MJD>58924</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03145</X>
+          <sigma_X>.00153</sigma_X>
+          <Y>0.38038</Y>
+          <sigma_Y>.00128</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.218781</UT1-UTC>
+          <sigma_UT1-UTC>.000502</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10658</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00916</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>17</dateDay>
+        <MJD>58925</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03198</X>
+          <sigma_X>.00170</sigma_X>
+          <Y>0.38196</Y>
+          <sigma_Y>.00145</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.219276</UT1-UTC>
+          <sigma_UT1-UTC>.000601</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10659</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00931</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>18</dateDay>
+        <MJD>58926</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03255</X>
+          <sigma_X>.00185</sigma_X>
+          <Y>0.38353</Y>
+          <sigma_Y>.00162</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.219667</UT1-UTC>
+          <sigma_UT1-UTC>.000701</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10668</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00937</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>19</dateDay>
+        <MJD>58927</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03318</X>
+          <sigma_X>.00200</sigma_X>
+          <Y>0.38507</Y>
+          <sigma_Y>.00179</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.220036</UT1-UTC>
+          <sigma_UT1-UTC>.000750</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10662</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00935</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>20</dateDay>
+        <MJD>58928</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03385</X>
+          <sigma_X>.00214</sigma_X>
+          <Y>0.38662</Y>
+          <sigma_Y>.00195</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.220464</UT1-UTC>
+          <sigma_UT1-UTC>.000550</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10630</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00934</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>21</dateDay>
+        <MJD>58929</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03453</X>
+          <sigma_X>.00227</sigma_X>
+          <Y>0.38815</Y>
+          <sigma_Y>.00210</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.221007</UT1-UTC>
+          <sigma_UT1-UTC>.000755</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10587</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00932</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>22</dateDay>
+        <MJD>58930</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03522</X>
+          <sigma_X>.00240</sigma_X>
+          <Y>0.38966</Y>
+          <sigma_Y>.00225</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.221667</UT1-UTC>
+          <sigma_UT1-UTC>.000934</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10561</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00920</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>23</dateDay>
+        <MJD>58931</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03593</X>
+          <sigma_X>.00252</sigma_X>
+          <Y>0.39114</Y>
+          <sigma_Y>.00239</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.222451</UT1-UTC>
+          <sigma_UT1-UTC>.001099</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10562</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00897</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>24</dateDay>
+        <MJD>58932</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03667</X>
+          <sigma_X>.00264</sigma_X>
+          <Y>0.39261</Y>
+          <sigma_Y>.00254</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.223359</UT1-UTC>
+          <sigma_UT1-UTC>.001254</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10576</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00876</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>25</dateDay>
+        <MJD>58933</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03743</X>
+          <sigma_X>.00275</sigma_X>
+          <Y>0.39408</Y>
+          <sigma_Y>.00267</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.224342</UT1-UTC>
+          <sigma_UT1-UTC>.001402</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10587</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00874</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+    <timeSeries>
+      <time>
+        <dateYear>2020</dateYear>
+        <dateMonth>03</dateMonth>
+        <dateDay>26</dateDay>
+        <MJD>58934</MJD>
+      </time>
+      <dataEOP>
+        <pole source="BulletinA" type="prediction">
+          <X>0.03823</X>
+          <sigma_X>.00286</sigma_X>
+          <Y>0.39553</Y>
+          <sigma_Y>.00281</sigma_Y>
+        </pole>
+        <UT source="BulletinA" type="prediction">
+          <UT1-UTC>-.225367</UT1-UTC>
+          <sigma_UT1-UTC>.001543</sigma_UT1-UTC>
+        </UT>
+        <nutation source="BulletinA" type="prediction">
+          <dPsi>-.10583</dPsi>
+          <sigma_dPsi>0.00032</sigma_dPsi>
+          <dEpsilon>-.00891</dEpsilon>
+          <sigma_dEpsilon>0.00016</sigma_dEpsilon>
+        </nutation>
+      </dataEOP>
+    </timeSeries>
+  </data>
+</EOP>

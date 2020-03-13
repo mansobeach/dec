@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><BulletinC xmlns="http://www.iers.org/2003/schema/iers">
+<data>
+    <date>2020-01-07</date>
+    <number>59</number>
+    <UT lineID="35">
+      <startDate>2017-01-01</startDate>
+      <startUTC>0</startUTC>
+      <UTC_TAI unit="s">-37</UTC_TAI>
+    </UT>
+  </data>
+</BulletinC>
