@@ -375,6 +375,7 @@ module DEC
       arrTools = [ \
                   "7za", \
                   "xmllint", \
+                  "sqlite3", \
                   "curl", \
                   "ncftp", \
                   "ncftpput", \

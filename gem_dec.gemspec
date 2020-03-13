@@ -81,6 +81,7 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 4.2')
   s.add_dependency('pg', '~> 1')
+  s.add_dependency('sqlite3', '~> 3')
   
   ## ----------------------------------------------
   

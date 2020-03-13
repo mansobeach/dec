@@ -39,7 +39,7 @@
       <Download>
          <DownloadDirs>false</DownloadDirs>
          <DeleteUnknownFiles>false</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
       </Download>
    </Options>
 
@@ -56,6 +56,7 @@
       <Report Name="RetrievedFiles">
          <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
          <FileType>DEC_F_RECV</FileType>
       </Report>
 
@@ -63,7 +64,8 @@
       <Report Name="UnknownFiles">
          <Enabled>false</Enabled>
          <Desc>List of unknown Files present</Desc>
-         <FileType>DCC_UFILES</FileType>
+         <FileClass>OPER</FileClass>
+         <FileType>DECUNKNOWN</FileType>
       </Report>
 
 

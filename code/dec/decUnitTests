@@ -64,6 +64,9 @@ require 'dec/ReadConfigIncoming'
 ## sudo /usr/local/sbin/pure-ftpd
 ## PAMAuthentication            yes
 
+### MacOS Mojave
+## sudo /usr/local/sbin/pure-ftpd -lpam
+
 # Stop FTP Server
 # launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 
