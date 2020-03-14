@@ -27,19 +27,22 @@
 	\item \textbf{[DEC\_110]} "interface" I/F: Downloaded "filename" with size "num\_bytes" bytes
 	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
 	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
-	\item \textbf{[DEC\_120]} Deleting unknown file "filename" available at "interface" I/F
-	\item \textbf{[DEC\_125]} Deleting duplicated file "filename" previously received from "interface" I/F
+	\item \textbf{[DEC\_120]} "interface" I/F: Deleting unknown file "filename" available
+	\item \textbf{[DEC\_125]} "interface" I/F: Deleting duplicated file "filename" previously received 
 	\item \textbf{[DEC\_126]} "interface" I/F: Deleted downloaded file "filename"  	
 \end{itemize}
 
 \subsection{[DEC\_005] Interface Polling Start}
-TBW
+\label{DEC005}
+This message time tags the start of the polling operation to \textit{pull} files from a given interface. The time to poll and filter the file to be pulled depends on the number of files published, the different rules configured for download or / and verification with the database of previous downloads ; measurements can be done with this message and its conclusion which is flagged by \hyperref[DEC050]{\textit{[DEC\_050]}} or \hyperref[DEC060]{\textit{[DEC\_060]}} message.
 
+\label{DEC050}
 \subsection{[DEC\_050] Interface Polling Complete / No File(s) Available}
-TBW
+This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database without any \textit{new} file meeting the download rules. It can be used to measure the time required to perform the filtering operations.
 
+\label{DEC060}
 \subsection{[DEC\_060] Interface Polling Complete / New File(s) Available}
-This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database. It can be used to measure the time required to perform the filtering operations. 
+This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database reporting there are some \textit{new} files for download. It can be used to measure the time required to perform the filtering operations.
 
 \subsection{[DEC\_105] File Available}
 The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
@@ -112,6 +115,7 @@ TBW.
 "directory" using mv command
 	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
 "directory" using hard-links command
+	\item \textbf{[DEC\_666]} "interface" I/F: Could not download "file"
 \end{itemize}
 
 \subsection{[DEC\_000]}
@@ -167,15 +171,38 @@ This error is raised when DEC could not disseminate a file into a given \textit{
 \label{DEC625}
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using hard-links. This is usually associated to file permission problems of the \textit{Intray} directory.
 
+\subsection{[DEC\_666] File Download Failure}
+\label{DEC666}
+This error is raised when DEC could not download a file from a given interface.
+
 % ------------------------------------------------------------------------------
 % Debug Messages
 
 
 \section{Debug Messages}
+The debug messages by DEC SW are meant in general for troubleshooting purposes. They are generated optionally when the different commands are instructed using the \textit{--Debug} or \textit{-D} execution flag supplied at the command line interface.
+\newline
+\par
+\noindent
+Some of the available debug messages are listed below.
 
+\begin{itemize}
+	\item \textbf{[DEC\_910]} "interface" I/F: Filtering directory with files "number" of items
+	\item \textbf{[DEC\_911]} "interface" I/F: performance when filtering according to download rules 
+	\item \textbf{[DEC\_912]} "interface" I/F: performance when filtering according to database
+\end{itemize}
 
+\subsection{[DEC\_910] Filtering Number of Files in Download Directory}
+\label{DEC910}
+This message reports the number of files published in the \hyperref[DownloadDirs]{"DownloadDirs"} which are about to be filtered according to the download rules and the database content.
 
+\subsection{[DEC\_911] Filtering According to Download Rules}
+\label{DEC911}
+This message reports the CPU time resources used to perform the filtering operations.
 
+\subsection{[DEC\_912] Filtering According to Download Rules}
+\label{DEC912}
+TBW
 
 \end{document}
 

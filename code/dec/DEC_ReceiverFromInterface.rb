@@ -1060,7 +1060,7 @@ private
       retVal = @local.downloadFile(filename)
       
        if retVal == false then
-         @logger.error("Could not download #{filename} from #{@entity} I/F")
+         @logger.error("[DEC_666]#{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination
@@ -1305,7 +1305,7 @@ private
 #      end
             
       if retVal == false then
-         @logger.error("Could not download #{filename} from #{@entity} I/F")
+         @logger.error("[DEC_666]#{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination
@@ -1607,7 +1607,7 @@ private
       nStart    = list.length
 
       if @isDebugMode == true then
-         @logger.debug("Filtering filetypes / #{list.length} items for #{@entity}")
+         @logger.debug("[DEC_910] #{@entity} I/F: Filtering directory with files / #{list.length} items")
       end
 
       perf = measure{
@@ -1695,7 +1695,11 @@ private
       } # end of measure
 
       if @isBenchmarkMode == true then
-         @logger.info("Filtered in #{@entity} #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+         @logger.info("[DEC_911] #{@entity} I/F: Filtered #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+      else
+         if @isDebugMode == true then
+            @logger.debug("[DEC_911] #{@entity} I/F: Filtered #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+         end      
       end
 
       # - Remove files that have already been retrieved/tracked
@@ -1703,7 +1707,7 @@ private
       if @isNoDB == false then
 
       if @isDebugMode == true then
-         @logger.debug("Filtering files #{@entity} previously recorded within db / #{list.length} items")
+         @logger.debug("[DEC_912] #{@entity} I/F: Filtering files previously recorded within db / #{list.length} items")
       end
 
       perf = measure{
