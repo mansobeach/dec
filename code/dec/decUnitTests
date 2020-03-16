@@ -16,6 +16,8 @@ require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 
+require 'sys/filesystem'
+
 require 'cuc/DirUtils'
 require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
@@ -89,6 +91,7 @@ class DECTestCase < Test::Unit::TestCase
    include CUC::DirUtils
    include CTC::FTPClientCommands
    include DEC
+   include Sys
 
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
@@ -382,6 +385,36 @@ class DECTestCase < Test::Unit::TestCase
 #         puts
 #         exit(99)
 #      end
+   end
+   ## -------------------------------------------------------------
+
+   def test_1
+            
+      checkDirectory("/tmp/dec_local_dissemination/S2A")
+      checkDirectory("/tmp/dec_local_dissemination/GPS")
+      
+      path1 = Filesystem.stat('/tmp/dec_local_dissemination/S2A')      
+      puts path1.filesystem_id
+      
+      path2 = Filesystem.stat('/tmp/dec_local_dissemination/GPS')      
+      puts path2.filesystem_id
+      
+      puts
+      puts path2.filesystem_id.class
+      puts
+      
+      cmd = "decCheckConfig -i"
+      puts cmd
+      puts
+      
+      retVal = system(cmd)
+      puts retVal
+      
+      puts $?
+      puts
+      
+      # assert(system(cmd), cmd)
+      
    end
    ## -------------------------------------------------------------
 

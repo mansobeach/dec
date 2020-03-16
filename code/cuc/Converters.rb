@@ -19,7 +19,7 @@ module CUC
 
 module Converters
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # String formats supported: 
    # - 20120325                     => "%Y%m%d"
@@ -92,16 +92,16 @@ module Converters
                           str.slice(9,2).to_i,  str.slice(11,2).to_i, str.slice(13,2).to_i)
    end
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # output string shall follow this format 2015-06-18T12:23:27
-   # - 2015-04-02T16:36:14.339
-   # - 2015-06-27T14:24:34.000000
-   # - 2015-06-19T21:14:10Z
-   # - 2015-06-27T09:07:06Z;DET=123456789ABC       / More rubbish from E2ESPM
-   # - 2015-06-27T14:24:34.000000;DET=123456789ABC / More rubbish from E2ESPM
-   # - 2015-04-02T16:36:14.339Z / Another one from E2ESPM
-   # - 2015-04-02T16:36:14.3Z   / Another one from E2ESPM
+   ## output string shall follow this format 2015-06-18T12:23:27
+   ## - 2015-04-02T16:36:14.339
+   ## - 2015-06-27T14:24:34.000000
+   ## - 2015-06-19T21:14:10Z
+   ## - 2015-06-27T09:07:06Z;DET=123456789ABC       / More rubbish from E2ESPM
+   ## - 2015-06-27T14:24:34.000000;DET=123456789ABC / More rubbish from E2ESPM
+   ## - 2015-04-02T16:36:14.339Z / Another one from E2ESPM
+   ## - 2015-04-02T16:36:14.3Z   / Another one from E2ESPM
    def str2strexceldate(str)
 #       puts str
 #       puts str.length
@@ -171,30 +171,36 @@ module Converters
       exit(99)
       
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def str2time(str)
       return Time.local(str.slice(0,4).to_i, str.slice(4,2).to_i, str.slice(6,2).to_i,
                           str.slice(9,2).to_i,  str.slice(11,2).to_i, str.slice(13,2).to_i)
 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def str_to_bool(str)
       return true   if str == true   || str =~ (/(true|t|yes|y|1)$/i)
       return false  if str == false  || str.empty? || str =~ (/(false|f|no|n|0)$/i)
       raise ArgumentError.new("Converters::str_to_bool invalid value for Boolean: \"#{str}\"")
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # sdm_mjd2000_to_utc -d 6600.04170138889
+   ## sdm_mjd2000_to_utc -d 6600.04170138889
    def mjd2000_to_utc(str)
       days        = (str.to_f.to_i)* 86400
       remainder   = "0.#{str.to_s.split('.')[1]}".to_f*86400
       epoch       = Time.utc(2000,"jan",1,00,00,00).to_i
       return Time.at(epoch+days+remainder).utc 
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
+
+   ## XL_ASCII_CCSDSA_COMPACT
+   def strDateMidnight
+      return "#{Date.today.strftime("%Y%m%dT")}000000"
+   end
+   ## -----------------------------------------------------------
 
 end # module
 

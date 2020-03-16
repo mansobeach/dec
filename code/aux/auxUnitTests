@@ -18,8 +18,11 @@ require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 
+require 'cuc/DirUtils'
+
 require 'aux/AUX_Environment'
-require 'aux/AUX_Parser_IGS_Broadcast_Ephemeris'
+require 'aux/AUX_Handler_IERS_Leap_Second'
+require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 
 # Select a single test of the suite
 
@@ -27,8 +30,8 @@ require 'aux/AUX_Parser_IGS_Broadcast_Ephemeris'
 
 class AUXTestCase < Test::Unit::TestCase
 
+   include CUC::DirUtils
    include Test::Unit::Data
-   
    include AUX
    
       
@@ -40,6 +43,9 @@ class AUXTestCase < Test::Unit::TestCase
    Test::Unit.at_start do
    
       @@conf = AUX_Environment.new
+      
+      @@testDir = "/tmp/aux"
+            
       
    end
    
@@ -53,6 +59,8 @@ class AUXTestCase < Test::Unit::TestCase
    ## Setup before every test-case
    ##
    def setup
+      checkDirectory(@@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat", @@testDir)
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -61,9 +69,29 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_iers
+   
+      file_leap_second = "#{@@testDir}/Leap_Second.dat"
+      
+      puts 
+   
+      handler = AUX_Handler_IERS_Leap_Second.new(file_leap_second, "S3")
+      
+      handler.convert
+      
+      newName = handler.rename
+      
+      puts newName
+      
+      assert(File.exist?(newName), "rename performed")
+      
+      
+   end
+   ## --------------------------------------------------------
+
    ## This test creates every necessary directory to make the circulations succeed
    def test_igs
-      parser = AUX_Parser_IGS_Broadcast_Ephemeris.new("/Users/borja/Projects/dec/code/aux/brdc/brdc0010.20g")
+      # parser = AUX_Parser_IGS_Broadcast_Ephemeris.new("/Users/borja/Projects/dec/code/aux/brdc/brdc0010.20g")
    end
    ## ------------------------------------------------------
 

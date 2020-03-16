@@ -366,7 +366,7 @@ class DEC_ReceiverFromInterface
       rescue Exception => e
          @logger.error("[DEC_610] #{@entity} I/F: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
          @logger.error("[DEC_611] #{@entity} I/F: #{e.to_s}")
-         @logger.error("Could not poll #{@entity} I/F")
+         @logger.error("[DEC_600] #{@entity} I/F: Could not perform polling")
          exit(99)
       end
 
@@ -635,9 +635,9 @@ class DEC_ReceiverFromInterface
             @session = @ftp.connect!
          end
       rescue Exception => e
-         @logger.error("#{@entity}: #{e.to_s}")
-         @logger.error("#{@entity}: Unable to connect to #{host}")
-         @logger.error("Could not poll #{@entity} I/F")
+         @logger.error("[DEC_610] #{@entity} I/F: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_611] #{@entity} I/F: #{e.to_s}")
+         @logger.error("[DEC_600] #{@entity} I/F: Could not perform polling")
          if @isDebugMode == true then
             @logger.debug(e.backtrace)
          end

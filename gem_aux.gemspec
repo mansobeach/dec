@@ -10,6 +10,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5'
   
   s.files       = Dir['code/aux/*.rb'] + \
+                  Dir['code/cuc/DirUtils.rb'] + \
+                  Dir['code/cuc/Converters.rb'] + \
                   Dir['install/orc_test.bash']
 
 

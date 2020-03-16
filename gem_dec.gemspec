@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.13'
+  s.version     = '1.0.14'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -81,7 +81,8 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 4.2')
   s.add_dependency('pg', '~> 1')
-  s.add_dependency('sqlite3', '~> 3')
+  s.add_dependency('sqlite3', '~> 1.4')
+  s.add_dependency('sys-filesystem', '~> 1.3')
   
   ## ----------------------------------------------
   

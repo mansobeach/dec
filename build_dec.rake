@@ -158,7 +158,7 @@ namespace :dec do
    desc "uninstall DEC gem"
    
    task :uninstall do
-      cmd = "gem uninstall dec"
+      cmd = "gem uninstall -x dec"
       puts cmd
       system(cmd)      
    end
@@ -171,9 +171,12 @@ namespace :dec do
       puts
       puts @filename
       puts
-      cmd = "gem uninstall -x dec"
-      puts cmd
-      system(cmd)
+      
+      Rake::Task["dec:uninstall"].invoke
+#      cmd = "gem uninstall -x dec"
+#      puts cmd
+#      system(cmd)
+      
       cmd = "gem install #{@filename}"
       puts cmd
       system(cmd)

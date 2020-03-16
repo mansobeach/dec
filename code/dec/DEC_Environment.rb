@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_Environment class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component (DEC)
-# 
-# Git: DEC_Environment,v $Id$ $Date$
-#
-# module DEC
-#
+###
+### === Ruby source for #DEC_Environment class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component (DEC)
+### 
+### Git: DEC_Environment,v $Id$ $Date$
+###
+### module DEC
+###
 #########################################################################
 
 require 'rubygems'
@@ -23,11 +23,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.13"
+   @@version = "1.0.14"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.14" =>    "New gem sys-filesystem is required to check hardlink config", \
       "1.0.13" =>    "Support of for HTTP protocol for known URLs\n\
           Support of authentication for HTTP(S) GET and DELETE verbs\n\
           dec_interfaces.xml defines <VerifyPeerSSL> to validate the certificate\n\

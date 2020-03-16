@@ -170,8 +170,8 @@ class FileDeliverer2InTrays
                if ret == true then
                   begin
                      if @isDebugMode == true then
+                        @logger.debug("[DEC_951] Removing #{dir}/#{file}")
                         @logger.debug("#{file} has been disseminated locally according to rules")
-                        @logger.debug("Removing #{dir}/#{file}")
                      end
                      FileUtils.rm_rf("#{dir}/#{file}")
                   rescue Exception
@@ -276,7 +276,7 @@ class FileDeliverer2InTrays
          if ret == true then
             begin
                if @isDebugMode == true then
-                  @logger.debug("Removing #{directory}/#{file}")
+                  @logger.debug("[DEC_951] Removing #{directory}/#{file}")
                end
                FileUtils.rm_rf("#{directory}/#{file}")
                if @isDebugMode == true then
@@ -376,16 +376,19 @@ private
          
 		   if bFirst == true then
 			  
+            ### 20200316 UPDATE
+            ### First operation is a hardlink to avoid copies
             # Move operation is not safe.
             # When dissemination is performed to several In-Trays, it is not
             # possible to rely on that a file would be still present in the first intray
             # a file is disseminated in.
  
-            cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
+            cmd  = "\\ln -f #{file} #{targetDir}/.TEMP_#{file}"
+            #cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
             #cmd  = "\\mv -f #{file} #{targetDir}/.TEMP_#{file}"
             
             if @isDebugMode == true then
-	   		   @logger.debug(cmd)
+	   		   @logger.debug("[DEC_941] Disseminate command (I) : #{cmd}")
 		   	end
             bRet = execute(cmd, "mv2InTrays")
             
@@ -403,7 +406,7 @@ private
             
 			   cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
    			if @isDebugMode == true then
-	   		   @logger.debug(cmd)
+	   		   @logger.debug("[DEC_942] Disseminate command (II) : #{cmd}")
 		   	end
             bRet = execute(cmd, "mv2InTrays")
 

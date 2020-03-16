@@ -8,7 +8,7 @@
 #
 # ==  Data Exchange Component
 # 
-# CVS:  $Id: CheckerInTrayConfig.rb,v 1.3 2007/12/19 06:03:48 decdev Exp $
+# Git:  $Id: CheckerInTrayConfig.rb,v 1.3 2007/12/19 06:03:48 decdev Exp $
 #
 # This class is in charge of verify that the dissemination configuration
 # defined in dec_incoming_files.xml is correct.
@@ -18,6 +18,8 @@
 #
 #########################################################################
 
+require 'sys/filesystem'
+
 require 'cuc/DirUtils'
 require 'dec/ReadConfigIncoming'
 
@@ -25,7 +27,8 @@ module DEC
 
 class CheckerInTrayConfig
    
-   include CUC::DirUtils 
+   include CUC::DirUtils
+   include Sys 
    ## -----------------------------------------------------------
 
    ## Class constructor.
@@ -40,10 +43,14 @@ class CheckerInTrayConfig
    ## It returns a boolean True whether checks are OK. False otherwise.
    def check     
       retVal       = true      
+      
+      arrInTrayDirs = Array.new
+      
+      
       arrDims      = @decReadConf.getIntrayNames
  
       arrDims.each{|dim|
-          
+                    
          inTray   = @decReadConf.getInTrayDir(dim)
          compress = @decReadConf.getInTrayCompress(dim)
 
@@ -65,13 +72,16 @@ class CheckerInTrayConfig
          else
             checkDirectory(inTray)
          end
+         
       }     
       
       arrTypes = @decReadConf.getAllFileTypes
      
       arrTypes.each{|type|
          
-         arrDest = @decReadConf.getInTrays4Filetype(type)
+         arrInTrays  = Array.new
+         hdlinked    = @decReadConf.isHardLinked?(type)
+         arrDest     = @decReadConf.getInTrays4Filetype(type)
  
          if @isDebugMode == true then
             puts "================================================"
@@ -92,7 +102,28 @@ class CheckerInTrayConfig
                retVal = false
                puts "#{type} - #{dim} is not declared in the ListIntrays"
             end
+            
+            arrInTrays << intray
+            
          }
+         
+         
+         if hdlinked == true then
+            puts
+            puts "Verification of hardlink configuration for #{type}:"
+            filesystemID_prev = Filesystem.stat(arrInTrays[0]).filesystem_id
+            inTray_prev       = arrInTrays[0]
+            arrInTrays.each{|intray|
+               puts "#{intray} => #{Filesystem.stat(intray).filesystem_id}"
+               if filesystemID_prev != Filesystem.stat(intray).filesystem_id then
+                  puts "ERROR #{intray} and #{inTray_prev} are not in the same filesystem"
+                  retVal = false
+               end
+               filesystemID_prev = Filesystem.stat(intray).filesystem_id
+               inTray_prev       = intray
+            }
+         end
+         
          
          arrDirs = @decReadConf.getTargetDirs4Filetype(type)
          
@@ -100,7 +131,12 @@ class CheckerInTrayConfig
 #         puts "getTargetDirs4Filetype(#{type})"
 #         puts arrDirs
 #         puts "----------------------------------------"
-#         
+#        
+
+         
+
+
+ 
       }
 
       # Perform integrity dec_incoming_files.xml
