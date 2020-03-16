@@ -99,11 +99,7 @@ TBW.
 \section{Error Messages}
 
 \begin{itemize}
-%	\item DEC_000 <interface> I\/F is not configured correctly: TBW
-%	\item \textit[DEC_002] Directory is unreachable: TBW
-	\item \textit{[DEC\_000] \textit{interface} I\/F is not configured correctly}: TBW
-	\item \textit{[DEC\_002] Directory is unreachable}: TBW
-%	\item \textbf{[DEC\_200]} Failed sending filename}: TBW
+	\item \textbf{[DEC\_600]} "interface" I/F: Could not perform polling
 	\item \textbf{[DEC\_610]} "interface" I/F: Unable to connect to \hyperref[Config_Server]{"Hostname"} with FTP
 	\item \textbf{[DEC\_611]} "interface" I/F: reason of the connection failure
 	\item \textbf{[DEC\_612]} "interface" I/F: Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
@@ -118,16 +114,17 @@ TBW.
 	\item \textbf{[DEC\_666]} "interface" I/F: Could not download "file"
 \end{itemize}
 
-\subsection{[DEC\_000]}
-\textit{Interface xxxx is not configured correctly}: TBW
 
-\subsection{[DEC\_200]}
-\textit{Failed sending  to interface}: TBW
+\subsection{[DEC\_600] Failed to Poll Interface}
+\label{DEC600}
+This message is raised at the end of the interface polling operation to notify failure. Reason should have been previously logged (e.g. \hyperref[DEC610]{DEC\_610}, \hyperref[DEC611]{DEC\_611},etc). Polling elapse time can be computed by referring to the associated \hyperref[DEC005]{DEC\_005} message. 
 
 \subsection{[DEC\_610] Unable to Connect with FTP}
+\label{DEC610}
 This error is raised when it is not possible to connect to \hyperref[Config_Server]{"Hostname"} with FTP.
 
 \subsection{[DEC\_611] Server Error Message}
+\label{DEC611}
 This error code can bring different messages associated to the connection failure [DEC\_610] is reporting. Errors can driven by miss-configuration of the \hyperref[Config_Server]{Server} associated to such interface or its unavailability due to network problems.
 
 \subsubsection{Hostname is unknown}
@@ -175,6 +172,8 @@ This error is raised when DEC could not disseminate a file into a given \textit{
 \label{DEC666}
 This error is raised when DEC could not download a file from a given interface.
 
+\subsection{TBW}
+
 % ------------------------------------------------------------------------------
 % Debug Messages
 
@@ -190,6 +189,9 @@ Some of the available debug messages are listed below.
 	\item \textbf{[DEC\_910]} "interface" I/F: Filtering directory with files "number" of items
 	\item \textbf{[DEC\_911]} "interface" I/F: performance when filtering according to download rules 
 	\item \textbf{[DEC\_912]} "interface" I/F: performance when filtering according to database
+	\item \textbf{[DEC\_941]} File dissemination command I
+	\item \textbf{[DEC\_942]} File dissemination command II	
+	\item \textbf{[DEC\_951]} Removing "file" in "directory" which is \hyperref[LocalInbox]{"LocalInbox"}
 \end{itemize}
 
 \subsection{[DEC\_910] Filtering Number of Files in Download Directory}
@@ -203,6 +205,18 @@ This message reports the CPU time resources used to perform the filtering operat
 \subsection{[DEC\_912] Filtering According to Download Rules}
 \label{DEC912}
 TBW
+
+\subsection{[DEC\_941] File Dissemination Command I}
+\label{DEC941}
+TBW
+
+\subsection{[DEC\_942] File Dissemination Command II}
+\label{DEC942}
+TBW
+
+\subsection{[DEC\_951] Removal from LocalInbox upon Dissemination}
+\label{DEC951}
+This message reports that the "file" has been removed from the "directory" \hyperref[LocalInbox]{"LocalInbox"} upon a complete dissemination according to the configured rules.
 
 \end{document}
 
