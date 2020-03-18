@@ -69,7 +69,35 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_auxConverter
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
+      cmd = "auxConverter -v"
+      puts cmd
+      assert(system(cmd), "version")
+      
+      cmd = "auxConverter -h"
+      puts cmd
+      assert(system(cmd), "help")
+
+      file_leap_second = "#{@@testDir}/Leap_Second.dat"
+
+      cmd = "auxConverter -f #{file_leap_second}"
+      puts cmd
+      assert(system(cmd), "converter")
+
+   end
+   ## --------------------------------------------------------
+
    def test_iers
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
    
       file_leap_second = "#{@@testDir}/Leap_Second.dat"
       
@@ -77,20 +105,24 @@ class AUXTestCase < Test::Unit::TestCase
    
       handler = AUX_Handler_IERS_Leap_Second.new(file_leap_second, "S3")
       
-      handler.convert
+      handler.setDebugMode
       
-      newName = handler.rename
+      newName = handler.convert
       
       puts newName
-      
+            
       assert(File.exist?(newName), "rename performed")
-      
-      
+            
    end
    ## --------------------------------------------------------
 
    ## This test creates every necessary directory to make the circulations succeed
    def test_igs
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
       # parser = AUX_Parser_IGS_Broadcast_Ephemeris.new("/Users/borja/Projects/dec/code/aux/brdc/brdc0010.20g")
    end
    ## ------------------------------------------------------

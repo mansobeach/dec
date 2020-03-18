@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# === Ruby source for #AUX_Parser_IGS_Broadcast_Ephemeris class
+# === Ruby source for #AUX_Handler class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
 # === Data Exchange Component
 # 
-# Git: $Id: AUX_Parser_Generic.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+# Git: $Id: AUX_Handler.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
 #
 # Module AUX management
 # 
@@ -17,9 +17,11 @@
 
 require 'cuc/Converters'
 
+require 'aux/AUX_Handler_IERS_Leap_Second'
+
 module AUX
 
-class AUX_Handler_Generic
+class AUX_Handler
 
    include CUC::Converters
 
@@ -27,17 +29,19 @@ class AUX_Handler_Generic
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, isDebug = false)
+   def initialize(full_path, target = "S3", isDebug = false)
+      @full_path  = full_path
+      @target     = "S3"
+      @handler    = nil
+      
       if isDebug == true then
          setDebugMode
       end
-
-      @full_path     = full_path
-      @filename      = File.basename(full_path)
-      @workingDir    = File.dirname(full_path)
-      @full_path_new = nil
-      @filename_new  = nil
+      
       checkModuleIntegrity
+      
+      loadHandler
+      
    end   
    ## -------------------------------------------------------------
    
@@ -48,27 +52,18 @@ class AUX_Handler_Generic
    ## -------------------------------------------------------------
    
    ## rename the file
-   def rename(newName)
-      prevDir = Dir.pwd
-      Dir.chdir(@workingDir)
-      FileUtils.move(@filename, newName)
-      Dir.chdir(prevDir)
-      @full_path_new = "#{@workingDir}/#{newName}"
-      @filename_new  = newName
+   def convert
+      newName = @handler.convert
+      return newName
    end
    ## -------------------------------------------------------------
 
 private
 
-   @listFiles = nil
-   @mailer    = nil
-
    ## -----------------------------------------------------------
    
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
-#      puts @full_path
-#      puts @filename
       
       if File.exist?(@full_path) == false then
          raise("#{@full_path} does not exist")
@@ -77,10 +72,15 @@ private
    end
    ## -----------------------------------------------------------
 
-protected
-
-   def getCreationDate
-      return self.strDateMidnight
+   def loadHandler
+      filename = File.basename(@full_path, ".*")
+      
+      if filename.downcase.include?("leap_second") then
+         @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target)
+         return
+      end
+            
+      raise "no pattern found for #{filename}"
    end
    ## -----------------------------------------------------------
 
