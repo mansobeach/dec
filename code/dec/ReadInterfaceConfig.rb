@@ -577,20 +577,24 @@ private
          pass    = xmlstruct.elements["Pass"].text
       end
 
-      if !xmlstruct.elements["SecureFlag"].nil? then
+      if !xmlstruct.elements["SecureFlag"].nil? and !xmlstruct.elements["SecureFlag"].text.nil? then
          if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" then
             bSecure = true
          else
             bSecure = false
          end
+      else
+         bSecure = false
       end
 
-      if !xmlstruct.elements["VerifyPeerSSL"].nil? then
+      if !xmlstruct.elements["VerifyPeerSSL"].nil? and !xmlstruct.elements["VerifyPeerSSL"].text.nil? then
          if xmlstruct.elements["VerifyPeerSSL"].text.upcase == "TRUE" then
             bVerifyPeerSSL = true
          else
             bVerifyPeerSSL = false
          end
+      else
+         bVerifyPeerSSL = false
       end
 
       if !xmlstruct.elements["CleanUpFreq"].nil? and !xmlstruct.elements["CleanUpFreq"].text.nil? then
@@ -614,7 +618,6 @@ private
             end
             
          end
-         
       end
       
       arrDownloadDirs = Array.new
@@ -630,26 +633,7 @@ private
            end
       end
 
-#      if xmlstruct.elements["SecureFlag"].text.upcase == "TRUE" and xmlstruct.elements["Protocol"].nil? then
-#         bSecure  = true
-#         protocol = "SFTP"
-#      end
-#      
-#      if xmlstruct.elements["SecureFlag"].text.upcase == "FALSE" and xmlstruct.elements["Protocol"].nil? then
-#         bSecure  = false
-#         protocol = "FTP"
-#      end
-
-#      if protocol == "" then
-#         puts "Fatal Error in ReadInterfaceConfig::fillFTPServerStruct (#{mnemonic})"
-#         puts
-#         puts "Verify Protocol / SecureFlag attributes"
-#         puts 
-#         exit(99)
-#      end
-
-
-      if protocol != "" then
+#      if protocol != "" then
 
       # puts protocol
 
@@ -672,13 +656,14 @@ private
       end
 
 
-      if xmlstruct.elements["CompressFlag"].text.upcase == "TRUE" then
-         bCompress = true
-      else
-         if xmlstruct.elements["CompressFlag"].text.upcase != "FALSE" then
-            puts "Error[#{mnemonic}] CompressFlag field only accepts true|false value"
-            bErrorValue = true
+      if !xmlstruct.elements["CompressFlag"].nil? and !xmlstruct.elements["CompressFlag"].text.nil? then
+         if xmlstruct.elements["CompressFlag"].text.upcase == "TRUE" then
+            bCompress = true
+         else
+            bCompress = false
          end
+      else
+         bCompress = false
       end
 
       if xmlstruct.elements["DeleteFlag"].text.upcase == "TRUE" then
@@ -693,18 +678,16 @@ private
       # ----------------------
       # new flag for ftp passive or not (passive is by default)
       
-      if xmlstruct.elements["PassiveFlag"].text.upcase == "FALSE" then
-         bPassive = false
-      else
-         if xmlstruct.elements["PassiveFlag"].text.upcase != "TRUE" then
-            puts "Error[#{mnemonic}] PassiveFlag field only accepts true|false value"
-            bErrorValue = true
+      if !xmlstruct.elements["PassiveFlag"].nil? and !xmlstruct.elements["PassiveFlag"].text.nil? then
+         if xmlstruct.elements["PassiveFlag"].text.upcase == "TRUE" then
+            bPassive = true
+         else
+            bPassive = false  
          end
+      else
+         bPassive = false  
       end
       # ----------------------
-
-      end
-
 
       if bErrorValue == true then
          puts

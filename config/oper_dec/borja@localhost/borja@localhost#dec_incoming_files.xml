@@ -30,7 +30,6 @@
          </DownloadDirs>
       </Interface>
 
-
       <Interface>
          <Name>LOCALHOST_NOT_SECURE</Name>
          <LocalInbox>/tmp/dec/in_basket_if_localhost_notsecure</LocalInbox>
@@ -95,6 +94,22 @@
          <LocalInbox>/tmp/dec/if_leap_in_basket</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
+         <Name>PUBLISH_S3</Name>
+         <LocalInbox>/tmp/dec/publish/s3</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_local_dissemination/S3</Directory>
+         </DownloadDirs>
+      </Interface>
+
+      <Interface>
+         <Name>PUBLISH_POD</Name>
+         <LocalInbox>/tmp/dec/publish/pod</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_local_dissemination/pod</Directory>
          </DownloadDirs>
       </Interface>
        
@@ -200,6 +215,14 @@
             <Interface>LOCALHOST_NOT_SECURE</Interface>
          </FromList>
       </File>
+
+      <File Type="S3__GN_1_LSC_AX*">
+         <Description>Sentinel-3 Leap Second</Description>
+         <FromList>
+            <Interface>PUBLISH_S3</Interface>
+         </FromList>
+      </File>
+
      
    </ListFiles>
 
@@ -208,6 +231,11 @@
    <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    
       <ListIntrays>
+
+         <Intray>
+            <Name>S3_IN</Name>
+            <Directory>/tmp/dec_local_dissemination/S3</Directory>
+         </Intray>
 
          <Intray>
             <Name>S2ALL</Name>
@@ -243,6 +271,8 @@
                 
       </ListIntrays>
 
+      <!-- =============================================== -->
+
       <ListFilesDisseminated>
     
       <!--
@@ -274,7 +304,7 @@
          <File Type="Leap_Second*">
             <HardLink>false</HardLink>
             <ToList>
-               <Intray>GPS</Intray>
+               <Intray>S3_IN</Intray>
             </ToList>
          </File>   
 

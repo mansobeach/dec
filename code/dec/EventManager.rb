@@ -10,7 +10,7 @@
 # 
 # Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
 #
-# === Module: Common Transfer Component // Class EventManager
+# === Module: Data Exchange Component // Class EventManager
 #
 # This class is in charge of processing different Events.
 #
@@ -107,21 +107,18 @@ class EventManager
             # --------------------------
             
             if log != nil then
-               log.info("#{interface} event:#{eventName} => #{cmd}")
+               log.info("[DEC_130] #{interface} I/F : event #{eventName.downcase} triggered => #{cmd}")
             end
             retVal = system(cmd)
             if @isDebugMode == true then
-               puts "Event #{eventName} Triggered for #{interface}"
-               puts "Executing command #{cmd}" 
+               log.debug("Event #{eventName} Triggered for #{interface}")
+               log.debug("Executing command #{cmd}")
             end
             if retVal == false then
-               puts "Error when executing #{cmd}"
+               log.debug("Error when executing #{cmd}")
             end
          else
-#            puts "xxxxxxxx"
-#            puts eventName
-#            puts event["name"]
-#            puts "xxxxxxxx"
+#            log.error("[DEC_XXX] #{interface} I/F event: unsupported event #{event[:name]}")
          end
       }
    end

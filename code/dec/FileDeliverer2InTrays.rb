@@ -419,7 +419,7 @@ private
                end
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
-               @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
+               @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
                             
                event  = EventManager.new
       
@@ -463,7 +463,7 @@ private
                   end
                   FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
                   
-                  @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
+                  @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
                   
                   event  = EventManager.new
       
@@ -505,7 +505,7 @@ private
                   Dir.chdir(prevDir)
                   return false
                else
-                  @logger.info("[DEC_115] Disseminated #{file} into #{targetDir} Intray")
+                  @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
                   
                   event  = EventManager.new
       

@@ -34,7 +34,7 @@
       <Download>
          <DownloadDirs>false</DownloadDirs>
          <DeleteUnknownFiles>false</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
          <!--
          <LogUnknownFiles>false</LogUnknownFiles>
          <LogDuplicatedFiles>false</LogDuplicatedFiles>     

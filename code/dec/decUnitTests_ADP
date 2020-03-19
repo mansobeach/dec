@@ -291,7 +291,6 @@ class DECTestCase < Test::Unit::TestCase
 
       interface, noDB = params
    
-      puts __method__.to_s
       puts
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s} => #{interface} noDB #{noDB}"
@@ -340,6 +339,65 @@ class DECTestCase < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
+   ## Test to publish IERS Bulletin C Leap Second
+
+   def test_ADP_S3
+
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("LEAP"))
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3"))
+      
+      ReadConfigIncoming.instance.getDownloadDirs("PUBLISH_S3").each do |dir|
+         checkDirectory(dir[:directory])
+      end
+
+      cmd = "decGetFromInterface -m LEAP -l"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m LEAP --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      cmd = "decGetFromInterface -m PUBLISH_S3"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      file = "#{ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3")}/S3__GN_1_LSC_AX_*"
+      
+      arr = Dir["#{file}"]
+      
+      assert(File.exist?(arr[0]), "S3__GN_1_LSC_AX Downloaded")
+
+      cmd = "decGetFromInterface -m LEAP --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      cmd = "decGetFromInterface -m PUBLISH_S3"
+      puts cmd
+      assert(system(cmd), cmd)      
+      
+   
+   end
+   ## ------------------------------------------------------
 
 end
 

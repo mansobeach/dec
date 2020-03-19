@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'aux'
-  s.version     = '0.0.0'
+  s.version     = '0.0.1'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/AUX component"
   s.description = "Auxiliary Data Gathering"
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
 
   s.executables   = [ 
-#                     'auxUnitTests', \
+                     'auxConverter', \
                      'auxUnitTests'
                      ]
 

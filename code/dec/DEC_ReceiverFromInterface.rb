@@ -1116,7 +1116,7 @@ private
          # disseminate the file to the In-Trays
 
          if @isNoInTray == false then
-            disseminateFile(disFile)
+            disseminateFile(filename)
          end     
 
          return true
