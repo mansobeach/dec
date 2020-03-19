@@ -107,7 +107,7 @@ class EventManager
             # --------------------------
             
             if log != nil then
-               log.info("[DEC_130] #{interface} I/F : event #{eventName.downcase} triggered => #{cmd}")
+               log.info("[DEC_130] #{interface} I/F : event #{eventName.downcase} => #{cmd}")
             end
             retVal = system(cmd)
             if @isDebugMode == true then

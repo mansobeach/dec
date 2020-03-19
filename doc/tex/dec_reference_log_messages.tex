@@ -32,7 +32,8 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
 	\item \textbf{[DEC\_120]} "interface" I/F: Deleting unknown file "filename" available
 	\item \textbf{[DEC\_125]} "interface" I/F: Deleting duplicated file "filename" previously received 
-	\item \textbf{[DEC\_126]} "interface" I/F: Deleted downloaded file "filename"  	
+	\item \textbf{[DEC\_126]} "interface" I/F: Deleted downloaded file "filename"
+	\item \textbf{[DEC\_130]} "interface" I/F: event "name" triggered  	
 \end{itemize}
 
 \subsection{[DEC\_005] Interface Polling Start}
@@ -50,9 +51,11 @@ This message is logged upon completion filtering the files published in the down
 \subsection{[DEC\_105] File Available}
 The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
 
+\label{DEC110}
 \subsection{[DEC\_110] File Downloaded}
 The file referenced in the message has been downloaded from the interface and placed into the \hyperref[LocalInbox]{\textit{LocalInbox}} associated to such interface. If the same file is available again at the same interface, the DEC will detect a file duplication condition.
 
+\label{DEC115}
 \subsection{[DEC\_115] File Disseminated}
 The file referenced in the message met any of the and it has been moved from \hyperref[LocalInbox]{\textit{LocalInbox}} into the Intray(s) matching the first \hyperref[Dissemination rules]{\textit{dissemination rule}}.
 
@@ -68,6 +71,20 @@ According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{Del
 \subsection{[DEC\_126] Downloaded File Deleted}
 According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteFlag}} defined in \textit{dec\_interfaces.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
 
+\subsection{[DEC\_130] Event Triggered}
+The message traces some event which has been triggered for a given interface according to the configuration items defined in \hyperref[Events]{Events}.
+
+\subsubsection{Event newfile2intray}
+This event is triggered upon successful polling completion (cf. \hyperref[DEC060]{DEC\_060}) which drove dissemination of some files (cf. \hyperref[DEC115]{DEC\_115}).
+\begin{verbatim}
+[DEC_130] LEAP I/F : event newfile2intray => auxConverter -f /S3/Leap_Second.dat
+\end{verbatim}
+
+\subsubsection{Event onreceivenewfilesok}
+This event is triggered upon successful polling completion (cf. \hyperref[DEC060]{DEC\_060}) which drove download of some files (cf. \hyperref[DEC110]{DEC\_110}).
+\begin{verbatim}
+[DEC_130] LEAP I/F : event onreceivenewfilesok triggered => echo %f RECEIVED
+\end{verbatim}
 
 % ------------------------------------------------------------------------------
 % Warning Messages
