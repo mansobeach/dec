@@ -10,7 +10,8 @@
          <Name>S2PDGS</Name>
          <LocalInbox>/volumes/dec/interfaces/dec_basket.s2pdgs</LocalInbox>
          <DownloadDirs>
-		 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/</Directory>
+                 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/</Directory>
+                 <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/1.nominal</Directory-->
          </DownloadDirs>
       </Interface>
 
@@ -18,7 +19,8 @@
          <Name>SUPER_TCI</Name>
          <LocalInbox>/volumes/dec/interfaces/dec_basket.tci</LocalInbox>
          <DownloadDirs>
-		 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
+                 <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
+                 <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/2.tci</Directory-->
          </DownloadDirs>
       </Interface>
 
@@ -288,12 +290,32 @@
           </ToList>
       </File>
 
+     <File Type="*REP_OPDPC__MTI_*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
      <File Type="*REP_OPDPC_*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+     <File Type="S2?_OPER_REP_ARC____MTI__???????????????_V???????????????_???????????????.EOF">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
         </ToList>
@@ -354,6 +376,16 @@
         </ToList>
      </File>
 
+     <File Type="*REP_PASS_?_MTI_*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
      <File Type="*REP_PASS_?*">
         <HardLink>True</HardLink>
         <ToList>
@@ -404,6 +436,16 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+     <File Type="*REP_OPDC___MTI_*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
         </ToList>
