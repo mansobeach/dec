@@ -22,7 +22,18 @@ require 'cuc/DirUtils'
 class FT_PackageUtils
 
    attr_reader :CompressMethods
-   CompressMethods = ["NONE", "7Z", "TGZ", "ZIP", "TAR", "GZIP", "COMPRESS", "UNPACK", "UNPACK_HDR", "UNPACK_DBL"]
+   
+   CompressMethods = [  "NONE", \
+                        "Z", \
+                        "7Z", \
+                        "TGZ", \
+                        "ZIP", \
+                        "TAR", \
+                        "GZIP", \
+                        "COMPRESS", \
+                        "UNPACK", \
+                        "UNPACK_HDR", \
+                        "UNPACK_DBL"]
 
    include CUC::DirUtils
 
@@ -30,7 +41,7 @@ class FT_PackageUtils
     
    ## --------------------------------------------------------------
 
-   ## Class constructor. It is called only once as this is a singleton class
+   ## Class constructor.
    ##
    ## - file (IN): File basename
    ## - path (IN): File directory
@@ -55,7 +66,12 @@ class FT_PackageUtils
    end
    ## -------------------------------------------------------------
    
-   # Unpack file -> it can generate from 1 to n files
+   def decompress
+   
+   end
+   ## -------------------------------------------------------------
+   
+   ## Unpack file -> it can generate from 1 to n files
    def unpack
    
       ext = getFileExtension(@srcFile)
@@ -71,7 +87,7 @@ class FT_PackageUtils
       end
       return performUnpack(ext)
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def setCompressMethod(method)
       if isValidCompressMethod(method) == true then
@@ -81,7 +97,7 @@ class FT_PackageUtils
       @compressMethod = ""
       return false
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def isValidCompressMethod(method)
       bRet = nil
@@ -95,6 +111,7 @@ class FT_PackageUtils
          when "UNPACK"     then bRet = true
          when "UNPACK_HDR" then bRet = true
          when "UNPACK_DBL" then bRet = true
+         when "Z"          then bRet = true
          else
             bRet = false  
       end
@@ -290,9 +307,13 @@ private
 #     @localDir = %Q{#{configDir}/.#{str}_packager}                 
    end
    
-   #------------------------------------------------------------- 
+   ## ----------------------------------------------------------- 
+   
+   ## ----------------------------------------------------------- 
+   
    def performUnpack(compressMethod)
       case compressMethod.upcase
+         when "Z"      then bRet = performUncompress
          when "TAR"    then bRet = performUnTar 
          when "TGZ"    then bRet = performUnTGZ
          when "ZIP"    then bRet = performUnZip
@@ -303,7 +324,7 @@ private
             bRet = false  
       end
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def performUnpackHDR
       bRet = unpack
@@ -344,8 +365,17 @@ private
 
       Dir.chdir(prevDir)    
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
+   def performUncompress
+      cmd     = %Q{uncompress -f #{@fullpathFile}}
+      if @isDebugMode == true then
+         puts cmd
+      end
+      `#{cmd}`    
+   end
+   ## -----------------------------------------------------------
+   
    def performUnZip
       prevDir = Dir.pwd
       Dir.chdir(@srcPath)
@@ -359,7 +389,7 @@ private
       end      
       Dir.chdir(prevDir)   
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def performUnGzip
       prevDir = Dir.pwd

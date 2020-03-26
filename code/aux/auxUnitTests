@@ -60,7 +60,9 @@ class AUXTestCase < Test::Unit::TestCase
    ##
    def setup
       checkDirectory(@@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat", @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",   @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",      @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",    @@testDir)
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -75,21 +77,46 @@ class AUXTestCase < Test::Unit::TestCase
       puts "AUX_UnitTests::#{__method__.to_s}"
       puts
    
-      cmd = "auxConverter -v"
-      puts cmd
-      assert(system(cmd), "version")
-      
-      cmd = "auxConverter -h"
-      puts cmd
-      assert(system(cmd), "help")
-
+#      cmd = "auxConverter -v"
+#      puts cmd
+#      assert(system(cmd), "version")
+#      
+#      cmd = "auxConverter -h"
+#      puts cmd
+#      assert(system(cmd), "help")
+#
       file_leap_second = "#{@@testDir}/Leap_Second.dat"
 
-      cmd = "auxConverter -f #{file_leap_second}"
+      cmd         = "auxConverter -f #{file_leap_second} -d /tmp/aux_out1"
       puts cmd
-      assert(system(cmd), "converter")
+      puts
+      assert(system(cmd), "converter leap second")
+
+      gps_daily = "#{@@testDir}/brdc0060.20n"
+
+      cmd = "auxConverter -f #{gps_daily} -d /tmp/aux_out2"
+      puts cmd
+      assert(system(cmd), "converter GPS broadcast daily")
+
+      puts
+      gps_daily   = "#{@@testDir}/brdc0060.20n.Z"
+      cmd         = "auxConverter -f #{gps_daily} -d /tmp/aux_out3"
+      puts cmd
+      puts
+      assert(system(cmd), "converter Compressed GPS broadcast daily")
 
    end
+   
+   ## --------------------------------------------------------
+   
+   def test_1
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
+   end
+   
    ## --------------------------------------------------------
 
    def test_iers
@@ -101,16 +128,12 @@ class AUXTestCase < Test::Unit::TestCase
    
       file_leap_second = "#{@@testDir}/Leap_Second.dat"
       
-      puts 
-   
-      handler = AUX_Handler_IERS_Leap_Second.new(file_leap_second, "S3")
+      handler = AUX_Handler_IERS_Leap_Second.new(file_leap_second, "S3", "/tmp/kk1")
       
       handler.setDebugMode
       
       newName = handler.convert
-      
-      puts newName
-            
+                  
       assert(File.exist?(newName), "rename performed")
             
    end
@@ -123,7 +146,18 @@ class AUXTestCase < Test::Unit::TestCase
       puts "AUX_UnitTests::#{__method__.to_s}"
       puts
    
-      # parser = AUX_Parser_IGS_Broadcast_Ephemeris.new("/Users/borja/Projects/dec/code/aux/brdc/brdc0010.20g")
+      igs = "#{@@testDir}/brdc0060.20n.Z"
+      
+      handler = AUX_Handler_IGS_Broadcast_Ephemeris.new(igs, "S3", "/tmp/kk2")
+      
+      handler.setDebugMode
+      
+      newName = handler.convert
+      
+      puts newName
+                  
+      assert(File.exist?(newName), "rename performed")
+
    end
    ## ------------------------------------------------------
 

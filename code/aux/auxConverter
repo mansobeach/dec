@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 # == Usage
-# auxConverter -f <full_path_file>
+# auxConverter -f <full_path_file> -d <dir>
 #     --version         shows the version number
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
@@ -37,9 +37,11 @@ def main
    @isDebugMode      = false
    @bShowVersion     = false
    @full_path_file   = ""
+   @targetDir        = ""
       
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--dir", "-d",                GetoptLong::REQUIRED_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
      ["--help", "-h",               GetoptLong::NO_ARGUMENT]
@@ -49,6 +51,7 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--file"              then @full_path_file = arg.to_s
+            when "--dir"               then @targetDir      = arg.to_s
             when "--Debug"             then @isDebugMode    = true
             when "--version"           then @bShowVersion   = true
 			   when "--help"              then @bUsage         = true
@@ -78,11 +81,11 @@ def main
       exit(99)
    end
 
-   handler = AUX_Handler.new(@full_path_file, "S3", @isDebugMode)
+   handler = AUX_Handler.new(@full_path_file, "S3", @targetDir, @isDebugMode)
    
    newName = handler.convert
    
-   puts newName
+   puts File.basename(newName)
    
    exit(0)
 

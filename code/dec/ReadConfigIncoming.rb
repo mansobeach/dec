@@ -94,6 +94,16 @@ class ReadConfigIncoming
       return getInTrayCompress(name)
    end
    ## -------------------------------------------------------------
+   
+   def getInTrayExecution(name)
+      @@arrIntrays.each{|dim|
+         if name == dim[:name] then
+            return dim[:execute]
+         end
+      }
+      return false
+   end 
+   ## -------------------------------------------------------------
     
    def getInTrayCompress(name)
       @@arrIntrays.each{|dim|
@@ -160,6 +170,17 @@ class ReadConfigIncoming
    
    def getEntitiesSendingIncomingFileType(fileType)
       return getEntitiesSendingIncomingFileName(fileType)
+   end
+   ## -------------------------------------------------------------
+   
+   def getSourceOfFile(fileName, logger)
+      arrEnt = Array.new
+      @@arrIncomingFiles.each{|item|
+         logger.debug("ReadConfigIncoming::getSourceOfFile(#{item[:filetype]} => #{fileName})")
+         if File.fnmatch(item[:filetype], fileName) == true then
+            return item[:fromList]
+         end
+      }   
    end
    ## -------------------------------------------------------------
    
@@ -311,8 +332,8 @@ class ReadConfigIncoming
    end
    ## -------------------------------------------------------------
    
-   # Get the information for a given filename or filetype
-   # Filenames are recognized by the wildcard * at their end.
+   ## Get the information for a given filename or filetype
+   ## Filenames are recognized by the wildcard * at their end.
    def getFile(afile)
       @@arrFile2Intrays.each{|file|
          bWildcard = false
@@ -335,7 +356,7 @@ class ReadConfigIncoming
     
                tmp = element.sub!(/([$])/, "\\.")
                while tmp != nil do
-   	          element = tmp
+   	            element = tmp
                   tmp = tmp.sub!(/([$])/, "\\.")
                end
 
@@ -360,7 +381,7 @@ class ReadConfigIncoming
       puts "#{afile} is not registered in dec_incoming_files.xml"
       exit(99)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # This method checks the coherency of the config file.
    # - It checks that a DIM Name present in the FileList is defined
@@ -466,7 +487,7 @@ private
    def defineStructs
       Struct.new("IncomingInterface", :mnemonic, :localInbox, :arrDownloadDirs)
       Struct.new("IncomingFile", :filetype, :description, :fromList)
-      Struct.new("Intray", :name, :directory, :compress)
+      Struct.new("Intray", :name, :directory, :compress, :execute)
       Struct.new("File2Intrays", :filetype, :hardlink, :arrIntrays)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 	end
@@ -534,7 +555,7 @@ private
       }
       ## ----------------------------------------
 
-      path    = "Config/ListFiles/File"
+      path    = "Config/DownloadRules/File"
 
       XPath.each(xmlFile, path){
          |file|
@@ -570,6 +591,7 @@ private
           trayName   = ""   
           directory  = ""
           compress   = ""
+          execute    = nil
                        
           XPath.each(dim, "Name"){
              |name|
@@ -587,8 +609,14 @@ private
              |kompress|
              compress = kompress.text
           }	  
+
+          XPath.each(dim, "Execute"){
+             |exec|
+             execute = exec.text
+          }	  
+
             
-          @@arrIntrays << Struct::Intray.new(trayName, directory, compress)      
+          @@arrIntrays << Struct::Intray.new(trayName, directory, compress, execute)      
       
       }
  

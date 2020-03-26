@@ -364,9 +364,9 @@ class DEC_ReceiverFromInterface
          @ftp.login(user, pass)
          @ftp.passive = bPassive
       rescue Exception => e
-         @logger.error("[DEC_610] #{@entity} I/F: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
-         @logger.error("[DEC_611] #{@entity} I/F: #{e.to_s}")
-         @logger.error("[DEC_600] #{@entity} I/F: Could not perform polling")
+         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_611] I/F #{@entity}: #{e.to_s}")
+         @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
          exit(99)
       end
 
@@ -391,8 +391,8 @@ class DEC_ReceiverFromInterface
             @ftp.chdir(@remotePath)
          rescue Exception => e
             @ftp.chdir("/")
-            @logger.error("[DEC_612] #{@entity} I/F: Cannot reach #{@remotePath} directory")
-            @logger.error("[DEC_613] #{@entity} I/F: #{e.to_s}")               
+            @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@remotePath} directory")
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")               
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
@@ -528,11 +528,11 @@ class DEC_ReceiverFromInterface
             end
 
             if bFound == false then
-               @logger.error("[DEC_614] #{@entity} I/F: Cannot GET #{url}")
+               @logger.error("[DEC_614] I/F #{@entity}: Cannot GET #{url}")
                next
             end
          rescue Exception => e
-            @logger.error("[DEC_614] #{@entity} I/F: Cannot GET #{url}")
+            @logger.error("[DEC_614] I/F #{@entity}: Cannot GET #{url}")
             @logger.error(e.to_s)
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
@@ -635,9 +635,9 @@ class DEC_ReceiverFromInterface
             @session = @ftp.connect!
          end
       rescue Exception => e
-         @logger.error("[DEC_610] #{@entity} I/F: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
-         @logger.error("[DEC_611] #{@entity} I/F: #{e.to_s}")
-         @logger.error("[DEC_600] #{@entity} I/F: Could not perform polling")
+         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_611] I/F #{@entity}: #{e.to_s}")
+         @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
          if @isDebugMode == true then
             @logger.debug(e.backtrace)
          end
@@ -1075,15 +1075,23 @@ private
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
-			# if deleteFlag is enable delete it from remote directory
-         if @protocol == "LOCAL" then
-            @local.deleteFromEntity(filename)
-         else
-   			deleteFromEntity(filename)
-         end      
+         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
          
-         @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
-
+         ## ------------------------------------------------
+         ##
+         ## if delete flag is enabled  
+         if @entityConfig.deleteAfterDownload?(@entity) == true then
+   	      retVal = deleteFromEntity(filename)
+         
+            if retVal == true then
+               @logger.info("[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}")
+            else
+               @logger.error("[DEC_670] I/F #{@entity}: Failed to delete #{File.basename(filename)}")
+            end
+         end
+         ##
+         ## ------------------------------------------------
+        
          event  = EventManager.new
          
          if @isDebugMode == true then
@@ -1172,7 +1180,7 @@ private
  
       size = File.size("#{@localDir}/#{File.basename(filename)}")
          
-      @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
+      @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
 		
       # File is made available at the interface inbox	
       copyFileToInBox(File.basename(filename), size)
@@ -1258,6 +1266,8 @@ private
                                 filename,
                                 nil)
          
+         ### ---------------------------
+         ### QUARANTINE THIS SOMETIME
          # If registered in database we do not delete the file
          # after retrieving it
          if @drivenByDB == false then                       
@@ -1265,6 +1275,7 @@ private
                                    filename,
                                    nil)
          end      
+         ### ---------------------------
       
       
       else
@@ -1316,11 +1327,24 @@ private
 			         
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
+
+         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
 			
-			# if deleteFlag is enable delete it from remote directory
-			deleteFromEntity(filename)
+         ## ------------------------------------------------
+         ##
+         ## if delete flag is enabled  
+         if @entityConfig.deleteAfterDownload?(@entity) == true then
+   	      retVal = deleteFromEntity(filename)
          
-         @logger.info("[DEC_110] #{@entity} I/F: Downloaded #{File.basename(filename)} with size #{size} bytes")
+            if retVal == true then
+               @logger.info("[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}")
+            else
+               @logger.error("[DEC_670] I/F #{@entity}: Failed to delete #{File.basename(filename)}")
+            end
+         end
+         ##
+         ## ------------------------------------------------
+                  
 
          if size.to_i == 0 then
             return true
@@ -1478,7 +1502,7 @@ private
          end
          return false
       end
-      msg = "[DEC_126] #{@entity} I/F: Deleted downloaded #{File.basename(filename)}"
+      msg = "[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}"
       @logger.info(msg)
       return true
    end
@@ -1489,15 +1513,20 @@ private
 	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename, bForce = false)
 	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
+      
+      if @isDebugMode == true then
+         @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity => DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
+		end
+      
 		# if true proceed to remove the files from the remote I/F
-		if deleteFlag == true or bForce == true then
+		
+      if deleteFlag == true or bForce == true then
 		   if @isDebugMode == true then
 			   @logger.debug("DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
 			end
          
          if @protocol == "LOCAL" then
-            @local.deleteFromEntity(filename)
-            return
+            return @local.deleteFromEntity(filename)
          end
 
          if @protocol == "WEBDAV" then
@@ -1524,6 +1553,7 @@ private
 			   retVal = sftpClient.executeAll
             output = sftpClient.output
       
+            return retVal
 #            if @isDebugMode == true then
 #               puts
 #               puts "------------------------------------------"
@@ -1535,13 +1565,11 @@ private
 			else
            # ncftpget performs the retrieval and delete operation in just one call
            # so additional commands are not required
-# 			   @logger.error("DEC_ReceiverFromInterface::deleteFromEntity not implemented for non secure")
-# 				exit(99)
+           if @isDebugMode == true then
+              @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity fake deletion for plain ftp since ncftpget already did it with flag -DD")
+           end
+           return true
 			end      
-		else
-		   if @isDebugMode == true then
-			   @logger.debug("DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
-			end
 		end
 	end
    ## -------------------------------------------------------------
@@ -1553,7 +1581,9 @@ private
    end
    ## -------------------------------------------------------------
    
-   ##
+   ###
+   ### forTracking concept is in QUARANTINE 
+   ###
    def filterFullPathFileList(list, forTracking)      
       arrTemp        = Array.new
       arrFiles       = Array.new
@@ -1607,7 +1637,7 @@ private
       nStart    = list.length
 
       if @isDebugMode == true then
-         @logger.debug("[DEC_910] #{@entity} I/F: Filtering directory with files / #{list.length} items")
+         @logger.debug("[DEC_910] I/F #{@entity}: Filtering directory with files / #{list.length} items")
       end
 
       perf = measure{
@@ -1677,12 +1707,19 @@ private
          
             # ----------------------------------------------
             
-            @logger.warn("[DEC_320] #{@entity} I/F: Detected unknown file #{File.basename(aFile)}")
+            @logger.warn("[DEC_320] I/F #{@entity}: Detected unknown file #{File.basename(aFile)}")
             
             if @isDelUnknown == true and forTracking == false then
-               @logger.info("[DEC_120] #{@entity} I/F: Deleting unknown file #{File.basename(aFile)}")
-               deleteFromEntity(aFile)
+               @logger.info("[DEC_120] I/F #{@entity}: Deleting unknown file #{File.basename(aFile)}")
+               ret = deleteFromEntity(aFile)
+               
+               if ret == false then
+                  @logger.error("[DEC_671] I/F #{@entity}: Failed to delete unknown file #{File.basename(aFile)}")
+               end
+
             end
+            
+            # ----------------------------------------------
          }
       end
 
@@ -1694,12 +1731,8 @@ private
 
       } # end of measure
 
-      if @isBenchmarkMode == true then
-         @logger.info("[DEC_911] #{@entity} I/F: Filtered #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
-      else
-         if @isDebugMode == true then
-            @logger.debug("[DEC_911] #{@entity} I/F: Filtered #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
-         end      
+      if @isBenchmarkMode == true or @isDebugMode == true then
+         @logger.info("[DEC_911] I/F #{@entity}: Filtered #{nStart}/#{tmpList.length} items (wildcards/file-type): #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
       end
 
       # - Remove files that have already been retrieved/tracked
@@ -1707,7 +1740,7 @@ private
       if @isNoDB == false then
 
       if @isDebugMode == true then
-         @logger.debug("[DEC_912] #{@entity} I/F: Filtering files previously recorded within db / #{list.length} items")
+         @logger.debug("[DEC_912] I/F #{@entity}: Filtering files previously recorded within db / #{list.length} items")
       end
 
       perf = measure{
@@ -1721,9 +1754,15 @@ private
       tmpList.each{|fullpath|
       
          filename = File.basename(fullpath)
-         if forTracking == false then
+         
+         if @isDebugMode == true then
+            @logger.debug("[DEC_913] I/F #{@entity}: Filtering file vs database => #{filename}")
+         end
+         
+         if forTracking == false or forTracking == true then
+         
             if hasBeenAlreadyReceived(filename) == true then
-               @logger.warn("[DEC_301] #{@entity} I/F: Detected duplicated file #{filename}")
+               @logger.warn("[DEC_301] I/F #{@entity}: Detected duplicated file #{filename}")
 
                arrDelete << fullpath
                
@@ -1731,10 +1770,16 @@ private
                ##
                ## dec_config.xml <DeleteDuplicatedFiles>
                ##
-               if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true then
-                  @logger.info("[DEC_125] #{@entity} I/F: Deleting duplicated file #{File.basename(filename)} previously received")
-                  # deleteFromEntity(fullpath, true)
-                  deleteFromEntity(fullpath, false)
+               if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true and forTracking == false then
+                  @logger.info("[DEC_125] I/F #{@entity}: Deleting duplicated file #{File.basename(filename)} previously received")
+                  
+                  ret = deleteFromEntity(fullpath, false)
+
+                  if ret == false then
+                     @logger.error("[DEC_672] I/F #{@entity}: Failed to delete duplicated file #{File.basename(filename)}")
+                  end
+                  
+                  
                else
                   if @isDebugMode == true then
                      @logger.debug("Duplicated files removal is #{DEC::ReadConfigDEC.instance.getDeleteDuplicated} / #{File.basename(filename)} ")
@@ -1742,19 +1787,23 @@ private
                end
                ## --------------------------------
             else
+               if @isDebugMode == true then
+                  @logger.debug("[DEC_915] I/F #{@entity}: #{filename} not previously recorded in db")
+               end
+
                numFilesToBeRetrieved += 1
                arrPolled << fullpath
             end
-         else
-            if hasBeenAlreadyTracked(filename) == true then
-               arrDelete << fullpath
-               if @isDebugMode == true then
-                  @logger.debug("#{getFilenameFromFullPath(filename)} already tracked from #{@entity}")
-               end
-            else
-               numFilesToBeRetrieved += 1
-               arrPolled << fullpath
-            end                     
+#         else
+#            if hasBeenAlreadyTracked(filename) == true then
+#               arrDelete << fullpath
+#               if @isDebugMode == true then
+#                  @logger.debug("#{getFilenameFromFullPath(filename)} already tracked from #{@entity}")
+#               end
+#            else
+#               numFilesToBeRetrieved += 1
+#               arrPolled << fullpath
+#            end                     
          end
       
          if @pollingSize != nil and numFilesToBeRetrieved >= @pollingSize.to_i then
@@ -1789,7 +1838,7 @@ private
       @fileListError = @fileListError.flatten.uniq
       return list
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
       
    # It process the output of ncftpls or sftp "ls" in order to
    # delete rubbish which does not correspond to a file
@@ -1830,9 +1879,14 @@ private
                   @logger.debug("#{getFilenameFromFullPath(fileName)} already received from #{@entity}")
                end
                #2016 patch
-               @logger.info("[DEC_125] #{@entity} I/F: Deleting duplicated file #{File.basename(filename)} previously received")
-               # deleteFromEntity(fileName, true)
-               deleteFromEntity(fileName, false)
+               @logger.info("[DEC_125] I/F #{@entity}: Deleting duplicated file #{File.basename(filename)} previously received")
+
+               ret = deleteFromEntity(fileName, false)
+               
+               if ret == false then
+                  @logger.error("[DEC_672] I/F #{@entity}: Failed to delete duplicated file #{File.basename(filename)}")
+               end
+               
             end
          else
             if hasBeenAlreadyTracked(fileName) == false then
@@ -1863,7 +1917,15 @@ private
    ## - true if source in dec_incoming_files.xml is current entity
    ## - false otherwise
    def checkFileSource(fileName)
+   
       sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
+
+      if @isDebugMode == true then
+         @logger.debug("DEC_ReceiverFromInterface::checkFileSource(#{fileName})")
+         @logger.debug(sources)
+      end
+
+      
 
       if sources == nil then
          if @isDebugMode == true then
@@ -1880,7 +1942,7 @@ private
 	## It invokes the method DCC_InventoryInfo::isFileReceived? 
    def hasBeenAlreadyReceived(filename)
       if @isDebugMode == true then
-         @logger.debug("checking previous reception of #{filename}")
+         @logger.debug("checking previous reception of #{filename} from #{@interface.name} => #{@interface.id}")
       end
       arrFiles = ReceivedFile.where(filename: filename)
       if arrFiles == nil then
@@ -1895,14 +1957,14 @@ private
           
          if file.interface_id == @interface.id then
             if @isDebugMode == true then
-               @logger.debug("hasBeenAlreadyReceived: #{filename}")
+               @logger.debug("[DEC_914] I/F #{@entity}: #{filename} found in database / it was previously received ")
             end
             return true
          end
       }
       return false
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    
    #-------------------------------------------------------------
@@ -2031,7 +2093,7 @@ private
             @logger.debug("#{cmd} Failed ")
             @logger.debug("Error in DEC_ReceiverFromInterface::copyFileToInBox :-(")
          end
-         @logger.error("[DEC_620] #{@entity} I/F: Could not copy #{filename} into local #{@finalDir} Inbox")
+         @logger.error("[DEC_620] I/F #{@entity}: Could not copy #{filename} into local #{@finalDir} Inbox")
          @logger.warn("[DEC_330] #{filename} is stuck in #{@localDir} directory")
          # @logger.info("#{size}")
 			exit(99)

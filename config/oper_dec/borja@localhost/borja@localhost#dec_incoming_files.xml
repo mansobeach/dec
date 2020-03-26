@@ -83,7 +83,9 @@
          <Name>IGS</Name>
          <LocalInbox>/tmp/dec/if_igs_in_basket</LocalInbox>
          <DownloadDirs>
+            <!--
 		      <Directory DepthSearch="0">/pub/gps/products/latest/final</Directory>
+            -->
             <!-- GPS Messages -->
             <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>
          </DownloadDirs>
@@ -101,7 +103,7 @@
          <Name>PUBLISH_S3</Name>
          <LocalInbox>/tmp/dec/publish/s3</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/tmp/dec_local_dissemination/S3</Directory>
+            <Directory DepthSearch="0">/tmp/aux_tmp</Directory>
          </DownloadDirs>
       </Interface>
 
@@ -118,7 +120,7 @@
 
    <!-- =========================================================== -->
 
-   <ListFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   
       <File Type="test_http*.bin*">
          <Description>test file</Description>
@@ -165,6 +167,8 @@
          </FromList>
       </File>
 
+<!--
+
       <File Type="ig??????.sp3*">
          <Description>International GPS Service / GPS Orbits igswwwwd.sp3.Z</Description>
          <FromList>
@@ -172,12 +176,7 @@
          </FromList>
       </File>
 
-      <File Type="ig??????.clk_30s*">
-         <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
-         <FromList>
-            <Interface>IGS</Interface>
-         </FromList>
-      </File>
+-->
 
       <File Type="ig??????.clk_30s*">
          <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
@@ -186,7 +185,14 @@
          </FromList>
       </File>
 
-      <File Type="brdc*.*n*">
+      <File Type="ig??????.clk_30s*">
+         <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
+         <FromList>
+            <Interface>IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="brdc????.??n.Z">
          <Description>International GPS Service / GPS navigation message brdcdddf.yyn.Z</Description>
          <FromList>
             <Interface>IGS</Interface>
@@ -223,8 +229,15 @@
          </FromList>
       </File>
 
+      <File Type="S3__GN_1_NAV_AX*">
+         <Description>Sentinel-3 IGS Broadcast Daily</Description>
+         <FromList>
+            <Interface>PUBLISH_S3</Interface>
+         </FromList>
+      </File>
+
      
-   </ListFiles>
+   </DownloadRules>
 
    <!-- =========================================================== -->
 
@@ -233,8 +246,22 @@
       <ListIntrays>
 
          <Intray>
+            <Name>FINAL_S3</Name>
+            <Directory>/tmp/dec_final_dissemination/S3</Directory>
+         </Intray>
+
+         <Intray>
+            <Name>ARCHIVE</Name>
+            <Directory>/tmp/dec_final_dissemination/archive</Directory>
+            <!--
+            <Compress>7z</Compress>
+            -->
+         </Intray>
+
+         <Intray>
             <Name>S3_IN</Name>
             <Directory>/tmp/dec_local_dissemination/S3</Directory>
+            <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
          </Intray>
 
          <Intray>
@@ -246,11 +273,17 @@
             <Name>S2A</Name>
             <Directory>/tmp/dec_local_dissemination/S2A</Directory>
             <Compress>7z</Compress>
+            <!--
+            <Execute>7z</Execute>
+            -->
          </Intray>
 
          <Intray>
             <Name>S2B</Name>
             <Directory>/tmp/dec_local_dissemination/S2B</Directory>
+            <!--
+            <Execute>7z</Execute>
+            -->
          </Intray>
 
          <Intray>
@@ -280,6 +313,24 @@
             Only the first rule matching the file pattern is applied     
       -->
 
+         <File Type="S3__GN_1_LSC_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S3__GN_1_NAV_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
+
+
+
          <File Type="*DECUNKNOWN*LOCALHOST_NOT_SECURE*">
             <HardLink>False</HardLink>
             <ToList>
@@ -307,6 +358,13 @@
                <Intray>S3_IN</Intray>
             </ToList>
          </File>   
+
+         <File Type="brdc0???.??n.Z">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>
 
          <File Type="gpsrapid.*">
             <HardLink>false</HardLink>

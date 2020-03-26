@@ -250,18 +250,22 @@ class LocalInterfaceHandler
 	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename)
 	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
-		# if true proceed to remove the files from the remote I/F
-		if deleteFlag then
-		   if @isDebugMode == true then puts "DeleteFlag is enabled for #{@entity} I/F" end
+
+      if @isDebugMode == true then 
+         @logger.debug("LocalInterfaceHandler::deleteFromEntity: I/F #{@entity} deleteFlag is #{deleteFlag}")
+      end
+
+		if deleteFlag == true then
          begin
             FileUtils.rm_rf(filename)    
          rescue
-            @logger.error("[DEC_004] Error: Could not delete #{filename}")
-            if @isdebugMode then puts"Error: Could not delete #{filename}" end
+            if @isdebugMode == true then 
+               @logger.debug("[DEC_XXX] I/F #{@entity}: LocalInterfaceHandler::deleteFromEntity: Could not delete #{filename}")
+            end
+            return false
          end
-		else
-		   if @isDebugMode then puts "DeleteFlag is disabled for #{@entity} I/F" end
 		end
+      return true
 	end
    ## -----------------------------------------------------------
 

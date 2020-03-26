@@ -151,7 +151,7 @@ The \textit{Interface} configuration item defines the interfaces pick-up point(s
 \par
 \noindent
 	
-\subsection{File filters}
+\subsection{Download rules}
 This configuration item defines the filters to select the files to be pulled from the interface pick-up point(s).
 \par
 \noindent
@@ -163,7 +163,7 @@ This configuration item defines the filters to select the files to be pulled fro
 \par
 \noindent
 \begin{lstlisting}
-<ListFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 <File Type="tai-utc*">
 	<Description>TAI UTC correlation</Description>
@@ -189,7 +189,7 @@ This configuration item defines the filters to select the files to be pulled fro
 	</FromList>
 </File>
 
-</ListFiles>
+</DownloadRules>
 
 \end{lstlisting}
 
@@ -203,8 +203,9 @@ Firstly it is defined the \textit{ListIntrays} \textit{Intray} configuration ite
 \par
 \noindent
 \begin{itemize}
-	\item \textit{Name} : this is the intray \textit{identifier} which is used to identify the final location the files pulled are placed
+	\item \textit{Name} : this is the Intray \textit{identifier} which is used to identify the final location the files pulled are placed
  	\item \textit{Directory} : this is the \textit{local} directory associated to the in-tray
+ 	\item \textit{Execute} : this \textit{optional} configuration item defines a command to be executed upon every file disseminated into the Intray as an \textit{event} 	
 \end{itemize}
 
 \begin{lstlisting}

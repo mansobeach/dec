@@ -23,17 +23,18 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 \subsection{Index of Messages}
 
 \begin{itemize}
-	\item \textbf{[DEC\_005]} "interface" I/F: Polling Started
-	\item \textbf{[DEC\_050]} "interface" I/F: Polling Completed / No file(s) available for pull	
-	\item \textbf{[DEC\_060]} "interface" I/F: Polling Completed / New file(s) available for pull
-	\item \textbf{[DEC\_105]} "interface" I/F: "filename" is available
-	\item \textbf{[DEC\_110]} "interface" I/F: Downloaded "filename" with size "num\_bytes" bytes
+	\item \textbf{[DEC\_005]} I/F "interface": Polling Started
+	\item \textbf{[DEC\_050]} I/F "interface": Polling Completed / No file(s) available for pull	
+	\item \textbf{[DEC\_060]} I/F "interface": Polling Completed / New file(s) available for pull
+	\item \textbf{[DEC\_105]} I/F "interface": "filename" is available
+	\item \textbf{[DEC\_110]} I/F "interface": Downloaded "filename" with size "num\_bytes" bytes
 	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
 	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
-	\item \textbf{[DEC\_120]} "interface" I/F: Deleting unknown file "filename" available
-	\item \textbf{[DEC\_125]} "interface" I/F: Deleting duplicated file "filename" previously received 
-	\item \textbf{[DEC\_126]} "interface" I/F: Deleted downloaded file "filename"
-	\item \textbf{[DEC\_130]} "interface" I/F: event "name" triggered  	
+	\item \textbf{[DEC\_120]} I/F "interface": Deleting unknown file "filename" available
+	\item \textbf{[DEC\_125]} I/F "interface": Deleting duplicated file "filename" previously received 
+	\item \textbf{[DEC\_126]} I/F "interface": Deleted downloaded file "filename"
+	\item \textbf{[DEC\_130]} I/F "interface": event "name" triggered  	
+	\item \textbf{[DEC\_131]} I/F "interface": event NewFile2Intray triggered  	
 \end{itemize}
 
 \subsection{[DEC\_005] Interface Polling Start}
@@ -68,6 +69,7 @@ According to the configuration item \hyperref[DeleteUnknownFiles]{\textit{Delete
 \subsection{[DEC\_125] Duplicated File Deleted}
 According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{DeleteDuplicatedFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which has been previously downloaded successfully such interface is considered duplicated and it is removed directly in download directory without downloading it.
 
+\label{DEC126}
 \subsection{[DEC\_126] Downloaded File Deleted}
 According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteFlag}} defined in \textit{dec\_interfaces.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
 
@@ -85,6 +87,9 @@ This event is triggered upon successful polling completion (cf. \hyperref[DEC060
 \begin{verbatim}
 [DEC_130] LEAP I/F : event onreceivenewfilesok triggered => echo %f RECEIVED
 \end{verbatim}
+
+\subsection{[DEC\_131] Dissemination Command Execution }
+The message traces some event which has been triggered for a given interface according to the configuration item \textit{"Execution"} defined in the \hyperref[Dissemination rules]{\textit{dissemination rules}}.
 
 % ------------------------------------------------------------------------------
 % Warning Messages
@@ -127,19 +132,19 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 \subsection{Index of Messages}
 
 \begin{itemize}
-	\item \textbf{[DEC\_600]} "interface" I/F: Could not perform polling
-	\item \textbf{[DEC\_610]} "interface" I/F: Unable to connect to \hyperref[Config_Server]{"Hostname"} with FTP
-	\item \textbf{[DEC\_611]} "interface" I/F: reason of the connection failure
-	\item \textbf{[DEC\_612]} "interface" I/F: Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
-	\item \textbf{[DEC\_613]} "interface" I/F: server message associated to the failure associated to the change of directory
-	\item \textbf{[DEC\_614]} "interface" I/F: Cannot GET "URL"
-	\item \textbf{[DEC\_620]} "interface" I/F: Could not copy "file" into local
+	\item \textbf{[DEC\_600]} I/F "interface": Could not perform polling
+	\item \textbf{[DEC\_610]} I/F "interface": Unable to connect to \hyperref[Config_Server]{"Hostname"} with FTP
+	\item \textbf{[DEC\_611]} I/F "interface": reason of the connection failure
+	\item \textbf{[DEC\_612]} I/F "interface": Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
+	\item \textbf{[DEC\_613]} I/F "interface": server message associated to the failure associated to the change of directory
+	\item \textbf{[DEC\_614]} I/F "interface": Cannot GET "URL"
+	\item \textbf{[DEC\_620]} I/F "interface": Could not copy "file" into local
 "directory"
 	\item \textbf{[DEC\_625]} Dissemination failure of "file" into intray
 "directory" using mv command
 	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
 "directory" using hard-links command
-	\item \textbf{[DEC\_666]} "interface" I/F: Could not download "file"
+	\item \textbf{[DEC\_666]} I/F "interface": Could not download "file"
 \end{itemize}
 
 
@@ -196,9 +201,14 @@ This error is raised when DEC could not disseminate a file into a given \textit{
 \label{DEC625}
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using hard-links. This is usually associated to file permission problems of the \textit{Intray} directory.
 
-\subsection{[DEC\_666] File Download Failure}
+\subsection{[DEC\_666] Download Failure}
 \label{DEC666}
 This error is raised when DEC could not download a file from a given interface.
+
+\subsection{[DEC\_670] Deletion Failure}
+\label{DEC670}
+This error is raised when DEC could not delete from the interface a file which has been successfully downloaded (cf. \hyperref[DEC110]{\textit{[DEC\_110]}}).
+For a given file from a specific interface this message is exclusive to \hyperref[DEC126]{\textit{[DEC\_126]}}.
 
 \subsection{TBW}
 
@@ -215,9 +225,12 @@ The debug messages by DEC SW are meant in general for troubleshooting purposes. 
 \subsection{Index of Messages}
 
 \begin{itemize}
-	\item \textbf{[DEC\_910]} "interface" I/F: Filtering directory with files "number" of items
-	\item \textbf{[DEC\_911]} "interface" I/F: performance when filtering according to download rules 
-	\item \textbf{[DEC\_912]} "interface" I/F: performance when filtering according to database
+	\item \textbf{[DEC\_910]} I/F "interface": Filtering directory with files "number" of items
+	\item \textbf{[DEC\_911]} I/F "interface": performance when filtering according to download rules 
+	\item \textbf{[DEC\_912]} I/F "interface": performance when filtering according to database
+	\item \textbf{[DEC\_913]} I/F "interface": filtering file with database
+	\item \textbf{[DEC\_914]} I/F "interface": "file" found in database
+	\item \textbf{[DEC\_915]} I/F "interface": "file" not found in database	
 	\item \textbf{[DEC\_941]} File dissemination command I
 	\item \textbf{[DEC\_942]} File dissemination command II	
 	\item \textbf{[DEC\_951]} Removing "file" in "directory" which is \hyperref[LocalInbox]{"LocalInbox"}
@@ -231,8 +244,20 @@ This message reports the number of files published in the \hyperref[DownloadDirs
 \label{DEC911}
 This message reports the CPU time resources used to perform the filtering operations.
 
-\subsection{[DEC\_912] Filtering According to Download Rules}
 \label{DEC912}
+\subsection{[DEC\_912] Filtering Number of Items with Database}
+TBW
+
+\label{DEC913}
+\subsection{[DEC\_913] Filtering File with Database}
+TBW
+
+\label{DEC914}
+\subsection{[DEC\_914] File Found in Database}
+TBW
+
+\label{DEC915}
+\subsection{[DEC\_915] File Not Found in Database}
 TBW
 
 \subsection{[DEC\_941] File Dissemination Command I}

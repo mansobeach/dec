@@ -82,7 +82,7 @@
   <xs:attribute name="Type" type="xs:string" use="required"/>
  </xs:complexType>
 
-  <xs:complexType name="ListFilesType">
+  <xs:complexType name="DownloadRulesType">
    <xs:sequence>
     <xs:element name="File" type="FileReceivedType" maxOccurs="unbounded"/>
    </xs:sequence>
@@ -99,6 +99,7 @@
    <xs:element name="Name"       type="SimpleAcronymType"/>
    <xs:element name="Directory"  type="xs:string"/>
    <xs:element name="Compress"   type="xs:string" minOccurs="0" maxOccurs="1" />
+   <xs:element name="Execute"    type="xs:string" minOccurs="0" maxOccurs="1" />
   </xs:sequence>
  </xs:complexType>
 
@@ -132,9 +133,9 @@
  <xs:element name="Config">
   <xs:complexType>
    <xs:sequence>
-    <xs:element name="ListInterfaces"           type="ListInterfacesType"           maxOccurs="1"/>
-    <xs:element name="ListFiles"                type="ListFilesType"                maxOccurs="1"/>
-    <xs:element name="DisseminationRules"       type="DisseminationRulesType"       maxOccurs="1"/>
+    <xs:element name="ListInterfaces"           type="ListInterfacesType"                 maxOccurs="1"/>
+    <xs:element name="DownloadRules"            type="DownloadRulesType"                  maxOccurs="1"/>
+    <xs:element name="DisseminationRules"       type="DisseminationRulesType"             maxOccurs="1"/>
    </xs:sequence>
   </xs:complexType>
  </xs:element>

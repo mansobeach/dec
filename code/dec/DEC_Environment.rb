@@ -28,7 +28,9 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.14" =>    "New gem sys-filesystem is required to check hardlink config", \
+      "1.0.14" =>    "New gem sys-filesystem is required to check hardlink config\n\
+          dec_incoming_files.xml config item FileList replaced by DownloadRules\n\
+          dec_incoming_files.xml config item Execute command for each Intray available in DisseminationRules", \
       "1.0.13" =>    "Support of for HTTP protocol for known URLs\n\
           Support of authentication for HTTP(S) GET and DELETE verbs\n\
           dec_interfaces.xml defines <VerifyPeerSSL> to validate the certificate\n\

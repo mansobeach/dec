@@ -36,30 +36,63 @@
 
 ### RINEX format
 
+require 'date'
+
+require 'aux/Aux_Handler_Generic'
+
 module AUX
 
-class AUX_Parser_IGS_Broadcast_Ephemeris
+AUX_IGS_Broadcast_Ephemeris_Pattern = "brdc0???.??n"
+
+class AUX_Handler_IGS_Broadcast_Ephemeris < AUX_Handler_Generic
 
    ## -------------------------------------------------------------
-      
+   
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, logger = nil, isDebug = false)
-      if isDebug == true then
-         setDebugMode
+   def initialize(full_path, target, dir, isDebug = false)
+      # puts "AUX_Handler_IGS_Broadcast_Ephemeris::initialize"
+      @target = target
+      super(full_path, dir, isDebug)
+      
+      @strValidityStart    = ""
+      @strValidityStop     = ""
+      @input_file_pattern  = "brdc0???.??n"
+      
+      if target.upcase == "S3" then
+         @mission    = "S3_"
+         @fileType = "GN_1_NAV_AX"
+      end
+      
+      if target.upcase == "POD" then
+         @mission    = "POD"
+         @fileType = "AUX_NAV_AX"
       end
 
-      @full_path  = full_path
-      @filename   = File.basename(full_path)
-
-      checkModuleIntegrity
-
-   end   
+      @instanceID = "____________________EGP_O_NR_POD"
+      @extension  = "SEN3"
+   end      
+   
    ## -------------------------------------------------------------
    
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+   end
+   ## -------------------------------------------------------------
+   
+   def rename
+      @strCreationDate  = self.getCreationDate
+      @newName          = "#{@mission}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@strCreationDate}_#{@instanceID}.#{@extension}"
+      super(@newName)
+      return @full_path_new
+   end
+   ## -------------------------------------------------------------
+
+   def convert
+      @strCreation = self.getCreationDate 
+      parse
+      return rename
    end
    ## -------------------------------------------------------------
    
@@ -71,14 +104,17 @@ private
 
    ## -----------------------------------------------------------
    
-   ## Check that everything needed by the class is present.
-   def checkModuleIntegrity
-      puts @full_path
-      puts @filename
-      return
-   end
    ## -----------------------------------------------------------
 
+   def parse
+      filename          = File.basename(@full_path)
+      doy               = filename.slice(4,3)
+      year              = "20#{filename.slice(9,2)}"
+      day               = Date.strptime("#{year}-#{doy}", '%Y-%j').strftime('%Y%m%d')
+      @strValidityStart = "#{day}T000000"
+      @strValidityStop  = "#{day}T000000"
+   end
+   ## -----------------------------------------------------------
       
 end # class
 

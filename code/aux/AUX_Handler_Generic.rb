@@ -15,28 +15,39 @@
 #
 #########################################################################
 
+require 'cuc/DirUtils'
 require 'cuc/Converters'
+require 'cuc/FT_PackageUtils'
 
 module AUX
 
 class AUX_Handler_Generic
 
    include CUC::Converters
+   include CUC::DirUtils
+
+   attr_reader :input_file_pattern
 
    ## -------------------------------------------------------------
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, isDebug = false)
+   def initialize(full_path, dir, isDebug = false)
+   
+      # puts "AUX_Handler_Generic::initialize"   
+   
       if isDebug == true then
          setDebugMode
       end
 
-      @full_path     = full_path
-      @filename      = File.basename(full_path)
-      @workingDir    = File.dirname(full_path)
-      @full_path_new = nil
-      @filename_new  = nil
+      @full_path           = full_path
+      @targetDir           = dir
+      @filename            = File.basename(full_path)
+      @workingDir          = File.dirname(full_path)
+      @full_path_new       = nil
+      @filename_new        = nil
+      @input_file_pattern  = "*"
+      
       checkModuleIntegrity
    end   
    ## -------------------------------------------------------------
@@ -51,9 +62,22 @@ class AUX_Handler_Generic
    def rename(newName)
       prevDir = Dir.pwd
       Dir.chdir(@workingDir)
-      FileUtils.move(@filename, newName)
+      
+      if File.exist?(newName) == true then
+         FileUtils.rm(newName)
+      end
+      
+      if @targetDir != "" and @targetDir != nil then
+         @full_path_new = "#{@targetDir}/#{newName}"
+         FileUtils.move(@filename, @full_path_new, force:true)
+         
+      else
+         FileUtils.move(@filename, newName, force:true)
+         @full_path_new = "#{@workingDir}/#{newName}"
+      end
+      
       Dir.chdir(prevDir)
-      @full_path_new = "#{@workingDir}/#{newName}"
+      
       @filename_new  = newName
    end
    ## -------------------------------------------------------------
@@ -67,8 +91,12 @@ private
    
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
-#      puts @full_path
-#      puts @filename
+      
+      # puts "AUX_Handler_Generic::checkModuleIntegrity"  
+      
+      if @targetDir != "" and @targetDir != nil then
+         checkDirectory(@targetDir)
+      end
       
       if File.exist?(@full_path) == false then
          raise("#{@full_path} does not exist")

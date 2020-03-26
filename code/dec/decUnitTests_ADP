@@ -375,7 +375,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)      
 
-      file = "#{ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3")}/S3__GN_1_LSC_AX_*"
+      file = "/tmp/dec_final_dissemination/S3/S3__GN_1_LSC_AX_*"
       
       arr = Dir["#{file}"]
       
@@ -395,8 +395,76 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)      
       
+      arr = Dir["/tmp/DEC*.log"]
+            
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
    
    end
+   ## ------------------------------------------------------
+
+   ## Test to publish IERS Bulletin C Leap Second
+
+   def test_ADP_S3_2
+
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("IGS"))
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3"))
+      
+      ReadConfigIncoming.instance.getDownloadDirs("PUBLISH_S3").each do |dir|
+         checkDirectory(dir[:directory])
+      end
+
+      system("rm -rf /tmp/dec_final_dissemination/S3")
+      system("rm -rf /tmp/dec_final_dissemination/archive")
+      system("rm -rf /tmp/dec_local_dissemination/S3")
+
+#      cmd = "decGetFromInterface -m IGS -l"
+#      puts cmd
+#      assert(system(cmd), cmd)
+#
+#      sleep(5.0)
+#
+      cmd = "decGetFromInterface -m IGS"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m LEAP --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+#      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
+#      puts cmd
+#      assert(system(cmd), cmd)      
+
+      cmd = "decGetFromInterface -m PUBLISH_S3"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      puts
+      puts
+      cmd = "decStats -H 1"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      arr = Dir["/tmp/DEC*.log"]
+            
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+   
+   end
+
    ## ------------------------------------------------------
 
 end

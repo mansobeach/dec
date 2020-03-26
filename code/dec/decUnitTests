@@ -38,8 +38,10 @@ require 'dec/ReadConfigIncoming'
 ###  0  - test_parsers
 ###  1  - test_dec_config
 ###  2  - test_commandline_helpers
-###  3  - test_decConfigInterface2DB
-###  4  - test_decGetFromInterface
+###  3.1   - test_decValidateConfig
+###  3.2   - test_decCheckConfig
+###  3.3   - test_decConfigInterface2DB
+###  4    - test_decGetFromInterface
 ###  4.1  - test_decGetFromInterface_LOCAL
 ###  4.2  - test_decGetFromInterface_WEBDAV
 ###  4.3  - test_decGetFromInterface_WEBDAV_SECURE => decUnitTests_WEBDAV_SECURE
@@ -678,6 +680,20 @@ class DECTestCase < Test::Unit::TestCase
       puts ftReadConf.isVerifyPeerSSL?("WEBDAV_SECURE")
       puts ftReadConf.isVerifyPeerSSL?("WEBDAV")
 
+      inConfig       = ReadConfigIncoming.instance
+      puts inConfig.getEntitiesSendingIncomingFileName("brdc0770.20n.Z")
+
+      puts inConfig.getInTrayCompress("S3_IN")
+      puts inConfig.getInTrayExecution("S3_IN")
+      
+      
+      puts
+      puts
+
+      puts inConfig.getInTrayExecution("S3_IN_2")
+      puts inConfig.getInTrayCompress("S3_IN_2")
+
+
       # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
    end
    ## ---------------------------------------------------------
@@ -867,7 +883,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
       puts cmd
       assert(!system(cmd), cmd)
-      
+           
       ENV['DEC_TMP'] = dec_tmp
 
       inConfig          = ReadConfigIncoming.instance
@@ -880,14 +896,14 @@ class DECTestCase < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
                   
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
+#      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
+#      puts cmd
+#      assert(system(cmd), cmd)
       
       cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --nodb --no-intray"
       puts cmd
       assert(system(cmd), cmd)
-
+     
       assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
       assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
       FileUtils.rm_f("#{@finalDir}/finals.all")
@@ -907,10 +923,12 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-#      assert(File.exist?("#{@finalDir}/finals.all"),  "retrieved finals.all")
-#      assert(File.exist?("#{@finalDir}/tai-utc.dat"), "retrieved tai-utc.dat")
-#      FileUtils.rm_f("#{@finalDir}/finals.all")
-#      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+      assert(!File.exist?("#{@finalDir}/finals.all"),  "not in the final dir finals.all")
+      assert(!File.exist?("#{@finalDir}/tai-utc.dat"), "not in the final dir tai-utc.dat")
+      
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
 
       # check presence of generated report file
       # Dir.chdir(ReadConfigDEC.instance.getReportDir)
@@ -945,7 +963,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray"
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --no-intray -D"
       puts cmd
       assert(system(cmd), cmd)
 

@@ -82,7 +82,7 @@ class FileDeliverer2InTrays
    ## from the local Entities In-Boxes to the DIMs In-Trays
    def deliver(mnemonic = "")
 #	   setDebugMode
-      
+          
       if mnemonic != "" and @isDebugMode == true then
          @logger.debug("Dissemination of files previously received from #{mnemonic}")
       end
@@ -109,8 +109,10 @@ class FileDeliverer2InTrays
             next
 			end
 
-			arrFiles.each{|file|
-         		   
+			arrFiles.each{|afile|
+         	
+            file = File.basename(afile)
+            	   
             bIsEEFile   = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
             fileType    = CUC::EE_ReadFileName.new(file).fileType
             dimsDirs    = Array.new
@@ -150,12 +152,18 @@ class FileDeliverer2InTrays
                end
                          
                if @isDebugMode == true then
-					   @logger.debug("#{file} is disseminated to: #{dimsName}")
+					   @logger.debug("CONTROL-1 #{file} is disseminated to: #{dimsName}")
 					end
 
                # main dissemination method
+               # - interface
+               # - file
+               # - from directory
+               # - to array of directories 
 
-					ret = disseminate(entity, file, dir, dimsDirs, hdlinked)
+               # ret = disseminate(entity, file, dir, dimsDirs, hdlinked)
+
+					ret = disseminate(entity, file, dir, dimsName, hdlinked)
                
                ## ---------------------------------
                # 20170601 - Patch to compress locally disseminated files               
@@ -164,16 +172,18 @@ class FileDeliverer2InTrays
                end
                ## ---------------------------------
                
+               ## ---------------------------------
+               
                # The original file is only deleted if the dissemination has been
                # performed successfully, otherwise it is kept in order to not loose
                # the information and perform a later manual dissemination 
                if ret == true then
                   begin
                      if @isDebugMode == true then
-                        @logger.debug("[DEC_951] Removing #{dir}/#{file}")
+                        @logger.debug("[DEC_951.2] I/F #{mnemonic}: Removing #{dir}/#{file}")
                         @logger.debug("#{file} has been disseminated locally according to rules")
                      end
-                     FileUtils.rm_rf("#{dir}/#{file}")
+                     FileUtils.rm_f("#{dir}/#{file}")
                   rescue Exception
                      @logger.error("Could not delete #{dir}/#{file}")
                      exit(99)
@@ -205,31 +215,17 @@ class FileDeliverer2InTrays
    ## -------------------------------------------------------------
    
    ## It delivers a given file
-   def deliverFile(entity, directory, file)
+   def deliverFile(entity, directory, afile)
       
-      bIsEEFile = CUC::EE_ReadFileName.new(file).isEarthExplorerFile?
-      fileType  = CUC::EE_ReadFileName.new(file).fileType
-				
-      dimsDirs  = Array.new
-      dimsName  = ""
-      bByType   = true
-            
-      if bIsEEFile == true then
-         bByType  = true
-         dimsDirs = @dimConfig.getTargetDirs4Filetype(fileType)
-         dimsName = @dimConfig.getDIMs4Filetype(fileType)
-         
-         if dimsName == false then
-            bByType  = false
-            dimsDirs = @dimConfig.getTargetDirs4Filename(file)
-            dimsName = @dimConfig.getDIMs4Filename(file)
-         end
-
-		else
-         bByType  = false
-         dimsDirs = @dimConfig.getTargetDirs4Filename(file)
-         dimsName = @dimConfig.getDIMs4Filename(file)
-      end   
+      file = File.basename(afile)                        
+                              
+#      @logger.info("deliverFile directory => #{directory}")
+#      @logger.info("deliverFile file => #{file}") 
+                              
+                                    
+      bByType  = false
+      dimsDirs = @dimConfig.getTargetDirs4Filename(file)
+      dimsName = @dimConfig.getDIMs4Filename(file)
                
       if dimsName != false then
          if @isDebugMode == true then
@@ -258,7 +254,12 @@ class FileDeliverer2InTrays
 #         disseminate(file, directory, dimsDirs, hdlinked)
 #         File.delete("#{directory}/#{file}")
  
- 		   ret = disseminate(entity, file, directory, dimsDirs, hdlinked)
+ 
+         ## 20200324
+ 
+ 		   # ret = disseminate(entity, file, directory, dimsDirs, hdlinked)
+
+         ret = disseminate(entity, file, directory, dimsName, hdlinked)
 
          # ---------------------------------
          # 20170601 - Patch to compress locally disseminated files               
@@ -276,18 +277,17 @@ class FileDeliverer2InTrays
          if ret == true then
             begin
                if @isDebugMode == true then
-                  @logger.debug("[DEC_951] Removing #{directory}/#{file}")
+                  @logger.debug("[DEC_951_1] I/F #{entity}: Removing #{directory}/#{file}")
                end
-               FileUtils.rm_rf("#{directory}/#{file}")
+               FileUtils.rm_f("#{directory}/#{file}")
                if @isDebugMode == true then
                   @logger.debug("File #{file} has been disseminated locally according to rules")
                end
             rescue Exception
-               @logger.error("dissemination : Could not delete #{directory}/#{file}")
+               @logger.error("dissemination : Could not delete #{file}")
                exit(99)
             end
          else
-            # @logger.error("[DEC_625 XXX] #{file} has not been disseminated")
             @logger.warn("[DEC_331] #{file} is stuck in #{directory} directory")
          end       
       else
@@ -346,9 +346,22 @@ private
    ## First at all it copies the file hidden in the In-Tray
    ## Once it has been completely copied, it renames it to the operational name
 	
-   def disseminate(entity, file, fromDir, arrToDir, hardlinked = false)
+   ## 20200325 - change function signature to include the Intray names
+   ## > get directory
+   ## > get execution command
+   
+   def disseminate(entity, afile, fromDir, arrToIntray, hardlinked = false)
+      
+#      puts
+#      puts
+#      puts caller
+      
+      # @logger.info(arrToIntray)
+      
+      
       bReturn = true
-      if hardlinked == true and arrToDir.length <2
+      
+      if hardlinked == true and arrToIntray.length <2
 		   if @isDebugMode == true then
 			   @logger.debug("HardLink flag for #{file} is useless for one target dir")
 			end
@@ -356,11 +369,21 @@ private
 		
 		prevDir = Dir.pwd
       
+      file = File.basename(afile)
+      
 		Dir.chdir(fromDir)
       
-		firstDir = arrToDir[0]
-		bFirst   = true
-		arrToDir.each{|targetDir|
+		bFirst      = true
+		firstDir    = ""
+      
+      arrToIntray.each{|intray|
+               
+         targetDir = @dimConfig.getInTrayDir(intray)
+         exec      = @dimConfig.getInTrayExecution(intray)
+                  
+#         
+
+      
          checkDirectory(targetDir)
 		   cmd = ""
          
@@ -375,38 +398,42 @@ private
          # -------------------------------------------  
          
 		   if bFirst == true then
-			  
+			   bFirst   = false
+           
             ### 20200316 UPDATE
             ### First operation is a hardlink to avoid copies
             # Move operation is not safe.
             # When dissemination is performed to several In-Trays, it is not
             # possible to rely on that a file would be still present in the first intray
             # a file is disseminated in.
- 
+             
             cmd  = "\\ln -f #{file} #{targetDir}/.TEMP_#{file}"
             #cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
             #cmd  = "\\mv -f #{file} #{targetDir}/.TEMP_#{file}"
-            
+                       
             if @isDebugMode == true then
-	   		   @logger.debug("[DEC_941] Disseminate command (I) : #{cmd}")
+	   		   @logger.debug("[DEC_941] Intray #{intray}: Disseminate command (I) : #{cmd}")
 		   	end
-            bRet = execute(cmd, "mv2InTrays")
+            bRet = execute(cmd, "pull")
             
             if bRet == false then
-               @logger.error("[DEC_625] Dissemination failure of #{file} into intray #{targetDir}")
+               @logger.error("[DEC_625] Intray #{intray}: Dissemination failure of #{file} into #{targetDir}")
                Dir.chdir(prevDir)
                bReturn = false
                return false
             end
             
+            # --------------------------
             # Remove in target directory any eventual copy of a file with the same name
             if File.exists?(targetDir+'/'+file) then 
+               @logger.warn("[DEC_555] Intray #{intray}: #{file} already existed in #{targetDir}")
                FileUtils.rm_rf(targetDir+'/'+file) 
             end
+            # --------------------------
             
 			   cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
    			if @isDebugMode == true then
-	   		   @logger.debug("[DEC_942] Disseminate command (II) : #{cmd}")
+	   		   @logger.debug("[DEC_942.1] Intray #{intray}: Disseminate command (II) : #{cmd}")
 		   	end
             bRet = execute(cmd, "mv2InTrays")
 
@@ -419,10 +446,14 @@ private
                end
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
-               @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
-                            
+               @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
+                               
+               firstDir = targetDir                            
                event  = EventManager.new
       
+               if exec != "" and exec != nil then
+                  event.exec_trigger(intray, "NewFile2Intray", exec, hParams, @logger)
+               end
       
                if @isDebugMode == true then
                   event.setDebugMode
@@ -438,24 +469,29 @@ private
                # -------------------------------------------
             end
                                    
-			   bFirst = false
+			  
 			else
-			   if hardlinked == true then
+			   
+            if hardlinked == true then
+               
+               # ---------------------------------
                # Delete if the file previously exists in the target dir
                if File.exist?("#{targetDir}/#{file}") == true then
                   cmd = "\\rm -f #{targetDir}/#{file}"
-                  @logger.warn("#{file} already existed in #{targetDir}")
+                  @logger.warn("[DEC_XXX] #{file} already existed in #{targetDir}")
                   @logger.warn("Old file #{file} will be deleted first")
                   execute(cmd, "mv2InTrays")
                end
+               
+               # ---------------------------------
 			      cmd = "ln #{firstDir}/#{file} #{targetDir}"
                if @isDebugMode == true then
-	   		      @logger.debug(cmd)
+	   		      @logger.debug("[DEC_942.2] Intray #{intray}: Disseminate command : #{cmd}")
 		   	   end
                bRet = execute(cmd, "mv2InTrays")
 
                if bRet == false then
-                  @logger.error("[DEC_626] Dissemination failure of #{file} into intray #{targetDir}")
+                  @logger.error("[DEC_626] Intray #{intray}: Dissemination failure of #{file} into #{targetDir}")
                   bReturn = false
                else
                   if @isDebugMode == true then
@@ -463,7 +499,7 @@ private
                   end
                   FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
                   
-                  @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
+                  @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
                   
                   event  = EventManager.new
       
@@ -505,7 +541,7 @@ private
                   Dir.chdir(prevDir)
                   return false
                else
-                  @logger.info("[DEC_115] Disseminated #{file} into Intray : #{targetDir}")
+                  @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
                   
                   event  = EventManager.new
       

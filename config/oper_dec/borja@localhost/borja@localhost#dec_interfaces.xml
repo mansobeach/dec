@@ -159,9 +159,10 @@
       </To>
     </Notify>
     <Events>
+    <!--
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-    <!--     
+     
          <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
     -->
     </Events>
@@ -506,11 +507,16 @@
       </To>
     </Notify>
     <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
-         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
-         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
-         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    
+                  
+         <!--
          
+         <Event Name="OnReceiveNewFile"        executeCmd="uncompress -f %F" /> 
+         <Event Name="OnReceiveNewFile"        executeCmd="uncompress %F" />    
+         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" /> 
+         
+         -->
+                 
          <!--
          
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
@@ -626,11 +632,10 @@
       </To>
     </Notify>
     <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
-         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
          
          <!--
-         
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
          -->
     
@@ -661,16 +666,16 @@
     <Server>
       <Protocol>LOCAL</Protocol>
       <Hostname>localhost</Hostname>
-	   <Port></Port>
+	   <Port>0</Port>
       <User></User>
       <Pass></Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag></SecureFlag>
-      <VerifyPeerSSL></VerifyPeerSSL>
-      <CompressFlag></CompressFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
       <DeleteFlag>false</DeleteFlag>
-      <PassiveFlag></PassiveFlag>
+      <PassiveFlag>false</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </Server>
     <DeliverByMailTo>
@@ -683,9 +688,10 @@
       </To>
     </Notify>
     <Events>
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>         
          <!--
-         
+                  <Event Name="OnReceiveNewFile"        executeCmd="auxConverter -f %F" />
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>         
+
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
          -->
     

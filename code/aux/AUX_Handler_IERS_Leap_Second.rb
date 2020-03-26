@@ -47,10 +47,11 @@
 ### S3__GN_1_LSC_AX_20000101T000000_20130101T000000_20120901T030000___________________USN_O_NR_POD.SEN3
 ###
 
-require 'Aux_Handler_Generic'
+require 'aux/Aux_Handler_Generic'
 
 module AUX
 
+AUX_IERS_Leap_Second_Pattern = "leap_second.*"
 
 class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
    
@@ -58,13 +59,14 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, target, isDebug = false)
+   def initialize(full_path, target, dir = "", isDebug = false)
       @target = target
-      super(full_path, isDebug)
-      checkModuleIntegrity
+      # puts "AUX_Handler_IERS_Leap_Second::initialize"
+      super(full_path, dir, isDebug)
       
-      @strValidityStart = ""
-      @strValidityStop  = ""
+      @input_file_pattern  = "leap_second"
+      @strValidityStart    = ""
+      @strValidityStop     = ""
       
       if target.upcase == "S3" then
          @mission    = "S3_"
@@ -75,6 +77,8 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
          @mission    = "POD"
          @fileType = "AUX_LSC_AX"
       end
+
+      @input_file_pattern = "leap_second"
 
       @instanceID = "____________________USN_O_NR_POD"
       @extension  = "SEN3"
@@ -109,15 +113,6 @@ private
 
    ## -----------------------------------------------------------
    
-   ## Check that everything needed by the class is present.
-   def checkModuleIntegrity
-      
-      if @target != "POD" and @target != "S3" then
-         raise "target #{@target} different than POD and S3"
-      end
-
-      return
-   end
    ## -----------------------------------------------------------
 
    def convert_S3
@@ -132,7 +127,7 @@ private
    def parse
       File.readlines(@full_path).each do |line|
          
-         # Read validiy stop
+         # Read validity stop
          if line.include?("File expires on") == true then
             fields   = line.split(" ")
             day      = fields[4]

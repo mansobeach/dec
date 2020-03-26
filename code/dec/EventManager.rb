@@ -106,21 +106,110 @@ class EventManager
             end
             # --------------------------
             
-            if log != nil then
-               log.info("[DEC_130] #{interface} I/F : event #{eventName.downcase} => #{cmd}")
-            end
-            retVal = system(cmd)
-            if @isDebugMode == true then
+            if @isDebugMode == true and log != nil then
                log.debug("Event #{eventName} Triggered for #{interface}")
                log.debug("Executing command #{cmd}")
             end
-            if retVal == false then
-               log.debug("Error when executing #{cmd}")
+            
+            output = `#{cmd}`
+            
+            # retVal = system(cmd)
+                        
+            if $?.exitstatus == 0 then
+               if log != nil then
+                  msg = "[DEC_130] #{interface} I/F: event #{eventName.downcase} => #{cmd}"
+                  if output != "" then
+                     log.info("#{msg} => #{output.chop}")
+                  else
+                     log.info(msg)
+                  end
+               end
+            else
+               if log != nil then
+                  log.error("[DEC_XXX] #{interface} I/F: EventManager failed execution of #{cmd}")
+               end
             end
          else
 #            log.error("[DEC_XXX] #{interface} I/F event: unsupported event #{event[:name]}")
          end
       }
+   end
+   ## -----------------------------------------------------------
+
+   def exec_trigger(intray, eventName, cmd, params = nil, log = nil)
+
+      @isDebugMode = true
+
+      filename    = nil
+      directory   = nil
+      pathfile    = nil
+
+      if params != nil then
+         filename    = params["filename"]
+         directory   = params["directory"]
+         pathfile    = "#{directory}/#{filename}"
+      end
+
+      # --------------------------
+            
+      # Escape special XML characters.
+      # At least '&' required for background execution
+            
+      anewCmd = cmd.sub!("&amp;", "&")
+            
+      if anewCmd != nil then
+         cmd = anewCmd
+      end
+            
+      # --------------------------
+            
+      if params != nil then            
+      
+         anewCmd = cmd.sub!("%F", pathfile)   
+         if anewCmd != nil then
+            cmd = anewCmd
+         end
+
+         anewCmd = cmd.sub!("%f", filename)
+         if anewCmd != nil then
+            cmd = anewCmd
+         end
+
+         anewCmd = cmd.sub!("%d", directory)
+         if anewCmd != nil then
+            cmd = anewCmd
+         end
+      end
+            
+      # --------------------------
+            
+      if @isDebugMode == true and log != nil then
+         log.debug("Event #{eventName} Triggered for #{intray}")
+         log.debug("Executing command #{cmd}")
+      end
+            
+      output = `#{cmd}`
+            
+                        
+      if $?.exitstatus == 0 then
+      
+         if log != nil then
+                  
+            msg = "[DEC_131] Intray #{intray}: event #{eventName.downcase} => #{cmd}"
+                  
+            if output != "" then
+               log.info("#{msg} => #{output.chop}")
+            else
+               log.info(msg)
+            end
+         end
+      else
+         if log != nil then
+            log.error("[DEC_XXX] Intray #{intray}: EventManager failed execution of #{cmd}")
+         end
+      end
+
+
    end
    ## -----------------------------------------------------------
    

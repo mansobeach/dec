@@ -18,6 +18,7 @@
 require 'cuc/Converters'
 
 require 'aux/AUX_Handler_IERS_Leap_Second'
+require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 
 module AUX
 
@@ -29,16 +30,21 @@ class AUX_Handler
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, target = "S3", isDebug = false)
+   def initialize(full_path, target = "S3", targetDir = "", isDebug = false)
       @full_path  = full_path
+      @filename   = File.basename(full_path)
+      @path       = File.dirname(full_path)
+      @targetDir  = targetDir
       @target     = "S3"
       @handler    = nil
-      
+
       if isDebug == true then
          setDebugMode
       end
       
       checkModuleIntegrity
+      
+      uncompress
       
       loadHandler
       
@@ -65,22 +71,50 @@ private
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       
+      # puts "AUX_Handler::checkModuleIntegrity"
+            
       if File.exist?(@full_path) == false then
          raise("#{@full_path} does not exist")
       end
+      
       return
    end
    ## -----------------------------------------------------------
 
    def loadHandler
-      filename = File.basename(@full_path, ".*")
       
-      if filename.downcase.include?("leap_second") then
-         @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target)
+      filename = File.basename(@full_path)
+            
+      if File.fnmatch(AUX_IERS_Leap_Second_Pattern, filename.downcase) == true then
+         @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target, @targetDir)
+         return
+      end
+
+      if File.fnmatch(AUX_IGS_Broadcast_Ephemeris_Pattern, filename.downcase) == true then
+         @handler = AUX_Handler_IGS_Broadcast_Ephemeris.new(@full_path, @target, @targetDir)
          return
       end
             
       raise "no pattern found for #{filename}"
+   end
+   ## -----------------------------------------------------------
+
+   def uncompress
+      
+      # --------------------------------
+      # compress tool .Z
+      
+      if File.extname(@filename) == ".Z" then
+         cmd = "uncompress -f #{@full_path}"
+         retVal = system(cmd)         
+         if retVal == false then
+            raise "Failed #{cmd}"
+         end
+         @full_path = @full_path.slice(0, @full_path.length-2)            
+      end
+      
+      # --------------------------------
+      
    end
    ## -----------------------------------------------------------
 
