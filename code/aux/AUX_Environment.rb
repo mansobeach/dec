@@ -8,9 +8,9 @@
 #
 # === Data Exchange Component (DEC)
 # 
-# Git: DEC_Environment,v $Id$ $Date$
+# Git: AUX_Environment,v $Id$ $Date$
 #
-# module DEC
+# module AUX
 #
 #########################################################################
 
@@ -23,11 +23,12 @@ module AUX
    
    include CUC::DirUtils
    
-   @@version = "0.0.1"
+   @@version = "0.0.2"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.2"  =>    "IGS Broadcast Ephemeris Daily has been integrated", \
       "0.0.1"  =>    "IERS Leap Second has been integrated", \
       "0.0.0"  =>    "first version of the aux installer created" \
    }
