@@ -18,6 +18,7 @@ require 'rubygems'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'dec/ReadConfigDEC'
 
 module DEC
    
@@ -29,6 +30,8 @@ module DEC
    
    @@change_record = { \
       "1.0.14" =>    "New gem sys-filesystem is required to check hardlink config\n\
+          dec_config.xml Inventory item added for database configuration\n\
+          dec_config.xml reshuffle of some configuration items\n\
           dec_incoming_files.xml config item FileList replaced by DownloadRules\n\
           dec_incoming_files.xml config item Execute command for each Intray available in DisseminationRules", \
       "1.0.13" =>    "Support of for HTTP protocol for known URLs\n\
@@ -65,13 +68,8 @@ module DEC
    ## -----------------------------------------------------------------
    
    def load_config_development
+      load_config
       ENV['DEC_VERSION']                  = DEC.class_variable_get(:@@version)
-      ENV['DEC_DB_ADAPTER']               = "sqlite3"
-      ENV['DEC_DATABASE_NAME']            = "/tmp/dec_inventory"
-      ENV['DEC_DATABASE_USER']            = "root"
-      ENV['DEC_DATABASE_PASSWORD']        = "1mysql"
-      ENV['DEC_TMP']                      = "/tmp/dec_tmp"
-      ENV['DEC_DELIVERY_ROOT']            = "/tmp/dec_delivery_root"
       ENV['DEC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       ENV['HOSTNAME']                     = `hostname`
       ENV.delete('DCC_CONFIG')
@@ -109,6 +107,43 @@ module DEC
    
    ## -----------------------------------------------------------------
 
+   def load_config
+
+      # --------------------------------
+      if !ENV['DEC_CONFIG'] then
+         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
+
+      unset_config
+
+      decConfig   = DEC::ReadConfigDEC.instance
+      inventory   = decConfig.getInventory
+   
+      if !ENV['DEC_DB_ADAPTER'] then
+         ENV['DEC_DB_ADAPTER'] = inventory[:db_adapter]
+      end
+   
+      if !ENV['DEC_DATABASE_NAME'] then
+         ENV['DEC_DATABASE_NAME'] = inventory[:db_name]
+      end
+   
+      if !ENV['DEC_DATABASE_USER'] then
+         ENV['DEC_DATABASE_USER'] = inventory[:db_username]
+      end   
+
+      if !ENV['DEC_DATABASE_PASSWORD'] then
+         ENV['DEC_DATABASE_PASSWORD'] = inventory[:db_password]
+      end
+      
+      if !ENV['DEC_TMP'] then
+         ENV['DEC_TMP'] = decConfig.getTempDir
+      end   
+      
+   end
+   
+   ## -----------------------------------------------------------------
+
    def load_config_developmentRPF
       ENV['RPF_ARCHIVE_ROOT']             = "#{ENV['HOME']}/Sandbox/dec/rpf_archive_root"
       ENV['FTPROOT']                      = "#{ENV['HOME']}/Sandbox/dec/delivery_root"
@@ -134,7 +169,6 @@ module DEC
       puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
       puts "DEC_DB_ADAPTER                => #{ENV['DEC_DB_ADAPTER']}"
       puts "DEC_TMP                       => #{ENV['DEC_TMP']}"
-      puts "DEC_DELIVERY_ROOT             => #{ENV['DEC_DELIVERY_ROOT']}"
       puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
       puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
       puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
@@ -154,9 +188,9 @@ module DEC
    end
 
    ## -----------------------------------------------------------------
-
+   
    def check_environment_dirs_push
-      checkDirectory(ENV['DEC_DELIVERY_ROOT'])
+      checkDirectory(DEC::ReadConfigDEC.instance.getSourceDir)
    end
 
    ## -----------------------------------------------------------------
@@ -173,15 +207,18 @@ module DEC
    ## -----------------------------------------------------------------
 
    def checkEnvironmentEssential
+   
+      load_config
+   
       bCheck = true
       
-      # --------------------------------
-      # DEC_CONFIG can be defined by the customer to override 
-      # the configuration shipped with the gem
-      if !ENV['DEC_CONFIG'] then
-         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-      end
-      # --------------------------------
+#      # --------------------------------
+#      # DEC_CONFIG can be defined by the customer to override 
+#      # the configuration shipped with the gem
+#      if !ENV['DEC_CONFIG'] then
+#         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+#      end
+#      # --------------------------------
       
       if !ENV['DEC_TMP'] then
          bCheck = false
@@ -202,11 +239,6 @@ module DEC
 
    def checkEnvironmentPUSH
       bCheck = true
-      if !ENV['DEC_DELIVERY_ROOT'] then
-         bCheck = false
-         puts "DEC_DELIVERY_ROOT environment variable is not defined !\n"
-         puts
-      end
       
       if bCheck == false then
          puts "DEC PUSH environment variables configuration not complete"
@@ -315,8 +347,6 @@ module DEC
    
    def createEnvironmentDirs
       checkDirectory(ENV['DEC_TMP'])
-      
-      checkDirectory(ENV['DEC_DELIVERY_ROOT'])
       
       if ENV['DEC_DATABASE_NAME'][0,1] == '/' then
          checkDirectory(File.dirname(ENV['DEC_DATABASE_NAME']))
@@ -445,12 +475,20 @@ class DEC_Environment
    
    include DEC
    
+   def wrapper_load_config
+      load_config
+   end
+      
    def wrapper_load_config_development
       load_config_development
    end
 
    def wrapper_load_config_developmentRPF
       load_config_developmentRPF
+   end
+
+   def wrapper_checkEnvironmentEssential
+      return checkEnvironmentEssential
    end
 
    def wrapper_check_environment

@@ -13,13 +13,18 @@
 \begin{document}
 
 \section{Purpose \& Scope}
-The Data Exchange Component (DEC) is a SW helper to gather, transform, circulate, and archive files autonomously amongst different interfaces. \newline
+The Data Exchange Component (DEC) is a SW component to gather, transform, circulate, and archive files autonomously among different \textit{interfaces} and \textit{consumers}. \newline
 \par
 \noindent
-The scope of DEC SW usually lies on the different ICD defined for communication and exchange of data (generally \textit{files}). As such, it relies on different COTS to delegate the implementation of the different protocols supported.\newline
+The scope of DEC SW usually lies on the different ICD defined for communication and exchange of data (generally \textit{files}). As such, it relies on different COTS to delegate the implementation of various network protocols supported.\newline
 \par
 \noindent
 The DEC SW offers a command line interface to \textit{pull} and \textit{push} files towards the different configured interfaces.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[scale=0.5]{DEC_Context_Diagram.png}
+\end{figure}
 
 \section{Definitions}
 This section addresses a high level overview for the main design drivers that allows DEC to interface efficiently for the configured exchanges:

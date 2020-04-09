@@ -4,6 +4,7 @@
       <Name>Data Exchange Component</Name>
       <Id>DEC</Id>
       <Mission>UNIT TESTS</Mission>
+      <SatPrefix>S2_</SatPrefix>
    </Project>
    <Filters>
          <IncomingFilters>
@@ -42,12 +43,6 @@
       </Download>
    </Options>
    
-   <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
-   
-   <SatPrefix>S2_</SatPrefix>
-   
-   <!-- for local dissemination -->
-   <ReportDir>/tmp/dec/in_basket_if_localhost_notsecure</ReportDir>
    
    <Reports>
             
@@ -84,5 +79,19 @@
       </Report>
 
    </Reports>
+
+   <Workflow>
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+      <ReportDir>/tmp/dec/in_basket_if_localhost_notsecure</ReportDir>
+      <TempDir>/tmp/dec_tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Name>/tmp/dec_inventory</Database_Name>
+      <Database_User>root</Database_User>
+      <Database_Password>2mysql</Database_Password>
+   </Inventory>
 
 </Configuration>

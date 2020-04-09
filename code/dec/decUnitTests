@@ -438,6 +438,17 @@ class DECTestCase < Test::Unit::TestCase
       puts "DeleteUnknownFiles      => #{DEC::ReadConfigDEC.instance.getDeleteUnknown}"
       puts "DeleteDuplicatedFiles   => #{DEC::ReadConfigDEC.instance.getDeleteDuplicated}"
       puts DEC::ReadConfigDEC.instance.getDownloadDirs
+      
+      @@conf.wrapper_unset_config
+      
+      @@conf.wrapper_print_environment
+      
+      @@conf.wrapper_checkEnvironmentEssential
+       
+      @@conf.wrapper_print_environment
+      
+      @@conf.wrapper_load_config_development
+      
    end
    ## -------------------------------------------------------------
 
@@ -627,16 +638,6 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decCheckSent -h"
       assert(system(cmd), cmd)
 
-
-      dec_tmp = ENV['DEC_TMP']
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
-
       cmd = "decDeliverFiles -v"
       assert(system(cmd), cmd)
 
@@ -645,11 +646,6 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decDeliverFiles -h"
       assert(system(cmd), cmd)
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decDeliverFiles"
-      assert(!system(cmd), cmd)
 
 
       @@conf.wrapper_load_config_development
@@ -693,6 +689,29 @@ class DECTestCase < Test::Unit::TestCase
       puts inConfig.getInTrayExecution("S3_IN_2")
       puts inConfig.getInTrayCompress("S3_IN_2")
 
+
+      decConfig   = DEC::ReadConfigDEC.instance
+      puts decConfig.getInventory
+      puts decConfig.getSatPrefix
+      
+      
+      puts decConfig.getSourceDir
+      assert(decConfig.getSourceDir != "", "parsed decConfig.getSourceDir")
+      
+      puts decConfig.getGlobalOutbox
+      assert(decConfig.getGlobalOutbox != "", "parsed decConfig.getGlobalOutbox")      
+      
+      puts decConfig.getReportDir
+      assert(decConfig.getReportDir != "", "parsed decConfig.getReportDir")
+      
+      puts decConfig.getTempDir
+      assert(decConfig.getTempDir != "", "parsed decConfig.getTempDir")
+
+      outConfig       = ReadConfigOutgoing.instance
+      arr = outConfig.getEntitiesReceivingOutgoingFile("S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ")
+
+      puts "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ"
+      puts arr
 
       # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
    end
@@ -874,17 +893,6 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
-
-
-      dec_tmp = ENV['DEC_TMP']
-
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE -l --nodb"
-      puts cmd
-      assert(!system(cmd), cmd)
-           
-      ENV['DEC_TMP'] = dec_tmp
 
       inConfig          = ReadConfigIncoming.instance
       @finalDir         = inConfig.getIncomingDir("LOCALHOST_NOT_SECURE")
@@ -1677,15 +1685,7 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decListener -s non_existing_interface"
       assert(!system(cmd), cmd)
-   
-      dec_tmp = ENV['DEC_TMP']
-      ENV.delete('DEC_TMP')
-      
-      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
-      assert(!system(cmd), cmd)
-      
-      ENV['DEC_TMP'] = dec_tmp
-      
+               
       cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
       assert(system(cmd), cmd)
    
@@ -1730,13 +1730,14 @@ class DECTestCase < Test::Unit::TestCase
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
 
-      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
       
       checkDirectory("#{sourceDir}/GIP_PROBA2")
 
       aFilename = "S2B_OPER_GIP_PROBAS_MPC__20190610T000207_V20190610T000000_21000101T000000_B00.EOF"
+      puts "#{sourceDir}/GIP_PROBA2/#{aFilename}"
       system("echo \'#{aFilename}\' > #{sourceDir}/GIP_PROBA2/#{aFilename}")
 
       @@arrPushFiles.each{|filename|
@@ -1744,14 +1745,28 @@ class DECTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
       }
 
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
       cmd = "decCheckConfig -o"
       assert(system(cmd), cmd)
 
-      cmd = "decGetFiles4Transfer -l -D"
+      cmd = "decGetFiles4Transfer -l"
+      puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decGetFiles4Transfer -D"
+      cmd = "decGetFiles4Transfer"
+      puts cmd
       assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+                  
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
 
    end
    
@@ -1848,7 +1863,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)
 
-      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
@@ -1897,7 +1912,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)
 
-      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
@@ -1955,7 +1970,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)
 
-      sourceDir = ENV['DEC_DELIVERY_ROOT']
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"

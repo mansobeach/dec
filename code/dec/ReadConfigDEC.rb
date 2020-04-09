@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ReadConfigDEC class          
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Data Distributor Component
-# 
-# $Git: $Id: ReadConfigDEC.rb
-#
-# Module Data Exchange Component
-# This class processes dec_config.xml configuration file.
-# which contain all the information about the DEC configuration.
-#
+###
+### === Ruby source for #ReadConfigDEC class          
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Data Distributor Component
+### 
+### $Git: $Id: ReadConfigDEC.rb
+###
+### Module Data Exchange Component
+### This class processes dec_config.xml configuration file.
+### which contain all the information about the DEC configuration.
+###
 #########################################################################
 
 require 'singleton'
@@ -34,28 +34,29 @@ class ReadConfigDEC
    
    ## -------------------------------------------------------------
   
-   # Class constructor
+   ## Class constructor
    def initialize
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @@handlerXmlFile    = nil          
+      @@handlerXmlFile    = nil
+      @inventory          = nil       
       checkModuleIntegrity
       defineStructs
       loadData
    end
    ## -------------------------------------------------------------
    
-   # Set the flag for debugging on
+   ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       puts "ReadConfigDEC debug mode is on"
    end
    ## -------------------------------------------------------------
    
-   # Reload data from files
-   #
-   # This is the method called when the config files are modified
+   ## Reload data from files
+   ##
+   ## This is the method called when the config files are modified
    def update
       if @isDebugMode then 
          print("\nReceived Notification that the config files have changed\n")
@@ -81,13 +82,23 @@ class ReadConfigDEC
    def getProjectName
       return @projectInfo[:name]
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def getGlobalOutbox
       return @globalOutbox
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
+   def getSourceDir
+      return @sourceDir
+   end 
+   ## -----------------------------------------------------------
+
+   def getTempDir
+      return @tempDir
+   end
+   ## -----------------------------------------------------------
+   
    def getProjectID
       return @projectInfo[:id]
    end
@@ -172,7 +183,13 @@ class ReadConfigDEC
    def getReports
       return @arrReports
    end
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
+   
+   def getInventory
+      return @inventory
+   end
+   # ------------------------------------------------------------
+
 
 private
 
@@ -180,9 +197,9 @@ private
    @@isModuleChecked   = false
    @isDebugMode        = false
    
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Check that everything needed is present
+   ## Check that everything needed is present
    def checkModuleIntegrity
       
       bDefined = true
@@ -214,17 +231,18 @@ private
         exit(99)
       end      
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-	# This method defines all the structs used
+	## This method defines all the structs used
 	def defineStructs
 	   Struct.new("Project", :name, :id)
       Struct.new("Report", :name, :enabled, :desc, :fileClass, :fileType)
+      Struct.new("Inventory", :db_adapter, :db_name, :db_username, :db_password)
 	end
 	## -----------------------------------------------------------
    
-   # Load the file into the internal struct File defined in the
-   # class Constructor. See initialize.
+   ## Load the file into the internal struct File defined in the
+   ## class Constructor. See initialize.
    def loadData
      configFilename           = %Q{#{@@configDirectory}/dec_config.xml}
      fileConfig               = File.new(configFilename)
@@ -254,7 +272,9 @@ private
       @uploadFilePrefix    = ""
       @uploadDirs          = ""
       @bDeleteSourceFiles  = ""
+      @sourceDir           = ""
       @globalOutbox        = ""
+      @tempDir             = ""
       @arrReports          = Array.new
       enabled              = ""
       desc                 = ""
@@ -275,6 +295,11 @@ private
       XPath.each(xmlFile, "Configuration/Project/Mission"){      
          |id|
          @mission    = id.text             
+      }
+
+      XPath.each(xmlFile, "Configuration/Project/SatPrefix"){      
+         |prefix|
+         @satPrefix = prefix.text
       }
       
       @projectInfo = Struct::Project.new(projectName, projectId)
@@ -347,21 +372,8 @@ private
       
       @bDeleteSourceFiles = bDeleteSourceFiles
 
-      # Process GlobalOutbox
-      XPath.each(xmlFile, "Configuration/GlobalOutbox"){      
-         |repository|
-         @globalOutbox = expandPathValue(repository.text)
-      }
-      XPath.each(xmlFile, "Configuration/SatPrefix"){      
-         |prefix|
-         @satPrefix = prefix.text
-      }
 
-      # Process Report Dir
-      XPath.each(xmlFile, "Configuration/ReportDir"){      
-         |reportDir|
-         @reportDir = expandPathValue(reportDir.text)
-      }
+      ## -----------------------------------------
 
       # Process Reports Configuration
       XPath.each(xmlFile, "Configuration/Reports"){      
@@ -398,6 +410,75 @@ private
             @arrReports << fillReportStruct(report.attributes["Name"], enabled, desc, fileClass, fileType)
          }           
       }
+
+      ## -----------------------------------------
+
+      ## Workflow configuration
+
+      XPath.each(xmlFile, "Configuration/Workflow"){     
+         |workflow|
+
+         # Process Report Dir
+         XPath.each(workflow, "SourceDir"){      
+            |sourceDir|
+            @sourceDir = expandPathValue(sourceDir.text)
+         }
+               
+         # Process GlobalOutbox
+         XPath.each(workflow, "GlobalOutbox"){      
+            |repository|
+            @globalOutbox = expandPathValue(repository.text)
+         }
+
+         # Process Report Dir
+         XPath.each(workflow, "ReportDir"){      
+            |reportDir|
+            @reportDir = expandPathValue(reportDir.text)
+         }
+ 
+         # Process Report Dir
+         XPath.each(workflow, "TempDir"){      
+            |tempDir|
+            @tempDir = expandPathValue(tempDir.text)
+         }
+      
+      }
+
+      ## -----------------------------------------
+      ## Process Reports Configuration
+      XPath.each(xmlFile, "Configuration/Inventory"){      
+         |inventory|
+
+         db_adapter  = ""
+         db_name     = ""
+         db_user     = ""
+         db_pass     = ""
+
+         XPath.each(inventory, "Database_Adapter"){
+            |adapter|  
+            db_adapter = adapter.text.to_s
+         }
+         
+         XPath.each(inventory, "Database_Name"){
+            |name|
+            db_name  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_User"){
+            |user|
+            db_user  = user.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Password"){
+            |pass|
+            db_pass  = pass.text.to_s   
+         }
+         
+         @inventory = Struct::Inventory.new(db_adapter, db_name, db_user, db_pass)
+          
+      }
+      ## -----------------------------------------
+
 
    end
    #-------------------------------------------------------------

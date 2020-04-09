@@ -76,6 +76,7 @@
          <LocalInbox>/tmp/dec/if_iers_in_basket</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">products/eop/rapid/standard</Directory>
+            <Directory DepthSearch="0">products/eop/rapid/daily</Directory>
          </DownloadDirs>
       </Interface>
       
@@ -148,6 +149,21 @@
          </FromList>
       </File>
 
+      <File Type="finals2000A.daily">
+         <Description>EOP parameters</Description>
+         <FromList>
+            <Interface>IERS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="finals2000A.data">
+         <Description>EOP parameters</Description>
+         <FromList>
+            <Interface>IERS</Interface>
+         </FromList>
+      </File>
+
+
       <File Type="gpsrapid*">
          <Description>GPS data</Description>
          <FromList>
@@ -206,13 +222,12 @@
          </FromList>
       </File>
 
-      <File Type="*RSGA*">
-         <Description>Solar flux and Geomagnetic activity</Description>
+      <File Type="????????RSGA.txt">
+         <Description>Report Solar Geophysical Activity flux and Geomagnetic activity</Description>
          <FromList>
             <Interface>NOAA</Interface>
          </FromList>
       </File>
-
      
       <File Type="S2?_*">
          <Description>Sentinel-2 Ground Segment</Description>
@@ -231,6 +246,20 @@
 
       <File Type="S3__GN_1_NAV_AX*">
          <Description>Sentinel-3 IGS Broadcast Daily</Description>
+         <FromList>
+            <Interface>PUBLISH_S3</Interface>
+         </FromList>
+      </File>
+
+      <File Type="S3__GN_1_EOP_AX*">
+         <Description>IERS Earth Orientation Parameters</Description>
+         <FromList>
+            <Interface>PUBLISH_S3</Interface>
+         </FromList>
+      </File>
+
+      <File Type="S3__GN_1_SAC_AX*">
+         <Description>NOAA Solar Activity Report</Description>
          <FromList>
             <Interface>PUBLISH_S3</Interface>
          </FromList>
@@ -329,6 +358,13 @@
             </ToList>
          </File>
 
+         <File Type="S3__GN_1_EOP_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
 
 
          <File Type="*DECUNKNOWN*LOCALHOST_NOT_SECURE*">
@@ -351,6 +387,13 @@
                <Intray>DEC_REPORTS</Intray>
             </ToList>
          </File>
+
+         <File Type="finals2000A.daily">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>   
  
          <File Type="Leap_Second*">
             <HardLink>false</HardLink>
@@ -360,6 +403,13 @@
          </File>   
 
          <File Type="brdc0???.??n.Z">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="????????RSGA.txt">
             <HardLink>false</HardLink>
             <ToList>
                <Intray>S3_IN</Intray>
@@ -381,7 +431,7 @@
             </ToList>
          </File>
    
-         <File Type="finals*">
+         <File Type="finals.*">
             <HardLink>true</HardLink>
             <ToList>
                <Intray>S2A</Intray>

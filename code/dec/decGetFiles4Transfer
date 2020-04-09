@@ -3,12 +3,12 @@
 # == Synopsis
 #
 # This is a DEC command line tool that retrieves files to be transferred (push)
-# from a source directory specified by $DEC_DELIVERY_ROOT environment variable.
+# from a source directory specified by dec_config.xml SourceDir configuration item.
 #
-# Files present in the source directory are filtered according to the rules 
-# defined in ft_outgoing_files.xml
+# Files present in the source directory are gathered and then filtered according to the rules 
+# defined in dec_outgoing_files.xml
 # => wildcards such as  <File Type="S2A*">
-# => children directories, such as <File Type="GIP_PROBA2"> 
+# => children directories, such as <File Type="./GIP_PROBA2"> 
 # 
 # Files gathered are finally placed into the directory defined in the 
 # configuration <GlobalOutbox> present in dec_config.xml 
@@ -42,7 +42,7 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: getFilesToBeTransferred.rb,v 1.4 2007/12/05 17:49:11 decdev Exp $
+# Git: $Id: decGetFiles4Transfer 1.4 2007/12/05 17:49:11 decdev Exp $
 #
 #########################################################################
 
@@ -128,9 +128,9 @@ def main
    
    @archiveRetriever.retrieve(@bList)
    
-   @archiveRetriever.deliver(@bList, @bOnce)
-   
-   puts
+   if @bList == false then
+      @archiveRetriever.mv2OutTrays(@bOnce)
+   end
    
    locker.release
    

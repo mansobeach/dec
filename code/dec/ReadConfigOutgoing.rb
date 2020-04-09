@@ -143,9 +143,13 @@ class ReadConfigOutgoing
    ## -------------------------------------------------------------
    
    def getEntitiesReceivingOutgoingFile(fileName)
-      arrEnt = Array.new
       @@arrOutgoingFiles.each{|item|
          if item[:fileType].include?("*") or item[:fileType].include?("?") then
+            if item[:fileType].include?("/") then
+               if File.fnmatch(File.basename(item[:fileType]), fileName) == true then
+                  return item[:toList]
+               end
+            end
             if File.fnmatch(item[:fileType], fileName) == true then
                return item[:toList]
             end

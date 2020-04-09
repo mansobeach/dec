@@ -21,7 +21,7 @@ require 'cuc/DirUtils'
 
 class FT_PackageUtils
 
-   attr_reader :CompressMethods
+   attr_reader :CompressMethods, :newfilename
    
    CompressMethods = [  "NONE", \
                         "Z", \
@@ -53,6 +53,7 @@ class FT_PackageUtils
      @compressMethod    = ""
      @bDeleteSrc        = bDeleteSrc
      @srcFile           = file
+     @newfilename       = file
      @srcPath           = path
      checkModuleIntegrity
      
@@ -121,7 +122,7 @@ class FT_PackageUtils
    
    ##
    def pack
-      puts "FT_PackageUtils::pack(#{@compressMethod})"
+      #puts "FT_PackageUtils::pack(#{@compressMethod})"
       case @compressMethod
          when "7Z"         then bRet = perform7z
          when "TGZ"        then bRet = performTGZ
@@ -575,12 +576,12 @@ private
       prevDir = Dir.pwd
       Dir.chdir(@srcPath)
             
-      newname = getFilenameWithoutExtension(@srcFile)
+      @newfilename = "#{getFilenameWithoutExtension(@srcFile)}.7z"
 
       if FileTest.directory?(@srcFile) == true then
-         cmd  = %Q{7za a #{newname}.7z #{@fullpathFile}/*}
+         cmd  = %Q{7za a #{@newfilename} #{@fullpathFile}/*}
       else
-         cmd  = %Q{7za a #{newname}.7z #{@fullpathFile}}
+         cmd  = %Q{7za a #{@newfilename} #{@fullpathFile}}
       end
 
 #      if bDeleteSourceFile == true then

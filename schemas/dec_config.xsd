@@ -70,6 +70,7 @@
    <xs:element name="Name" type="xs:string"/>
    <xs:element name="Id" type="xs:string"/>
    <xs:element name="Mission" type="xs:string"/>
+   <xs:element name="SatPrefix"    type="SimpleAcronymType"/>
   </xs:sequence>
  </xs:complexType>
 
@@ -80,19 +81,37 @@
   </xs:sequence>
  </xs:complexType>
 
+ <xs:complexType name="InventoryType">
+  <xs:sequence>
+   <xs:element name="Database_Adapter"       type="xs:string"/>
+   <xs:element name="Database_Name"          type="xs:string"/>
+   <xs:element name="Database_User"          type="xs:string"/>
+   <xs:element name="Database_Password"      type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+ <xs:complexType name="WorkflowType">
+  <xs:sequence>
+    <xs:element name="SourceDir"       type="xs:string"/>  
+    <xs:element name="GlobalOutbox"    type="xs:string"/>
+    <xs:element name="ReportDir"       type="xs:string"/>
+    <xs:element name="TempDir"         type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
+
  <!--
  ============================================================
  -->
  <xs:element name="Configuration">
   <xs:complexType>
    <xs:sequence>
-    <xs:element name="Project" type="ProjectType"/>
-    <xs:element name="Filters" type="FiltersType"/>
-    <xs:element name="Options" type="OptionsType"/>
-    <xs:element name="GlobalOutbox" type="xs:string"/>
-    <xs:element name="SatPrefix" type="SimpleAcronymType"/>
-    <xs:element name="ReportDir" type="xs:string"/>
-    <xs:element name="Reports" type="ReportsType"/>
+    <xs:element name="Project"      type="ProjectType"/>
+    <xs:element name="Filters"      type="FiltersType"/>
+    <xs:element name="Options"      type="OptionsType"/>
+    <xs:element name="Reports"      type="ReportsType"/>
+    <xs:element name="Workflow"     type="WorkflowType"/>    
+    <xs:element name="Inventory"    type="InventoryType"/>
    </xs:sequence>
   </xs:complexType>
  </xs:element>

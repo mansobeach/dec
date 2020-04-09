@@ -37,8 +37,8 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_131]} I/F "interface": event NewFile2Intray triggered  	
 \end{itemize}
 
-\subsection{[DEC\_005] Interface Polling Start}
 \label{DEC005}
+\subsection{[DEC\_005] Interface Polling Start}
 This message time tags the start of the polling operation to \textit{pull} files from a given interface. The time to poll and filter the file to be pulled depends on the number of files published, the different rules configured for download or / and verification with the database of previous downloads ; measurements can be done with this message and its conclusion which is flagged by \hyperref[DEC050]{\textit{[DEC\_050]}} or \hyperref[DEC060]{\textit{[DEC\_060]}} message.
 
 \label{DEC050}
@@ -49,6 +49,7 @@ This message is logged upon completion filtering the files published in the down
 \subsection{[DEC\_060] Interface Polling Complete / New File(s) Available}
 This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database reporting there are some \textit{new} files for download. It can be used to measure the time required to perform the filtering operations.
 
+\label{DEC105}
 \subsection{[DEC\_105] File Available}
 The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
 
@@ -94,6 +95,8 @@ The message traces some event which has been triggered for a given interface acc
 % ------------------------------------------------------------------------------
 % Warning Messages
 
+\newpage
+
 \section{Warning Messages}
 
 \subsection{Scope}
@@ -123,7 +126,7 @@ This warning is associated to error message \hyperref[DEC625]{\textit{[DEC\_625]
 % ------------------------------------------------------------------------------
 % Error Messages
 
-
+\newpage
 \section{Error Messages}
 
 \subsection{Scope}
@@ -145,6 +148,8 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
 "directory" using hard-links command
 	\item \textbf{[DEC\_666]} I/F "interface": Could not download "file"
+	\item \textbf{[DEC\_711]} Could not reach directory from \textit{SourceDir} to fetch files for push
+	\item \textbf{[DEC\_713]} Could not place file in  \textit{LocalOutbox} to prepare files out-tray for push	
 \end{itemize}
 
 
@@ -205,22 +210,30 @@ This error is raised when DEC could not disseminate a file into a given \textit{
 \label{DEC666}
 This error is raised when DEC could not download a file from a given interface.
 
-\subsection{[DEC\_670] Deletion Failure}
 \label{DEC670}
+\subsection{[DEC\_670] Deletion Failure}
 This error is raised when DEC could not delete from the interface a file which has been successfully downloaded (cf. \hyperref[DEC110]{\textit{[DEC\_110]}}).
 For a given file from a specific interface this message is exclusive to \hyperref[DEC126]{\textit{[DEC\_126]}}.
+
+\label{DEC711}
+\subsection{[DEC\_711] Cannot Reach SourceDir Sub-Directory}
+This error is raised when DEC could not reach a \textit{SourceDir} sub-directory to fetch the selected files to \textit{push} according to some \hyperref[Upload Rules]{\textit{[Upload Rule}} miss-configuration.
 
 \subsection{TBW}
 
 % ------------------------------------------------------------------------------
 % Debug Messages
 
-
+\newpage
 \section{Debug Messages}
 
 \subsection{Scope}
-The debug messages by DEC SW are meant in general for troubleshooting purposes. They are generated optionally when the different commands are instructed using the \textit{--Debug} or \textit{-D} execution flag supplied at the command line interface.
-\newline
+The debug messages by DEC SW are meant in general for troubleshooting purposes when undesired behaviour raises ; for instance it may be useful to activate it when rehearsing new configurations. \newline
+
+\par
+\noindent
+By default the log debug messages are not generated ; they can be optionally activated at the execution time of the different DEC commands by usage of the \textit{--Debug} or \textit{-D} execution flag supplied at the command line interface.
+
 
 \subsection{Index of Messages}
 
@@ -246,15 +259,15 @@ This message reports the CPU time resources used to perform the filtering operat
 
 \label{DEC912}
 \subsection{[DEC\_912] Filtering Number of Items with Database}
-TBW
+This message traces the number of files which met the download rules during a given pull iteration and which are about to be filtered with respect to the database registry.
 
 \label{DEC913}
 \subsection{[DEC\_913] Filtering File with Database}
-TBW
+This message traces that a file found in the interface, which is matching the download rules, is about to be verified whether it has been previously received or not by checking its name reference in the database. 
 
 \label{DEC914}
 \subsection{[DEC\_914] File Found in Database}
-TBW
+This message traces that a file found in the interface, which is matching the download rules, is already registered in the database referring to a previous successful download, and therefore such file will be filtered-out and it will not be pulled again.
 
 \label{DEC915}
 \subsection{[DEC\_915] File Not Found in Database}

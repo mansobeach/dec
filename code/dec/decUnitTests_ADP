@@ -281,11 +281,11 @@ class DECTestCase < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   data("1",     ["ISLR",  false])
+#   data("1",     ["ISLR",  false])
    data("2",     ["NOAA",  false])
-   data("3",     ["IERS",  false])
-   data("4",     ["IGS",   false])
-   data("5",     ["LEAP",  true])
+#   data("3",     ["IERS",  false])
+#   data("4",     ["IGS",   false])
+#   data("5",     ["LEAP",  true])
 
    def test_ADP(params)
 
@@ -414,6 +414,7 @@ class DECTestCase < Test::Unit::TestCase
       puts
 
       checkDirectory(ReadConfigIncoming.instance.getIncomingDir("IGS"))
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("IERS"))
       checkDirectory(ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3"))
       
       ReadConfigIncoming.instance.getDownloadDirs("PUBLISH_S3").each do |dir|
@@ -430,17 +431,33 @@ class DECTestCase < Test::Unit::TestCase
 #
 #      sleep(5.0)
 #
+
+      cmd = "decGetFromInterface -m IERS"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+
       cmd = "decGetFromInterface -m IGS"
       puts cmd
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
-      cmd = "decGetFromInterface -m LEAP --nodb"
+
+      cmd = "decGetFromInterface -m NOAA"
       puts cmd
       assert(system(cmd), cmd)
 
       sleep(5.0)
+
+
+#      cmd = "decGetFromInterface -m LEAP --nodb"
+#      puts cmd
+#      assert(system(cmd), cmd)
+#
+#      sleep(5.0)
 
 #      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
 #      puts cmd

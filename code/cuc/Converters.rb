@@ -202,6 +202,20 @@ module Converters
    end
    ## -----------------------------------------------------------
 
+   ## XL_ASCII_CCSDSA_COMPACT
+   def strDateNow
+      return "#{Date.today.strftime("%Y%m%dT%H%M%S")}"
+   end
+   ## -----------------------------------------------------------
+
+   ### http://www.csgnetwork.com/julianmodifdateconv.html
+
+   def strMJD2Date(mjd)
+      return Date.jd(2400000.5 + mjd).strftime("%Y%m%dT%H%M%S")
+   end
+   
+   ## -----------------------------------------------------------
+
 end # module
 
 end # module

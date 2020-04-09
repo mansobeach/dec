@@ -606,7 +606,7 @@ private
                File.delete(targetFile)
                retVal = false
             else
-               msg = "[DEC_116] Compressed #{file} in #{compress} at #{inTray} Intray"
+               msg = "[DEC_116] Intray #{dim}: Compressed #{file} in #{compress} at #{inTray}"
                @logger.info(msg)
             end
          else
