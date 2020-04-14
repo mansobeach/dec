@@ -2,8 +2,7 @@
 
 # == Synopsis
 #
-# This is a DDC command line tool that sends an email notification
-# with the files sent to a given I/F.
+# This is a DEC command line tool that sends an email notification with the files sent to a given I/F.
 # 
 #
 # == Usage
@@ -31,30 +30,31 @@
 #
 # Data Exchange Component
 # 
-# CVS:
+# Git:
 #   $Id: decNotify2Interface,v 1.6 2007/11/06 16:33:54 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
 
+require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 require 'cuc/CheckerProcessUniqueness'
-require 'ddc/DDC_Notifier2Interface'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
+require 'dec/DEC_Notifier2Interface'
 
 # MAIN script function
 def main
 
-   #=======================================================================
-
+   ## =======================================================================
+ 
    def SIGTERMHandler
       puts "\n[#{File.basename($0)} #{@mnemonic}] SIGTERM signal received ... sayonara, baby !\n"
       @locker.release
       exit(0)
    end
-   #=======================================================================
+   ## =======================================================================
 
    include           DEC
    include           CUC::DirUtils
@@ -82,18 +82,16 @@ def main
    begin 
       opts.each do |opt, arg|
          case opt     
-            when "--Debug"    then  @isDebugMode = 1
-            when "--version"  then  @bShowVersion = true
-            when "--mnemonic" then  @mnemonic   = arg
-            when "--usage"    then  @bShowUsage = true
-            when "--help"     then  @bShowUsage = true
-            when "--OK"       then  @isOK       = true
-                               option = true
-                            
-            when "--KO"   then @isOK = false
-                               option = true         
-            when "--file" then
-                @fullPathFile = arg                                   
+            when "--Debug"    then  @isDebugMode   = true
+            when "--version"  then  @bShowVersion  = true
+            when "--mnemonic" then  @mnemonic      = arg
+            when "--usage"    then  @bShowUsage    = true
+            when "--help"     then  @bShowUsage    = true
+            when "--OK"       then  @isOK          = true
+                                    option         = true
+            when "--KO"       then  @isOK          = false
+                                    option         = true         
+            when "--file"     then  @fullPathFile  = arg                                   
          end
       end
    rescue Exception
@@ -114,14 +112,15 @@ def main
       exit(0)
    end
    
+   self.load_config
+   
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
       exit(99)
    end
- 
-
+   
    if @mnemonic == "" or option == false then
       usage
       exit(99)
@@ -137,16 +136,28 @@ def main
       exit(99)
    end
 
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("mail", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+		puts "Error in send2Interface::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+
    # Set notify2Interface <I/F> running.
    # This assures there is only one send2Interface running for a given I/F. 
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @mnemonic, true)
    
-#    if @isDebugMode == 1 then
-#       @locker.setDebugMode
-#    end
-   
    if @locker.isRunning == true then
-      puts "\n#{File.basename($0)} for #{@mnemonic} I/F is already running !\n\n"
+      @logger.error("#{File.basename($0)} for #{@mnemonic} I/F is already running !")
       exit(99)
    end
   
@@ -181,6 +192,7 @@ def main
    # SR-2352-TRN-FUN - MP-FU-50b
    # SR-2354-TRN-FUN - MP-FU-59a
    
+   
    @bNotify  = ftReadConf.isNotificationSent?(@mnemonic)
 
    if @bNotify == false then
@@ -204,16 +216,18 @@ def main
    @locker.release   
 end
 
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 # Generate and deliver Notification Mail to the given I/F
 # If for this I/F no file is sent, no mail is sent as well. 
 def notifySuccess2Entity
-   notifier = DDC::DDC_Notifier2Interface.new(@mnemonic)
-   if @isDebugMode == 1 then
+   
+   notifier = DEC::DEC_Notifier2Interface.new(@mnemonic, @logger)
+   
+   if @isDebugMode == true then
       notifier.setDebugMode
    end
 
@@ -222,15 +236,17 @@ def notifySuccess2Entity
    @listFiles = Array.new
    list.each{|x| @listFiles << x.chop}
    notifier.setListFilesSent(@listFiles)
+   
+      
       
    notifier.notifyFilesSent
 end
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 # Generate and deliver Notification Mail to the given 
 def notifyFailure2Entity
-   notifier = DDC::DDC_Notifier2Interface.new(@mnemonic)
-   if @isDebugMode == 1 then
+   notifier = DEC::DEC_Notifier2Interface.new(@mnemonic, @logger)
+   if @isDebugMode == true then
       notifier.setDebugMode
    end
    
@@ -247,7 +263,7 @@ end
 
 ## Print command line help
 def usage
-   fullpathFile = `which #{File.basename($0)}`    
+   fullpathFile = File.expand_path(__FILE__)
    
    value = `#{"head -24 #{fullpathFile}"}`
       

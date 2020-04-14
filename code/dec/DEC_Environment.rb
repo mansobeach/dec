@@ -108,7 +108,7 @@ module DEC
    ## -----------------------------------------------------------------
 
    def load_config
-
+   
       # --------------------------------
       if !ENV['DEC_CONFIG'] then
          ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
@@ -116,6 +116,12 @@ module DEC
       # --------------------------------
 
       unset_config
+
+      # --------------------------------
+      if !ENV['HOSTNAME'] then
+         ENV['HOSTNAME'] = `hostname`
+      end
+      # --------------------------------
 
       decConfig   = DEC::ReadConfigDEC.instance
       inventory   = decConfig.getInventory

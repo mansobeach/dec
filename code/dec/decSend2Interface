@@ -88,20 +88,20 @@ def main
    end
    ## ================================================================
 
-   # If it is running, it kills its notify2Interface associated
+   # If it is running, it kills its decNotify2Interface associated
    def killInProgressNotify2Entity
-      checker = CUC::CheckerProcessUniqueness.new("notify2Interface.rb", @entity, true)
+      checker = CUC::CheckerProcessUniqueness.new("decNotify2Interface", @entity, true)
       if @isDebugMode == 1 then
          checker.setDebugMode
       end
       pid = checker.getRunningPID
       if pid == false then
          if @isDebugMode == 1 then
-            @logger.debug("notify2Interface for #{@entity} I/F was not running")
+            @logger.debug("decNotify2Interface for #{@entity} I/F was not running")
          end
       else
          if @isDebugMode == 1 then
-            @logger.debug("Sending signal SIGTERM to Process #{pid} for killing notify2Interface.rb #{@entity}")
+            @logger.debug("Sending signal SIGTERM to Process #{pid} for killing decNotify2Interface #{@entity}")
          end
          Process.kill(15, pid.to_i)
       end               
@@ -244,7 +244,7 @@ def main
    trap 15,proc{ self.SIGTERMHandler }
 
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("send2Interface", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
@@ -322,10 +322,10 @@ def main
    @locker.release
    
    if bSent == true then
-      @logger.info("Success delivering files towards #{@entity} ! :-)")
+      @logger.info("[DEC_200] #{@entity} I/F: Push iteration completed successfully ! :-)")
       exit(0)
    else
-      @logger.error("Failed to deliver files towards #{@entity} ! :-(")
+      @logger.error("[DEC_700] #{@entity} I/F: Push iterations problems ! :-(")
       exit(99)   
    end
 end
@@ -335,32 +335,38 @@ end
 # Generate and deliver Notification Mail to the given I/F
 # If for this I/F no file is sent, no mail is sent as well. 
 def notifySuccess2Entity
-   cmd           = nil
+   cmd            = nil
+   fileListFiles  = ""
+   tmpDir         = ENV['DEC_TMP']
+   time           = Time.new
+   retVal         = false
+   
    # Create a File which contains all the files sent
-   fileListFiles = ""
-   tmpDir    = ENV['DEC_TMP']
-   time      = Time.new
    fileListFiles = %Q{#{tmpDir}/.#{time.to_f.to_s}_sent2#{@entity}}
    aFile = File.new(fileListFiles, File::CREAT|File::WRONLY)
    @listFiles.each{|x| aFile.puts(x)}     
    aFile.flush
    aFile.close
    
-   cmd = %Q{notify2Interface.rb -m #{@entity} -O -f #{fileListFiles}}
+   cmd = %Q{decNotify2Interface -m #{@entity} -O -f #{fileListFiles}}
       
    if @isDebugMode == true then
       cmd = %Q{#{cmd} -D}
-      puts cmd
+      @logger.debug(cmd)
    end      
+      
+   @logger.info("#{retVal} / #{$?}")   
       
    retVal = system(cmd)
    
-   if retVal == false then
-      @logger.error("Failed to send mail notification-success to #{@entity}")
+   @logger.info("#{retVal} / #{retVal.class}/ #{$?}")
+   
+   if retVal == false or retVal == nil then
+      @logger.error("[DEC_XXX] #{@entity} I/F: Failed to send mail notification-success to recipients")
    else
-      @logger.info("Mail notification-success sent to #{@entity}")   
+      @logger.info("[DEC_XXX] #{@entity} I/F: Mail notification-success sent to recipients")   
    end
-   if FileTest.exist?(fileListFiles)==true then
+   if FileTest.exist?(fileListFiles) == true then
       File.delete(fileListFiles)
    end
    return retVal
@@ -382,7 +388,7 @@ def notifyFailure2Entity
    aFile.flush
    aFile.close
 
-   cmd = %Q{notify2Interface.rb -m #{@entity} -K -f #{fileListFilesErrors}}   
+   cmd = %Q{decNotify2Interface -m #{@entity} -K -f #{fileListFilesErrors}}   
    if @isDebugMode == true then
       cmd = %Q{#{cmd} -D}
       @logger.debug(cmd)
@@ -426,7 +432,9 @@ def deliverByBodyMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered using mailbody mechanism to #{@entity}")
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using mailbody mechanism")
+            end
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -460,7 +468,9 @@ def deliverByMail
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered using email to #{@entity}")
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using email")
+            end
          end
       else
          bSent = decMailer.deliver(@isDeliveredOnce, @hParams)
@@ -500,7 +510,9 @@ def deliverByHTTP
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered using http to #{@entity}")
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using http")
+            end
          end
       else
          bSent = sender.deliver(@isDeliveredOnce, @hParams)
@@ -535,7 +547,9 @@ def deliverByFTP
       if numFiles == 0 then
          bNewFiles = false
          if bFirst == true then
-            @logger.info("No files to be delivered using ftp to #{@entity}")
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using ftp")
+            end
          end
       else
          bSent = sender.deliver(@isDeliveredOnce, @hParams)
@@ -590,7 +604,7 @@ def deliverByFTP
    end
    return bSent
 end
-#---------------------------------------------------------------------
+## -------------------------------------------------------------------
 
 ## ---------------------------------------------------------
 

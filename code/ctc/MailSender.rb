@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: MailSender.rb,v 1.9 2013/03/14 14:03:24 algs Exp $
+# Git: $Id: MailSender.rb,v 1.9 2013/03/14 14:03:24 algs Exp $
 #
 # Module Common Transfer Component
 # This class delivers text mails.
@@ -25,14 +25,13 @@ module CTC
 
 class MailSender
     
-   #--------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Class constructor.
-   # address (IN) : string with the from address mail.
-   # host (IN) : string with the IP address or hostname
-   # port (IN) : integer with port number
+   ## Class constructor.
+   ## address (IN) : string with the from address mail.
+   ## host (IN) : string with the IP address or hostname
+   ## port (IN) : integer with port number
    def initialize(host, port, user, pass, isSecure, name="", subject="", body="")
-#      puts "initialize MailSender ..."
       @isModuleOK        = false
       @isModuleChecked   = false
       @isDebugMode       = false
@@ -52,21 +51,21 @@ class MailSender
       @optMail           = Hash.new
       @optMail[:server]       ||= host
       @optMail[:from]         ||= user
-      @optMail[:from_alias]   ||= 'DEC/RPF Mailer'
-      @optMail[:subject]      ||= "DEC/RPF Notification"
+      @optMail[:from_alias]   ||= 'DEC Mailer'
+      @optMail[:subject]      ||= "DEC Notification"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Set debug mode on
+   ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
       puts "MailSender Debug Mode is on"
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Set Mail Subject
+   ## Set Mail Subject
    def setMailSubject(subject)
-      puts "MailSender::setMailSubject(#{subject})"
+      # puts "MailSender::setMailSubject(#{subject})"
       @optMail[:subject]      = subject
 #      smtpSubject = %Q{Subject: #{subject}}
 #      @arrContent.unshift(smtpSubject)
@@ -74,7 +73,7 @@ class MailSender
          puts "Mail Subject is : #{subject}"
       end
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def buildMessage
       destination = ""
@@ -88,9 +87,9 @@ class MailSender
       
       # destination = @arrToAddress[0]
       
-      puts
-      puts destination
-      puts
+#      puts
+#      puts destination
+#      puts
       
       @msg = <<END_OF_MESSAGE
 From: #{@optMail[:from_alias]} <#{@optMail[:from]}>
@@ -118,85 +117,52 @@ END_OF_MESSAGE
       @arrContent = %Q{#{@arrContent}\n#{line}}
    end
 
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    
-   # Sends a mail with 
+   ## Sends a mail with 
    def sendMail
    
       # @optMail[:body]        ||= @arrContent
       
       if @bConfigured == false then
          puts "MailSender::sendMail Internal Error : init method must be invoked first !! :-O \n\n"
-         exit(99)
+         raise
       end      
 
-      if @isDebugMode == true then
-         puts "MailSender::sendMail debug"
-         puts "--------------------"
-         puts @optMail[:server]
-         puts "--------------------"
-         puts @optMail[:from]
-         puts "--------------------"
-         puts @msg
-         puts "--------------------"
-         puts @arrToAddress
-         puts "--------------------"           
+#      if @isDebugMode == true then
+#         puts "MailSender::sendMail debug"
+#         puts "--------------------"
+#         puts "#{@optMail[:server]} / #{@port} / #{@isSecure}"
+#         puts "--------------------"
+#         puts @optMail[:from]
+#         puts "--------------------"
+#         puts @msg
+#         puts "--------------------"
+#         puts @arrToAddress
+#         puts "--------------------"           
+#      end
+
+      smtp = Net::SMTP.new @optMail[:server], @port
+            
+      if @isSecure == true then
+         smtp.enable_starttls
       end
-
-
-      Net::SMTP.start(@optMail[:server]) do |smtp|
-         smtp.send_message @msg, @optMail[:from], @arrToAddress
+    
+      smtp.start(@domain, @user, @pass, :login) do
+         smtp.send_message(@msg, @optMail[:from], @arrToAddress)
       end
 
       return true
    end
-   #-------------------------------------------------------------
-   
-   def init_old
-      begin
-         
-         puts
-         puts @isSecure
-         puts @isSecure.class
-         puts
-         
-         if @isSecure == true #ssl/tls active 
-            @smtpClient        = Net::SMTP.new(@host, @port)
-            #@smtpClient.enable_starttls_auto
-            @smtpClient.enable_starttls
-            @smtpClient.start(@domain, @user, @pass, :plain)
-         else
-            @smtpClient        = Net::SMTP.start(@host, @port, @domain)
-         end
-      rescue Exception => e
-          if @isDebugMode == true
-            puts
-            puts "SMTP Connection Refused ! =-("
- 	         puts "Host   -> #{@host}"
- 	         puts "Port   -> #{@port}"
- 	         puts "Domain -> #{@domain}"
-             puts
-          else
-             puts
-             puts "MailSender::init could not connect to #{@host}:#{@port}"
-          end
-          puts
-          puts e.backtrace
-          puts
-          return false
-       end
-      @bConfigured = true
-      return true
-   end
-   # -------------------------------------------------------------
-   
+   ## -----------------------------------------------------------
+      
    # Add an address to @toAddress array
    def addToAddress(address)
       @arrToAddress << address
-      if @isDebugMode == true then
-         puts "Address #{address} added to Destinations"
-      end
+#      if @isDebugMode == true then
+#         puts "Address #{address} added to Destinations"
+#      end
    end
    # -------------------------------------------------------------
 
@@ -340,47 +306,15 @@ end #while
    
    # Content of the outgoing mail is stored as an array of lines.
    
-   #-------------------------------------------------------------
-   
-   
-   # Sends a mail with 
-   def sendMail_old
-      if @bConfigured == false then
-         puts "MailSender::sendMail Internal Error : init method must be invoked first !! :-O \n\n"
-         exit(99)
-      end      
-      if @arrToAddress.empty? == true then
-         puts "MailSender::sendMail Error : Destinations address is empty :-( \n\n"
-         exit(99)
-      end
 
-      begin
-      
-      puts "CONTENET #{@arrContent}"
-     
-      arrKK = Array.new
-     
-      @arrContent.each{|kk| arrKK << kk.chop}
-     
-         #should use @user instead of @fromAddress
-         # @smtpClient.send_mail(@arrContent, @fromAddress, @arrToAddress)
-         @smtpClient.send_mail(arrKK, @fromAddress, @arrToAddress)
-      rescue Exception => e
-         #if @isDebugMode then 
-         puts "Error NET::SMTP #{e}" 
-         #end
-         return false
-      end
-
-      return true
-   end
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------#\""
 
    def newMail
       @arrContent=Array.new
 #      @fromAddress=""
 #      @arrToAddress=""
    end
+   # ------------------------------------------------------------#\""
 
 private
 
@@ -388,26 +322,25 @@ private
    @isModuleChecked   = false
    @isDebugMode       = false      
 
-   #-------------------------------------------------------------
+   # ------------------------------------------------------------
 
    # Check that all needed to run is present
    def checkModuleIntegrity
       bDefined = true
       if !ENV['HOSTNAME'] then
-         puts "\nHOSTNAME environment variable not defined !\n"
-         bDefined = false
+         @domain = "localhost"
+      else
+         @domain = ENV['HOSTNAME'].to_s.chop
       end
       
       if bDefined == false then
-        puts("MailSender::checkModuleIntegrity FAILED !\n\n")
-        exit(99)
+         puts("MailSender::checkModuleIntegrity FAILED !\n\n")
+         raise
       end      
-      @domain = ENV['HOSTNAME']
+      
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-
-   #=============================================================
 end # class
 
 end # module

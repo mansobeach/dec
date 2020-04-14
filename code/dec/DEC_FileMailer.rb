@@ -52,7 +52,7 @@ class DEC_FileMailer
       checkModuleIntegrity
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_FileMailer", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -179,8 +179,10 @@ class DEC_FileMailer
          puts "-------------------------------------------------------"
       end
       
-      if @arrFiles.empty? then    
-         @logger.debug("No Files to #{@entity} I/F in mail outbox #{@outboxDir}")
+      if @arrFiles.empty? then
+         if @isDebugMode == true then 
+            @logger.debug("#{@entity} I/F: No Files in mail outbox #{@outboxDir}")
+         end
       end
    
       @listFileToBeSent = @arrFiles

@@ -34,7 +34,12 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_125]} I/F "interface": Deleting duplicated file "filename" previously received 
 	\item \textbf{[DEC\_126]} I/F "interface": Deleted downloaded file "filename"
 	\item \textbf{[DEC\_130]} I/F "interface": event "name" triggered  	
-	\item \textbf{[DEC\_131]} I/F "interface": event NewFile2Intray triggered  	
+	\item \textbf{[DEC\_131]} I/F "interface": event NewFile2Intray triggered
+	\item \textbf{[DEC\_210]} I/F "interface": File "filename" sent using "protocol"  	
+	\item \textbf{[DEC\_211]} TBW
+	\item \textbf{[DEC\_212]} TBW
+	\item \textbf{[DEC\_213]} TBW
+	\item \textbf{[DEC\_214]} TBW	
 \end{itemize}
 
 \label{DEC005}
@@ -91,6 +96,38 @@ This event is triggered upon successful polling completion (cf. \hyperref[DEC060
 
 \subsection{[DEC\_131] Dissemination Command Execution }
 The message traces some event which has been triggered for a given interface according to the configuration item \textit{"Execution"} defined in the \hyperref[Dissemination rules]{\textit{dissemination rules}}.
+
+\label{DEC210}
+\subsection{[DEC\_210] File Pushed to Interface}
+The file referenced in the message has been uploaded to the interface placed into its \hyperref[Upload Rules]{\textit{UploadDir}}.
+
+\label{DEC211}
+\subsection{[DEC\_211] Push Setup / File at GlobalOutbox}
+TBW.
+
+\label{DEC212}
+\subsection{[DEC\_212] Push Setup / File at Removed from SourceDir}
+TBW.
+
+\label{DEC213}
+\subsection{[DEC\_213] Push Setup / File at Interface LocalOutbox}
+TBW.
+
+\label{DEC214}
+\subsection{[DEC\_214] Push Setup / File Compressed at Interface LocalOutbox}
+TBW.
+
+\label{DEC235}
+\subsection{[DEC\_235] Report Generation DeliveredFiles to Interface}
+TBW.
+
+\label{DEC240}
+\subsection{[DEC\_240] Push Email Notification to Interface}
+TBW / decNotify2Interface.
+
+\label{DEC241}
+\subsection{[DEC\_241] Push Error Email Notification to Interface}
+TBW / decNotify2Interface.
 
 % ------------------------------------------------------------------------------
 % Warning Messages
@@ -215,9 +252,51 @@ This error is raised when DEC could not download a file from a given interface.
 This error is raised when DEC could not delete from the interface a file which has been successfully downloaded (cf. \hyperref[DEC110]{\textit{[DEC\_110]}}).
 For a given file from a specific interface this message is exclusive to \hyperref[DEC126]{\textit{[DEC\_126]}}.
 
+\label{DEC700}
+\subsection{[DEC\_700] Push Failure to Interface}
+TBW
+
 \label{DEC711}
 \subsection{[DEC\_711] Cannot Reach SourceDir Sub-Directory}
 This error is raised when DEC could not reach a \textit{SourceDir} sub-directory to fetch the selected files to \textit{push} according to some \hyperref[Upload Rules]{\textit{[Upload Rule}} miss-configuration.
+
+\label{DEC713}
+\subsection{[DEC\_713] File Hard-link Failure into LocalOutbox}
+This error is raised .
+
+\label{DEC740}
+\subsection{[DEC\_740] Failed to Email Push Email Notification to Interface}
+TBW / decNotify2Interface.
+
+\label{DEC741}
+\subsection{[DEC\_741] Failed to Email Push Error Notification to Interface}
+TBW / decNotify2Interface.
+
+\label{DEC742}
+\subsection{[DEC\_742] Email Error}
+TBW / decNotify2Interface.
+
+\subsubsection{Credentials Not Accepted}
+
+\begin{verbatim}
+[ERROR] 2020-04-14 18:44:38 NODE_1.mail - [DEC_742] LOCALHOST_NOT_SECURE I/F: Username and Password not accepted
+\end{verbatim}
+
+\subsubsection{SMTP Server Not Known}
+
+\begin{verbatim}
+[ERROR] 2020-04-14 18:49:42 NODE_1.mail - [DEC_742] LOCALHOST_NOT_SECURE I/F: getaddrinfo: nodename nor servname provided, or not known
+\end{verbatim}
+
+\subsubsection{Time-Out / Port Miss-configuration}
+\begin{verbatim}
+[ERROR] 2020-04-14 18:56:31 NODE_1.mail - [DEC_742] LOCALHOST_NOT_SECURE I/F: execution expired
+\end{verbatim}
+
+\subsubsection{Need TLS / Secure Flag Miss-configuration}
+\begin{verbatim}
+[ERROR] 2020-04-14 18:58:58 NODE_1.mail - [DEC_742] LOCALHOST_NOT_SECURE I/F: Must issue a STARTTLS command first
+\end{verbatim}
 
 \subsection{TBW}
 

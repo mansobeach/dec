@@ -39,7 +39,7 @@ class CheckerMailConfig
       @dccReadConf    = ReadMailConfig.instance
       @sendMailCfg    = @dccReadConf.getSendMailParams
       @receiveMailCfg = @dccReadConf.getReceiveMailParams
-      @isDebugMode    = true
+      @isDebugMode    = false
    end
    # -------------------------------------------------------------
    

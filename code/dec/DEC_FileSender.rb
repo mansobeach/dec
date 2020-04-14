@@ -64,7 +64,7 @@ class DEC_FileSender
          exit(99)
       end
             
-      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_FileSender", "#{configDir}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -171,7 +171,9 @@ class DEC_FileSender
       end
       
       if @arrFiles.empty? then
-         @logger.debug("No Files to #{@entity} I/F in ftp outbox #{@outboxDir}")
+         if @isDebugMode == true then
+            @logger.debug("#{@entity} I/F: No Files for push in ftp LocalOutbox #{@outboxDir}")
+         end
       end
 
       @listFileToBeSent = @arrFiles      
@@ -207,19 +209,21 @@ class DEC_FileSender
                   
          @arrFiles.each{|file|
 
-            @logger.info("Sending #{file} to #{@entity} via #{@ftpserver[:protocol]}")
+            if @isDebugMode == true then
+               @logger.debug("Sending #{file} to #{@entity} via #{@ftpserver[:protocol]}")
+            end
             
             size = File.size("#{@outboxDir}/#{File.basename(file)}")
             
             bRet = sendFile(file)
             
             if bRet == false then
-               @logger.error("[DEC_200] Failed sending #{file} to #{@entity}")
+               @logger.error("[DEC_710] #{@entity} I/F: Failed sending #{file}")
                @listFileError << file
                @listFileError = @listFileError.uniq
                bSent = false
             else
-               @logger.info("#{file} sent to #{@entity} via #{@protocol}")
+               @logger.info("[DEC_210] #{@entity} I/F: #{file} sent using #{@protocol}")
                tmpFilesSent  << file
                @listFileSent << file
                
@@ -323,7 +327,7 @@ class DEC_FileSender
       
       filename = writer.getFilename
          
-      @logger.info("#{@entity} - created Report File #{filename}")
+      @logger.info("[DEC_235] #{@entity} I/F: - Created report #{filename}")
    
       if filename == "" then
          @logger.error("Error in DEC_FileSender::createContentFile !!!! =:-O")

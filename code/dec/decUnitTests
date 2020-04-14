@@ -54,7 +54,8 @@ require 'dec/ReadConfigIncoming'
 ###  7  - test_decSend2Interface
 ###  7.1  - test_decSend2Interface_LOCAL
 ###  7.2  - test_decSend2Interface_HTTP
-###  8  - test_decDeliverFiles
+###  8  - test_decNotify2Interface
+###  9  - test_decDeliverFiles
 
 # Select a single test of the suite
 
@@ -1806,6 +1807,8 @@ class DECTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), cmd)
 
+      exit
+
       cmd = "decStats"
       assert(system(cmd), cmd)
 
@@ -1996,7 +1999,33 @@ class DECTestCase < Test::Unit::TestCase
 
    def test_decNotify2Interface
       cmd = "decNotify2Interface -v"
+      puts cmd
       assert(system(cmd), cmd)
+
+      cmd = "decNotify2Interface -h"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      @@arrPushFiles.each{|filename|
+         system("echo \'#{filename}\' >> /tmp/dec_tmp/list_files")
+      }
+      
+      
+      cmd = "decNotify2Interface -m LOCALHOST_NOT_SECURE -O -f /tmp/dec_tmp/list_files"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      
+      cmd = "decNotify2Interface -m LOCALHOST_NOT_SECURE -K -f /tmp/dec_tmp/list_files"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
 
    end
    ## -------------------------------------------------------------

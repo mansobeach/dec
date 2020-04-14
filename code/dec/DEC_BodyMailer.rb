@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Distributor Component
 # 
-# CVS: $Id: DEC_BodyMailer.rb,v 1.11 2011/08/24 18:56:24 algs Exp $
+# Git: $Id: DEC_BodyMailer.rb,v 1.11 2011/08/24 18:56:24 algs Exp $
 #
 # Module Data Distributor Component
 # This class delivers methods for sending files to entities using SMTP.
@@ -50,7 +50,7 @@ class DEC_BodyMailer
       checkModuleIntegrity
 
       # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("DEC_BodyMailer", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
@@ -171,7 +171,9 @@ class DEC_BodyMailer
       end
       
       if @arrFiles.empty? then
-         @logger.debug("No Files to #{@entity} I/F in ftp outbox #{@outboxDir}")
+         if @isDebugMode == true then
+            @logger.debug("#{@entity} I/F: No Files to  in ftp outbox #{@outboxDir}")
+         end
       end
    
       @listFileToBeSent = @arrFiles
