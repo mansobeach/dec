@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.executables   = [ 
                      'decValidateConfig', \
                      'decCheckConfig', \
-                     'decCheckSent', \
+                     'decListDirUpload', \
                      'decConfigInterface2DB', \
                      'decDeliverFiles', \
                      'decGetFiles4Transfer', \
@@ -89,6 +89,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('test-unit', '~> 3.0')
   
+  ## ----------------------------------------------
+
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Data Exchange Component installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+    
   ## ----------------------------------------------
      
 end

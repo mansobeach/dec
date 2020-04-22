@@ -34,11 +34,10 @@
        <Address>borja.lopez@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
-      <SendNotification>true</SendNotification>
+      <SendNotification>false</SendNotification>
       <To>
        <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>
-       <Address>borja.lopez.fernandez@esa.int</Address>
       </To>
     </Notify>
     <Events>
@@ -93,11 +92,9 @@
        <Address>borja.lopez@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
-      <SendNotification>true</SendNotification>
+      <SendNotification>false</SendNotification>
       <To>
        <Address>borja.esa@gmail.com</Address>
-       <Address>borja.lopez@deimos-space.com</Address>
-       <Address>borja.lopez.fernandez@esa.int</Address>
       </To>
     </Notify>
     <Events>
@@ -155,7 +152,6 @@
       <To>
        <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>
-       <Address>borja.lopez.fernandez@esa.int</Address>
       </To>
     </Notify>
     <Events>
@@ -236,6 +232,61 @@
 
   <!-- ================================================================ -->
 
+  <Interface Name="WEBDAV2">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
   <Interface Name="WEBDAV">
     <Desc>Localhost Interface</Desc>
     <TXRXParams>
@@ -252,8 +303,8 @@
       <Protocol>WEBDAV</Protocol>
       <Hostname>localhost</Hostname>
       <Port>8080</Port>      
-      <User>borja</User>
-      <Pass>perrillo</Pass>
+      <User></User>
+      <Pass></Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>

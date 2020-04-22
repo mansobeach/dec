@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# CVS: $Id: LocalInterfaceHandler.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
+# Git: $Id: LocalInterfaceHandler.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
 #
 # Module Data Collector Component
 # This class polls a given LOCAL Interface and gets all registered available files
@@ -113,6 +113,10 @@ class LocalInterfaceHandler
    end
 
 # DCC =============================================================
+
+
+   ## -----------------------------------------------------------
+   ## DCC - Pull
 
    def getLocalList
       @newArrFile    = Array.new      

@@ -88,15 +88,15 @@ class DEC_FileSender
       @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
       @protocol      = @ftpserver[:protocol]     
-      @sender        = CTC::FileSender.new(@ftpserver, protocol, @logger)
+      @sender        = CTC::FileSender.new(@entity, @ftpserver, @protocol, @logger)
             
       if isDebug == true then
          self.setDebugMode
       end
       
-      @outboxDir   = ReadConfigOutgoing.instance.getOutgoingDir(@entity)
-      # @outboxDir   = "#{@outboxDir}/ftp"
-      @outboxDir   = "#{@outboxDir}/#{protocol.downcase!}"
+      @outboxDir     = ReadConfigOutgoing.instance.getOutgoingDir(@entity)            
+      @outboxDir     = "#{@outboxDir.dup}/#{@protocol.downcase}"
+      
       checkDirectory(@outboxDir)
       @decConfig   = DEC::ReadConfigDEC.instance
       @arrFilters  = @decConfig.getOutgoingFilters
@@ -121,8 +121,8 @@ class DEC_FileSender
    end
    ## -----------------------------------------------------------
  
-   ## Set the outbox directory where the files to be sent are placed.
-   ##
+   ## Load the list of files to be sent from outbox directory
+   ## If flag to deliver once is enabled, previously circulated file are removed
    def loadFileList
       @listFileSent     = Array.new
       @listFileError    = Array.new
@@ -142,6 +142,7 @@ class DEC_FileSender
          end
          arrTmp << Dir[filter].sort_by{ |f| File.mtime(f)}
       }
+      
       arrTmp = arrTmp.flatten
       arrTmp = arrTmp.uniq
       Dir.chdir(prevDir)
@@ -150,11 +151,17 @@ class DEC_FileSender
       # has already been delivered
       if @deliverOnce then
          arrTmp.each { |file|
+         
+#            if file.downcase == "ftp" or file.downcase == "local" or file.downcase == "sftp" or file.downcase == "sftp" then
+#               next
+#            end
+         
             if SentFile.hasAlreadyBeenSent?(file, @entity, @ftpserver[:protocol]) == true then
-               if @isDebugMode then
-                  @logger.debug("#{file} already sent to #{@entity} via #{@ftpserver[:protocol]}")
-               end
+               @logger.warn("[DEC_401] #{@entity} I/F: #{file} previously uploaded discarded")
                File.delete(%Q{#{@outboxDir}/#{file}})
+               if @isDebugMode then
+                  @logger.debug("#{@entity} I/F: #{file} deleted from #{@outboxDir} to avoid circulation duplication")
+               end
             else
                @arrFiles << file
             end                   
@@ -172,7 +179,7 @@ class DEC_FileSender
       
       if @arrFiles.empty? then
          if @isDebugMode == true then
-            @logger.debug("#{@entity} I/F: No Files for push in ftp LocalOutbox #{@outboxDir}")
+            @logger.debug("#{@entity} I/F: No Files for push in #{@protocol} LocalOutbox #{@outboxDir}")
          end
       end
 
@@ -223,7 +230,7 @@ class DEC_FileSender
                @listFileError = @listFileError.uniq
                bSent = false
             else
-               @logger.info("[DEC_210] #{@entity} I/F: #{file} sent using #{@protocol}")
+               @logger.info("[DEC_210] #{@entity} I/F: #{file} with size #{size} bytes sent using #{@protocol}")
                tmpFilesSent  << file
                @listFileSent << file
                
@@ -327,7 +334,7 @@ class DEC_FileSender
       
       filename = writer.getFilename
          
-      @logger.info("[DEC_235] #{@entity} I/F: - Created report #{filename}")
+      @logger.info("[DEC_235] #{@entity} I/F: Created report #{filename}")
    
       if filename == "" then
          @logger.error("Error in DEC_FileSender::createContentFile !!!! =:-O")
@@ -367,6 +374,8 @@ private
       until ((nRetries < 0) or (retVal == true))       
          
 
+         # @logger.debug(file)
+
          if File.directory?(file) == true then
             bRetVal = @sender.sendDir(file)
          else
@@ -389,7 +398,6 @@ private
    end
    ## -----------------------------------------------------------
    
-
 end # class
 
 end # module

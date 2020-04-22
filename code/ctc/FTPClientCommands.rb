@@ -22,6 +22,30 @@ module CTC
 module FTPClientCommands
 
    ## -----------------------------------------------------------
+
+   def createCurlFTPList(host, port, user, pass, dir, passive = nil, filter = nil)
+      
+      command = ""
+      
+      if dir[0,1] == '/' then
+         dir = '%2F' + dir
+      end
+      
+#      # --------------------------------
+#      # Switch between FTP passive or port mode
+#      optionPassive = ""
+#      if passive == nil then
+#         optionPassive = "-E"
+#      else
+#         optionPassive = "-F"
+#      end
+#      # --------------------------------
+   
+       cmd = "curl -l ftp://#{user}:#{pass}@#{host}:/#{dir}/"
+   
+   end
+
+   ## -----------------------------------------------------------
    
    ## Create ncftpls command. 
    ## %2F literal slash character is required for managing full path directories
@@ -56,7 +80,7 @@ module FTPClientCommands
       end
       return command         
    end
-   ## -------------------------------------------------------------
+   ## -------------------------------------------------------------\""
 
    def createNcFtpPut_FJLH1(host, port, user, pass, dir, tdir, file, verbose)
       filename = File.basename(file)

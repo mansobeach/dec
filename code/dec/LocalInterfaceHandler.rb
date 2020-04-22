@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# CVS: $Id: LocalInterfaceHandler.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
+# Git: $Id: LocalInterfaceHandler.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
 #
 # Module Data Collector Component
 # This class polls a given LOCAL Interface and gets all registered available files
@@ -18,6 +18,7 @@
 require 'cuc/Log4rLoggerFactory'
 #require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
 require 'dec/CheckerInterfaceConfig'
 
 require 'fileutils'
@@ -34,7 +35,7 @@ class LocalInterfaceHandler
       @entity     = entity
       # initialize logger
       
-      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
+      if !ENV['DEC_CONFIG'] then
          puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
       end
  
@@ -42,8 +43,6 @@ class LocalInterfaceHandler
          
       if ENV['DEC_CONFIG'] then
          configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      else
-         configDir         = %Q{#{ENV['DCC_CONFIG']}}  
       end
             
       loggerFactory = CUC::Log4rLoggerFactory.new("LocalInterfaceHandler", "#{configDir}/dec_log_config.xml")
@@ -67,6 +66,8 @@ class LocalInterfaceHandler
 
      #load classes needed
       @entityConfig     = ReadInterfaceConfig.instance
+      @outConfig        = ReadConfigOutgoing.instance      
+      
 #       if Interface.find_by_name(@entity) == nil then
 # 	      @logger.error("[DEC_001] #{entity} is not a registered I/F !")
 #          raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
@@ -113,7 +114,35 @@ class LocalInterfaceHandler
 
    end
 
-# DCC =============================================================
+   ## -----------------------------------------------------------
+   ##
+   ##
+   
+   def getUploadDirList(bTemp = false)
+      dir      = nil
+      if bTemp == false then
+         dir = @outConfig.getUploadDir(@entity)
+      else
+         dir = @outConfig.getUploadTemp(@entity)
+      end
+      
+      prevDir = Dir.pwd
+      
+      begin
+         Dir.chdir(dir)
+      rescue Exception => e
+         @logger.error("[DEC_712] #{@entity} I/F: Directory #{dir} is unreachable. Try with decCheckConfig -e")
+         return Array.new
+      end
+      
+      entries  = Dir["*"].sort_by{|time| File.stat(time).mtime}
+      
+      Dir.chdir(prevDir)
+      return entries
+   end
+
+   ## -----------------------------------------------------------
+   ## DCC - Pull
 
    def getLocalList
       @newArrFile    = Array.new      

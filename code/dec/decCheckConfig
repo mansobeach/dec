@@ -234,9 +234,9 @@ def main
          retVal     = checker.check
 
          if retVal == true then
-            puts "\n#{x} I/F is configured correctly ! :-) \n"
+            puts "#{'1F44D'.hex.chr('UTF-8')} #{x} I/F is configured correctly"
          else
-            puts "\n#{x} I/F is not configured correctly ! :-( \n"
+            puts "#{'1F4A9'.hex.chr('UTF-8')} #{x} I/F is not configured correctly\n"
             @retVal = retVal
          end
       }      
@@ -332,7 +332,7 @@ def main
       end
 
       if ret == true then
-         puts "\ndec_incoming_files.xml is configured correctly ! :-) \n"
+         puts "\ndec_incoming_files.xml is configured correctly ! #{'1F44D'.hex.chr('UTF-8')}\n"
       else
          puts "\ndec_incoming_files.xml is not configured correctly ! :-( \n"
       end     
@@ -474,9 +474,9 @@ def checkOutgoingConfig
          puts failed  
       end
       if ret == true then
-         puts "\ndec_outgoing_files.xml is configured correctly ! :-) \n"
+         puts "\ndec_outgoing_files.xml is configured correctly #{'1F44D'.hex.chr('UTF-8')}\n"
       else
-         puts "\nError: dec_outgoing_files.xml is not configured correctly ! :-( \n"
+         puts "\nError: dec_outgoing_files.xml is not configured correctly #{'1F480'.hex.chr('UTF-8')}\n"
       end     
       puts "================================================"
    

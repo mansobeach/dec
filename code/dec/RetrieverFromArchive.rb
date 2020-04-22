@@ -121,14 +121,14 @@ class RetrieverFromArchive
                ## has already been delivered
                
                if bDeliverOnce == true then
-                  if SentFile.hasAlreadyBeenSent?(thefile, anEntity[:mnemonic], aMethod) == true then
+                  if SentFile.hasAlreadyBeenSent?(thefile, interface[:mnemonic], aMethod) == true then
                      @logger.warn("[DEC_XXX] Skipping #{aFile} already sent to #{interface[:mnemonic]} via #{aMethod}")
                      next
                   end
                end 
                ## ---------------------------------
             
-               mvFile2OutTray(aFile, destDir, interface[:compressMethod])
+               mvFile2OutTray(aFile, destDir, interface[:compressMethod], interface[:mnemonic])
             
             }
             
@@ -303,7 +303,7 @@ private
       retVal = system(cmd)
                      
       if retVal == true then
-         @logger.info("[DEC_211] File #{filetype} is now at GlobalOutbox #{@targetDirectory}")
+         @logger.info("[DEC_211] File #{filetype} at GlobalOutbox #{@targetDirectory}")
       else
          @logger.error("[DEC_XXX] File #{filetype} failed gathering hard-link towards GlobalOutbox #{@targetDirectory}")
       end
@@ -316,7 +316,7 @@ private
    end
    ## ------------------------------------------------------------
    
-   def mvFile2OutTray(filename, destination, compress)
+   def mvFile2OutTray(filename, destination, compress, interface)
       
       if @isDebugMode == true then
          @logger.debug("mvFile2OutTray => #{filename} #{destination} #{compress}")
@@ -331,9 +331,9 @@ private
       retVal = system(cmd)
                      
       if retVal == true then
-         @logger.info("[DEC_213] File #{filename} is now at LocalOutbox #{destination}")
+         @logger.info("[DEC_213] #{interface} I/F: #{filename} at LocalOutbox #{destination}")
       else
-         @logger.error("[DEC_713] File #{filename} hard-link failure towards LocalOutbox #{destination}")
+         @logger.error("[DEC_713] #{interface} I/F: #{filename} hard-link failure towards LocalOutbox #{destination}")
          return false
       end
 
@@ -358,9 +358,9 @@ private
       arr << bRet
       
       if bRet == true then
-         @logger.info("[DEC_214] File #{package.newfilename} compressed at LocalOutbox #{destination}")
+         @logger.info("[DEC_214] #{interface} I/F: #{package.newfilename} compressed at LocalOutbox #{destination}")
       else
-         @logger.error("[DEC_714] Failed to compress #{package.newfilename}")
+         @logger.error("[DEC_714] #{interface} I/F: Failed to compress #{package.newfilename}")
       end
             
       return bRet

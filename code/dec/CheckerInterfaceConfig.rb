@@ -24,6 +24,7 @@ require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerWebDAVConfig'
 require 'ctc/CheckerFTPConfig'
+require 'ctc/CheckerHTTPConfig'
 require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
@@ -63,14 +64,36 @@ class CheckerInterfaceConfig
       @ftpSend[:uploadTemp]            = @outConf.getUploadTemp(@entity)
             
       @check4Recv = nil
-            
+ 
+      ## -----------------------------------------
+      ## Checkers for Receive / Pull      
+           
       if @ftpRecv[:protocol].upcase == "WEBDAV" then
          @check4Recv                      = CheckerWebDAVConfig.new(@ftpRecv, @entity)
-      else
-         @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
       end
       
-      @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity)
+      if @ftpRecv[:protocol].upcase == "SFTP" or @ftpRecv[:protocol].upcase == "FTP" then
+         @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
+      end
+
+      if @ftpRecv[:protocol].upcase == "HTTP" then
+         @check4Recv                      = CheckerHTTPConfig.new(@ftpRecv, @entity)
+      end
+
+      ## -----------------------------------------
+      ## Checkers for Send / Push      
+      if @ftpSend[:protocol].upcase == "WEBDAV" then
+         @check4Send                      = CheckerWebDAVConfig.new(@ftpSend, @entity)
+      end
+      
+      if @ftpSend[:protocol].upcase == "HTTP" then
+         @check4Send                      = CheckerHTTPConfig.new(@ftpSend, @entity)
+      end
+ 
+      if @ftpSend[:protocol].upcase == "FTP" or @ftpSend[:protocol].upcase == "SFTP" then
+         @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity)
+      end
+      ## -----------------------------------------
  
       @checkLocal4Send                 = CheckerLocalConfig.new(@ftpSend, @entity)  
       @checkLocal4Recv                 = CheckerLocalConfig.new(@ftpRecv, @entity)    
@@ -93,7 +116,7 @@ class CheckerInterfaceConfig
          else
             retVal = @check4Send.check4Send
          end
-      end     
+      end
 
       if @bCheckIncoming == true then
          if retVal == true then

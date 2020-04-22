@@ -46,10 +46,10 @@ class CheckerInventoryConfig
          # Interface.where(["name = ?", x]).first
       
          if Interface.find_by_name(x) != nil then
-            puts "\n#{x} I/F is declared in DEC/Inventory ! :-) \n"
+            puts "#{'1F44D'.hex.chr('UTF-8')} #{x} I/F is declared in DEC/Inventory"
             retVal = true
          else
-            puts "\n#{x} I/F is NOT declared in DEC/Inventory ! :-( \n"
+            puts "#{'1F480'.hex.chr('UTF-8')} #{x} I/F is NOT declared in DEC/Inventory"
             retVal = false
          end
       }
@@ -74,7 +74,7 @@ private
    def checkModuleIntegrity
 
       if !ENV['DEC_DATABASE_NAME'] then
-         puts "DEC_DATABASE_NAME environment variable not defined !  :-(\n\n"
+         puts "DEC_DATABASE_NAME environment variable not defined !  #{'1F480'.hex.chr('UTF-8')}\n\n"
          bCheckOK = false
          bDefined = false
          puts "Error in CheckerInventoryConfig::checkModuleIntegrity !"

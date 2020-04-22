@@ -428,7 +428,7 @@ private
    ## This method creates all the structs used
 	##
    def defineStructs
-      @@deliveryMethods = ["ftp", "email", "mailbody"]
+      @@deliveryMethods = ["ftp", "sftp", "email", "mailbody", "http", "local"]
       Struct.new("OutgoingInterface", :mnemonic, :localOutbox, :uploadDir, :uploadTemp)
       Struct.new("OutgoingFile", :fileType, :description, :toList)
       Struct.new("DeliveryInterface", :mnemonic, :compressMethod, :deliveryMethods, :cleanUpAge)      

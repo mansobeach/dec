@@ -23,7 +23,7 @@ module CTC
 module WrapperCURL
   
    ## -------------------------------------------------------------
-   #
+   ##
    def getURL(url, isDebugMode = false)
       cmd = "curl -f -s -X GET #{url}"
       if isDebugMode == true then
@@ -43,6 +43,90 @@ module WrapperCURL
          return false
       end
       return output
+   end
+   
+   ## -------------------------------------------------------------
+   
+   ## Remove file with DELETE
+   
+   ## curl -X DELETE http://localhost:8080/tmp/test1.txt
+   
+   def deleteFile(url, file, isDebugMode = false)
+      if url[-1, 1] != "/" then
+         url = "#{url}/"  
+      end
+
+      cmd = "curl -X DELETE #{url}#{file}"
+            
+      if isDebugMode == true then
+         cmd = "#{cmd} -v "
+         puts cmd
+      end
+      return system(cmd)
+   end
+   
+   ## -------------------------------------------------------------
+   
+   ## Upload with PUT <formless>
+
+   ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
+
+   def putFile(url, file, isDebugMode = false, logger = nil)
+      
+      if url[-1, 1] != "/" then
+         url = "#{url}/"  
+      end
+            
+      cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+            
+      if isDebugMode == true then
+         cmd = "#{cmd} -v "
+         output = `#{cmd}`
+      else
+         system(cmd)
+      end
+      
+      if isDebugMode == true and $? != 0 then
+         puts "Failed execution of #{cmd} ! :-("
+         puts
+         puts "curl exit code is #{$?}"
+         puts
+      end
+
+      if logger != nil and isDebugMode == true then
+         logger.debug("#{cmd} => exit code #{$?}")
+         logger.debug(output)
+      end
+
+      if $? != 0 then
+         return false
+      else
+         return true
+      end
+
+   end
+   
+   ## -------------------------------------------------------------
+   
+   ## Upload with PUT <formless>
+
+   ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
+   
+   def putFileSilent(url, file, isDebugMode = false)
+   
+      if url[-1, 1] != "/" then
+         url = "#{url}/"  
+      end
+   
+      cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+            
+      if isDebugMode == true then
+         cmd = "#{cmd} -v "
+         puts cmd
+      end
+
+      return system(cmd)
+   
    end
    ## -------------------------------------------------------------
    

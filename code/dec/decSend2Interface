@@ -287,27 +287,42 @@ def main
 
       bSent = deliverByFTP
 
+      # ------------------------------------------
+      # Using LOCAL
+      if bSent == true then
+         bSent = deliverByProtocol("LOCAL")
+      else
+         deliverByProtocol("LOCAL")
+      end
+      
+      # ------------------------------------------
+
+
+      # ------------------------------------------
       # Using http
       if bSent == true then
-         bSent = deliverByHTTP
+         bSent = deliverByProtocol("HTTP")
       else
-         deliverByHTTP
-      end   
-
-
-      # Deliverying files via mailbody
-      if bSent == true then
-         bSent = deliverByBodyMail
-      else
-         deliverByBodyMail
+         deliverByProtocol("HTTP")
       end
-
-      # Deliverying files via email
-      if bSent == true then
-         bSent = deliverByMail
-      else
-         deliverByMail
-      end   
+      
+      # ------------------------------------------
+      
+#      # ------------------------------------------
+#      
+#      # Deliverying files via mailbody
+#      if bSent == true then
+#         bSent = deliverByBodyMail
+#      else
+#         deliverByBodyMail
+#      end
+#
+#      # Deliverying files via email
+#      if bSent == true then
+#         bSent = deliverByMail
+#      else
+#         deliverByMail
+#      end   
 
       # Try again for FTP deliveries
       if bSent == true then
@@ -322,10 +337,10 @@ def main
    @locker.release
    
    if bSent == true then
-      @logger.info("[DEC_200] #{@entity} I/F: Push iteration completed successfully ! :-)")
+      @logger.info("[DEC_200] #{@entity} I/F: Push iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
       exit(0)
    else
-      @logger.error("[DEC_700] #{@entity} I/F: Push iterations problems ! :-(")
+      @logger.error("[DEC_700] #{@entity} I/F: Push iterations problems #{'1F4A9'.hex.chr('UTF-8')}")
       exit(99)   
    end
 end
@@ -355,16 +370,14 @@ def notifySuccess2Entity
       @logger.debug(cmd)
    end      
       
-   @logger.info("#{retVal} / #{$?}")   
-      
    retVal = system(cmd)
-   
-   @logger.info("#{retVal} / #{retVal.class}/ #{$?}")
    
    if retVal == false or retVal == nil then
       @logger.error("[DEC_XXX] #{@entity} I/F: Failed to send mail notification-success to recipients")
    else
-      @logger.info("[DEC_XXX] #{@entity} I/F: Mail notification-success sent to recipients")   
+      if @isDebugMode == true then
+         @logger.debug("[DEC_740] #{@entity} I/F: Mail notification-success sent to recipients")   
+      end
    end
    if FileTest.exist?(fileListFiles) == true then
       File.delete(fileListFiles)
@@ -486,6 +499,84 @@ def deliverByMail
    end
    return bSent
 end
+## ---------------------------------------------------------
+
+def deliverByProtocol(protocol)
+   bNewFiles   = true
+   bSent       = true
+   bFirst      = true
+   
+   event  = EventManager.new
+
+   if @isDebugMode == true then
+      event.setDebugMode
+   end
+
+   while bNewFiles
+      sender = DEC_FileSender.new(@entity, protocol, @isDeliveredOnce, @isDebugMode, @isNoDB)
+      if @isDebugMode == true then
+         sender.setDebugMode
+      end
+      
+      numFiles = sender.listFileToBeSent.length
+
+      if numFiles == 0 then
+         bNewFiles = false
+         if bFirst == true then
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using http")
+            end
+         end
+      else
+         bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         if bSent == true then
+            @logger.info("Successful delivery of files towards #{@entity}")
+         end
+      end
+   end
+   return bSent
+end
+
+
+## ---------------------------------------------------------
+
+def deliverByLOCAL
+   bNewFiles   = true
+   bSent       = true
+   bFirst      = true
+   
+   event  = EventManager.new
+
+   if @isDebugMode == true then
+      event.setDebugMode
+   end
+
+   while bNewFiles
+      sender = DEC_FileSender.new(@entity, "LOCAL", @isDeliveredOnce, @isDebugMode, @isNoDB)
+      if @isDebugMode == true then
+         sender.setDebugMode
+      end
+      
+      numFiles = sender.listFileToBeSent.length
+
+      if numFiles == 0 then
+         bNewFiles = false
+         if bFirst == true then
+            if @isDebugMode == true then
+               @logger.debug("#{@entity} I/F: No files to be delivered using http")
+            end
+         end
+      else
+         bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         if bSent == true then
+            @logger.info("Successful delivery of files towards #{@entity}")
+         end
+      end
+   end
+   return bSent
+end
+
+
 ## ---------------------------------------------------------
 
 def deliverByHTTP

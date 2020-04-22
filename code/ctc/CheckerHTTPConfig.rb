@@ -2,32 +2,35 @@
 
 #########################################################################
 #
-# Ruby source for #CheckerWebDAVConfig class
+# Ruby source for #CheckerHTTPConfig class
 #
 # Written by DEIMOS Space S.L. (bolf)
 #
 # Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: CheckerWebDAVConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
+# Git: $Id: CheckerHTTPConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
 #
 #########################################################################
 
 require 'net/dav'
 
+require 'ctc/WrapperCURL'
+
 module CTC
 
-class CheckerWebDAVConfig
+class CheckerHTTPConfig
 
    include CTC
-
+   include CTC::WrapperCURL
+   
    ## ----------------------------------------------------------------
 
    ## Class constructor.
    ## IN (struct) Struct with all relevant field required for net_dav connections.
-   def initialize(davServerStruct, strInterfaceCaption = "")
+   def initialize(httpServerStruct, strInterfaceCaption = "")
       @isDebugMode = false
       checkModuleIntegrity
-      @davElement  = davServerStruct
+      @httpElement  = httpServerStruct
       if strInterfaceCaption != "" then
          @entity = strInterfaceCaption
       else
@@ -40,113 +43,112 @@ class CheckerWebDAVConfig
    ## IN (struct) Struct with all relevant field required for ftp/sftp connections.
    def check
       if @isDebugMode == true then
-         showDAVConfig(true, true)
+         showHTTPConfig(true, true)
       end
      
-      retVal = checkDAVConfig(true, true)
+      retVal = checkHTTPConfig(true, true)
      
       return retVal
    end
-   ## ---------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def check4Send
+   
       if @isDebugMode == true then
-         showDAVConfig(true, false)
+         puts "Checking Push Configuration for HTTP protocol"
       end
    
-      retVal = checkDAVConfig(true, false)
+      if @isDebugMode == true then
+         showHTTPConfig(true, false)
+      end
+   
+      retVal = checkHTTPConfig(true, false)
       return retVal
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def check4Receive
+   
       if @isDebugMode == true then
-         showDAVConfig(false, true)
+         puts "Checking Pull Configuration for HTTP protocol"
+      end
+   
+      if @isDebugMode == true then
+         showHTTPConfig(false, true)
       end  
-      retVal = checkDAVConfig(false, true)
+      retVal = checkHTTPConfig(false, true)
       return retVal   
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Set debug mode on
+   ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "CheckerWebDAVConfig debug mode is on"
+      puts "CheckerHTTPConfig debug mode is on"
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
 
-   @isDebugMode       = false      
-   @@davElement       = nil
-   @sftpClient        = nil
-   @ftReadConf        = nil
+   @isDebugMode         = false      
+   @@httpElement        = nil
+   @sftpClient          = nil
+   @ftReadConf          = nil
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true
       
-      if !ENV['DCC_CONFIG'] and !ENV['DEC_CONFIG'] then
-         puts "\nDEC_CONFIG | DCC_CONFIG environment variable not defined !  :-(\n\n"
+      if !ENV['DEC_CONFIG'] then
+         puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
          bCheckOK = false
          bDefined = false
       end
       
       if bDefined == false then
-         puts "\nError in CheckerFTPConfig::checkModuleIntegrity :-(\n\n"
+         puts "\nError in CheckerHTTPConfig::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
                   
-      tmpDir = nil
-         
-      if ENV['DEC_CONFIG'] then
-         tmpDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      else
-         tmpDir         = %Q{#{ENV['DCC_CONFIG']}}  
-      end
-
-      time   = Time.new
-      time.utc
-      @batchFile = %Q{#{tmpDir}/.#{time.to_f.to_s}}
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # It shows the DAV Configuration.
-   def showDAVConfig(b4Send, b4Receive)
+   ## It shows the HTTP Configuration.
+   def showHTTPConfig(b4Send, b4Receive)
       msg = ""
       if @entity != "" then
-         msg = "Configuration of #{@entity} I/F"
+         msg = "Configuration of #{@entity} I/F for HTTP"
       else
-         msg = "Checking WebDAV Configuration"
+         msg = "Checking HTTP Configuration"
       end
       puts
       puts "============================================================="
       puts msg
       
       puts
-      if @davElement[:isSecure] == true then 
-        puts "Secure conection is used (HTTPS)"
+      if @httpElement[:isSecure] == true then 
+         puts "Secure conection is used (HTTPS)"
       else
-        puts "NON Secure conection is used (plain HTTP)"
+         puts "NON Secure conection is used (plain HTTP)"
       end
-      if @davElement[:isSecure] == true and @davElement[:isCompressed] == true then 
-        puts "Communication data is compressed (sftp)"
-      end
-      puts "hostname     -> #{@davElement[:hostname]}"
-      puts "port         -> #{@davElement[:port]}"
-      puts "user         -> #{@davElement[:user]}"
-      puts "password     -> #{@davElement[:password]}"
+
+      puts "protocol     -> #{@httpElement[:protocol]}"
+      puts "hostname     -> #{@httpElement[:hostname]}"
+      puts "port         -> #{@httpElement[:port]}"
+      puts "user         -> #{@httpElement[:user]}"
+      puts "password     -> #{@httpElement[:password]}"
+      
       if b4Send == true then
-      	puts "upload dir   -> #{@davElement[:uploadDir]}"
-      	puts "upload tmp   -> #{@davElement[:uploadTemp]}"
+      	puts "upload dir   -> #{@httpElement[:uploadDir]}"
+      	puts "upload tmp   -> #{@httpElement[:uploadTemp]}"
       end
       if b4Receive == true then
          puts
-         puts @davElement
+         puts @httpElement
          puts
-         arrDirs = @davElement[:arrDownloadDirs]
+         arrDirs = @httpElement[:arrDownloadDirs]
          arrDirs.each{|element|
             puts "download dir -> #{element[:depthSearch]} | #{element[:directory]}"
          }
@@ -161,22 +163,20 @@ private
    ## Check WebDAV configuration.
    ## It returns true if the check is successful
    ## otherwise it returns false.
-   def checkDAVConfig(bCheck4Send, bCheck4Receive)
+   def checkHTTPConfig(bCheck4Send, bCheck4Receive)
 
       ret = true
       # --------------------------------
       # Check 4 Sending
       if bCheck4Send == true then
-         puts "#{'1F480'.hex.chr('UTF-8')} CheckerWebDAV::checkDAVConfig Sending mode is not supported "
-         exit(99)      
+         ret = putTestFile
+         
+           
       end
       # --------------------------------
       
-      if bCheck4Receive == true then
-         if @isDebugMode == true then
-            puts "Checking Pull Configuration for WebDAV protocol"
-         end
-         arrElements = @davElement[:arrDownloadDirs]
+      if bCheck4Receive == true then   
+         arrElements = @httpElement[:arrDownloadDirs]
          bError = false
          arrElements.each{|element|
             dir = element[:directory]
@@ -201,14 +201,14 @@ private
    ## Check that the remote directories exists
    ##
    def checkRemoteDirectory(path, mirror=false)
-      port = @davElement[:port].to_i
-      user = @davElement[:user]
-      pass = @davElement[:password]
+      port = @httpElement[:port].to_i
+      user = @httpElement[:user]
+      pass = @httpElement[:password]
       host = ""
-      if @davElement[:isSecure] == false then
-         host = "http://#{@davElement[:hostname]}:#{@davElement[:port]}/"
+      if @httpElement[:isSecure] == false then
+         host = "http://#{@httpElement[:hostname]}:#{@httpElement[:port]}/"
       else
-         host = "https://#{@davElement[:hostname]}:#{@davElement[:port]}/"
+         host = "https://#{@httpElement[:hostname]}:#{@httpElement[:port]}/"
       end
       dav  = Net::DAV.new(host, :curl => false)
       
@@ -222,7 +222,7 @@ private
       ## if credentials are not empty in the configuration file
       if user != "" or (pass != "" and pass != nil) then
          if @isDebugMode == true then
-            puts "Passing Credentials #{user} #{pass} to WebDAV server"
+            puts "Passing Credentials #{user} #{pass} to HTTP server"
          end
          dav.credentials(user, pass)
       end
@@ -256,7 +256,7 @@ private
       retVal  = true
       prevDir = Dir.pwd
 
-      if @davElement[:isSecure] == true then
+      if @httpElement[:isSecure] == true then
          puts "Error in CheckerFTPConfig::checkWriteRemoteDirectory"
          puts "Method not supported yet for secure protocol ! :-("
          puts
@@ -268,11 +268,11 @@ private
       file     = "satansaldemi.txt"
       system("echo \'satan sal de mi\' > #{file}")   
       
-      host     = @davElement[:hostname]
-      port     = @davElement[:port].to_i
-      user     = @davElement[:user]
-      pass     = @davElement[:password]
-      passive  = @davElement[:isPassive]
+      host     = @httpElement[:hostname]
+      port     = @httpElement[:port].to_i
+      user     = @httpElement[:user]
+      pass     = @httpElement[:password]
+      passive  = @httpElement[:isPassive]
 
       cmd = self.createNcFtpPut(host,  \
                                 port, \
@@ -321,11 +321,46 @@ private
       return retVal
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
+
+   def putTestFile
+      port  = @httpElement[:port].to_i
+      user  = @httpElement[:user]
+      pass  = @httpElement[:password]
+      url   = ""
+      
+      if @httpElement[:user] != "" and @httpElement[:password] != "" then
+         url = "#{@httpElement[:user]}:#{@httpElement[:password]}@#{@httpElement[:hostname]}:#{@httpElement[:port]}#{@httpElement[:uploadDir]}"
+      else
+         url = "#{@httpElement[:hostname]}:#{@httpElement[:port]}#{@httpElement[:uploadDir]}"
+      end
+      
+      if @httpElement[:isSecure] == false then
+         url = "http://#{url}"
+      else
+         url = "https://#{url}/"
+      end
+      
+      system("echo \'test1.txt\' > ./test1.txt")
+      
+      if @isDebugMode == true then
+         puts "#{url} / ./test1.txt"
+      end
+      
+      ret = putFileSilent(url, "./test1.txt", @isDebugMode)
+      
+      deleteFile(url, "test1.txt", @isDebugMode)
+               
+   end
+   ## -------------------------------------------------------------
+
+   def postTestFile
+   
+   end
+   ## -------------------------------------------------------------
 
 end # end class
 
 
 end # module
-
 

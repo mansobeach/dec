@@ -293,7 +293,9 @@ def validate (fileName)
    ret = system(cmd)
    
    if ret == false then
-      puts "Fail schema check for #{fileName}"
+      puts "Fail schema check for #{fileName} #{'1F480'.hex.chr('UTF-8')}"
+   else
+      puts "Valid schema check for #{fileName} #{'1F4AA'.hex.chr('UTF-8')}"
    end
    
    return ret   

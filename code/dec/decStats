@@ -23,22 +23,22 @@
 
 #########################################################################
 #
-# === Data Collector Component
+# === Data Exchange Component
 #
-# CVS: $Id: dccStats.rb,v 1.15 2015/09/25 16:55:04 decdev Exp $
+# Git: $Id: dccStats,v 1.15 2015/09/25 16:55:04 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
+require 'json'
 
-require 'dcc/StatisticDCC'
-require 'ddc/StatisticDDC'
+require 'cuc/Log4rLoggerFactory'
 require 'dec/DEC_Environment'
-require 'dec/DEC_DatabaseModel'
 
 # MAIN script function
 def main
+
+   include           DEC
 
    @filename                  = ""
    @filetype                  = ""
@@ -83,6 +83,17 @@ def main
       exit(99)
    end
 
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   require 'dec/DEC_DatabaseModel'
+   require 'dcc/StatisticDCC'
+   require 'ddc/StatisticDDC'
+
    if @bShowVersion == true then
       print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n\n")
       exit(0)
@@ -93,17 +104,49 @@ def main
       exit(0)
    end
 
-   if @filename != ""
+   if @filename != "" then
       queryFile
    end
+
+   # -----------------------------------------------------------------
+   #
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("stat", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+		puts "Error in send2Interface::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+   # -----------------------------------------------------------------
 
    stats = DCC::StatisticDCC.new
    stats.lastHour(@hours)
    
-   puts
-   
    stats = DDC::StatisticDDC.new
-   stats.lastHour(@hours)
+   ret = stats.lastHour(@hours)
+  
+   if ret == nil then
+      @logger.info("[DEC_244] Push #{@hours}h: No files pushed")
+      exit(0)
+   end
+  
+   arrJson = Array.new
+  
+   ret.each{|aHash|
+      arrJson << JSON.generate(aHash)
+   }
+  
+   arrJson.each{|entry|
+      @logger.info("[DEC_244] Push #{@hours}h: #{entry}")
+   }
   
    exit(0)
 

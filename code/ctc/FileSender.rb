@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Common Transfer Component
 # 
-# CVS: $Id: FileSender.rb,v 1.18 2014/05/20 14:41:04 algs Exp $
+# Git: $Id: FileSender.rb,v 1.18 2014/05/20 14:41:04 algs Exp $
 #
 #########################################################################
 
@@ -17,64 +17,79 @@ require 'net/sftp'
 require 'ftpfxp'
 require 'fileutils'
 
-require "ctc/FTPClientCommands"
-require "ctc/SFTPBatchClient"
-require "ctc/LocalInterfaceHandler"
-require "cuc/DirUtils"
-require "cuc/CommandLauncher"
+require 'ctc/FTPClientCommands'
+require 'ctc/SFTPBatchClient'
+require 'ctc/WrapperCURL'
+require 'ctc/LocalInterfaceHandler'
+require 'cuc/DirUtils'
+require 'cuc/CommandLauncher'
+require 'dec/LocalInterfaceHandler'
 
 module CTC
 
  # Module Common Transfer Component
  # This class performs the file(s) delivery.
  #
- # This class provides methods for sending files to entities using FTP.
+ # This class provides methods for sending files to entities using various protocols.
  # It implements both, secure and non secure file transfers.
  #
 
 class FileSender
 
+   # -------------------------
    # Mixins includes
    include CTC::FTPClientCommands
+   include CTC::WrapperCURL
    include CTC   
    include CUC::DirUtils
    include CUC::CommandLauncher
+   # -------------------------
 
    attr_reader :fileList
    
-   # Class constructor
-   # - FTPServer Struct  (IN): DDC_ReadEntityConfig::fillFTPServerStruct
-   # - hParameters       (IN): Hash type containing Additional Parameters   
-   def initialize(ftpServerStruct, protocol, logger, hParameters=nil)
-      @ftpServer        = ftpServerStruct
+   ## Class constructor
+   ## - Server Struct  (IN): DDC_ReadEntityConfig::fillFTPServerStruct
+   ## - hParameters       (IN): Hash type containing Additional Parameters   
+   def initialize(entity, pushServerStruct, protocol, logger, hParameters=nil)
+      @entity           = entity
+      @pushServer       = pushServerStruct
       @protocol         = protocol
+      @uploadDir        = @pushServer[:uploadDir]
+      @uploadTemp       = @pushServer[:uploadTemp]
       @logger           = logger
       @hParameters      = hParameters
       checkModuleIntegrity
-      @ftBatchFilename  = %Q{.BatchSenderFile4#{ftpServerStruct[:mnemonic]}}
+      @ftBatchFilename  = %Q{.BatchSenderFile4#{@pushServer[:mnemonic]}}
       @isDebugMode      = false
       @fileListLoaded   = false
-      @entity           = ftpServerStruct[:mnemonic]
-      @secureMode       = ftpServerStruct[:isSecure]
-      @passiveMode      = ftpServerStruct[:isPassive]
+      @entity           = @pushServer[:mnemonic]
+      @secureMode       = @pushServer[:isSecure]
+      @passiveMode      = @pushServer[:isPassive]
+      @url              = nil
       @dynamic          = false
       @mirroring        = false
       @prefix           = ''
-      if protocol == 'LOCAL' then
+      
+      if @protocol == 'LOCAL' then
          #false stands for use DCC; true stands for use DDC
-         @local = CTC::LocalInterfaceHandler.new(@entity, false, true, DDC::ReadConfigDDC.instance.getUploadDirs)
+         @local = DEC::LocalInterfaceHandler.new(@entity, false, true, false)
       end
+      
+      if @protocol == 'HTTP' then
+         buildURL
+      end
+      
    end
    ## -----------------------------------------------------------
    
-   # Set the flag for debugging on
+   ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       @logger.debug("FileSender debug mode is on")
    end
    ## -----------------------------------------------------------
 
-   # Set the flag for debugging on
+   ## Set the flag for debugging on
    def setUploadPrefix(prefix)
       @prefix = prefix
    end
@@ -103,11 +118,11 @@ class FileSender
    def useMirrorServer(file, bIsNotDir=true)
       
       @mirroring  =  true
-      @protocol   =  @ftpServer[:FTPServerMirror][:protocol]
-      @hostname   =  @ftpServer[:FTPServerMirror][:hostname]
-      @port       =  @ftpServer[:FTPServerMirror][:port].to_i
-      @user       =  @ftpServer[:FTPServerMirror][:user]
-      @password   =  @ftpServer[:FTPServerMirror][:password]
+      @protocol   =  @pushServer[:FTPServerMirror][:protocol]
+      @hostname   =  @pushServer[:FTPServerMirror][:hostname]
+      @port       =  @pushServer[:FTPServerMirror][:port].to_i
+      @user       =  @pushServer[:FTPServerMirror][:user]
+      @password   =  @pushServer[:FTPServerMirror][:password]
 
       if bIsNotDir then
          retVal=sendFile(file)
@@ -146,8 +161,8 @@ class FileSender
 
    def getUploadTargets(file)
 
-      @uploadDir   = @ftpServer[:uploadDir]
-      @uploadTemp  = @ftpServer[:uploadTemp]
+      @uploadDir   = @pushServer[:uploadDir]
+      @uploadTemp  = @pushServer[:uploadTemp]
       @sourceFile  = %Q{"#{@srcDirectory}/#{file}"}
 
       @former_uploadDir=""
@@ -170,6 +185,10 @@ class FileSender
    
    def sendFile(file, bDeleteSource=true)
 
+      if @isDebugMode == true then
+         @logger.debug("FileSender::sendFile => #{file}")
+      end
+
       getUploadTargets(file)
 
       isReadyToSend(file)
@@ -177,21 +196,17 @@ class FileSender
       Dir.chdir(@srcDirectory)
 
       if !@mirroring then
-         @protocol   =  @ftpServer[:protocol]
-         @hostname   =  @ftpServer[:hostname]
-         @port       =  @ftpServer[:port].to_i
-         @user       =  @ftpServer[:user]
-         @password   =  @ftpServer[:password]
+         @protocol   =  @pushServer[:protocol]
+         @hostname   =  @pushServer[:hostname]
+         @port       =  @pushServer[:port].to_i
+         @user       =  @pushServer[:user]
+         @password   =  @pushServer[:password]
       end
+      
+      ## ===================================================
+      
+      case @protocol.upcase
 
-      if @secureMode then 
-         @protocol= "SFTP" 
-      end 
-
-      #secureMode should be changed for protocol; backwards compatibility
-      case @protocol
-
-   #FTP protocol
          when "FTP" then
             if @dynamic then
                cmd  = self.createNcFtpMkd(@hostname,
@@ -199,7 +214,7 @@ class FileSender
                                           @user,
                                           @password,
                                           @uploadDir,
-                                          ENV["DCC_TMP"],
+                                          ENV["DEC_TMP"],
                                           "createDir",
                                           @isDebugMode) 
                if @isDebugMode then
@@ -223,7 +238,8 @@ class FileSender
             end
             retVal = execute(cmd, "send2interface")
 
-   #SFTP protocol
+         ## ===================================================
+         
          when "SFTP" then
             # If there is a previous file of a failed execution we delete it.
             if FileTest.exist?(@ftBatchFilename) then 
@@ -234,7 +250,7 @@ class FileSender
                                              @port,
                                              @user,
                                              @ftBatchFilename,
-                                             @ftpServer[:isCompressed])
+                                             @pushServer[:isCompressed])
             if @isDebugMode == true then
                sftpClient.setDebugMode
             end
@@ -277,7 +293,8 @@ class FileSender
                n = File.delete(@ftBatchFilename)
             end
 
-   #FTPS protocol
+         ## ===================================================
+         
          when "FTPS" then
 
             if @isDebugMode then
@@ -308,7 +325,8 @@ class FileSender
                puts"Error on FTPS:: #{e}"
                retVal= false 
             end
-   #LOCAL protocol
+         ## ===================================================
+         
          when "LOCAL" then
             begin
                #dynamic directories
@@ -317,18 +335,26 @@ class FileSender
                   @dynamic=false
                end
                ###
-               retVal= @local.uploadFile(file,@targetFile,@targetTemp)
+               retVal = @local.uploadFile(file, @targetFile, @targetTemp)
             rescue Exception => e
                @logger.error("#{e.to_s}")
                retVal= false 
-            end   
+            end
+            
+         ## ===================================================
+               
          when "WEBDAV" then
             retVal = sendFileHTTP(file, bDeleteSource)
+         
+         ## ===================================================
+         
          when "HTTP" then
             retVal = sendFileHTTP(file, bDeleteSource)
          else
             @logger.error("protocol #{@protocol} not implemented")
-            raise "protocol #{@protocol} not implemented"      
+            raise "protocol #{@protocol} not implemented"
+            
+         ## ===================================================          
       end   #end of case                                 
     
       Dir.chdir(prevDir)
@@ -349,8 +375,10 @@ class FileSender
    ## -----------------------------------------------------------
 
    def sendFileHTTP(file, bDeleteSource = true)
-      @logger.debug("FileSender::sendFileHTTP => #{file} / #{bDeleteSource}")
-      return true
+      if @isDebugMode == true then
+         @logger.debug("FileSender::sendFileHTTP => #{file} / #{bDeleteSource}")
+      end
+      return putFile(@url, file, @isDebugMode, @logger)
    end
 
    ## -----------------------------------------------------------
@@ -360,8 +388,8 @@ class FileSender
       if @secureMode == false then
          return sendNonSecureDir(dir, bDeleteSource)
       else
-         @logger.error("FileSender::sendSecureDir is not implemented ! :-p")
-         raise "FileSender::sendSecureDir is not implemented ! :-p"
+         @logger.error("FileSender::sendSecureDir is not implemented ! #{'1F480'.hex.chr('UTF-8')}")
+         raise "FileSender::sendSecureDir is not implemented ! #{'1F480'.hex.chr('UTF-8')}"
       end
    end
    ## -----------------------------------------------------------
@@ -377,10 +405,10 @@ class FileSender
       @ftp           = nil
 
       if !@mirroring then
-         @hostname   = @ftpServer[:hostname]      
-         @port       = @ftpServer[:port].to_i
-         @user       = @ftpServer[:user]
-         @password   = @ftpServer[:password]
+         @hostname   = @pushServer[:hostname]      
+         @port       = @pushServer[:port].to_i
+         @user       = @pushServer[:user]
+         @password   = @pushServer[:password]
       end
 
       begin
@@ -401,7 +429,7 @@ class FileSender
       prevDir = Dir.pwd
       
       begin
-         @ftp.chdir(@ftpServer[:uploadDir])
+         @ftp.chdir(@pushServer[:uploadDir])
          @ftp.mkdir("__#{dir}")
       rescue Exception => e
          @logger.error("Could not create __#{dir}")
@@ -473,14 +501,14 @@ class FileSender
    # files, and the repetition of tests caused the FT to fail.
    #
    def deleteRemoteFile(file)
-      uploadDir   = @ftpServer[:uploadDir]
+      uploadDir   = @pushServer[:uploadDir]
       targetFile  = %Q{"#{uploadDir}/#{file}"}
        
       sftpClient  = SFTPBatchClient.new(@hostname,
                                             @port,
                                             @user,
                                             @ftBatchFilename,
-                                            @ftpServer[:isCompressed])
+                                            @pushServer[:isCompressed])
 #       sftpClient.setDebugMode
       sftpClient.addCommand("rm", targetFile, nil)
        
@@ -498,28 +526,6 @@ private
       
       bDefined = true
       bCheckOK = true
-      
-      #check the commands needed
-      isToolPresent = `which ncftp`   
-      if isToolPresent[0,1] != '/' then
-         puts "\n\nFileSender::checkModuleIntegrity\n"
-         puts "Fatal Error: ncftp not present in PATH !!   :-(\n\n\n"
-         bCheckOK = false
-      end
-
-      isToolPresent = `which ncftpput`
-      if isToolPresent[0,1] != '/' then
-         puts "\n\nFileSender::checkModuleIntegrity\n"
-         puts "Fatal Error: ncftpput not present in PATH !!   :-(\n\n\n"
-         bCheckOK = false
-      end      
- 
-      isToolPresent = `which sftp`   
-      if isToolPresent[0,1] != '/' then
-         puts "\n\nFileSender::checkModuleIntegrity\n"
-         puts "Fatal Error: sftp not present in PATH !!   :-(\n\n\n"
-         bCheckOK = false
-      end
                    
       if bCheckOK == false then
          puts "\nFileSender::checkModuleIntegrity FAILED !\n\n"
@@ -551,19 +557,34 @@ private
          @logger.error("UploadTemp cleanup not implemented for non-secure mode !")
          raise "UploadTemp cleanup not implemented for non-secure mode !"
       end
-      uploadTemp  = @ftpServer[:uploadTemp]
+      uploadTemp  = @pushServer[:uploadTemp]
        
       sftpClient  = CTC::SFTPBatchClient.new(@hostname,
                                            @port,
                                            @user,
                                            @ftBatchFilename,
-                                           @ftpServer[:isCompressed])
+                                           @pushServer[:isCompressed])
     
       sftpClient.addCommand("cd", uploadTemp, nil)
       sftpClient.addCommand("rm","*", nil)
        
       retVal = sftpClient.executeAll
       output = sftpClient.output
+   end
+   ## -----------------------------------------------------------
+   
+   def buildURL
+      if @pushServer[:user] != "" and @pushServer[:password] != "" then
+         @url = "#{@pushServer[:user]}:#{@pushServer[:password]}@#{@pushServer[:hostname]}:#{@pushServer[:port]}#{@pushServer[:uploadDir]}"
+      else
+         @url = "#{@pushServer[:hostname]}:#{@pushServer[:port]}#{@pushServer[:uploadDir]}"
+      end
+      
+      if @pushServer[:isSecure] == false then
+         @url = "http://#{@url}"
+      else
+         @url = "https://#{@url}/"
+      end
    end
    ## -----------------------------------------------------------
    

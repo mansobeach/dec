@@ -3,9 +3,9 @@
 <MailParams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
   <SendMailParams>
-    <SMTPServer>smtp.google.com</SMTPServer>
-    <Port>25</Port>
-    <User>borja.esa</User>
+    <SMTPServer>smtp.gmail.com</SMTPServer>
+    <Port>587</Port>
+    <User>borja.esa@gmail.com</User>
     <Pass>perrillo.pwd</Pass>
     <isSecure>true</isSecure>
   </SendMailParams>

@@ -54,6 +54,7 @@ require 'dec/ReadConfigIncoming'
 ###  7  - test_decSend2Interface
 ###  7.1  - test_decSend2Interface_LOCAL
 ###  7.2  - test_decSend2Interface_HTTP
+###  7.3  - test_decSend2Interface_SFTP
 ###  8  - test_decNotify2Interface
 ###  9  - test_decDeliverFiles
 
@@ -243,6 +244,7 @@ class DECTestCase < Test::Unit::TestCase
       system("\\rm -rf #{reportDir}")
       system("\\rm -rf /tmp/dec*")
       system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /tmp/dec_simul_if/filesystem/upload/")
 
       ftConfig    = ReadInterfaceConfig.instance
       configOut   = ReadConfigOutgoing.instance
@@ -633,10 +635,10 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decSend2Interface -m non_existing_if"
       assert(!system(cmd), cmd)
 
-      cmd = "decCheckSent -v"
+      cmd = "decListDirUpload -v"
       assert(system(cmd), cmd)
 
-      cmd = "decCheckSent -h"
+      cmd = "decListDirUpload -h"
       assert(system(cmd), cmd)
 
       cmd = "decDeliverFiles -v"
@@ -1752,6 +1754,7 @@ class DECTestCase < Test::Unit::TestCase
       }
 
       cmd = "decCheckConfig -o"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decGetFiles4Transfer -l"
@@ -1799,39 +1802,62 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decSend2Interface -m non_existing_if"
       assert(!system(cmd), cmd)
 
+      ## Call to previous test to load the out-trays
       test_decGetFiles4Transfer
-
-      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O -D"
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
       puts
       puts cmd
       puts
       assert(system(cmd), cmd)
 
-      exit
-
       cmd = "decStats"
+      puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decCheckSent -m LOCALHOST_NOT_SECURE -t"
+      puts
+      cmd = "decListDirUpload -m LOCALHOST_NOT_SECURE -t"
+      puts cmd
       assert(system(cmd), cmd)
-      puts      
+      puts
 
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
       arr = Dir["#{reportDir}/*"]
       assert(arr.length>0, "delivery report generation")
 
+      sleep(5.0)
+      puts
       cmd = "decSend2Interface -m LOCALHOST_SECURE -O"
+      puts cmd
       assert(system(cmd), cmd)
+
+      sleep(5.0)
+      
+      ## Call to previous test to load the out-trays
+      test_decGetFiles4Transfer
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      puts
+      cmd = "decSend2Interface -m LOCALHOST_SECURE -O"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+
+      # There should be warnings reporting the duplications available
+      cmd = "grep WARN #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "WARN not found in DEC logs in #{__method__.to_s}") 
 
       cmd = "decStats"
       assert(system(cmd), cmd)
 
-      cmd = "decCheckSent -m LOCALHOST_SECURE -t"
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
       assert(system(cmd), cmd)
       puts      
 
-      arr = Dir["/tmp/DEC*.log"]
       
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
@@ -1870,6 +1896,7 @@ class DECTestCase < Test::Unit::TestCase
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
       
       @@arrPushFiles.each{|filename|
          puts filename
@@ -1880,11 +1907,11 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decCheckSent -m LOCALHOST_SECURE -t"
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
       assert(system(cmd), cmd)
       puts      
 
-      cmd = "decCheckSent -m LOCALHOST_NOT_SECURE -t"
+      cmd = "decListDirUpload -m LOCALHOST_NOT_SECURE -t"
       assert(system(cmd), cmd)
       puts      
 
@@ -1914,11 +1941,22 @@ class DECTestCase < Test::Unit::TestCase
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)
+      
+      cmd = "decValidateConfig -e"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      puts cmd
+      assert(system(cmd), cmd)
+
 
       sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
+
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
 
       ## for LOCAL protocol the same files for download are used
       
@@ -1931,7 +1969,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface --mnemonic FILESYSTEM"
+      cmd = "decSend2Interface --mnemonic FILESYSTEM -O"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -1939,7 +1977,8 @@ class DECTestCase < Test::Unit::TestCase
 #      puts cmd
 #      assert(system(cmd), cmd)
 
-      cmd = "decCheckSent -m FILESYSTEM -t"
+      cmd = "decListDirUpload -m FILESYSTEM -t"
+      puts cmd
       assert(system(cmd), cmd)
       puts      
 
@@ -1950,6 +1989,86 @@ class DECTestCase < Test::Unit::TestCase
 
    ## -------------------------------------------------------------
 
+   def test_local1
+      require 'dec/LocalInterfaceHandler'
+      
+      checkDirectory("/tmp/dec_simul_if/filesystem/upload")
+      
+      handler = LocalInterfaceHandler.new("FILESYSTEM")
+      
+      puts handler.getUploadDirList
+      puts handler.getUploadDirList(true)
+   end
+   
+   ## -------------------------------------------------------------
+   
+   def test_decSend2Interface_SFTP
+
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -e"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
+      
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
+
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      @@arrPushFiles.each{|filename|
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decGetFiles4Transfer"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic LOCALHOST_SECURE -O"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      @@arrPushFiles.each{|filename|
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decGetFiles4Transfer"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic LOCALHOST_SECURE -O"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+   end
+   
+   
    ## -------------------------------------------------------------
 
    ## test for pushing files with HTTP protocol towards the interfaces
@@ -1973,6 +2092,28 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decConfigInterface2DB -p EXTERNAL"
       ret = system(cmd)
 
+      cmd = "decValidateConfig -e"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decValidateConfig -o"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -e WEBDAV2"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decCheckConfig -o"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      system("\\rm -rf /tmp/http_put/*")
+      
+      checkDirectory("/tmp/http_put/tmp")
+      
       sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
@@ -1989,9 +2130,22 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface --mnemonic WEBDAV -D"
+      cmd = "decSend2Interface --mnemonic WEBDAV2"
       puts cmd
       assert(system(cmd), cmd)
+
+      cmd = "decStats"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      assert(File.exist?("/tmp/http_put/tai-utc.dat"), "tai-utc.dat pushed with HTTP")
+      assert(File.exist?("/tmp/http_put/finals.7z"), "finals.7z pushed with HTTP")
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
    end
 
