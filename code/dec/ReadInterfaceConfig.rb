@@ -249,6 +249,8 @@ class ReadInterfaceConfig
 	## Get the configuration FTP config flag <DeleteFlag>
    ## - mnemonic (IN): Entity name	
 	def deleteAfterDownload?(mnemonic)
+      puts "DEPRECATED METHOD ! #{'1F480'.hex.chr('UTF-8')}"
+      exit(99)
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isDeleted]	
 	end
@@ -440,7 +442,7 @@ private
           events = nil
           XPath.each(entity, "Desc"){
              |descr|
-             description = expandPathValue(descr.text)
+             description = descr.text
           }          
 #          XPath.each(entity, "IncomingDir"){
 #             |dir|
@@ -570,7 +572,7 @@ private
       end
       
       if !xmlstruct.elements["User"].nil? then
-         user    = expandPathValue(xmlstruct.elements["User"].text)
+         user    = xmlstruct.elements["User"].text
       end
 
       if !xmlstruct.elements["Pass"].nil? then
@@ -666,14 +668,16 @@ private
          bCompress = false
       end
 
-      if xmlstruct.elements["DeleteFlag"].text.upcase == "TRUE" then
-         bDelete = true
-      else
-         if xmlstruct.elements["DeleteFlag"].text.upcase != "FALSE" then
-            puts "Error[#{mnemonic}] DeleteFlag field only accepts true|false value"
-            bErrorValue = true
-         end
-      end
+### DeleteFlag is deprecated since DEC 1.0.14
+
+#      if xmlstruct.elements["DeleteFlag"].text.upcase == "TRUE" then
+#         bDelete = true
+#      else
+#         if xmlstruct.elements["DeleteFlag"].text.upcase != "FALSE" then
+#            puts "Error[#{mnemonic}] DeleteFlag field only accepts true|false value"
+#            bErrorValue = true
+#         end
+#      end
 
       # ----------------------
       # new flag for ftp passive or not (passive is by default)
@@ -715,7 +719,7 @@ private
                          bSecure,
                          bVerifyPeerSSL,
                          bCompress,
-								 bDelete,
+###								 bDelete,
                          bPassive,
                          nCleanUpFreq,
                          nil,
@@ -761,7 +765,7 @@ private
       end
 
       if !xmlstruct.elements["ParallelDownload"].nil? then
-         parallelDownload = expandPathValue(xmlstruct.elements["ParallelDownload"].text).to_i
+         parallelDownload = xmlstruct.elements["ParallelDownload"].text.to_i
       end
 
       txrxParams  = Struct::TXRXParams.new(

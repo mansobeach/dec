@@ -304,6 +304,8 @@ def main
    
    body
    
+   @logger.info("[DEC_100] #{@entity} I/F: Pull iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
+   
    @locker.release
    exit(0)
 end

@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# == Ruby source for #ReadConfigIncoming class          
-#
-# == Written by DEIMOS Space S.L. (bolf)
-#
-# == Data Exchange Component
-# 
-# CVS: $Id: ReadConfigIncoming.rb,v 1.6 2008/04/04 14:01:51 decdev Exp $
-#
-# This class processes dec_incoming_files.xml config file
-# which contain the link between a file type and the DIMs that process it.
-# Moreover, the DIM In-Tray in which the file will be placed for later processing.
-#
+###
+### == Ruby source for #ReadConfigIncoming class          
+###
+### == Written by DEIMOS Space S.L. (bolf)
+###
+### == Data Exchange Component
+### 
+### Git: $Id: ReadConfigIncoming.rb,v 1.6 2008/04/04 14:01:51 decdev Exp $
+###
+### This class processes dec_incoming_files.xml config file
+### which contain the link between a file type and the DIMs that process it.
+### Moreover, the DIM In-Tray in which the file will be placed for later processing.
+###
 #########################################################################
 
 require 'singleton'
@@ -87,6 +87,67 @@ class ReadConfigIncoming
    
    ## -------------------------------------------------------------
    
+   def getSwitches(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches]
+         end
+      }
+      return Array.new   
+   end
+   ## -------------------------------------------------------------
+   
+   def deleteDuplicated?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:deleteDuplicated]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
+
+   def deleteDownloaded?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:deleteDownloaded]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
+
+   def deleteUnknown?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:deleteUnknown]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
+
+   def logUnknown?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:logUnknown]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
+
+   def logDuplicated?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:logDuplicated]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
+
+     
    def getDIMCompress(name)
       puts
       puts "DEPRECATED METHOD: getDIMCompress !"
@@ -389,7 +450,7 @@ class ReadConfigIncoming
    def checkCoherency
       return
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def getFileInfo(file, field)
    
@@ -423,7 +484,7 @@ class ReadConfigIncoming
       exit(99)
   
    end 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 private
 
@@ -485,11 +546,26 @@ private
    ## This method creates all the structs used
 	##
    def defineStructs
-      Struct.new("IncomingInterface", :mnemonic, :localInbox, :arrDownloadDirs)
+   
+      Struct.new("IncomingInterface", \
+                  :mnemonic, \
+                  :localInbox, \
+                  :arrDownloadDirs, \
+                  :switches)
+                  
       Struct.new("IncomingFile", :filetype, :description, :fromList)
       Struct.new("Intray", :name, :directory, :compress, :execute)
       Struct.new("File2Intrays", :filetype, :hardlink, :arrIntrays)
       Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
+      
+      Struct.new("Switches", \
+                  :mnemonic, \
+                  :deleteDownloaded, \
+                  :deleteDuplicated, \
+                  :deleteUnknown, \
+                  :logDuplicated, \
+                  :logUnknown \
+                  )
 	end
 	## -------------------------------------------------------------
 
@@ -527,9 +603,14 @@ private
       XPath.each(xmlFile, path){
          |interface|
 
-         if_name     = ""
-         if_inbox    = ""
-         
+         if_name                 = ""
+         if_inbox                = ""
+         if_switches             = nil
+         bDeleteDownloaded       = nil
+         bDeleteDuplicated       = nil
+         bDeleteUnknown          = nil
+         bLogDuplicated          = nil
+         bLogUnknown             = nil
 
          XPath.each(interface, "Name"){
              |name|
@@ -550,7 +631,71 @@ private
              arrDownloadDirs << Struct::DownloadDir.new(if_name, dir, depth)
          }
          
-         @@arrIncomingInterfaces << Struct::IncomingInterface.new(if_name, if_inbox, arrDownloadDirs)
+         XPath.each(interface, "Switches"){
+             |switch|
+             
+             XPath.each(switch, "DeleteDownloaded"){
+                |name|
+                if name.text.upcase == "TRUE" then
+                   bDeleteDownloaded = true
+                else
+                   bDeleteDownloaded = false
+                end
+             }
+             
+             XPath.each(switch, "DeleteDuplicated"){
+                |name|
+                if name.text.upcase == "TRUE" then
+                   bDeleteDuplicated = true
+                else
+                   bDeleteDuplicated = false
+                end
+             }
+             
+             XPath.each(switch, "DeleteUnknown"){
+                |name|
+                if name.text.upcase == "TRUE" then
+                   bDeleteUnknown = true
+                else
+                   bDeleteUnknown = false
+                end
+             }
+  
+             XPath.each(switch, "LogDuplicated"){
+                |name|
+                if name.text.upcase == "TRUE" then
+                   bLogDuplicated = true
+                else
+                   bLogDuplicated = false
+                end
+             }
+             
+             XPath.each(switch, "LogUnknown"){
+                |name|
+                if name.text.upcase == "TRUE" then
+                   bLogUnknown = true
+                else
+                   bLogUnknown = false
+                end
+
+             }
+           
+             if_switches = Struct::Switches.new(if_name, \
+                                    bDeleteDownloaded, \
+                                    bDeleteDuplicated, \
+                                    bDeleteUnknown, \
+                                    bLogDuplicated, \
+                                    bLogUnknown )
+            
+         }
+
+         
+         
+         @@arrIncomingInterfaces << Struct::IncomingInterface.new(if_name, \
+                                                                  if_inbox, \
+                                                                  arrDownloadDirs, \
+                                                                  if_switches)
+                                                                  
 
       }
       ## ----------------------------------------

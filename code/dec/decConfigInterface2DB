@@ -118,6 +118,12 @@ def main
       exit(66)
    end
 
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
 
    begin
       require 'dec/DEC_DatabaseModel'

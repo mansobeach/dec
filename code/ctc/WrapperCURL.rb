@@ -77,7 +77,7 @@ module WrapperCURL
          url = "#{url}/"  
       end
             
-      cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      cmd = "curl -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "

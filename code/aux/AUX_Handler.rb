@@ -17,8 +17,10 @@
 
 require 'cuc/Converters'
 
+require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
+require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
 module AUX
 
@@ -85,16 +87,26 @@ private
       
       filename = File.basename(@full_path)
             
-      if File.fnmatch(AUX_IERS_Leap_Second_Pattern, filename.downcase) == true then
+      if File.fnmatch(AUX_Pattern_IERS_Leap_Second, filename.downcase) == true then
          @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target, @targetDir)
          return
       end
 
-      if File.fnmatch(AUX_IGS_Broadcast_Ephemeris_Pattern, filename.downcase) == true then
+      if File.fnmatch(AUX_Pattern_IERS_EOP_Daily, filename) == true then
+         @handler = AUX_Handler_IERS_EOP_Daily.new(@full_path, @target, @targetDir)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_IGS_Broadcast_Ephemeris, filename.downcase) == true then
          @handler = AUX_Handler_IGS_Broadcast_Ephemeris.new(@full_path, @target, @targetDir)
          return
       end
-            
+      
+      if File.fnmatch(AUX_Pattern_NOAA_RSGA_Daily, filename) == true then
+         @handler = AUX_Handler_NOAA_RSGA_Daily.new(@full_path, @target, @targetDir)
+         return
+      end      
+      
       raise "no pattern found for #{filename}"
    end
    ## -----------------------------------------------------------

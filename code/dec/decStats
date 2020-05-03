@@ -2,7 +2,7 @@
 
 # == Synopsis
 #
-# This is a DEC/DCC command line tool that shows file reception statistics  
+# This is a DEC command line tool that shows file circulation statistics  
 # 
 # == Usage
 # decStats
@@ -128,7 +128,24 @@ def main
    # -----------------------------------------------------------------
 
    stats = DCC::StatisticDCC.new
-   stats.lastHour(@hours)
+   ret = stats.lastHour(@hours)
+
+   if ret == nil or ret.empty? == true then
+      @logger.info("[DEC_144] Pull #{@hours}h: No files pulled")
+   else
+            
+      arrJson = Array.new
+  
+      ret.each{|aHash|
+         arrJson << JSON.generate(aHash)
+      }
+  
+      arrJson.each{|entry|
+         @logger.info("[DEC_144] Pull #{@hours}h: #{entry}")
+      }
+
+   end
+
    
    stats = DDC::StatisticDDC.new
    ret = stats.lastHour(@hours)

@@ -37,8 +37,15 @@
  -->
        <Interface>
          <Name>WEBDAV2</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_webdav</LocalOutbox>
+         <LocalOutbox>/tmp/dec_local_dissemination/POD_IN</LocalOutbox>
          <UploadDir>/tmp/http_put</UploadDir>
+         <UploadTemp>/tmp/http_put/tmp</UploadTemp>
+      </Interface>
+
+       <Interface>
+         <Name>POD_PUSH</Name>
+         <LocalOutbox>/tmp/dec_tmp/dec/out_basket_pod_push</LocalOutbox>
+         <UploadDir>/tmp/http_put/pod</UploadDir>
          <UploadTemp>/tmp/http_put/tmp</UploadTemp>
       </Interface>
             

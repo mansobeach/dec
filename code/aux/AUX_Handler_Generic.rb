@@ -48,6 +48,9 @@ class AUX_Handler_Generic
       @filename_new        = nil
       @input_file_pattern  = "*"
       
+      @strValidityStart    = ""
+      @strValidityStop     = ""
+            
       checkModuleIntegrity
    end   
    ## -------------------------------------------------------------
@@ -108,9 +111,20 @@ private
 protected
 
    def getCreationDate
+      return getCreationDateMidnight
+   end
+   ## -----------------------------------------------------------
+
+   def getCreationDateMidnight
       return self.strDateMidnight
    end
    ## -----------------------------------------------------------
+
+   def getCreationDateNow
+      return self.strDateNow
+   end
+   ## -----------------------------------------------------------
+
 
 end # class
 

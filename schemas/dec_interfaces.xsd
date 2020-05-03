@@ -116,7 +116,6 @@
    <xs:element name="SecureFlag" type="BooleanType" minOccurs="0"/>
    <xs:element name="VerifyPeerSSL" type="BooleanType"/>
    <xs:element name="CompressFlag" type="BooleanType"/>
-   <xs:element name="DeleteFlag" type="BooleanType"/>
    <xs:element name="PassiveFlag" type="BooleanType"/>
    <xs:element name="CleanUpFreq" type="CleanUpFreqType"/>
   </xs:sequence>

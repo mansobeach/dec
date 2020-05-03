@@ -21,8 +21,10 @@ require 'fileutils'
 require 'cuc/DirUtils'
 
 require 'aux/AUX_Environment'
+require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
+require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
 # Select a single test of the suite
 
@@ -46,7 +48,6 @@ class AUXTestCase < Test::Unit::TestCase
       
       @@testDir = "/tmp/aux"
             
-      
    end
    
    ## --------------------------------------------------------
@@ -60,9 +61,11 @@ class AUXTestCase < Test::Unit::TestCase
    ##
    def setup
       checkDirectory(@@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",   @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",      @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",    @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -92,6 +95,14 @@ class AUXTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), "converter leap second")
 
+      eop = "#{@@testDir}/finals2000A.daily"
+
+      cmd         = "auxConverter -f #{eop} -d /tmp/aux_out1"
+      puts cmd
+      puts
+      assert(system(cmd), "converter leap second")
+
+
       gps_daily = "#{@@testDir}/brdc0060.20n"
 
       cmd = "auxConverter -f #{gps_daily} -d /tmp/aux_out2"
@@ -105,6 +116,14 @@ class AUXTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), "converter Compressed GPS broadcast daily")
 
+      puts
+      rsga   = "#{@@testDir}/20200101RSGA.txt"
+      cmd         = "auxConverter -f #{rsga} -d /tmp/aux_out4"
+      puts cmd
+      puts
+      assert(system(cmd), "converter NOAA Repor Solar Geophysical Activity")
+
+
    end
    
    ## --------------------------------------------------------
@@ -117,6 +136,28 @@ class AUXTestCase < Test::Unit::TestCase
    
    end
    
+   ## --------------------------------------------------------
+
+   def test_iers2
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
+   
+      eop = "#{@@testDir}/finals2000A.daily"
+      
+      handler = AUX_Handler_IERS_EOP_Daily.new(eop, "S3", "/tmp/kk1")
+      
+      handler.setDebugMode
+      
+      newName = handler.convert
+      
+      puts newName
+                  
+      assert(File.exist?(newName), "rename performed")
+   
+   end
    ## --------------------------------------------------------
 
    def test_iers
@@ -160,6 +201,31 @@ class AUXTestCase < Test::Unit::TestCase
 
    end
    ## ------------------------------------------------------
+
+   ## --------------------------------------------------------
+
+   ## This test creates every necessary directory to make the circulations succeed
+   def test_noaa
+      puts
+      puts "================================================"
+      puts "AUX_UnitTests::#{__method__.to_s}"
+      puts
+   
+      rsga = "#{@@testDir}/20200101RSGA.txt"
+      
+      handler = AUX_Handler_NOAA_RSGA_Daily.new(rsga, "S3", "/tmp/kk2")
+      
+      handler.setDebugMode
+      
+      newName = handler.convert
+      
+      puts newName
+                  
+      assert(File.exist?(newName), "rename performed")
+
+   end
+   ## ------------------------------------------------------
+
 
 end
 

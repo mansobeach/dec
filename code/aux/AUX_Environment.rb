@@ -23,11 +23,13 @@ module AUX
    
    include CUC::DirUtils
    
-   @@version = "0.0.2"
+   @@version = "0.0.3"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.4"  =>    "NOAA Report Solar Geophysical Activity has been integrated", \
+      "0.0.3"  =>    "IERS Earth Orientation Parameters has been integrated", \
       "0.0.2"  =>    "IGS Broadcast Ephemeris Daily has been integrated", \
       "0.0.1"  =>    "IERS Leap Second has been integrated", \
       "0.0.0"  =>    "first version of the aux installer created" \

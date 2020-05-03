@@ -48,9 +48,21 @@
 
  <xs:complexType name="InterfaceDefType">
   <xs:sequence>
-   <xs:element name="Name"             type="xs:string"/>
-   <xs:element name="LocalInbox"       type="xs:string"/>
-   <xs:element name="DownloadDirs"     type="DownloadDirsType"/>
+     <xs:element name="Name"              type="xs:string"/>
+     <xs:element name="LocalInbox"        type="xs:string"/>
+     <xs:element name="DownloadDirs"      type="DownloadDirsType"/>
+     <xs:element name="Switches"          type="TypeSwitches"/>
+  </xs:sequence>
+ </xs:complexType>
+
+
+ <xs:complexType name="TypeSwitches">
+  <xs:sequence>
+     <xs:element name="DeleteDownloaded"     type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="DeleteDuplicated"     type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="DeleteUnknown"        type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="LogDuplicated"        type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="LogUnknown"           type="BooleanType"   minOccurs="0" maxOccurs="1" />
   </xs:sequence>
  </xs:complexType>
 

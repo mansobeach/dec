@@ -54,6 +54,10 @@ This message is logged upon completion filtering the files published in the down
 \subsection{[DEC\_060] Interface Polling Complete / New File(s) Available}
 This message is logged upon completion filtering the files published in the download interface and verification of eventual duplications in the database reporting there are some \textit{new} files for download. It can be used to measure the time required to perform the filtering operations.
 
+\label{DEC100}
+\subsection{[DEC\_100] Interface Pull Iteration Completed}
+TBW.
+
 \label{DEC105}
 \subsection{[DEC\_105] File Available}
 The file referenced in the message met any of the filtering rules defined in the configuration \textit{dec\_incoming\_files.xml} and it is therefore available for download from the interface. This message is logged only when the \textit{--list} mode is used, otherwise the files matching the rules are directly downloaded and logged accordingly. 
@@ -96,6 +100,10 @@ This event is triggered upon successful polling completion (cf. \hyperref[DEC060
 
 \subsection{[DEC\_131] Dissemination Command Execution }
 The message traces some event which has been triggered for a given interface according to the configuration item \textit{"Execution"} defined in the \hyperref[Dissemination rules]{\textit{dissemination rules}}.
+
+\label{DEC144}
+\subsection{[DEC\_144] Pull Statistics}
+TBW.
 
 \label{DEC210}
 \subsection{[DEC\_210] File Pushed to Interface}
@@ -322,6 +330,10 @@ TBW / decNotify2Interface.
 \begin{verbatim}
 [ERROR] 2020-04-14 18:58:58 NODE_1.mail - [DEC_742] LOCALHOST_NOT_SECURE I/F: Must issue a STARTTLS command first
 \end{verbatim}
+
+\label{DEC750}
+\subsection{[DEC\_750] Event Error}
+TBW / Event Manager
 
 \subsection{TBW}
 

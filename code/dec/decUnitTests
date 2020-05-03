@@ -318,8 +318,8 @@ class DECTestCase < Test::Unit::TestCase
                      dir = "~/#{arr[0][:directory]}"
                   end
                   puts "============================"
-                  puts "#{filename}    => #{dir}/#{filename}"
-                  cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
+                  puts "#{filename}    => #{dir}#{filename}"
+                  cmd = "echo \'#{filename} is in da house\' > #{dir}#{filename}"
                   puts cmd
                   system(cmd)
                   # FileUtils.chmod("a-x", "#{dir}/#{filename}")
@@ -331,7 +331,7 @@ class DECTestCase < Test::Unit::TestCase
                      dir = "~/#{arr[0][:directory]}"
                   end
                   puts "============================"
-                  puts "#{filename}    => #{dir}/#{filename}"
+                  puts "#{filename}    => #{dir}#{filename}"
                   cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
                   puts cmd
                   system(cmd)
@@ -499,6 +499,9 @@ class DECTestCase < Test::Unit::TestCase
       puts conf.getDownloadDirs("LOCALHOST_NOT_SECURE")
       puts
       puts conf.getDownloadDirs("LOCALHOST_SECURE")
+      puts
+      puts "scihub"
+      puts conf.getDownloadDirs("SCIHUB")
       puts
       arr = conf.getEntitiesSendingIncomingFileName("S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ")
       puts arr
@@ -686,8 +689,25 @@ class DECTestCase < Test::Unit::TestCase
       puts inConfig.getInTrayExecution("S3_IN")
       
       
-      puts
-      puts
+      puts inConfig.getSwitches("SCIHUB")
+      
+      puts inConfig.deleteDownloaded?("SCIHUB")
+      assert(inConfig.deleteDownloaded?("SCIHUB") != nil, "deleteDownloaded?")
+
+      puts inConfig.deleteDuplicated?("SCIHUB")
+      assert(inConfig.deleteDuplicated?("SCIHUB") != nil, "deleteDuplicated?")
+
+      puts inConfig.deleteUnknown?("SCIHUB")
+      assert(inConfig.deleteUnknown?("SCIHUB") != nil, "deleteUnknown?")
+
+      puts inConfig.logUnknown?("SCIHUB")
+      assert(inConfig.logUnknown?("SCIHUB") != nil, "logUnknown?")
+
+      puts inConfig.logDuplicated?("SCIHUB")
+      assert(inConfig.logDuplicated?("SCIHUB") != nil, "logDuplicated?")
+
+      puts inConfig.deleteDownloaded?("LOCALHOST_SECURE")
+      assert(inConfig.deleteDownloaded?("LOCALHOST_SECURE"), "deleteDownloaded?")
 
       puts inConfig.getInTrayExecution("S3_IN_2")
       puts inConfig.getInTrayCompress("S3_IN_2")
@@ -965,6 +985,7 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decStats -f finals.all"
       puts cmd
       assert(system(cmd), cmd)
+
 
       cmd = "decStats -f tai-utc.dat"
       puts cmd

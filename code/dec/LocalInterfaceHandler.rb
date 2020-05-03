@@ -278,22 +278,20 @@ class LocalInterfaceHandler
 	## directory. It deletes the file in the remote Entity if the Config
 	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename)
-	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
 
       if @isDebugMode == true then 
-         @logger.debug("LocalInterfaceHandler::deleteFromEntity: I/F #{@entity} deleteFlag is #{deleteFlag}")
+         @logger.debug("LocalInterfaceHandler::deleteFromEntity: I/F #{@entity}")
       end
 
-		if deleteFlag == true then
-         begin
-            FileUtils.rm_rf(filename)    
-         rescue
-            if @isdebugMode == true then 
-               @logger.debug("[DEC_XXX] I/F #{@entity}: LocalInterfaceHandler::deleteFromEntity: Could not delete #{filename}")
-            end
-            return false
+      begin
+         FileUtils.rm_rf(filename)    
+      rescue
+         if @isdebugMode == true then 
+            @logger.debug("[DEC_XXX] I/F #{@entity}: LocalInterfaceHandler::deleteFromEntity: Could not delete #{filename}")
          end
-		end
+         return false
+      end
+
       return true
 	end
    ## -----------------------------------------------------------

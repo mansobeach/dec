@@ -320,6 +320,16 @@ class DECTestCase < Test::Unit::TestCase
 
       sleep(5.0)
 
+      cmd = "decGetFromInterface -m #{interface}"
+      if noDB == true then
+         cmd = "#{cmd} --nodb"
+      end      
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      sleep(5.0)
+
+
       cmd = "decGetFromInterface -m #{interface} --no-intray"
       if noDB == true then
          cmd = "#{cmd} --nodb"
@@ -327,14 +337,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      sleep(5.0)
 
-      cmd = "decGetFromInterface -m #{interface}"
-      if noDB == true then
-         cmd = "#{cmd} --nodb"
-      end      
-      puts cmd
-      assert(system(cmd), cmd)      
       
    end
    ## ------------------------------------------------------
@@ -482,6 +485,65 @@ class DECTestCase < Test::Unit::TestCase
    
    end
 
+   ## ------------------------------------------------------
+
+   ## Pull circulation which upon disseminatin is chaining a push circulation 
+
+   def test_IGS2POD
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      checkDirectory("/tmp/http_put/pod")
+      checkDirectory("/tmp/dec/if_igs_in_basket")
+      
+      cmd = "decGetFromInterface -m IGS"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+      
+      arr = Dir["/tmp/DEC*.log"]
+                        
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+   
+   end
+   ## ------------------------------------------------------
+
+   def test_SCIHUB
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+         
+      system("rm -f /tmp/dec_final_dissemination/DIAS/*")
+      
+      cmd = "decGetFromInterface -m SCIHUB -l"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m SCIHUB"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m SCIHUB"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)      
+      
+      arr = Dir["/tmp/DEC*.log"]
+                        
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")   
+   end
    ## ------------------------------------------------------
 
 end

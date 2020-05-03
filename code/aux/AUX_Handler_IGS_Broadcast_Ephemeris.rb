@@ -42,7 +42,7 @@ require 'aux/Aux_Handler_Generic'
 
 module AUX
 
-AUX_IGS_Broadcast_Ephemeris_Pattern = "brdc0???.??n"
+AUX_Pattern_IGS_Broadcast_Ephemeris = "brdc0???.??n"
 
 class AUX_Handler_IGS_Broadcast_Ephemeris < AUX_Handler_Generic
 
@@ -57,7 +57,6 @@ class AUX_Handler_IGS_Broadcast_Ephemeris < AUX_Handler_Generic
       
       @strValidityStart    = ""
       @strValidityStop     = ""
-      @input_file_pattern  = "brdc0???.??n"
       
       if target.upcase == "S3" then
          @mission    = "S3_"
@@ -98,9 +97,6 @@ class AUX_Handler_IGS_Broadcast_Ephemeris < AUX_Handler_Generic
    
 
 private
-
-   @listFiles = nil
-   @mailer    = nil
 
    ## -----------------------------------------------------------
    

@@ -1,26 +1,28 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_ReceiverFromInterface class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
-#
-# Module Data Exchange Component
-# This class polls a given Interface and gets all registered available files
-# via FTP, SFTP, WebDAV HTTP, or LOCAL.
-#
+###
+### === Ruby source for #DEC_ReceiverFromInterface class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component
+### 
+### Git: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
+###
+### Module Data Exchange Component
+### This class polls a given Interface and gets all registered available files
+### via FTP, SFTP, WebDAV, HTTP, or LOCAL.
+###
 #########################################################################
 
 ### IPC for children process (overall volume downloaded)
 
 ### https://www.jstorimer.com/blogs/workingwithcode/7766091-introduction-to-ipc-in-ruby
 
-### https://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processeshttps://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processes
+### https://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processes
+
+### https://stackoverflow.com/questions/3057120/shared-variable-among-ruby-processes
 
 ### https://stackoverflow.com/questions/53646103/pipe-with-multiple-child-process
 
@@ -30,6 +32,7 @@ require 'uri'
 require 'net/http'
 require 'net/ssh'
 require 'net/sftp'
+require 'nokogiri'
 require 'timeout'
 require 'benchmark'
 
@@ -68,14 +71,18 @@ class DEC_ReceiverFromInterface
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
    def initialize(entity, drivenByDB = true, isNoDB = false, isNoInTray = false, isDelUnknown = false, isDebug = false)
-      @entity        = entity
-      @drivenByDB    = drivenByDB
-      @isNoDB        = isNoDB
-      @isNoInTray    = isNoInTray
-      @isDelUnknown  = isDelUnknown
-      @isDebugMode   = isDebug
+      @entity              = entity
+      @drivenByDB          = drivenByDB
+      @isNoDB              = isNoDB
+      @isNoInTray          = isNoInTray
+      @bDeleteUnknown      = DEC::ReadConfigIncoming.instance.deleteUnknown?(@entity)
+      @bDeleteDuplicated   = DEC::ReadConfigIncoming.instance.deleteDuplicated?(@entity)
+      @bDeleteDownloaded   = DEC::ReadConfigIncoming.instance.deleteDownloaded?(@entity)
+      @bLogDuplicated      = DEC::ReadConfigIncoming.instance.logDuplicated?(@entity)
+      @bLogUnknown         = DEC::ReadConfigIncoming.instance.logUnknown?(@entity)
+      @isDebugMode         = isDebug
       checkModuleIntegrity
-      @isBenchmarkMode = false
+      @isBenchmarkMode     = false
 
       # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{@@configDirectory}/dec_log_config.xml")
@@ -358,7 +365,7 @@ class DEC_ReceiverFromInterface
 
       begin
          if @isDebugMode == true then
-            @logger.debug("FTP #{host}:#{port} #{user}:#{pass} | passive = #{bPassive}")
+            @logger.debug("FTP #{host} #{port} #{user} #{pass} | passive = #{bPassive}")
          end
          @ftp = Net::FTP.new(host)
          @ftp.login(user, pass)
@@ -484,6 +491,36 @@ class DEC_ReceiverFromInterface
    
    ## -----------------------------------------------------------
    
+   ## Returns an array of URLs
+   def getHTTPListDir(url)
+      if @isDebugMode == true then
+         @logger.debug("DEC_ReceiverFromInterface::getHTTPListDir => #{url} treated as a directory")
+      end
+   
+      uri = URI.parse(url)
+      
+      response = Net::HTTP.get_response(uri)
+      
+      if @isDebugMode == true then
+         @logger.debug("HTTP GET #{url} => #{response.code}")
+      end   
+
+      arr = Array.new
+
+      doc   = Nokogiri::HTML.parse(response.body)
+      tags  = doc.xpath("//a")
+   
+      tags.each do |tag|
+         arr << "#{url}#{tag.text}"
+      end
+   
+      return arr
+   
+   end
+   ## -----------------------------------------------------------
+   
+   ##
+   
    def getHTTPList
       @newArrFile = Array.new
       host        = ""
@@ -491,7 +528,7 @@ class DEC_ReceiverFromInterface
       if isSecureMode == false then
          host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
       else
-         host        = "https://#{@ftpserver[:hostname]}"
+         host        = "https://#{@ftpserver[:hostname]}/"
       end
       port        = @ftpserver[:port].to_i
       user        = @ftpserver[:user]
@@ -508,6 +545,14 @@ class DEC_ReceiverFromInterface
          if @isDebugMode == true then
             @logger.debug("Checking URL #{url}")
          end
+
+         # ---------------------------------------
+         # URL ends with "/" treat it as a directory         
+         if @remotePath[-1, 1] == "/" then
+            @newArrFile << getHTTPListDir(url)
+            next
+         end 
+         # ---------------------------------------
          
          begin
             bFound = false
@@ -541,7 +586,7 @@ class DEC_ReceiverFromInterface
          end
       }   
       
-      return @newArrFile
+      return @newArrFile.flatten
       
    end
    ## -----------------------------------------------------------
@@ -585,10 +630,15 @@ class DEC_ReceiverFromInterface
 
       arrElements.each{|element|
          @remotePath    = element[:directory]
+         
+         if @remotePath[-1, 1] != "/" then
+            @remotePath = "#{@remotePath}/"
+         end 
+                  
          @recursive     = (element[:depthSearch].to_i > 0)
          
          if @isDebugMode == true then
-            @logger.debug("Checking directory #{@remotePath} - recursive search is #{@recursive}")
+            @logger.debug("Checking directory with PROPFIND #{@remotePath} - recursive search is #{@recursive}")
          end
          
          begin
@@ -1060,7 +1110,7 @@ private
       retVal = @local.downloadFile(filename)
       
        if retVal == false then
-         @logger.error("[DEC_666]#{@entity} I/F: Could not download #{filename}")
+         @logger.error("[DEC_666] #{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination
@@ -1080,7 +1130,7 @@ private
          ## ------------------------------------------------
          ##
          ## if delete flag is enabled  
-         if @entityConfig.deleteAfterDownload?(@entity) == true then
+         if @bDeleteDownloaded == true then
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
@@ -1285,7 +1335,7 @@ private
                                    @ftpserver[:password],
                                    "",
                                    filename,
-                                   @ftpserver[:isDeleted], 
+                                   @bDeleteDownloaded, 
                                    @isDebugMode)
       end
       
@@ -1333,7 +1383,7 @@ private
          ## ------------------------------------------------
          ##
          ## if delete flag is enabled  
-         if @entityConfig.deleteAfterDownload?(@entity) == true then
+         if @bDeleteDownloaded == true then
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
@@ -1498,7 +1548,6 @@ private
          @logger.error(e.to_s)
          if @isDebugMode == true then
             @logger.debug(e.backtrace)
-            puts e.backtrace
          end
          return false
       end
@@ -1512,17 +1561,16 @@ private
 	## directory. It deletes the file in the remote Entity if the Config
 	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename, bForce = false)
-	   deleteFlag = @entityConfig.deleteAfterDownload?(@entity)
-      
+	   
       if @isDebugMode == true then
-         @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity => DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
+         @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity => DeleteFlag is #{@bDeleteDownloaded} | ForceFlag is #{bForce} for #{@entity} I/F ")
 		end
       
 		# if true proceed to remove the files from the remote I/F
 		
-      if deleteFlag == true or bForce == true then
+      if @bDeleteDownloaded == true or bForce == true then
 		   if @isDebugMode == true then
-			   @logger.debug("DeleteFlag is #{deleteFlag} | ForceFlag is #{bForce} for #{@entity} I/F ")
+			   @logger.debug("DeleteFlag is #{@bDeleteDownloaded} | ForceFlag is #{bForce} for #{@entity} I/F ")
 			end
          
          if @protocol == "LOCAL" then
@@ -1644,10 +1692,10 @@ private
 
       tmpList.each{|fullpath|
          if @isDebugMode == true then
-            @logger.debug("Filtering #{fullpath}")
+            @logger.debug("Filtering List : #{fullpath}")
          end
          filename = File.basename(fullpath)
-         # Check dcc_config.xml filters
+         # Check dec_config.xml filters
          bFound = false
          @arrFilters.each {|ext|
             if File.fnmatch(ext, filename) == true then
@@ -1707,9 +1755,11 @@ private
          
             # ----------------------------------------------
             
-            @logger.warn("[DEC_320] I/F #{@entity}: Detected unknown file #{File.basename(aFile)}")
+            if @bLogUnknown == true then
+               @logger.warn("[DEC_320] I/F #{@entity}: Detected unknown file #{File.basename(aFile)}")
+            end
             
-            if @isDelUnknown == true and forTracking == false then
+            if @bDeleteUnknown == true and forTracking == false then
                @logger.info("[DEC_120] I/F #{@entity}: Deleting unknown file #{File.basename(aFile)}")
                ret = deleteFromEntity(aFile)
                
@@ -1762,15 +1812,16 @@ private
          if forTracking == false or forTracking == true then
          
             if hasBeenAlreadyReceived(filename) == true then
-               @logger.warn("[DEC_301] I/F #{@entity}: Detected duplicated file #{filename}")
-
+               if @bLogDuplicated == true then
+                  @logger.warn("[DEC_301] I/F #{@entity}: Detected duplicated file #{filename}")
+               end
                arrDelete << fullpath
                
                ## --------------------------------
                ##
-               ## dec_config.xml <DeleteDuplicatedFiles>
+               ## dec_incoming_files.xml <DeleteDuplicated>
                ##
-               if DEC::ReadConfigDEC.instance.getDeleteDuplicated == true and forTracking == false then
+               if @bDeleteDuplicated == true and forTracking == false then
                   @logger.info("[DEC_125] I/F #{@entity}: Deleting duplicated file #{File.basename(filename)} previously received")
                   
                   ret = deleteFromEntity(fullpath, false)
@@ -2152,7 +2203,7 @@ private
    
             if @isDebugMode == true then
                deliverer.setDebugMode
-               @logger.debug(puts "Creating and Deliver Content File")
+               @logger.debug("Creating and Deliver Content File")
             end
             
             deliverer.deliverFile(@entity, directory, filename)

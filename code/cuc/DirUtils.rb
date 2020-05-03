@@ -19,11 +19,17 @@ module CUC
 
 module DirUtils
 
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
-   # Expand environment variable values in a path expresion
-   # - str (IN): string with a path that contains an environment variable
+   ## Expand environment variable values in a path expresion
+   ## - str (IN): string with a path that contains an environment variable
    def expandPathValue(str)
+      bPath = true
+      
+      if str[-1, 1] != "/" then
+         bPath = false
+      end
+      
       if str == nil then
 		   return ""
 		end
@@ -56,12 +62,17 @@ module DirUtils
       if bIsFullPath == true and strPath[0,1] != "/" then
          strPath = %Q{/#{strPath}}
       end
+      
+      if bPath == true and strPath[-1, 1] != "/" then
+         strPath = %Q{#{strPath}/}
+      end
+      
       return strPath
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Check directory existence. If it does not exist, create it.
-   # - dir (IN): Directory path.
+   ## Check directory existence. If it does not exist, create it.
+   ## - dir (IN): Directory path.
    def checkDirectory(dir)
       if FileTest.exist?(dir) == false then
          cmd = %{mkdir -p #{dir}}
@@ -72,7 +83,7 @@ module DirUtils
          end
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Delete Recursively Directory without confirmation.
    # - dir (IN): Directory path.

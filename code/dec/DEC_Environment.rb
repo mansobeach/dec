@@ -29,10 +29,13 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.14" =>    "New gem sys-filesystem is required to check hardlink config\n\
+      "1.0.14" =>    "New gems sys-filesystem and nokogiri are required\n\
           Support of HTTP(S) protocol verb PUT for push circulations\n\
+          Support of HTTP(S) protocol verb GET for pull directories\n\
           dec_config.xml Inventory item added for database configuration\n\
           dec_config.xml reshuffle of some configuration items\n\
+          dec_interfaces.xml configuration item DeleteFlag removed\n\
+          dec_incoming_files.xml config item Switches to handle duplication, unknowns, for each I/F\n\
           dec_incoming_files.xml config item FileList replaced by DownloadRules\n\
           dec_incoming_files.xml config item Execute command for each Intray available in DisseminationRules", \
       "1.0.13" =>    "Support of Pull circulations using HTTP protocol for known URLs\n\

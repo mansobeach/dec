@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# CVS: $Id: StatisticDCC.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
+# Git: $Id: StatisticDCC.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 #
 # Module Data Collector Component
 #
@@ -16,61 +16,52 @@
 
 require 'filesize'
 
-# require 'dbm/DatabaseModel'
+require 'dec/DEC_DatabaseModel'
 
 module DCC
 
 class StatisticDCC
 
-   #-------------------------------------------------------------   
+   # -------------------------------------------------------------   
    
    # Class contructor
    def initialize
       checkModuleIntegrity
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "StatisticDCC debug mode is on"
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def lastHour(iHours = 1)
       lastHourFiles     = ReceivedFile.all.where('reception_date > ?', iHours.to_i.hours.ago)
       lastHourCount     = lastHourFiles.count
       lastHourSize      = lastHourFiles.sum(:size)
-      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
-      
-      if ReceivedFile.last == nil then
-         puts "No files received"
-         return
-      end
-                  
-      lastHourFiles     = ReceivedFile.select("filename, interface_id").where('reception_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
-      
+      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty      
+      arrFiles          = Array.new
       
       lastHourFiles.load.to_a.each{|item|
-         puts "#{item.interface.name.to_s.ljust(15)} - #{item.filename}"
+            
+         hFile = Hash.new
+         hFile[:filename]  = item.filename
+         hFile[:interface] = item.interface.name
+         hFile[:date]      = item.reception_date
+         hFile[:protocol]  = item.protocol
+         hFile[:size]      = item.size
+         
+         arrFiles << hFile
       }
-
-      puts      
-      puts "Last received file #{ReceivedFile.last.reception_date}"
-      
-      puts
-      puts "New #{lastHourCount} files received during last #{iHours} hour(s)"
-      
-      puts
-      puts "Received #{prettyHourSize}"
-      
-      puts
-      puts
+            
+      return arrFiles
       
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def customQuery
       lastHourFiles     = ReceivedFile.all.where('reception_date > ?', 7.days.ago)
@@ -105,9 +96,7 @@ class StatisticDCC
       puts
       
    end
-   #-------------------------------------------------------------
-
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 private
 
@@ -119,7 +108,7 @@ private
       bDefined = true
       bCheckOK = true
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
    def queryInventory
       if @filename == nil then
@@ -141,14 +130,10 @@ private
       end
       return aFile
    end
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
 
 end # class
 
 end # module
-#=====================================================================
-
-
-#-----------------------------------------------------------
-
+# =====================================================================
 

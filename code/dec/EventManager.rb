@@ -1,20 +1,22 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-#
-# === Ruby source for #EventManager class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Transfer Component
-# 
-# Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
-#
-# === Module: Data Exchange Component // Class EventManager
-#
-# This class is in charge of processing different Events.
-#
-#########################################################################
+##########################################################################
+##
+## === Ruby source for #EventManager class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component -> Common Transfer Component
+## 
+## Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
+##
+## === Module: Data Exchange Component // Class EventManager
+##
+## This class is in charge of processing different Events.
+##
+##########################################################################
+
+require 'open3'
 
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
@@ -49,7 +51,15 @@ class EventManager
       checkModuleIntegrity
       @ftReadConf = ReadInterfaceConfig.instance
    end
+
    ## -----------------------------------------------------------
+   
+   ## Set debug mode on
+   def setDebugMode
+      @isDebugMode = true
+   end
+   ## -----------------------------------------------------------
+   
    ##
    ## %f => filename
    ## %F => full path filename
@@ -63,7 +73,11 @@ class EventManager
       if params != nil then
          filename    = params["filename"]
          directory   = params["directory"]
-         pathfile    = "#{directory}/#{filename}"
+         if directory[-1,1] != "/" then
+            pathfile    = "#{directory}/#{filename}"
+         else
+            pathfile    = "#{directory}#{filename}"
+         end
       end
 
       eventMgr  = @ftReadConf.getEvents(interface)
@@ -111,22 +125,37 @@ class EventManager
                log.debug("Executing command #{cmd}")
             end
             
-            output = `#{cmd}`
+            log.info("[DEC_130] #{interface} I/F: event triggered #{eventName.downcase} => #{cmd}")
             
-            # retVal = system(cmd)
-                        
-            if $?.exitstatus == 0 then
+            exit_status = nil
+            
+            Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+               while line = stdout.gets
+                  puts line
+               end
+               exit_status = wait_thr.value
+            end           
+            
+#            output = `#{cmd}`
+            # retVal = system(cmd)                        
+            # if $?.exitstatus == 0 then
+            
+            if @isDebugMode == true and log != nil then
+               log.debug("EventManager #{exit_status} / #{exit_status.exitstatus}")
+            end
+            
+            if exit_status.exitstatus == 0 then
                if log != nil then
-                  msg = "[DEC_130] #{interface} I/F: event #{eventName.downcase} => #{cmd}"
-                  if output != "" then
-                     log.info("#{msg} => #{output.chop}")
-                  else
-                     log.info(msg)
-                  end
+                  log.info("[DEC_130] #{interface} I/F: event completed #{eventName.downcase} => #{cmd}")
+#                  if output != "" then
+#                     log.info("#{msg} => #{output.chop}")
+#                  else
+#                     log.info(msg)
+#                  end
                end
             else
                if log != nil then
-                  log.error("[DEC_XXX] #{interface} I/F: EventManager failed execution of #{cmd}")
+                  log.error("[DEC_750] #{interface} I/F: EventManager failed execution of #{cmd} / #{$?.exitstatus}")
                end
             end
          else
@@ -138,7 +167,7 @@ class EventManager
 
    def exec_trigger(intray, eventName, cmd, params = nil, log = nil)
 
-      @isDebugMode = true
+      # @isDebugMode = true
 
       filename    = nil
       directory   = nil
@@ -147,7 +176,11 @@ class EventManager
       if params != nil then
          filename    = params["filename"]
          directory   = params["directory"]
-         pathfile    = "#{directory}/#{filename}"
+         if directory[-1,1] != "/" then
+            pathfile    = "#{directory}/#{filename}"
+         else
+            pathfile    = "#{directory}#{filename}"
+         end
       end
 
       # --------------------------
@@ -197,15 +230,16 @@ class EventManager
                   
             msg = "[DEC_131] Intray #{intray}: event #{eventName.downcase} => #{cmd}"
                   
-            if output != "" then
-               log.info("#{msg} => #{output.chop}")
-            else
-               log.info(msg)
-            end
+#            if output != "" then
+#               log.info("#{msg} => #{output.chop}")
+#            else
+#               log.info(msg)
+#            end
          end
       else
          if log != nil then
-            log.error("[DEC_XXX] Intray #{intray}: EventManager failed execution of #{cmd}")
+            log.error("[DEC_750] Intray #{intray}: EventManager failed execution of #{cmd}")
+            log.debug("#{cmd} / #{$?.exitstatus} / #{output}")
          end
       end
 
@@ -213,11 +247,6 @@ class EventManager
    end
    ## -----------------------------------------------------------
    
-   ## Set debug mode on
-   def setDebugMode
-      @isDebugMode = true
-   end
-   ## -----------------------------------------------------------
 
 private
 

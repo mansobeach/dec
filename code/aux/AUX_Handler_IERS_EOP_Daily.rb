@@ -8,24 +8,26 @@
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: AUX_Hander_IERS_Leap_Second.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+### Git: $Id: AUX_Hander_IERS_EOP_Daily.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
 ###
 ### Module AUX management
 ### 
 ###
 #########################################################################
 
-### IERS Bulletin-C / Leap Second TAI-UTC
+### http://hpiers.obspm.fr/eoppc/bul/bulb/explanatory.html
+
+### IERS (Bulletin-A) / Earth Orientation Parameters (EOP) Daily
 
 ### MMM_SS_L_TTTTTT_yyyymmddThhmmss_YYYYMMDDTHHMMSS_ YYYYMMDDTHHMMSS_<instance ID>_GGG_<class ID>.<extension>
 ###
 ### MISSION:
 ### MMM     S3_      for both Sentinel 3A and 3B
 ### 
-### FILETYPE: GN_1_LSC_AX
+### FILETYPE: GN_1_EOP_AX
 ### SS      GN       Data consumer: GNSS
 ### L       1        for Level-1
-### TTTTT   LSC_AX   Data Type ID; Leap Seconds Auxiliary Data
+### TTTTT   EOP_AX   Data Type ID; Leap Seconds Auxiliary Data
 ###
 ### START VALIDITY:
 ### yyyymmddThhmmss  Validity start time of the data contained in the file, in CCSDS compact format
@@ -44,16 +46,20 @@
 ###
 ### <extension>      SEN3  Sentinel-3
 ###
-### S3__GN_1_LSC_AX_20000101T000000_20130101T000000_20120901T030000___________________USN_O_NR_POD.SEN3
+### S3__GN_1_EOP_AX_20000101T000000_20130101T000000_20120901T030000___________________USN_O_NR_POD.SEN3
 ###
 
+require 'cuc/Converters'
 require 'aux/Aux_Handler_Generic'
+
 
 module AUX
 
-AUX_Pattern_IERS_Leap_Second = "leap_second.*"
+AUX_Pattern_IERS_EOP_Daily = "finals2000A.daily"
 
-class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
+class AUX_Handler_IERS_EOP_Daily < AUX_Handler_Generic
+   
+   include CUC::Converters
    
    ## -------------------------------------------------------------
       
@@ -63,26 +69,20 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
       @target = target
       # puts "AUX_Handler_IERS_Leap_Second::initialize"
       super(full_path, dir, isDebug)
-      
-      @input_file_pattern  = "leap_second"
-      @strValidityStart    = ""
-      @strValidityStop     = ""
-      
+            
       if target.upcase == "S3" then
          @mission    = "S3_"
-         @fileType = "GN_1_LSC_AX"
+         @fileType = "GN_1_EOP_AX"
       end
       
       if target.upcase == "POD" then
          @mission    = "POD"
-         @fileType = "AUX_LSC_AX"
+         @fileType = "AUX_EOP_AX"
       end
-
-      @input_file_pattern = "leap_second"
 
       @instanceID = "____________________USN_O_NR_POD"
       @extension  = "SEN3"
-   end   
+   end
    ## -------------------------------------------------------------
    
    ## Set the flag for debugging on
@@ -92,7 +92,7 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
    ## -------------------------------------------------------------
    
    def rename
-      @strCreationDate  = self.getCreationDate
+      @strCreationDate  = self.getCreationDateNow
       @newName          = "#{@mission}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@strCreationDate}_#{@instanceID}.#{@extension}"
       super(@newName)
       return @full_path_new
@@ -108,9 +108,6 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
 
 private
 
-   @listFiles = nil
-   @mailer    = nil
-
    ## -----------------------------------------------------------
    
    ## -----------------------------------------------------------
@@ -125,33 +122,20 @@ private
    ## -------------------------------------------------------------
 
    def parse
+      mjdStart = nil
+      mjdStop  = nil
+      bFirst   = true
       File.readlines(@full_path).each do |line|
-         
-         # Read validity stop
-         if line.include?("File expires on") == true then
-            fields   = line.split(" ")
-            day      = fields[4]
-            month    = Date::MONTHNAMES.index(fields[5]).to_s.rjust(2, "0") 
-            year     = fields[6]
-            @strValidityStop = "#{year}#{month}#{day}T000000"
-            if @isDebugMode == true then
-               puts "Validity Stop: #{@strValidityStop}"
-            end
+         if bFirst == true then
+            bFirst   = false
+            mjdStart = line.slice(6, 9).to_f
          end
-         
-         # Read first line of data to get validity start
-         if line[0] != "#" then
-            fields = line.split(" ")
-            day      = fields[1].to_s.rjust(2, "0")
-            month    = fields[2].to_s.rjust(2, "0")
-            year     = fields[3]
-            @strValidityStart = "#{year}#{month}#{day}T000000"
-            if @isDebugMode == true then
-               puts "Validity Start: #{@strValidityStart}"
-            end            
-            break
-         end
-      end
+         mjdStop = line.slice(6, 9).to_f
+      end   
+      
+      @strValidityStart = strMJD2Date(mjdStart)
+      @strValidityStop  = strMJD2Date(mjdStop)
+      return
    end
    ## -------------------------------------------------------------
       

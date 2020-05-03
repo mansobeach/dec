@@ -47,7 +47,6 @@ end
 
 class ReceivedFile < ActiveRecord::Base
    belongs_to  :interface
-   # attr_accessor :filename, size, reception_date, protocol
 end
 
 ## ===================================================================

@@ -12,6 +12,49 @@
          <DownloadDirs>
             <Directory DepthSearch="0">tmp</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SCIHUB</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_scihub</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/02/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/03/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/04/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/05/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/06/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/07/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/08/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/09/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/10/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/11/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2A/2020/12/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/02/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/03/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/04/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/05/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/06/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/07/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/08/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/09/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/10/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/11/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2020/12/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
       </Interface>
 
       <Interface>
@@ -20,6 +63,13 @@
          <DownloadDirs>
             <Directory DepthSearch="0">tmp</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
       </Interface>
 
       <Interface>
@@ -28,6 +78,13 @@
          <DownloadDirs>
             <Directory DepthSearch="0">tmp</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
       </Interface>
 
       <Interface>
@@ -36,6 +93,13 @@
          <DownloadDirs>
             <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_notsecure/download</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
       </Interface>
       
       <Interface>
@@ -44,6 +108,13 @@
          <DownloadDirs>
 		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure/download</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
       </Interface>      
             
       <Interface>
@@ -52,6 +123,13 @@
          <DownloadDirs>
 		      <Directory DepthSearch="0">/tmp/dec_simul_if/filesystem/download</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
       </Interface>
 
       <Interface>
@@ -61,6 +139,13 @@
 		      <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3a/2020</Directory>
             <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3b/2020</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
       </Interface>
 
       <Interface>
@@ -69,6 +154,13 @@
          <DownloadDirs>
 		      <Directory DepthSearch="0">/pub/warehouse/2020/RSGA</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
       </Interface>
       
       <Interface>
@@ -78,18 +170,32 @@
 		      <Directory DepthSearch="0">products/eop/rapid/standard</Directory>
             <Directory DepthSearch="0">products/eop/rapid/daily</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
       </Interface>
       
       <Interface>
          <Name>IGS</Name>
          <LocalInbox>/tmp/dec/if_igs_in_basket</LocalInbox>
          <DownloadDirs>
-            <!--
+            
 		      <Directory DepthSearch="0">/pub/gps/products/latest/final</Directory>
-            -->
+            
             <!-- GPS Messages -->
             <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
       </Interface>
 
       <Interface>
@@ -98,6 +204,13 @@
          <DownloadDirs>
 		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
       </Interface>
 
       <Interface>
@@ -106,6 +219,13 @@
          <DownloadDirs>
             <Directory DepthSearch="0">/tmp/aux_tmp</Directory>
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>true</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
       </Interface>
 
       <Interface>
@@ -113,7 +233,14 @@
          <LocalInbox>/tmp/dec/publish/pod</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">/tmp/dec_local_dissemination/pod</Directory>
-         </DownloadDirs>
+         </DownloadDirs>         
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>true</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
       </Interface>
        
       
@@ -183,16 +310,31 @@
          </FromList>
       </File>
 
+
 <!--
 
-      <File Type="ig??????.sp3*">
+igswwwwd.sp3
+
+https://cddis.nasa.gov/Data_and_Derived_Products/GNSS/gnss_igsclk5.html
+
+WWWW/igsWWWWD.clk.Z
+
+> WWWW   GPS week
+> D      day of week (0-6, 7 indicates weekly)
+
+
+-->
+
+
+
+      <File Type="igs?????.*">
          <Description>International GPS Service / GPS Orbits igswwwwd.sp3.Z</Description>
          <FromList>
             <Interface>IGS</Interface>
          </FromList>
       </File>
 
--->
+
 
       <File Type="ig??????.clk_30s*">
          <Description>International GPS Service / GPS Clocks igswwwwd.sp3.Z</Description>
@@ -234,6 +376,7 @@
          <FromList>
             <Interface>LOCALHOST_SECURE</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
+            <Interface>SCIHUB</Interface>
          </FromList>
       </File>
 
@@ -275,13 +418,19 @@
       <ListIntrays>
 
          <Intray>
+            <Name>DIAS</Name>
+            <Directory>/tmp/dec_final_dissemination/DIAS/</Directory>
+         </Intray>
+
+
+         <Intray>
             <Name>FINAL_S3</Name>
-            <Directory>/tmp/dec_final_dissemination/S3</Directory>
+            <Directory>/tmp/dec_final_dissemination/S3/</Directory>
          </Intray>
 
          <Intray>
             <Name>ARCHIVE</Name>
-            <Directory>/tmp/dec_final_dissemination/archive</Directory>
+            <Directory>/tmp/dec_final_dissemination/archive/</Directory>
             <!--
             <Compress>7z</Compress>
             -->
@@ -289,8 +438,10 @@
 
          <Intray>
             <Name>S3_IN</Name>
-            <Directory>/tmp/dec_local_dissemination/S3</Directory>
+            <Directory>/tmp/dec_local_dissemination/S3/</Directory>
+            <!--
             <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
+            -->
          </Intray>
 
          <Intray>
@@ -329,6 +480,15 @@
             <Name>DEC_REPORTS_GRAVEYARD</Name>
             <Directory>/tmp/dec_local_dissemination/DEC_Reports_Graveyard</Directory>
          </Intray>
+ 
+         <Intray>
+            <Name>POD_IN</Name>
+            <Directory>/tmp/dec_tmp/dec/out_basket_pod_push/http</Directory>
+            <!--
+            <Execute>decSend2Interface -m POD_PUSH</Execute>
+            -->
+         </Intray>
+
       
                 
       </ListIntrays>
@@ -341,6 +501,21 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+
+         <File Type="S2?_*OPENHUB*.csv">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>DIAS</Intray>
+            </ToList>
+         </File>
+
+
+         <File Type="igs?????.*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>POD_IN</Intray>
+            </ToList>
+         </File>
 
          <File Type="S3__GN_1_LSC_AX*">
             <HardLink>false</HardLink>
