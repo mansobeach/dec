@@ -1,3 +1,14 @@
+
+Image Docker
+============
+https://hub.docker.com/_/httpd
+
+
+Container
+=========
+docker run -dit --name my-apache-app -p 8080:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+
 Log files
 =========
 
@@ -13,6 +24,11 @@ Check the configuration
 
 /usr/local/etc/httpd/httpd.conf
 
+
+
+Modules
+=======
+> dir_module used by DEC for push
 
 
 
