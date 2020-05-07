@@ -101,6 +101,12 @@ module DEC
       path = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       
       arrConfigFiles.each{|config|
+      
+         if File.exist?("#{destination}/#{config}") == true then
+            puts "File #{destination}/#{config} exists already / please backup first #{'1F47A'.hex.chr('UTF-8')}"
+            next
+         end
+      
          if File.exist?("#{path}/#{config}") == true then
             FileUtils.cp("#{path}/#{config}", "#{destination}/#{nodename}##{config}")
             FileUtils.ln_s("#{destination}/#{nodename}##{config}","#{destination}/#{config}")
@@ -129,7 +135,7 @@ module DEC
 
       decConfig   = DEC::ReadConfigDEC.instance
       inventory   = decConfig.getInventory
-   
+         
       if !ENV['DEC_DB_ADAPTER'] then
          ENV['DEC_DB_ADAPTER'] = inventory[:db_adapter]
       end

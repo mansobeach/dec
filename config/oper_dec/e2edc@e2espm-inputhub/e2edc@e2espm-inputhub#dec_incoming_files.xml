@@ -13,6 +13,13 @@
                  <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/</Directory>
                  <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/1.nominal</Directory-->
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
       </Interface>
 
       <Interface>
@@ -22,6 +29,13 @@
                  <Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/REP_ARC_TCI</Directory>
                  <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/2.tci</Directory-->
          </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
       </Interface>
 
    </ListInterfaces>
@@ -32,7 +46,7 @@
 
    <!-- =========================================================== -->
 
-<ListFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
 
    <File Type="S2?_*">
@@ -51,7 +65,7 @@
   </File>
 
   
-</ListFiles>
+</DownloadRules>
 
    <!-- =========================================================== -->
 

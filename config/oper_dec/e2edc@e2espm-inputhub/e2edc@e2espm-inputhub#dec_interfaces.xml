@@ -26,7 +26,6 @@
       <SecureFlag>true</SecureFlag>
       <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </Server>
@@ -85,7 +84,6 @@
       <SecureFlag>true</SecureFlag>
       <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
-      <DeleteFlag>true</DeleteFlag>
       <PassiveFlag>true</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </Server>

@@ -150,6 +150,9 @@ namespace :dec do
          filename = "#{path}/#{prefix}#{file}"
          if File.exist?(filename) == true then
             cp filename, "config/#{file}"
+         else
+            puts "#{filename} not found #{'1F480'.hex.chr('UTF-8')}"
+            exit(99)
          end
       }
    end

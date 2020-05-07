@@ -4,6 +4,7 @@
       <Name>Sentinel-2 ESA - ESRIN E2ESPM</Name>
       <Id>ESA_</Id>
       <Mission>Sentinel-2</Mission>
+      <SatPrefix>S2_</SatPrefix>
    </Project>
    <Filters>
       <IncomingFilters>
@@ -43,13 +44,11 @@
       </Download>
    </Options>
 
-   <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+
    
-   <SatPrefix>S2_</SatPrefix>
    
    <!-- currently placed in DEC basket intray -->
    
-   <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
    
    <Reports>
 
@@ -68,7 +67,22 @@
          <FileType>DECUNKNOWN</FileType>
       </Report>
 
-
-
    </Reports>
+   
+   <Workflow>
+      <!-- SourceDir is not used by e2edc@e2espm-inputhub -->
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
+      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+      <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
+      <TempDir>/tmp/dec_tmp</TempDir>
+   </Workflow>   
+   
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Name>e2edc</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
+   </Inventory>
+   
 </Configuration>
