@@ -21,10 +21,10 @@ require 'fileutils'
 require 'cuc/DirUtils'
 
 require 'aux/AUX_Environment'
-require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
+require 'aux/AUX_Handler_IERS_EOP_Daily'
 
 # Select a single test of the suite
 

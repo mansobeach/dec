@@ -137,7 +137,9 @@ class FileDeliverer2InTrays
                end
             else
                # @logger.warn("#{file} has no In-Tray config")
-               @logger.debug("#{file} has no In-Tray config")
+               if @isDebugMode == true then 
+                  @logger.debug("#{file} has no In-Tray config")
+               end
             end            
             
             
@@ -235,7 +237,9 @@ class FileDeliverer2InTrays
          end
       else
          # @logger.warn("#{file} has no In-Tray config")
-         @logger.debug("#{file} has no In-Tray config")
+         if @isDebugMode == true then
+            @logger.debug("#{file} has no In-Tray config")
+         end
       end            
 
       if dimsDirs.empty? == false then
@@ -290,13 +294,10 @@ class FileDeliverer2InTrays
          else
             @logger.warn("[DEC_331] #{file} is stuck in #{directory} directory")
          end       
-      else
-         # @logger.warn("#{file} is not disseminated to any In-Tray")
-         @logger.debug("#{file} is not disseminated to any In-Tray")
-         # @logger.warn("#{file} is still placed in #{directory}")
-         @logger.debug("#{file} is still placed in #{directory}")
+      else         
          if @isDebugMode == true then
             @logger.debug("#{file} is not disseminated to any Intray")
+            @logger.debug("#{file} is still placed in #{directory}")
          end
       end
    end

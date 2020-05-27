@@ -50,7 +50,7 @@
 ###
 
 require 'cuc/Converters'
-require 'aux/Aux_Handler_Generic'
+require 'aux/AUX_Handler_Generic'
 
 
 module AUX

@@ -79,6 +79,9 @@ This section contains the cheat-list of commands to handle docker *containers*.
 -	Save a Container into an Image  
 	`docker container commit --author "BOLF" dec app_dec:latest`
 
+-  Remove containers completed
+   `docker container prune --filter "until=24h"`
+
 ---
 
 ### Execution

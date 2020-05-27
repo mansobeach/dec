@@ -16,8 +16,10 @@ FROM ruby:2.6
 RUN apt-get update && \
     apt-get install -y apt-utils && \
     apt-get install -y --no-install-recommends \
+    supervisor \
     build-essential \
     net-tools \
+    libxml2 \
     xml-twig-tools \
     gnupg \
     net-tools \
@@ -27,6 +29,7 @@ RUN apt-get update && \
     sqlite3 \
     libsqlite3-dev \
     exiftool \
+    ncftp \
     curl \
     lsof
 RUN apt-get update \
@@ -41,38 +44,35 @@ RUN apt-get update && \
 # ------------------------------------------------
 RUN groupadd -g 10001 e2edc && \
     useradd -u 10001 -ms /bin/bash -g e2edc -d /home/e2edc e2edc
-# ------------------------------------------------    
+# ------------------------------------------------
+COPY ./scripts/entrypoint_dec.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_dec.sh /    
+# ------------------------------------------------
 RUN gem update
-COPY Gemfile .
-RUN bundle install
+# ------------------------------------------------
 COPY ./gems/dec.gem .
-RUN gem install --local dec.gem
+RUN gem install dec.gem
 # ------------------------------------------------
+COPY ./gems/aux.gem .
+RUN gem install aux.gem
 # ------------------------------------------------
+# Patch log4r
+COPY ./patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10/lib/log4r/outputter/
 # ------------------------------------------------
 RUN service postgresql start
 # ------------------------------------------------
 USER postgres
 RUN    /etc/init.d/postgresql start &&\
-    psql --command "CREATE USER e2edc WITH SUPERUSER PASSWORD 'e2edc';"
+    psql --command "CREATE USER e2edc WITH SUPERUSER PASSWORD 'e2edc';" &&\
+    createdb -O e2edc e2edc
 USER e2edc
-ENV   DEC_BASE=/home/e2edc/Projects/dec && \
-      DEC_CONFIG=/volumes/dec/config && \
-      DEC_DB_ADAPTER=postgresql && \
-      DEC_DATABASE_NAME=e2edc && \
-      DEC_DATABASE_USER=e2edc && \
-      DEC_DATABASE_PASSWORD=e2edc && \
-      DEC_DELIVERY_ROOT=$HOME/Sandbox/dec/delivery_root && \
-      DEC_TMP=/volumes/dec/tmp && \
-      HOSTNAME=dec && \
-      GEM_HOME=/usr/local/bundle && \
-      PATH="/usr/local/bundle/bin:${PATH}"
-RUN   mkdir -p /home/e2edc/.ssh && \
-      mkdir -p /home/e2edc/Projects/dec/config
-COPY ./oper/e2edc_e2espm_esrin* /tmp/
-COPY ./keys/* /home/e2edc/.ssh/
-COPY profile_dec_postgres /home/e2edc
-#RUN createdb dec -O e2edc e2edc
+ENV   HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}" ####"
+# ------------------------------------------------
+# Initialise DEC
+RUN decManageDB -c
+RUN decConfigInterface2DB -p EXTERNAL
+# ------------------------------------------------
+#
 EXPOSE 5432
 # Execution entry point
-#CMD ["decListener", "-s"]
+ENTRYPOINT ["/usr/bin/entrypoint_dec.sh"]

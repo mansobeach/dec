@@ -32,6 +32,7 @@ module DEC
       "1.0.14" =>    "New gems sys-filesystem and nokogiri are required\n\
           Support of HTTP(S) protocol verb PUT for push circulations\n\
           Support of HTTP(S) protocol verb GET for pull directories\n\
+          Support of HTTP(S) protocol verb HEAD for checking interface URL\n\
           dec_config.xml Inventory item added for database configuration\n\
           dec_config.xml reshuffle of some configuration items\n\
           dec_interfaces.xml configuration item DeleteFlag removed\n\

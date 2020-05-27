@@ -12,6 +12,8 @@
 #
 #########################################################################
 
+require 'curb'
+require 'uri'
 require 'net/dav'
 
 require 'ctc/WrapperCURL'
@@ -210,6 +212,30 @@ private
       else
          host = "https://#{@httpElement[:hostname]}:#{@httpElement[:port]}/"
       end
+      
+      ## Treat URL as a file
+      if path[-1, 1] != "/" then
+         
+         url = "#{host}#{path}"
+         
+         ret = Curl::Easy.http_head(url)
+
+#         if @isDebugMode == true then
+#            @logger.debug("#{url} => #{ret.status}")
+#         end
+            
+         if ret.status.include?("200") == true then      
+            if @isDebugMode == true then
+               @logger.debug("Found #{File.basename(url)}")
+            end
+            return true
+         else
+            puts "#{ret.status} / #{url}"
+            return false
+         end
+
+      end      
+      
       dav  = Net::DAV.new(host, :curl => false)
       
       ## -------------------------------

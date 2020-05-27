@@ -47,7 +47,7 @@
 ### S3__GN_1_LSC_AX_20000101T000000_20130101T000000_20120901T030000___________________USN_O_NR_POD.SEN3
 ###
 
-require 'aux/Aux_Handler_Generic'
+require 'aux/AUX_Handler_Generic'
 
 module AUX
 
