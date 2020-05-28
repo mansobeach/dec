@@ -1366,7 +1366,7 @@ private
 #      end
             
       if retVal == false then
-         @logger.error("[DEC_666]#{@entity} I/F: Could not download #{filename}")
+         @logger.error("[DEC_666] #{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination

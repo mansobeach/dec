@@ -253,9 +253,12 @@ end
 def pollInterface
    startTime = Time.new
    startTime.utc   
-   puts "Polling #{@mnemonic} I/F ..."
+   # puts "Polling #{@mnemonic} I/F ..."
    # @logger.info("Polling #{@mnemonic} I/F ...")
-   @logger.debug("Polling #{@mnemonic} I/F ...")
+   
+   if @isDebugMode == true then
+      @logger.debug("Polling #{@mnemonic} I/F ...")
+   end 
       
    if @isDebugMode == true then
       command  = %Q{decGetFromInterface --mnemonic #{@mnemonic} -D}
@@ -296,9 +299,11 @@ def pollInterface
    retVal = system(command)
       
    if retVal == true then
-      puts "Success Polling #{@mnemonic} I/F !\n\n"
+      # puts "Success Polling #{@mnemonic} I/F !\n\n"
       # @logger.info("Success Polling #{@mnemonic} I/F !")
-      @logger.debug("Success Polling #{@mnemonic} I/F !")
+      if @isDebugMode == true then
+         @logger.debug("Success Polling #{@mnemonic} I/F !")
+      end
    else
       puts "ERROR Polling #{@mnemonic} I/F !\n\n"
       @logger.error("Could not Poll #{@mnemonic} I/F !")

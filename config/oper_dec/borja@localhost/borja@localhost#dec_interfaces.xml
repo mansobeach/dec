@@ -549,9 +549,11 @@
     </Notify>
     <Events>
     
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="decSend2Interface -m POD_PUSH"/>
+         
                   
          <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="decSend2Interface -m POD_PUSH"/>
          
          <Event Name="OnReceiveNewFile"        executeCmd="uncompress -f %F" /> 
          <Event Name="OnReceiveNewFile"        executeCmd="uncompress %F" />    
@@ -656,7 +658,7 @@
     <Server>
       <Protocol>HTTP</Protocol>
       <Hostname>hpiers.obspm.fr</Hostname>
-	   <Port>80</Port>
+	   <Port>443</Port>
       <User></User>
       <Pass></Pass>
       <RegisterContentFlag>false</RegisterContentFlag>

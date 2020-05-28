@@ -136,9 +136,9 @@ class FileDeliverer2InTrays
                   }
                end
             else
-               # @logger.warn("#{file} has no In-Tray config")
+               # @logger.warn("#{file} has no InTray config")
                if @isDebugMode == true then 
-                  @logger.debug("#{file} has no In-Tray config")
+                  @logger.debug("#{file} has no InTray config")
                end
             end            
             
@@ -236,9 +236,9 @@ class FileDeliverer2InTrays
             }
          end
       else
-         # @logger.warn("#{file} has no In-Tray config")
+         # @logger.warn("#{file} has no InTray config")
          if @isDebugMode == true then
-            @logger.debug("#{file} has no In-Tray config")
+            @logger.debug("#{file} has no InTray config")
          end
       end            
 
@@ -301,7 +301,7 @@ class FileDeliverer2InTrays
          end
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
 private
 

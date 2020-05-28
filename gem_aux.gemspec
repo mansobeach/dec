@@ -11,8 +11,7 @@ Gem::Specification.new do |s|
   
   s.files       = Dir['code/aux/*.rb'] + \
                   Dir['code/cuc/DirUtils.rb'] + \
-                  Dir['code/cuc/Converters.rb'] + \
-                  Dir['install/orc_test.bash']
+                  Dir['code/cuc/Converters.rb']
 
 
   s.require_paths = ['code', 'code/aux']

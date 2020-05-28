@@ -66,8 +66,8 @@ RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER e2edc WITH SUPERUSER PASSWORD 'e2edc';" &&\
     createdb -O e2edc e2edc
 USER e2edc
-ENV   HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}" ####"
-# ------------------------------------------------
+ENV   HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
+# "------------------------------------------------
 # Initialise DEC
 RUN decManageDB -c
 RUN decConfigInterface2DB -p EXTERNAL

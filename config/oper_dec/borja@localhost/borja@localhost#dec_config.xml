@@ -84,7 +84,7 @@
       <SourceDir>/tmp/dec_delivery_root</SourceDir>
       <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
       <ReportDir>/tmp/dec/in_basket_if_localhost_notsecure</ReportDir>
-      <TempDir>/tmp/dec_tmp</TempDir>
+      <TempDir>/tmp/dec/tmp</TempDir>
    </Workflow>
 
    <Inventory>
