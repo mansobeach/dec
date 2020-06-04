@@ -411,8 +411,8 @@ class DEC_ReceiverFromInterface
          begin         
             entries = @ftp.list
          rescue Exception => e
-            @logger.error("Failed to get list of files / FTP passive mode is #{@ftp.passive}")
-            @logger.error(e.to_s)
+            @logger.error("[DEC_615] I/F #{@entity}: Failed to get list of files / FTP passive mode is #{@ftp.passive}")
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
@@ -555,14 +555,28 @@ class DEC_ReceiverFromInterface
          # ---------------------------------------
          
          begin
+
             bFound = false
-            
+
             ret = Curl::Easy.http_head(url)
 
             if @isDebugMode == true then
                @logger.debug("#{url} => #{ret.status}")
             end
+                        
+            ## -----------------------------------
+            ## Permanent re-direction
+            if ret.status.include?("301") == true then               
+               new_url = ret.header_str.split("Location:")[1].split("\n")[0].gsub(/\s+/, "")
+               @newArrFile << new_url
+               bFound = true
+               if @isDebugMode == true then
+                  @logger.debug("Found #{File.basename(new_url)}")
+               end
+            end
             
+            ## -----------------------------------
+                        
             if ret.status.include?("200") == true then
                @newArrFile << url
                bFound = true
@@ -1221,7 +1235,11 @@ private
 
       # @logger.debug(http.code)
 
-      filename = getFilenameFromFullPath(url)
+      # puts url
+      # filename = getFilenameFromFullPath(url)
+      
+      filename = File.basename(url)
+      
       aFile = File.new(filename, "wb")
       # aFile.write(http.body)
       aFile.write(http.body_str)
@@ -1395,7 +1413,6 @@ private
          ##
          ## ------------------------------------------------
                   
-
          if size.to_i == 0 then
             return true
          end

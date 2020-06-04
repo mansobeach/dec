@@ -641,7 +641,68 @@
     </ContactInfo>
   </Interface>
 
-  <!-- ================================================================ -->
+   <!-- ================================================================ -->
+
+  <Interface Name="ECDC">
+    <Desc>European Centre for Disease Prevention and Control</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>opendata.ecdc.europa.eu</Hostname>
+	   <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="mv /tmp/dec/in_basket_if_ecdc/csv /tmp/dec/in_basket_if_ecdc/&quot;$(date +&quot;%Y%m%d_covid-19.csv&quot;)&quot;" />
+         
+         <!--
+         
+                  <Event Name="OnReceiveNewFile"        executeCmd="mv -f %F &quot;$(date +&quot;%y%m%d_covid-19.csv&quot;)&quot;" />
+
+         <Event Name="NewFile2InTray"          executeCmd="mv -f %F -d /tmp/dec/publish/covid-19/" />
+
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
 
   <Interface Name="LEAP">
     <Desc>IERS Mirror hpiers.obspm.fr</Desc>

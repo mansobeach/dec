@@ -90,6 +90,30 @@ require 'dec/ReadConfigIncoming'
 
 ### brew services start nginx
 
+
+### FTPS TLS / SSL
+
+## openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+
+## To configure vsftpd edit /opt/local/etc/vsftpd.conf
+## sudo port load vsftpd
+## sudo port unload vsftpd
+
+
+###
+### Securing FTP with TLS
+### https://tools.ietf.org/html/rfc4217
+###
+
+### http://tomatousb.org/forum/t-274551
+
+### > http://jiraesa.s2pdgs.com/browse/CS-295
+
+### > curl -k -ssl -u dec ftps://localhost
+
+### > curl -k -ssl -u ops2pdgs ftps://131.176.236.160:990//s2/ai-storage/tmp/
+### > lftp -d -u ops2pdgs,**** ftps://pac1ai1.pac1.s2pdgs.esa.int 990 -e 'put /s2/ai-storage/DC_BASKET/AI2AI_LOCAL_EPA_2/S2B_OPER_MSI_L1B_GR_VGS2_20200514T120556_S20200514T094506_D08_N39.99.tar'
+
 class DECTestCase < Test::Unit::TestCase
 
    include CUC::DirUtils

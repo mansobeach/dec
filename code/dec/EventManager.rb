@@ -125,7 +125,7 @@ class EventManager
                log.debug("Executing command #{cmd}")
             end
             
-            log.info("[DEC_130] #{interface} I/F: event triggered #{eventName.downcase} => #{cmd}")
+            log.info("[DEC_130] I/F #{interface}: event triggered #{eventName.downcase} => #{cmd}")
             
             exit_status = nil
             
@@ -146,7 +146,7 @@ class EventManager
             
             if exit_status.exitstatus == 0 then
                if log != nil then
-                  log.info("[DEC_130] #{interface} I/F: event completed #{eventName.downcase} => #{cmd}")
+                  log.info("[DEC_130] I/F #{interface}: event completed #{eventName.downcase} => #{cmd}")
 #                  if output != "" then
 #                     log.info("#{msg} => #{output.chop}")
 #                  else
@@ -155,7 +155,7 @@ class EventManager
                end
             else
                if log != nil then
-                  log.error("[DEC_750] #{interface} I/F: EventManager failed execution of #{cmd} / #{$?.exitstatus}")
+                  log.error("[DEC_750] I/F #{interface}: EventManager failed execution of #{cmd} / #{$?.exitstatus}")
                end
             end
          else

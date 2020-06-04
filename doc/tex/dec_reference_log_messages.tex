@@ -207,6 +207,7 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 	\item \textbf{[DEC\_612]} I/F "interface": Cannot reach directory defined in any of the the \hyperref[DownloadDirs]{"DownloadDirs"}
 	\item \textbf{[DEC\_613]} I/F "interface": server message associated to the failure associated to the change of directory
 	\item \textbf{[DEC\_614]} I/F "interface": Cannot GET "URL"
+	\item \textbf{[DEC\_615]} I/F "interface": Failed to get list of files / FTP passive mode is "mode"
 	\item \textbf{[DEC\_620]} I/F "interface": Could not copy "file" into local
 "directory"
 	\item \textbf{[DEC\_625]} Dissemination failure of "file" into intray
@@ -256,9 +257,13 @@ The information replied by the server when error condition \hyperref[DEC612]{[DE
 [DEC_613] LOCALHOST I/F: 550 Can't change directory to /a/if/local/: No such file or directory
 \end{verbatim}
 
-\subsection{[DEC\_614] Cannot Get URL}
 \label{DEC614}
+\subsection{[DEC\_614] Cannot Get URL}
 Failed to get the URL associated to one \textit{Directory} of the \hyperref[DownloadDirs]{"DownloadDirs"} of a given interface when using the HTTP protocol.
+
+\label{DEC615}
+\subsection{[DEC\_615] Failed to list files with FTP}
+In practical terms, this is a failure when performing the FTP command list to obtain the list of files available in a given directory.
 
 \subsection{[DEC\_620] Downloaded File not Copied into Final Dir}
 \label{DEC620}

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+[ "$DEBUG" == 'true' ] && set -x
+
 decListener -m ISLR -i 3600
 
 decListener -m IGS -i 3600
@@ -8,6 +10,8 @@ decListener -m IGS -i 3600
 decListener -m IERS -i 3600
 
 decListener -m SCIHUB -i 86400
+
+decListener -m ECDC -i 86400 --nodb --no-intray
 
 decListener -m NOAA -i 3600
 
