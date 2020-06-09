@@ -9,6 +9,7 @@
       <xs:enumeration value="FTP"/>
       <xs:enumeration value="SFTP"/>
       <xs:enumeration value="FTPS"/>
+      <xs:enumeration value="FTPES"/>
       <xs:enumeration value="LOCAL"/>
       <xs:enumeration value="HTTP"/>
       <xs:enumeration value="WEBDAV"/>

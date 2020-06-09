@@ -24,7 +24,7 @@ RUN set -x \
 
 RUN set -x \
   && apt-get update \
-  && apt-get install -y --no-install-recommends vsftpd db-util curl ftp ncftp whois \
+  && apt-get install -y --no-install-recommends libxml2 vsftpd db-util curl ftp ncftp whois \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   ;
@@ -43,7 +43,7 @@ COPY ./config/ftp_banner /etc/vsftpd/
 
 COPY ./scripts/entrypoint_dec_vsftpd.sh /
 
-EXPOSE 20 21 990 4559 4560 4561 4562 4563 4564
+EXPOSE 20 21 990 30200-30300
 
 ENTRYPOINT ["/entrypoint_dec_vsftpd.sh"]
 

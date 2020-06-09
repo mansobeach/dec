@@ -18,5 +18,7 @@ sudo docker container run --name dec_ftp -p 21:21 -p 30200-30300:30200-30300 -it
 
 sudo docker container exec -i -t dec_ftp /bin/bash
 
+## ---------------------------------------------------------
+
 
 

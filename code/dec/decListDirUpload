@@ -43,7 +43,7 @@ require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
-require 'dec/LocalInterfaceHandler'
+require 'dec/InterfaceHandlerLocal'
                                    
 ## MAIN script function
 def main
@@ -187,7 +187,7 @@ def main
    
    # ---------------------------------------------
    if entConf[:protocol].upcase == "LOCAL" then
-      handler = LocalInterfaceHandler.new(@entity)
+      handler = InterfaceHandlerLocal.new(@entity)
       
       list = handler.getUploadDirList
       

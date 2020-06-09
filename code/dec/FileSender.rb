@@ -14,19 +14,18 @@
 
 require 'net/ssh'
 require 'net/sftp'
-require 'ftpfxp'
 require 'fileutils'
 
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
-require 'ctc/WrapperCURL'
 require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'dec/InterfaceHandlerLocal'
+require 'dec/InterfaceHandlerHTTP'
 
-module CTC
+module DEC
 
- # Module Common Transfer Component
+ # Module Data Exchange Component
  # This class performs the file(s) delivery.
  #
  # This class provides methods for sending files to entities using various protocols.
@@ -38,10 +37,10 @@ class FileSender
    # -------------------------
    # Mixins includes
    include CTC::FTPClientCommands
-   include CTC::WrapperCURL
    include CTC   
    include CUC::DirUtils
    include CUC::CommandLauncher
+   include DEC
    # -------------------------
 
    attr_reader :fileList
@@ -68,15 +67,21 @@ class FileSender
       @dynamic          = false
       @mirroring        = false
       @prefix           = ''
+      @handler          = nil
       
+      ## ---------------------------------------------------
       if @protocol == 'LOCAL' then
          #false stands for use DCC; true stands for use DDC
          @local = DEC::InterfaceHandlerLocal.new(@entity, false, true, false)
       end
+      ## ---------------------------------------------------
       
-      if @protocol == 'HTTP' then
-         buildURL
+      if @protocol == 'HTTP' or @protocol == 'WEBDAV' then
+         @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, false, true, false)
       end
+      ## ---------------------------------------------------
+      
+      
       
    end
    ## -----------------------------------------------------------
@@ -85,6 +90,10 @@ class FileSender
    def setDebugMode
       @isDebugMode = true
       @logger.debug("FileSender debug mode is on")
+      
+      if @handler != nil then
+         @handler.setDebugMode
+      end
    end
    ## -----------------------------------------------------------
 
@@ -343,12 +352,12 @@ class FileSender
          ## ===================================================
                
          when "WEBDAV" then
-            retVal = sendFileHTTP(file, bDeleteSource)
+            retVal = @handler.pushFile(file)
          
          ## ===================================================
          
          when "HTTP" then
-            retVal = sendFileHTTP(file, bDeleteSource)
+            retVal = @handler.pushFile(file)
          else
             @logger.error("protocol #{@protocol} not implemented")
             raise "protocol #{@protocol} not implemented"
@@ -576,7 +585,9 @@ private
    
       puts "xxxxxxxxxxxxxxxxxxxxxxxxxx"
       puts @pushServer[:user]
+      puts @pushServer[:user].class
       puts @pushServer[:password]
+      puts @pushServer[:password].class
       puts "xxxxxxxxxxxxxxxxxxxxxxxxxx"
    
       if @pushServer[:user] != "" and @pushServer[:password] != "" and \

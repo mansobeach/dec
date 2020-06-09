@@ -28,6 +28,10 @@ class StatisticDDC
    # Class contructor
    def initialize
       checkModuleIntegrity
+      @numFiles   = 0
+      @sumSize    = 0
+      @hours      = 0
+      @rate       = 0
    end
    ## -----------------------------------------------------------
    
@@ -60,7 +64,11 @@ class StatisticDDC
          hFile[:protocol]  = item.delivered_using
          hFile[:date]      = item.delivery_date
          arrFiles << hFile
+         @sumSize          = @sumSize + item.size
+         @numFiles         = @numFiles + 1
       }
+      
+      @rate = @sumSize / 3600.0      
 
 #      puts      
 #      puts "Last sent file #{SentFile.last.delivery_date}"
@@ -78,6 +86,17 @@ class StatisticDDC
       
    end
    
+   ## -----------------------------------------------------------
+
+   def stats
+      hStats = Hash.new
+      hStats[:numFiles] = @numFiles
+      hStats[:hours]    = @hours
+      hStats[:rate]     = "#{Filesize.from(%Q{#{@rate} B}).pretty}/s"
+      hStats[:volume]   = Filesize.from("#{@sumSize} B").pretty
+      return hStats
+   end
+
    ## -----------------------------------------------------------
 
 

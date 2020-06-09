@@ -9,7 +9,7 @@
 #
 #########################################################################
 #
-# Dockerfile for E2ESPM inputhub host @ ESRIN
+# Dockerfile for AUXIP
 #
 FROM ruby:2.6
 # ================================================
@@ -19,6 +19,8 @@ RUN apt-get update && \
     supervisor \
     build-essential \
     net-tools \
+    lftp \
+    ftp \
     libxml2 \
     xml-twig-tools \
     gnupg \
@@ -45,8 +47,8 @@ RUN apt-get update && \
 RUN groupadd -g 10001 e2edc && \
     useradd -u 10001 -ms /bin/bash -g e2edc -d /home/e2edc e2edc
 # ------------------------------------------------
-COPY ./scripts/entrypoint_dec.sh /usr/bin/
-RUN ln -s /usr/bin/entrypoint_dec.sh /    
+COPY ./scripts/entrypoint_dec_auxip.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_dec_auxip.sh /    
 # ------------------------------------------------
 RUN gem update
 # ------------------------------------------------
@@ -75,4 +77,4 @@ RUN decConfigInterface2DB -p EXTERNAL
 #
 EXPOSE 5432
 # Execution entry point
-ENTRYPOINT ["/usr/bin/entrypoint_dec.sh"]
+ENTRYPOINT ["/usr/bin/entrypoint_dec_auxip.sh"]

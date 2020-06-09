@@ -27,6 +27,10 @@ class StatisticDCC
    # Class contructor
    def initialize
       checkModuleIntegrity
+      @numFiles   = 0
+      @sumSize    = 0
+      @hours      = 0
+      @rate       = 0
    end
    # -------------------------------------------------------------
    
@@ -37,9 +41,19 @@ class StatisticDCC
    end
    # -------------------------------------------------------------
 
+   def stats
+      hStats = Hash.new
+      hStats[:numFiles] = @numFiles
+      hStats[:hours]    = @hours
+      hStats[:rate]     = "#{Filesize.from(%Q{#{@rate} B}).pretty}/s"
+      hStats[:volume]   = Filesize.from("#{@sumSize} B").pretty
+      return hStats
+   end
+
    # -------------------------------------------------------------
 
    def lastHour(iHours = 1)
+      @hours            = iHours
       lastHourFiles     = ReceivedFile.all.where('reception_date > ?', iHours.to_i.hours.ago)
       lastHourCount     = lastHourFiles.count
       lastHourSize      = lastHourFiles.sum(:size)
@@ -54,10 +68,12 @@ class StatisticDCC
          hFile[:date]      = item.reception_date
          hFile[:protocol]  = item.protocol
          hFile[:size]      = item.size
-         
          arrFiles << hFile
+         @sumSize          = @sumSize + item.size
+         @numFiles         = @numFiles + 1
       }
-            
+      
+      @rate = @sumSize / 3600.0      
       return arrFiles
       
    end

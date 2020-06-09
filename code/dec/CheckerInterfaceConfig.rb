@@ -1,29 +1,30 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #CheckerInterfaceConfig class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: CheckerInterfaceConfig.rb,v 1.8 2010/04/09 10:12:28 algs Exp $
-#
-# This class is in charge of verify that the configuration
-# for a given Interface defined dec_interfaces.xml, dec_incoming_files.xml 
-# and dec_outgoing_files.xml is correct.
-#
-# ==== This class is in charge of verify that the FTP Configuration for a 
-# ==== given I/F is correct. It performs tests connections to defined 
-# ==== directories.
-#
+##
+## === Ruby source for #CheckerInterfaceConfig class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## Git: $Id: CheckerInterfaceConfig.rb,v 1.8 2010/04/09 10:12:28 algs Exp $
+##
+## This class is in charge of verify that the configuration
+## for a given Interface defined dec_interfaces.xml, dec_incoming_files.xml 
+## and dec_outgoing_files.xml is correct.
+##
+## ==== This class is in charge of verify that the FTP Configuration for a 
+## ==== given I/F is correct. It performs tests connections to defined 
+## ==== directories.
+##
 #########################################################################
 
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'ctc/CheckerWebDAVConfig'
 require 'ctc/CheckerFTPConfig'
+require 'ctc/CheckerFTPSConfig'
 require 'ctc/CheckerHTTPConfig'
 require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
@@ -64,6 +65,7 @@ class CheckerInterfaceConfig
       @ftpSend[:uploadTemp]            = @outConf.getUploadTemp(@entity)
             
       @check4Recv = nil
+      @check4Send = nil
  
       ## -----------------------------------------
       ## Checkers for Receive / Pull      
@@ -72,6 +74,10 @@ class CheckerInterfaceConfig
          @check4Recv                      = CheckerWebDAVConfig.new(@ftpRecv, @entity)
       end
       
+      if @ftpRecv[:protocol].upcase == "FTPS" or @ftpSend[:protocol].upcase == "FTPES" then
+         @check4Recv                      = CheckerFTPSConfig.new(@ftpRecv, @entity)
+      end
+
       if @ftpRecv[:protocol].upcase == "SFTP" or @ftpRecv[:protocol].upcase == "FTP" then
          @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
       end
@@ -82,6 +88,11 @@ class CheckerInterfaceConfig
 
       ## -----------------------------------------
       ## Checkers for Send / Push      
+      
+      if @ftpSend[:protocol].upcase == "FTPS" or @ftpSend[:protocol].upcase == "FTPES" then
+         @check4Send                      = CheckerFTPSConfig.new(@ftpSend, @entity)
+      end
+            
       if @ftpSend[:protocol].upcase == "WEBDAV" then
          @check4Send                      = CheckerWebDAVConfig.new(@ftpSend, @entity)
       end
@@ -93,11 +104,20 @@ class CheckerInterfaceConfig
       if @ftpSend[:protocol].upcase == "FTP" or @ftpSend[:protocol].upcase == "SFTP" then
          @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity)
       end
-      ## -----------------------------------------
- 
+      ## -----------------------------------------      
+      
       @checkLocal4Send                 = CheckerLocalConfig.new(@ftpSend, @entity)  
       @checkLocal4Recv                 = CheckerLocalConfig.new(@ftpRecv, @entity)    
       @protocol                        = @ftReadConf.getProtocol(@entity)
+            
+      if @check4Recv == nil and @protocol != "LOCAL" then
+         raise "No pull checker for #{@protocol}"
+      end
+
+      if @check4Send == nil and @protocol != "LOCAL" then
+         raise "No push checker for #{@protocol}"
+      end
+
    end
    ## -----------------------------------------------------------
    

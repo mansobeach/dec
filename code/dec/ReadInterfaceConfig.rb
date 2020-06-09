@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ReadInterfaceConfig class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: ReadInterfaceConfig.rb,v 1.7 2008/03/27 15:52:13 decdev Exp $
-#
-# == Module Common Transfer Component
-# This class reads and decodes the interfaces configuration file 
-# dec_interfaces.xml.
-#
+##
+## === Ruby source for #ReadInterfaceConfig class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## Git: $Id: ReadInterfaceConfig.rb,v 1.7 2008/03/27 15:52:13 decdev Exp $
+##
+## == Module Common Transfer Component
+## This class reads and decodes the interfaces configuration file 
+## dec_interfaces.xml.
+##
 #########################################################################
 
 require 'singleton'
@@ -35,7 +35,7 @@ class ReadInterfaceConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @protocolArray      = ["FTP","SFTP","FTPS","LOCAL", "HTTP", "WEBDAV"]
+      @protocolArray      = ["FTP","SFTP","FTPS","FTPES","LOCAL", "HTTP", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs
       loadData
@@ -365,13 +365,13 @@ private
          end
             
               
-        @@configDirectory = configDir
+         @@configDirectory = configDir
         
-        @configFile = %Q{#{configDir}/dec_interfaces.xml}        
-        if !FileTest.exist?(@configFile) then
+         @configFile = %Q{#{configDir}/dec_interfaces.xml}        
+         if !FileTest.exist?(@configFile) then
            bCheckOK = false
            print("\n\n", @configFile, " does not exist !  :-(\n\n" )
-        end        
+         end        
       end      
       if bCheckOK == false then
         puts "ReadInterfaceConfig::checkModuleIntegrity FAILED !\n\n"
@@ -385,8 +385,26 @@ private
 	   Struct.new("Entity", :mnemonic, :description, :incomingDir,
                       :outgoingDir, :Server, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
-		Struct.new("Server", :mnemonic, :protocol, :hostname, :port, :user, :password, :isTracked, :isRetrieved, :isSecure, :verifyPeerSSL, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
-                   :uploadTemp, :arrDownloadDirs)
+                      
+		Struct.new("Server", :mnemonic, \
+                           :protocol, \
+                           :hostname, \
+                           :port, \
+                           :user, \
+                           :password, \
+                           :isTracked, \
+                           :isRetrieved, \
+                           :isSecure, \
+                           :verifyPeerSSL, \
+                           :isCompressed, \
+#                           :isDeleted, \
+                           :isPassive, \
+                           :cleanUpFreq, \
+                           :uploadDir, \
+                           :uploadTemp, \
+                           :arrDownloadDirs \
+                           )
+                           
 #		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
 #                   :user, :password, :ServerMirror, :isTracked, :isRetrieved, 
 #                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
@@ -530,7 +548,7 @@ private
                          
       return entity              
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Fill an FTPServer Struct
    # - mnemonic (IN):
@@ -727,7 +745,8 @@ private
 #                         expandPathValue(xmlstruct.elements["UploadDir"].text),
 #                         expandPathValue(xmlstruct.elements["UploadTemp"].text),
                          arrDownloadDirs
-                         )     
+                         ) 
+                                                      
       return ftpstruct      
    end
    #-------------------------------------------------------------

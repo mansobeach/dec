@@ -90,3 +90,9 @@ Delete submodule <cache>
 ========================
 
 git rm --cached code/ws23rb
+
+
+### Git differences with respect different commits
+
+git diff <commit_id> /path/filename
+

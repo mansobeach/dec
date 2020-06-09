@@ -102,6 +102,15 @@ def main
       ["--nodb", "-n",           GetoptLong::NO_ARGUMENT]
       )
 
+   self.load_config
+   
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end   
+
    begin
       opts.each do |opt, arg|
          case opt
@@ -156,13 +165,6 @@ def main
           and @bStopListeners == false and @bStopInterface == false then
       usage
       exit(66)
-   end
-
-   if self.checkEnvironmentEssential == false then
-      puts
-      self.printEnvironmentError
-      puts
-      exit(99)
    end
 
    checkModuleIntegrity

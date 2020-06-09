@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_TestCases class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# module DEC
-#
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## module DEC
+##
 #########################################################################
 
 require 'rubygems'
@@ -105,11 +105,13 @@ require 'dec/ReadConfigIncoming'
 ### https://tools.ietf.org/html/rfc4217
 ###
 
+### curl -k --ftp-ssl --insecure --user dec:dec ftp://localhost/
+
+### http://crunchtools.com/vsftpd-ssl/
+
 ### http://tomatousb.org/forum/t-274551
 
 ### > http://jiraesa.s2pdgs.com/browse/CS-295
-
-### > curl -k -ssl -u dec ftps://localhost
 
 ### > curl -k -ssl -u ops2pdgs ftps://131.176.236.160:990//s2/ai-storage/tmp/
 ### > lftp -d -u ops2pdgs,**** ftps://pac1ai1.pac1.s2pdgs.esa.int 990 -e 'put /s2/ai-storage/DC_BASKET/AI2AI_LOCAL_EPA_2/S2B_OPER_MSI_L1B_GR_VGS2_20200514T120556_S20200514T094506_D08_N39.99.tar'
@@ -343,7 +345,7 @@ class DECTestCase < Test::Unit::TestCase
                   end
                   puts "============================"
                   puts "#{filename}    => #{dir}#{filename}"
-                  cmd = "echo \'#{filename} is in da house\' > #{dir}#{filename}"
+                  cmd = "echo \'#{filename} is in da house\' > #{dir}/#{filename}"
                   puts cmd
                   system(cmd)
                   # FileUtils.chmod("a-x", "#{dir}/#{filename}")
@@ -2035,11 +2037,11 @@ class DECTestCase < Test::Unit::TestCase
    ## -------------------------------------------------------------
 
    def test_local1
-      require 'dec/LocalInterfaceHandler'
+      require 'dec/InterfaceHandlerLocal'
       
       checkDirectory("/tmp/dec_simul_if/filesystem/upload")
       
-      handler = LocalInterfaceHandler.new("FILESYSTEM")
+      handler = InterfaceHandlerLocal.new("FILESYSTEM")
       
       puts handler.getUploadDirList
       puts handler.getUploadDirList(true)
@@ -2154,10 +2156,10 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
-      
-      system("\\rm -rf /tmp/http_put/*")
-      
       checkDirectory("/tmp/http_put/tmp")
+      checkDirectory("~/tmp/http_put")
+      system("\\rm -rf ~/tmp/http_put/*")
+      system("\\rm -rf /Users/borja/tmp/http_put/*")
       
       sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
@@ -2183,8 +2185,8 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      assert(File.exist?("/tmp/http_put/tai-utc.dat"), "tai-utc.dat pushed with HTTP")
-      assert(File.exist?("/tmp/http_put/finals.7z"), "finals.7z pushed with HTTP")
+      assert(File.exist?("/Users/borja/tmp/http_put/tai-utc.dat"), "tai-utc.dat pushed with HTTP")
+      assert(File.exist?("/Users/borja/tmp/http_put/finals.7z"), "finals.7z pushed with HTTP")
 
       arr = Dir["/tmp/DEC*.log"]
       
@@ -2197,6 +2199,15 @@ class DECTestCase < Test::Unit::TestCase
    ## -------------------------------------------------------------
 
    def test_decNotify2Interface
+   
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      checkDirectory("/tmp/dec_tmp")
+   
       cmd = "decNotify2Interface -v"
       puts cmd
       assert(system(cmd), cmd)

@@ -73,9 +73,15 @@ module WrapperCURL
 
    def putFile(url, file, isDebugMode = false, logger = nil)
       
+      ## -----------------------------------------
+      ## Behaviour with WebDAVNav Server to include slash
+      ## for uploading files into a directory
       if url[-1, 1] != "/" then
          url = "#{url}/"  
       end
+      ## -----------------------------------------
+
+      
             
       cmd = "curl -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
             

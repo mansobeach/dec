@@ -2,116 +2,71 @@
 
 #########################################################################
 #
-# === Ruby source for #LocalInterfaceHandler class
+# === Ruby source for #InterfaceHandlerFTPS class
 #
-# === Written by DEIMOS Space S.L. (algk)
+# === Written by DEIMOS Space S.L. (bolf)
 #
 # === Data Exchange Component -> Data Collector Component
 # 
-# Git: $Id: LocalInterfaceHandler.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
+# Git: $Id: InterfaceHandlerFTPS.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
 #
-# Module Data Collector Component
-# This class polls a given LOCAL Interface and gets all registered available files
+# Module Interface
+# This class polls a given FTPS Interface and gets all registered available files
 #
 #########################################################################
 
-require 'cuc/Log4rLoggerFactory'
-#require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
 require 'dec/CheckerInterfaceConfig'
 
+require 'net/ftp'
 require 'fileutils'
 
 module DEC
 
-class LocalInterfaceHandler
+## https://ruby-doc.org/stdlib-2.4.0/libdoc/net/ftp/rdoc/Net/FTP.html
+
+class InterfaceHandlerFTPS
 
    ## -----------------------------------------------------------
    ##
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, bDCC=true, bDDC=true, manageDirs=false)
-      @entity     = entity
-      # initialize logger
-      
-      if !ENV['DEC_CONFIG'] then
-         puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
-      end
- 
-      configDir = nil
-         
-      if ENV['DEC_CONFIG'] then
-         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      end
-            
-      loggerFactory = CUC::Log4rLoggerFactory.new("LocalInterfaceHandler", "#{configDir}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-      if @logger == nil then
-         puts
-			puts "Error in LocalInterfaceHandler::initialize"
-			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-			puts
-			exit(99)
-      end
-
-      self.checkConfigLocal(entity, bDCC, bDDC)
-
-      #to manage whole dirs
-      @manageDirs=manageDirs
-
-     #load classes needed
+   def initialize(entity, log, bDCC=true, bDDC=true, manageDirs=false)
+      @entity     =  entity
+      @logger     =  log
+      @manageDirs =  manageDirs
+                   
       @entityConfig     = ReadInterfaceConfig.instance
-      @outConfig        = ReadConfigOutgoing.instance      
+      @outConfig        = ReadConfigOutgoing.instance
+      @inConfig         = ReadConfigIncoming.instance
+      @ftpServer        = @entityConfig.getFTPServer4Receive(@entity)
+      @ftps             = nil
       
-#       if Interface.find_by_name(@entity) == nil then
-# 	      @logger.error("[DEC_001] #{entity} is not a registered I/F !")
-#          raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
-#       end
-
+      self.checkConfig(entity, bDCC, bDDC)         
    end   
    ## -----------------------------------------------------------
    ##
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "LocalInterfaceHandler debug mode is on"
+      @logger.debug("InterfaceHandlerFTPS debug mode is on") 
    end
    ## -----------------------------------------------------------
 
-   def checkConfigLocal (entity, bDCC, bDDC)
-#       #check if I/F is correcly configured      
-#       localChecker     = CTC::CheckerLocalConfig.new(entity)     
-#       if @isDebugMode then
-#          localChecker.setDebugMode
-#       end
-# 
-#       if bDCC then
-#          retVal = localChecker.checkLocal4Receive
-#       end     
-# 
-#       if bDDC then
-#          retVal = localChecker.checkLocal4Send
-#       end
-
-       #check if I/F is correcly configured
-
-       checker     = CheckerInterfaceConfig.new(entity, bDCC, bDDC)
-       retVal      = checker.check
+   def checkConfig(entity, bDCC, bDDC)
+      checker     = CheckerInterfaceConfig.new(entity, bDCC, bDDC)
+      
+      retVal      = checker.check
  
-       if retVal == true then
-          if @isDebugMode == true then
-             @logger.debug("#{entity} I/F is configured correctly")
+      if retVal == true then
+         if @isDebugMode == true then
+            @logger.debug("#{entity} I/F is configured correctly")
  	      end
-       else	
-          @logger.error("[DEC_000] #{entity} I/F is not configured correctly")
-          raise "Error in LocalInterfaceHandler::initialize -> #{entity} I/F is not configured correctly :-("
-       end
-
+      else
+         raise "[DEC_000] I/F #{entity}: init / configuration problem"
+      end
    end
 
    ## -----------------------------------------------------------
@@ -142,48 +97,54 @@ class LocalInterfaceHandler
    end
 
    ## -----------------------------------------------------------
-   ## DCC - Pull
+   ## DEC - Pull
 
-   def getLocalList
-      @newArrFile    = Array.new      
+   def getList
       @depthLevel    = 0
-      @ftpserver     = @entityConfig.getFTPServer4Receive(@entity)
-
-      arrDownloadDirs = @ftpserver[:arrDownloadDirs]
+      pwd            = nil
+      login()
+      
+      arrFiles          = Array.new
+      arrDownloadDirs   = @inConfig.getDownloadDirs(@entity)        
+      
 
       arrDownloadDirs.each{|downDir|
          
-         @remotePath = downDir[:directory]
-         @maxDepth   = downDir[:depthSearch]
+         remotePath = downDir[:directory]
+         maxDepth   = downDir[:depthSearch]
 
          if @isDebugMode then
-            @logger.debug("Polling #{@remotePath}")
+            @logger.debug("Polling #{remotePath}")
          end
-         
-         formerDir= Dir.pwd #shuold not be necessary; safety reasons
+        
          begin
-            Dir.chdir(@remotePath)
+            @ftps.chdir(remotePath)
+            pwd = @ftps.pwd
          rescue Exception => e
-            @logger.error("[DEC_002] Directory #{@remotePath} is unreachable. Check with CheckconfigDCC.rb -e")
+            @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@remotePath} directory")
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
          end
 
-         entries  = Dir["*"].sort_by{|time| File.stat(time).mtime}
-         @pwd     = @remotePath
-         
-         entries.each{|entry|
-            exploreLocalTree(entry)
-         }
-         
-         Dir.chdir(formerDir)
+         begin
+            # items = ftps.list
+            items = @ftps.nlst
+            items.each{|file|
+               arrFiles << "#{pwd}/#{file}"
+            }
+         rescue Exception => e
+            @logger.error("[DEC_615] I/F #{@entity}: Failed to get list of files / FTPS passive mode is #{ftps.passive}")
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
+         end
+
       }
-      return @newArrFile
+      return arrFiles.flatten
    end
    ## -----------------------------------------------------------
 
-   def exploreLocalTree(relativeFile)
+   def exploreTree(relativeFile)
 
       if @isDebugMode == true then
-         @logger.debug("LocalInterfaceHandler::exploreLocalTree #{relativeFile}")
+         @logger.debug("InterfaceHandlerFTPS::exploreLocalTree #{relativeFile}")
       end
 
       # Treat normal files
@@ -199,7 +160,7 @@ class LocalInterfaceHandler
                #and the depth is okey explore dir.
                if @depthLevel < @maxDepth then
                   if @isDebugMode == true then
-                     @logger.debug("LocalInterfaceHandler::exploreLocalTree change dir to #{relativeFile}")
+                     @logger.debug("InterfaceHandlerFTPS::exploreLocalTree change dir to #{relativeFile}")
                   end 
                   #get into directory (stack recursion)
                   Dir.chdir(relativeFile)
@@ -228,26 +189,25 @@ class LocalInterfaceHandler
    end
    ## -----------------------------------------------------------
    
+   ## We are placed on the right directory (tmp dir): 
+   ##          receiveAllFiles->downloadFile->self
+   
    ## Download a file from the I/F
-   def downloadFile(filename)      
-       #we are placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
-      if File.directory?(filename) then
-         return downloadDir(filename)
-      else  
-         begin
-            FileUtils.link(filename,File.basename(filename))
-         rescue
-            if @isdebugMode then @logger.debug("Could not make a Hardlink of #{filename} to #{Dir.pwd}. Copying the file") end
-            begin
-               FileUtils.copy(filename,'.'+File.basename(filename))
-               FileUtils.move('.'+File.basename(filename), File.basename(filename))
-            rescue
-               @logger.error("[DEC_003] Error: Could not make a hardlink/copy of #{filename}")
-               if @isdebugMode then puts"Error: Could not make a copy of #{filename}" end
-               return false
-            end
-         end
+   def downloadFile(filename)
+   
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerFTPS::downloadFile(#{filename})")
       end
+      
+      login()
+      
+      @ftps.getbinaryfile(filename)
+      @ftps.close
+      
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerFTPS::downloadFile / Completed")
+      end
+
       return true
    end	
 	## -----------------------------------------------------------
@@ -280,14 +240,14 @@ class LocalInterfaceHandler
 	def deleteFromEntity(filename)
 
       if @isDebugMode == true then 
-         @logger.debug("LocalInterfaceHandler::deleteFromEntity: I/F #{@entity}")
+         @logger.debug("InterfaceHandlerFTPS::deleteFromEntity: I/F #{@entity}")
       end
 
       begin
          FileUtils.rm_rf(filename)    
       rescue
          if @isdebugMode == true then 
-            @logger.debug("[DEC_XXX] I/F #{@entity}: LocalInterfaceHandler::deleteFromEntity: Could not delete #{filename}")
+            @logger.debug("[DEC_XXX] I/F #{@entity}: InterfaceHandlerFTPS::deleteFromEntity: Could not delete #{filename}")
          end
          return false
       end
@@ -339,6 +299,59 @@ class LocalInterfaceHandler
       return true
    end
 	## -------------------------------------------------------------
+
+private
+
+   ## -------------------------------------------------------------
+   ##
+   ## Login into FTPS server 
+   
+   def login
+      host     = @ftpServer[:hostname]
+      port     = @ftpServer[:port].to_i
+      user     = @ftpServer[:user]
+      pass     = @ftpServer[:password]
+      passive  = @ftpServer[:isPassive]
+      chkSSL   = @ftpServer[:verifyPeerSSL]
+      @ftps    = nil
+      
+      begin
+         if chkSSL == true then
+            hOptions = Hash.new
+            hOptions[:ssl] = true
+            @ftps = Net::FTP.new(host,hOptions)
+         else
+            @ftps = Net::FTP.new(host, ssl: {:verify_mode => OpenSSL::SSL::VERIFY_NONE})
+         end
+      rescue Exception => e
+         if @isDebugMode == true then
+            puts
+            puts e.backtrace
+            puts
+         end
+         raise e.to_s
+      end
+
+      begin
+         @ftps.login(user, pass)
+         
+         if passive == true then
+            @ftps.passive = true
+         else
+            @ftps.passive = false
+         end
+      rescue Exception => e
+         @logger.error("[DEC_611] I/F #{@entity}: #{e.to_s}")
+         if @isDebugMode == true then
+            puts
+            puts e.backtrace
+            puts
+         end
+         raise "[DEC_611] I/F #{@entity}: #{e.to_s}"
+      end      
+        
+   end
+   ## -------------------------------------------------------------
 
 end # class
 

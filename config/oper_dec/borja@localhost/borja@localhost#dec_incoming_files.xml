@@ -25,7 +25,7 @@
          <Name>WEBDAV</Name>
          <LocalInbox>/tmp/dec/in_basket_if_webdav</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">tmp</Directory>
+            <Directory DepthSearch="0">tmp/</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
@@ -95,6 +95,24 @@
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>LOCALHOST_FTPS</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_ftps</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/tmp</Directory>
+            <Directory DepthSearch="0">/tmp/dir1/</Directory>
+            <Directory DepthSearch="0">/tmp/dir2/</Directory>
+            <Directory DepthSearch="0">/tmp/dir3/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LogDuplicated>true</LogDuplicated>
@@ -264,6 +282,14 @@
    <!-- =========================================================== -->
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+       <File Type="touch_file*">
+         <Description>test file</Description>
+         <FromList>
+            <Interface>LOCALHOST_FTPS</Interface>
+         </FromList>
+      </File>
+
   
       <File Type="test_http*.bin*">
          <Description>test file</Description>

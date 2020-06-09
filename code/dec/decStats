@@ -22,11 +22,11 @@
 #
 
 #########################################################################
-#
-# === Data Exchange Component
-#
-# Git: $Id: dccStats,v 1.15 2015/09/25 16:55:04 decdev Exp $
-#
+##
+## === Data Exchange Component
+##
+## Git: $Id: decStats,v 1.15 2015/09/25 16:55:04 decdev Exp $
+##
 #########################################################################
 
 require 'getoptlong'
@@ -144,6 +144,10 @@ def main
          @logger.info("[DEC_144] Pull #{@hours}h: #{entry}")
       }
 
+      stats = stats.stats
+
+      @logger.info("[DEC_144] Pull stats: #{JSON.generate(stats)}")
+
    end
 
    
@@ -164,6 +168,10 @@ def main
    arrJson.each{|entry|
       @logger.info("[DEC_244] Push #{@hours}h: #{entry}")
    }
+  
+   stats = stats.stats
+
+   @logger.info("[DEC_244] Push stats: #{JSON.generate(stats)}")
   
    exit(0)
 

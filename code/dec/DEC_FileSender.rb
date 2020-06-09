@@ -21,12 +21,12 @@
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/EE_ReadFileName'
-require 'ctc/FileSender'
 require 'ctc/ListWriterDelivery'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/DEC_Environment'
+require 'dec/FileSender'
 
 module DEC
 
@@ -88,7 +88,7 @@ class DEC_FileSender
       @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
       @protocol      = @ftpserver[:protocol]     
-      @sender        = CTC::FileSender.new(@entity, @ftpserver, @protocol, @logger)
+      @sender        = DEC::FileSender.new(@entity, @ftpserver, @protocol, @logger)
             
       if isDebug == true then
          self.setDebugMode

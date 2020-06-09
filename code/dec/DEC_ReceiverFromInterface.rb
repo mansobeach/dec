@@ -29,6 +29,7 @@
 require 'rubygems'
 require 'curb'
 require 'uri'
+require 'net/ftp'
 require 'net/http'
 require 'net/ssh'
 require 'net/sftp'
@@ -44,7 +45,8 @@ require 'ctc/ListWriterUnknown'
 require 'ctc/ListWriterDelivery'
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
-require 'dec/LocalInterfaceHandler'
+require 'dec/InterfaceHandlerLocal'
+require 'dec/InterfaceHandlerFTPS'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
@@ -217,14 +219,31 @@ class DEC_ReceiverFromInterface
             
          # ---------------------------------------
          
-         when "FTPS"  
-            
-            puts "FTPS not integrated yet from ALGK"
-            puts
-            puts "DEC_ReceiverFromInterface::check4NewFiles"
-            puts
-            exit(99)
+         when "FTPS"
          
+            begin
+               
+               @ftps = DEC::InterfaceHandlerFTPS.new(@entity, @logger, true, false, @decConfig.getDownloadDirs)
+               
+               if @isDebugMode then 
+                  @ftps.setDebugMode
+               end
+                  
+               perf = measure { list = @ftps.getList }      
+            
+            rescue Exception => e
+            
+               @logger.error(e.to_s.chop)
+               
+               if @isDebugMode == true then
+                  @logger.debug(e.backtrace)
+               end
+               
+               @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
+               
+               exit(99)
+            end     
+                  
          # ---------------------------------------   
             
          when "LOCAL"
@@ -236,7 +255,7 @@ class DEC_ReceiverFromInterface
           
             begin
                
-               @local = DEC::LocalInterfaceHandler.new(@entity, true, false, @decConfig.getDownloadDirs)
+               @local = DEC::InterfaceHandlerLocal.new(@entity, true, false, @decConfig.getDownloadDirs)
                
                if @isDebugMode then 
                   @local.setDebugMode
@@ -361,6 +380,7 @@ class DEC_ReceiverFromInterface
       port           = @ftpserver[:port].to_i
       user           = @ftpserver[:user]
       pass           = @ftpserver[:password]
+      passive        = @ftpserver[:isPassive]
       @depthLevel    = 0
 
       begin
@@ -407,6 +427,8 @@ class DEC_ReceiverFromInterface
          end
 
          @pwd = @ftp.pwd
+         
+         # @logger.debug("#{@pwd}")
          
          begin         
             entries = @ftp.list
@@ -1293,6 +1315,24 @@ private
 
       # ------------------------------------------
 
+      if @protocol == "FTPS" or @protocol == "FTPES" then
+         retVal = @ftps.downloadFile(filename)
+         
+         size = File.size("#{@localDir}/#{File.basename(filename)}")
+         
+			copyFileToInBox(File.basename(filename), size)
+			         
+			# update DEC Inventory
+			setReceivedFromEntity(File.basename(filename), size)
+
+         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
+         
+         return retVal
+         
+      end
+
+      # ------------------------------------------
+
       if @protocol == "LOCAL" then
          return downloadFileLocal(filename)
       end      
@@ -1649,7 +1689,8 @@ private
    ###
    ### forTracking concept is in QUARANTINE 
    ###
-   def filterFullPathFileList(list, forTracking)      
+   def filterFullPathFileList(list, forTracking)
+            
       arrTemp        = Array.new
       arrFiles       = Array.new
       tmpList        = Array.new(list)
@@ -1707,7 +1748,7 @@ private
 
       perf = measure{
 
-      tmpList.each{|fullpath|
+      tmpList.each{|fullpath|      
          if @isDebugMode == true then
             @logger.debug("Filtering List : #{fullpath}")
          end
@@ -1990,7 +2031,7 @@ private
 
       if @isDebugMode == true then
          @logger.debug("DEC_ReceiverFromInterface::checkFileSource(#{fileName})")
-         @logger.debug(sources)
+         # @logger.debug(sources)
       end
 
       
