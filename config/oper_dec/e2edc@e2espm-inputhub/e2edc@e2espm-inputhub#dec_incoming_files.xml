@@ -296,6 +296,13 @@
          </ToList>
       </File>
 
+      <File Type="*_MPC_*">
+          <HardLink>False</HardLink>
+                 <ToList>
+                    <Intray>ARCHIVE_S2PDGS</Intray>
+          </ToList>
+      </File>
+
       <File Type="*_VGS*">
           <HardLink>False</HardLink>
                  <ToList>
@@ -304,7 +311,7 @@
           </ToList>
       </File>
 
-     <File Type="*REP_OPDPC__MTI_*">
+     <File Type="*REP_OPDPC__SGS_*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
@@ -325,7 +332,7 @@
         </ToList>
      </File>
 
-     <File Type="S2?_OPER_REP_ARC____MTI__???????????????_V???????????????_???????????????.EOF">
+     <File Type="S2?_OPER_REP_ARC____SGS__???????????????_V???????????????_???????????????.EOF">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
@@ -390,7 +397,7 @@
         </ToList>
      </File>
 
-     <File Type="*REP_PASS_?_MTI_*">
+     <File Type="*REP_PASS_?_SGS_*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
@@ -455,7 +462,7 @@
         </ToList>
      </File>
 
-     <File Type="*REP_OPDC___MTI_*">
+     <File Type="*REP_OPDC___SGS_*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
