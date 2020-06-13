@@ -2,6 +2,12 @@
 http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
 -->
 
+<!--
+
+http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
+
+-->
+
 <log4r_config>
  
  <pre_config>

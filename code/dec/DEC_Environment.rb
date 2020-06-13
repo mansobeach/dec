@@ -33,7 +33,8 @@ module DEC
           Support of HTTP(S) protocol verb PUT for push circulations\n\
           Support of HTTP(S) protocol verb GET for pull directories\n\
           Support of HTTP(S) protocol verb HEAD for checking interface URL\n\
-          Support of FTPS/FTPES protocol for pull circulations\n\
+          Migration of FTPS/FTPES protocol for pull circulations\n\
+          Migration of FTPS/FTPES protocol for push circulations\n\
           dec_config.xml Inventory item added for database configuration\n\
           dec_config.xml reshuffle of some configuration items\n\
           dec_interfaces.xml configuration item DeleteFlag removed\n\

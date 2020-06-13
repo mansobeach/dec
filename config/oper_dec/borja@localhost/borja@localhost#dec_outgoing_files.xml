@@ -7,6 +7,13 @@
    <ListInterfaces>
             
       <Interface>
+         <Name>LOCALHOST_FTPS</Name>
+         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftps</LocalOutbox>
+         <UploadDir>/tmp/dir1/</UploadDir>
+         <UploadTemp>/tmp/dir2/</UploadTemp>
+      </Interface>
+
+      <Interface>
          <Name>LOCALHOST_SECURE</Name>
          <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_secure</LocalOutbox>
          <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
@@ -59,7 +66,8 @@
          <Description></Description>
          <ToList>
             <Interface Name="FILESYSTEM"     Compress="NONE"   DeliveryMethods="LOCAL" />
-            <Interface Name="WEBDAV2"         Compress="7Z"     DeliveryMethods="HTTP" />
+            <Interface Name="LOCALHOST_FTPS" Compress="NONE"   DeliveryMethods="FTPS" />
+            <Interface Name="WEBDAV2"        Compress="7Z"     DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
@@ -70,6 +78,7 @@
             <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="LOCAL" />
             -->
             <Interface Name="WEBDAV2"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="LOCALHOST_FTPS" Compress="NONE"   DeliveryMethods="FTPS" />
          </ToList>
       </File>
    

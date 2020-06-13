@@ -22,6 +22,7 @@ require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerHTTP'
+require 'dec/InterfaceHandlerFTPS'
 
 module DEC
 
@@ -66,7 +67,7 @@ class FileSender
       @url              = nil
       @dynamic          = false
       @mirroring        = false
-      @prefix           = ''
+      @prefix           = "temp_"
       @handler          = nil
       
       ## ---------------------------------------------------
@@ -80,7 +81,11 @@ class FileSender
          @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, false, true, false)
       end
       ## ---------------------------------------------------
-      
+  
+      if @protocol == 'FTPS' or @protocol == 'FTPES' then
+         @handler = DEC::InterfaceHandlerFTPS.new(@entity, @logger, false, true, false)
+      end
+      ## ---------------------------------------------------      
       
       
    end
@@ -123,24 +128,7 @@ class FileSender
    end
    ## -----------------------------------------------------------
    
-   def useMirrorServer(file, bIsNotDir=true)
-      
-      @mirroring  =  true
-      @protocol   =  @pushServer[:FTPServerMirror][:protocol]
-      @hostname   =  @pushServer[:FTPServerMirror][:hostname]
-      @port       =  @pushServer[:FTPServerMirror][:port].to_i
-      @user       =  @pushServer[:FTPServerMirror][:user]
-      @password   =  @pushServer[:FTPServerMirror][:password]
-
-      if bIsNotDir then
-         retVal=sendFile(file)
-      else
-         retVal=sendDir(file)
-      end
-      @mirroring =false 
-      return retVal    
-   end          
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
    def dynamicDirectory (directory, file)
       while directory.include?('[') do
@@ -168,6 +156,11 @@ class FileSender
    ## -----------------------------------------------------------
 
    def getUploadTargets(file)
+      @prefix           = "temp_"
+      
+      if @isDebugMode == true then
+         @logger.debug("FileSender::getUploadTargets => #{file} / #{@prefix}")
+      end
 
       @uploadDir   = @pushServer[:uploadDir]
       @uploadTemp  = @pushServer[:uploadTemp]
@@ -178,11 +171,11 @@ class FileSender
          @former_uploadDir=@uploadDir.slice(0..@uploadDir.index('[')-1)
       end
 
-      @uploadDir = dynamicDirectory(@uploadDir, file)
-      @targetFile  = "#{@uploadDir}/#{file}"
+      @uploadDir  = dynamicDirectory(@uploadDir, file)
+      @targetFile = "#{@uploadDir}/#{file}"
 
       @uploadTemp = dynamicDirectory(@uploadTemp, file)
-      @targetTemp  = "#{@uploadTemp}/#{@prefix}#{file}"
+      @targetTemp = "#{@uploadTemp}/#{@prefix}#{file}"
    
    end
 
@@ -306,32 +299,28 @@ class FileSender
          when "FTPS" then
 
             if @isDebugMode then
-               @logger.debug("FTPS connecting to #{@user}@#{@hostname} getting file #{file}")
+               @logger.debug("FTPS connecting to #{@user}@#{@hostname} pushing file #{file} / #{@targetFile} / #{@targetTemp}")
             end
         
             begin
-               @ftp = Net::FTPFXPTLS::new(@hostname)
-               @ftp.login(@user,@password)
-               @ftp.passive = true
-
-         #dynamic directories
-               if @dynamic then
-                  dynamic_uploadDir=@uploadDir.sub(@former_uploadDir,'')
-                  dynamicSplitArray = dynamic_uploadDir.split('/')
-                  dynamicSplitArray.each { |dir|
-                     @former_uploadDir=@former_uploadDir+'/'+dir
-                     @ftp.mkdir(@former_uploadDir) 
-                  }  			           
-                  @dynamic=false
-               end
-         ###
-               @ftp.put(file,@targetTemp)
-               @ftp.rename(@targetTemp,@targetFile)
-               @ftp.close
-               retVal=true
+            
+               retVal = @handler.pushFile(file, @targetFile, @targetTemp)
+            
+            
+#               # dynamic directories
+#               if @dynamic then
+#                  dynamic_uploadDir=@uploadDir.sub(@former_uploadDir,'')
+#                  dynamicSplitArray = dynamic_uploadDir.split('/')
+#                  dynamicSplitArray.each { |dir|
+#                     @former_uploadDir=@former_uploadDir+'/'+dir
+#                     @ftp.mkdir(@former_uploadDir) 
+#                  }  			           
+#                  @dynamic=false
+#               end
+              
             rescue Exception => e
-               puts"Error on FTPS:: #{e}"
-               retVal= false 
+               @logger.error("[DEC_715] I/F #{@entity}: #{e.to_s}")
+               retVal = false 
             end
          ## ===================================================
          

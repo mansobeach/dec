@@ -115,6 +115,7 @@ require 'dec/CheckerInTrayConfig'
 @isNoDB           = false
 @bLog             = false
 @interface        = ""
+@logger           = nil
 
 # MAIN script function
 def main
@@ -196,13 +197,29 @@ def main
     
    checkModuleIntegrity
 
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+	   puts "Error in getFromInterface::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+
    @projectName = ReadConfigDEC.instance.getProjectName
    @projectID   = ReadConfigDEC.instance.getProjectID
    
    ftConfig = ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllMnemonics
 
-   puts "\nChecking #{@projectName} retrieval of files \n\n"
+   puts "\nChecking #{@projectName} interface \n\n"
 
    # Check of the Entities Configuration
    
@@ -225,13 +242,18 @@ def main
             puts "#{x} is disabled for sending files"
          end
 
-		   checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send)
+		   checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send, @logger)
                  
          if @isDebugMode == true or @isVerboseMode then
             checker.setDebugMode
          end
-                 
-         retVal     = checker.check
+
+         begin                 
+            retVal     = checker.check
+         rescue Exception => e
+            @logger.error(e.to_s)
+            exit(99)
+         end
 
          if retVal == true then
             puts "#{'1F44D'.hex.chr('UTF-8')} #{x} I/F is configured correctly"

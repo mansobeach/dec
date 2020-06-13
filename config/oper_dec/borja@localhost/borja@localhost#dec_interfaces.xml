@@ -933,7 +933,7 @@
   <Interface Name="LOCALHOST_FTPS">
     <Desc>Unit tests for FTPS</Desc>
     <TXRXParams>
-      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>

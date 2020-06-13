@@ -22,7 +22,7 @@ class CheckerFTPSConfig
 
    # Class constructor.
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
-   def initialize(ftpServerStruct, strInterfaceCaption = "")
+   def initialize(ftpServerStruct, strInterfaceCaption = "", logger = nil)
       @isDebugMode = false
       checkModuleIntegrity
       @ftpElement  = ftpServerStruct
@@ -31,6 +31,7 @@ class CheckerFTPSConfig
       else
          @entity = "Generic"
       end
+      @logger = logger
    end
    # -------------------------------------------------------------
    
@@ -185,13 +186,13 @@ private
             dir= dir.slice(0,dir.index('['))
          end
    ###  
-         retVal = checkRemoteDirectory(dir, false)
+         retVal = checkRemoteDirectory(dir)
          if retVal == false then
             puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{dir} :-(\n"
             ret = false
          end
 
-         retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], false)
+         retVal = checkRemoteDirectory(@ftpElement[:uploadTemp])
          if retVal == false then
             puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
             ret = false
@@ -214,20 +215,6 @@ private
                ret = false
             end
          end
-
-#         #mirror server check
-#         if mirror then
-#            retVal = checkRemoteDirectory(dir, true)
-#            if retVal == false then
-#               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{dir} :-(\n"
-#               ret = false
-#            end
-#            retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], true)
-#            if retVal == false then
-#               puts "\nError: in #{@entity} I/F: (Mirror Server) Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
-#               ret = false
-#            end
-#         end
       
       end
 

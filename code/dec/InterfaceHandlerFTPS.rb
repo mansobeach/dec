@@ -70,29 +70,51 @@ class InterfaceHandlerFTPS
    end
 
    ## -----------------------------------------------------------
+
+   def pushFile(sourceFile, targetFile, targetTemp)
+      login()
+      
+      @ftps.put(sourceFile,   targetTemp)
+      @ftps.rename(targetTemp, targetFile)
+      @ftps.close
+      
+      return true
+      
+   end
+   ## -----------------------------------------------------------
    ##
    ##
    
    def getUploadDirList(bTemp = false)
+   
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerFTPS::getUploadDirList tmp => #{bTemp}")
+      end
+      
+      if @ftps == nil then
+         login()
+      end
+   
       dir      = nil
       if bTemp == false then
          dir = @outConfig.getUploadDir(@entity)
       else
          dir = @outConfig.getUploadTemp(@entity)
       end
-      
-      prevDir = Dir.pwd
-      
+            
       begin
-         Dir.chdir(dir)
+         @ftps.chdir(dir)
       rescue Exception => e
          @logger.error("[DEC_712] #{@entity} I/F: Directory #{dir} is unreachable. Try with decCheckConfig -e")
          return Array.new
       end
+
+      if @isDebugMode == true then
+         puts @ftps.list
+      end
       
-      entries  = Dir["*"].sort_by{|time| File.stat(time).mtime}
-      
-      Dir.chdir(prevDir)
+      entries  = @ftps.nlst
+
       return entries
    end
 
@@ -257,47 +279,7 @@ class InterfaceHandlerFTPS
    ## -----------------------------------------------------------
 
 
-# DDC =============================================================
 
-  # Upload a file to the I/F  (DDC)
-   def uploadFile(filename,targetFile,targetTemp)      
-       #we are placed on the right directory (sourceDir): sendFile->self  (DDC) 
-      begin
-         FileUtils.link(filename,targetFile)
-      rescue         
-         if @isdebugMode then puts "Could not make a Hardlink of #{filename} to #{dir}. Copying the file" end
-         begin
-            FileUtils.copy(filename,targetTemp)
-            FileUtils.move(targetTemp, targetFile)
-         rescue
-            @logger.error("[DEC_003] Error: Could not make a copy of #{filename}")
-            if @isdebugMode then puts"Error: Could not make a copy of #{filename}" end
-            return false
-         end
-      end
-      return true
-   end
-	## -----------------------------------------------------------
-
-   ## Upload a file to the I/F  (DDC)
-   def uploadDir(dirname,targetDir,targetTemp)      
-       #we are placed on the right directory (sourceDir): sendFile->self  (DDC) 
-      if @manageDirs then
-         begin
-            FileUtils.cp_r(dirname,targetTemp)
-            if File.exists?(targetDir) then FileUtils.rm_rf(targetDir) end
-            FileUtils.move(targetTemp, targetDir)
-         rescue
-            @logger.error("[DEC_003] Error: Could not make a copy of #{dirname} dir")
-            if @isdebugMode then puts"Error: Could not make a copy of #{dirname} dir" end
-            return false
-         end
-      else
-         return false
-      end
-      #everything ok
-      return true
-   end
 	## -------------------------------------------------------------
 
 private
@@ -314,6 +296,10 @@ private
       passive  = @ftpServer[:isPassive]
       chkSSL   = @ftpServer[:verifyPeerSSL]
       @ftps    = nil
+      
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerFTPS::login I/F #{@entity}: #{host} #{user} passive => #{passive} checkSSL => #{chkSSL}")
+      end
       
       begin
          if chkSSL == true then

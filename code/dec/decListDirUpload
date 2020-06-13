@@ -44,6 +44,7 @@ require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/InterfaceHandlerLocal'
+require 'dec/InterfaceHandlerFTPS'
                                    
 ## MAIN script function
 def main
@@ -192,11 +193,44 @@ def main
       list = handler.getUploadDirList
       
       list.each{|file|
-         @logger.debug("#{@entity} I/F UploadDir: item #{file} found")
+         @logger.debug("I/F #{@entity}:  UploadDir: #{file} found")
       }
+      
+      if @checkUploadTmp == true then
+         list = handler.getUploadDirList(true)
+      
+         list.each{|file|
+            @logger.debug("I/F #{@entity}:  UploadTemp: #{file} found")
+         }
+      end
       
       exit(0)
    end 
+   # ---------------------------------------------
+   
+   if entConf[:protocol].upcase == "FTPS" or entConf[:protocol].upcase == "FTPES" then
+      handler = InterfaceHandlerFTPS.new(@entity, @logger)
+      
+      if @isDebugMode == true then
+         handler.setDebugMode
+      end
+      
+      list = handler.getUploadDirList
+      
+      list.each{|file|
+         @logger.debug("#{@entity} I/F UploadDir: item #{file} found")
+      }
+      
+      if @checkUploadTmp == true then
+         list = handler.getUploadDirList(true)
+      
+         list.each{|file|
+            @logger.debug("I/F #{@entity}:  UploadTemp: #{file} found")
+         }
+      end
+            
+      exit(0)
+   end
    # ---------------------------------------------
    
    if entConf[:isSecure] == true then

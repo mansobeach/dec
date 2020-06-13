@@ -48,9 +48,10 @@ class CheckerInterfaceConfig
    ## IN (bool) [optional] - check parameters required for receiving
    ##
    ## IN (bool) [optional] - check parameters required for sending
-   def initialize(entity, bCheckIncoming = true, bCheckOutgoing = true)
+   def initialize(entity, bCheckIncoming = true, bCheckOutgoing = true, logger = nil)
       @bCheckIncoming                  = bCheckIncoming
       @bCheckOutgoing                  = bCheckOutgoing
+      @logger                          = nil
       @isDebugMode                     = false
       @entity                          = entity
       checkModuleIntegrity
@@ -75,11 +76,11 @@ class CheckerInterfaceConfig
       end
       
       if @ftpRecv[:protocol].upcase == "FTPS" or @ftpSend[:protocol].upcase == "FTPES" then
-         @check4Recv                      = CheckerFTPSConfig.new(@ftpRecv, @entity)
+         @check4Recv                      = CheckerFTPSConfig.new(@ftpRecv, @entity, @logger)
       end
 
       if @ftpRecv[:protocol].upcase == "SFTP" or @ftpRecv[:protocol].upcase == "FTP" then
-         @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity)
+         @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity, @logger)
       end
 
       if @ftpRecv[:protocol].upcase == "HTTP" then
@@ -134,7 +135,9 @@ class CheckerInterfaceConfig
          if @protocol == "LOCAL" then
             retVal = @checkLocal4Send.checkLocal4Send
          else
-            retVal = @check4Send.check4Send
+            begin
+               retVal = @check4Send.check4Send
+            end
          end
       end
 

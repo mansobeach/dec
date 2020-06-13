@@ -19,6 +19,8 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
 
 ## ---------------------------------------------------------
 ##
@@ -60,6 +62,8 @@ class DECTestCase_FTPS < Test::Unit::TestCase
    include Test::Unit::Data
    
    include CUC::DirUtils
+   
+   include DEC
          
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
@@ -101,6 +105,13 @@ class DECTestCase_FTPS < Test::Unit::TestCase
          end
       end   
    
+   
+      @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "tai-utc.dat" \
+                           ]
+
+   
    end
    
    # --------------------------------------------------------
@@ -125,8 +136,8 @@ class DECTestCase_FTPS < Test::Unit::TestCase
    
    ## ------------------------------------------------------
    
-   ## This test creates every necessary directory to make the circulations succeed
-   def test_1
+   ## PULL Circulations
+   def test_pull
       puts __method__.to_s
       puts
       puts "================================================"
@@ -188,6 +199,75 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
       
+      
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   
+   ## PUSH Circulations
+   def test_push
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      checkDirectory("/tmp/dec/in_basket_if_localhost_ftps")
+      
+      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
+
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)   
+   
+      cmd = "decCheckConfig -e LOCALHOST_FTPS"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
+      
+      checkDirectory(sourceDir)
+      puts "SOURCE DIR => #{sourceDir}"
+
+      ## for FTPS protocol the same files for download are used
+      
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
+      }
+
+      cmd = "decGetFiles4Transfer"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic LOCALHOST_FTPS -O"
+      puts cmd
+      assert(system(cmd), cmd)
+
+#      cmd = "decDeliverFiles -D"
+#      puts cmd
+#      assert(system(cmd), cmd)
+
+      cmd = "decListDirUpload -m LOCALHOST_FTPS -t"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts      
+
+      cmd = "decStats"
+      assert(system(cmd), cmd)
       
    end
    ## ------------------------------------------------------

@@ -52,9 +52,11 @@ require 'dec/ReadConfigIncoming'
 ###  5  - test_decListener
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
-###  7.1  - test_decSend2Interface_LOCAL
-###  7.2  - test_decSend2Interface_HTTP
-###  7.3  - test_decSend2Interface_SFTP
+###  7.1  - test_decSend2Interface_FTP
+###  7.2  - test_decSend2Interface_LOCAL
+###  7.3  - test_decSend2Interface_HTTP
+###  7.4  - test_decSend2Interface_SFTP
+###  7.5  - test_decSend2Interface_FTPS => decUnitTests_FTPS / test_push
 ###  8  - test_decNotify2Interface
 ###  9  - test_decDeliverFiles
 
@@ -677,6 +679,12 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "decDeliverFiles -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -h"
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -v"
       assert(system(cmd), cmd)
 
 
@@ -1827,7 +1835,7 @@ class DECTestCase < Test::Unit::TestCase
    ##
    ## 
    
-   def test_decSend2Interface
+   def test_decSend2Interface_FTP
       puts __method__.to_s
       puts
       puts "================================================"

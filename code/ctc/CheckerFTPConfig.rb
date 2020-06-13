@@ -28,7 +28,8 @@ class CheckerFTPConfig
 
    # Class constructor.
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
-   def initialize(ftpServerStruct, strInterfaceCaption = "")
+   def initialize(ftpServerStruct, strInterfaceCaption = "", logger = nil)
+      @logger = logger
       @isDebugMode = false
       checkModuleIntegrity
       @ftpElement  = ftpServerStruct
@@ -105,10 +106,10 @@ private
                   
       tmpDir = nil
          
-      if ENV['DEC_CONFIG'] then
-         tmpDir         = %Q{#{ENV['DEC_CONFIG']}}  
+      if ENV['DEC_TMP'] then
+         tmpDir         = %Q{#{ENV['DEC_TMP']}}  
       else
-         tmpDir         = %Q{#{ENV['DCC_CONFIG']}}  
+         tmpDir         = "/tmp"  
       end
 
       time   = Time.new

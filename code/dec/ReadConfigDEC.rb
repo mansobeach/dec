@@ -206,9 +206,7 @@ private
       bCheckOK = true
    
       if !ENV['DEC_CONFIG'] then
-         puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
-         bCheckOK = false
-         bDefined = false
+         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
       
       if bDefined == true then      
@@ -227,8 +225,8 @@ private
         
       end
       if bCheckOK == false then
-        puts "ReadConfigDEC::checkModuleIntegrity FAILED !\n\n"
-        exit(99)
+         puts "ReadConfigDEC::checkModuleIntegrity FAILED !\n\n"
+         exit(99)
       end      
    end
    ## -----------------------------------------------------------

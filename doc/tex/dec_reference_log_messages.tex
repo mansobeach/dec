@@ -228,7 +228,7 @@ This message is raised at the end of the interface polling operation to notify f
 \label{DEC610}
 This error is raised when it is not possible to connect to \hyperref[Config_Server]{"Hostname"} with FTP.
 
-\subsection{[DEC\_611] Server Error Message}
+\subsection{[DEC\_611] Pull Server Error Message}
 \label{DEC611}
 This error code can bring different messages associated to the connection failure [DEC\_610] is reporting. Errors can driven by miss-configuration of the \hyperref[Config_Server]{Server} associated to such interface or its unavailability due to network problems.
 
@@ -240,6 +240,11 @@ This error code can bring different messages associated to the connection failur
 \subsubsection{Service not enabled by host}
 \begin{verbatim}
 [DEC_611] LOCALHOST_NOT_SECURE I/F: Connection refused - connect(2) for 127.0.0.1:21
+\end{verbatim}
+
+\subsubsection{SSL/TLS not configured by server}
+\begin{verbatim}
+[DEC_611] I/F LOCALHOST_FTPS: 500 This security scheme is not implemented
 \end{verbatim}
 
 \subsubsection{Failed authentication}
@@ -290,6 +295,10 @@ For a given file from a specific interface this message is exclusive to \hyperre
 \subsection{[DEC\_700] Push Failure to Interface}
 TBW
 
+\label{DEC710}
+\subsection{[DEC\_710] Failed to send file to Interface}
+TBW
+
 \label{DEC711}
 \subsection{[DEC\_711] Cannot Reach SourceDir Sub-Directory}
 This error is raised when DEC could not reach a \textit{SourceDir} sub-directory to fetch the selected files to \textit{push} according to some \hyperref[Upload Rules]{\textit{[Upload Rule}} miss-configuration.
@@ -301,6 +310,14 @@ Failed to reach \textit{UploadDir} for a given interface.
 \label{DEC713}
 \subsection{[DEC\_713] File Hard-link Failure into LocalOutbox}
 This error is raised .
+
+\label{DEC715}
+\subsection{[DEC\_715] Push Server Error Message}
+
+\subsubsection{No Write Permission }
+\begin{verbatim}
+[DEC_715] I/F LOCALHOST_FTPS: 553 Could not create file
+\end{verbatim}
 
 \label{DEC740}
 \subsection{[DEC\_740] Failed to Email Push Email Notification to Interface}
