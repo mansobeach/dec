@@ -193,7 +193,7 @@
       <File Type="*DEC_F_RECV*">
       	  <HardLink>False</HardLink>
 	         <ToList>
-                    <Intray>S2BOA</Intray>
+               <Intray>S2BOA</Intray>
 	            <Intray>S2BOA_SHADOW</Intray>	  
           </ToList>
       </File>
@@ -296,6 +296,12 @@
          </ToList>
       </File>
 
+      <!--
+      
+         CENTRE level filters right after specific files but BEFORE "file-type" rules
+      
+      -->
+      
       <File Type="*_MPC_*">
           <HardLink>False</HardLink>
                  <ToList>
@@ -307,6 +313,7 @@
           <HardLink>False</HardLink>
                  <ToList>
                     <Intray>SHADOW_S2PDGS</Intray>
+                    <Intray>S2BOA_SHADOW</Intray>
                     <Intray>ARCHIVE_S2PDGS</Intray>
           </ToList>
       </File>
@@ -317,7 +324,6 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
-           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -338,7 +344,6 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
-           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -403,7 +408,6 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
-           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -468,7 +472,6 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
-           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
