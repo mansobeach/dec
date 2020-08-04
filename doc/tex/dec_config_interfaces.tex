@@ -1,0 +1,91 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Interfaces Configuration
+%
+% dec_interfaces.xml
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+\section{Interface Configuration}
+ 
+\par
+\noindent
+The general configuration file \textit{dec\_interfaces.xml} carries the items TBW TBW TBW.
+
+
+\label{decinterfacesxml}
+\section{Example dec\_interfaces.xml}
+\begin{verbatim}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <Interface Name="IERS">
+     
+     <Desc>IERS Interface</Desc>
+     
+     <TXRXParams>
+         <Enabled4Sending>false</Enabled4Sending>
+         <Enabled4Receiving>true</Enabled4Receiving>
+         <ImmediateRetries>3</ImmediateRetries>
+         <LoopRetries>2</LoopRetries>
+         <LoopDelay unit="s">300</LoopDelay>
+         <PollingInterval unit="s">20</PollingInterval>
+         <PollingSize>470</PollingSize>
+         <ParallelDownload>5</ParallelDownload>
+     </TXRXParams>    
+
+     <Server>
+        <Protocol>FTP</Protocol>
+        <Hostname>ftp.iers.org</Hostname>
+        <Port>21</Port>
+        <User>anonymous</User>
+        <Pass>guest</Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>false</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>true</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+     </Server>
+     
+     <DeliverByMailTo>
+	      <Address>mario.bross@deimos-space.com</Address>
+     </DeliverByMailTo>
+
+   <Notify>
+	  <SendNotification>false</SendNotification>
+	  <To>
+		<Address>mario.draghi@supereuro.com</Address>
+	   </To>
+   </Notify>
+
+   <Events>
+      <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+   </Events>
+
+   <ContactInfo>
+      <Name>Mr draghi</Name>
+      <EMail>mario.draghi@supereuro.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+     <Address>Citta Uova</Address>
+   </ContactInfo>
+
+   </Interface>
+
+</Interfaces>
+
+\end{verbatim}
+
+\end{document}
+

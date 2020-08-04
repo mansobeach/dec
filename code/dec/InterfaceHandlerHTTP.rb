@@ -64,7 +64,7 @@ class InterfaceHandlerHTTP
    def pushFile(file)
       buildURLPush()
       if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerHTTP::pushFile => #{file} / #{bDeleteSource} / #{@url}")
+         @logger.debug("InterfaceHandlerHTTP::pushFile => #{file} / #{@url}")
       end
       return putFile(@url, file, @isDebugMode, @logger)
    end

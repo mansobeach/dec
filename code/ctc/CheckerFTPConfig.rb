@@ -186,6 +186,11 @@ private
       # Check 4 Sending
       if bCheck4Send == true then
 
+
+         puts "xxxxxxxxxxxx"
+         puts @ftpElement
+         puts "xxxxxxxxxxxx"
+   
          if @ftpElement[:uploadDir] == "" then
             puts "\nError: in #{@entity} I/F: UploadDir configuration element cannot be void :-(\n"
             ret = false         

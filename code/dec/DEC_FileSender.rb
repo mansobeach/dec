@@ -157,7 +157,7 @@ class DEC_FileSender
 #            end
          
             if SentFile.hasAlreadyBeenSent?(file, @entity, @ftpserver[:protocol]) == true then
-               @logger.warn("[DEC_401] #{@entity} I/F: #{file} previously uploaded discarded")
+               @logger.warn("[DEC_401] I/F #{@entity}: #{file} previously uploaded discarded")
                File.delete(%Q{#{@outboxDir}/#{file}})
                if @isDebugMode then
                   @logger.debug("#{@entity} I/F: #{file} deleted from #{@outboxDir} to avoid circulation duplication")
@@ -225,12 +225,12 @@ class DEC_FileSender
             bRet = sendFile(file)
             
             if bRet == false then
-               @logger.error("[DEC_710] #{@entity} I/F: Failed sending #{file}")
+               @logger.error("[DEC_710] I/F #{@entity}: Failed sending #{file}")
                @listFileError << file
                @listFileError = @listFileError.uniq
                bSent = false
             else
-               @logger.info("[DEC_210] #{@entity} I/F: #{file} with size #{size} bytes sent using #{@protocol}")
+               @logger.info("[DEC_210] I/F #{@entity}: #{file} with size #{size} bytes sent using #{@protocol}")
                tmpFilesSent  << file
                @listFileSent << file
                
@@ -334,7 +334,7 @@ class DEC_FileSender
       
       filename = writer.getFilename
          
-      @logger.info("[DEC_235] #{@entity} I/F: Created report #{filename}")
+      @logger.info("[DEC_235] I/F #{@entity}: Created report #{filename}")
    
       if filename == "" then
          @logger.error("Error in DEC_FileSender::createContentFile !!!! =:-O")

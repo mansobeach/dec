@@ -132,7 +132,13 @@ def main
    # -----------------------------------------------------------------
 
    stats = DCC::StatisticDCC.new
-   ret = stats.lastHour(@hours)
+   
+   begin
+      ret = stats.lastHour(@hours)
+   rescue Exception => e
+      puts "#{e.to_s} #{'1F480'.hex.chr('UTF-8')}"
+      exit(99)
+   end
 
    if ret == nil or ret.empty? == true then
       @logger.info("[DEC_144] Pull #{@hours}h: No files pulled")
@@ -156,7 +162,13 @@ def main
 
    
    stats = DDC::StatisticDDC.new
-   ret = stats.lastHour(@hours)
+
+   begin
+      ret = stats.lastHour(@hours)
+   rescue Exception => e
+      puts "#{e.to_s} #{'1F480'.hex.chr('UTF-8')}"
+      exit(99)
+   end
   
    if ret == nil then
       @logger.info("[DEC_244] Push #{@hours}h: No files pushed")

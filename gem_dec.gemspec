@@ -1,15 +1,15 @@
 #########################################################################
-#
-# === Ruby source for #Gem Specification
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component (DEC)
-# 
-# Git: gem_dec.gemspec,v $Id$ $Date$
-#
-# System Component DEC
-#
+###
+### === Ruby source for #Gem Specification
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component (DEC)
+### 
+### Git: gem_dec.gemspec,v $Id$ $Date$
+###
+### System Component DEC
+###
 #########################################################################
 
 Gem::Specification.new do |s|
@@ -79,16 +79,19 @@ Gem::Specification.new do |s|
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('net_dav', '~> 0.5')
   s.add_dependency('net-sftp', '~> 2.1')
-  s.add_dependency('net-ssh', '~> 4.2')
+  s.add_dependency('net-ssh', '~> 6.1')
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('pg', '~> 1')
   s.add_dependency('sqlite3', '~> 1.4')
   s.add_dependency('sys-filesystem', '~> 1.3')
   
   ## ----------------------------------------------
-  
+ 
+  s.add_development_dependency('coderay', '~> 1.1')
+  s.add_development_dependency('rspec', '~> 3.9') 
   s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('test-unit', '~> 3.0')
+ 
   
   ## ----------------------------------------------
 

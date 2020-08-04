@@ -99,6 +99,8 @@
     <Events>
     <!--
          <Event Name="ONRECEIVENEWFILESOK"     executeCmd="review_inputs"/>
+      -->
+         <!--
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/> -->
          <!-- <Event Name="OnReceiveOK"             executeCmd="echo $PWD " />  -->
          <!-- <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />  -->

@@ -16,8 +16,8 @@
  
 \begin{document}
 
-
-\section{decCheckConfig} \label{decCheckConfig}
+\label{decCheckConfig}
+\section{decCheckConfig}
  
 \begin{verbatim}
 == Synopsis
@@ -292,6 +292,23 @@ decManageDB --create-tables | --drop-tables
 --Debug           shows Debug info during the execution
 --help            shows this help
 
+
+\end{verbatim}
+
+\label{decNotify2Interface}
+\section{decNotify2Interface}
+
+\begin{verbatim}
+
+== Usage
+decNotify2Interface -m <MNEMONIC> --OK | --KO
+--mnemonic  <MNEMONIC> (mnemonic is case sensitive)
+--OK        notify success in the delivery to the I/F -f full_path_filelist list of files send
+--KO        notify failure in the delivery to the I/F -f full_path_filelist list of files failed to be sent
+--help      shows this help
+--usage     shows the usage
+--Debug     shows Debug info during the execution
+--version   shows version number
 
 \end{verbatim}
 

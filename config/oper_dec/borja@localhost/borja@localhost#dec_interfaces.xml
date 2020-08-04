@@ -452,8 +452,8 @@
 
   <!-- ================================================================ --> 
  
-  <Interface Name="ISLR">
-    <Desc>ISLR Interface</Desc>
+  <Interface Name="ILRS">
+    <Desc>ILRS Interface</Desc>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -707,7 +707,8 @@
   <Interface Name="LEAP">
     <Desc>IERS Mirror hpiers.obspm.fr</Desc>
     <TXRXParams>
-      <Enabled4Sending>false</Enabled4Sending>
+    <!-- MISS-CONFIGURATION FOR TESTING PURPOSES -->
+      <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
@@ -822,7 +823,8 @@
     <Desc>POD PUSH</Desc>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
+      <!-- Miss configuration to raise DEC_605 -->
+      <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">300</LoopDelay>

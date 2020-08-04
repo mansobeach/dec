@@ -81,6 +81,7 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
+require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 require 'ctc/CheckerMailConfig'
 
@@ -120,6 +121,7 @@ require 'dec/CheckerInTrayConfig'
 # MAIN script function
 def main
 
+   include CUC::DirUtils
    include DEC
 
    @bShowVersion     = false
@@ -295,6 +297,18 @@ def main
    end
    
    if @bIncoming == true or @bAll == true then
+   
+      if @interface != "" and @interface != nil then
+         @finalDir = ReadConfigIncoming.instance.getIncomingDir(@interface)
+      
+         puts "Checking LocalInbox #{@finalDir}"     
+         checkDirectory(@finalDir)
+
+         if File.exist?(@finalDir) == false then
+            puts "LocalInbox #{@finalDir} not present"
+         end
+      end
+   
       ftReadIncoming   = ReadConfigIncoming.instance   
       arrIncomingFiles = ftReadIncoming.getAllIncomingFiles  
       puts

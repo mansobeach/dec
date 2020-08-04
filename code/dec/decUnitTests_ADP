@@ -281,7 +281,7 @@ class DECTestCase < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-#   data("1",     ["ISLR",  false])
+#   data("1",     ["ILRS",  false])
    data("2",     ["NOAA",  false])
 #   data("3",     ["IERS",  false])
 #   data("4",     ["IGS",   false])

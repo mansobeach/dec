@@ -52,8 +52,8 @@ RUN ln -s /usr/bin/entrypoint_dec_auxip.sh /
 # ------------------------------------------------
 RUN gem update
 # ------------------------------------------------
-COPY ./gems/dec.gem .
-RUN gem install dec.gem
+COPY ./gems/dec_auxip.gem .
+RUN gem install dec_auxip.gem
 # ------------------------------------------------
 COPY ./gems/aux.gem .
 RUN gem install aux.gem

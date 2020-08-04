@@ -273,10 +273,23 @@ def main
    }
       
    if bFound == false then
-      print("\nInterface ", @entity, " does not exist !!   :-(\n\n")
+      @logger.error("[DEC_705] #{@entity} I/F: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
-   end   
-         
+   end
+   
+   if @ftReadConf.isEnabled4Sending?(@entity) == false then
+      @logger.error("[DEC_705] #{@entity} I/F: Enabled4Sending flag is disabled #{'1F480'.hex.chr('UTF-8')}")
+      exit(99)
+   end
+      
+   @outConfig = ReadConfigOutgoing.instance 
+   
+   if @outConfig.getOutgoingDir(@entity) == nil then
+      @logger.error("[DEC_705] #{@entity} I/F: LocalOutbox configuration item not found #{'1F480'.hex.chr('UTF-8')}")
+      exit(99)
+   end
+   
+      
    ## ------------------------------------------------------------------
    ##  AUTOMATION FileSender Management
    
@@ -337,10 +350,10 @@ def main
    @locker.release
    
    if bSent == true then
-      @logger.info("[DEC_200] #{@entity} I/F: Push iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
+      @logger.info("[DEC_200] I/F #{@entity}: Push iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
       exit(0)
    else
-      @logger.error("[DEC_700] #{@entity} I/F: Push iterations problems #{'1F4A9'.hex.chr('UTF-8')}")
+      @logger.error("[DEC_700] I/F #{@entity}: Push iterations problems #{'1F4A9'.hex.chr('UTF-8')}")
       exit(99)   
    end
 end

@@ -3,7 +3,7 @@ set -e
 
 [ "$DEBUG" == 'true' ] && set -x
 
-decListener -m ISLR -i 3600
+decListener -m ILRS -i 3600
 
 decListener -m IGS -i 3600
 

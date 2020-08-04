@@ -873,6 +873,56 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       ## -----------------------------------------
+      ##
+      ## Push Miss-Configurations
+      ##
+      
+      cmd = "decSend2Interface -m FOO"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      arr = Dir["/tmp/DEC*.log"]
+      
+      cmd = "decSend2Interface -m ILRS"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "decSend2Interface -m LEAP"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "grep DEC_705 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "DEC_705 should be raised for interface push miss-configuration#{__method__.to_s}") 
+
+      ## -----------------------------------------
+      ##
+      ## Pull Miss-Configurations
+      ##
+
+      cmd = "decGetFromInterface -m FOO"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m WEBDAV2"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m POD_PUSH"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "grep DEC_605 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "DEC_605 should be raised for interface pull miss-configuration#{__method__.to_s}") 
+
+      ## -----------------------------------------
       ## test are not performed for the flag --all since
       ## the access slot to the interface IERS is not granted
       ## resulting into error
@@ -1164,6 +1214,13 @@ class DECTestCase < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
 
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
+      }
+
+
+
       cmd = "decGetFromInterface -m WEBDAV -l"
       puts cmd
       assert(system(cmd), cmd)
@@ -1252,61 +1309,61 @@ class DECTestCase < Test::Unit::TestCase
    data("SEPARATOR",     ["Start of the Test",     0,   0,   0,    false])
 
    data("0",     ["10files_10GB_1Slots_NoDB",      10,   10240,   1,     true])
-   data("1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     true])
-   data("2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     true])
-   data("3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     true])
-   data("4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     true])
-   data("5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    true])
-  
-   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs NoDB",     0,   0,   0,    false])
-
-   data("b1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     false])
-   data("b2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     false])
-   data("b3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     false])
-   data("b4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     false])
-   data("b5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    false])
-  
-   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
-
-   data("6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     true])
-   data("7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     true])
-   data("8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     true])
-   data("9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     true])   
-   data("10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    true])   
-
-   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs NoDB",     0,   0,   0,    false])
-   
-   data("b6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     false])
-   data("b7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     false])
-   data("b8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     false])
-   data("b9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     false])   
-   data("b10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    false])   
-
-   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
-
-   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     true])
-   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     true])
-   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     true])
-   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     true])   
-   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    true])   
-
-   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs NoDB",     0,   0,   0,    false])
-
-   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     false])
-   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     false])
-   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     false])
-   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     false])   
-   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    false])   
-
-   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
-
-   data("1",     ["10files_100GB_2Slots_NoDB",      10,   102400,   2,     false])
-   data("2",     ["10files_100GB_4Slots_NoDB",      10,   102400,   4,     false])
-   data("3",     ["10files_100GB_6Slots_NoDB",      10,   102400,   6,     false])
-   data("4",     ["10files_100GB_8Slots_NoDB",      10,   102400,   8,     false])
-   data("5",     ["10files_100GB_10Slots_NoDB",     10,   102400,   10,    false])
-  
-   data("SEPARATOR",     ["END OF 10 FILES of 100 GBs",     0,   0,   0,    false])
+#   data("1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     true])
+#   data("2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     true])
+#   data("3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     true])
+#   data("4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     true])
+#   data("5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    true])
+#  
+#   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+#
+#   data("b1",     ["10files_10GB_2Slots_NoDB",      10,   10240,   2,     false])
+#   data("b2",     ["10files_10GB_4Slots_NoDB",      10,   10240,   4,     false])
+#   data("b3",     ["10files_10GB_6Slots_NoDB",      10,   10240,   6,     false])
+#   data("b4",     ["10files_10GB_8Slots_NoDB",      10,   10240,   8,     false])
+#   data("b5",     ["10files_10GB_10Slots_NoDB",     10,   10240,   10,    false])
+#  
+#   data("SEPARATOR",     ["END OF 10 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+#
+#   data("6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     true])
+#   data("7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     true])
+#   data("8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     true])
+#   data("9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     true])   
+#   data("10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    true])   
+#
+#   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+#   
+#   data("b6",     ["50files_10GB_2Slots_NoDB",      50,   10240,   2,     false])
+#   data("b7",     ["50files_10GB_4Slots_NoDB",      50,   10240,   4,     false])
+#   data("b8",     ["50files_10GB_6Slots_NoDB",      50,   10240,   6,     false])
+#   data("b9",     ["50files_10GB_8Slots_NoDB",      50,   10240,   8,     false])   
+#   data("b10",    ["50files_10GB_10Slots_NoDB",     50,   10240,   10,    false])   
+#
+#   data("SEPARATOR",     ["END OF 50 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+#
+#   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     true])
+#   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     true])
+#   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     true])
+#   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     true])   
+#   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    true])   
+#
+#   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs NoDB",     0,   0,   0,    false])
+#
+#   data("11",    ["100files_10GB_2Slots_NoDB",      100,   10240,   2,     false])
+#   data("12",    ["100files_10GB_4Slots_NoDB",      100,   10240,   4,     false])
+#   data("13",    ["100files_10GB_6Slots_NoDB",      100,   10240,   6,     false])
+#   data("14",    ["100files_10GB_8Slots_NoDB",      100,   10240,   8,     false])   
+#   data("15",    ["100files_10GB_10Slots_NoDB",     100,   10240,   10,    false])   
+#
+#   data("SEPARATOR",     ["END OF 100 FILES of 10 GBs DB Recording",     0,   0,   0,    false])
+#
+#   data("1",     ["10files_100GB_2Slots_NoDB",      10,   102400,   2,     false])
+#   data("2",     ["10files_100GB_4Slots_NoDB",      10,   102400,   4,     false])
+#   data("3",     ["10files_100GB_6Slots_NoDB",      10,   102400,   6,     false])
+#   data("4",     ["10files_100GB_8Slots_NoDB",      10,   102400,   8,     false])
+#   data("5",     ["10files_100GB_10Slots_NoDB",     10,   102400,   10,    false])
+#  
+#   data("SEPARATOR",     ["END OF 10 FILES of 100 GBs",     0,   0,   0,    false])
    
    def test_decGetFromInterface_PARALLEL_HTTP(params)
 
@@ -1348,12 +1405,18 @@ class DECTestCase < Test::Unit::TestCase
             
       checkDirectory(@finalDir)
 
+      FileUtils.mkdir_p(@finalDir)
+
+      puts "xxxx"
+      puts "#{@finalDir}"
+      puts "xxxx"
+
       arr = configIn.getDownloadDirs("PARALLEL_HTTP")
       
       downloadDir = ""
       
       if arr[0][:directory][0,1] != '/' then
-         downloadDir = '/Users/borja/' + arr[0][:directory]
+         downloadDir = '/Users/borja/Downloads/' + arr[0][:directory]
       else
          downloadDir = arr[0][:directory]
       end
@@ -1373,6 +1436,11 @@ class DECTestCase < Test::Unit::TestCase
          puts cmd
          system(cmd)
       end
+
+
+      cmd = "decCheckConfig -e PARALLEL_HTTP -i"
+      puts cmd
+      assert(system(cmd), cmd)
 
       ## -----------------------------------------
 
@@ -1395,6 +1463,7 @@ class DECTestCase < Test::Unit::TestCase
 
       1.upto(numFiles) do |i|
          filename = "test_http_#{i}.bin"
+         puts "#{@finalDir}/#{filename}"
          assert(File.exist?("#{@finalDir}/#{filename}"), "Checking #{filename} presence at #{@finalDir}")
          FileUtils.rm_f("#{@finalDir}/#{filename}")
       end
@@ -1854,9 +1923,6 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "decSend2Interface -S"
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface -m non_existing_if"
-      assert(!system(cmd), cmd)
-
       ## Call to previous test to load the out-trays
       test_decGetFiles4Transfer
       checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
@@ -1917,6 +1983,14 @@ class DECTestCase < Test::Unit::TestCase
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      cmd = "decSend2Interface -m non_existing_if"
+      assert(!system(cmd), cmd)
+
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
 
    end
 
@@ -2185,7 +2259,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface --mnemonic WEBDAV2"
+      cmd = "decSend2Interface --mnemonic WEBDAV2 -D"
       puts cmd
       assert(system(cmd), cmd)
 

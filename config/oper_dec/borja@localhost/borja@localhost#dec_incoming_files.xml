@@ -89,7 +89,7 @@
 
       <Interface>
          <Name>PARALLEL_HTTP</Name>
-         <LocalInbox>/tmp/dec/in_basket_if_http</LocalInbox>
+         <LocalInbox>/tmp/if_dec/in_basket_if_http</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">tmp</Directory>
          </DownloadDirs>
@@ -166,7 +166,7 @@
       </Interface>
 
       <Interface>
-         <Name>ISLR</Name>
+         <Name>ILRS</Name>
          <LocalInbox>/tmp/dec/if_islr_in_basket</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3a/2020</Directory>
@@ -409,7 +409,7 @@ WWWW/igsWWWWD.clk.Z
       <File Type="sentinel3*">
          <Description>Satellite Laser Ranging data</Description>
          <FromList>
-            <Interface>ISLR</Interface>
+            <Interface>ILRS</Interface>
          </FromList>
       </File>
 

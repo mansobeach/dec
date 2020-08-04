@@ -125,7 +125,9 @@ class EventManager
                log.debug("Executing command #{cmd}")
             end
             
-            log.info("[DEC_130] I/F #{interface}: event triggered #{eventName.downcase} => #{cmd}")
+            if log != nil then
+               log.info("[DEC_130] I/F #{interface}: event triggered #{eventName.downcase} => #{cmd}")
+            end
             
             exit_status = nil
             

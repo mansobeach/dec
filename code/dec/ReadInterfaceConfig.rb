@@ -348,7 +348,19 @@ private
       
       bDefined = true
       bCheckOK = true
-   
+
+      ## -----------------------------------------
+      ##
+       
+      ## If not previosly defined,
+      ## the configuration directory is the one of the gem installation 
+       
+      if !ENV['DEC_CONFIG'] then
+         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+  
+      ## -----------------------------------------
+  
       if !ENV['DEC_CONFIG'] then
          puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
          bCheckOK = false
@@ -372,10 +384,10 @@ private
            bCheckOK = false
            print("\n\n", @configFile, " does not exist !  :-(\n\n" )
          end        
-      end      
+      end
+            
       if bCheckOK == false then
-        puts "ReadInterfaceConfig::checkModuleIntegrity FAILED !\n\n"
-        exit(99)
+         raise "ReadInterfaceConfig::checkModuleIntegrity FAILED"
       end      
    end
    ## -------------------------------------------------------------

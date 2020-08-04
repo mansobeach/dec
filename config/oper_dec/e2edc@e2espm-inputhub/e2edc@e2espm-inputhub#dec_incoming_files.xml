@@ -92,10 +92,15 @@
       </Intray>
 
       <Intray>
+         <Name>REP_OPLTAS_TCI_7Z</Name>
+         <Directory>/volumes/dec/interfaces/REP_OPLTAS_TCI_7Z</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
          <Name>REP_ARC_TCI</Name>
          <Directory>/volumes/dec/interfaces/REP_ARC_TCI</Directory>
-      </Intray>
-      
+      </Intray>      
 
       <Intray>
          <Name>REP_ARC_TCI_7Z_EPA</Name>
@@ -132,7 +137,6 @@
           <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/MPC</Directory>
          <!--  <Compress>7z</Compress> -->
       </Intray>
-
                                  
       <Intray>
          <Name>OPERATIONAL_S2PDGS</Name>
@@ -312,6 +316,7 @@
       <File Type="*_VGS*">
           <HardLink>False</HardLink>
                  <ToList>
+                    <Intray>OPERATIONAL_S2PDGS</Intray>
                     <Intray>SHADOW_S2PDGS</Intray>
                     <Intray>S2BOA_SHADOW</Intray>
                     <Intray>ARCHIVE_S2PDGS</Intray>
@@ -322,7 +327,9 @@
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
+           <!-- S2MPASUP-349 
            <Intray>OPERATIONAL_S2PDGS</Intray>
+           -->
            <Intray>S2BOA</Intray>
         </ToList>
      </File>
@@ -342,7 +349,9 @@
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
+           <!-- S2MPASUP-349 
            <Intray>OPERATIONAL_S2PDGS</Intray>
+           -->
            <Intray>S2BOA</Intray>
         </ToList>
      </File>
@@ -352,6 +361,24 @@
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
+           <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+<!--
+
+   Inuvik station acquisition report NOT circulated to the E2ESPM Operational
+   
+   https://jira.elecnor-deimos.com/browse/S2MPASUP-339
+
+-->
+
+     <File Type="*REP_STNACQ_INS*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
@@ -444,6 +471,13 @@
         </ToList>
      </File>
 
+     <File Type="S2?_OPER_REP_OPLTA__EPA?_???????????????_V???????????????_???????????????_A??????_T?????.EOF">
+        <HardLink>False</HardLink>
+        <ToList>
+         <Intray>REP_OPLTAS_TCI_7Z</Intray>
+        </ToList>
+     </File>
+
      <File Type="*REP_OPLTA_*">
         <HardLink>True</HardLink>
         <ToList>
@@ -470,7 +504,9 @@
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
+           <!-- S2MPASUP-349 
            <Intray>OPERATIONAL_S2PDGS</Intray>
+           -->
            <Intray>S2BOA</Intray>
         </ToList>
      </File>
@@ -483,6 +519,15 @@
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+     <!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-346 -->
+
+     <File Type="S2?_OPER_REP_OPLTAS_EPA?_???????????????_V???????????????_???????????????_A??????_T?????.EOF">
+        <HardLink>False</HardLink>
+        <ToList>
+         <Intray>REP_OPLTAS_TCI_7Z</Intray>
         </ToList>
      </File>
 

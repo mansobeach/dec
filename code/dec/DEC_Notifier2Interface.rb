@@ -123,9 +123,9 @@ class DEC_Notifier2Interface
       end
       
       if retVal == true then
-         @logger.info("[DEC_240] #{@entity} I/F: Push files notification by email sent")
+         @logger.info("[DEC_240] I/F #{@entity}: Push files notification by email sent")
       else
-         @logger.error("[DEC_740] #{@entity} I/F: Failed to send email notification")
+         @logger.error("[DEC_740] I/F #{@entity}: Failed to send email notification")
       end
    end
    ## -----------------------------------------------------------

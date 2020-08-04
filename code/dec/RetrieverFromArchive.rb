@@ -331,9 +331,9 @@ private
       retVal = system(cmd)
                      
       if retVal == true then
-         @logger.info("[DEC_213] #{interface} I/F: #{filename} at LocalOutbox #{destination}")
+         @logger.info("[DEC_213] I/F #{interface}: #{filename} at LocalOutbox #{destination}")
       else
-         @logger.error("[DEC_713] #{interface} I/F: #{filename} hard-link failure towards LocalOutbox #{destination}")
+         @logger.error("[DEC_713] I/F #{interface}: #{filename} hard-link failure towards LocalOutbox #{destination}")
          return false
       end
 
@@ -358,9 +358,9 @@ private
       arr << bRet
       
       if bRet == true then
-         @logger.info("[DEC_214] #{interface} I/F: #{package.newfilename} compressed at LocalOutbox #{destination}")
+         @logger.info("[DEC_214] I/F #{interface}: #{package.newfilename} compressed at LocalOutbox #{destination}")
       else
-         @logger.error("[DEC_714] #{interface} I/F: Failed to compress #{package.newfilename}")
+         @logger.error("[DEC_714] I/F #{interface}: Failed to compress #{package.newfilename}")
       end
             
       return bRet

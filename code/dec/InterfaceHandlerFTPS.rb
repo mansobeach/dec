@@ -19,6 +19,7 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 require 'dec/CheckerInterfaceConfig'
+require 'dec/InterfaceHandlerAbstract'
 
 require 'net/ftp'
 require 'fileutils'
@@ -27,15 +28,17 @@ module DEC
 
 ## https://ruby-doc.org/stdlib-2.4.0/libdoc/net/ftp/rdoc/Net/FTP.html
 
-class InterfaceHandlerFTPS
+class InterfaceHandlerFTPS < InterfaceHandlerAbstract
 
    ## -----------------------------------------------------------
    ##
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, log, bDCC=true, bDDC=true, manageDirs=false)
+   def initialize(entity, log, bPull=true, bPush=true, manageDirs=false)
       @entity     =  entity
       @logger     =  log
+      @bPull      =  bPull
+      @bPush      =  bPush
       @manageDirs =  manageDirs
                    
       @entityConfig     = ReadInterfaceConfig.instance
@@ -44,7 +47,7 @@ class InterfaceHandlerFTPS
       @ftpServer        = @entityConfig.getFTPServer4Receive(@entity)
       @ftps             = nil
       
-      self.checkConfig(entity, bDCC, bDDC)         
+      self.checkConfig(entity, bPull, bPush)         
    end   
    ## -----------------------------------------------------------
    ##
@@ -52,6 +55,11 @@ class InterfaceHandlerFTPS
    def setDebugMode
       @isDebugMode = true
       @logger.debug("InterfaceHandlerFTPS debug mode is on") 
+   end
+   ## -----------------------------------------------------------
+   
+   def inspect
+      puts "#{self.class} #{@entity} pull => #{@bPull} | push => #{@bPush}"
    end
    ## -----------------------------------------------------------
 

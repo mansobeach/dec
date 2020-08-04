@@ -42,9 +42,10 @@ module DirUtils
       arrLevels.each{|level|
          if level[0,1] == "$" then
             if ENV[level[1,level.length-1]] == nil then
-               print "Environment Variable ", level, " is not defined!\n"
+               msg = "DirUtils::expandPathValue(#{str}) => Environment Variable ", level, " is not defined!"
+               print msg
                print "\nCheck your configuration Files !\n\n"
-               exit(99)
+               raise msg
             end
             arrTmp << ENV[level[1,level.length-1]]
          else
