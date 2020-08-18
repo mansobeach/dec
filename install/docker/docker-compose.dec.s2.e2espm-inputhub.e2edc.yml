@@ -1,0 +1,67 @@
+##
+## DOCKER COMPOSE DEC SERVICE
+## 
+## docker exec -it dec_db_s2 psql -U postgres -c "create database dec_db_s2"
+##
+## Docker POSTGRES reference environment variables & initdb reference
+## https://hub.docker.com/_/postgres
+##
+## https://www.postgresql.org/docs/9.2/auth-pg-hba-conf.html
+## https://github.com/docker-library/postgres/issues/482
+## host all all 0.0.0.0/0 trust
+## 
+## Docker Networking
+## https://docs.docker.com/compose/networking/
+##
+## Docker Volumes
+## https://docs.docker.com/compose/compose-file/#volumes
+##
+## Create a named volume beforehand
+## https://stackoverflow.com/questions/52152231/how-to-mount-docker-directory-into-host-directory-with-docker-compose
+version: '3'
+
+services:
+  dec_db_s2:
+    image: "postgres:11"
+    container_name: dec_db_s2
+    restart: always
+    environment:
+      POSTGRES_DB: "e2edc"
+      POSTGRES_USER: "e2edc"
+      POSTGRES_PASSWORD: "e2edc"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "54320:5432"
+    volumes:
+      - volume_dec_db:/var/lib/postgresql/data
+  dec_s2:
+      depends_on:
+         - "dec_db_s2"
+      image: app_dec_s2
+      container_name: dec_s2
+      restart: always
+      volumes:
+        - volume_dec:/volumes/dec
+
+volumes:
+  volume_dec:
+      driver: local
+      driver_opts:
+         type: none
+         o: bind
+         device: /volumes/dec
+  volume_dec_db:
+      driver: local
+      driver_opts:
+         type: none
+         o: bind
+         device: /volumes/dec/db
+                     
+# ------------------------------------------------
+# BUILD process does not work when dockerfile location and context directory differs
+# https://github.com/docker/compose/issues/4857
+# https://github.com/docker/compose/issues/7350
+#      build:
+#         context: .
+#         dockerfile: ./install/docker/Dockerfile.dec.s2.e2espm-inputhub.e2edc
+# ------------------------------------------------

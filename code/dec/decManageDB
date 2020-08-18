@@ -111,14 +111,8 @@ def main
       usage
       exit(0)
    end
-   
-#   if @bCreateDB == true then
-#      puts "Creating database ..."
-#      createDatabase
-#      exit(0)
-#   end
-      
-   if !@bDown and !@bUp and !@bCreateDB then
+         
+   if !@bDown and !@bUp and !@bCreateDB and !@bUpdate then
       usage
       exit(99)
    end
@@ -144,6 +138,8 @@ def main
    require 'dec/DEC_DatabaseModel'
 
    dbAdapter   = ENV['DEC_DB_ADAPTER']
+   dbHost      = ENV['DEC_DATABASE_HOST']
+   dbPort      = ENV['DEC_DATABASE_PORT']
    dbName      = ENV['DEC_DATABASE_NAME']
    dbUser      = ENV['DEC_DATABASE_USER']
    dbPass      = ENV['DEC_DATABASE_PASSWORD']
@@ -151,10 +147,18 @@ def main
    if @isDebugMode == true then
       puts "----------------"
       puts dbAdapter
+      puts dbHost
+      puts dbPort
       puts dbName
       puts dbUser
       puts dbPass
       puts "----------------"
+   end
+
+   if @bCreateDB == true then
+      puts "Creating database ..."
+      createDatabase
+      exit(0)
    end
 
    if @bUpdate then
@@ -293,9 +297,9 @@ def main
 
 end
 
-# -------------------------------------------------------------
+## --------------------------------------------------------------
 
-# Print command line help
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
@@ -307,16 +311,19 @@ def usage
       puts line[2, len]
    }
 end
-# -------------------------------------------------------------
+## --------------------------------------------------------------
 
 def createDatabase
    dbAdapter   = ENV['DEC_DB_ADAPTER']
+   dbHost      = ENV['DEC_DATABASE_HOST']
+   dbPort      = ENV['DEC_DATABASE_PORT']
    dbName      = ENV['DEC_DATABASE_NAME']
    dbUser      = ENV['DEC_DATABASE_USER']
    dbPass      = ENV['DEC_DATABASE_PASSWORD']
 
    db_config = {
-	   host: 'localhost',
+	   host: dbHost,
+      port: dbPort,
 	   adapter: 'postgresql',
 	   encoding: 'utf-8',
 	   database: dbName,
@@ -331,7 +338,7 @@ def createDatabase
    ActiveRecord::Base.connection.create_database(db_config[:database])
    
 end
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 ## ===================================================================
 # Start of the main body

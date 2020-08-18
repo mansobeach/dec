@@ -1,18 +1,22 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DatabaseModel class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Data Distributor Component
-# 
-# Git: $Id$: DEC_DatabaseModel.rb,v 1.12 2007/12/18 18:34:03 decdev Exp $
-#
-# module DEC
-#
+###
+### === Ruby source for #DatabaseModel class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Data Distributor Component
+### 
+### Git: $Id$: DEC_DatabaseModel.rb,v 1.12 2007/12/18 18:34:03 decdev Exp $
+###
+### module DEC
+###
 #########################################################################
+
+## Evetual future support of yaml
+## db_config = YAML.load_file('config/database.yml')
+## ActiveRecord::Base.establish_connection(db_config['production'])
 
 # CREATE INDEX IS GOOD ! :o)
 
@@ -23,13 +27,16 @@ require 'rubygems'
 require 'active_record'
 
 dbAdapter   = ENV['DEC_DB_ADAPTER']
+dbHost      = ENV['DEC_DATABASE_HOST']
+dbPort      = ENV['DEC_DATABASE_PORT']
 dbName      = ENV['DEC_DATABASE_NAME']
 dbUser      = ENV['DEC_DATABASE_USER']
 dbPass      = ENV['DEC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(
          :adapter    => dbAdapter,
-         :host       => "localhost", 
+         :host       => dbHost,
+         :port       => dbPort, 
          :database   => dbName,
          :username   => dbUser,
          :password   => dbPass, 
@@ -245,7 +252,7 @@ class InventoryROP < ActiveRecord::Base
       InventoryROP.setROPStatus(nROP, STATUS_CONSOLIDATED)
       InventoryROP.unsetAllTransferable(nROP)
    end
-   #-----------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end
 
@@ -261,8 +268,3 @@ class InventoryParams < ActiveRecord::Base
    self.primary_key  = 'KEYWORD'
 end
 ## ===================================================================
-
-
-
-#-----------------------------------------------------------
-

@@ -234,23 +234,30 @@ private
 	## This method defines all the structs used
 	def defineStructs
 	   Struct.new("Project", :name, :id)
+
       Struct.new("Report", :name, :enabled, :desc, :fileClass, :fileType)
-      Struct.new("Inventory", :db_adapter, :db_name, :db_username, :db_password)
+
+      Struct.new("Inventory", :db_adapter, \
+                              :db_host, \
+                              :db_port, \
+                              :db_name, \
+                              :db_username, \
+                              :db_password)
 	end
 	## -----------------------------------------------------------
    
    ## Load the file into the internal struct File defined in the
    ## class Constructor. See initialize.
    def loadData
-     configFilename           = %Q{#{@@configDirectory}/dec_config.xml}
-     fileConfig               = File.new(configFilename)
-     xmlConfig                = REXML::Document.new(fileConfig)
-     @arrFiltersOutgoing      = Array.new
-     @arrFiltersIncoming      = Array.new
-     if @isDebugMode == true then
+      configFilename           = %Q{#{@@configDirectory}/dec_config.xml}
+      fileConfig               = File.new(configFilename)
+      xmlConfig                = REXML::Document.new(fileConfig)
+      @arrFiltersOutgoing      = Array.new
+      @arrFiltersIncoming      = Array.new
+      if @isDebugMode == true then
         puts "\nProcessing DEC Config File"
-     end
-     processConfigFile(xmlConfig)
+      end
+      processConfigFile(xmlConfig)
    end   
    ## -----------------------------------------------------------
    
@@ -448,6 +455,8 @@ private
          |inventory|
 
          db_adapter  = ""
+         db_host     = ""
+         db_port     = ""
          db_name     = ""
          db_user     = ""
          db_pass     = ""
@@ -455,6 +464,16 @@ private
          XPath.each(inventory, "Database_Adapter"){
             |adapter|  
             db_adapter = adapter.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Host"){
+            |name|
+            db_host  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Port"){
+            |name|
+            db_port  = name.text.to_s
          }
          
          XPath.each(inventory, "Database_Name"){
@@ -472,7 +491,12 @@ private
             db_pass  = pass.text.to_s   
          }
          
-         @inventory = Struct::Inventory.new(db_adapter, db_name, db_user, db_pass)
+         @inventory = Struct::Inventory.new(db_adapter, \
+                                             db_host, \
+                                             db_port, \
+                                             db_name, \
+                                             db_user, \
+                                             db_pass)
           
       }
       ## -----------------------------------------
@@ -544,7 +568,7 @@ private
       
       return Struct::Report.new(name, enabled, desc, fileClass, fileType)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end # class
 

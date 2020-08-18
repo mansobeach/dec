@@ -170,7 +170,7 @@ def main
    checkModuleIntegrity
 
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("decListener", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
@@ -215,20 +215,16 @@ def main
    else
       
       if existEntity?(@mnemonic) == false then
-         puts
-         puts "Could not start a listener for #{@mnemonic} I/F !  :-("
-         puts
-         puts "#{@mnemonic} is not a registered I/F"
-         puts
+         @logger.error("[DEC_605] I/F #{@entity}: db inventory is not configured / reachable #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error("[DEC_601] I/F #{@entity}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
    
       ftReadConf   = ReadInterfaceConfig.instance
    
       if ftReadConf.isEnabled4Receiving?(@mnemonic) == false then
-         puts "Interface #{@mnemonic} is not configured for receiving"
-         puts "Check out the flag Enabled4Receiving"
-         puts
+         @logger.error("[DEC_605] I/F #{@entity}: Enabled4Receiving flag is disabled #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error("[DEC_601] I/F #{@entity}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
    
@@ -408,13 +404,12 @@ def stopListener(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
    pid     = checker.getRunningPID
    if pid == false then
-      puts "There was not a listener for #{mnemonic} I/F running !"
-      @logger.info("Listener for #{mnemonic} I/F was not running")
+      @logger.info("[DEC_XXX] I/F #{@entity}: Listener was not running")
    else
-      puts "Sending signal SIGKILL to Process #{pid} for killing #{mnemonic} I/F"
+      logger.debug("Sending signal SIGKILL to Process #{pid} for killing #{mnemonic} I/F")
       Process.kill(9, pid.to_i)
 	   checker.release
-      @logger.info("Listener for #{mnemonic} I/F has been disabled")
+      @logger.info("[DEC_002] I/F #{@entity}: Listener has been switched-off")
    end
 end
 ## ---------------------------------------------------------

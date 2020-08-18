@@ -216,14 +216,14 @@ class DEC_Notifier2Interface
       begin
          retVal = @mailer.sendMail
       rescue Exception => e
-         @logger.error("[DEC_742] #{@entity} I/F: #{e.to_s}")
+         @logger.error("[DEC_742] I/F #{@entity}: #{e.to_s}")
          retVal = false
       end
       
       if retVal == true then
-         @logger.info("[DEC_241] #{@entity} I/F: Push error notification by email sent")
+         @logger.info("[DEC_241] I/F #{@entity}: Push error notification by email sent")
       else
-         @logger.error("[DEC_741] #{@entity} I/F: Failed to send push error notification")
+         @logger.error("[DEC_741] I/F #{@entity}: Failed to send push error notification")
       end
       
    end

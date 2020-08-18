@@ -80,6 +80,11 @@
    
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
+      <!--
+      <Database_Host>host.docker.internal</Database_Host>
+      -->
+      <Database_Host>dec_db_s2</Database_Host>
+      <Database_Port>5432</Database_Port>      
       <Database_Name>e2edc</Database_Name>
       <Database_User>e2edc</Database_User>
       <Database_Password>e2edc</Database_Password>

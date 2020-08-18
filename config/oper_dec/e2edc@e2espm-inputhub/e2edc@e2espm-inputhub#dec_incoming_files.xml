@@ -182,6 +182,21 @@
       <ListFilesDisseminated>
     
       <!--
+    
+      => 20200818 REP_PASS_E to SGS circulated to SHADOW
+    
+      => S2MPASUP-349: REP_OPDPC Legacy SGS NOT circulated to OPERATIONAL_S2PDGS
+      => S2MPASUP-349: REP_ARC__ Legacy SGS NOT circulated to OPERATIONAL_S2PDGS
+
+      => S2MPASUP-346: "Fake" OPLTAS TCI-wise are filtered-out by dissemination to REP_OPLTAS_TCI_7Z only
+
+      => S2MPASUP-339: CANCELLED update of Inuvik station acquisition report NOT circulated to the E2ESPM Operational
+
+
+      -->
+    
+    
+      <!--
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
@@ -367,18 +382,16 @@
         </ToList>
      </File>
 
-<!--
-
-   Inuvik station acquisition report NOT circulated to the E2ESPM Operational
-   
-   https://jira.elecnor-deimos.com/browse/S2MPASUP-339
-
--->
 
      <File Type="*REP_STNACQ_INS*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
+<!--
+   Inuvik station acquisition report RE circulated to the E2ESPM Operational
+   https://jira.elecnor-deimos.com/browse/S2MPASUP-349
+-->           
+           <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
@@ -434,6 +447,7 @@
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
+           <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
         </ToList>
      </File>

@@ -717,11 +717,14 @@ class DEC_ReceiverFromInterface
 
       begin
          Timeout.timeout(10) do
+            if @isDebugMode == true then
+               @logger.debug("[DEC_XXX] I/F #{@entity}: Connecting to #{host} with #{@protocol}")
+            end
             @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 5)
             @session = @ftp.connect!
          end
       rescue Exception => e
-         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} with #{@protocol}")
          @logger.error("[DEC_611] I/F #{@entity}: #{e.to_s}")
          @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
          if @isDebugMode == true then
@@ -761,8 +764,18 @@ class DEC_ReceiverFromInterface
       req = Array.new
       begin
         Timeout.timeout(300) do
+            if @isDebugMode == true then
+               @logger.debug("[DEC_XXX] I/F #{@entity}: #{@protocol} CD #{path}")
+            end
+
             handle = @ftp.opendir!(path)
+
+            if @isDebugMode == true then
+               @logger.debug("[DEC_XXX] I/F #{@entity}: #{@protocol} NLST")
+            end
+
             req = @ftp.readdir!(handle)
+
             # req = @ftp.readdir(handle)
             @ftp.close!(handle)
         end
@@ -784,7 +797,7 @@ class DEC_ReceiverFromInterface
          # Add item to list if it is a regular file
          if item.file? then
             fullFile = "#{path}/#{item.name}"
-            if @isDebugMode then
+            if @isDebugMode == true then
                @logger.debug("Found #{fullFile}")
             end
             @newArrFile << fullFile
@@ -1931,7 +1944,7 @@ private
       } # end of measure
 
       if @isDebugMode == true then
-         @logger.debug("Filtering Completed for #{@entity}")
+         @logger.debug("[DEC_919] I/F #{@entity}: Filtering Completed")
       end
 
       end # end of if @isNoDB
@@ -1940,8 +1953,8 @@ private
          list = list[0..@pollingSize-1]
       end
 
-      if @isBenchmarkMode == true then
-         @logger.info("Filtered in #{@entity} #{nStart}/#{tmpList.length} items in database):#{ perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
+      if @isBenchmarkMode == true or @isDebugMode == true then
+         @logger.info("[DEC_920] I/F #{@entity}: Filtered #{nStart}/#{tmpList.length} items in database):#{ perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
       end
 
       @fileListError = @fileListError.flatten.uniq

@@ -239,6 +239,9 @@ def main
       begin
          @dbEntity   = Interface.new
       rescue Exception => e
+         
+         @logger.error("[DEC_605] I/F #{@entity}: db inventory is not configured / reachable #{'1F480'.hex.chr('UTF-8')}")
+
 
          if @isDebugMode == true then
             puts
@@ -247,19 +250,15 @@ def main
             puts e.backtrace
          end
 
-         puts
-         puts "db inventory is not configured"
-         puts
-         puts "you may try with \"--nodb\" flag"
-         puts
-         
+
          exit(99)
+
       end
 
       interface = Interface.find_by(name: @entity)
       
       if interface == nil then
-         @logger.error("[DEC_605] #{@entity} I/F: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error("[DEC_605] I/F #{@entity}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
 
@@ -273,17 +272,17 @@ def main
    cnf = ReadInterfaceConfig.instance
 
    if cnf.exists?(@entity) == false
-      @logger.error("[DEC_605] #{@entity} I/F: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
+      @logger.error("[DEC_605] I/F #{@entity}: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end 
    
    if cnf.isEnabled4Receiving?(@entity) == false then
-      @logger.error("[DEC_605] #{@entity} I/F: Enabled4Receiving flag is disabled #{'1F480'.hex.chr('UTF-8')}")
+      @logger.error("[DEC_605] I/F #{@entity}: Enabled4Receiving flag is disabled #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
    
    if ReadConfigIncoming.instance.getIncomingDir(@entity) == nil then
-      @logger.error("[DEC_605] #{@entity} I/F: LocalInbox configuration item not found #{'1F480'.hex.chr('UTF-8')}")
+      @logger.error("[DEC_605] I/F #{@entity}: LocalInbox configuration item not found #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
    

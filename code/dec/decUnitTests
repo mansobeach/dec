@@ -780,33 +780,43 @@ class DECTestCase < Test::Unit::TestCase
       puts
 
       cmd = "decValidateConfig -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -e"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -i"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -o"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -m"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -l"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -g"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -a"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -X /tmp/dec_config -N decUnitTests@localhost"
+      puts cmd
       assert(system(cmd), cmd)
 
       assert(File.exist?("/tmp/dec_config/dec_interfaces.xml"),         "Extracted dec_interfaces.xml")
@@ -903,12 +913,22 @@ class DECTestCase < Test::Unit::TestCase
       ## Pull Miss-Configurations
       ##
 
+      cmd = "decListener -m FOO -i 20 --nodb"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
       cmd = "decGetFromInterface -m FOO"
       puts cmd
       puts
       assert(!system(cmd), cmd)
 
       cmd = "decGetFromInterface -m WEBDAV2"
+      puts cmd
+      puts
+      assert(!system(cmd), cmd)
+
+      cmd = "decListener -m POD_PUSH -i 20 --nodb"
       puts cmd
       puts
       assert(!system(cmd), cmd)

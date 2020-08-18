@@ -24,11 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.14"
+   @@version = "1.0.15"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.15" =>    "Support to remote inventory / db different than localhost\n\
+          dec_config.xml Inventory config now includes Database_Host & Database_Port items", \
       "1.0.14" =>    "New gems sys-filesystem and nokogiri are required\n\
           Support of HTTP(S) protocol verb PUT for push circulations\n\
           Support of HTTP(S) protocol verb GET for pull directories\n\
@@ -142,6 +144,14 @@ module DEC
       if !ENV['DEC_DB_ADAPTER'] then
          ENV['DEC_DB_ADAPTER'] = inventory[:db_adapter]
       end
+
+      if !ENV['DEC_DATABASE_HOST'] then
+         ENV['DEC_DATABASE_HOST'] = inventory[:db_host]
+      end
+
+      if !ENV['DEC_DATABASE_PORT'] then
+         ENV['DEC_DATABASE_PORT'] = inventory[:db_port]
+      end
    
       if !ENV['DEC_DATABASE_NAME'] then
          ENV['DEC_DATABASE_NAME'] = inventory[:db_name]
@@ -174,6 +184,8 @@ module DEC
    def unset_config
       ENV.delete('DEC_VERSION')
       ENV.delete('DEC_DB_ADAPTER')
+      ENV.delete('DEC_DATABASE_HOST')
+      ENV.delete('DEC_DATABASE_PORT')
       ENV.delete('DEC_DATABASE_NAME')
       ENV.delete('DEC_DATABASE_USER')
       ENV.delete('DEC_DATABASE_PASSWORD')
@@ -188,6 +200,8 @@ module DEC
       puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
       puts "DEC_DB_ADAPTER                => #{ENV['DEC_DB_ADAPTER']}"
       puts "DEC_TMP                       => #{ENV['DEC_TMP']}"
+      puts "DEC_DATABASE_HOST             => #{ENV['DEC_DATABASE_HOST']}"
+      puts "DEC_DATABASE_PORT             => #{ENV['DEC_DATABASE_PORT']}"
       puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
       puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
       puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
