@@ -125,6 +125,10 @@ The DEC SW can generate a report enumerating the files which did not match any f
 \end{verbatim}
 
 
+%% ========================================================= 
+%% ========================================================= 
+%% ========================================================= 
+
 \section{Interfaces}
  
 This section covers the \textit{interfaces} configuration of a DEC node. The configuration of every interface is defined in the file \textit{dec\_interfaces.xml}.
@@ -133,8 +137,8 @@ This section covers the \textit{interfaces} configuration of a DEC node. The con
 \noindent
 \begin{itemize}
 	\item \textit{TXRXParams} : configuration items regarding adjustments for the \textit{pull} and \textit{push} circulations
-	\item \textit{Enabled4Receiving} : \textit{boolean} flag for the activation of the circulations in \textit{push} mode
-	\item \textit{ImmediateRetries} : number of retries to be applied to recover eventual \textit{upload} failures when \textit{pushing} a file
+		\item \textit{Enabled4Receiving} : \textit{boolean} flag for the activation of the circulations in \textit{push} mode
+		\item \textit{ImmediateRetries} : number of retries to be applied to recover eventual \textit{upload} failures when \textit{pushing} a file
 	\item \textit{LoopRetries} : number of loops to be applied to recover eventual \textit{upload} failures when \textit{pushing} a file
 	\item \textit{LoopDelay} : delay in \textit{seconds} between two consecutive loops (if needed) for push
 	\item \textit{PollingInterval} : delay in \textit{seconds} in between consecutive iterations for \textit{pull} circulations
@@ -226,6 +230,10 @@ Below the possible \textit{Event Name} values which can be configured:
 	\item \textit{NewFile2Intray} :	it is raised upon every new file locally disseminated after pulling it ; \%f specifies the \textit{filename} disseminated ; \%F specifies the \textit{full path filename} disseminated ; \%d specifies the directory name in which the file has been disseminated 					 
 \end{itemize}
 
+%% ========================================================= 
+%% ========================================================= 
+%% ========================================================= 
+
 \section{Pull circulations}
 
 The mechanism to \textit{select}, \textit{download} and locally \textit{disseminate} files to a DEC node is referred to \textit{pull mode}.
@@ -243,6 +251,7 @@ The \textit{Interface} configuration item defines the interfaces pick-up point(s
 	\item \textit{Name} : this is the configuration item \textit{identifier} which is used to identify a given interface and refer to it in other sections of the configuration
 	\item \textit{LocalInbox} : this is the \textit{local} directory in which files are initially placed upon successful download ; if no dissemination rule is applied, this directory becomes the final destination  
 	\item \textit{DownloadDirs} : a list of \textit{Directory} configuration items to define the \textit{remote} directories of this interface from which the files will be pulled ; the attribute \textit{DepthSearch} defines the directory sub-levels which are polled.
+	\item \textit{Switches} : \textit{pull} configuration items to modulate the operations with respect the published files by the interface.
 \end{itemize}
 
 
@@ -256,6 +265,13 @@ The \textit{Interface} configuration item defines the interfaces pick-up point(s
 		<Directory DepthSearch="0">/download1</Directory>
 		<Directory DepthSearch="0">/download2</Directory>
 	</DownloadDirs>
+    <Switches>
+	   <DeleteDownloaded>true</DeleteDownloaded>
+	   <DeleteDuplicated>true</DeleteDuplicated>
+	   <DeleteUnknown>false</DeleteUnknown>
+	   <LogDuplicated>true</LogDuplicated>
+	   <LogUnknown>true</LogUnknown>
+   </Switches>  
 </Interface>
 				
 <Interface>
@@ -264,13 +280,33 @@ The \textit{Interface} configuration item defines the interfaces pick-up point(s
 	<DownloadDirs>
 		<Directory DepthSearch="0">ser7</Directory>
 	</DownloadDirs>
+    <Switches>
+       <DeleteDownloaded>false</DeleteDownloaded>
+       <DeleteDuplicated>false</DeleteDuplicated>
+       <DeleteUnknown>false</DeleteUnknown>
+       <LogDuplicated>false</LogDuplicated>
+       <LogUnknown>false</LogUnknown>
+    </Switches>  	
 </Interface>
 		
 </ListInterfaces>
 \end{lstlisting}
 
-\par
-\noindent
+\subsubsection{Pull Switches}
+This sections describes the different pull switches which are defined interface-wise when retrieving files from it.
+
+\label{DeleteDownloaded}
+\label{DeleteUnknownFiles}
+\label{DeleteDuplicatedFiles}
+
+\begin{itemize}
+	\item \textit{DeleteDownloaded} : file pulled are removed upon successful retrieval ; this option is usually disabled when fetching files from shared public interfaces.
+	\item \textit{DeleteDuplicated} : \textit{duplicated} files found during a pull iteration are removed from the interface without retrieval ; this option is usually disabled when fetching files from shared public interfaces.  
+	\item \textit{DeleteUnknown} : \textit{unknown} files which do not meet any \textit{download rule} are removed from the interface without retrieval ; this option is usually disabled when fetching files from shared public interfaces.
+	\item \textit{LogDuplicated} : \textit{duplicated} files found from the interface during a pull iteration are logged as \hyperref[DEC301]{\textit{[DEC\_301]}} warnings without retrieval ; this option is usually disabled when fetching files from shared public interfaces.
+	\item \textit{LogUnknown} : \textit{unknown} files from the interface which do not meet any \textit{download rule} are logged as \hyperref[DEC320]{\textit{[DEC\_320]}} warnings ; this option is usually disabled when fetching files from shared public interfaces.
+\end{itemize}
+
 
 \label{DownloadRules}
 \subsection{Download rules}
@@ -486,31 +522,6 @@ The following command can be used to register an interface identifier in the dat
 %% Tweaks
 %%
 
-\section{Circulation Options}
-This section describes different circulation options or the DEC SW execution behaviour in particular cases. The associated configuration items are defined in the \textit{dec\_config.xml} configuration file.
-
-
-\subsection{Pulled Files}
-The associated configuration items are defined in \textit{Options/Download}
-
-\subsubsection{Unknown Files}
-The DEC SW is able to delete without download the files published by any interface in a \textit{Directory} \textit{DownloadDir} which do not meet any of the \textit{ListFiles} matching criteria rules defined in dec\_incoming\_files.xml. 
-
-\label{DeleteUnknownFiles}
-\begin{verbatim}
-	<DeleteUnknownFiles>false|true</DeleteUnknownFiles>
-\end{verbatim}
-
-\subsubsection{Duplicated Files}
-The DEC SW controls and blocks the retrieval of files duplication published by a given interface to avoid feeding the consumer in-trays with the same inputs previously received.\newline
-\par
-\noindent
-Those duplicated files which are not pulled can become a problem introducing performance penalties when filtering them during each iteration.
-By configuration below it is possible to instruct DEC remove these duplicated files from the interface pick-up point without downloading them using the \textit{DeleteDuplicatedFiles} configuration item:
-\label{DeleteDuplicatedFiles}
-\begin{verbatim}
-<DeleteDuplicatedFiles>false|true</DeleteDuplicatedFiles>
-\end{verbatim}
 
 \subsection{Pushed Files}
 TBW
@@ -518,9 +529,13 @@ TBW
 
 \section{Environment Variables}
 
-The execution of DEC SW can be parametrised through the usage of environment variables which are loaded from the shell. This section describes them.
+The execution of DEC SW can be parameterized through the usage of environment variables which are loaded from the shell. Usage of these environment variables is considered \textit{deprecated} since all the associated configuration items they refer to are covered within the configuration files.
+\newline
 \par
 \noindent
+The eventual definition and availability of the environment variable referred in this section would override the configuration parameters defined in the configuration files, therefore they are documented to mainly avoid their usage.
+
+
 \subsection{Database Variables} \label{Database Variables}
 This section describes the environment variables used by DEC SW to define the database settings.
 \begin{itemize}
@@ -539,7 +554,7 @@ This section describes the environment variables used by DEC SW to define the da
 \end{itemize}
 
 \subsection{File Transfer for RPF}
-This section describes the specific environment variables used by DEC SW acting as File Transfer for the RPF.
+This section describes the specific environment variables used by DEC SW acting as File Transfer for the RPF. The configuration items associated are not covered by the DEC configuration files, therefore their definition is mandatory for the RPF execution environment.
 \begin{itemize}
 	\item \textit{FTPROOT} : this is the directory which is used to place the files which will be \textit{pushed} as part of each ROP delivery
 	\item \textit{RPF\_ARCHIVE\_ROOT} : this is RPF archive root directory from which the files to be transferred are gathered

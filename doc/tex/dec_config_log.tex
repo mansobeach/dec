@@ -22,17 +22,18 @@ The log capability by DEC SW are based on the \textit{ruby} \href{http://log4r.s
 The associated configuration file \textit{dec\_log\_config.xml} is not DEC SW specific and it can be directly handled by \textit{log4r} and can be similar to other components which use the same logging \textit{Log4r} library.
 
 \subsection{Rolling File Outputter}
-This section recalls the \href{http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html}{Log4r} \textit{RollingFileOutputter} which is used by default in DEC SW.
+This section recalls the \href{https://www.rubydoc.info/github/bestmike007/log4rails/Log4r/RollingFileOutputter}{Log4r} \textit{RollingFileOutputter} which is used by default in DEC SW.
 \par
 \noindent
 \begin{itemize}
-	\item \textit{type} : TBW
-	\item \textit{filename} : TBW
-	\item \textit{formatter} : TBW
-	\item \textit{trunc} : TBW
-	\item \textit{maxsize} : TBW
-	\item \textit{max\_backups} : TBW
-	\item \textit{maxtime} : TBW 
+	\item \textit{type} : RollingFileOutputter
+	\item \textit{filename} : pull path filename
+	\item \textit{formatter} : \href{https://www.rubydoc.info/github/bestmike007/log4rails/Log4r/PatternFormatter}{PatternFormatter}
+	\item \textit{trunc} : If true, deletes the existing log files, otherwise continues logging where it left off
+	last time 
+	\item \textit{maxsize} : Maximum size of every log file in bytes
+	\item \textit{max\_backups} : Maximum number of prior log files kept
+	\item \textit{maxtime} : Maximum age of every log file in seconds
 \end{itemize}
 
 \subsection{Server}

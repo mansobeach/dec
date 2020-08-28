@@ -35,21 +35,18 @@
 # Copyright (c) 2005 ESA - DEIMOS Space S.L.
 #
 
-
 #########################################################################
-#
-# === Data Exchange Component
-#
-# CVS: $Id: decListener,v 1.8 2008/07/03 11:38:07 decdev Exp $
-#
+###
+### === Data Exchange Component
+###
+### Git: $Id: decListener,v 1.8 2008/07/03 11:38:07 decdev Exp $
+###
 #########################################################################
-
-
 
 ## DEC Daemon process which listens to incoming files and dispatches them
 ## into the proper directories, depending on the configuration file
-## ft_incoming_files.xml.
-## It agregates #DCC_Listener to implement a daemon.
+## dec_incoming_files.xml.
+## It agregates #cuc/Listener to implement a daemon.
 
 
 require 'rubygems'
@@ -111,6 +108,24 @@ def main
       exit(99)
    end   
 
+   checkModuleIntegrity
+
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+		puts "Error in decListener::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+
    begin
       opts.each do |opt, arg|
          case opt
@@ -124,9 +139,7 @@ def main
             when "--interval" then @intervalSeconds      = arg.to_i
 	         when "--stop"     then
                if existEntity?(arg.to_s) == false then
-                  puts
-                  puts "#{arg.to_s} is not a registered I/F"
-                  puts
+                        @logger.error("[DEC_605] I/F #{@entity}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
                   exit(99)
                end
                @bStopInterface         = true
@@ -167,24 +180,6 @@ def main
       exit(66)
    end
 
-   checkModuleIntegrity
-
-   # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-   if @isDebugMode then
-      loggerFactory.setDebugMode
-   end
-   @logger = loggerFactory.getLogger
-   if @logger == nil then
-      puts
-		puts "Error in decListener::main"
-		puts "Could not set up logging system !  :-("
-      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		puts
-		puts
-		exit(99)
-   end
-
    if @bStopInterface == true then
       stopListener(@mnemonic)
       stopGetFromEntity(@mnemonic)
@@ -193,7 +188,7 @@ def main
 
    if @bStopListeners == true then
    	stopListeners
-	   puts "\nlisteners to the I/Fs have been killed ! }=-) \n\n"
+      @logger.info("[DEC_000] listeners to every I/F has been killed #{'1F608'.hex.chr('UTF-8')}")
       exit(0)
    end
  
@@ -232,7 +227,6 @@ def main
                               self.method("pollInterface").to_proc)
 
       trap("SIGHUP") {  
-                        puts "\nPolling requested for #{@mnemonic} I/F ...\n"
                         @logger.info("Polling Requested for #{@mnemonic} I/F")
                      }   
 
@@ -241,7 +235,9 @@ def main
       end
 		   
       # start server
+      @logger.info("[DEC_001] I/F #{@mnemonic}: Listener has been switched-on")
       listener.run
+      # @logger.info("[DEC_001] I/F #{@mnemonic}: Listener has been switched-on")
    end
 end
 ## -------------------------------------------------------------
@@ -370,11 +366,13 @@ def restartListeners
        if ftReadConf.isEnabled4Receiving?(x) == true then
 	       checker = CUC::CheckerProcessUniqueness.new(File.basename($0), x, true)
          if checker.getRunningPID == false then
-            puts "\nThere was not a listener for #{x} I/F running !\n"
+            @logger.warn("[DEC_603] I/F #{mnemonic}: Listener was not running")
             launchListener(x)
          else
             pid = checker.getRunningPID
-            puts "Sending signal 1 to Process #{pid} for restarting #{x} I/F"
+            if @isDebugMode == true then
+               @logger.debug("Sending signal 1 to Process #{pid} for restarting #{x} I/F")
+            end
             Process.kill(1, pid.to_i)
          end     
        end
@@ -390,7 +388,6 @@ def stopListeners
    arrPIDs      = Array.new
    @logger.info("Stopping all I/Fs ...")
    arrEntities.each{|x|
-      puts x
       if ftReadConf.isEnabled4Receiving?(x) == true then
          stopListener(x)
       end
@@ -404,12 +401,14 @@ def stopListener(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
    pid     = checker.getRunningPID
    if pid == false then
-      @logger.info("[DEC_XXX] I/F #{@entity}: Listener was not running")
+      @logger.warn("[DEC_603] I/F #{mnemonic}: Listener was not running")
    else
-      logger.debug("Sending signal SIGKILL to Process #{pid} for killing #{mnemonic} I/F")
+      if @isDebugMode == true then
+         @logger.debug("Sending signal SIGKILL to Process #{pid} for killing #{mnemonic} I/F")
+      end
       Process.kill(9, pid.to_i)
 	   checker.release
-      @logger.info("[DEC_002] I/F #{@entity}: Listener has been switched-off")
+      @logger.info("[DEC_002] I/F #{mnemonic}: Listener has been switched-off")
    end
 end
 ## ---------------------------------------------------------
@@ -426,23 +425,26 @@ def checkListeners
    bAll  = true
    bNone = true
    arrEntities.each{|x|
-      puts x
        checker = CUC::CheckerProcessUniqueness.new(File.basename($0), x, true)
        if @isDebugMode == true then
           checker.setDebugMode
        end
+       
+       if ftReadConf.isEnabled4Receiving?(x) == false then
+          next
+       end
+      
        ret     = checker.isRunning
        if ret == false then
           if ftReadConf.isEnabled4Receiving?(x) == true then
-             puts "There is not a listener for #{x} I/F running !"
+             @logger.info("[DEC_003] I/F #{x}: Listener is switched-off")
              bAll = false
           end  
        else
-          puts "listener for #{x} I/F is running"
+          @logger.info("[DEC_003] I/F #{x}: Listener is switched-on")
           bNone = false
        end
    }
-   puts
    if bAll == true then
       exit(0)
    end
@@ -458,11 +460,11 @@ end
 def launchListeners      
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
-   
-   puts "Polling #{@projectName} Interfaces ..."
-	puts
-   
-   @logger.info("Starting all Listeners ...")
+      
+   if @isDebugMode == true then 
+      @logger.debug("Polling #{@projectName} Interfaces ...")
+      @logger.debug("Starting all Listeners ...")
+   end
    
    startTime = Time.new
    startTime.utc
@@ -473,7 +475,6 @@ def launchListeners
 	      launchListener(entity)
       end
 	}
-   puts
    return 0   
 end
 ## ---------------------------------------------------------
@@ -487,25 +488,28 @@ def launchListener(entity)
    else
       command  = %Q{decListener --mnemonic #{entity} --interval #{pI}}
    end
-   puts command
-   @logger.info("Starting Listener for #{entity} I/F")
-   #---------------------------------------------
+
+   if @isDebugMode == true then
+      @logger.debug(cmd)
+   end
+   
+   @logger.info("[DEC_001] I/F #{entity}: Starting Listener")
+   # ---------------------------------------------
    # Create a new process for each Entity
    pid = fork {
       Process.setpriority(Process::PRIO_PROCESS, 0, 1)
       if @isDebugMode == true then
-         puts command
+         @logger.debug(command)
       end
       retVal = execute(command, "decListener")
       if retVal == true then
 			exit(0)
       else
-         # @logger.error("Could not launch listener for #{entity} I/F")
-		   puts "Error launching listener for #{entity}"
+         @logger.info("[DEC_999] I/F #{entity}: Error when launching Listener")
          exit(99)
       end            
    }
-   #---------------------------------------------
+   # ---------------------------------------------
 end
 ## ---------------------------------------------------------
 
@@ -514,7 +518,7 @@ def stopGetFromEntities
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    arrPIDs      = Array.new
-   puts
+
 #   @logger.info("Abort current polling Operations ...")
    
    arrEntities.each{|x|
@@ -530,13 +534,19 @@ def stopGetFromEntity(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new("decGetFromInterface", mnemonic, true)
    pid     = checker.getRunningPID
    if pid == false then
-      puts "There was not a decGetFromInterface for #{mnemonic} I/F running !"
+      if @isDebugMode == true then
+         @logger.debug("[DEC_XXX] I/F #{mnemonic}: decGetFromInterface was not pulling")
+      end
    else
-      puts "Sending signal SIGKILL to Process #{pid} for killing decGetFromInterface -m #{mnemonic}"
-      @logger.info("Abort current polling Operations ...")
+      if @isDebugMode == true then
+         @logger.debug("Sending signal SIGKILL to Process #{pid} for killing decGetFromInterface -m #{mnemonic}")
+      end
+      if @isDebugMode == true then
+         @logger.debug("[DEC_XXX] I/F #{mnemonic}: Aborting on-going pull iteration ...")
+      end
       Process.kill(9, pid.to_i)
 	   checker.release
-      @logger.info("Polling for #{mnemonic} I/F has been aborted")
+      @logger.info("[DEC_XXX] I/F #{mnemonic}: Pull on-going iteration has been aborted")
    end
 end
 ## ---------------------------------------------------------

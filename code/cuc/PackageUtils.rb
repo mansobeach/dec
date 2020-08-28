@@ -67,17 +67,24 @@ module PackageUtils
       Dir.chdir(prevDir)
       remove_dir(@localDir, true)
    end
-   ## --------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # compress a single file into 7z
-   #
-   # - full_path_file   (IN): File to be compressed
-   # - deleteSourceFile (IN): Flag to delete the source file
+   ## compress a single file into 7z
+   ##
+   ## - full_path_file   (IN): File to be compressed
+   ## - deleteSourceFile (IN): Flag to delete the source file
+   ##
+   ## Silent compression
+   ## https://serverfault.com/questions/108024/silent-7za-compression
    
-   def pack7z(full_path_file, targetName = "", bDeleteSourceFile = true, bIsDebugMode = false)
-      
-      # puts "PackageUtils::pack7z"
-      
+   
+   def pack7z( full_path_file, \
+               targetName = "", \
+               bDeleteSourceFile = true, \
+               bIsDebugMode = false, \
+               logger = nil \
+               )
+            
       checkModuleIntegrity
       
       if FileTest.exist?(full_path_file) == false then
@@ -91,18 +98,25 @@ module PackageUtils
 
       bIsDir = true
 
+      cmd  = %Q{7za a #{targetName} #{full_path_file}}
+
+      ## silent mode
+      ## > progress redirected to 0
+      ## > output redirected to 0
+      if bIsDebugMode == false then
+         cmd = "#{cmd} -y -bsp0 -bso0"
+      end
+
       if FileTest.directory?(full_path_file) == true then
-         cmd  = %Q{7za a #{targetName} #{full_path_file}/*}
-      else
-         cmd  = %Q{7za a #{targetName} #{full_path_file}}
+         cmd  = %Q{#{cmd}/*}
       end
 
 #      if bDeleteSourceFile == true then
 #         cmd = "#{cmd} -sdel"
 #      end
 
-      if bIsDebugMode == true then
-         puts(cmd)
+      if bIsDebugMode == true and logger != nil then
+         logger.debug(cmd)
       end
 
       retVal = system(cmd)
@@ -117,7 +131,7 @@ module PackageUtils
 
       return retVal
    end
-   #--------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def initialize(file, path, bDeleteSrc)
      @isModuleOK        = false

@@ -2,7 +2,7 @@
 
 rsync over ssh
 
-rsync -rhv -e ssh --progress /Users/borja/Music/Lossless/  borja@192.168.1.118:music/Lossless/
+rsync -rhv -e ssh --progress /Users/borja/Music/Lossless/  borja@192.168.1.118:music/Lossless
 
 
 http://www.joedog.org/siege-home

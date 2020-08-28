@@ -31,27 +31,10 @@ The install is based on \href{https://rvm.io/}{RVM}, which is a command-line too
 \inlinecode{bash}{ \$> \\curl -sSL https://get.rvm.io | bash -s stable --ruby} \newline
 \par 
 \noindent
-The following command installs a specific version of ruby interpreter ; the version specified below corresponds to the one used for the unit tests and it is required as a mandatory precondition at installation time according to the gem file definition.\newline
+Alternatively to the latest ruby stable installation, the following command installs a specific version of ruby interpreter ; the version specified below corresponds to the one used for the unit tests and it is required as a mandatory precondition at installation time according to the gem file definition.\newline
 
 \inlinecode{bash}{ \$> rvm install ruby-2.6.5} \newline
 
-\subsection{Install Bundler}
-
-\par
-\noindent
-The ruby pre-requisites can be installed using on \href{https://bundler.io/}{bundler} gem, by tracking and installing the exact gems and versions which are needed by DEC. 
-
-\par
-\inlinecode{bash}{ \$> gem install bundler }
-
-\subsection{Install Gems}
-
-\par
-\noindent
-The \textit{gems} pre-requisites by DEM are defined in the \textit{Gemfile} ; in order to install the exact gems and versions which are needed by DEC from the directory in which the \textit{Gemfile} is placed execute the following command in the shell. \newline
-
-\par
-\inlinecode{bash}{ \$> bundle install }
 
 \section{Install DEC}
 
@@ -78,10 +61,12 @@ Press 'Y' key to remove the executables as well
 
 \section{COTS Required}
 
-This section enumerates the COTS which are used by DEC SW for exchange of file by some network protocol implementation, or file transformations associated to those exchanges.
+This section enumerates the COTS which are used by DEC SW for exchange of file by some network protocol implementation, or file transformations associated to those exchanges. \par\noindent
+
+
 \par
 \noindent
-It is not part of the scope of this manual how to provision these COTS ; since they can be obtained naturally with OS distribution, downloaded with its native package manager, or manually downloaded. 
+This manual, which currently address component level information, does not address how to provision these COTS ; they can be obtained naturally with most OS distribution, downloaded with its native package manager, or manually installed. However it is noted that DEC containerized execution environments definition (IaaS) which already resolve every SW COTS dependencies out of the box are available, please do not hesitate in requesting information.
 
 \subsection{Databases}
 This section enumerates the different databases which can be used by DEC SW. Only \textit{sqlite3} is \textit{mandatory} to allow the execution of the entire set of \textit{unit tests}. Below the different databases that have used at some deployment. It is recalled that it is possible to execute the DEC SW without any database by usage of flag \textit{"--nodb"}.
@@ -115,7 +100,7 @@ This section enumerates the file compression tools which can be used by DEC SW.
 This section enumerates the file transformation tools which can be used by DEC SW.
 
 \begin{itemize}
-	\item \href{http://xmlsoft.org/xmllint.html}{\textit{xmllint}} : is a command line XML parser which is part of the \href{http://xmlsoft.org}{\textit{libxml2}} utils
+	\item \href{http://xmlsoft.org/xmllint.html}{\textit{xmllint}} : is a command line XML parser which is part of the \href{http://xmlsoft.org}{\textit{libxml2}} and libxml2-utils packages.
 \end{itemize}
 
 \section{Installation Verification}

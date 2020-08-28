@@ -192,7 +192,7 @@ class FileDeliverer2InTrays
                   end
                else      
                   # @logger.error("#{file} has not been disseminated")
-                  @logger.warn("[DEC_331] #{file} is stuck in LocalInbox #{dir}")
+                  @logger.warn("[DEC_331] I/F #{entity}: #{file} is stuck in LocalInbox #{dir}")
                end
 				end
 			}
@@ -292,7 +292,7 @@ class FileDeliverer2InTrays
                exit(99)
             end
          else
-            @logger.warn("[DEC_331] #{file} is stuck in #{directory} directory")
+            @logger.warn("[DEC_331] I/F #{entity}: #{file} is stuck in #{directory} directory")
          end       
       else         
          if @isDebugMode == true then
@@ -418,7 +418,7 @@ private
             bRet = execute(cmd, "pull")
             
             if bRet == false then
-               @logger.error("[DEC_625] Intray #{intray}: Dissemination failure of #{file} into #{targetDir}")
+               @logger.error("[DEC_625] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
                Dir.chdir(prevDir)
                bReturn = false
                return false
@@ -427,7 +427,8 @@ private
             # --------------------------
             # Remove in target directory any eventual copy of a file with the same name
             if File.exists?(targetDir+'/'+file) then 
-               @logger.warn("[DEC_555] Intray #{intray}: #{file} already existed in #{targetDir}")
+               @logger.warn("[DEC_555] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
+               @logger.warn("[DEC_556] Intray #{intray}: #{file} duplicated will be deleted before dissemination")
                FileUtils.rm_rf(targetDir+'/'+file) 
             end
             # --------------------------
@@ -436,7 +437,7 @@ private
    			if @isDebugMode == true then
 	   		   @logger.debug("[DEC_942.1] Intray #{intray}: Disseminate command (II) : #{cmd}")
 		   	end
-            bRet = execute(cmd, "mv2InTrays")
+            bRet = execute(cmd, "pull")
 
             if bRet == false then
                @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
@@ -447,7 +448,7 @@ private
                end
                FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
             
-               @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
+               @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                                
                firstDir = targetDir                            
                event  = EventManager.new
@@ -479,9 +480,9 @@ private
                # Delete if the file previously exists in the target dir
                if File.exist?("#{targetDir}/#{file}") == true then
                   cmd = "\\rm -f #{targetDir}/#{file}"
-                  @logger.warn("[DEC_XXX] #{file} already existed in #{targetDir}")
-                  @logger.warn("Old file #{file} will be deleted first")
-                  execute(cmd, "mv2InTrays")
+                  @logger.warn("[DEC_555] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
+                  @logger.warn("[DEC_556] Intray #{intray}: #{file} duplicated will be deleted before dissemination")
+                  execute(cmd, "pull")
                end
                
                # ---------------------------------
@@ -489,10 +490,10 @@ private
                if @isDebugMode == true then
 	   		      @logger.debug("[DEC_942.2] Intray #{intray}: Disseminate command : #{cmd}")
 		   	   end
-               bRet = execute(cmd, "mv2InTrays")
+               bRet = execute(cmd, "pull")
 
                if bRet == false then
-                  @logger.error("[DEC_626] Intray #{intray}: Dissemination failure of #{file} into #{targetDir}")
+                  @logger.error("[DEC_626] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
                   bReturn = false
                else
                   if @isDebugMode == true then
@@ -500,7 +501,7 @@ private
                   end
                   FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
                   
-                  @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
+                  @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                   
                   event  = EventManager.new
       
@@ -523,7 +524,7 @@ private
    			   if @isDebugMode == true then
 	   		      @logger.debug(cmd)
 		   	   end
-               bRet = execute(cmd, "mv2InTrays")
+               bRet = execute(cmd, "pull")
             
                if bRet == false then
                   @logger.error("Could not copy file #{file} into target Directory")
@@ -534,7 +535,7 @@ private
    			   if @isDebugMode == true then
 	   		      @logger.debug(cmd)
 		   	   end
-               bRet = execute(cmd, "mv2InTrays")
+               bRet = execute(cmd, "pull")
                
                if bRet == false then
                   @logger.error("Could not disseminate into #{targetDir} intray")
@@ -542,7 +543,7 @@ private
                   Dir.chdir(prevDir)
                   return false
                else
-                  @logger.info("[DEC_115] Intray #{intray}: Disseminated #{file} into #{targetDir}")
+                  @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                   
                   event  = EventManager.new
       
@@ -600,14 +601,14 @@ private
                   
          if compress == "7z" then
                                      
-            ret = pack7z(sourceFile, targetFile, true, @isDebugMode)
+            ret = pack7z(sourceFile, targetFile, true, @isDebugMode, @logger)
                      
             if ret == false then
                @logger.error("Could not compress in #{compress} #{targetFile}")
                File.delete(targetFile)
                retVal = false
             else
-               msg = "[DEC_116] Intray #{dim}: Compressed #{file} in #{compress} at #{inTray}"
+               msg = "[DEC_116] Intray #{dim}: #{file} compressed in #{compress} at #{inTray}"
                @logger.info(msg)
             end
          else

@@ -39,8 +39,8 @@ This section addresses a high level overview for the main design drivers that al
 	\item \textit{Rule} : this generic term refers to the configuration items for \textit{pull} files, \textit{disseminate} them, and \textit{push} them.
 \end{itemize}
 
-\section{Design Drivers}
-This section enumerates a high level overview for the main design drivers that allows DEC to interface efficiently for the configured exchanges:
+\section{Main Features}
+This section enumerates a high level overview for the main features that allows DEC to interface efficiently for the configured exchanges:
 
 \begin{itemize}
 	\item \textit{Automation} : the ability to perform unattended autonomous circulation operations
@@ -49,20 +49,15 @@ This section enumerates a high level overview for the main design drivers that a
 	\item \textit{Performance} : parallelisation of the circulation to fruit the available network bandwidth, support of file compression mechanisms to reduce the footprint of transfers and local disseminations for which duplication of files by \textit{cp} or \textit{mv} can be avoided by usage of \textit{hardlinks}
 	\item \textit{Resiliency} : to \textit{autonomously} recover from network errors, downtime and eventual glitches and resume operations during every iteration.
 	\item \textit{Zero-copy} : to avoid new copies in the file system during \textit{dissemination} circulations.	
+	\item \textit{Comprehensive Traceability} : complete deterministic and unambiguous traceability using codes within the log file of every operation.	
 \end{itemize}
 
 \section{Download DEC SW}
-This section contains the links to download the DEC SW and the \textit{Gemfile} with the definition of the \textit{gem} dependencies. It is necessary to be logged-in with your DEIMOS \textit{gmail} account to \textit{authorise} the download.
+This section contains the link to download the DEC SW installer \textit{gemfile} \href{https://drive.google.com/uc?export=download&id=1gieDRpDEBzKv5Xr0qwPvBz34RHphTnQq}{\textit{dec-stable.gem}} with the unit tests configuration. It is necessary to be logged-in with your DEIMOS \textit{gmail} account to \textit{authorise} the download. Do not hesitate in requesting tailored installation packages according to your needs.
 
 \par
 \noindent
 
-\begin{itemize}
-	\item \href{https://drive.google.com/uc?export=download&id=18TAD2BAJpHzgBdZGf3W8KQZCY7SPpKbU}{\textit{Gemfile}} : file with the \textit{gem} dependencies 
-	\item \href{https://drive.google.com/uc?export=download&id=1gieDRpDEBzKv5Xr0qwPvBz34RHphTnQq}{\textit{dec-stable.gem}} : DEC gem installer
-	\item\href{https://drive.google.com/uc?export=download&id=1JBAnxdRwaPK8PmrxuRi3qea43NOPRJbK/view?usp=sharing}{\textit{dec\_test.bash}} : definition of the environment variables used by the unit tests for bash console 
-	\item\href{https://drive.google.com/uc?export=download&id=1HHWOVxCZbY6Surv_kKyF5kGTy45CvUKl/view?usp=sharing}{\textit{dec\_test.env}} : definition of the environment variables used by the unit tests for docker container parametrisation
-\end{itemize}
 
 \end{document}
 

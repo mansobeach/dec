@@ -81,7 +81,7 @@ According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{Del
 
 \label{DEC126}
 \subsection{[DEC\_126] Downloaded File Deleted}
-According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteFlag}} defined in \textit{dec\_interfaces.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
+According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteDownloaded}} defined in \textit{dec\_incoming\_files.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
 
 \subsection{[DEC\_130] Event Triggered}
 The message traces some event which has been triggered for a given interface according to the configuration items defined in \hyperref[Events]{Events}.
@@ -177,24 +177,37 @@ The warning messages by DEC SW are meant in general for tracing not nominal situ
 	\item \textbf{[DEC\_320]} Detected unknown file "filename" available at "interface" I/F
 	\item \textbf{[DEC\_330]} "filename" is stuck in "temporal" directory
 	\item \textbf{[DEC\_331]} "filename" is stuck in LocalInbox directory
-	\item \textbf{[DEC\_401]} "filename" was previously Sent
+	\item \textbf{[DEC\_401]} "filename" was previously sent
+	\item \textbf{[DEC\_555]} "filename" was previously Sent
 \end{itemize}
 
+\label{DEC301}
 \subsection{[DEC\_301] Duplicated File Available}
 The file reported is available again at the \textit{pull} interface ; if the inventory is active, DEC retrieves just once a given file from each interface. This message will be reported during every polling iteration unless the \textit{duplicated} file is removed from the interface.
 
+\label{DEC320}
 \subsection{[DEC\_320] Unknown File Available}
 The file reported is available in the \textit{pull} interface, but did not match any filtering rule defined in the configuration \textit{dec\_incoming\_files.xml}. This message will be repeated every polling iteration unless the \textit{unknown} file is removed from the interface.
 
+\label{DEC330}
 \subsection{[DEC\_330] File Stuck in Temporal Directory}
 This warning is associated to error message \hyperref[DEC620]{\textit{[DEC\_620]}} informing that the file was successfully downloaded and stuck in the temporal directory available for contingency recovery.
 
+\label{DEC331}
 \subsection{[DEC\_331] File Stuck in LocalInbox Directory}
 This warning is associated to error message \hyperref[DEC625]{\textit{[DEC\_625]}} or \hyperref[DEC626]{\textit{[DEC\_626]}} informing that the file was successfully downloaded and stuck in the \textit{LocalInbox} directory of some interface due to problems during dissemination.
 
 \label{DEC401}
 \subsection{[DEC\_401] File Previously Uploaded}
 The file reported has been found available again for upload towards an interface though it has been previously \textit{pushed} there ; since the \textit{push} iteration is executed with the "once" flag, this file has been discarded for upload.
+
+\label{DEC555}
+\subsection{[DEC\_555] File Disseminated Exists}
+This message is raised when a previous file with same filename is found disseminating locally into an in-tray.
+
+\label{DEC556}
+\subsection{[DEC\_556] Old File Removed}
+This message is raised upon detection of a previous file in the final intray to record its deletion prior the dissemination of the new one.
 
 % ------------------------------------------------------------------------------
 % Error Messages
@@ -222,6 +235,7 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 "directory" using mv command
 	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
 "directory" using hard-links command
+	\item \textbf{[DEC\_628]} Failure when executing command
 	\item \textbf{[DEC\_666]} I/F "interface": Could not download "file"
 	\item \textbf{[DEC\_705]} I/F "interface": Push miss-configuration
 	\item \textbf{[DEC\_711]} Could not reach directory from \textit{SourceDir} to fetch files for push
@@ -232,13 +246,42 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 \subsection{[DEC\_600] Failed to Pull from Interface}
 This message is raised at the completion of the interface polling operation (i.e. \textit{pull} circulation)when it failed. Reason should have been previously logged (e.g. \hyperref[DEC610]{DEC\_610}, \hyperref[DEC611]{DEC\_611},etc). Polling elapse time can be computed by referring to the associated \hyperref[DEC005]{DEC\_005} message. 
 
+\label{DEC601}
+\subsection{[DEC\_601] Failed to Start Listener for Interface}
+This message is raised when the interface commanded for \textit{pull} circulation is miss-configured. It is usually explained by \hyperref[DEC605]{DEC\_605} message. 
+
+\label{DEC603}
+\subsection{[DEC\_603] Listener for Interface was not running}
+This message is raised when the interface commanded to stop or re-start its listener was not previously switched-on.
+
 \label{DEC605}
 \subsection{[DEC\_605] Pull Miss-Configuration}
 This message is raised when interface commanded for \textit{pull} circulation is miss-configured.
 
 \subsubsection{Not existing interface in dec\_interfaces.xml }
 \begin{verbatim}
-[DEC_605] Foo I/F: such is not a configured interface
+[DEC_605] I/F Foo: such is not a configured interface
+\end{verbatim}
+
+\subsubsection{Inventory db is not configured / reachable }
+\begin{verbatim}
+[DEC_605] I/F Foo: db inventory is not configured / reachable
+\end{verbatim}
+
+\subsubsection{Not registered interface in database }
+Polling is performed using the database but such interface has not been registered.
+\begin{verbatim}
+[DEC_605] I/F Foo: such is not a registered I/F in db
+\end{verbatim}
+
+\subsubsection{Pull flag is disabled in  dec\_interfaces.xml }
+\begin{verbatim}
+[DEC_605] I/F IERS: Enabled4Receiving flag is disabled
+\end{verbatim}
+
+\subsubsection{I/F LocalInbox not defined in  dec\_incoming\_files.xml }
+\begin{verbatim}
+[DEC_605] I/F Foo: LocalInbox configuration item not found
 \end{verbatim}
 
 \label{DEC610}
@@ -291,13 +334,17 @@ In practical terms, this is a failure when performing the FTP command list to ob
 \label{DEC620}
 The file retrieved from the interface could not be copied into the final directory defined in the configuration. This is usually a problem of file permissions. 
 
-\subsection{[DEC\_625] File Dissemination Failure}
+\subsection{[DEC\_625] File Move Dissemination Failure}
 \label{DEC625}
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using a mv command. This is usually associated to file permission problems of the \textit{Intray} directory.
 
-\subsection{[DEC\_626] File Dissemination Failure}
+\subsection{[DEC\_626] File Hard-Link Dissemination Failure}
 \label{DEC625}
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using hard-links. This is usually associated to file permission problems of the \textit{Intray} directory.
+
+\subsection{[DEC\_628] Command Execution Failure}
+\label{DEC628}
+This error is raised when DEC tried to execute a command in sub-shell obtaining failure status.
 
 \subsection{[DEC\_666] Download Failure}
 \label{DEC666}

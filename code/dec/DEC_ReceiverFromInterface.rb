@@ -1174,7 +1174,7 @@ private
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 			
-         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
+         @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
          
          ## ------------------------------------------------
          ##
@@ -1183,9 +1183,9 @@ private
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
-               @logger.info("[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}")
+               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download")
             else
-               @logger.error("[DEC_670] I/F #{@entity}: Failed to delete #{File.basename(filename)}")
+               @logger.error("[DEC_670] I/F #{@entity}: #{File.basename(filename)} delete failure")
             end
          end
          ##
@@ -1283,7 +1283,7 @@ private
  
       size = File.size("#{@localDir}/#{File.basename(filename)}")
          
-      @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
+      @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
 		
       # File is made available at the interface inbox	
       copyFileToInBox(File.basename(filename), size)
@@ -1338,7 +1338,7 @@ private
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 
-         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
+         @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
          
          return retVal
          
@@ -1449,7 +1449,7 @@ private
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 
-         @logger.info("[DEC_110] I/F #{@entity}: Downloaded #{File.basename(filename)} with size #{size} bytes")
+         @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
 			
          ## ------------------------------------------------
          ##
@@ -1458,9 +1458,9 @@ private
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
-               @logger.info("[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}")
+               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download")
             else
-               @logger.error("[DEC_670] I/F #{@entity}: Failed to delete #{File.basename(filename)}")
+               @logger.error("[DEC_670] I/F #{@entity}: #{File.basename(filename)} delete failure")
             end
          end
          ##
@@ -1621,7 +1621,7 @@ private
          end
          return false
       end
-      msg = "[DEC_126] I/F #{@entity}: Deleted downloaded #{File.basename(filename)}"
+      msg = "[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download"
       @logger.info(msg)
       return true
    end
@@ -1827,7 +1827,7 @@ private
             # ----------------------------------------------
             
             if @bLogUnknown == true then
-               @logger.warn("[DEC_320] I/F #{@entity}: Detected unknown file #{File.basename(aFile)}")
+               @logger.warn("[DEC_320] I/F #{@entity}: #{File.basename(aFile)} detected is unknown")
             end
             
             if @bDeleteUnknown == true and forTracking == false then
@@ -1884,7 +1884,7 @@ private
          
             if hasBeenAlreadyReceived(filename) == true then
                if @bLogDuplicated == true then
-                  @logger.warn("[DEC_301] I/F #{@entity}: Detected duplicated file #{filename}")
+                  @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
                end
                arrDelete << fullpath
                
@@ -1893,7 +1893,7 @@ private
                ## dec_incoming_files.xml <DeleteDuplicated>
                ##
                if @bDeleteDuplicated == true and forTracking == false then
-                  @logger.info("[DEC_125] I/F #{@entity}: Deleting duplicated file #{File.basename(filename)} previously received")
+                  @logger.info("[DEC_125] I/F #{@entity}: #{File.basename(filename)} previously received being deleted")
                   
                   ret = deleteFromEntity(fullpath, false)
 

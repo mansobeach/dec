@@ -1828,40 +1828,49 @@ class DECTestCase < Test::Unit::TestCase
       puts
 
       cmd = "decListener -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decListener -s non_existing_interface"
+      puts cmd
       assert(!system(cmd), cmd)
                
-      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -D -i 60"
+      cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -i 60"
+      puts cmd
       assert(system(cmd), cmd)
    
       sleep(10)
 
       cmd = "decListener -s LOCALHOST_NOT_SECURE"
+      puts cmd
       assert(system(cmd), cmd)
 
       sleep(10)
       
       cmd = "decListener -c"
+      puts cmd
       assert(!system(cmd), cmd)
        
       cmd = "decListener -S"
+      puts cmd
       assert(system(cmd), cmd)
       
       sleep(10)
   
       cmd = "decListener -a"
+      puts cmd
       assert(system(cmd), cmd)
 
-      sleep(10)
+      sleep(15)
 
       cmd = "decListener -a -R"
+      puts cmd
       assert(system(cmd), cmd)
 
       sleep(10)
             
       cmd = "decListener -S"
+      puts cmd
       assert(system(cmd), cmd)
       
       sleep(20)

@@ -51,11 +51,11 @@ module CommandLauncher
       
       if bRet == false then
       	 if bLogResult == true then      
-            log_execution(cmd, subSystem)
+            log_execution("[DEC_628] exec failed: #{cmd}", subSystem)
             arrLines = output.split("\n")
             arrLines.each{|line|
             	if line != "" and line != "false" then
-               	   log_execution(line, subSystem)
+                  log_execution("[DEC_628] exec output: #{line}", subSystem)
             	end
             }
 	      end
@@ -81,7 +81,7 @@ private
          configDir         = %Q{#{ENV['DEC_CONFIG']}}  
       end
 
-      loggerFactory = CUC::Log4rLoggerFactory.new("CommandLauncher:#{header}", "#{configDir}/dec_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("#{header}", "#{configDir}/dec_log_config.xml")
       if @isDebugMode then
          loggerFactory.setDebugMode
       end

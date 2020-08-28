@@ -160,7 +160,7 @@ namespace :dec do
       @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
       cp @filename, "install/gems/dec_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
-      rm @filename
+      # rm @filename
    end
 
    ## ----------------------------------------------------------------
@@ -282,6 +282,7 @@ namespace :dec do
       cmd = "gem install #{@filename}"
       puts cmd
       system(cmd)
+      rm @filename
    end
    ## --------------------------------------------------------------------
 

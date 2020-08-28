@@ -1,16 +1,16 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# = Ruby source for #Listener class
-#
-# = Written by DEIMOS Space S.L. (bolf)
-#
-# = Data Exchange Component -> Common Utils Component
-# 
-# CVS:
-#   $Id: Listener.rb,v 1.1 2006/09/11 16:46:55 decdev Exp $
-#
+###
+### = Ruby source for #Listener class
+###
+### = Written by DEIMOS Space S.L. (bolf)
+###
+### = Data Exchange Component -> Common Utils Component
+### 
+### Git:
+###   $Id: Listener.rb,v 1.1 2006/09/11 16:46:55 decdev Exp $
+###
 #########################################################################
 
    # This class implements a generic listener (daemon).
@@ -52,7 +52,7 @@ class Listener
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "DCC_Listener debug mode is on"
+      puts "Listener debug mode is on"
    end
    #-------------------------------------------------------------
 
@@ -211,9 +211,9 @@ private
         
                          
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Become a nasty and cruel daemon in the system.
+   ## Become a nasty and cruel daemon in the system.
    def daemonize
    
       # Parent exists, child continue
@@ -230,9 +230,9 @@ private
       Dir.chdir("/")   
       File.umask(0000)
    
-      puts "#{File.basename($0)} #{@param} set as daemon with pid #{Process.pid}\n\n"
+      # puts "#{File.basename($0)} #{@param} set as daemon with pid #{Process.pid}\n\n"
    
-  #   Redirect standard streams    
+      # Redirect standard streams    
       STDIN.reopen("/dev/null")
   
       if @isDebugMode == false then
@@ -243,7 +243,7 @@ private
       # Register in lock file the daemon
       @locker.setRunning      
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def calculateWaitSeconds
       waitSecs    = 0
