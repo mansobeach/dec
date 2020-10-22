@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #MINARC_TestCases class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# module MINARC
-#
+###
+### === Ruby source for #MINARC_TestCases class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Mini Archive Component (MinArc)
+### 
+### module MINARC
+###
 #########################################################################
 
 require 'rubygems'
@@ -21,6 +21,7 @@ require 'cuc/DirUtils'
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
 require 'arc/MINARC_Status'
+require 'arc/ReadMinarcConfig'
 
 # Preconditions:
 # 1 - setup 
@@ -31,7 +32,8 @@ require 'arc/MINARC_Status'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-#  0  - test_commmandline_helpers
+#  0.1  - test_ReadConfig
+#  0.2  - test_commandline_helpers
 #  1  - test_local_minArcStore
 #  2  - test_local_minArcRetrieve
 #  3  - test_local_purge
@@ -238,7 +240,28 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
+
+   def test_ReadConfig
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      config = ReadMinarcConfig.instance
+           
+      arrFreqs = config.getFrequencies
+      assert(arrFreqs != nil, "get frequencies recovered")
+
+      dbConfig = config.getInventory
+      assert(dbConfig != nil, "get inventory database configuration")
+   
+      tmpDir = config.getTempDir
+      assert(tmpDir != nil, "get temp directory")
+   
+   end
+   ## ------------------------------------------------------
 
    def test_commandline_helpers
    

@@ -1,0 +1,360 @@
+#!/usr/bin/env ruby
+
+#
+# == Usage
+# decODataClient 
+#     --user      <username>
+#     --password  <password>
+#     --query     <dhus:l2a:GS2B_20200903T104429_018252_N02.14> | <prip>
+# 
+#
+# long long long long query GS2B_20201015T092029_018852_N02.14
+
+#########################################################################
+###
+### Ruby source for #decODataClient class
+###
+### Written by DEIMOS Space S.L. (bolf)
+###
+### Data Exchange Component -> 
+### 
+### git:
+###   decODataClient,v $Date$ $Id$ 
+###
+#########################################################################
+
+require 'rubygems'
+require 'getoptlong'
+require 'net/http'
+require 'nokogiri'
+require 'json'
+
+require 'dec/DEC_Environment'
+require 'dec/API_DHUS'
+require 'dec/API_PRIP'
+
+@isDebugMode = false
+
+
+# MAIN script function
+def main
+
+   include DEC
+
+   @user          = ""
+   @password      = ""
+   @query         = ""
+   @bUsage        = false
+   @bShowVersion  = false
+   
+   opts = GetoptLong.new(
+     ["--user", "-u",               GetoptLong::REQUIRED_ARGUMENT],
+     ["--password", "-p",           GetoptLong::REQUIRED_ARGUMENT],
+     ["--query", "-q",              GetoptLong::REQUIRED_ARGUMENT],
+     ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",            GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",               GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt
+            when "--Debug"             then @isDebugMode    = true
+            when "--user"              then @user           = arg.to_s.chomp
+            when "--password"          then @password       = arg.to_s.chomp
+            when "--query"             then @query          = arg.to_s.upcase
+            when "--version"           then @bShowVersion   = true
+			   when "--help"              then @bUsage         = true
+         end
+      end
+   rescue Exception => e
+      puts e.to_s
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = DEC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }      
+      exit(0)
+   end
+   
+   if @bUsage then
+      usage
+      exit(0)
+   end
+   
+   if @user == "" or @password == "" or @query == "" then
+      usage
+      exit(99)
+   end
+         
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   if @isDebugMode == true then
+      puts @user
+      puts @password
+      puts @query
+   end
+ 
+   ret = true
+ 
+   if @query.include?("PRIP") == true then
+      ret = queryPRIP(@user, @password, @query)
+   end
+
+   if @query.include?("DHUS") == true then
+      ret = queryDHUS(@user, @password, @query)
+   end
+ 
+ 
+   if ret == true then
+      exit(0)
+   else
+      exit(1)
+   end
+
+end
+
+## --------------------------------------------------------------
+
+## Print command line help
+def usage
+   fullpathFile = File.expand_path(__FILE__)    
+   
+   value = `#{"head -12 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+## --------------------------------------------------------------
+
+def queryPRIP(user, password, query)
+      
+   strURL = PRIP::API_URL_ODATA_PRODUCT
+      
+   uri = URI.parse(strURL)
+      
+   http = Net::HTTP.new(uri.host, uri.port)
+
+   http.use_ssl      = true
+   http.verify_mode  = OpenSSL::SSL::VERIFY_NONE
+
+   request = Net::HTTP::Get.new(uri.request_uri)
+         
+   request.basic_auth(user, password)
+   response = http.request(request)
+      
+   if @isDebugMode == true then
+      puts strURL
+      puts uri.request_uri
+      puts response.code
+      puts response.message
+      puts
+   end
+      
+   doc = JSON.parse(response.body)
+   
+   if @isDebugMode == true then
+      puts JSON.pretty_generate(doc)
+   end
+   
+   doc["value"].each{|item|
+      puts item["Name"]
+      puts item["ContentLength"]
+      puts item["PublicationDate"]
+      puts item["EvictionDate"]
+      puts
+   }                        
+   
+   return true
+end
+
+## -------------------------------------------------------------
+
+def queryDHUS(user, password, query)
+   urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT
+   urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID
+   urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING
+   nParams     = query.split(":").length
+   system      = query.split(":")[0]
+   level       = query.split(":")[1]
+   datatake    = query.split(":")[2]
+   creation    = ""
+   strEUP      = "#{datatake.slice(1,3)}_MSI#{level}_#{datatake.slice(5,15)}_#{datatake.slice(28,3)}#{datatake.slice(32,3)}"   
+   condition   = "#{DHUS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{strEUP}%27,Name)"
+   
+   if nParams == 4 then
+      creation = query.split(":")[3]
+#      condition = "#{condition}#{DHUS::API_ODATA_FILTER_ENDSWITH}(%27#{creation}%27,Name)"
+   end
+      
+   if @isDebugMode == true then
+      puts system
+      puts level
+      puts datatake
+      puts strEUP
+   end
+
+   ## --------------------------------------------
+   ##
+   ## Product Count 
+   ##
+   urlCount = "#{urlCount}#{condition}"
+   uri      = URI.parse(urlCount)
+      
+   http = Net::HTTP.new(uri.host, uri.port)
+   http.use_ssl = true
+
+   request = Net::HTTP::Get.new(uri.request_uri)   
+   request.basic_auth(user, password)
+   
+   response = http.request(request)
+   
+   if @isDebugMode == true then
+      puts urlCount
+      puts uri.request_uri
+      puts response.code
+      puts response.message
+      puts response.body
+   end
+      
+   if response.code != DHUS::API_RESOURCE_FOUND then
+      puts "Error in request #{response.code} / #{response.message}"
+      return false 
+   end
+   
+   iPending = response.body.to_i
+   iSkip    = 0
+   
+   puts "Found #{iPending} items"
+               
+   ## --------------------------------------------
+   ##
+   ## Product Select 
+
+   urlSelect   = "#{urlSelect}#{condition}"
+   uri         = URI.parse(urlSelect)
+      
+   request = Net::HTTP::Get.new(uri.request_uri)   
+   request.basic_auth(user, password)
+   response = http.request(request)
+   
+   if @isDebugMode == true then
+      puts urlSelect
+      puts uri.request_uri
+      puts response.code
+      puts response.message
+      puts response.body
+   end
+      
+   if response.code != DHUS::API_RESOURCE_FOUND then
+      puts "Error in request #{response.code} / #{response.message}"
+      return false 
+   end
+      
+   doc = Nokogiri::XML(response.body)
+            
+   elements = doc.xpath("//xmlns:title")
+   
+   arrItems = Array.new
+      
+   elements.each{|item|
+      if item.text.include?(creation) == true then
+         arrItems << item.text
+      end
+   }   
+   puts arrItems.sort
+
+   iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
+   iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
+   
+   ## --------------------------------------------
+   
+   if iPending <= 0 then
+      return true
+   end
+   
+   ## --------------------------------------------
+   
+   ##
+   ## Product Paging 
+
+   while iPending > 0 do
+
+      urlPaging   = "#{DHUS::API_URL_ODATA_PRODUCT_PAGING}#{iSkip}#{condition}"
+      uri         = URI.parse(urlPaging)
+      
+      request = Net::HTTP::Get.new(uri.request_uri)   
+      request.basic_auth(user, password)
+      response = http.request(request)
+   
+      if @isDebugMode == true then
+         puts urlPaging
+         puts uri.request_uri
+         puts response.code
+         puts response.message
+         puts response.body
+      end
+      
+      if response.code != DHUS::API_RESOURCE_FOUND then
+         puts "Error in request #{urlPaging} #{uri}"
+         puts "#{response.code} / #{response.message}"
+         return false 
+      end
+      
+      doc = Nokogiri::XML(response.body)
+            
+      elements = doc.xpath("//xmlns:title")
+   
+      arrItems = Array.new
+      
+      elements.each{|item|
+         if item.text.include?(creation) == true then
+            arrItems << item.text
+         end
+      }
+   
+      puts arrItems.sort   
+   
+      iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
+      iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
+   
+   end
+   ## --------------------------------------------
+   
+   return true
+end
+
+## -------------------------------------------------------------
+
+## Print command line help
+def usage
+   fullpathFile = File.expand_path(__FILE__)
+   
+   value = `#{"head -10 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+end
+## -------------------------------------------------------------
+
+
+## ===================================================================
+## Start of the main body
+main
+## End of the main body
+##====================================================================

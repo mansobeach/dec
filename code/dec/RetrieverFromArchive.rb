@@ -21,6 +21,7 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/FT_PackageUtils'
+require 'cuc/PackageUtils'
 require 'cuc/Log4rLoggerFactory'
 
 require 'dec/ReadConfigDEC'
@@ -327,11 +328,11 @@ private
       if @isDebugMode == true then               
          @logger.debug(cmd)
       end
-                     
+        
       retVal = system(cmd)
                      
       if retVal == true then
-         @logger.info("[DEC_213] I/F #{interface}: #{filename} at LocalOutbox #{destination}")
+         @logger.info("[DEC_213] I/F #{interface}: #{filename} is hard-linked at LocalOutbox #{destination}")
       else
          @logger.error("[DEC_713] I/F #{interface}: #{filename} hard-link failure towards LocalOutbox #{destination}")
          return false

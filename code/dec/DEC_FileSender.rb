@@ -1,21 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_FileSender class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: DEC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
-#
-# Module Data Distributor Component
-# This class performs the file(s) FTP/SFTP delivery to a given Entity.
-# Its source directory is the OUTBOX/ftp directory.
-#
-# This class makes use of FileSender & ReadInterfaceConfig. 
-#
+###
+### === Ruby source for #DEC_FileSender class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component
+### 
+### Git: $Id: DEC_FileSender.rb,v 1.25 2014/10/14 08:49:08 algs Exp $
+###
+### This class performs the file(s) FTP/SFTP delivery to a given Entity.
+### Its source directory is the OUTBOX/ftp directory.
+###
+###
 #########################################################################
 
 require 'cuc/DirUtils'
@@ -84,6 +82,7 @@ class DEC_FileSender
       @delay         = @ftReadConf.getLoopDelay(@entity).to_i
       @loops         = @ftReadConf.getLoopRetries(@entity).to_i
       @retries       = @ftReadConf.getImmediateRetries(@entity).to_i
+      @parallelSlots = @ftReadConf.getTXRXParams(@entity)[:parallelDownload].to_i 
       @ftpserver     = @ftReadConf.getFTPServer4Send(@entity)
       @ftpserver[:uploadDir]  = ReadConfigOutgoing.instance.getUploadDir(@entity)
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
@@ -110,6 +109,8 @@ class DEC_FileSender
       @mission     = DEC::ReadConfigDEC.instance.getMission
       @sender.setUploadPrefix(DEC::ReadConfigDEC.instance.getUploadFilePrefix)
 
+      @listFileSent     = Array.new
+
    end
    ## -----------------------------------------------------------
   
@@ -124,7 +125,7 @@ class DEC_FileSender
    ## Load the list of files to be sent from outbox directory
    ## If flag to deliver once is enabled, previously circulated file are removed
    def loadFileList
-      @listFileSent     = Array.new
+      
       @listFileError    = Array.new
       @listFileToBeSent = Array.new
       @arrFiles         = Array.new
@@ -183,14 +184,105 @@ class DEC_FileSender
          end
       end
 
-      @listFileToBeSent = @arrFiles      
+      @listFileToBeSent = @arrFiles
+         
+   end
+   
+   ## -----------------------------------------------------------
+   
+   def deliver(deliverOnce=false, hParams=nil)
+      @deliverOnce = deliverOnce
+           
+      if @arrFiles.length == 0 then
+         return true
+      end
+      
+      listFiles = Array.new(@arrFiles)
+      
+      bSent = false
+      iLoop = @loops - 1
+      i     = 0
+      
+      ## -----------------------------------------
+      ## Force at least one loop execution
+      if iLoop < 0 then
+         iLoop = 0
+      end
+      ## -----------------------------------------
+
+      until bSent == true or iLoop < 0
+         if @isDebugMode == true and iLoop != @loops and i != 0 then
+            @logger.warn("RE-Sending Loop Retry(#{i}) files to #{@entity}")
+         end 
+         bSent = true
+         loop do
+            break if listFiles.empty?
+            1.upto(@parallelSlots) {|i|
+               break if listFiles.empty?
+               file = listFiles.shift
+               size = File.size("#{@outboxDir}/#{File.basename(file)}")
+               
+               ### ---------------------------------------------------------
+               ### 20201021 Super-dirty 
+               ### adding a priori the files to be circulated as successful
+               @listFileSent << File.basename(file)
+               ### ---------------------------------------------------------
+                  
+               fork{
+                  if @isDebugMode == true then
+                     @logger.debug("Child process created to download #{File.basename(file)}")
+            	   end
+                  
+                  bRet = sendFile(file, size, hParams)
+
+                  if bRet == false then
+                     if @isDebugMode == true then
+                        @logger.debug("Child process failed to push #{File.basename(file)}")
+                     end
+                     exit(1)
+                  else
+                     exit(0)
+                  end
+               } 
+            }  ## loop parallel slots
+         
+            arr = Process.waitall
+            arr.each{|child|
+               if child[1].exitstatus != 0 then
+                  bSent = false
+               end
+            }
+         end #loop
+
+         if bSent == false then
+            loadFileList
+            listFiles = Array.new(@arrFiles)
+         else
+            return true
+         end
+     
+         iLoop = iLoop - 1
+         i     = i + 1
+      
+         if @isDebugMode == true and iLoop >= 0 then
+            pid = Process.pid
+            @logger.debug("Waiting #{@delay} seconds for sending files to #{@entity} (pid=#{pid}) ")
+         end
+         
+         if iLoop >=0 then
+            @logger.info("[DEC_205] I/F #{@entity}: Push retry waiting LoopDelay #{@delay}s")
+            sleep(@delay)
+         end
+         
+      end
+      return bSent
    end
    
    ## -----------------------------------------------------------
 
    ## Main function of the class which performs the File delivery
    ## to the given entity
-   def deliver(deliverOnce=false, hParams=nil)
+   def deliver_old_but_work(deliverOnce=false, hParams=nil)
       @deliverOnce = deliverOnce
            
       if @arrFiles.length == 0 then
@@ -222,7 +314,7 @@ class DEC_FileSender
             
             size = File.size("#{@outboxDir}/#{File.basename(file)}")
             
-            bRet = sendFile(file)
+            bRet = sendFile(file, size, hParams)
             
             if bRet == false then
                @logger.error("[DEC_710] I/F #{@entity}: Failed sending #{file}")
@@ -271,7 +363,8 @@ class DEC_FileSender
    ##
    ##
    def createReportFile(directory, bDeliver = true, bForceCreation = false, bNominal = true)
-	   bFound      = false
+	         
+      bFound      = false
       bIsEnabled  = false
       fileClass   = ""
       fileType    = ""
@@ -312,6 +405,8 @@ class DEC_FileSender
 
       arrListofFilesSent = Array.new
 
+      @listFileSent = @listFileSent.flatten.uniq
+
       @listFileSent.each{|aFilename|
          aFileType = CUC::EE_ReadFileName.new(aFilename).fileType
          if arrRepTypes.include?(aFileType) == false then
@@ -320,6 +415,7 @@ class DEC_FileSender
       }
 
       if arrListofFilesSent.length == 0 then
+         @logger.warn("[DEC_XXX] I/F #{@entity}: Failed to create report #{filename} / no files sent?!")
          return
       end
 
@@ -361,8 +457,48 @@ private
       return
    end
    ## -----------------------------------------------------------
+
+   def sendFile(file, size, hParams)
+
+      @logger.info("[DEC_201] I/F #{@entity}: Sending #{file} using #{@ftpserver[:protocol]}")
+
+      prevDir           = Dir.pwd
+      Dir.chdir(@outboxDir)
    
-   def sendFile(file)
+      nRetries = @retries - 1     
+      retVal   = false
+      i        = 0      
+          
+      until ((nRetries < 0) or (retVal == true))       
+         
+         if File.directory?(file) == true then
+            bRetVal = @sender.sendDir(file)
+         else
+            bRetVal = @sender.sendFile(file)
+         end
+
+         if bRetVal == true then
+            SentFile.setBeenSent(file, @interface, @ftpserver[:protocol], size, hParams)
+            @logger.info("[DEC_210] I/F #{@entity}: #{file} with size #{size} bytes sent using #{@protocol}")
+            Dir.chdir(prevDir)
+            return true
+         else
+            @logger.error("[DEC_710] I/F #{@entity}: Failed sending #{file}")
+         end
+         
+         nRetries = nRetries - 1
+         i        = i + 1
+         
+         @logger.info("[DEC_206] I/F #{@entity}: Push ImmediateRetries RE-Sending(#{i}) #{file}")
+               
+      end
+      Dir.chdir(prevDir)
+      return false     
+   end   
+   
+   ## -----------------------------------------------------------
+      
+   def sendFile_old_but_working(file)
 
       prevDir           = Dir.pwd
       Dir.chdir(@outboxDir)

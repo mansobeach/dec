@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileArchiver class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id: MINARC_Environment.rb $Date$
-#
-# module MINARC
-#
+##
+## === Ruby source for #FileArchiver class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id: MINARC_Environment.rb $Date$
+##
+## module MINARC
+##
 #########################################################################
 
 require 'dotenv'

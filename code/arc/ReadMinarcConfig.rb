@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ReadMailConfig class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Transfer Component
-# 
-# CVS:  $Id: ReadMinarcConfig.rb,v 1.1 2008/03/11 09:49:13 decdev Exp $
-#
-# Module MINARC
-# This class reads and decodes MINARC configuration stored 
-# minarc_config.xml.
-#
+###
+### === Ruby source for #ReadMinarcConfig class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> minArc
+### 
+### Git:  $Id: ReadMinarcConfig.rb,v 1.1 2008/03/11 09:49:13 decdev Exp $
+###
+### Module MINARC
+### This class reads and decodes MINARC configuration stored 
+### minarc_config.xml.
+###
 #########################################################################
 
 
@@ -30,25 +30,26 @@ class ReadMinarcConfig
    include Singleton
    include REXML
    include CUC::DirUtils
-   #-------------------------------------------------------------   
+   ## -------------------------------------------------------------   
    
    # Class contructor
    def initialize
       @@isModuleOK        = false
       @@isModuleChecked   = false
-      @isDebugMode        = false 
+      @isDebugMode        = false
+      @inventory          = nil 
       checkModuleIntegrity
 		defineStructs
-      @arrRules = loadData
+      loadData
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "ReadMinarcConfig debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
    # Reload data from configuration file
    #
@@ -81,7 +82,18 @@ class ReadMinarcConfig
       end
       return arrTmp
    end
-   #-------------------------------------------------------------
+   ## ------------------------------------------------------------
+
+   def getInventory
+      return @inventory
+   end
+   ## -----------------------------------------------------------
+
+   def getTempDir
+      return @tempDir
+   end
+   ## -----------------------------------------------------------
+
 
 private
 
@@ -97,7 +109,11 @@ private
       
       bDefined = true
       bCheckOK = true
-   
+
+      if !ENV['MINARC_CONFIG'] then
+         ENV['MINARC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+
       if !ENV['MINARC_CONFIG'] then
         puts "MINARC_CONFIG environment variable not defined !  :-(\n"
         bCheckOK = false
@@ -119,12 +135,13 @@ private
          exit(99)
       end      
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Load the file into the an internal struct.
-   #
-   # The struct is defined in the class Constructor. See #initialize.
+   ## Load the file into the an internal struct.
+   ##
+   ## The struct is defined in the class Constructor. See #initialize.
    def loadData
+      self.setDebugMode
       externalFilename = %Q{#{@@configDirectory}/minarc_config.xml}
       fileExternal     = File.new(externalFilename)
       xmlFile          = REXML::Document.new(fileExternal)
@@ -133,12 +150,16 @@ private
          puts "\nProcessing minarc_config.xml"
       end
       
-      return processRules(xmlFile)
+      @arrRules = processRules(xmlFile)
+      
+      parseWorkflow(xmlFile)
+      
+      parseInventoryConfig(xmlFile)
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Process the xml file decoding all the Rules
-   # - xmlFile (IN): XML configuration file
+   ## Process the xml file decoding all the Rules
+   ## - xmlFile (IN): XML configuration file
    def processRules(xmlFile)
 
       arrRules  = Array.new
@@ -151,7 +172,7 @@ private
       age       = nil
       ageUnit   = nil
       
-      XPath.each(xmlFile, "MINARC_CONFIG/CleanUp"){ |cleanUp|
+      XPath.each(xmlFile, "Configuration/CleanUp"){ |cleanUp|
          frequency = cleanUp.attributes["Frequency"]
          freqUnit  = cleanUp.attributes["Unit"]
 
@@ -181,7 +202,94 @@ private
       return arrRules
 	
    end
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
+
+   def parseWorkflow(xmlFile)
+   
+      @tempDir = nil
+   
+      XPath.each(xmlFile, "Configuration/Workflow"){     
+         |workflow|
+
+ 
+         # Process Report Dir
+         XPath.each(workflow, "TempDir"){      
+            |tempDir|
+            @tempDir = expandPathValue(tempDir.text)
+         }
+      
+      }
+
+      if @isDebugMode == true then
+         puts "workflow -> tmp directory : #{@tempDir}"
+      end
+
+
+   end
+   ## -----------------------------------------------------------
+
+   def parseInventoryConfig(xmlFile)
+         
+      ## -----------------------------------------
+      ## Process Reports Configuration
+      XPath.each(xmlFile, "Configuration/Inventory"){      
+         |inventory|
+
+         db_adapter  = ""
+         db_host     = ""
+         db_port     = ""
+         db_name     = ""
+         db_user     = ""
+         db_pass     = ""
+
+         XPath.each(inventory, "Database_Adapter"){
+            |adapter|  
+            db_adapter = adapter.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Host"){
+            |name|
+            db_host  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Port"){
+            |name|
+            db_port  = name.text.to_s
+         }
+         
+         XPath.each(inventory, "Database_Name"){
+            |name|
+            db_name  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_User"){
+            |user|
+            db_user  = user.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Password"){
+            |pass|
+            db_pass  = pass.text.to_s   
+         }
+         
+         @inventory = Struct::Inventory.new(db_adapter, \
+                                             db_host, \
+                                             db_port, \
+                                             db_name, \
+                                             db_user, \
+                                             db_pass)
+          
+      }
+      ## -----------------------------------------
+
+      if @isDebugMode == true then
+         puts @inventory
+      end
+
+      ## -----------------------------------------
+
+   end
 
    # converts times in seconds according to the original unit.
    def conv2seconds(value, unit)
@@ -198,13 +306,19 @@ private
 
       return newValue
    end
-   #-------------------------------------------------------------  
+   ## -----------------------------------------------------------  
    
-	# Define all the structs
+	## Define all the structs
 	def defineStructs
 	   Struct.new("CleanUpRule", :frequency, :filetype, :rule, :date, :age)
+      Struct.new("Inventory", :db_adapter, \
+                              :db_host, \
+                              :db_port, \
+                              :db_name, \
+                              :db_username, \
+                              :db_password)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Fill a Send;ailStruct struct
    # - smtpserver (IN):
@@ -220,7 +334,7 @@ private
 			                         age)
       return cleanUpRuleStruct               
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
     
 	
 end # class

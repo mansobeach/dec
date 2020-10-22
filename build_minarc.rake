@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC repository management
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component (DEC) repository
-# 
-# Git: rakefile,v $Id$ $Date$
-#
-# module ARC
-#
+###
+### === Ruby source for #DEC repository management
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component (DEC) repository
+### 
+### Git: rakefile,v $Id$ $Date$
+###
+### module ARC
+###
 #########################################################################
 
 require 'rake'
@@ -23,16 +23,26 @@ require 'rake'
 
 namespace :minarc do
 
+   ## -----------------------------
+   ## minARC Config files
+   
+   @arrConfigFiles = [\
+      "minarc_config.xml",\
+      "minarc_log_config.xml"]
+   ## -----------------------------
+   
+   @rootConf = "config/oper_arc"
+
    ## ----------------------------------------------------------------
    
    desc "build minarc gem"
 
-   task :build, [:user, :host] => :load_config do |t, args|
-      args.with_defaults(:user => :orctest, :host => "localhost")
-      puts "building gem orchestrator with config #{args[:user]}@#{args[:host]}"
+   task :build, [:user, :host, :suffix] => :load_config do |t, args|
+      args.with_defaults(:user => :borja, :host => "localhost", :suffix => :s2)
+      puts "building gem minarc_#{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
-         puts "Orchestrator configuration not present in repository"
+         puts "minARC configuration not present in repository"
          exit(99)
       end
    
@@ -44,11 +54,11 @@ namespace :minarc do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      cp filename, "minarc.gem"
-      mv "orc.gem", "install"
-      mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
-      @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
+      mv filename, "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
+      @filename = "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
+      cp @filename, "install/gems/minarc_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
+      # rm @filename
    end
 
    ## ----------------------------------------------------------------
@@ -58,7 +68,7 @@ namespace :minarc do
    desc "load Orchestrator configuration package"
 
    task :load_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :orctest, :host => "localhost")
+      args.with_defaults(:user => :borja, :host => "localhost")
       puts "loading configuration for #{args[:user]}@#{args[:host]}"      
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
@@ -78,7 +88,7 @@ namespace :minarc do
    desc "save Orchestrator configuration package"
 
    task :save_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :orctest, :host => :localhost)
+      args.with_defaults(:user => :borja, :host => :localhost)
             
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
@@ -106,17 +116,29 @@ namespace :minarc do
    end
    ## --------------------------------------------------------------------
 
+   ## ----------------------------------------------------------------
+   
+   desc "uninstall minARC gem"
+   
+   task :uninstall do
+      cmd = "gem uninstall -x minarc"
+      puts cmd
+      system(cmd)      
+   end
+   ## ----------------------------------------------------------------
+
    task :install ,[:user, :host] => :build do |t, args|
-      args.with_defaults(:user => :orctest, :host => :localhost)
+      args.with_defaults(:user => :borja, :host => :localhost)
       puts
       puts @filename
       puts
-      cmd = "sudo gem uninstall orc"
+      
+      Rake::Task["minarc:uninstall"].invoke
+      
+      cmd = "gem install #{@filename}"
       puts cmd
       system(cmd)
-      cmd = "sudo gem install --local #{@filename}"
-      puts cmd
-      system(cmd)
+      rm @filename
    end
    ## --------------------------------------------------------------------
 

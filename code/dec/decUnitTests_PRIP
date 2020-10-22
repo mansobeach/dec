@@ -1,0 +1,271 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+###
+### === Ruby source for #DEC_TestCases class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component
+### 
+### module DEC
+###
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/API_PRIP'
+
+
+# Preconditions:
+# 1 - setup 
+
+# 2 - teardown
+
+#  1  - test_protocol
+#  2  - test_commandline_helpers
+#  3  - test_decListener
+
+
+# Select a single test of the suite
+
+# ruby decUnitTests_PRIP -n test_my_method 
+
+
+class DECTestCasePRIP < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+      
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config_development
+
+
+      puts      
+      @@conf.wrapper_print_environment
+      puts
+      
+      
+      @@conf.createEnvironmentDirs
+
+
+      if @@conf.wrapper_check_environment == false then
+         puts "DEC environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+      
+      
+   end
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC test for DHUS interface"
+   end
+   
+   ## ------------------------------------------------------
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+            
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTestsPRIP::#{__method__.to_s}"
+      puts
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_protocol
+   
+      ## References:
+      ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
+   
+      puts
+      puts "================================================"
+      puts "DEC_UnitTestsPRIP::#{__method__.to_s}"
+      puts
+
+      require 'net/http'
+      require 'nokogiri'
+      require 'json'
+
+
+      strURL = PRIP::API_URL_ODATA_PRODUCT
+   
+   
+      uri = URI.parse(strURL)
+      
+      http = Net::HTTP.new(uri.host, uri.port)
+
+      http.use_ssl      = true
+      http.verify_mode  = OpenSSL::SSL::VERIFY_NONE
+
+      request = Net::HTTP::Get.new(uri.request_uri)
+      
+      puts strURL
+      puts uri.request_uri
+      
+      request.basic_auth("pripuser1", "12qwas")
+
+      response = http.request(request)
+   
+      puts response.code
+      puts
+      puts response.message
+      puts
+      
+      doc = JSON.parse(response.body)
+      
+      # puts JSON.pretty_generate(doc)
+                              
+                        
+      puts
+      
+      doc["value"].each{|item|
+         puts item["Name"]
+      }                        
+   end
+
+   ## -------------------------------------------------------------
+
+   def test_commandline_helpers
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decODataClient -v"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decODataClient -h"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decODataClient -u mario -p cipollini"
+      puts cmd
+      assert(!system(cmd), "#{cmd} invoked without the query")
+
+      cmd = "decODataClient -u mario -q dhus:l1c:GS2B_20200903T104429_018252_N02.14"
+      puts cmd
+      assert(!system(cmd), "#{cmd} invoked without the password")
+
+   end
+
+   ## ------------------------------------------------------
+
+   def test_cmd1
+   
+      ## References:
+      ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
+   
+      puts
+      puts "================================================"
+      puts "DEC_UnitTestsPRIP::#{__method__.to_s}"
+      puts
+
+      ## Query for PRIP
+      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:S2A_OPER_GIP"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+      ## Query for PRIP
+      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:S2A_OPER_GIP -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+   end
+
+   ## ------------------------------------------------------
+
+
+end
+
+
+## ===================================================================
+
+
+
+

@@ -79,6 +79,8 @@
             <Directory>/tmp/dec_local_dissemination/S2ALL</Directory>
          </Intray>
 
+      <!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-371 -->
+
       <Intray>
          <Name>HP_DPC</Name>
          <Directory>/volumes/dec/interfaces/hp_dpc</Directory>
@@ -154,7 +156,6 @@
          <Directory>/volumes/dec/interfaces/shadow.all</Directory>
       </Intray>
 
-
       <Intray>
          <Name>S2BOA</Name>
          <Directory>/volumes/dec/interfaces/s2boa</Directory>
@@ -182,6 +183,9 @@
       <ListFilesDisseminated>
     
       <!--
+    
+      => S2MPASUP-371: REP_OPHKTM gathering with the rule VGS*
+    
     
       => 20200818 REP_PASS_E to SGS circulated to SHADOW
     
@@ -217,19 +221,20 @@
           </ToList>
       </File>
 
-      <File Type="S2__OPER_REP_OPDPC*">
-          <HardLink>False</HardLink>
-          <ToList>
-             <Intray>HP_DPC</Intray>
-          </ToList>
-      </File>
-
       <File Type="S2?_OPER_REP_MET*">
           <HardLink>False</HardLink>
           <ToList>
              <Intray>REP_MET</Intray>
           </ToList>
       </File>
+
+      <File Type="S2?_OPER_REP_OPDPC*">
+          <HardLink>False</HardLink>
+          <ToList>
+             <Intray>HP_DPC</Intray>
+          </ToList>
+      </File>
+
    
       <!--
       

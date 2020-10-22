@@ -67,7 +67,7 @@
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
-      <LoopDelay unit="s">300</LoopDelay>
+      <LoopDelay unit="s">10</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>5</ParallelDownload>
@@ -120,9 +120,9 @@
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
-      <ImmediateRetries>3</ImmediateRetries>
+      <ImmediateRetries>1</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
-      <LoopDelay unit="s">300</LoopDelay>
+      <LoopDelay unit="s">5</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>5</ParallelDownload>
@@ -145,7 +145,7 @@
        <Address>borja.lopez@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
-      <SendNotification>true</SendNotification>
+      <SendNotification>false</SendNotification>
       <To>
        <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>
@@ -707,8 +707,9 @@
   <Interface Name="LEAP">
     <Desc>IERS Mirror hpiers.obspm.fr</Desc>
     <TXRXParams>
-    <!-- MISS-CONFIGURATION FOR TESTING PURPOSES -->
-      <Enabled4Sending>true</Enabled4Sending>
+    <!-- MISS-CONFIGURATION FOR TESTING PURPOSES
+      <Enabled4Sending>true</Enabled4Sending> -->
+      <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
@@ -824,7 +825,7 @@
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <!-- Miss configuration to raise DEC_605 -->
-      <Enabled4Receiving>true</Enabled4Receiving>
+      <Enabled4Receiving>false</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">300</LoopDelay>
@@ -935,7 +936,7 @@
   <Interface Name="LOCALHOST_FTPS">
     <Desc>Unit tests for FTPS</Desc>
     <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
@@ -947,7 +948,7 @@
     <Server>
       <Protocol>FTPS</Protocol>
       <Hostname>localhost</Hostname>
-      <Port>22</Port>      
+      <Port>21</Port>      
       <User>dec</User>
       <Pass>dec</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>

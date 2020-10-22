@@ -24,12 +24,15 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.16"
+   @@version = "1.0.17"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.16" =>    "TBW2 / TBD2", \
+      "1.0.17" =>    "Support to push parallelisation driven by ParallelDownload config\n\
+          OData client for DHUS supports pagination:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-376",
+      "1.0.16" =>    "First version of the OData client for DHUS / PRIP for Sentinel-2", \
       "1.0.15" =>    "Support to remote inventory / db different than localhost\n\
           dec_config.xml Inventory config now includes Database_Host & Database_Port items", \
       "1.0.14" =>    "New gems sys-filesystem and nokogiri are required\n\

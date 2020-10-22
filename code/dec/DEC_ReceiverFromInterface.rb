@@ -821,15 +821,13 @@ class DEC_ReceiverFromInterface
       @retValFilesReceived    = true
       @atLeast1FileReceived   = false
       listFiles               = Array.new(@fileList)
-      
-      arrSent  = Array.new
-      
+            
       loop do
          break if listFiles.empty?
          1.upto(@parallelDownload) {|i|
             break if listFiles.empty?
             file = listFiles.shift
-            arrSent << file
+            
             fork{
                if @isDebugMode == true then
                   @logger.debug("Child process created to download #{File.basename(file)}")
@@ -849,14 +847,13 @@ class DEC_ReceiverFromInterface
          arr = Process.waitall
          arr.each{|child|
             if child[1].exitstatus == 0 then
-               #@logger.info(arrSent)
                @atLeast1FileReceived = true
             else
                # @logger.error("Problem(s) during file download")
                @retValFilesReceived = false
             end
          }
-         arrSent  = Array.new
+         
       end
             
       deleteTempDir

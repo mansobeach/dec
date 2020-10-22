@@ -96,7 +96,7 @@
       <File Type="S2A*">
          <Description></Description>
          <ToList>
-            <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+            <Interface Name="LOCALHOST_NOT_SECURE"  Compress="7Z" DeliveryMethods="FTP" />
          </ToList>
       </File>
 

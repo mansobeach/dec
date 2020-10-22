@@ -705,6 +705,10 @@ class DECTestCase < Test::Unit::TestCase
       puts ftpRecv
       puts
 
+      parallelSlots = ftReadConf.getTXRXParams("LOCALHOST_NOT_SECURE")[:parallelDownload] 
+
+      assert(parallelSlots != nil, "parallelDownload attribute")
+
       ftReadConf = ReadInterfaceConfig.instance
       ftReadConf.update
       ftpRecv    = ftReadConf.getFTPServer("WEBDAV_SECURE")
@@ -899,14 +903,14 @@ class DECTestCase < Test::Unit::TestCase
       puts
       assert(!system(cmd), cmd)
 
-      cmd = "decSend2Interface -m LEAP"
-      puts cmd
-      puts
-      assert(!system(cmd), cmd)
-
-      cmd = "grep DEC_705 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "DEC_705 should be raised for interface push miss-configuration#{__method__.to_s}") 
+#      cmd = "decSend2Interface -m LEAP"
+#      puts cmd
+#      puts
+#      assert(!system(cmd), cmd)
+#
+#      cmd = "grep DEC_705 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "DEC_705 should be raised for interface push miss-configuration#{__method__.to_s}") 
 
       ## -----------------------------------------
       ##
@@ -1786,12 +1790,15 @@ class DECTestCase < Test::Unit::TestCase
       @@conf.wrapper_load_config_development
 
       cmd = "decManageDB -d"
+      puts cmd
       ret = system(cmd)
 
       cmd = "decManageDB -c"
+      puts cmd
       ret = system(cmd)
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
       assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
 
       inConfig          = ReadConfigIncoming.instance
@@ -1947,9 +1954,11 @@ class DECTestCase < Test::Unit::TestCase
       ret = system(cmd)
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
+      puts cmd
       ret = system(cmd)
 
       cmd = "decSend2Interface -S"
+      puts cmd
       assert(system(cmd), cmd)
 
       ## Call to previous test to load the out-trays
@@ -1962,7 +1971,7 @@ class DECTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), cmd)
 
-      cmd = "decStats"
+      cmd = "decStats -H 1"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -1974,51 +1983,33 @@ class DECTestCase < Test::Unit::TestCase
 
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
+      puts
+      puts reportDir
+      puts
       arr = Dir["#{reportDir}/*"]
       assert(arr.length>0, "delivery report generation")
 
-      sleep(5.0)
-      puts
-      cmd = "decSend2Interface -m LOCALHOST_SECURE -O"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      sleep(5.0)
-      
-      ## Call to previous test to load the out-trays
-      test_decGetFiles4Transfer
-      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
-      
-      puts
-      cmd = "decSend2Interface -m LOCALHOST_SECURE -O"
-      puts cmd
-      assert(system(cmd), cmd)
-
       arr = Dir["/tmp/DEC*.log"]
-
-      # There should be warnings reporting the duplications available
-      cmd = "grep WARN #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "WARN not found in DEC logs in #{__method__.to_s}") 
-
-      cmd = "decStats"
-      assert(system(cmd), cmd)
-
-      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
-      assert(system(cmd), cmd)
-      puts      
-
       
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
-      cmd = "decSend2Interface -m non_existing_if"
-      assert(!system(cmd), cmd)
-
-      cmd = "grep ERROR #{arr[0]}"
+      ## Call to previous test to load the out-trays
+      test_decGetFiles4Transfer
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      puts
       puts cmd
-      assert(system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+      puts
+      assert(system(cmd), cmd)
+
+
+      # There should be warnings reporting the duplications available
+      cmd = "grep WARN #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "WARN not found in DEC logs in #{__method__.to_s}") 
 
 
    end
@@ -2061,7 +2052,7 @@ class DECTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
       }
 
-      cmd = "decDeliverFiles -D"
+      cmd = "decDeliverFiles"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -2140,7 +2131,7 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
       puts      
 
-      cmd = "decStats"
+      cmd = "decStats -H 1"
       assert(system(cmd), cmd)
 
    end
@@ -2167,6 +2158,9 @@ class DECTestCase < Test::Unit::TestCase
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
+
+      system("\\rm -f /tmp/dec_simul_if/localhost_secure/upload/*")
+      system("\\rm -f /tmp/dec_simul_if/localhost_secure/upload/_TEMP_/*")
 
       cmd = "decManageDB -d"
       ret = system(cmd)
@@ -2196,6 +2190,12 @@ class DECTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
       }
 
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts      
+
+
       cmd = "decGetFiles4Transfer"
       puts cmd
       assert(system(cmd), cmd)
@@ -2210,12 +2210,31 @@ class DECTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
       }
 
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts      
+
+      cmd = "decStats -H 1"
+      assert(system(cmd), cmd)
+
+      system("\\rm -f /tmp/dec_simul_if/localhost_secure/upload/*")
+      system("\\rm -f /tmp/dec_simul_if/localhost_secure/upload/_TEMP_/*")
+
       cmd = "decGetFiles4Transfer"
       puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface --mnemonic LOCALHOST_SECURE -O"
       puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts      
+
+      cmd = "decStats -H 1"
       assert(system(cmd), cmd)
 
       arr = Dir["/tmp/DEC*.log"]

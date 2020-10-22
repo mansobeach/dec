@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC repository management
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component (DEC) repository
-# 
-# Git: rakefile,v $Id$ $Date$
-#
-# module DEC
-#
+##
+## === Ruby source for #DEC repository management
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component (DEC) repository
+## 
+## Git: rakefile,v $Id$ $Date$
+##
+## module DEC
+##
 #########################################################################
 
 require 'rake'

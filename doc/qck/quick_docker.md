@@ -71,7 +71,9 @@ This section contains the cheat-list of commands to handle docker *containers*.
 -	To obtain a console / bash from a container already in running state:  
 	`docker container exec -i -t <container_id> /bin/bash`
 
--	To obtain a root console / bash from a container already in running state:`sudo docker container exec --user='root' -i -t dec /bin/bash`
+-	To obtain a root console / bash from a container already in running state:
+   `sudo docker container exec --user='root' -i -t dec /bin/bash`
+   `sudo docker container exec -u 0 -i -t dec /bin/bash`
 
 -	To delete all Containers exited:  
 	`docker rm $(docker ps --all -q -f status=exited)`

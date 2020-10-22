@@ -12,9 +12,10 @@
 ###
 #########################################################################
 
+
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.15'
+  s.version     = '1.0.17'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -52,17 +53,29 @@ Gem::Specification.new do |s|
                      'decListener', \
                      'decManageDB', \
                      'decNotify2Interface', \
+                     'decODataClient', \
                      'decSend2Interface', \
                      'decSmokeTests', \
                      'decStats', \
                      'decUnitTests', \
                      'decUnitTests_ADP', \
+                     'decUnitTests_DHUS', \
                      'decUnitTests_FTPS', \
                      'decUnitTests_IERS', \
                      'decUnitTests_ncftpput', \
+                     'decUnitTests_PRIP', \
                      'decUnitTests_WEBDAV_SECURE', \
                      'decUnitTests_mail' \
                      ]
+  
+   ## --------------------------------------------
+   ##
+   ## Tailored installer to include only the OData client
+   if ENV.include?("DEC_ODATA") == true then
+      s.executables   = [ 'decODataClient' ]
+   end
+   ## --------------------------------------------
+
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
@@ -72,7 +85,6 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '> 2.6.0.preview2'
   
   s.add_dependency('activerecord', '~> 6.0')
-  s.add_dependency('curb', '~> 0.9')
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
@@ -81,7 +93,16 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 6.1')
   s.add_dependency('nokogiri', '~> 1.1')
-  s.add_dependency('pg', '~> 1')
+  
+  ## --------------------------------------------
+  ##
+  ## Tailored installer to avoid some gems only for the OData client
+  if ENV.include?("DEC_ODATA") == false then
+      s.add_dependency('curb', '~> 0.9')
+      s.add_dependency('pg', '~> 1')
+  end
+  ## --------------------------------------------
+
   s.add_dependency('sqlite3', '~> 1.4')
   s.add_dependency('sys-filesystem', '~> 1.3')
   

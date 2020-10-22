@@ -584,6 +584,13 @@ private
          cmd  = %Q{7za a #{@newfilename} #{@fullpathFile}}
       end
 
+      ## silent mode
+      ## > progress redirected to 0
+      ## > output redirected to 0
+      if @isDebugMode == false then
+         cmd = "#{cmd} -y -bsp0 -bso0"
+      end
+
 #      if bDeleteSourceFile == true then
 #         cmd = "#{cmd} -sdel"
 #      end

@@ -70,6 +70,7 @@ class FileSender
       @prefix           = "temp_"
       @handler          = nil
       
+      
       ## ---------------------------------------------------
       if @protocol == 'LOCAL' then
          #false stands for use DCC; true stands for use DDC

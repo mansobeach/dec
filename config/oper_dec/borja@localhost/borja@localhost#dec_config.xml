@@ -46,7 +46,7 @@
    
    <Reports>
             
-       <!-- DDC delivery reports / push (decSend2Interface) -->      
+       <!-- DEC push / delivery reports / push (decSend2Interface) -->      
             
       <Report Name="DeliveredFiles">
          <Enabled>true</Enabled>
@@ -62,7 +62,7 @@
          <FileType>DEMERGENCY</FileType>
       </Report>
 
-      <!-- DCC Retrieval reports (decGetFromInterface) -->
+      <!-- DEC pull / retrieval reports (decGetFromInterface) -->
 
       <Report Name="RetrievedFiles">
          <Enabled>true</Enabled>
@@ -87,11 +87,25 @@
       <TempDir>/tmp/dec/tmp</TempDir>
    </Workflow>
 
+<!--
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>dec_db_s2</Database_Host>
+      <Database_Port>54320</Database_Port>
+      <Database_Name>dec_db_s2</Database_Name>
+      <Database_User>postgres</Database_User>
+      <Database_Password>postgres</Database_Password>
+   </Inventory>
+-->
+
    <Inventory>
       <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>
       <Database_Name>/tmp/dec_inventory</Database_Name>
       <Database_User>root</Database_User>
       <Database_Password>2mysql</Database_Password>
    </Inventory>
+
 
 </Configuration>

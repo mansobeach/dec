@@ -642,7 +642,19 @@ def deliverByFTP
    end
 
    while bNewFiles
-      sender = DEC_FileSender.new(@entity, "FTP", @isDeliveredOnce, @isDebugMode, @isNoDB)
+      sender = nil
+      
+      begin
+         sender = DEC_FileSender.new(@entity, "FTP", @isDeliveredOnce, @isDebugMode, @isNoDB)
+      rescue Exception => e
+         if @isDebugMode == true then
+            puts e.backtrace
+            puts
+         end
+         @logger.error(e.to_s)
+         exit(1)
+      end
+      
       if @isDebugMode == true then
          sender.setDebugMode
       end

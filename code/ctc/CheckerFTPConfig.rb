@@ -29,10 +29,10 @@ class CheckerFTPConfig
    # Class constructor.
    # IN (struct) Struct with all relevant field required for ftp/sftp connections.
    def initialize(ftpServerStruct, strInterfaceCaption = "", logger = nil)
-      @logger = logger
-      @isDebugMode = false
+      @logger        = logger
+      @isDebugMode   = false
       checkModuleIntegrity
-      @ftpElement  = ftpServerStruct
+      @ftpElement    = ftpServerStruct
       if strInterfaceCaption != "" then
          @entity = strInterfaceCaption
       else
@@ -87,7 +87,7 @@ private
    @sftpClient        = nil
    @ftReadConf        = nil
 
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
@@ -183,13 +183,9 @@ private
          puts "Check your configuration \n" 
       end      
 
+      # 
       # Check 4 Sending
       if bCheck4Send == true then
-
-
-         puts "xxxxxxxxxxxx"
-         puts @ftpElement
-         puts "xxxxxxxxxxxx"
    
          if @ftpElement[:uploadDir] == "" then
             puts "\nError: in #{@entity} I/F: UploadDir configuration element cannot be void :-(\n"
@@ -215,13 +211,21 @@ private
    ###  
          retVal = checkRemoteDirectory(dir, false)
          if retVal == false then
-            puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{dir} :-(\n"
+            if @logger != nil then
+               @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{dir} directory")
+            else 
+               puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{dir} :-(\n"
+            end
             ret = false
          end
 
          retVal = checkRemoteDirectory(@ftpElement[:uploadTemp], false)
          if retVal == false then
-            puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+            if @logger != nil then
+               @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@ftpElement[:uploadTemp]} directory")
+            else 
+               puts "\nError: in #{@entity} I/F: Unable to access to remote dir #{@ftpElement[:uploadTemp]} :-(\n"
+            end
             ret = false
          end
 
@@ -229,7 +233,11 @@ private
             retVal = checkWriteRemoteDirectoryNonSecure(@ftpElement[:uploadTemp])
 
             if retVal == false then
-               puts "\nError: in #{@entity} I/F: Unable to write into remote dir uploadTemp #{@ftpElement[:uploadTemp]} :-(\n"
+               if @logger != nil then
+                  @logger.error("[DEC_712] I/F #{@entity}: Cannot reach #{@ftpElement[:uploadTemp]} directory")
+               else
+                  puts "\nError: in #{@entity} I/F: Unable to write into remote dir uploadTemp #{@ftpElement[:uploadTemp]} :-(\n"
+               end
                ret = false
             end
          end
@@ -238,7 +246,11 @@ private
             retVal = checkWriteRemoteDirectoryNonSecure(@ftpElement[:uploadDir])
 
             if retVal == false then
-               puts "\nError: in #{@entity} I/F: Unable to write into remote dir uploadDir #{@ftpElement[:uploadDir]} :-(\n"
+               if @logger != nil then
+                  @logger.error("[DEC_712] I/F #{@entity}: Cannot reach #{@ftpElement[:uploadDir]} directory")
+               else
+                  puts "\nError: in #{@entity} I/F: Unable to write into remote dir #{@ftpElement[:uploadDir]} :-(\n"
+               end
                ret = false
             end
          end
@@ -270,7 +282,7 @@ private
             dir = element[:directory]
             retVal = checkRemoteDirectory(dir)
             if retVal == false then
-               puts "Error: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n\n"
+               @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{element[:directory]} directory")
                bError = true
             end
          }
@@ -319,13 +331,9 @@ private
             @ftp.passive = true
             @ftp.chdir(dir)
          rescue Exception => e
-            puts
-            puts e.to_s
-            puts
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
             if @isDebugMode == true then
-               puts
-               puts e.backtrace
-               puts
+               @logger.debug(e.backtrace)
             end
             return false
          end

@@ -47,7 +47,7 @@ namespace :dec do
    desc "build docker DEC image"
 
    task :image_build, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts "building Docker Image DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
    
       dockerFile = "Dockerfile.dec.#{args[:suffix]}.#{args[:host]}.#{args[:user]}"
@@ -67,7 +67,7 @@ namespace :dec do
    desc "build DEC gem & docker DEC image"
 
    task :image_build_all, [:user, :host, :suffix] => :build do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts "building Docker Image DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
    
       dockerFile = "Dockerfile.dec.#{args[:suffix]}.#{args[:host]}.#{args[:user]}"
@@ -87,7 +87,7 @@ namespace :dec do
    desc "build DEC gem & docker image (container)"
 
    task :container_build, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts "building Docker Container DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
    
       dockerFile = "Dockerfile.dec.#{args[:suffix]}.#{args[:host]}.#{args[:user]}"
@@ -107,7 +107,7 @@ namespace :dec do
    desc "run DEC container"
 
    task :container_run, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts "Executing Docker Container DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
       cmd = "docker container rm dec_#{args[:suffix]}"
       puts cmd
@@ -122,7 +122,7 @@ namespace :dec do
    desc "shell to DEC container"
 
    task :container_shell, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts "Getting shell to Docker Container DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"      
       cmd = "docker container exec -i -t dec_#{args[:suffix]} /bin/bash"
       puts cmd
@@ -137,15 +137,22 @@ namespace :dec do
    
    ## ----------------------------------------------------------------
    
-   desc "build DEC gem"
+   desc "build DEC gem [user, host, suffix = s2 | s2odata]"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost, :suffix => :s2)
-      puts "building gem DEC with config #{args[:user]}@#{args[:host]}"
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2")
+      puts "building gem #{args[:suffix]} DEC with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
          puts "DEC configuration not present in repository"
          exit(99)
+      end
+   
+      if args[:suffix].include?("odata") == true then
+         puts "Building gem with DEC_ODATA flag"
+         ENV['DEC_ODATA'] = "true"
+      else
+         ENV.delete('DEC_ODATA')
       end
    
       cmd = "gem build gem_dec.gemspec"
@@ -156,8 +163,8 @@ namespace :dec do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
-      @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
+      mv filename, "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
+      @filename = "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
       cp @filename, "install/gems/dec_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
       # rm @filename
@@ -177,7 +184,7 @@ namespace :dec do
    desc "check DEC configuration package"
    
    task :check_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost)
+      args.with_defaults(:user => :borja, :host => :localhost)
       
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
          puts "DEC configuration not present in repository"
@@ -202,7 +209,7 @@ namespace :dec do
    desc "save DEC configuration package"
 
    task :save_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost)
+      args.with_defaults(:user => :borja, :host => :localhost)
             
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
@@ -235,7 +242,7 @@ namespace :dec do
    desc "load DEC configuration package"
 
    task :load_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :dectest, :host => :localhost)
+      args.with_defaults(:user => :borja, :host => :localhost)
       puts "loading configuration for #{args[:user]}@#{args[:host]}"      
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
@@ -268,8 +275,8 @@ namespace :dec do
 
    desc "install DEC"
 
-   task :install ,[:user, :host] => :build do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost)
+   task :install ,[:user, :host, :suffix] => :build do |t, args|
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
       puts
       puts @filename
       puts

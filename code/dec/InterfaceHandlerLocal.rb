@@ -131,7 +131,7 @@ class InterfaceHandlerLocal
       begin
          Dir.chdir(dir)
       rescue Exception => e
-         @logger.error("[DEC_712] #{@entity} I/F: Directory #{dir} is unreachable. Try with decCheckConfig -e")
+         @logger.error("[DEC_712] I/F #{@entity}: Directory #{dir} is unreachable. Try with decCheckConfig -e")
          return Array.new
       end
       

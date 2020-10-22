@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
 #                  Dir['code/arc/plugins/test/example_1.mp4'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
+                  Dir['config/minarc_config.xml'] + \
+                  Dir['config/minarc_log_config.xml'] + \
                   Dir['install/minarc_test.env'] + \
                   Dir['install/minarc_test.bash']
 
@@ -27,7 +29,7 @@ Gem::Specification.new do |s|
 
   s.bindir        = ['code/arc']
 
-  # s.datadir     #  = ['code/arc/plugins/test']
+  # s.datadir       = ['code/arc/plugins/test']
 
   s.executables   = [ 
                      'minArcStore', \
@@ -52,6 +54,7 @@ Gem::Specification.new do |s|
   ## ----------------------------------------------
   
   s.add_dependency('activerecord', '~> 6.0')
+  s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('dotenv', '~> 2.7')
   s.add_dependency('filesize', '~> 0.1')
@@ -71,10 +74,10 @@ Gem::Specification.new do |s|
   
   
   
-  # database specific gems which can differ
-  
-  # s.add_dependency('pg', '~> 1.0')
-  
-  s.post_install_message = "Elecnor Deimos MINARC installed :-)"
+  ## ----------------------------------------------
+
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+    
+  ## ----------------------------------------------
   
 end

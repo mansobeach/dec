@@ -51,7 +51,7 @@ class CheckerInterfaceConfig
    def initialize(entity, bCheckIncoming = true, bCheckOutgoing = true, logger = nil)
       @bCheckIncoming                  = bCheckIncoming
       @bCheckOutgoing                  = bCheckOutgoing
-      @logger                          = nil
+      @logger                          = logger
       @isDebugMode                     = false
       @entity                          = entity
       checkModuleIntegrity
@@ -84,14 +84,14 @@ class CheckerInterfaceConfig
       end
 
       if @ftpRecv[:protocol].upcase == "HTTP" then
-         @check4Recv                      = CheckerHTTPConfig.new(@ftpRecv, @entity)
+         @check4Recv                      = CheckerHTTPConfig.new(@ftpRecv, @entity, @logger)
       end
 
       ## -----------------------------------------
       ## Checkers for Send / Push      
       
       if @ftpSend[:protocol].upcase == "FTPS" or @ftpSend[:protocol].upcase == "FTPES" then
-         @check4Send                      = CheckerFTPSConfig.new(@ftpSend, @entity)
+         @check4Send                      = CheckerFTPSConfig.new(@ftpSend, @entity, @logger)
       end
             
       if @ftpSend[:protocol].upcase == "WEBDAV" then
@@ -99,11 +99,11 @@ class CheckerInterfaceConfig
       end
       
       if @ftpSend[:protocol].upcase == "HTTP" then
-         @check4Send                      = CheckerHTTPConfig.new(@ftpSend, @entity)
+         @check4Send                      = CheckerHTTPConfig.new(@ftpSend, @entity, @logger)
       end
  
       if @ftpSend[:protocol].upcase == "FTP" or @ftpSend[:protocol].upcase == "SFTP" then
-         @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity)
+         @check4Send                      = CheckerFTPConfig.new(@ftpSend, @entity, @logger)
       end
       ## -----------------------------------------      
       
@@ -137,6 +137,12 @@ class CheckerInterfaceConfig
          else
             begin
                retVal = @check4Send.check4Send
+#            rescue Exception => e
+#               if @isDebugMode == true then
+#                  puts e.backtrace
+#               end
+#               @logger.error(e.to_s)
+#               retVal = false
             end
          end
       end

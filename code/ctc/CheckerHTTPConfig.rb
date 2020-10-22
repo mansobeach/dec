@@ -29,7 +29,8 @@ class CheckerHTTPConfig
 
    ## Class constructor.
    ## IN (struct) Struct with all relevant field required for net_dav connections.
-   def initialize(httpServerStruct, strInterfaceCaption = "")
+   def initialize(httpServerStruct, strInterfaceCaption = "", logger = nil)
+      @logger      = logger
       @isDebugMode = false
       checkModuleIntegrity
       @httpElement  = httpServerStruct
@@ -184,7 +185,12 @@ private
             dir = element[:directory]
             retVal = checkRemoteDirectory(dir)
             if retVal == false then
-               puts "Error: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n\n"
+               if @logger != nil then
+                  @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{element[:directory]} directory")
+               else 
+                  puts "Error: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n\n"
+               end
+               
                bError = true
             end
          }
@@ -264,14 +270,11 @@ private
             puts 
          end
       rescue Exception => e
-         puts "Failed PROPFIND request to #{host}#{path}"
-         puts
-         puts e.to_s
-         puts
+         @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
          if @isDebugMode == true then
-            puts e.backtrace
-            puts
+            @logger.debug(e.backtrace)
          end
+
          return false
       end
       return true

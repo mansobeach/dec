@@ -112,6 +112,23 @@ The internal of log messages is a JSON string referring to:
 	\item \textbf{date} : date of the circulation
 \end{itemize}
 
+\label{DEC200}
+\subsection{[DEC\_200] Push iteration to Interface completed successfully}
+This message traces the successful push circulation completion.
+
+\label{DEC201}
+\subsection{[DEC\_201] Request to Push File to Interface started}
+This message traces the start of a given file push circulation towards an interface.
+
+\label{DEC205}
+\subsection{[DEC\_205] Push Retry to Interface waiting LoopDelay}
+Push loop which has failed any circulation (cf. \hyperref[DEC710]{DEC\_710} ) is waiting \textit{LoopDelay} seconds to retry.
+
+\label{DEC206}
+\subsection{[DEC\_206] Push Immediate Retry to Re-sending File to Interface waiting LoopDelay}
+Push loop which has failed any circulation (cf. \hyperref[DEC710]{DEC\_710} ) is waiting \textit{LoopDelay} seconds to retry.
+
+
 \label{DEC210}
 \subsection{[DEC\_210] File Pushed to Interface}
 The file referenced in the message has been uploaded to the interface placed into its \hyperref[Upload Rules]{\textit{UploadDir}}.
