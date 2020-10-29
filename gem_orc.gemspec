@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.9'
+  s.version     = '0.0.10'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -48,7 +48,7 @@ Gem::Specification.new do |s|
 
   ## ----------------------------------------------
   
-  s.add_dependency('minarc', '~> 1.0.33')
+  s.add_dependency('minarc', '~> 1.0.34')
 
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('log4r', '~> 1.0')  
@@ -59,8 +59,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('test-unit', '~> 3.0')
   
   ## ----------------------------------------------  
-  
     
-  s.post_install_message = "Elecnor Deimos Generic Orchestrator installed :-)"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Elecnor Deimos Generic Orchestrator installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
   
 end

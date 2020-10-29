@@ -185,7 +185,7 @@ def main
    end
 
    entConf = @configFile.getFTPServer4Send(@entity)  
-   
+      
    # ---------------------------------------------
    if entConf[:protocol].upcase == "LOCAL" then
       handler = InterfaceHandlerLocal.new(@entity)
@@ -243,21 +243,21 @@ def main
    
    if @isSecure == false then
    
-      cmd = self.createCurlFTPList(entConf[:hostname],
-                              entConf[:port],
-                              entConf[:user],
-                              entConf[:password],
-                              ReadConfigOutgoing.instance.getUploadDir(@entity),
-                              nil,   
-                              nil)
-   
-#      cmd = self.createNcFtpLs(entConf[:hostname],
+#      cmd = self.createCurlFTPList(entConf[:hostname],
 #                              entConf[:port],
 #                              entConf[:user],
 #                              entConf[:password],
 #                              ReadConfigOutgoing.instance.getUploadDir(@entity),
-#                              nil,   
+#                              entConf[:isPassive],   
 #                              nil)
+   
+      cmd = self.createNcFtpLs(entConf[:hostname],
+                              entConf[:port],
+                              entConf[:user],
+                              entConf[:password],
+                              ReadConfigOutgoing.instance.getUploadDir(@entity),
+                              entConf[:isPassive],   
+                              nil)
    else
       cmd = self.createSftpCommand(entConf[:hostname],
                                   entConf[:port],
@@ -283,7 +283,7 @@ def main
    puts "============================================================="
    puts "Checking #{@entity} I/F Upload Directory"
    puts
-   system(cmd)
+   retVal = system(cmd)
    puts "============================================================="
    puts
    if @isSecure == true and FileTest.exist?(@batchFile) then
@@ -292,23 +292,29 @@ def main
 
    # If check to uploadTemp has not been requested, we've finished!.
    if @checkUploadTmp == false then
-      exit(0)
+      if retVal == true then
+         exit(0)
+      else
+         exit(99)
+      end
    end
 
    if @isSecure == false then
-      cmd = self.createCurlFTPList(entConf[:hostname],
-                              entConf[:port],
-                              entConf[:user],
-                              entConf[:password],
-                              ReadConfigOutgoing.instance.getUploadTemp(@entity),   
-                              "*")
-                              
-#      cmd = self.createNcFtpLs(entConf[:hostname],
+#      cmd = self.createCurlFTPList(entConf[:hostname],
 #                              entConf[:port],
 #                              entConf[:user],
 #                              entConf[:password],
-#                              ReadConfigOutgoing.instance.getUploadTemp(@entity),   
-#                              "CS*")
+#                              ReadConfigOutgoing.instance.getUploadTemp(@entity),
+#                              entConf[:isPassive], 
+#                              "*")
+                              
+      cmd = self.createNcFtpLs(entConf[:hostname],
+                              entConf[:port],
+                              entConf[:user],
+                              entConf[:password],
+                              ReadConfigOutgoing.instance.getUploadTemp(@entity),
+                              entConf[:isPassive],
+                              "*")
    else
       cmd = self.createSftpCommand(entConf[:hostname],
                                   entConf[:port],
@@ -334,12 +340,19 @@ def main
    puts "============================================================="
    puts "Checking #{@entity} I/F Upload TEMP Directory"
    puts
-   system(cmd)
+   retVal = system(cmd)
    puts "============================================================="
    puts
    if @isSecure == true and FileTest.exist?(@batchFile) then
       n = File.delete(@batchFile)
    end     
+   
+   if retVal == true then
+      exit(0)
+   else
+      exit(99)
+   end
+
    
 end
 

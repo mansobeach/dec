@@ -69,7 +69,7 @@ class CheckerProcessUniqueness
    # * Returns False if its not.
    def isRunning
       if FileTest.exist?(@fileLock) == false then
-        return false
+         return false
       end
        
       @pid = readPID
@@ -79,7 +79,7 @@ class CheckerProcessUniqueness
       end       
       return checkProcess(@pid)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # It returns the running PID of the process if avalaible.
    # Otherwise it returns false.
@@ -172,9 +172,9 @@ class CheckerProcessUniqueness
 
 private
    
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true
       
@@ -209,10 +209,11 @@ private
       if @args == nil then 
         @fileLock = %Q{#{@tmpDir}/.lock_#{@processName}}
       else
-        @fileLock = %Q{#{@tmpDir}/.lock_#{@processName}_#{@args.delete("/").delete(" ")}}
+        @fileLock = %Q{#{@tmpDir}/.lock_#{@processName}_#{@args.delete("/").delete(" ")}} 
+        # \""
       end      
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # It reads the File Lock of a given process name to check
    # the last PID registered to watch if it is still running.

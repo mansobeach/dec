@@ -225,6 +225,8 @@ class FileSender
                retVal = execute(cmd, "send2interface")
             end
 
+            # PASSIVE IS MISSING
+
             cmd  = self.createNcFtpPut(@hostname,
                                           @port,
                                           @user,
@@ -233,7 +235,8 @@ class FileSender
                                           @uploadDir,
                                           file,
                                           @prefix,
-                                          @isDebugMode) 
+                                          @isDebugMode,
+                                          @passiveMode) 
 
             if @isDebugMode then
                @logger.debug(cmd)

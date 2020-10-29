@@ -1,0 +1,251 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## module DEC
+##
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'sys/filesystem'
+
+require 'cuc/DirUtils'
+require 'ctc/FTPClientCommands'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
+
+### Integration test with CLOUD_SBOA use cloud_sboa@e2espm-inputhub
+### CLOUD_SBOA interface defined in cloud_sboa@e2espm-inputhub
+
+class DECTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+   include Sys
+
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   #--------------------------------------------------------
+   
+   Test::Unit.at_start do
+      system("clear")
+      puts
+      puts "======================================"
+      puts "DEC Integration Test Cases with CLOUD_SBOA"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+            
+      
+      @@arrUnknownFiles = [ \
+                           "You-Do-Not-Know-Me_1.yet", \
+                           "You-Do-Not-Know-Me_2.yet", \
+                           ]
+
+
+      @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "tai-utc.dat" \
+                           ]
+
+      @@arrPushFiles = [ \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
+
+      
+      
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      # system("decListener -S")
+      puts "End of DEC SBOA tests"
+   end
+   
+   ## --------------------------------------------------------   
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+            
+#      system("\\rm -rf #{reportDir}")
+#      system("\\rm -rf /tmp/dec*")
+      # system("\\rm -f /tmp/DEC*.log")
+#      system("\\rm -rf /tmp/dec_simul_if/filesystem/upload/")
+      system("\\rm -f /volumes/dec/log_sboa/SBOA_DEC*.log")
+
+      
+      
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+      
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when creating the DEC inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
+         puts
+         # exit(99)
+      end
+      
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+#      cmd = "decManageDB -d"
+#      puts cmd
+#      ret = system(cmd)
+#       
+#      if ret == false then
+#         puts "Error when dropping the dec inventory ! :-("
+#         puts
+#         exit(99)
+#      end
+   end
+   ## -------------------------------------------------------------
+
+   def test_1
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+            
+      outConfig      = ReadConfigOutgoing.instance
+      outbox         = outConfig.getOutgoingDir("CLOUD_SBOA")
+
+      system("mkdir -p #{outbox}")
+
+      @@arrPushFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{outbox}/ftp/#{filename}")
+      }
+
+      cmd = "decSend2Interface -m CLOUD_SBOA --nodb"
+      puts cmd
+      
+      assert(system(cmd), cmd)
+
+      cmd = "decListDirUpload -m CLOUD_SBOA -t"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -H 1"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arr = Dir["/volumes/dec/log_sboa/SBOA_DEC*.log"]
+      
+      cmd = "grep WARN #{arr[0]}"
+      puts
+      puts cmd
+      assert(!system(cmd), "WARN should not be raised for previously received files  #{__method__.to_s}") 
+
+      
+      cmd = "grep ERROR #{arr[0]}"
+      puts
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+
+
+   end
+   ## -------------------------------------------------------------
+
+
+end
+
+
+## =====================================================================
+

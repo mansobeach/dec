@@ -75,15 +75,27 @@
   </xs:sequence>
  </xs:complexType>
 
+ <xs:complexType name="InventoryType">
+  <xs:sequence>
+   <xs:element name="Database_Adapter"       type="xs:string"/>
+   <xs:element name="Database_Host"          type="xs:string"/>
+   <xs:element name="Database_Port"          type="xs:string"/>
+   <xs:element name="Database_Name"          type="xs:string"/>
+   <xs:element name="Database_User"          type="xs:string"/>
+   <xs:element name="Database_Password"      type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+
 
  <xs:element name="OrchestratorConfiguration">
   <xs:complexType>
    <xs:sequence>
-       <xs:element name="List_of_DataProviders"                      type="Type_ListDataProvider"                    maxOccurs="1"/>
-       <xs:element name="List_of_PriorityRules"                      type="Type_ListPriorityRule"                    maxOccurs="1"/>
-       <xs:element name="List_of_ProcessingRules"                    type="Type_ListProcessingRule"                  maxOccurs="1"/>
-       <xs:element name="List_of_Breakpoints"                        type="xs:string"                                maxOccurs="1"/>
-       <xs:element name="Miscelanea"                                 type="Type_Miscelanea"                          maxOccurs="1"/>
+       <xs:element name="List_of_DataProviders"         type="Type_ListDataProvider"      maxOccurs="1"/>
+       <xs:element name="List_of_PriorityRules"         type="Type_ListPriorityRule"      maxOccurs="1"/>
+       <xs:element name="List_of_ProcessingRules"       type="Type_ListProcessingRule"    maxOccurs="1"/>
+       <xs:element name="List_of_Breakpoints"           type="xs:string"                  maxOccurs="1"/>
+       <xs:element name="Miscelanea"                    type="Type_Miscelanea"            maxOccurs="1"/>
+       <xs:element name="Inventory"                     type="InventoryType"              maxOccurs="1"/>
    </xs:sequence>
   </xs:complexType>
  </xs:element>

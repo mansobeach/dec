@@ -1,20 +1,20 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FTPClientCommands module
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Transfer Component
-# 
-# git: FTPClientCommands.rb,v $Id$: 
-#
-# === module Common Transfer Component module FTPClientCommands
-#
-# This module contains methods for creating the ncftp, sftp, ...
-# command line statements. 
-#
+##
+## === Ruby source for #FTPClientCommands module
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component -> Common Transfer Component
+## 
+## git: FTPClientCommands.rb,v $Id$: 
+##
+## === module Common Transfer Component module FTPClientCommands
+##
+## This module contains methods for creating the ncftp, sftp, ...
+## command line statements. 
+##
 #########################################################################
 
 module CTC
@@ -31,17 +31,17 @@ module FTPClientCommands
          dir = '%2F' + dir
       end
       
-#      # --------------------------------
-#      # Switch between FTP passive or port mode
-#      optionPassive = ""
-#      if passive == nil then
-#         optionPassive = "-E"
-#      else
-#         optionPassive = "-F"
-#      end
-#      # --------------------------------
+      # --------------------------------
+      # Switch between FTP passive or port mode
+      optionPassive = ""
+      if passive == nil or passive == false then
+         optionPassive = "--ftp-port"
+      else
+         optionPassive = "--ftp-pasv"
+      end
+      # --------------------------------
    
-       cmd = "curl -l ftp://#{user}:#{pass}@#{host}:/#{dir}/"
+      cmd = "curl #{optionPassive} -l ftp://#{user}:#{pass}@#{host}:/#{dir}/"
    
    end
 
@@ -57,7 +57,7 @@ module FTPClientCommands
    ## - passive (IN): boolean to switch between Passive or Port mode.
    ## - filter (IN): optional filtering in the directory.
    ## * Returns the ncftpls command line statement created.
-   def createNcFtpLs(host,port,user,pass,dir,passive = nil, filter = nil)
+   def createNcFtpLs(host, port, user, pass, dir, passive = nil, filter = nil)
 
       if dir[0,1] == '/' then
          dir = '%2F' + dir
@@ -66,18 +66,27 @@ module FTPClientCommands
       # --------------------------------
       # Switch between FTP passive or port mode
       optionPassive = ""
-      if passive == nil then
+      if passive == nil or passive == false then
          optionPassive = "-E"
       else
          optionPassive = "-F"
       end
       # --------------------------------
       
+#      if filter == nil then
+#         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1" ftp://#{host}/#{dir}/}      
+#      else
+#         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1 #{filter}\" ftp://#{host}/#{dir}/}
+#         ### Dummy comment \""
+#      end
+      
       if filter == nil then
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1" ftp://#{host}/#{dir}/}      
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-l" ftp://#{host}/#{dir}/}      
       else
-         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-1 #{filter}\" ftp://#{host}/#{dir}/}
+         command = %Q{ncftpls -P #{port} -u #{user} -p #{pass} #{optionPassive} -x \"-l #{filter}\" ftp://#{host}/#{dir}/}
+         ### Dummy comment \""
       end
+
       return command         
    end
    ## -------------------------------------------------------------\""
@@ -171,7 +180,7 @@ module FTPClientCommands
    # - file (IN): string of the filename.
    # - verbose (IN): boolean for activating or not the verbose mode.
    # - passive (IN): boolean to switch between Passive or Port mode.
-   def createNcFtpPut(host,port,user,pass,tmpDir,dir,file,prefix,verbose, passive = nil)
+   def createNcFtpPut(host, port, user, pass, tmpDir, dir, file, prefix, verbose, passive = nil)
       if dir[0,1] != '/' then
          dir='~/'+dir
       end      
@@ -180,10 +189,16 @@ module FTPClientCommands
       optionPassive = ""
       if passive == nil or passive == false then
          optionPassive = "-E"
+#         puts
+#         puts "SHIT NO PAASOV"
+#         puts
       else
+#         puts "PUERCO PASIVO"
          optionPassive = "-F"
       end
       # --------------------------------
+
+      # exit(99)
 
       if verbose == true then
          options= "-v"

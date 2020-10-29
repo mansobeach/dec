@@ -80,11 +80,11 @@
 #
 
 #########################################################################
-#
-# === Mini Archive Component (MinArc)
-#
-# CVS: $Id: minArcDelete.rb,v 1.10 2008/09/24 10:18:26 decdev Exp $
-#
+###
+### === Mini Archive Component (MinArc)
+###
+### Git: $Id: minArcDelete.rb,v 1.10 2008/09/24 10:18:26 decdev Exp $
+###
 #########################################################################
 
 require 'getoptlong'
@@ -94,6 +94,7 @@ require 'arc/MINARC_Environment'
 
 # MAIN script function
 def main
+   include ARC
 
    @filename                  = ""
    @filetype                  = ""
@@ -109,10 +110,6 @@ def main
    @bShowVersion              = false
    @bShowUsage                = false
    
-   if !ENV['MINARC_SERVER'] then
-      @bNoServer   = true
-   end
-
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--directory", "-d",       GetoptLong::REQUIRED_ARGUMENT],
@@ -189,6 +186,22 @@ def main
    end
 
    # -------------------------------------------------------
+ 
+   # -------------------------------------------------------
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   # -------------------------------------------------------
+ 
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
+
  
    # Check all flags and combinations
 

@@ -69,7 +69,7 @@ end
 ## Class SentFile that maps SENT_FILES tables
 
 class SentFile < ActiveRecord::Base
-   # belongs_to  :interface
+   belongs_to  :interface
    
    #-----------------------------------------------------------
    
@@ -163,7 +163,7 @@ class SentFile < ActiveRecord::Base
       sentFile                   = SentFile.new
       sentFile.filename          = file
       sentFile.interface_id      = interface.id
-      sentFile.interface         = interface.name
+      sentFile.interface         = interface   # .name
       sentFile.delivered_using   = %Q{#{deliveryMethod};}
       sentFile.size              = size
       sentFile.delivery_date     = Time.now

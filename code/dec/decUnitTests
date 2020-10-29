@@ -57,6 +57,7 @@ require 'dec/ReadConfigIncoming'
 ###  7.3  - test_decSend2Interface_HTTP
 ###  7.4  - test_decSend2Interface_SFTP
 ###  7.5  - test_decSend2Interface_FTPS => decUnitTests_FTPS / test_push
+###  7.6  - test_decSend2Interface_contingency
 ###  8  - test_decNotify2Interface
 ###  9  - test_decDeliverFiles
 
@@ -117,6 +118,8 @@ require 'dec/ReadConfigIncoming'
 
 ### > curl -k -ssl -u ops2pdgs ftps://131.176.236.160:990//s2/ai-storage/tmp/
 ### > lftp -d -u ops2pdgs,**** ftps://pac1ai1.pac1.s2pdgs.esa.int 990 -e 'put /s2/ai-storage/DC_BASKET/AI2AI_LOCAL_EPA_2/S2B_OPER_MSI_L1B_GR_VGS2_20200514T120556_S20200514T094506_D08_N39.99.tar'
+
+### https://p1ngouin.com/posts/active-and-passive-ftp-with-docker
 
 class DECTestCase < Test::Unit::TestCase
 
@@ -2004,13 +2007,11 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       puts
       assert(system(cmd), cmd)
-
-
+      
       # There should be warnings reporting the duplications available
       cmd = "grep WARN #{arr[0]}"
       puts cmd
       assert(system(cmd), "WARN not found in DEC logs in #{__method__.to_s}") 
-
 
    end
 
@@ -2245,6 +2246,46 @@ class DECTestCase < Test::Unit::TestCase
 
    end
    
+   ## -------------------------------------------------------------
+   
+   def test_decSend2Interface_contingency
+   
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+   
+      ## -----------------------------------------
+      ## simultaneous execution of decSend2Interface to the same interface
+      ## should fail raising error DEC_703
+
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      puts
+      puts cmd
+      puts
+      assert(spawn(cmd), cmd)
+
+      sleep(1.0)
+      
+      cmd = "decSend2Interface -m LOCALHOST_NOT_SECURE -O"
+      puts
+      puts cmd
+      puts
+      assert(!system(cmd), "#{cmd} should fail")      
+      
+      sleep(2.0)
+      
+      arr = Dir["/tmp/DEC*.log"]
+
+      cmd = "grep ERROR #{arr[0]}"
+      puts
+      puts cmd
+      assert(system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      ## -----------------------------------------
+
+   end
    
    ## -------------------------------------------------------------
 

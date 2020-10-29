@@ -44,16 +44,16 @@
 
 
 #########################################################################
-#
-# decSend2Interface for sending all files to an Entity
-# 
-# Written by DEIMOS Space S.L.   (bolf)
-#
-# Data Exchange Component
-# 
-# git:
-#   $Id: decSend2Interface,v 1.23 2008/07/03 11:38:26 decdev Exp $
-#
+###
+### decSend2Interface for sending all files to an Entity
+### 
+### Written by DEIMOS Space S.L.   (bolf)
+###
+### Data Exchange Component
+### 
+### git:
+###   $Id: decSend2Interface,v 1.23 2008/07/03 11:38:26 decdev Exp $
+###
 #########################################################################
 
 require 'rubygems'
@@ -227,23 +227,10 @@ def main
       decodeParams
    end
    
-   # Set send2Interface <I/F> running.
-   # This assures there is only one send2Interface running for a given I/F. 
-   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true)
-   
-#    if @isDebugMode == 1 then
-#       @locker.setDebugMode
-#    end
-   
-   if @locker.isRunning == true then
-      puts "\n#{File.basename($0)} for #{@entity} I/F is already running !\n\n"
-      exit(99)
-   end
-
-   # Register a handler for SIGTERM
-   trap 15,proc{ self.SIGTERMHandler }
-
+   # ---------------------------------------------
+   #
    # initialize logger
+   #
    loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -258,9 +245,32 @@ def main
 		puts
 		exit(99)
    end
-  
+
+   #
+   # ---------------------------------------------
+   
+   # Set send2Interface <I/F> running.
+   # This assures there is only one send2Interface running for a given I/F. 
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), @entity, true)
+   
+#    if @isDebugMode == 1 then
+#       @locker.setDebugMode
+#    end
+   
+   if @locker.isRunning == true then
+   @logger.error("[DEC_703] I/F #{@entity}: #{File.basename($0)} is already running #{'1F480'.hex.chr('UTF-8')}")
+      exit(99)
+   end
+
    # Register in lock file the process
    @locker.setRunning
+
+   @logger.info("[DEC_201] I/F #{@entity}: Push circulation iteration started")
+
+   # Register a handler for SIGTERM
+   trap 15,proc{ self.SIGTERMHandler }
+
+  
 
    # Check that the given mnemonic is present in the config file   
    @ftReadConf = ReadInterfaceConfig.instance
@@ -288,8 +298,7 @@ def main
       @logger.error("[DEC_705] #{@entity} I/F: LocalOutbox configuration item not found #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
-   
-      
+     
    ## ------------------------------------------------------------------
    ##  AUTOMATION FileSender Management
    

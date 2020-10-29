@@ -1,5 +1,10 @@
 psql s2boa_orc root
 
+
+postgres=# CREATE USER e2edc WITH PASSWORD 'e2edc';
+CREATE ROLE
+
+
 s2boa_orc=> \list
 
 s2boa_orc=> \connect s2boa_orc

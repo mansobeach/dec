@@ -37,7 +37,7 @@ class DEC_FileSender
    
    attr_reader :listFileSent, :listFileError, :listFileToBeSent
    
-   def initialize(entity, protocol, deliverOnce, isDebug=false, isNoDB=false)
+   def initialize(entity, protocol, deliverOnce, isDebug = false, isNoDB=false)
       @entity      = entity
       @protocol    = protocol
       @isDebugMode = isDebug
@@ -45,13 +45,6 @@ class DEC_FileSender
       @isNoDB      = isNoDB
 
       checkModuleIntegrity
-
-      if @isNoDB == false then
-         require 'dec/DEC_DatabaseModel'
-         @interface   = Interface.where(name: @entity).to_a[0]
-      else
-         @interface   = @entity
-      end
       
       configDir = nil
 
@@ -77,6 +70,23 @@ class DEC_FileSender
 			exit(99)
       end
 
+      if @isNoDB == false then
+         require 'dec/DEC_DatabaseModel'
+         
+         # @interface   = Interface.where(name: @entity).to_a[0]
+         
+         @interface        = Interface.find_by_name(@entity)
+         if @interface == nil then
+@logger.error("[DEC_705] #{@entity} I/F: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
+            exit(99)
+         end
+
+      else
+         @interface   = @entity
+      end
+
+      @logger.debug("#{@interface}")
+
       @ftReadConf    = ReadInterfaceConfig.instance
       txparams       = @ftReadConf.getTXRXParams(@entity)
       @delay         = @ftReadConf.getLoopDelay(@entity).to_i
@@ -88,7 +98,7 @@ class DEC_FileSender
       @ftpserver[:uploadTemp] = ReadConfigOutgoing.instance.getUploadTemp(@entity)
       @protocol      = @ftpserver[:protocol]     
       @sender        = DEC::FileSender.new(@entity, @ftpserver, @protocol, @logger)
-            
+                 
       if isDebug == true then
          self.setDebugMode
       end
@@ -322,7 +332,7 @@ class DEC_FileSender
                @listFileError = @listFileError.uniq
                bSent = false
             else
-               @logger.info("[DEC_210] I/F #{@entity}: #{file} with size #{size} bytes sent using #{@protocol}")
+               @logger.info("[DEC_210] I/F #{@entity}: #{file} UPLOADED / #{size} bytes")
                tmpFilesSent  << file
                @listFileSent << file
                
@@ -452,7 +462,7 @@ private
    
    ## -----------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       return
    end
@@ -460,7 +470,7 @@ private
 
    def sendFile(file, size, hParams)
 
-      @logger.info("[DEC_201] I/F #{@entity}: Sending #{file} using #{@ftpserver[:protocol]}")
+      @logger.info("[DEC_203] I/F #{@entity}: #{file} DELIVERY using #{@ftpserver[:protocol]}")
 
       prevDir           = Dir.pwd
       Dir.chdir(@outboxDir)
@@ -478,8 +488,10 @@ private
          end
 
          if bRetVal == true then
-            SentFile.setBeenSent(file, @interface, @ftpserver[:protocol], size, hParams)
-            @logger.info("[DEC_210] I/F #{@entity}: #{file} with size #{size} bytes sent using #{@protocol}")
+            if @isNoDB == false then
+               SentFile.setBeenSent(file, @interface, @ftpserver[:protocol], size, hParams)
+            end
+            @logger.info("[DEC_210] I/F #{@entity}: #{file} UPLOADED / size #{size} bytes")
             Dir.chdir(prevDir)
             return true
          else

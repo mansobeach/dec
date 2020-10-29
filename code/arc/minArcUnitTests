@@ -87,7 +87,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       @@conf = MINARC_Environment.new
       
-      @@conf.wrapper_load_config_development
+      @@conf.wrapper_load_config
 
 
       puts      
@@ -257,8 +257,22 @@ class TestCaseStore < Test::Unit::TestCase
       dbConfig = config.getInventory
       assert(dbConfig != nil, "get inventory database configuration")
    
+      server  = config.getArchiveServer
+      puts server
+      assert(server != nil, "get Archive Server")
+   
+      root  = config.getArchiveRoot
+      puts root
+      assert(root != nil, "get Archive Root")
+
+      error  = config.getArchiveError
+      puts error
+      assert(error != nil, "get Archive Error")
+
       tmpDir = config.getTempDir
+      puts tmpDir
       assert(tmpDir != nil, "get temp directory")
+
    
    end
    ## ------------------------------------------------------

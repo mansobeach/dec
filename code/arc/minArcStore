@@ -132,14 +132,11 @@ require 'arc/FileArchiver'
 require 'arc/MINARC_Client'
 
 
-# Global variables
-@dateLastModification = "$Date: 2008/09/25 11:37:23 $"   # to keep control of the last modification
-                                       # of this script
-                                       # execution showing Debug Info
-
-
 # MAIN script function
 def main
+
+   include ARC
+
    @full_path_location     = nil
    @full_path_filename     = ""
    @filename               = ""
@@ -160,9 +157,6 @@ def main
    @bShowVersion           = false
    @bShowUsage             = false
 
-   if !ENV['MINARC_SERVER'] then
-      @bNoServer   = true
-   end
    
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
@@ -222,6 +216,22 @@ def main
    end
 
    # -------------------------------------------------------
+
+   # -------------------------------------------------------
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   # -------------------------------------------------------
+
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
+
 
    if @bShowUsage == true then
       usage
@@ -345,8 +355,6 @@ def main
       # puts "bulkk - #{@full_path_filename}"
    end
    # ---------------------------------------------
-
-
 
    archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
    

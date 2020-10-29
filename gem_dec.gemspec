@@ -64,6 +64,7 @@ Gem::Specification.new do |s|
                      'decUnitTests_IERS', \
                      'decUnitTests_ncftpput', \
                      'decUnitTests_PRIP', \
+                     'decUnitTests_SBOA', \
                      'decUnitTests_WEBDAV_SECURE', \
                      'decUnitTests_mail' \
                      ]
@@ -93,13 +94,14 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 6.1')
   s.add_dependency('nokogiri', '~> 1.1')
+  s.add_dependency('shell', '~> 0.8')
   
   ## --------------------------------------------
   ##
   ## Tailored installer to avoid some gems only for the OData client
   if ENV.include?("DEC_ODATA") == false then
-      s.add_dependency('curb', '~> 0.9')
-      s.add_dependency('pg', '~> 1')
+#      s.add_dependency('curb', '~> 0.9')
+#      s.add_dependency('pg', '~> 1')
   end
   ## --------------------------------------------
 

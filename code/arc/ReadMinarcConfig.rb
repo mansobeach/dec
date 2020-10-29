@@ -16,7 +16,6 @@
 ###
 #########################################################################
 
-
 require 'singleton'
 require 'rexml/document'
 
@@ -30,9 +29,10 @@ class ReadMinarcConfig
    include Singleton
    include REXML
    include CUC::DirUtils
+   
    ## -------------------------------------------------------------   
    
-   # Class contructor
+   ## Class contructor
    def initialize
       @@isModuleOK        = false
       @@isModuleChecked   = false
@@ -89,8 +89,23 @@ class ReadMinarcConfig
    end
    ## -----------------------------------------------------------
 
+   def getArchiveRoot
+      return @workflow[:archiveRoot]
+   end
+   ## -----------------------------------------------------------
+
+   def getArchiveError
+      return @workflow[:archiveError]
+   end
+   ## -----------------------------------------------------------
+
+   def getArchiveServer
+      return @workflow[:archiveServer]
+   end
+   ## -----------------------------------------------------------
+
    def getTempDir
-      return @tempDir
+      return @workflow[:archiveTemp]
    end
    ## -----------------------------------------------------------
 
@@ -141,7 +156,7 @@ private
    ##
    ## The struct is defined in the class Constructor. See #initialize.
    def loadData
-      self.setDebugMode
+      # self.setDebugMode
       externalFilename = %Q{#{@@configDirectory}/minarc_config.xml}
       fileExternal     = File.new(externalFilename)
       xmlFile          = REXML::Document.new(fileExternal)
@@ -151,8 +166,7 @@ private
       end
       
       @arrRules = processRules(xmlFile)
-      
-      parseWorkflow(xmlFile)
+      @workflow = parseWorkflow(xmlFile)
       
       parseInventoryConfig(xmlFile)
    end   
@@ -207,24 +221,46 @@ private
 
    def parseWorkflow(xmlFile)
    
-      @tempDir = nil
+      archiveServer  = ""
+      archiveRoot    = nil
+      archiveError   = nil
+      tempDir        = nil
    
       XPath.each(xmlFile, "Configuration/Workflow"){     
          |workflow|
 
  
-         # Process Report Dir
+         XPath.each(workflow, "ArchiveServer"){      
+            |value|
+            if value.text != nil and value.text != "" then
+               archiveServer = expandPathValue(value.text)
+            end
+         }
+
+         XPath.each(workflow, "ArchiveRoot"){      
+            |value|
+            archiveRoot = expandPathValue(value.text)
+         }
+
+
+         XPath.each(workflow, "ArchiveError"){      
+            |value|
+            archiveError = expandPathValue(value.text)
+         }
+
          XPath.each(workflow, "TempDir"){      
-            |tempDir|
-            @tempDir = expandPathValue(tempDir.text)
+            |value|
+            tempDir = expandPathValue(value.text)
          }
       
       }
 
-      if @isDebugMode == true then
-         puts "workflow -> tmp directory : #{@tempDir}"
-      end
+         
 
+      return Struct::Workflow.new(archiveServer, 
+                                  archiveRoot,
+                                  archiveError,
+                                  tempDir)
 
    end
    ## -----------------------------------------------------------
@@ -310,13 +346,24 @@ private
    
 	## Define all the structs
 	def defineStructs
-	   Struct.new("CleanUpRule", :frequency, :filetype, :rule, :date, :age)
-      Struct.new("Inventory", :db_adapter, \
+	   
+      Struct.new("CleanUpRule", :frequency, :filetype, :rule, :date, :age)
+      
+      Struct.new("Workflow",     :archiveServer,\
+                                 :archiveRoot,\
+                                 :archiveError,\
+                                 :archiveTemp)
+
+      if Struct::const_defined? "Inventory" then
+         Struct.const_get "Inventory"
+      else
+         Struct.new("Inventory", :db_adapter, \
                               :db_host, \
                               :db_port, \
                               :db_name, \
                               :db_username, \
                               :db_password)
+      end
    end
    ## -----------------------------------------------------------
 

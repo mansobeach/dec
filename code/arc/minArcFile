@@ -26,11 +26,11 @@
 #
 
 #########################################################################
-#
-# === Mini Archive Component (MinArc)
-#
-# Git: $Id: minArcFile 1.13 2008/09/25 11:37:23 decdev Exp $
-#
+###
+### === Mini Archive Component (MinArc)
+###
+### Git: $Id: minArcFile 1.13 2008/09/25 11:37:23 decdev Exp $
+###
 #########################################################################
 
 require 'rubygems'
@@ -43,6 +43,9 @@ require 'arc/MINARC_Client'
 
 # MAIN script function
 def main
+
+   include ARC
+   
    @full_path_location     = nil
    @full_path_filename     = ""
    @filename               = ""
@@ -132,6 +135,17 @@ def main
    end
    # -------------------------------------------------------
 
+   # -------------------------------------------------------
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   # -------------------------------------------------------
+
 #   rubylibs = ENV['RUBYLIB'].split(':')      
 #   rubylibs.each {|path|
 #	      name = "#{path}/arc/plugins/Handler_#{@fileType.upcase}.rb"
@@ -150,8 +164,7 @@ def main
 #      end
       
       bInventory = false
-      
-      
+         
       handler           = "Handler_#{@fileType.upcase}"   
       require "arc/plugins/#{handler}"
       nameDecoderKlass  = eval(handler)
@@ -195,7 +208,7 @@ end
 #-------------------------------------------------------------
 
    
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 def usage
 
@@ -209,11 +222,11 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

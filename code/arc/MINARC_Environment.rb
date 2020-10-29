@@ -18,15 +18,21 @@ require 'dotenv'
 
 require 'cuc/DirUtils'
 
+require 'arc/ReadMinarcConfig'
+
 module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.33"
+   @@version = "1.0.34"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.34"  =>   "minarc_config.xml Inventory item added for database configuration\n\
+         Support to remote inventory / db different than localhost\n\
+         Inventory config now includes Database_Host & Database_Port items\n\
+         TBW2",\
       "1.0.33" =>    "Fix of https://jira.elecnor-deimos.com/browse/S2MPASUP-290\n\
           DEC RetrievedFiles report is now supported by Handler_S2PDGS:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-308\n\
@@ -76,6 +82,8 @@ module ARC
                   "MINARC_ARCHIVE_ROOT", \
                   "MINARC_DB_ADAPTER", \
                   "MINARC_ARCHIVE_ERROR", \
+                  "MINARC_DATABASE_HOST", \
+                  "MINARC_DATABASE_PORT", \
                   "MINARC_DATABASE_NAME", \
                   "MINARC_DATABASE_USER", \
                   "MINARC_DATABASE_PASSWORD" \
@@ -93,8 +101,62 @@ module ARC
                   "unzip" \
                   ]
 
-   ## ----------------------------------------------------------------
+   ## -----------------------------------------------------------------
+
+   def load_config
    
+      # --------------------------------
+      if !ENV['MINARC_CONFIG'] then
+         ENV['MINARC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
+
+      minArcConfig   = ARC::ReadMinarcConfig.instance
+      inventory      = minArcConfig.getInventory
+         
+      if !ENV['MINARC_DB_ADAPTER'] then
+         ENV['MINARC_DB_ADAPTER'] = inventory[:db_adapter]
+      end
+
+      if !ENV['MINARC_DATABASE_HOST'] then
+         ENV['MINARC_DATABASE_HOST'] = inventory[:db_host]
+      end
+
+      if !ENV['MINARC_DATABASE_PORT'] then
+         ENV['MINARC_DATABASE_PORT'] = inventory[:db_port]
+      end
+   
+      if !ENV['MINARC_DATABASE_NAME'] then
+         ENV['MINARC_DATABASE_NAME'] = inventory[:db_name]
+      end
+   
+      if !ENV['MINARC_DATABASE_USER'] then
+         ENV['MINARC_DATABASE_USER'] = inventory[:db_username]
+      end   
+
+      if !ENV['MINARC_DATABASE_PASSWORD'] then
+         ENV['MINARC_DATABASE_PASSWORD'] = inventory[:db_password]
+      end
+      
+      if !ENV['MINARC_SERVER'] and minArcConfig.getArchiveServer != "" then
+         ENV['MINARC_SERVER'] = minArcConfig.getArchiveServer
+      end   
+      
+      if !ENV['MINARC_ARCHIVE_ROOT'] then
+         ENV['MINARC_ARCHIVE_ROOT'] = minArcConfig.getArchiveRoot
+      end   
+ 
+      if !ENV['MINARC_ARCHIVE_ERROR'] then
+         ENV['MINARC_ARCHIVE_ERROR'] = minArcConfig.getArchiveError
+      end   
+ 
+      if !ENV['MINARC_TMP'] then
+         ENV['MINARC_TMP'] = minArcConfig.getTempDir
+      end
+
+   end
+
+   ## -----------------------------------------------------------------   
    def load_config_development
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
       ENV['MINARC_SERVER']                = "http://localhost:4567"
@@ -102,6 +164,8 @@ module ARC
       ENV['MINARC_ARCHIVE_ERROR']         = "/tmp/minarc/error"
       ENV['MINARC_TMP']                   = "/tmp/minarc/tmp"
       ENV['TMPDIR']                       = "/tmp/minarc/tmp"
+      ENV['MINARC_DATABASE_HOST']         = "localhost"
+      ENV['MINARC_DATABASE_PORT']         = ""
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
       ENV['MINARC_DATABASE_USER']         = "root"
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
@@ -115,6 +179,8 @@ module ARC
       ENV.delete('MINARC_SERVER')
       ENV.delete('MINARC_ARCHIVE_ROOT')
       ENV.delete('MINARC_ARCHIVE_ERROR')
+      ENV.delete('MINARC_DATABASE_HOST')
+      ENV.delete('MINARC_DATABASE_PORT')
       ENV.delete('MINARC_DATABASE_NAME')
       ENV.delete('MINARC_DATABASE_USER')
       ENV.delete('MINARC_DATABASE_PASSWORD')
@@ -135,6 +201,8 @@ module ARC
       puts "MINARC_SERVER                 => #{ENV['MINARC_SERVER']}"
       puts "MINARC_TMP                    => #{ENV['MINARC_TMP']}"
       puts "MINARC_DATABASE_NAME          => #{ENV['MINARC_DATABASE_NAME']}"
+      puts "MINARC_DATABASE_HOST          => #{ENV['MINARC_DATABASE_HOST']}"
+      puts "MINARC_DATABASE_PORT          => #{ENV['MINARC_DATABASE_PORT']}"
       puts "MINARC_DATABASE_USER          => #{ENV['MINARC_DATABASE_USER']}"
       puts "MINARC_DATABASE_PASSWORD      => #{ENV['MINARC_DATABASE_PASSWORD']}"
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
@@ -175,6 +243,9 @@ module ARC
    ## ----------------------------------------------------------------
    
    def check_environment
+   
+      load_config
+      
       check_environment_dirs
       retVal = checkEnvironmentEssential
       if retVal == true then
@@ -186,6 +257,8 @@ module ARC
    ## ----------------------------------------------------------------
    
    def checkEnvironmentEssential
+      load_config
+      
       bCheck = true
       
       @@arrENV.each{|vble|
@@ -235,6 +308,11 @@ module ARC
    
    ## ----------------------------------------------------------------
 
+   def printEnvironmentError
+      puts "Execution environment not suited for  minARC"
+   end
+   ## ----------------------------------------------------------------
+
    
 end # module
 
@@ -246,6 +324,10 @@ end # module
 class MINARC_Environment
    
    include ARC
+
+   def wrapper_load_config
+      load_config
+   end
 
    def wrapper_load_environment_test
       load_environment_test

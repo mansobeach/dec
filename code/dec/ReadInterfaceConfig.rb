@@ -602,11 +602,11 @@ private
       end
       
       if !xmlstruct.elements["User"].nil? then
-         user    = xmlstruct.elements["User"].text
+         user    = xmlstruct.elements["User"].text.gsub('"', '\"')
       end
 
       if !xmlstruct.elements["Pass"].nil? then
-         pass    = xmlstruct.elements["Pass"].text
+         pass    = xmlstruct.elements["Pass"].text.gsub('"', '\"')
       end
 
       if !xmlstruct.elements["SecureFlag"].nil? and !xmlstruct.elements["SecureFlag"].text.nil? then

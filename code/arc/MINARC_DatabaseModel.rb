@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #MINARC_DatabaseModel class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 decdev
-#
-# module MINARC
-#
+##
+## === Ruby source for #MINARC_DatabaseModel class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 decdev
+##
+## module MINARC
+##
 #########################################################################
 
 require 'rubygems'
@@ -21,6 +21,8 @@ require 'activerecord-import'
 require 'bcrypt'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
+dbHost      = ENV['MINARC_DATABASE_HOST']
+dbPort      = ENV['MINARC_DATABASE_PORT']
 dbName      = ENV['MINARC_DATABASE_NAME']
 dbUser      = ENV['MINARC_DATABASE_USER']
 dbPass      = ENV['MINARC_DATABASE_PASSWORD']
@@ -29,8 +31,9 @@ dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
-                                          :host       => "localhost", 
+                                          :host       => dbHost, 
                                           :database   => dbName,
+                                          :port       => dbPort,
                                           :username   => dbUser, 
                                           :password   => dbPass, 
                                           :timeout    => 100000,

@@ -116,8 +116,8 @@ The internal of log messages is a JSON string referring to:
 \subsection{[DEC\_200] Push iteration to Interface completed successfully}
 This message traces the successful push circulation completion.
 
-\label{DEC201}
-\subsection{[DEC\_201] Request to Push File to Interface started}
+\label{DEC203}
+\subsection{[DEC\_203] Request to Push File to Interface started}
 This message traces the start of a given file push circulation towards an interface.
 
 \label{DEC205}
@@ -375,6 +375,10 @@ For a given file from a specific interface this message is exclusive to \hyperre
 \label{DEC700}
 \subsection{[DEC\_700] Push Failure to Interface}
 This message is raised at the completion of the interface \textit{push} operation, when it failed, upon completion of the retry loops (cf. \hyperref[TXRXParams]{TXRXParams configuration}). Reason should have been previously logged (e.g. \hyperref[DEC710]{DEC\_710}, \hyperref[DEC711]{DEC\_711},\hyperref[DEC712]{DEC\_712}). 
+
+\label{DEC703}
+\subsection{[DEC\_703]  Push Iteration to Interface is already running}
+This message is raised upon execution of a new instance of decSend2Interface for a given interface when there is already a previous on-going execution for such given interface.
 
 \label{DEC705}
 \subsection{[DEC\_705] Push Miss-Configuration for Interface}

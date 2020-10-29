@@ -237,12 +237,16 @@ private
 
       Struct.new("Report", :name, :enabled, :desc, :fileClass, :fileType)
 
-      Struct.new("Inventory", :db_adapter, \
-                              :db_host, \
-                              :db_port, \
-                              :db_name, \
-                              :db_username, \
-                              :db_password)
+      if Struct::const_defined? "Inventory" then
+         Struct.const_get "Inventory"
+      else
+         Struct.new("Inventory", :db_adapter, \
+                                 :db_host, \
+                                 :db_port, \
+                                 :db_name, \
+                                 :db_username, \
+                                 :db_password)
+      end
 	end
 	## -----------------------------------------------------------
    
@@ -450,7 +454,7 @@ private
       }
 
       ## -----------------------------------------
-      ## Process Reports Configuration
+      ## Process Inventory Configuration
       XPath.each(xmlFile, "Configuration/Inventory"){      
          |inventory|
 

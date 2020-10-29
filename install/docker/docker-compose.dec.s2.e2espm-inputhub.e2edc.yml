@@ -18,9 +18,17 @@
 ##
 ## Create a named volume beforehand
 ## https://stackoverflow.com/questions/52152231/how-to-mount-docker-directory-into-host-directory-with-docker-compose
+
+## network mode host for FTP
+## https://docs.docker.com/compose/compose-file/#network_mode
+##
+## network_mode: "host"
+
+
 version: '3'
 
 services:
+  ## network_mode: host
   dec_db_s2:
     image: "postgres:11"
     container_name: dec_db_s2
@@ -65,3 +73,6 @@ volumes:
 #         context: .
 #         dockerfile: ./install/docker/Dockerfile.dec.s2.e2espm-inputhub.e2edc
 # ------------------------------------------------
+
+# https://stackoverflow.com/questions/49935580/how-to-use-ftp-client-with-docker-containers
+# https://stackoverflow.com/questions/49935580/how-to-use-ftp-client-with-docker-containers

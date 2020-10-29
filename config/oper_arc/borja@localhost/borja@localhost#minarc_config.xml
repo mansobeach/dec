@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <CleanUp Frequency="10" Unit="s">
+  
+    <List_of_CleanUpRules>
+      <CleanUpRule Filetype="TLM_MIRA0_" Rule="Older"  Date="archive_date"    Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_VS_PRO" Rule="Older"  Date="validity_start"  Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
+    </List_of_CleanUpRules>
+  
+  </CleanUp>
+
+   <Archive>
+      <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
+   </Archive>
+
+   <Workflow>
+      <TempDir>/tmp/dec/tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>
+      <Database_Name>/tmp/minarc_inventory</Database_Name>
+      <Database_User>root</Database_User>
+      <Database_Password>2mysql</Database_Password>
+   </Inventory>
+
+
+</Configuration>
