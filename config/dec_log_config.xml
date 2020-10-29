@@ -1,51 +1,38 @@
-<!--
-http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
--->
-
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="DEC_TEST_NODE_1"/>
+  <parameter name="mainLoggerName" value="SBOA"/>
  </pre_config>
 
-<!-- ============================================= -->
-
-<outputter name="console"  level="INFO" >
+ <outputter name="console"  level="DEBUG" >
    <type>StdoutOutputter</type>
-	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
-	</formatter>
-</outputter>
-
-<!-- ============================================= -->
+    <formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+        <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+    </formatter>
+ </outputter>
  
  <outputter name="dec_log" level="DEBUG">
+   <type>RollingFileOutputter</type>
   
-  <type>RollingFileOutputter</type>
-
-  <filename>/tmp/DEC.log</filename>
-
-  <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+   <filename>/volumes/dec/log_sboa/SBOA_DEC.log</filename>
+  
+   <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
       <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
-  </formatter>
-
-  <trunc>false</trunc>
-
-  <maxsize>10000000</maxsize>
-
-  <max_backups>4</max_backups>
-
-  <maxtime>2592000</maxtime>
-
+   </formatter>
+  
+   <trunc>false</trunc>
+  
+   <maxsize>50000000</maxsize>
+  
+   <max_backups>10</max_backups>
+ 
+   <maxtime>2592000</maxtime>
+  
  </outputter>
 
-<!-- ============================================= -->
-
- <logger name="DEC_TEST_NODE_1" level="DEBUG" trace="false">
-   <outputter>console</outputter>
-   <outputter>dec_log</outputter>
+ <logger name="SBOA" level="INFO" trace="false">
+    <outputter>console</outputter>
+    <outputter>dec_log</outputter>
  </logger>
- 
-<!-- ============================================= --> 
  
 </log4r_config>

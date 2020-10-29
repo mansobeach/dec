@@ -7,25 +7,11 @@
    <ListInterfaces>
             
       <Interface>
-         <Name>LOCALHOST_SECURE</Name>
-         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_localhost_secure</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
+         <Name>CLOUD_SBOA</Name>
+         <LocalOutbox>/volumes/dec/interfaces/cloud_sboa.out</LocalOutbox>
+         <UploadDir>/s2pdgs_in</UploadDir>
+         <UploadTemp>/s2pdgs_in/_TEMP_</UploadTemp>
       </Interface>
-
-      <Interface>
-         <Name>LOCALHOST_NOT_SECURE</Name>
-         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_localhost_notsecure</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
-      </Interface>
-      
-      <Interface>
-         <Name>FILESYSTEM</Name>
-         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_filesystem</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/filesystem/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/filesystem/upload/_TEMP_</UploadTemp>
-      </Interface>      
             
    </ListInterfaces>
 
@@ -33,41 +19,83 @@
 
    <ListFiles>
 
-      <File Type="finals.all"> 
-         <Description></Description>
+      <File Type="*MPL_ORBPRE*">
+         <Description>FOS Predicted Orbit File</Description>
          <ToList>
-            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
          </ToList>
       </File>
 
-      <File Type="tai-utc.dat"> 
-         <Description></Description>
+      <File Type="*MPL__NPPF_*">
+         <Description>Satellite Plan File</Description>
          <ToList>
-            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
-         </ToList>
-      </File>
-   
-      <File Type="GIP_PROBA2"> 
-         <Description></Description>
-         <ToList>
-            <Interface Name="LOCALHOST_NOT_SECURE"    Compress="7Z"     DeliveryMethods="FTP" />
-            <Interface Name="LOCALHOST_SECURE"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
          </ToList>
       </File>
 
-      <File Type="S2A*">
-         <Description></Description>
+      <File Type="*MPL_SP????*">
+         <Description>Station Plan File</Description>
          <ToList>
-            <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
          </ToList>
       </File>
 
-      <File Type="S2B*">
-         <Description></Description>
+      <File Type="*REP_OPHKTM*">
+         <Description>HKTM PDI downlink orbit</Description>
          <ToList>
-            <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="FTP" />
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
          </ToList>
       </File>
+
+      <File Type="S2?_OPER_REP_OPDPC*">
+         <Description>DPC Processing Reports</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????.EOF">
+         <Description>DPC Processing Reports</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2?_????_REP_OPDHUS_????_????????T??????.*">
+         <Description>DAGC DHUS Pick-up Point</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPDAM?*">
+         <Description>DAM Ingestion Report</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPDC__*">
+         <Description>DC Circulation Report</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPAI__*">
+         <Description>DC Circulation Report</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_PASS_?*">
+         <Description>EISP / DFEP Report</Description>
+         <ToList>
+            <Interface Name="CLOUD_SBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
 
    </ListFiles>
 

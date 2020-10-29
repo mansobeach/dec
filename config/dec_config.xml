@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
    <Project>
-      <Name>Data Exchange Component</Name>
-      <Id>DEC</Id>
-      <Mission>DEC UNIT TESTS</Mission>
+      <Name>DEC-SBOA</Name>
+      <Id>ESA_</Id>
+      <Mission>Sentinel-2</Mission>
+      <SatPrefix>S2_</SatPrefix>
    </Project>
    <Filters>
-         <IncomingFilters>
-            <Filter>*</Filter>
-            <!--
-            <Filter>SM_MREP_*.zip</Filter>
-            <Filter>GO_*EEF</Filter>
-            <Filter>GO_*HDR</Filter>
-            <Filter>GO_*TGZ</Filter>
-            <Filter>CORG*Z</Filter>
-            <Filter>SM_*EEF</Filter>
-            <Filter>SM_*TGZ</Filter>
-            <Filter>*sp3*</Filterftproot/remote/RPF_R/fromRPF_R/>
-            <Filter>*clk*</Filter>
-            <Filter>igrg*.Z</Filter>
-            -->
-         </IncomingFilters>
+      <IncomingFilters>
+         <Filter>*</Filter>
+         <!--
+         <Filter>SM_MREP_*.zip</Filter>
+         <Filter>GO_*EEF</Filter>
+         <Filter>GO_*HDR</Filter>
+         <Filter>GO_*TGZ</Filter>
+         <Filter>CORG*Z</Filter>
+         <Filter>SM_*EEF</Filter>
+         <Filter>SM_*TGZ</Filter>
+         <Filter>*sp3*</Filterftproot/remote/RPF_R/fromRPF_R/>
+         <Filter>*clk*</Filter>
+         <Filter>igrg*.Z</Filter>
+         -->
+      </IncomingFilters>
+            
       <OutgoingFilters>
          <Filter>*</Filter>
       </OutgoingFilters>
+
+      
    </Filters>
+   
+   
    <Options>
       <Upload>
          <DeleteSourceFiles>true</DeleteSourceFiles>
@@ -34,50 +40,51 @@
       <Download>
          <DownloadDirs>false</DownloadDirs>
          <DeleteUnknownFiles>false</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
       </Download>
    </Options>
+
+
    
-   <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
    
-   <SatPrefix>S2</SatPrefix>
+   <!-- currently placed in DEC basket intray -->
    
-   <ReportDir>/tmp/dec_reports</ReportDir>
    
    <Reports>
-            
-       <!-- DDC delivery reports / push (decSend2Interface) -->      
-            
-      <Report Name="DeliveredFiles">
-         <Enabled>true</Enabled>
-         <Desc>List of Files Delivered</Desc>
-         <FileClass>OPER</FileClass>
-         <FileType>DEC_F_SENT</FileType>
-      </Report>
-
-      <Report Name="EmergencyDeliveredFiles">
-         <Enabled>false</Enabled>
-         <Desc>List of Files Delivered in Emergency Mode</Desc>
-         <FileClass>OPER</FileClass>
-         <FileType>DEMERGENCY</FileType>
-      </Report>
-
-      <!-- DCC Retrieval reports (decGetFromInterface) -->
 
       <Report Name="RetrievedFiles">
-         <Enabled>true</Enabled>
+         <Enabled>false</Enabled>
          <Desc>List of Files Retrieved</Desc>
          <FileClass>OPER</FileClass>
          <FileType>DEC_F_RECV</FileType>
       </Report>
 
+<!--  -->
       <Report Name="UnknownFiles">
          <Enabled>false</Enabled>
          <Desc>List of unknown Files present</Desc>
          <FileClass>OPER</FileClass>
-         <FileType>DEC_UFILES</FileType>
+         <FileType>DECUNKNOWN</FileType>
       </Report>
 
    </Reports>
-
+   
+   <Workflow>
+      <!-- SourceDir is not used by e2edc@e2espm-inputhub -->
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
+      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+      <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
+      <TempDir>/tmp/dec_tmp</TempDir>
+   </Workflow>   
+   
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>
+      <Database_Name>/volumes/dec/db_dec_sboa/db.sqlite3</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
+   </Inventory>
+   
 </Configuration>
