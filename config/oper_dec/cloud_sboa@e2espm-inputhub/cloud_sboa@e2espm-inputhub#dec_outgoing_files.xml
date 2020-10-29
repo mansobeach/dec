@@ -9,8 +9,8 @@
       <Interface>
          <Name>CLOUD_SBOA</Name>
          <LocalOutbox>/volumes/dec/interfaces/cloud_sboa.out</LocalOutbox>
-         <UploadDir>s2pdgs_in</UploadDir>
-         <UploadTemp>s2pdgs_in/_TEMP_</UploadTemp>
+         <UploadDir>/s2pdgs_in</UploadDir>
+         <UploadTemp>/s2pdgs_in/_TEMP_</UploadTemp>
       </Interface>
             
    </ListInterfaces>

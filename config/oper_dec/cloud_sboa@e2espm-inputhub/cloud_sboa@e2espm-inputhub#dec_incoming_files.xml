@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- UNUSED -->
+
 <Config>
 
    <!-- =========================================================== -->
@@ -79,8 +81,6 @@
             <Directory>/tmp/dec_local_dissemination/S2ALL</Directory>
          </Intray>
 
-      <!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-371 -->
-
       <Intray>
          <Name>HP_DPC</Name>
          <Directory>/volumes/dec/interfaces/hp_dpc</Directory>
@@ -152,15 +152,10 @@
       </Intray>
 
       <Intray>
-         <Name>CLOUD_SBOA.FTPOutbox</Name>
-         <Directory>/volumes/dec/interfaces/cloud_sboa.out/ftp</Directory>
-         <Compress>7z</Compress>
-      </Intray>
-
-      <Intray>
          <Name>SHADOW_S2PDGS</Name>
          <Directory>/volumes/dec/interfaces/shadow.all</Directory>
       </Intray>
+
 
       <Intray>
          <Name>S2BOA</Name>
@@ -189,24 +184,6 @@
       <ListFilesDisseminated>
     
       <!--
-    
-      => S2MPASUP-371: REP_OPHKTM gathering with the rule VGS*
-    
-    
-      => 20200818 REP_PASS_E to SGS circulated to SHADOW
-    
-      => S2MPASUP-349: REP_OPDPC Legacy SGS NOT circulated to OPERATIONAL_S2PDGS
-      => S2MPASUP-349: REP_ARC__ Legacy SGS NOT circulated to OPERATIONAL_S2PDGS
-
-      => S2MPASUP-346: "Fake" OPLTAS TCI-wise are filtered-out by dissemination to REP_OPLTAS_TCI_7Z only
-
-      => S2MPASUP-339: CANCELLED update of Inuvik station acquisition report NOT circulated to the E2ESPM Operational
-
-
-      -->
-    
-    
-      <!--
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
@@ -227,20 +204,19 @@
           </ToList>
       </File>
 
-      <File Type="S2?_OPER_REP_MET*">
-          <HardLink>False</HardLink>
-          <ToList>
-             <Intray>REP_MET</Intray>
-          </ToList>
-      </File>
-
-      <File Type="S2?_OPER_REP_OPDPC*">
+      <File Type="S2__OPER_REP_OPDPC*">
           <HardLink>False</HardLink>
           <ToList>
              <Intray>HP_DPC</Intray>
           </ToList>
       </File>
 
+      <File Type="S2?_OPER_REP_MET*">
+          <HardLink>False</HardLink>
+          <ToList>
+             <Intray>REP_MET</Intray>
+          </ToList>
+      </File>
    
       <!--
       
@@ -339,20 +315,8 @@
           </ToList>
       </File>
 
-      <File Type="*REP_OPHKTM*">
-          <HardLink>True</HardLink>
-                 <ToList>
-                    <Intray>CLOUD_SBOA.FTPOutbox</Intray>
-                    <Intray>OPERATIONAL_S2PDGS</Intray>
-                    <Intray>SHADOW_S2PDGS</Intray>
-                    <Intray>S2BOA_SHADOW</Intray>
-                    <Intray>ARCHIVE_S2PDGS</Intray>
-          </ToList>
-      </File>
-
-
       <File Type="*_VGS*">
-          <HardLink>True</HardLink>
+          <HardLink>False</HardLink>
                  <ToList>
                     <Intray>OPERATIONAL_S2PDGS</Intray>
                     <Intray>SHADOW_S2PDGS</Intray>
@@ -375,7 +339,6 @@
      <File Type="*REP_OPDPC_*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -398,7 +361,6 @@
      <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????.EOF">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -407,16 +369,18 @@
         </ToList>
      </File>
 
+<!--
+
+   Inuvik station acquisition report NOT circulated to the E2ESPM Operational
+   
+   https://jira.elecnor-deimos.com/browse/S2MPASUP-339
+
+-->
 
      <File Type="*REP_STNACQ_INS*">
         <HardLink>True</HardLink>
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
-<!--
-   Inuvik station acquisition report RE circulated to the E2ESPM Operational
-   https://jira.elecnor-deimos.com/browse/S2MPASUP-349
--->           
-           <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
@@ -437,7 +401,6 @@
      <File Type="*MPL__NPPF_*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -449,7 +412,6 @@
      <File Type="*MPL_SP????*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -474,7 +436,6 @@
         <ToList>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
-           <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
         </ToList>
      </File>
@@ -482,7 +443,6 @@
      <File Type="*REP_PASS_?*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -505,7 +465,6 @@
      <File Type="*REP_OPDAM?*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -535,7 +494,6 @@
      <File Type="*REP_OPAI__*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -558,7 +516,6 @@
      <File Type="*REP_OPDC__*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -590,7 +547,6 @@
      <File Type="*MPL_ORBPRE*">
         <HardLink>True</HardLink>
         <ToList>
-           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
@@ -632,7 +588,6 @@
       <File Type="S2?_????_REP_OPDHUS_????_????????T??????.*">
          <HardLink>True</HardLink>
          <ToList>
-            <Intray>CLOUD_SBOA.FTPOutbox</Intray>
             <Intray>OPERATIONAL_S2PDGS</Intray>
             <Intray>ARCHIVE_S2PDGS</Intray>
             <Intray>SHADOW_S2PDGS</Intray>
