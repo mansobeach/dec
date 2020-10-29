@@ -61,9 +61,6 @@ def main
    @command            = ""
    @bQueueFiles        = false
    @isDebugMode        = false
-   checkModuleIntegrity 
-   @orcConfigDir       = ENV['ORC_CONFIG']
-   
    @bShowVersion       = false
    @bShowUsage         = false
    
@@ -123,10 +120,14 @@ def main
    end
 
    ## -------------------------------------------------------
+   
+   checkModuleIntegrity 
+   
+   @orcConfigDir       = ENV['ORC_CONFIG']
 
    require 'orc/OrchestratorScheduler'
 
-   loggerFactory = CUC::Log4rLoggerFactory.new("SC", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("Scheduler", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -178,23 +179,26 @@ private
 
 
 def start
-   msg = "Starting #{File.basename(File.expand_path(__FILE__))} daemon ..."
-   puts msg
-   @logger.debug(msg)        
+
+   msg = "[ORC_007] Starting #{File.basename(File.expand_path(__FILE__))} daemon / debug = #{@isDebugMode}"
+   @logger.info(msg)
+         
    @OrcSch  = ORC::OrchestratorScheduler.new(@logger, @isDebugMode)
    
-   if @isDebugMode == true
+   if @isDebugMode == true then
       @OrcSch.setDebugMode
    end
 
    listener = CUC::Listener.new(File.basename($0), "", 0, @OrcSch.method("schedule").to_proc)       
 
-   if @isDebugMode == true
+   if @isDebugMode == true then
       listener.setDebugMode
    end
-		   
+	
+   # ---------------	   
    # Start server
    listener.run
+   # ---------------	
    
 end
 ## -------------------------------------------------------------

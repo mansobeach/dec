@@ -27,11 +27,12 @@ class PriorityRulesSolver
    
    include CUC::DirUtils
 
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
   
-   # Class constructor
+   ## Class constructor
 
-   def initialize
+   def initialize(logger)
+      @logger        = logger
       @isDebugMode   = false
       @isConfigured  = false
       @isResolved    = false
@@ -45,12 +46,12 @@ class PriorityRulesSolver
 
       @rules = @ftReadConf.getPriorityRules
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Set the flag for debugging on
+   ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "PriorityRulesSolver debug mode is on"
+      @logger.debug("PriorityRulesSolver debug mode is on")
    end
    
    # -------------------------------------------------------------

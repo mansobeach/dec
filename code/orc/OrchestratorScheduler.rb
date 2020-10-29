@@ -8,7 +8,7 @@
 #
 # === Orchestrator => ORC Component
 # 
-# CVS: $Id: OrchestratorScheduler.rb,v 1.9 2009/04/30 11:58:52 decdev Exp $
+# Git: $Id: OrchestratorScheduler.rb,v 1.9 2009/04/30 11:58:52 decdev Exp $
 #
 # module ORC
 #
@@ -34,7 +34,7 @@ class OrchestratorScheduler
             
       @logger           = log
       
-      loggerFactory = CUC::Log4rLoggerFactory.new("Orchestrator", "#{ENV['ORC_CONFIG']}/orchestrator_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("Scheduler", "#{ENV['ORC_CONFIG']}/orchestrator_log_config.xml")
    
       if @isDebugMode then
          loggerFactory.setDebugMode
@@ -51,7 +51,6 @@ class OrchestratorScheduler
       end
       
       @bFirstSchedule      = true
-      @orcTmpDir           = ENV['ORC_TMP']
       @isDebugMode         = debug
       @arrQueuedFiles      = Array.new
       @arrPendingFiles     = Array.new
@@ -68,10 +67,10 @@ class OrchestratorScheduler
       @failureDir          = @ftReadConf.getFailureDir   
       @freqScheduling      = @ftReadConf.getSchedulingFreq.to_f
       @resourceManager     = @ftReadConf.getResourceManager
+      @orcTmpDir           = @ftReadConf.getTmpDir
       # --------------------------------
 
-      @bExit               = false      
-            
+      @bExit              = false
       @sigUsr1Received    = false
       @sigUsr1Count       = 0
       
@@ -82,15 +81,16 @@ class OrchestratorScheduler
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "OrchestratorScheduler debug mode is on"
+      @logger.debug("OrchestratorScheduler debug mode is on")
    end
    ## -----------------------------------------------------------   
 
    ## Get all Queued Files
    def loadQueue
-      msg = "OrchestratorScheduler::loadQueue begin"
-      
-      @logger.debug(msg)
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::loadQueue begin"
+         @logger.debug(msg)
+      end
       
 #      if @isDebugMode == true then
 #         puts "Scheduler PAUSED / press any key"
@@ -101,12 +101,16 @@ class OrchestratorScheduler
       
       @arrQueuedFiles = OrchestratorQueue.getQueuedFiles
       
-      @arrQueuedFiles.each{|item|
-         @logger.debug("queued : #{item.filename}")
-      }
+      if @isDebugMode == true then
+         @arrQueuedFiles.each{|item|
+            @logger.debug("load queue in memory : #{item.filename}")
+         }
+      end
       
-      msg = "OrchestratorScheduler::loadQueue completed"
-      @logger.debug(msg) 
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::loadQueue completed"
+         @logger.debug(msg)
+      end
    end
    ## -----------------------------------------------------------  
 
@@ -114,10 +118,11 @@ class OrchestratorScheduler
    ## table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles_BULK
 
-      msg = "OrchestratorScheduler::enqueuePendingFiles begin"
-      # puts msg
-      @logger.debug(msg) 
-
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::enqueuePendingFiles begin"
+         @logger.debug(msg) 
+      end
+      
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
 
       if @arrPendingFiles.empty? == true then
@@ -144,54 +149,53 @@ class OrchestratorScheduler
    ## This method gets all files referenced in Pending2QueueFile
    ## table and adds them to Orchestrator_Queue table
    def enqueuePendingFiles
-
-      msg = "OrchestratorScheduler::enqueuePendingFiles begin"
-      @logger.debug(msg) 
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::enqueuePendingFiles begin"
+         @logger.debug(msg) 
+      end
 
       @arrPendingFiles = Pending2QueueFile.getPendingFiles     
 
       if @arrPendingFiles.empty? == true then
-         msg = "No new input files are pending to be queued"
-         @logger.debug(msg)
+         if @isDebugMode == true then
+            msg = "No new input files are pending to be queued"
+            @logger.debug(msg)
+         end
          return
       end
       
       arrIds = Array.new
   
       OrchestratorQueue.transaction do
-      
          @arrPendingFiles.each{|file|
-             
             new_queued_file = OrchestratorQueue.new
             new_queued_file.trigger_product_id = file.trigger_product_id
             new_queued_file.save
-            
-            @logger.info("queued pending file #{file.filename}")
-            
-            Pending2QueueFile.destroy_by(trigger_product_id: file.trigger_product_id)
-            
+            @logger.info("[ORC_215] #{file.filename} queued for dispatch")
+            Pending2QueueFile.destroy_by(trigger_product_id: file.trigger_product_id)  
          }
-   
       end
          
    end
    
    ## -------------------------------------------------------------
    
-   
    def schedule
-      msg = "Orchestrator::schedule started"
-      puts msg
-      @logger.info(msg)
+      if @isDebugMode == true then
+         msg = "[ORC_XXX] Orchestrator::schedule started"
+         @logger.debug(msg)
+      end
       @sigUsr1Received = false
       while true do
+         @logger.info("[ORC_200] Load queue for dispatch")
          loadQueue
+         @logger.info("[ORC_205] Dispatching jobs")
          dispatch
+         @logger.info("[ORC_210] Queue pending triggers into dispatch")
          enqueuePendingFiles
-         msg = "Orchestrator::schedule completed"
-         @logger.info(msg)
+         # @logger.info("[ORC_220] Queue pending into dispatch")
          if @arrPendingFiles.empty? == true and @sigUsr1Received == false then
-            @logger.info("Waiting for new inputs / enabling SIGUSR1 / #{@sigUsr1Count}")
+            @logger.info("[ORC_225] Waiting for new inputs / enabling SIGUSR1 / #{@sigUsr1Count}")
             sleep 10.0 until @sigUsr1Received
          end
          @sigUsr1Received = false
@@ -206,10 +210,12 @@ class OrchestratorScheduler
    ## sorted by priority
    def sortPendingJobs
       
-      msg = "OrchestratorScheduler::Sorting Pending jobs / PriorityRulesSolver"
-      @logger.debug(msg)
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::Sorting Pending jobs / PriorityRulesSolver"
+         @logger.debug(msg)
+      end
       
-      resolver = ORC::PriorityRulesSolver.new
+      resolver = ORC::PriorityRulesSolver.new(@logger)
       
       if @isDebugMode == true then
          resolver.setDebugMode
@@ -241,7 +247,7 @@ class OrchestratorScheduler
    def triggerJobS2(selectedQueuedFile)
       @bJobJustTriggered = true
       
-      @logger.debug("*** Triggering Job => #{selectedQueuedFile.filename} ***")
+      @logger.info("[ORC_240] Triggering Job => #{selectedQueuedFile.filename}")
       
       cmd = ""
       if selectedQueuedFile.filename.include?(".TGZ") == true then      
@@ -251,21 +257,22 @@ class OrchestratorScheduler
       end
 
       if @isDebugMode == true then
-         puts cmd
+         @logger.debug(cmd)
       end
-
-      @logger.debug(cmd)
-
+ 
       ret = system(cmd)
 
       if ret == false then
-         @logger.error("Retrieving input #{selectedQueuedFile.filename}")
+         @logger.error("[ORC_612] #{selectedQueuedFile.filename} retrieval failed")
       end
      
       dataType = @ftReadConf.getDataType(selectedQueuedFile.filetype)
       procCmd  = @ftReadConf.getExecutable(dataType)
       procCmd  = procCmd.gsub("%F", "#{@procWorkingDir}/#{selectedQueuedFile.filename}")
-      @logger.debug(procCmd)
+      
+      if @isDebugMode == true then
+         @logger.debug(procCmd)
+      end
       
       # --------------------------------
       # TRIGGER PROCESSOR !!  :-)
@@ -279,16 +286,21 @@ class OrchestratorScheduler
       # retVal = true
 
       if retVal == true then
+         @logger.info("[ORC_250] #{selectedQueuedFile.filename} job successful")
          cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s SUCCESS"
-         @logger.debug(cmd)
+         if @isDebugMode == true then
+            @logger.debug(cmd)
+         end
          retVal = system(cmd)
          if retVal == false then
             @logger.error("Failed exec of #{cmd}")
          end
       else
-         @logger.error("Failed job #{procCmd}")
+         @logger.error("[ORC_666] #{selectedQueuedFile.filename} job failed / #{procCmd}")
          cmd = "orcQueueUpdate -f #{selectedQueuedFile.filename} -s FAILURE"
-         @logger.debug(cmd)
+         if @isDebugMode == true then
+            @logger.debug(cmd)
+         end
          retVal = system(cmd)
          if retVal == false then
             @logger.error("Failed exec of #{cmd}")
@@ -306,8 +318,11 @@ class OrchestratorScheduler
    def dispatch
    
       msg = "OrchestratorScheduler::dispatch => Dispatching new job(s)"
-      @logger.debug(msg)
-
+      
+      if @isDebugMode == true then
+         @logger.debug(msg)
+      end
+      
       @procWorkingdir   = ""
       inputsDir         = ""
 
@@ -328,7 +343,7 @@ class OrchestratorScheduler
          retVal = system(cmd)
          
          while (retVal == false) do
-            @logger.debug("No resources available / queue length: #{@arrQueuedFiles.length} / sleeping #{@freqScheduling} s")
+            @logger.info("[ORC_225] No resources available / queue length: #{@arrQueuedFiles.length} / sleeping #{@freqScheduling} s")
             sleep(@freqScheduling)
             retVal = system(cmd)
          end         
@@ -345,12 +360,8 @@ private
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
    
-      if !ENV['ORC_TMP'] then
-         puts "ORC_TMP environment variable not defined !  :-(\n"
-         bCheckOK = false
-         bDefined = false
-      end
-
+      bCheckOK = true
+      
       if bCheckOK == false then
          puts "OrchestratorScheduler::checkModuleIntegrity FAILED !\n\n"
          exit(99)
@@ -373,9 +384,9 @@ private
    ## -----------------------------------------------------------
 
    def registerSignals
-      @logger.debug("Registering signals")
-      puts
-      puts "OrchestratorScheduler::registerSignals"
+      if @isDebugMode == true then
+         @logger.debug("OrchestratorScheduler::registerSignals")
+      end
       
       Signal.trap("SIGTERM") { 
                         signalHandler("sigterm")
@@ -425,7 +436,6 @@ private
          puts "Signal #{usr} not managed"
       end
       ## --------------------------------
-
 
    end
    ## -------------------------------------------------------------

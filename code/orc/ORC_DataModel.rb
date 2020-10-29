@@ -1,30 +1,33 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ORC_DatabaseModel class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === ORC Component
-# 
-# CVS: $Id: ORC_DataModel.rb,v 1.14 2009/03/18 11:15:49 decdev Exp $
-#
-# module ORC
-#
+##
+## === Ruby source for #ORC_DatabaseModel class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === ORC Component
+## 
+## Git: $Id: ORC_DataModel.rb,v 1.14 2009/03/18 11:15:49 decdev Exp $
+##
+## module ORC
+##
 #########################################################################
 
 require 'rubygems'
 require 'active_record'
 
 dbAdapter   = ENV['ORC_DB_ADAPTER']
+dbHost      = ENV['ORC_DATABASE_HOST']
+dbPort      = ENV['ORC_DATABASE_PORT']
 dbName      = ENV['ORC_DATABASE_NAME']
 dbUser      = ENV['ORC_DATABASE_USER']
 dbPass      = ENV['ORC_DATABASE_PASSWORD']
 
 ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
-                                          :host       => "localhost", 
+                                          :host       => dbHost,
+                                          :port       => dbPort,
                                           :database   => dbName,
                                           :username   => dbUser, 
                                           :password   => dbPass, 
@@ -40,6 +43,8 @@ class HandleDBConnection
 
    def initialize
       dbAdapter   = ENV['ORC_DB_ADAPTER']
+      dbHost      = ENV['ORC_DATABASE_HOST']
+      dbPort      = ENV['ORC_DATABASE_PORT']
       dbName      = ENV['ORC_DATABASE_NAME']
       dbUser      = ENV['ORC_DATABASE_USER']
       dbPass      = ENV['ORC_DATABASE_PASSWORD']
@@ -52,7 +57,8 @@ class HandleDBConnection
 
       ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
-                                          :host       => "localhost", 
+                                          :host       => dbHost,
+                                          :port       => dbPort,
                                           :database   => dbName,
                                           :username   => dbUser, 
                                           :password   => dbPass, 
@@ -159,7 +165,6 @@ class OrchestratorQueue < ActiveRecord::Base
       queuedFiles  = OrchestratorQueue.all
  
       triggerFiles.each{|triggerFile|
-
          queuedFiles.each{|queuedFile|
             if triggerFile.id == queuedFile.trigger_product_id then
                arrFiles << triggerFile
@@ -178,7 +183,7 @@ class OrchestratorQueue < ActiveRecord::Base
       aTrigger   = TriggerProduct.find_by_id(jobId)
       return aTrigger
    end
-   #----------------------------------------------
+   ## ----------------------------------------------
 
 end
 

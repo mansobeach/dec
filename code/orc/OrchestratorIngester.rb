@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #OrchestratorIngester class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === ORC Component
-# 
-# CVS: $Id: OrchestratorIngester.rb,v 1.7 2009/03/31 08:42:53 decdev Exp $
-#
-# module ORC
-#
+##
+## === Ruby source for #OrchestratorIngester class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === ORC Component
+## 
+## Git: $Id: OrchestratorIngester.rb,v 1.7 2009/03/31 08:42:53 decdev Exp $
+##
+## module ORC
+##
 #########################################################################
 
 require 'cuc/DirUtils'
@@ -27,13 +27,13 @@ module ORC
 class OrchestratorIngester
    
    include CUC::DirUtils
-   #-------------------------------------------------------------
+   
+   ## -----------------------------------------------------------
   
-   # Class constructor
+   ## Class constructor
 
    def initialize(pollDir, interval, debugMode, log, pid)
       @logger              = log
-      checkModuleIntegrity
       @pollingDir          = pollDir
       @intervalSeconds     = interval
       @isDebugMode         = debugMode
@@ -43,18 +43,25 @@ class OrchestratorIngester
       if @isDebugMode == true then
          @ftReadConf.setDebugMode
       end
+
+      @orcTmpDir           = @ftReadConf.getTmpDir
+      @parallelIngest      = @ftReadConf.getParallelIngest
+      
       if ENV['ORC_DB_ADAPTER'] == "sqlite3" then
          @parallelIngest      = 1
-      else
-         @parallelIngest      = @ftReadConf.getParallelIngest
       end
+      
+      checkModuleIntegrity
+      
+      registerSignals
+      
    end
-   ## -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "OrchestratorIngester debug mode is on"
+      @logger.debug("OrchestratorIngester debug mode is on")
    end
    ## -------------------------------------------------------------
 
@@ -62,8 +69,11 @@ class OrchestratorIngester
       bIngested   = false
       cmd         = "minArcFile -T S2PDGS -f #{polledFile} -t"         
       filetype    = `#{cmd}`.chop
-         
-      @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})
+      
+      if @isDebugMode == true then
+         @logger.debug("Extracting filetype for #{polledFile}")
+         @logger.debug(%Q{#{cmd} / #{filetype} => #{$?}})
+      end
                                  
       if @ftReadConf.isValidFileType?(polledFile) == true then
          @newFile = true
@@ -72,16 +82,24 @@ class OrchestratorIngester
             cmd = "#{cmd.dup} -D"
          end
          retVal   = system(cmd)
-         @logger.info("#{cmd} => #{$?}")
-                  
-         if retVal == true then               
+         
+         if @isDebugMode == true then
+            @logger.debug("#{cmd} => #{$?}")
+         end
+               
+         if retVal == true then
+            @logger.info("[ORC_110] #{polledFile} archived")            
             bIngested = true                              
+            
+            ## Queue in pending the trigger file-types
             if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
                cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
                retVal   = system(cmd)
-               @logger.info("#{cmd} / #{retVal}")
+               if @isDebugMode == true then
+                  @logger.debug("#{cmd} / #{retVal}")
+               end
                if retVal != true then
-                  @logger.error("Could not queue #{polledFile}")
+                  @logger.error("[ORC_601] #{polledFile} pending queue failed")
                   cmd      = "minArcRetrieve --noserver -f #{File.basename(polledFile, ".*")} -L #{@ftReadConf.getFailureDir}"
                   retVal   = system(cmd)
                   if retVal == true then
@@ -90,17 +108,19 @@ class OrchestratorIngester
                      @logger.error("Could not place #{polledFile} into failure dir #{@ftReadConf.getFailureDir}")
                   end
                   return false
+               else
+                  @logger.info("[ORC_115] #{polledFile} queued in pending") 
                end
             else
-               @logger.debug("#{polledFile} is not trigger")
+               @logger.warn("[ORC_305] #{polledFile} / #{@ftReadConf.getDataType(polledFile)} is not trigger-type")
             end
          else
             bIngested = false
-            @logger.error("Could not Archive #{polledFile} File on MINARC")
+            @logger.error("[ORC_611] #{polledFile} archiving failed")
          end  
       else
          bIngested = false
-         @logger.error("File-type #{filetype} not present in configuration !")
+         @logger.error("[ORC_602] #{polledFile} #{filetype} filetype not configured")
       end
       
       ## ---------------------------------------------------
@@ -137,16 +157,18 @@ class OrchestratorIngester
    end
    ## -------------------------------------------------------------
 
-   # Method that checks on the given array of files which one is a 
-   # valid type and stores or delete it accordingly to the result
+   ## Method that checks on the given array of files which one is a 
+   ## valid type and stores or delete it accordingly to the result
    def ingest(arrPolledFiles)
       @newFile = false
       
-      # Log all files found in the polling dir
+      ## -----------------------------------------
+      ## Log all files found in the polling dir
       arrPolledFiles.each{|polledFile|   
-         @logger.debug(%Q{Found #{polledFile}})
+         @logger.info(%Q{[ORC_100] #{polledFile} found})
       }
-
+      ## -----------------------------------------
+      
       loop do
          
          break if arrPolledFiles.empty?
@@ -158,7 +180,7 @@ class OrchestratorIngester
             file = arrPolledFiles.shift
 
             if file.to_s.slice(0,1) == "_" or file.to_s.slice(0,2) != "S2" then
-               @logger.warn(%Q{Discarded #{file}})
+               @logger.warn(%Q{[ORC_301] Discarded #{file}})
                next
             end
             
@@ -186,10 +208,9 @@ class OrchestratorIngester
 
       if (@observerPID != nil) and (@newFile == true) then
          sleep(2.0)
-         @logger.debug("Sending SIGUSR1 to Observer with pid #{@observerPID}")                                
+         @logger.info("[ORC_120] Loop completed")                            
          ret = Process.kill("SIGUSR1", @observerPID)
-         @logger.debug(ret)
-         puts ret
+         @logger.info("[ORC_125] SIGUSR1 sent to Scheduler with pid #{@observerPID} / #{ret}")
       end
       ## ---------------------------------------------------
       
@@ -198,29 +219,32 @@ class OrchestratorIngester
    end
    ## -------------------------------------------------------------
    
-   # Method triggered by Listener 
+   ## Method triggered by Listener 
    def poll
       startTime = Time.new
       startTime.utc 
       
-#      if @isDebugMode == true then
-         @logger.debug("Polling #{@pollingDir}")
-#      end     
+      if @isDebugMode == true then
+         @logger.debug("[ORC_XXX] Ingester is polling #{@pollingDir}")
+      end     
 
-      # Polls the given dir and calls the "ingest" method for each entry
+      ## Polls the given dir and calls the "ingest" method for each entry
       prevDir = Dir.pwd     
       begin 
          Dir.chdir(@pollingDir) do
             d=Dir["*"]
+            ## -------------------------
+            ## main method to ingest every entry
             self.ingest(d)
+            ## -------------------------
             if @isDebugMode == true then
-               @logger.debug("Success Polling #{@pollingDir}  !")
+               @logger.debug("[ORC_XXX] Ingester Successfully Polling #{@pollingDir}  !")
             end
          end      
       rescue SystemCallError => e
-         puts e.to_s
-         puts
-         puts e.backtrace
+#         puts e.to_s
+#         puts
+#         puts e.backtrace
          @logger.error("Could not Poll #{@pollingDir}  !")
          @logger.error(e.to_s)
          @logger.error(e.backtrace)
@@ -234,14 +258,13 @@ class OrchestratorIngester
       nwIntSeconds = @intervalSeconds - requiredTime.to_i
    
       if @isDebugMode == true and nwIntSeconds > 0 then
-         puts "New Trigger Interval is #{nwIntSeconds} seconds | #{@intervalSeconds} - #{requiredTime.to_i}"
+         @logger.debug("Ingester New Trigger Interval is #{nwIntSeconds} seconds | #{@intervalSeconds} - #{requiredTime.to_i}")
       end
    
       if @isDebugMode == true and nwIntSeconds < 0 then
-         puts "Time performed for polling is higher than interval Server !"
-         puts "polling interval -> #{@intervalSeconds} seconds "
-         puts "time required    -> #{requiredTime.to_i} seconds "
-         puts
+         @logger.debug("Time performed for polling is higher than interval Server !")
+         @logger.debug("polling interval -> #{@intervalSeconds} seconds ")
+         @logger.debug("time required    -> #{requiredTime.to_i} seconds ")
       end
       
       # The lowest time we return is one second. 
@@ -253,7 +276,7 @@ class OrchestratorIngester
          return 1
       end   
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
 private
   
@@ -262,14 +285,11 @@ private
    
    def checkModuleIntegrity
    
-      if !ENV['ORC_TMP'] then
-         @logger.debug("ORC_TMP environment variable not defined")
-         bCheckOK = false
-         bDefined = false
-      else
-         @orcTmpDir = ENV['ORC_TMP']
-         checkDirectory("#{@orcTmpDir}/_ingestionError")
-      end
+      bCheckOK = true
+      bDefined = true
+      
+      checkDirectory("#{@orcTmpDir}/_ingestionError")
+
 
       if bCheckOK == false or bDefined == false then
          puts "OrchestratorIngester::checkModuleIntegrity FAILED !\n\n"
@@ -278,6 +298,44 @@ private
 
    end
    # -------------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def registerSignals
+      if @isDebugMode == true then
+         @logger.debug("OrchestratorIngester::registerSignals")
+      end
+      
+      Signal.trap("SIGTERM") { 
+                        signalHandler("sigterm")
+                      }                                         
+                       
+   end
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def signalHandler(usr)
+      puts "OrchestratorIngester::signalHandler=>#{usr}"
+      ## --------------------------------
+      
+      ## --------------------------------
+     
+      if (usr == "sigterm") then
+         bHandled = true
+         puts "SIGTERM received / sayonara baby :-O"
+         exit(0)
+      end
+
+      ## --------------------------------
+      ## Unhandled Signal
+      if bHandled == false then
+         puts "Signal #{usr} not managed"
+      end
+      ## --------------------------------
+
+   end
+   ## -------------------------------------------------------------
 
 end #end class
 

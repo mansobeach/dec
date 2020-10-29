@@ -84,7 +84,7 @@
 #
 # === SMOS NRTP Orchestrator
 #
-# CVS: $Id: orcQueueInput,v 1.16 2009/03/24 17:33:27 decdev Exp $
+# Git: $Id: orcQueueInput,v 1.16 2009/03/24 17:33:27 decdev Exp $
 #
 #########################################################################
 
@@ -190,7 +190,6 @@ def main
       exit(99)
    end
 
-
    if @bShowVersion == true then
       print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC.class_variable_get(:@@version)}]", "\n")
       hRecord = ORC.class_variable_get(:@@change_record)
@@ -199,7 +198,6 @@ def main
       }
       exit(0)
    end
-
 
    if @bShowUsage == true then
       usage
@@ -500,9 +498,9 @@ def main
          puts "#{@filename} has been successfully queued :-)" 
          puts
       else
-         puts
-         puts "#{@filename} is classified as pending :-)" 
-         puts      
+#         puts
+#         puts "#{@filename} is classified as pending :-)" 
+#         puts      
       end
 
    end

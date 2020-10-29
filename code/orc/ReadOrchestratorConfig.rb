@@ -1,18 +1,18 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ReadOrchestratorConfig class          
-#
-# === Written by DEIMOS Space S.L.
-#
-# ===  ORC Component
-# 
-# $Id: ReadOrchestratorConfig.rb,v 1.11 2009/03/24 16:35:22 decdev Exp $
-#
-# This class processes $ORC_CONFIG/orchestratorConfigFile.xml
-# which contain all the configuration related to the ORCHESTRATOR
-#
+##
+## === Ruby source for #ReadOrchestratorConfig class          
+##
+## === Written by DEIMOS Space S.L.
+##
+## ===  ORC Component
+## 
+## $Id: ReadOrchestratorConfig.rb,v 1.11 2009/03/24 16:35:22 decdev Exp $
+##
+## This class processes $ORC_CONFIG/orchestratorConfigFile.xml
+## which contain all the configuration related to the ORCHESTRATOR
+##
 #########################################################################
 
 require 'singleton'
@@ -30,6 +30,7 @@ class ReadOrchestratorConfig
    ## Class constructor
    def initialize
       @isDebugMode        = true
+      @inventory          = nil
       checkModuleIntegrity
       defineStructs
       loadData
@@ -379,10 +380,20 @@ class ReadOrchestratorConfig
    end
    # -------------------------------------------------------------
 
+   def getTempDir
+      return @@miscelanea[:tmpDir]
+   end
+   # -------------------------------------------------------------
+
    def getTmpDir
       return @@miscelanea[:tmpDir]
    end
    # -------------------------------------------------------------
+
+   def getInventory
+      return @inventory
+   end
+   # ------------------------------------------------------------
 
 
    # -------------------------------------------------------------
@@ -396,9 +407,9 @@ private
    @@arrOrchProcessRule     = nil
    @@miscelanea             = nil
    @@configDirectory        = ""
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # This method defines all the structs used in this class
+   ## This method defines all the structs used in this class
    def defineStructs
       Struct.new("OrchDataProvider", :isTrigger, :dataType, :fileType)
       Struct.new("OrchPriorityRule", :rank, :dataType, :fileType, :sort)
@@ -406,8 +417,20 @@ private
       Struct.new("OrchListOfInputs", :dataType, :coverage, :mandatory, :excludeDataType)
       Struct.new("OrchMiscelanea", :pollingDir, :pollingFreq, :parallelIngest, :schedulingFreq, :resourceManager, :procWorkingDir, :successDir, :failureDir, :breakPointDir, :tmpDir)
       Struct.new("OrchProcParameter", :name, :value, :unit)
+
+      if Struct::const_defined? "Inventory" then
+         Struct.const_get "Inventory"
+      else
+         Struct.new("Inventory", :db_adapter, \
+                                 :db_host, \
+                                 :db_port, \
+                                 :db_name, \
+                                 :db_username, \
+                                 :db_password)
+      end
+            
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def fillProcParameter(name, value, unit)
       return Struct::OrchProcParameter.new(name, value, unit)
@@ -443,11 +466,10 @@ private
    def fillMiscelanea(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
       return Struct::OrchMiscelanea.new(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-
-   # Load the file into the internal struct File defined in the
-   # class Constructor. See initialize.
+   ## Load the file into the internal struct File defined in the
+   ## class Constructor. See initialize.
    def loadData
       orchFilename = %Q{#{@@configDirectory}/orchestratorConfigFile.xml}
       fileOrch     = File.new(orchFilename)
@@ -462,8 +484,9 @@ private
       parseProcessRules(xmlOrch)
       parseProcParameters(xmlOrch)
       parseMiscelanea(xmlOrch)
+      parseInventory(xmlOrch)
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 
    # Process File, Data providers section
@@ -643,13 +666,73 @@ private
       tmpDir            = mc.elements[10].text
 
       @@miscelanea = fillMiscelanea(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
-      } 
+      }
+      
+      
+ 
 
    end 
-   # ---------------------------------------------------------------
+   ## ---------------------------------------------------------------
 
+   def parseInventory(xmlFile)
+   
+      ## -----------------------------------------
+      ## Process Inventory Configuration
+      XPath.each(xmlFile, "OrchestratorConfiguration/Inventory"){      
+         |inventory|
 
-   # Check that everything needed is present
+         db_adapter  = ""
+         db_host     = ""
+         db_port     = ""
+         db_name     = ""
+         db_user     = ""
+         db_pass     = ""
+
+         XPath.each(inventory, "Database_Adapter"){
+            |adapter|  
+            db_adapter = adapter.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Host"){
+            |name|
+            db_host  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Port"){
+            |name|
+            db_port  = name.text.to_s
+         }
+         
+         XPath.each(inventory, "Database_Name"){
+            |name|
+            db_name  = name.text.to_s
+         }
+
+         XPath.each(inventory, "Database_User"){
+            |user|
+            db_user  = user.text.to_s
+         }
+
+         XPath.each(inventory, "Database_Password"){
+            |pass|
+            db_pass  = pass.text.to_s   
+         }
+         
+         @inventory = Struct::Inventory.new(db_adapter, \
+                                             db_host, \
+                                             db_port, \
+                                             db_name, \
+                                             db_user, \
+                                             db_pass)
+          
+      }
+      ## -----------------------------------------
+
+   end
+
+   ## -----------------------------------------------------------
+
+   ## Check that everything needed is present
    def checkModuleIntegrity
 
       bDefined = true
@@ -678,7 +761,7 @@ private
         exit(99)
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end # class
 

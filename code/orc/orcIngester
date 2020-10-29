@@ -36,7 +36,7 @@
 #
 # === ORC Orchestrator
 #
-# CVS: $Id: orcIngester,v 1.2 2009/03/17 12:47:03 decdev Exp $
+# Git: $Id: orcIngester,v 1.2 2009/03/17 12:47:03 decdev Exp $
 #
 #########################################################################
 
@@ -132,17 +132,19 @@ def main
 
    # -------------------------------------------------------
 
+   checkModuleIntegrity  
+
+   @orcConfigDir       = ENV['ORC_CONFIG']
+
    require 'orc/OrchestratorIngester'
 
-   # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("IC", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   ## ----------------------------------
+   ## initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("Ingestion", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
-
-   # Check environment pre-requisites
-   checkModuleIntegrity  
       
    @logger = loggerFactory.getLogger
    
@@ -152,6 +154,8 @@ def main
       puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
 		exit(99)
    end
+
+   ## ----------------------------------
 
    case @command
       when "start"   then start         
@@ -172,45 +176,48 @@ end
 
 private
 
-def start     
+def start
 
+   msg = "[ORC_006] Starting #{File.basename(File.expand_path(__FILE__))} daemon / debug = #{@isDebugMode}"
+   @logger.info(msg)
+ 
    # Check input parameters
    if (@intervalSeconds == 0) then
-      puts
-      puts "daemon polling interval is missing ! :-("
-      puts
+      @logger.error("daemon polling interval is missing ! :-(")
       exit(99)
    end
  
    if (@pollingDir == "") then
-      puts
-      puts "the polling directory is missing ! :-("
-      puts
+      @logger.error("the polling directory is missing ! :-(")
       exit(99)
    end
    
-   @logger.debug("Started ORC Ingester with freq #{@intervalSeconds} s")
-       
-   @OrcIng = ORC::OrchestratorIngester.new(@pollingDir, @intervalSeconds, @isDebugMode, @logger, @pid) 
-        
-   # Create our lovely listener and start it.
+   if @isDebugMode == true then
+      @logger.debug("Started ORC Ingester with freq #{@intervalSeconds} s")
+   end
+   
+   ## ----------------------------------
+   ## Create a daemon for the ingestion    
+   @OrcIng  = ORC::OrchestratorIngester.new(@pollingDir, @intervalSeconds, @isDebugMode, @logger, @pid) 
    listener = CUC::Listener.new(File.basename($0), "", @intervalSeconds, @OrcIng.method("poll").to_proc)
-
+   ## ----------------------------------
 
    trap("SIGHUP") {  
-                     @logger.debug("Restart, Ingestor, Polling Requested for #{@pollingDir}")
+                     @logger.info("[ORC_016] Ingestor re-start, Polling Requested for #{@pollingDir}")
                      self.restart
                   }   
 
-   if @isDebugMode == true
+   if @isDebugMode == true then
       listener.setDebugMode
    end
-		   
-   # start server
+	
+   ## ----------------------------------   
+   ## start ingestion daemon server
    listener.run
+   ## ----------------------------------
 end
 
-#===============================================================================
+## =============================================================================
 
 # It stops the Orchestrator Ingestor 
 
@@ -231,18 +238,22 @@ def stopIngestor
    end
 end
 
-#===============================================================================
+## =============================================================================
 
 
-# It stops the Orchestrator Ingestor 
+## It stops the Orchestrator Ingestor 
 def restart
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
    pid     = checker.getRunningPID
 
    if pid == false then
-      @logger.debug("There was not an ingesterComponent daemon running !")
-   else         
-      @logger.debug("Sending signal SIGTERM to Process #{pid} to kill the ingesterComponent")         
+      if @isDebugMode == true then
+         @logger.debug("ORC Ingestor Component daemon was not running !")
+      end
+   else
+      if @isDebugMode == true then     
+         @logger.debug("Sending signal SIGTERM to Process #{pid} to kill the ingesterComponent")         
+      end
       Process.kill(15, pid.to_i)
       checker = CUC::CheckerProcessUniqueness.new("schedulerComponent.rb", "", true)
       pid     = checker.getRunningPID
@@ -290,7 +301,7 @@ end
 
 #===============================================================================
 
-# -------------------------------------------------------------
+## ---------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -304,11 +315,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 
-# ===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-# ===============================================================================
+## End of the main body
+## =============================================================================

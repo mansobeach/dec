@@ -15,10 +15,14 @@ LIBDIR      = RbConfig::CONFIG['libdir']
 INCLUDEDIR  = RbConfig::CONFIG['includedir']
 
 # Driven by the target platform, select the physical library architecture
-LIB_DIRS    = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "../lib/LINUX64"))]
+# LIB_DIRS    = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "../lib/LINUX64"))]
 LIB_DIRS    = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "../lib/MACIN64"))]
 
 HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), "../include"))]
+
+#if RUBY_PLATFORM =~ /darwin/
+#  $LDFLAGS << '-framework AppKit'
+#end
 
 # array of all libraries that the C extension should be compiled against
 # - libexplorer_orbit.a

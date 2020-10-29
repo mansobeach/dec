@@ -31,17 +31,17 @@
 #
 
 #########################################################################
-#
-# === Ruby source for #Orchestrator
-#
-# === Written by DEIMOS Space S.L.
-#
-# === DEC/ORC => ORC Component
-# 
-# CVS: $Id: orchestrator.rb,v 1.5 2009/03/26 09:17:23 decdev Exp $
-#
-# module ORC
-#
+##
+## === Ruby source for #Orchestrator
+##
+## === Written by DEIMOS Space S.L.
+##
+## === DEC/ORC => ORC Component
+## 
+## Git: $Id: orchestrator.rb,v 1.5 2009/03/26 09:17:23 decdev Exp $
+##
+## module ORC
+##
 #########################################################################
 
 require 'getoptlong'
@@ -53,13 +53,15 @@ require 'cuc/CommandLauncher'
 require 'orc/ORC_Environment'
 
 
+## ---------------------------------------------------------
+##
+## MAIN script function
 
 def main
    
    include CUC::CommandLauncher
    include ORC
    
-   @orcConfigDir       = ENV['ORC_CONFIG']
    @isDebugMode        = false
    @bCheckIngester     = false  
    @bStop              = false
@@ -134,11 +136,13 @@ def main
 
    # -------------------------------------------------------
 
+   @orcConfigDir = ENV['ORC_CONFIG']
    require 'orc/ReadOrchestratorConfig'
+ 
 
-
-   # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("Orchestrator", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   ## ----------------------------------
+   ## initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("orcBolg", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -153,6 +157,8 @@ def main
  	   puts
    	exit(99)
    end
+
+   ## ----------------------------------
 
 #    #check if there is an orchestrator allready runnning
 #    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
@@ -173,24 +179,26 @@ def main
    end
         
 end #main
-#---------------------------------------------- 
+
+## main
+##
+## -------------------------------------------------------------
 
 
 def start 
-   puts "Starting Orchestrator"
-   @logger.info("Starting Orchestrator")
+   @logger.info("[ORC_005] Starting Orchestrator / debug = #{@isDebugMode}")
    
    @ftReadConf       = ORC::ReadOrchestratorConfig.instance 
    @pollingDir       = @ftReadConf.getPollingDir
    @intervalSeconds  = @ftReadConf.getPollingFreq
    
-   # -----------------------------------
-   # Scheduler command management
+   ## -----------------------------------
+   ## Scheduler command management
    if @schedulerChecker.isRunning == false then      
       cmd = "orcScheduler -c start"
       if @isDebugMode == true
          cmd = "#{cmd} -D"
-         puts cmd
+         @logger.debug(cmd)
       end
       
       # Creates a new process 
@@ -200,25 +208,24 @@ def start
       sleep(20)
 
       pid = @schedulerChecker.getRunningPID
-      puts "Scheduler started with pid #{pid}"
-      puts
-      @logger.debug("Scheduler started with pid #{pid}")
-   else                                         
-      puts "Scheduler is already running"
-      @logger.warn("Scheduler is already running")
+      if @isDebugMode == true then
+         @logger.debug("Scheduler started with pid #{pid}")
+      end
+   else
+      @logger.warn("[ORC_310] Scheduler is already running")
       exit(99)
    end
-   # -----------------------------------
+   ## -----------------------------------
 
-   # -----------------------------------
-   # Ingester command management
+   ## -----------------------------------
+   ## Ingester command management
    
    checker = CUC::CheckerProcessUniqueness.new("orcIngester", "", true)
    if @ingesterChecker.isRunning == false then
       cmd= "orcIngester -c start -d #{@pollingDir} -i #{@intervalSeconds} -p #{pid}" 
       if @isDebugMode == true
          cmd = "#{cmd} -D"
-         puts cmd
+         @logger.debug(cmd)
       end
       
       # Creates a new process
@@ -228,20 +235,19 @@ def start
       sleep(5)
       
       pid = @ingesterChecker.getRunningPID
-      puts "Ingester started with pid #{pid}"
-      @logger.debug("Ingester started with pid #{pid}")
+      if @isDebugMode == true then
+         @logger.debug("Ingester started with pid #{pid}")
+      end
    else
-      puts "Ingester is already running"
-      @logger.warn("Ingester is already running")
+      @logger.warn("[ORC_311] Ingester is already running")
       exit(99)
    end
-   # -----------------------------------
+   ## -----------------------------------
 
-   puts "Orchestrator Started"
-   @logger.info("Orchestrator Started")
+   # @logger.info("[ORC_010] Orchestrator Started")
  
 end   
-#-------------------------------------------
+## ------------------------------------------
 
 # 
 # def restart      
@@ -276,60 +282,60 @@ end
 # #---------------------------------------------------
 
 
+## =============================================================================
+
 def processStatus
 
-   puts "Checking status"
-
    if @ingesterChecker.isRunning == false then 
-      puts "No daemon is running for the Ingester  component"
-      # @logger.debug("There is not a daemon running for the ingestor component")
+      @logger.info("[ORC_031] No daemon is running for the Ingestion")
    else
-      puts "Ingester  component is running with pid #{@ingesterChecker.getRunningPID}"
-      # @logger.debug("There is a daemon running for the ingestor component with pid #{@ingesterChecker.getRunningPID}")
+      @logger.info("[ORC_032] Ingestion is running with pid #{@ingesterChecker.getRunningPID}")
    end
 
    if @schedulerChecker.isRunning == false then
-      puts "No daemon is running for the Scheduler component"
-      # @logger.debug("There is not a daemon running for the scheduler component")
+      @logger.info("[ORC_033] No daemon is running for the Scheduler")
    else
-      puts "Scheduler component is running with pid #{@schedulerChecker.getRunningPID}"
-      # @logger.debug("There is a daemon running for the scheduler component with pid #{@schedulerChecker.getRunningPID}")
+      @logger.info("[ORC_034] Scheduler is running with pid #{@schedulerChecker.getRunningPID}")
    end
 
 end
-#===============================================================================
+## =============================================================================
 
 
 def stop
-   @logger.info("Stopping Orchestrator gracefully")
-   puts "Stopping Orchestrator:"
+   @logger.info("[ORC_050] Stopping Orchestrator gracefully")
 
    if @ingesterChecker.isRunning == true then
       pid = @ingesterChecker.getRunningPID
-      puts "Sending signal SIGTERM to Process #{pid} to kill IngesterComponent"
-      @logger.debug("Stopping orchestrator ingestor  daemon")
+      if @isDebugMode == true then
+         puts "Sending signal SIGTERM to Process #{pid} to kill IngesterComponent"
+         @logger.debug("Stopping orchestrator ingestor  daemon")
+      end
       Process.kill(15, pid.to_i)
    else
-      puts "Ingester  was not running"
+      if @isDebugMode == true then
+         @logger.debug("Ingester  was not running")
+      end
    end
 
    if @schedulerChecker.isRunning == true then
       pid = @schedulerChecker.getRunningPID
-      puts "Sending signal SIGTERM to Process #{pid} to kill SchedulerComponent"
-      @logger.debug("Stopping orchestrator scheduler daemon")
+      if @isDebugMode == true then
+         @logger.debug("Stopping orchestrator scheduler daemon")
+         @logger.debug("Sending signal SIGTERM to Process #{pid} to kill SchedulerComponent")
+      end
       Process.kill(15, pid.to_i)
       sleep(60)
       if @schedulerChecker.isRunning == true then
-         puts "Sending signal SIGKILL to Process #{pid} to kill SchedulerComponent"
+         logger.debug("Sending signal SIGKILL to Process #{pid} to kill SchedulerComponent")
          Process.kill(9, pid.to_i)
       end
    else
-      puts "Scheduler was not running"
-      puts
+      @logger.warn("Scheduler was not running")
    end
-   @logger.info("Orchestrator Stopped")
+   @logger.info("[ORC_060] Stopped Orchestrator")
 end
-#===============================================================================
+# ===============================================================================
 
 def processAbort
    @logger.info("Stopping Orchestrator (Force)")
@@ -355,14 +361,14 @@ def processAbort
    end
    @logger.info("Orchestrator Stopped")
 end
-#===============================================================================
+# ===============================================================================
 
 
 
 private
   
 
-#===============================================================================
+# ===============================================================================
 
 
 # -------------------------------------------------------------
@@ -379,11 +385,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

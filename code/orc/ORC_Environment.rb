@@ -1,35 +1,38 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ORC_Environment class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Orchestrator (generic orchestrator)
-# 
-# Git: $Id: ORC_Environment.rb $Date$
-#
-# module ORC
-#
+##
+## === Ruby source for #ORC_Environment class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Orchestrator (generic orchestrator)
+## 
+## Git: $Id: ORC_Environment.rb $Date$
+##
+## module ORC
+##
 #########################################################################
 
 require 'dotenv'
-
 require 'cuc/DirUtils'
-
 require 'orc/ReadOrchestratorConfig'
 
 module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.9"
+   @@version = "0.0.10"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n
+      "0.0.10"  =>   "orchestratorConfigFile.xml Inventory item added for database configuration\n\
+         Support to remote inventory / db different than localhost\n\
+         Inventory config now includes Database_Host & Database_Port items\n\
+         log messages rationalisation and clean-up\n\
+         TBW2",\
+      "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n\
          orcQueueUpdate removes from the queue a previously failed product\n\
          orcValidateConfig has been created:\n\
          improved resilience and race condition problem fixed according to tickets below:\n\
@@ -52,6 +55,8 @@ module ORC
    @@arrEnv = [ \
                "ORC_TMP", \
                "ORC_DB_ADAPTER", \
+               "ORC_DATABASE_HOST", \
+               "ORC_DATABASE_PORT", \
                "ORC_DATABASE_NAME", \
                "ORC_DATABASE_USER", \
                "ORC_DATABASE_PASSWORD" \
@@ -69,6 +74,52 @@ module ORC
                 ]
    
    ## ----------------------------------------------------------------
+   
+   ## -----------------------------------------------------------------
+
+   def load_config
+   
+      # --------------------------------
+      if !ENV['ORC_CONFIG'] then
+         ENV['ORC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
+
+      orcConfig   = ORC::ReadOrchestratorConfig.instance
+      inventory   = orcConfig.getInventory
+         
+      if !ENV['ORC_DB_ADAPTER'] then
+         ENV['ORC_DB_ADAPTER'] = inventory[:db_adapter]
+      end
+
+      if !ENV['ORC_DATABASE_HOST'] then
+         ENV['ORC_DATABASE_HOST'] = inventory[:db_host]
+      end
+
+      if !ENV['ORC_DATABASE_PORT'] then
+         ENV['ORC_DATABASE_PORT'] = inventory[:db_port]
+      end
+   
+      if !ENV['ORC_DATABASE_NAME'] then
+         ENV['ORC_DATABASE_NAME'] = inventory[:db_name]
+      end
+   
+      if !ENV['ORC_DATABASE_USER'] then
+         ENV['ORC_DATABASE_USER'] = inventory[:db_username]
+      end   
+
+      if !ENV['ORC_DATABASE_PASSWORD'] then
+         ENV['ORC_DATABASE_PASSWORD'] = inventory[:db_password]
+      end
+      
+      if !ENV['ORC_TMP'] then
+         ENV['ORC_TMP'] = orcConfig.getTempDir
+      end   
+      
+   end
+
+   ## -----------------------------------------------------------------
+
    
    def load_environment_test
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'orc_test.env')
@@ -156,6 +207,9 @@ module ORC
    ## ----------------------------------------------------------------
 
    def checkEnvironmentEssential
+      
+      load_config
+      
       bCheck = true
             
       @@arrEnv.each{|vble|
@@ -281,6 +335,10 @@ end # module
 class ORC_Environment
    
    include ORC
+
+   def wrapper_load_config
+      load_config
+   end
 
    def wrapper_load_config_development
       load_config_development

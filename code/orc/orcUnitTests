@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #ORC_TestCases class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Orchestrator Component
-# 
-# module ORC
-#
+##
+## === Ruby source for #ORC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Orchestrator Component
+## 
+## module ORC
+##
 #########################################################################
 
 require 'rubygems'
@@ -21,7 +21,10 @@ require 'cuc/DirUtils'
 require 'orc/ORC_Environment'
 require 'arc/MINARC_Environment'
 
-# Preconditions:
+## Preconditions:
+#
+## 0 - rake -f build_minarc.rake minarc:install[orctest,localhost]
+#
 # 1 - setup 
 # 1.1 - load_config_development
 # 1.2 - inventory database is created
@@ -31,14 +34,14 @@ require 'arc/MINARC_Environment'
 # 2.2 - inventory database is destroyed
 
 
-#  1  - test_commandline_helpers
-#  2  - test_parsers
-#  3  - test_states
-#  4  - test_orcValidateConfig
-#  5  - test_command_orcIngester
-#  6  - test_command_orcScheduler
-#  7  - test_command_orcBolg
-#  8  - test_allatonce
+##  1  - test_commandline_helpers
+##  2  - test_parsers
+##  3  - test_states
+##  4  - test_orcValidateConfig
+##  5  - test_command_orcIngester
+##  6  - test_command_orcScheduler
+##  7  - test_command_orcBolg
+##  8  - test_allatonce
 
 # Select a single test of the suite
 
@@ -138,7 +141,7 @@ class ORCTestCase < Test::Unit::TestCase
             exit(99)
          end
       else     
-         @@conf.wrapper_load_config_development
+         @@conf.wrapper_load_config
       end
 
       puts      
@@ -154,14 +157,24 @@ class ORCTestCase < Test::Unit::TestCase
          exit(99)
       end
       
+      require 'orc/ReadOrchestratorConfig'
+      
+      @@pollingDir = ORC::ReadOrchestratorConfig.instance.getPollingDir
+      
       @@conf = MINARC_Environment.new
 
-      if @@execEnvFile == nil or @@execEnvFile == "" then
-         @@conf.wrapper_load_environment_test
-      end
+      ## minArc configuration is now shipped within the gem
+      ## and it is used the one installed
+#      @@conf.wrapper_load_config_development
+#
+#      if @@execEnvFile == nil or @@execEnvFile == "" then
+#         @@conf.wrapper_load_environment_test
+#      end
 
       puts
       puts "Creating minARC directories"
+
+      @@conf.wrapper_load_config
 
       @@conf.wrapper_createEnvironmentDirs
       
@@ -342,6 +355,9 @@ class ORCTestCase < Test::Unit::TestCase
       puts "Failure directory"
       puts orcConf.getFailureDir
       puts "==========================================="
+      puts "Inventory"
+      puts orcConf.getInventory
+      assert(orcConf.getInventory != nil, "parsed inventory")
       
       assert(orcConf.isValidFileType?("MPL_ORBPRE"), "MPL_ORBPRE file-type configuration")
       assert(orcConf.isFileTypeTrigger?("MPL_ORBPRE"), "MPL_ORBPRE file-type configuration")
@@ -497,12 +513,16 @@ class ORCTestCase < Test::Unit::TestCase
       
       system("orcManageDB -d")
       system("orcManageDB -c")
+      puts
 
-      cmd = "orcBolg -c start -D"
+      cmd = "orcBolg -c start"
+      puts
+      puts cmd
+      puts
       assert(system(cmd), cmd)
    
       @@arrInputFiles.each{|filename|
-         puts filename
+         puts "orcUnitTests::#{__method__.to_s} #{filename}"
          system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
          sleep(25)
       }
@@ -569,11 +589,11 @@ class ORCTestCase < Test::Unit::TestCase
       system("orcManageDB -d")
       system("orcManageDB -c")
 
-      cmd = "orcBolg -c start -D"
+      cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
    
       @@arrInputFiles.each{|filename|
-         puts filename
+         puts "orcUnitTests::#{__method__.to_s} #{filename}"
          system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
          sleep(4)
       }
@@ -644,7 +664,7 @@ class ORCTestCase < Test::Unit::TestCase
 
       sleep(3.0)
 
-      cmd = "orcBolg -c start -D"
+      cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
 
       sleep(300)
@@ -723,7 +743,7 @@ class ORCTestCase < Test::Unit::TestCase
 
       sleep(3.0)
 
-      cmd = "orcBolg -c start -D"
+      cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
 
       sleep(20)
@@ -1049,9 +1069,14 @@ class ORCTestCase < Test::Unit::TestCase
 
       sleep(5.0)
 
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+
+
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/#{filename}")
+         system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
          sleep(3.0)
 
       }
@@ -1123,30 +1148,7 @@ class ORCTestCase < Test::Unit::TestCase
 
    ## -------------------------------------------------------------
 
-   def test_11
-   
-      puts "================================================"
-      puts "ORC_UnitTests::#{__method__.to_s}"
-      puts
-   
-      system("orcManageDB -d")
-      system("orcManageDB -c")
 
-      cmd = "minArcPurge -Y"
-      assert(system(cmd), cmd)
-
-      system("minArcDB -d")
-      system("minArcDB -c")      
-      assert(system(cmd), cmd)
-
-
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-
-      FileUtils.rm_f("/tmp/dec_orchestrator.log")
-
-
-
-   end
    ## -------------------------------------------------------------
 
    def test_command_orcBolg
@@ -1161,8 +1163,14 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "minArcPurge -Y"
       assert(system(cmd), cmd)
 
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      filename = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
 
+
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+
+      system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
 
 
@@ -1215,12 +1223,20 @@ class ORCTestCase < Test::Unit::TestCase
 #
 #      sleep(5.0)
 #      
-      cmd = "orcBolg -c start -D"
+      cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
 
       sleep(10.0)
 
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > /tmp/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+
+
+      filename = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+
+      system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
+
 
       sleep(60.0)
 
@@ -1240,6 +1256,12 @@ class ORCTestCase < Test::Unit::TestCase
       puts "ORC_UnitTests::#{__method__.to_s}"
       puts
 
+      require 'orc/ReadOrchestratorConfig'
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+
       system("mkdir -p /tmp/orc_polling_dir")
       
       FileUtils.rm_f("/tmp/dec_orchestrator.log")
@@ -1251,15 +1273,17 @@ class ORCTestCase < Test::Unit::TestCase
       system("orcManageDB -d")
       system("orcManageDB -c")
       
-      system("orcBolg -c stop")
+      cmd = "orcBolg -c stop"
+      puts cmd
+      system(cmd)
                  
-      cmd = "orcBolg -c start -D"
-      # cmd = "orcBolg -c start"
+      cmd = "orcBolg -c start"
+      puts cmd
       assert(system(cmd), cmd)
 
       @@arrInputFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /tmp/orc_polling_dir/#{filename}")
+         system("echo \'#{filename}\' > #{pollingDir}/#{filename}")
          sleep(1.5)
 
       }
