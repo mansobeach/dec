@@ -20,8 +20,6 @@
 
 #include <explorer_lib.h>
 
-
-
 /* Defining a space for information 
 and references about the module to be stored internally */
 
@@ -87,15 +85,6 @@ VALUE method_check_library_version()
 
 
 /* -------------------------------------------------------------------------- */
-
-
-
-/*============================================================================*/
-/*  MPL::PositionInOrbit 
-      - full_path_OSF
-      - Absolute_Orbit_Angle
-      - ANX_Angle        */
-/*============================================================================*/
 
 
 /* -------------------------------------------------------------------------- */

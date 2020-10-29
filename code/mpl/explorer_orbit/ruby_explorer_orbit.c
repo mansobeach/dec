@@ -53,11 +53,14 @@ void Init_ruby_explorer_orbit()
    
    rb_define_method(ruby_explorer_orbit, "DateTime2OrbitAbsolute", method_DateTime2OrbitAbsolute, 2) ;
 
+   /* xo_position_on_orbit_to_time */
    rb_define_method(ruby_explorer_orbit, "PositionInOrbit", method_PositionInOrbit, 3) ;
 
 }
 
 /* -------------------------------------------------------------------------- */
+
+/* => xo_orbit_close */
 
 /*============================================================================*/
 /*  EXPCFI check_library_version direct call          */
@@ -78,7 +81,8 @@ VALUE method_check_library_version()
    printf("DEBUG: exit ruby_explorer_orbit::method_check_library_version\n") ;  
    printf("\n") ;
 
-   return LONG2NUM(lValue) ;}
+   return LONG2NUM(lValue) ;
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -100,6 +104,21 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
    strcpy(path_orbit_file, StringValueCStr(strROEF) ) ;
 
    long lOrbitNumber = NUM2ULONG(lOrbit) ;
+
+   /* =============================== */
+
+   /* Error handling for orbit ephemeris presence */
+   FILE *file;
+   if ((file = fopen(path_orbit_file, "r")))
+   {
+      fclose(file) ;
+   }
+   else
+   {
+     return LONG2NUM(-1) ;
+   }
+
+   /* =============================== */
    
    
    /*
@@ -382,6 +401,20 @@ VALUE method_DateTime2OrbitAbsolute(VALUE self, VALUE strROEF, VALUE strUTC)
    char path_orbit_file[XO_MAX_STR] ;   
    strcpy(path_orbit_file, StringValueCStr(strROEF) ) ;
 
+   /* =============================== */
+
+   /* Error handling for orbit ephemeris presence */
+   FILE *file;
+   if ((file = fopen(path_orbit_file, "r")))
+   {
+      fclose(file) ;
+   }
+   else
+   {
+     return LONG2NUM(-1) ;
+   }
+
+   /* =============================== */
 
    /*
    printf("\n") ;

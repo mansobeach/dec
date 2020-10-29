@@ -18,7 +18,7 @@ require 'cuc/Converters'
 
 include CUC::Converters
 
-statDB         = "./data/S2__OPER_MPL_GND_DB"
+statDB         = "../data/S2__OPER_MPL_GND_DB"
 roef           = "./data/S2A_OPER_MPL_ORBSCT"
 swath          = "./data/S2A_OPER_MPL_SWTVIS"
 

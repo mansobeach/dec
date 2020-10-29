@@ -52,7 +52,9 @@ class StatisticDDC
          return
       end
                   
-      lastHourFiles     = SentFile.select("filename, interface_id, interface, delivery_date, size, delivered_using").where('delivery_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
+#      lastHourFiles     = SentFile.select("filename, interface_id, interface, delivery_date, size, delivered_using").where('delivery_date > ?', iHours.hours.ago).group(:interface_id, :filename).order('interface_id asc')
+      
+      lastHourFiles     = SentFile.all.where('delivery_date > ?', iHours.to_i.hours.ago)
       
       arrFiles          = Array.new
       
@@ -60,7 +62,7 @@ class StatisticDDC
          hFile = Hash.new
          hFile[:filename]  = item.filename
          hFile[:size]      = item.size
-         hFile[:interface] = item.interface
+         hFile[:interface] = item.interface.name
          hFile[:protocol]  = item.delivered_using
          hFile[:date]      = item.delivery_date
          arrFiles << hFile

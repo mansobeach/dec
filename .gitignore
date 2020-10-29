@@ -1,3 +1,4 @@
+gem
 *.gem
 data/
 reek.yml
