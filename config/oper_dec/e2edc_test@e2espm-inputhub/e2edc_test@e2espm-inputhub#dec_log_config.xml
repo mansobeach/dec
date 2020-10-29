@@ -1,0 +1,38 @@
+<log4r_config>
+ 
+ <pre_config>
+  <parameter name="mainLoggerName" value="E2ESPM-ESRIN"/>
+ </pre_config>
+
+ <outputter name="console"  level="DEBUG" >
+   <type>StdoutOutputter</type>
+    <formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+        <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+    </formatter>
+ </outputter>
+ 
+ <outputter name="dec_log" level="DEBUG">
+   <type>RollingFileOutputter</type>
+  
+   <filename>/volumes/dec/log/DEC.log</filename>
+  
+   <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+   </formatter>
+  
+   <trunc>false</trunc>
+  
+   <maxsize>50000000</maxsize>
+  
+   <max_backups>10</max_backups>
+ 
+   <maxtime>2592000</maxtime>
+  
+ </outputter>
+
+ <logger name="E2ESPM-ESRIN" level="INFO" trace="false">
+    <outputter>console</outputter>
+    <outputter>dec_log</outputter>
+ </logger>
+ 
+</log4r_config>

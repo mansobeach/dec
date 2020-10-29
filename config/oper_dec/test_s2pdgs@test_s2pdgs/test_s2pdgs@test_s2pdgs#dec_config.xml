@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>Sentinel-2 ESA - ESRIN E2ESPM</Name>
+      <Id>ESA_</Id>
+      <Mission>Sentinel-2</Mission>
+      <SatPrefix>S2_</SatPrefix>
+   </Project>
+   <Filters>
+      <IncomingFilters>
+         <Filter>*</Filter>
+         <!--
+         <Filter>SM_MREP_*.zip</Filter>
+         <Filter>GO_*EEF</Filter>
+         <Filter>GO_*HDR</Filter>
+         <Filter>GO_*TGZ</Filter>
+         <Filter>CORG*Z</Filter>
+         <Filter>SM_*EEF</Filter>
+         <Filter>SM_*TGZ</Filter>
+         <Filter>*sp3*</Filterftproot/remote/RPF_R/fromRPF_R/>
+         <Filter>*clk*</Filter>
+         <Filter>igrg*.Z</Filter>
+         -->
+      </IncomingFilters>
+            
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+
+      
+   </Filters>
+   
+   
+   <Options>
+      <Upload>
+         <DeleteSourceFiles>true</DeleteSourceFiles>
+         <UploadFilePrefix>false</UploadFilePrefix>
+         <UploadDirs>false</UploadDirs>
+      </Upload>
+      <Download>
+         <DownloadDirs>false</DownloadDirs>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
+      </Download>
+   </Options>
+
+
+   
+   
+   <!-- currently placed in DEC basket intray -->
+   
+   
+   <Reports>
+
+      <Report Name="RetrievedFiles">
+         <Enabled>true</Enabled>
+         <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_RECV</FileType>
+      </Report>
+
+<!--  -->
+      <Report Name="UnknownFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of unknown Files present</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DECUNKNOWN</FileType>
+      </Report>
+
+   </Reports>
+   
+   <Workflow>
+      <!-- SourceDir is not used by e2edc@e2espm-inputhub -->
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
+      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+      <ReportDir>/Users/borja/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
+      <TempDir>/tmp/dec_tmp</TempDir>
+   </Workflow>   
+   
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>host.docker.internal</Database_Host>
+      <Database_Port>5432</Database_Port>
+      <Database_Name>borja</Database_Name>
+      <Database_User>borja</Database_User>
+      <Database_Password>borja</Database_Password>
+   </Inventory>
+   
+</Configuration>
