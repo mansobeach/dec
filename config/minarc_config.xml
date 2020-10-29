@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MINARC_CONFIG xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <CleanUp Frequency="10" Unit="s">
   
@@ -15,4 +15,21 @@
       <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
    </Archive>
 
-</MINARC_CONFIG>
+   <Workflow>
+      <ArchiveServer></ArchiveServer>
+      <ArchiveRoot>/tmp/minarc</ArchiveRoot>
+      <ArchiveError>/tmp/minarc_error2</ArchiveError>
+      <TempDir>/tmp/minarc</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port>5432</Database_Port>      
+      <Database_Name>postgres</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
+   </Inventory>
+
+
+</Configuration>
