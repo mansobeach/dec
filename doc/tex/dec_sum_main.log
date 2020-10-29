@@ -1,0 +1,1641 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.14)  23 OCT 2020 11:26
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**dec_sum_main.tex
+(./dec_sum_main.tex
+LaTeX2e <2018-12-01>
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@chapter=\count81
+\c@section=\count82
+\c@subsection=\count83
+\c@subsubsection=\count84
+\c@paragraph=\count85
+\c@subparagraph=\count86
+\c@figure=\count87
+\c@table=\count88
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2019/05/04 3.31 The Babel package
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2019/05/04 3.31 Babel switching mechanism
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2017/06/06 v3.3r English support from the babel system
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2019/05/04 3.31 Babel common definitions
+\babel@savecnt=\count89
+\U@D=\dimen103
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count90
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2018/04/16 v5.8 Page Geometry
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count91
+\Gm@cntv=\count92
+\c@Gm@tempcnt=\count93
+\Gm@bindingoffset=\dimen104
+\Gm@wd@mp=\dimen105
+\Gm@odd@mp=\dimen106
+\Gm@even@mp=\dimen107
+\Gm@layoutwidth=\dimen108
+\Gm@layoutheight=\dimen109
+\Gm@layouthoffset=\dimen110
+\Gm@layoutvoffset=\dimen111
+\Gm@dimlist=\toks17
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/array.sty
+Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
+\col@sep=\dimen112
+\ar@mcellbox=\box27
+\extrarowheight=\dimen113
+\NC@list=\toks18
+\extratabsurround=\skip43
+\backup@length=\skip44
+\ar@cellbox=\box28
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen114
+\Gin@req@width=\dimen115
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2018/04/12 v2.0h eso-pic (RN)
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2018/11/30 v6.88e Hypertext links for LaTeX
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
+
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package hobsub Info: Skipping package `ifvtex' (already loaded).
+Package: intcalc 2016/05/16 v1.2 Expandable calculations with integers (HO)
+Package hobsub Info: Skipping package `ifpdf' (already loaded).
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
+)
+Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
+Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2016/05/16 v1.5 Let assignment for LaTeX macros (HO)
+Package: hopatch 2016/05/16 v1.3 Wrapper for package hooks (HO)
+Package: xcolor-patch 2016/05/16 xcolor patch
+Package: atveryend 2016/05/16 v1.9 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package hobsub Info: Skipping package `atbegshi' (already loaded).
+Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
+Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+)
+\@linkdim=\dimen116
+\Hy@linkcounter=\count94
+\Hy@pagecounter=\count95
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2018/11/30 v6.88e Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+\Hy@SavedSpaceFactor=\count96
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4519.
+Package hyperref Info: Link nesting OFF on input line 4524.
+Package hyperref Info: Hyper index ON on input line 4527.
+Package hyperref Info: Plain pages OFF on input line 4534.
+Package hyperref Info: Backreferencing OFF on input line 4539.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4772.
+\c@Hy@tempcnt=\count97
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5125.
+\XeTeXLinkMargin=\dimen117
+\Fld@menulength=\count98
+\Field@Width=\dimen118
+\Fld@charsize=\dimen119
+Package hyperref Info: Hyper figures OFF on input line 6380.
+Package hyperref Info: Link nesting OFF on input line 6385.
+Package hyperref Info: Hyper index ON on input line 6388.
+Package hyperref Info: backreferencing OFF on input line 6395.
+Package hyperref Info: Link coloring OFF on input line 6400.
+Package hyperref Info: Link coloring with OCG OFF on input line 6405.
+Package hyperref Info: PDF/A mode OFF on input line 6410.
+LaTeX Info: Redefining \ref on input line 6450.
+LaTeX Info: Redefining \pageref on input line 6454.
+\Hy@abspage=\count99
+\c@Item=\count100
+\c@Hfootnote=\count101
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2018/11/30 v6.88e Hyperref driver for pdfTeX
+\Fld@listcount=\count102
+\c@bookmark@seq@number=\count103
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip45
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count104
+\lst@gtempboxa=\box29
+\lst@token=\toks19
+\lst@length=\count105
+\lst@currlwidth=\dimen120
+\lst@column=\count106
+\lst@pos=\count107
+\lst@lostspace=\dimen121
+\lst@width=\dimen122
+\lst@newlines=\count108
+\lst@lineno=\count109
+\lst@maxwidth=\dimen123
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2019/02/27 1.8b (Carsten Heinz)
+\c@lstnumber=\count110
+\lst@skipnumbers=\count111
+\lst@framebox=\box30
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2019/02/27 1.8b listings configuration
+))
+Package: listings 2019/02/27 1.8b (Carsten Heinz)
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)+ FMi change
+\LTleft=\skip46
+\LTright=\skip47
+\LTpre=\skip48
+\LTpost=\skip49
+\LTchunksize=\count112
+\LTcapwidth=\dimen124
+\LT@head=\box31
+\LT@firsthead=\box32
+\LT@foot=\box33
+\LT@lastfoot=\box34
+\LT@cols=\count113
+\LT@rows=\count114
+\c@LT@tables=\count115
+\c@LT@chunks=\count116
+\LT@p@ftn=\toks20
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/titlepic/titlepic.sty
+Package: titlepic 2017/03/14 1.2 Package to display a picture on the title page
+
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2016/03/21 v2.10.2 Sectioning titles
+\ttl@box=\box35
+\beforetitleunit=\skip50
+\aftertitleunit=\skip51
+\ttl@plus=\dimen125
+\ttl@minus=\dimen126
+\ttl@toksa=\toks21
+\titlewidth=\dimen127
+\titlewidthlast=\dimen128
+\titlewidthfirst=\dimen129
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/blindtext/blindtext.sty
+Package: blindtext 2012/01/06 V2.0 blindtext-Package
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+\c@blindtext=\count117
+\c@Blindtext=\count118
+\c@blind@countparstart=\count119
+\blind@countxx=\count120
+\blindtext@numBlindtext=\count121
+\blind@countyy=\count122
+\c@blindlist=\count123
+\c@blindlistlevel=\count124
+\c@blindlist@level=\count125
+\blind@listitem=\count126
+\c@blind@listcount=\count127
+\c@blind@levelcount=\count128
+\blind@mathformula=\count129
+\blind@Mathformula=\count130
+\c@blind@randomcount=\count131
+\c@blind@randommax=\count132
+\c@blind@pangramcount=\count133
+\c@blind@pangrammax=\count134
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/titling/titling.sty
+Package: titling 2009/09/04 v2.1d maketitle typesetting
+\thanksmarkwidth=\skip52
+\thanksmargin=\skip53
+\droptitle=\skip54
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty
+Package: verbatim 2014/10/28 v1.5q LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks22
+\verbatim@line=\toks23
+\verbatim@in@stream=\read1
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2019/01/15
+
+Style option: `fancyvrb' v3.2a <2019/01/15> (tvz)
+\FV@CodeLineNo=\count135
+\FV@InFile=\read2
+\FV@TabBox=\box36
+\c@FancyVerbLine=\count136
+\FV@StepNumber=\count137
+\FV@OutFile=\write3
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/verbatimbox/verbatimbox.sty
+Package: verbatimbox 2014/03/12 v3.13 Routines for placing verbatim text into b
+oxes, useful in places where the verbatim environment is inaccessible. Secondar
+ily, for adding vertical buffer around an object.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/readarray/readarray.sty
+Package: readarray 2016/11/07\ 2.0\ Routines for inputting 2D and 3D array data
+ and recalling it on an element-by-element basis.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/local/texlive/2019/texmf-dist/tex/generic/listofitems/listofitems.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/listofitems/listofitems.tex
+\loi_cnt_foreach_nest=\count138
+\loi_nestcnt=\count139
+)
+Package: listofitems 2019/03/03 v1.61 Grab items in lists using user-specified 
+sep char (CT)
+)
+\c@@index=\count140
+\c@@plane=\count141
+\c@@row=\count142
+\c@@col=\count143
+\c@use@args=\count144
+\c@@record=\count145
+\c@arg@index=\count146
+\c@break@count=\count147
+\c@index@count=\count148
+\c@loop@count=\count149
+\Arg@toks=\toks24
+\@arrayident@toks=\toks25
+\rdar@file=\read3
+
+readarray: bounds checking OFF
+)
+\savedverbbox=\box37
+\c@VerbboxLineNo=\count150
+\boxtopsep=\dimen130
+\boxbottomsep=\dimen131
+\ps@tempdima=\dimen132
+\ps@tempboxa=\box38
+\boxtop@sep=\skip55
+\boxbottom@sep=\skip56
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/dashrule/dashrule.sty
+Package: dashrule 2013/03/28 v1.3 Dashed rules
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/ifmtarg/ifmtarg.sty
+Package: ifmtarg 2018/04/16 v1.2b check for an empty argument
+)
+\c@hdr@segments=\count151
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2019/01/31 v3.10 Extensive control of page headers and footer
+s
+\f@nch@headwidth=\skip57
+\f@nch@O@elh=\skip58
+\f@nch@O@erh=\skip59
+\f@nch@O@olh=\skip60
+\f@nch@O@orh=\skip61
+\f@nch@O@elf=\skip62
+\f@nch@O@erf=\skip63
+\f@nch@O@olf=\skip64
+\f@nch@O@orf=\skip65
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/subfiles/subfiles.sty
+Package: subfiles 2018/07/31 Federico Garcia, Gernot Salzer
+)
+
+LaTeX Warning: Unused global option(s):
+    [headings=optiontoheadandtoc].
+
+(./dec_sum_main.aux
+
+LaTeX Warning: Label `DEC625' multiply defined.
+
+)
+\openout1 = `dec_sum_main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(89.62709pt, 418.25368pt, 89.6271pt)
+* v-part:(T,H,B)=(101.40665pt, 591.5302pt, 152.11pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=418.25368pt
+* \textheight=591.5302pt
+* \oddsidemargin=17.3571pt
+* \evensidemargin=17.3571pt
+* \topmargin=-0.93083pt
+* \headheight=12.0pt
+* \headsep=18.06749pt
+* \topskip=10.0pt
+* \footskip=25.29494pt
+* \marginparwidth=61.0pt
+* \marginparsep=7.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count152
+\scratchdimen=\dimen133
+\scratchbox=\box39
+\nofMPsegments=\count153
+\nofMParguments=\count154
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count155
+\MPscratchDim=\dimen134
+\MPnumerator=\count156
+\makeMPintoPDFobject=\count157
+\everyMPtoPDFconversion=\toks27
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\AtBeginShipoutBox=\box40
+Package hyperref Info: Link coloring OFF on input line 90.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
+
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
+)
+\c@section@level=\count158
+)
+LaTeX Info: Redefining \ref on input line 90.
+LaTeX Info: Redefining \pageref on input line 90.
+LaTeX Info: Redefining \nameref on input line 90.
+
+(./dec_sum_main.out) (./dec_sum_main.out)
+\@outlinefile=\write4
+\openout4 = `dec_sum_main.out'.
+
+\c@lstlisting=\count159
+<../res/logo_elecnor_deimos.png, id=735, 135.3858pt x 66.0066pt>
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 100
+.
+(pdftex.def)             Requested size: 167.2989pt x 81.57137pt.
+<../res/DEC_Logo_White.png, id=737, 513.92pt x 513.92pt>
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 110.
+(pdftex.def)             Requested size: 167.2989pt x 167.29648pt.
+ [1
+
+
+{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <../res/
+logo_elecnor_deimos.png> <../res/DEC_Logo_White.png>] (./dec_sum_main.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 4.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 4.
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.37 ....3.2}Download rules}{21}{subsection.4.3.2}
+                                                  % [1
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 84.
+
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 84.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+Make it at least 32.05pt.
+We now make it that large for the rest of the document.
+This may cause the page layout to be inconsistent, however.
+
+[2]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 133
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 133.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [3]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 179
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 179.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [4])
+\tf@toc=\write5
+\openout5 = `dec_sum_main.toc'.
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 124
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 124.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [5]
+Chapter 1.
+(./dec_acronyms.tex [6
+
+])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 128
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 128.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [7]
+Chapter 2.
+(./dec_introduction.tex
+Underfull \hbox (badness 10000) in paragraph at lines 16--17
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18--20
+
+ []
+
+<../res/DEC_Context_Diagram.png, id=964, 405.515pt x 542.025pt>
+File: ../res/DEC_Context_Diagram.png Graphic file (type png)
+<use ../res/DEC_Context_Diagram.png>
+Package pdftex.def Info: ../res/DEC_Context_Diagram.png  used on input line 26.
+
+(pdftex.def)             Requested size: 202.75699pt x 271.01183pt.
+[8
+
+ <../res/DEC_Context_Diagram.png>]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 33.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 33.
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 57.
+
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 57.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [9])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 132
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 132.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [10]
+Chapter 3.
+(./dec_install.tex
+Underfull \hbox (badness 10000) in paragraph at lines 27--29
+
+ []
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2019/02/27 1.8b listings language file
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2019/02/27 1.8b listings language file
+)
+Underfull \hbox (badness 10000) in paragraph at lines 31--32
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--35
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
+
+ []
+
+
+Overfull \hbox (1135.73277pt too wide) in paragraph at lines 55--55
+[]\OT1/cmtt/m/n/10 decValidateConfig, decCheckConfig, decCheckSent, decConfigIn
+terface2DB, decDeliverFiles, decGetFiles4Transfer, decGetFromInterface, decList
+ener, decManageDB, decNotify2Interface, decSend2Interface, decSmokeTests, decSt
+ats, decUnitTests, decUnitTests_IERS, decUnitTests_ncftpput, decUnitTests_mail[
+] 
+ []
+
+[11
+
+]
+Overfull \hbox (14.58566pt too wide) in paragraph at lines 75--76
+[][]\OT1/cmr/m/it/10 sqlite3[] \OT1/cmr/m/n/10 : is an in-process li-brary that
+ im-ple-ments a self-contained, server-less, zero-configuration,
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 103
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 103.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 108--109
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--115
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--118
+
+ []
+
+
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 125--126
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+
+Overfull \hbox (136.14525pt too wide) in paragraph at lines 126--127
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 128--129
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--136
+
+ []
+
+
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 140--141
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+
+Overfull \hbox (123.54527pt too wide) in paragraph at lines 141--142
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 143
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 143.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[13]
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 143--144
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 151--152
+
+ []
+
+
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 156--157
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+
+Overfull \hbox (123.54527pt too wide) in paragraph at lines 157--158
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (395.48923pt too wide) in paragraph at lines 159--160
+[][][][]\OT1/cmtt/m/n/10 ------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------[] 
+ []
+
+)
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 137
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 137.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [14]
+Chapter 4.
+(./dec_configuration.tex [15
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 122
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 122.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [16]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 168
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 168.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [17]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 205
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 205.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [18]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 254
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 254.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [19]
+Overfull \hbox (22.74547pt too wide) in paragraph at lines 259--261
+[][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (3.8455pt too wide) in paragraph at lines 263--264
+[][][][][][][][][][][][][] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 305
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 305.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[20]
+Overfull \hbox (16.44548pt too wide) in paragraph at lines 324--326
+[][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (3.8455pt too wide) in paragraph at lines 335--336
+[][][][][][][][][][][][][][][][][] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 350
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 350.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[21]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 407
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 407.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [22]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 464
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 464.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [23]
+Underfull \hbox (badness 10000) in paragraph at lines 489--490
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 504--505
+
+ []
+
+
+Overfull \hbox (30.7319pt too wide) in paragraph at lines 508--509
+\OT1/cmr/m/n/10 It is also pos-si-ble to reg-is-ter the in-ter-face iden-ti-fie
+rs ac-cord-ing to its name def-i-ni-tion in \OT1/cmr/m/it/10 dec[]interfaces.xm
+l\OT1/cmr/m/n/10 : 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 532--534
+
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 534
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 534.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[24]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 573
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 573.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [25]
+Underfull \hbox (badness 10000) in paragraph at lines 573--574
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 579--580
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 587--588
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 594--595
+
+ []
+
+)
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 140
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 140.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [26]
+Chapter 5.
+(./dec_reference_log_messages.tex [27
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 78.
+
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 78.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [28]
+Overfull \hbox (1.74266pt too wide) in paragraph at lines 92--92
+[]\OT1/cmtt/m/n/10 [DEC_130] LEAP I/F : event newfile2intray => auxConverter -f
+ /S3/Leap_Second.dat 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 113
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 113.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[29]
+Overfull \hbox (1.5744pt too wide) in paragraph at lines 149--149
+|[]\OT1/cmr/bx/n/12 [DEC[]214] Push Setup / File Com-pressed at In-ter-face Loc
+alOut-
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 165
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 165.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[30]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 183
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 183.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [31]
+
+LaTeX Warning: Hyper reference `DEC626' on page 32 undefined on input line 215.
+
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 226
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 226.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[32]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 232
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 232.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [33]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 275
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 275.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [34]
+Overfull \hbox (69.99207pt too wide) in paragraph at lines 314--314
+[]\OT1/cmtt/m/n/10 [DEC_611] LOCALHOST_NOT_SECURE I/F: getaddrinfo: nodename no
+r servname provided, or not known 
+ []
+
+
+Overfull \hbox (22.74248pt too wide) in paragraph at lines 319--319
+[]\OT1/cmtt/m/n/10 [DEC_611] LOCALHOST_NOT_SECURE I/F: Connection refused - con
+nect(2) for 127.0.0.1:21 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 329
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 329.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[35]
+Overfull \hbox (75.24202pt too wide) in paragraph at lines 339--339
+[]\OT1/cmtt/m/n/10 [DEC_613] LOCALHOST I/F: 550 Can't change directory to /a/if
+/local/: No such file or directory 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 374
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 374.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[36]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 419
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 419.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [37]
+Overfull \hbox (169.7412pt too wide) in paragraph at lines 437--437
+[]\OT1/cmtt/m/n/10 [ERROR] 2020-04-14 18:44:38 NODE_1.mail - [DEC_742] LOCALHOS
+T_NOT_SECURE I/F: Username and Password not accepted 
+ []
+
+
+Overfull \hbox (290.49014pt too wide) in paragraph at lines 443--443
+[]\OT1/cmtt/m/n/10 [ERROR] 2020-04-14 18:49:42 NODE_1.mail - [DEC_742] LOCALHOS
+T_NOT_SECURE I/F: getaddrinfo: nodename nor servname provided, or not known 
+ []
+
+
+Overfull \hbox (80.49197pt too wide) in paragraph at lines 448--448
+[]\OT1/cmtt/m/n/10 [ERROR] 2020-04-14 18:56:31 NODE_1.mail - [DEC_742] LOCALHOS
+T_NOT_SECURE I/F: execution expired 
+ []
+
+
+Overfull \hbox (174.99115pt too wide) in paragraph at lines 453--453
+[]\OT1/cmtt/m/n/10 [ERROR] 2020-04-14 18:58:58 NODE_1.mail - [DEC_742] LOCALHOS
+T_NOT_SECURE I/F: Must issue a STARTTLS command first 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 463
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 463.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[38]
+Underfull \hbox (badness 10000) in paragraph at lines 467--468
+
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 507
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 507.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[39])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 143
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 143.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [40]
+Chapter 6.
+(./dec_reference_commands.tex
+Overfull \hbox (22.74248pt too wide) in paragraph at lines 26--26
+[]\OT1/cmtt/m/n/10 DEC configuration is distributed amongst different XML files
+. The information set up[] 
+ []
+
+
+Overfull \hbox (48.99225pt too wide) in paragraph at lines 27--27
+[]\OT1/cmtt/m/n/10 must be coherent. This tool ensures that all configuration c
+ritical elements are correct.[] 
+ []
+
+
+Overfull \hbox (27.99243pt too wide) in paragraph at lines 33--33
+[]\OT1/cmtt/m/n/10 With this option the Interfaces (Entities) configuration pla
+ced in dec_interfaces.xml[] 
+ []
+
+
+Overfull \hbox (85.74193pt too wide) in paragraph at lines 36--36
+[]\OT1/cmtt/m/n/10 (Note: if the network link to a given I/F is broken, the too
+l will not be able to connect and it[] 
+ []
+
+
+Overfull \hbox (75.24202pt too wide) in paragraph at lines 42--42
+[]\OT1/cmtt/m/n/10 With this option the Incoming file-types registered in the d
+ec_incoming_files.xml are checked.[] 
+ []
+
+
+Overfull \hbox (90.99188pt too wide) in paragraph at lines 43--43
+[]\OT1/cmtt/m/n/10 Mainly what it is done is to check that the interfaces from 
+a File is retrieved are configured in[] 
+ []
+
+
+Overfull \hbox (43.7423pt too wide) in paragraph at lines 49--49
+[]\OT1/cmtt/m/n/10 With this option the DEC Mail configuration placed in the ft
+_mail_config.xml is checked.[] 
+ []
+
+
+Overfull \hbox (33.24239pt too wide) in paragraph at lines 54--54
+[]\OT1/cmtt/m/n/10 With this option the DCC Services configured in the dcc_serv
+ices.xml file are checked.[] 
+ []
+
+
+Overfull \hbox (59.49216pt too wide) in paragraph at lines 55--55
+[]\OT1/cmtt/m/n/10 The check performed with this flag is that the executable se
+t in the command of the service[] 
+ []
+
+[41
+
+]
+Overfull \hbox (43.7423pt too wide) in paragraph at lines 61--61
+[]\OT1/cmtt/m/n/10 With this option the In-Trays configured in the dec_incoming
+_files.xml file are checked.[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 94.
+
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 94.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[42]
+Overfull \hbox (6.99261pt too wide) in paragraph at lines 99--99
+[]\OT1/cmtt/m/n/10 This is a DEC command line tool that lists the contents of t
+he <Upload> directory[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 119
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 119.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[43
+
+]
+Overfull \hbox (111.9917pt too wide) in paragraph at lines 124--124
+[]\OT1/cmtt/m/n/10 This is a Data Exchange Component command line tool that syn
+chronizes the Entities configuration file[] 
+ []
+
+
+Overfull \hbox (6.99261pt too wide) in paragraph at lines 125--125
+[]\OT1/cmtt/m/n/10 with DEC Inventory. It extracts all the I/Fs from the dec_in
+terfaces.xml file and[] 
+ []
+
+
+Overfull \hbox (43.7423pt too wide) in paragraph at lines 128--128
+[]\OT1/cmtt/m/n/10 As well it allows to specify a new I/F mnemonic to be loaded
+ into the DEC Inventory with[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 149
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 149.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[44
+
+]
+Overfull \hbox (1.74266pt too wide) in paragraph at lines 169--169
+[]\OT1/cmtt/m/n/10 The "ONCE" flag registers in the Inventory all the files sen
+t. As well it checks[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 191
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 191.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[45
+
+]
+Overfull \hbox (54.2422pt too wide) in paragraph at lines 205--205
+[]\OT1/cmtt/m/n/10 With this option, only "List" of new availables files for Re
+trieving and Tracking is done.[] 
+ []
+
+
+Overfull \hbox (111.9917pt too wide) in paragraph at lines 206--206
+[]\OT1/cmtt/m/n/10 This flag overrides configuration flags RegisterContentFlag 
+RetrieveContentFlag in dec_interfaces.xml[] 
+ []
+
+
+Overfull \hbox (22.74248pt too wide) in paragraph at lines 217--217
+[]\OT1/cmtt/m/n/10 It overrides the dcc_config.xml configuration parameter Dele
+teUnknown and explicitly[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 243
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 243.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[46
+
+]
+Overfull \hbox (17.49252pt too wide) in paragraph at lines 258--258
+[]\OT1/cmtt/m/n/10 Alternatively the listener settings can be overriden with th
+e command line options.[] 
+ []
+
+
+Overfull \hbox (17.49252pt too wide) in paragraph at lines 268--268
+[]\OT1/cmtt/m/n/10 --interval            the frequency it is polled I/F given b
+y MNEMONIC (in seconds)[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 283
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 283.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[47
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 299
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 299.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [48
+
+]
+Overfull \hbox (75.24202pt too wide) in paragraph at lines 306--306
+[]\OT1/cmtt/m/n/10 --OK        notify success in the delivery to the I/F -f ful
+l_path_filelist list of files send[] 
+ []
+
+
+Overfull \hbox (143.49142pt too wide) in paragraph at lines 307--307
+[]\OT1/cmtt/m/n/10 --KO        notify failure in the delivery to the I/F -f ful
+l_path_filelist list of files failed to be sent[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 315
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 315.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[49
+
+]
+Overfull \hbox (64.74211pt too wide) in paragraph at lines 323--323
+[]\OT1/cmtt/m/n/10 Files sent can be registered in an Inventory and the deliver
+y date is set to the latest one.[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 363
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 363.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[50
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 392
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 392.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [51
+
+]
+Overfull \hbox (22.74248pt too wide) in paragraph at lines 418--418
+[]\OT1/cmtt/m/n/10 With this option the Incoming file-types configuration file 
+(dec_incoming_files.xml)[] 
+ []
+
+
+Overfull \hbox (22.74248pt too wide) in paragraph at lines 423--423
+[]\OT1/cmtt/m/n/10 With this option the Outgoing file-types configuration file 
+(dec_outgoing_files.xml)[] 
+ []
+
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 442
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 442.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+[52
+
+])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 148
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 148.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [53]
+Appendix A.
+(./dec_config_general.tex [54
+
+]
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 105
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 105.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [55])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 151
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 151.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [56]
+Appendix B.
+(./dec_config_interfaces.tex [57
+
+])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 154
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 154.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [58]
+Appendix C.
+
+Overfull \hbox (0.75934pt too wide) in paragraph at lines 154--154
+|[]\OT1/cmr/bx/n/24.88 Pull Cir-cu-la-tions Con-fig-u-ra-tion| 
+ []
+
+(./dec_config_pull.tex [59
+
+])
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 157
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 157.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [60]
+Appendix D.
+(./dec_config_log.tex
+Underfull \hbox (badness 10000) in paragraph at lines 19--20
+
+ []
+
+[61
+
+]
+Overfull \hbox (48.99225pt too wide) in paragraph at lines 53--53
+[]      \OT1/cmtt/m/n/10 <formatter type="Log4r::PatternFormatter" pattern="[%5
+l] %d %c.#{moduleName} - %m">[] 
+ []
+
+
+Overfull \hbox (12.24257pt too wide) in paragraph at lines 61--61
+[]      \OT1/cmtt/m/n/10 <formatter type="PatternFormatter" pattern="[%5l] %d %
+c.#{moduleName} - %m">[] 
+ []
+
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 161.
+File: ../res/logo_elecnor_deimos.png Graphic file (type png)
+<use ../res/logo_elecnor_deimos.png>
+Package pdftex.def Info: ../res/logo_elecnor_deimos.png  used on input line 161
+.
+(pdftex.def)             Requested size: 56.9055pt x 27.74373pt.
+File: ../res/DEC_Logo_White.png Graphic file (type png)
+<use ../res/DEC_Logo_White.png>
+Package pdftex.def Info: ../res/DEC_Logo_White.png  used on input line 161.
+(pdftex.def)             Requested size: 28.45274pt x 28.44997pt.
+ [62]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 161.
+ (./dec_sum_main.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 161.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 161.
+
+
+Package rerunfilecheck Warning: File `dec_sum_main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `dec_sum_main.out':
+(rerunfilecheck)             Before: 20AE48D19389DDEA9DFA655A5B991F5F;14947
+(rerunfilecheck)             After:  BD5F3BEBC4C3602FAB133409C62169D7;15062.
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 161.
+ ) 
+Here is how much of TeX's memory you used:
+ 10722 strings out of 492616
+ 154287 string characters out of 6129481
+ 481969 words of memory out of 5000000
+ 14036 multiletter control sequences out of 15000+600000
+ 6446 words of font info for 24 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 37i,16n,54p,551b,1931s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{subsubsection.5.3.28.4} has been referenced but d
+oes not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.28.3} has been referenced but doe
+s not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.28.2} has been referenced but doe
+s not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.28.1} has been referenced but doe
+s not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.25.1} has been referenced but doe
+s not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.20.2} has been referenced but doe
+s not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.5.3.20.1} has been referenced but doe
+s not exist, replaced by a fixed one
+
+</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><
+/usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></
+usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></us
+r/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/
+local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
+ocal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/lo
+cal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/loc
+al/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on dec_sum_main.pdf (63 pages, 422099 bytes).
+PDF statistics:
+ 1574 PDF objects out of 1728 (max. 8388607)
+ 1480 compressed objects within 15 object streams
+ 423 named destinations out of 1000 (max. 500000)
+ 1472 words of extra memory for PDF output out of 10000 (max. 10000000)
+

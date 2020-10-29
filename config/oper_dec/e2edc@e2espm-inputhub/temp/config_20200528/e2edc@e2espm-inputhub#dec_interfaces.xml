@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- ================================================================ -->
+ 
+  <Interface Name="S2PDGS">
+    <Desc>S2PDGS Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">10</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
+	   <Port>22</Port>
+      <User>e2espm</User>
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+	    <!--
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="review_inputs"/>
+	 <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/> -->
+         <!-- <Event Name="OnReceiveOK"             executeCmd="echo $PWD " />  -->
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+
+
+
+
+  <!-- ================================================================ -->
+    <Interface Name="SUPER_TCI">
+    <Desc>S2PDGS Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">10</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>100</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>pdmcdag1.sentinel2.eo.esa.int</Hostname>
+	   <Port>22</Port>
+      <User>e2espm</User>
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <DeleteFlag>true</DeleteFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="review_inputs"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/> -->
+         <!-- <Event Name="OnReceiveOK"             executeCmd="echo $PWD " />  -->
+         <!-- <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />  -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+
+  <!-- ================================================================ -->
+
+
+</Interfaces>

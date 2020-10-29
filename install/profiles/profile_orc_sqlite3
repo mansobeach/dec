@@ -1,0 +1,41 @@
+
+# Here are defined all the environment variables required for
+# the Data Exchange Component (both DDC & DCC)
+
+export MINARC_SERVER=http://localhost:4567
+
+export MINARC_SERVER=172.17.0.2:4567
+
+export MINARC_DB_ADAPTER=sqlite3
+
+export ORC_DB_ADAPTER=sqlite3
+
+export MINARC_DATABASE_NAME=$HOME/Sandbox/inventory/minarc_inventory
+
+export ORC_DATABASE_NAME=$HOME/Sandbox/inventory/orc_inventory
+
+export ORC_DATABASE_USER=root
+
+export MINARC_DATABASE_USER=root
+
+export ORC_DATABASE_PASSWORD=1mysql
+
+export MINARC_DATABASE_PASSWORD=1mysql
+
+#export MINARC_ARCHIVE_ROOT=$HOME/minarc_root
+
+export MINARC_ARCHIVE_ROOT=$HOME/Sandbox/minarc_root
+
+export MINARC_ARCHIVE_ERROR=$HOME/Sandbox/minarc_root/0.errors
+
+export ORC_CONFIG=$HOME/Projects/dec/config
+
+export ORC_TMP=/tmp/orc_tmp
+
+export PATH=$PATH:$MINARC_BASE/code/orc
+
+export RUBYLIB=$DEC_BASE/code
+
+
+unset USERNAME
+

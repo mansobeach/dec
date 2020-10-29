@@ -1,0 +1,56 @@
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% Acronyms
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+
+ 
+\begin{document}
+
+\begin{longtable}{|m{2.8cm}|m{10cm}|}
+	\caption{Acronyms\label{long}} \\
+    \hline
+	\textbf{Acronym} & \textbf{Text} \\
+	\hline
+	ADP & Auxiliary Data Provider \\ \hline
+	COTS & Commercial Off The Shelf \\ \hline
+	CPU & Central Processing Unit \\ \hline
+	DEC & Data Exchange Component \\ \hline
+	FAQ & Frequently Asked Questions \\ \hline
+	FTP & File Transfer Protocol \\ \hline
+	HTTP & Hypertext Transfer Protocol \\ \hline
+	HTTPS & Hypertext Transfer Protocol Secure\\ \hline
+	I/F & Interface \\ \hline
+	ICD & Interface Control Document \\ \hline
+	IERS & International Earth Rotation Service \\ \hline
+<<<<<<< HEAD
+	ILRS & International Laser Ranging Service \\ \hline
+=======
+	JSON & Javascript Object Notation \\ \hline
+>>>>>>> c28077018a3b6eba1ab3355bfd6203851f52175b
+	OS & Operative System \\ \hline
+	RPF & Reference Planning Facility \\ \hline
+	RVM & Ruby Version Manager \\ \hline
+	SFTP & Secure File Transfer Protocol \\ \hline
+	SLR & Satellite Laser Ranging \\ \hline
+	SMTP & Simple Mail Transfer Protocol \\ \hline
+	SQL & Structured Query Language \\ \hline
+	SSH & Secure Shell \\ \hline
+	SSL & Secure Socket Layer \\ \hline
+	SW & Software \\ \hline
+	TAI & Temps Atomique International \\ \hline
+	TCP & Transfer Control Protocol \\ \hline
+	TLS & Transport Layer Security \\ \hline
+	URL & Universal Resource Locator \\ \hline
+	UTC & Universal Time Coordinated \\ \hline
+	WebDAV & Web Distributed Authoring \& Versioning \\ \hline
+	XML & Extensible Markup Language \\ \hline						
+\end{longtable}
+
+\end{document}
+

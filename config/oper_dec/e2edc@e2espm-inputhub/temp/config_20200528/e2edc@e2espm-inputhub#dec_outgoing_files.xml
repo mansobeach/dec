@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces>
+            
+      <Interface>
+         <Name>LOCALHOST_SECURE</Name>
+         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_localhost_secure</LocalOutbox>
+         <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
+         <Name>LOCALHOST_NOT_SECURE</Name>
+         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_localhost_notsecure</LocalOutbox>
+         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
+      </Interface>
+      
+      <Interface>
+         <Name>FILESYSTEM</Name>
+         <LocalOutbox>$DEC_TMP/../dec/out_basket_if_filesystem</LocalOutbox>
+         <UploadDir>/tmp/dec_simul_if/filesystem/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/filesystem/upload/_TEMP_</UploadTemp>
+      </Interface>      
+            
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+   <ListFiles>
+
+      <File Type="finals.all"> 
+         <Description></Description>
+         <ToList>
+            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="tai-utc.dat"> 
+         <Description></Description>
+         <ToList>
+            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+   
+      <File Type="GIP_PROBA2"> 
+         <Description></Description>
+         <ToList>
+            <Interface Name="LOCALHOST_NOT_SECURE"    Compress="7Z"     DeliveryMethods="FTP" />
+            <Interface Name="LOCALHOST_SECURE"        Compress="NONE"   DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2A*">
+         <Description></Description>
+         <ToList>
+            <Interface Name="LOCALHOST_NOT_SECURE"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2B*">
+         <Description></Description>
+         <ToList>
+            <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+   </ListFiles>
+
+   <!-- =========================================================== -->
+
+</Config>
