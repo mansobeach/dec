@@ -236,7 +236,7 @@ class DECTestCasePRIP < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def test_cmd1
+   def test_GIP
    
       ## References:
       ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
@@ -260,6 +260,31 @@ class DECTestCasePRIP < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
+   ## ------------------------------------------------------
+
+   def test_HKTM
+      
+      puts
+      puts "================================================"
+      puts "DEC_UnitTestsPRIP::#{__method__.to_s}"
+      puts
+
+      ## Query for HKTM
+      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:HKTM"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+      ## Query for PRIP
+      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:HKTM -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+   end
+
+   ## ------------------------------------------------------
+
+
+   ## ------------------------------------------------------
 
 end
 

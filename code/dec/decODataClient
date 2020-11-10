@@ -1,5 +1,22 @@
 #!/usr/bin/env ruby
 
+# The decODataClient is a simple OData client to hit Copernicus Sentinel
+# servers to extract Sentinel-2 product metadata.
+#
+# DHUS queries:
+#
+# Query by Sentinel-2 Datatake Identifier: which looks for the associated
+# published Complete Single Tile products 
+#
+# --query dhus:GS2B_20200903T104429_018252_N02.14
+#
+#
+# PRIP: queries:
+#
+# Query is so far targetting S2PRIP specifically.
+#
+# --query prip:S2B_OPER_MSI_L0__DS_VGS2_20201028T163228_S20201028T144729_N02.09:MSI_L0__GR
+#
 #
 # == Usage
 # decODataClient 
@@ -8,7 +25,11 @@
 #     --query     <dhus:l2a:GS2B_20200903T104429_018252_N02.14> | <prip>
 # 
 #
+# prip:S2A_OPER_MSI_L0__DS_VGS2:MSI_L0__GR
+#
 # long long long long query GS2B_20201015T092029_018852_N02.14
+# 
+# S2B_OPER_MSI_L0__DS_VGS2_20201028T163228_S20201028T144729_N02.09
 
 #########################################################################
 ###
@@ -46,11 +67,14 @@ def main
    @query         = ""
    @bUsage        = false
    @bShowVersion  = false
+   @isVerboseMode = false
+   @isDebugMode   = false
    
    opts = GetoptLong.new(
      ["--user", "-u",               GetoptLong::REQUIRED_ARGUMENT],
      ["--password", "-p",           GetoptLong::REQUIRED_ARGUMENT],
      ["--query", "-q",              GetoptLong::REQUIRED_ARGUMENT],
+     ["--Verbose", "-V",            GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
      ["--help", "-h",               GetoptLong::NO_ARGUMENT]
@@ -63,6 +87,7 @@ def main
             when "--user"              then @user           = arg.to_s.chomp
             when "--password"          then @password       = arg.to_s.chomp
             when "--query"             then @query          = arg.to_s.upcase
+            when "--Verbose"           then @isVerboseMode  = true
             when "--version"           then @bShowVersion   = true
 			   when "--help"              then @bUsage         = true
          end
@@ -114,7 +139,6 @@ def main
       ret = queryDHUS(@user, @password, @query)
    end
  
- 
    if ret == true then
       exit(0)
    else
@@ -140,13 +164,25 @@ end
 ## --------------------------------------------------------------
 
 def queryPRIP(user, password, query)
+   
+   nParams     = query.split(":").length
+   system      = query.split(":")[0]
+   item        = query.split(":")[1]
+   subitem     = query.split(":")[2]
+   strURL      = ""
+   bQueryDS    = false
+   
+   if nParams > 1 then
+      strURL = %Q{#{PRIP::API_URL_ODATA_PRODUCT}#{PRIP::API_ODATA_FILTER_CONTAINS}(Name,%27#{item}%27)}
+      if item.include?("MSI_L0__DS") then
+         bQueryDS = true
+      end
+   else
+      strURL = PRIP::API_URL_ODATA_PRODUCT
+   end
       
-   strURL = PRIP::API_URL_ODATA_PRODUCT
-      
-   uri = URI.parse(strURL)
-      
-   http = Net::HTTP.new(uri.host, uri.port)
-
+   uri               = URI.parse(strURL)
+   http              = Net::HTTP.new(uri.host, uri.port)
    http.use_ssl      = true
    http.verify_mode  = OpenSSL::SSL::VERIFY_NONE
 
@@ -169,17 +205,95 @@ def queryPRIP(user, password, query)
       puts JSON.pretty_generate(doc)
    end
    
-   doc["value"].each{|item|
-      puts item["Name"]
-      puts item["ContentLength"]
-      puts item["PublicationDate"]
-      puts item["EvictionDate"]
+   if bQueryDS == true and subitem != nil then
       puts
+      puts "Processing #{doc["value"].length} datastrip(s)"
+      puts
+   end
+   
+   doc["value"].sort_by!{|item| item["Name"]}.each{|item|
+      puts item["Name"]
+      if @isVerboseMode == true then
+         # puts item["ContentLength"]
+         puts "ContentDate       : #{item["ContentDate"]}"
+         puts "PublicationDate   : #{item["PublicationDate"]}"
+         puts "EvictionDate      : #{item["EvictionDate"]}"
+         puts
+      end
+      
+      if bQueryDS == true and subitem != nil then
+         subitem = item["Name"].gsub("MSI_L0__DS", "MSI_L0__GR").slice(0, 40)
+         queryPRIP_DS_to_PDI(user, password, subitem)
+      end
+      
    }                        
+   
+   if bQueryDS == false or subitem == nil then
+      puts
+      puts "#{doc["value"].length} item(s)"
+      puts
+   end
    
    return true
 end
 
+## -------------------------------------------------------------
+
+## 
+def queryPRIP_DS_to_PDI(user, password, pdi)
+   strURL   = %Q{#{PRIP::API_URL_ODATA_PRODUCT}#{PRIP::API_ODATA_FILTER_CONTAINS}(Name,%27#{pdi}%27)}
+      
+   if @isDebugMode == true then
+      puts strURL
+   end
+
+   uri   = URI.parse(strURL)
+   http  = Net::HTTP.new(uri.host, uri.port)
+
+   http.use_ssl      = true
+   http.verify_mode  = OpenSSL::SSL::VERIFY_NONE
+
+   request = Net::HTTP::Get.new(uri.request_uri)
+         
+   request.basic_auth(user, password)
+   response = http.request(request)
+      
+   if @isDebugMode == true then
+      puts strURL
+      puts uri.request_uri
+      puts response.code
+      puts response.message
+      puts
+   end
+
+   doc = JSON.parse(response.body)
+   
+   if @isDebugMode == true then
+      puts JSON.pretty_generate(doc)
+   end
+   
+   doc["value"].sort_by!{|item| item["Name"]}.each{|item|
+      puts item["Name"]
+      if @isVerboseMode == true then
+         # puts item["ContentLength"]
+         puts "ContentDate       : #{item["ContentDate"]}"
+         puts "PublicationDate   : #{item["PublicationDate"]}"
+         puts "EvictionDate      : #{item["EvictionDate"]}"
+         puts
+      end
+   }                        
+   
+   puts
+   puts "#{doc["value"].length} item(s)"
+   puts
+
+   if doc["value"].length % 12 != 0 then
+      puts
+      puts "Missing PDI for #{pdi} !!"
+      puts
+      exit(99)
+   end
+end
 ## -------------------------------------------------------------
 
 def queryDHUS(user, password, query)

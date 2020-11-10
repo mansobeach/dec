@@ -1,6 +1,21 @@
+#########################################################################
+###
+### === Ruby source for #Gem Specification
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component (DEC)
+### 
+### Git: gem_dec.gemspec,v $Id$ $Date$
+###
+### System Component DEC
+###
+#########################################################################
+
+
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.0.34'
+  s.version     = '1.0.35'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -15,15 +30,21 @@ Gem::Specification.new do |s|
                   Dir['code/arc/ReadMinarcConfig.rb'] + \
                   Dir['code/arc/ReportEditor.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
-                  Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF'] + \
-#                  Dir['code/arc/plugins/test/example_1.m2ts'] + \
-#                  Dir['code/arc/plugins/test/example_1.mp4'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
                   Dir['config/minarc_config.xml'] + \
                   Dir['config/minarc_log_config.xml'] + \
                   Dir['install/minarc_test.env'] + \
                   Dir['install/minarc_test.bash']
+
+
+  ## --------------------------------------------
+  ## Tailored installer to include Postgresql
+  if ENV.include?("MINARC_TEST") == true then
+     s.files = s.files + Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF']
+     s.files = s.files + Dir['code/arc/plugins/test/example_1.m2ts']
+  end
+  ## --------------------------------------------
 
   s.require_paths = ['code', 'code/arc']
 
@@ -40,16 +61,22 @@ Gem::Specification.new do |s|
                      'minArcReallocate', \
                      'minArcRetrieve', \
                      'minArcServer', \
-                     'minArcStatus', \
-                     'minArcUnitTests', \
-                     'minArcSmokeTestLocal', \
-                     'minArcSmokeTestRemote'
-                     ]
+                     'minArcStatus'
+                      ]
+
+
+  ## --------------------------------------------
+  ##
+  ## Include test executables
+  if ENV.include?("MINARC_TEST") == true then
+     s.executables   << 'minArcUnitTests'
+     s.executables   << 'minArcSmokeTestLocal'
+     s.executables   << 'minArcSmokeTestRemote'
+  end
+  ## --------------------------------------------
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
-  
-
   
   ## ----------------------------------------------
   
@@ -57,22 +84,32 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('dotenv', '~> 2.7')
+  s.add_dependency('exiftool', '~> 1.2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('json', '~> 2.0')
   s.add_dependency('log4r', '~> 1.0')
-#  s.add_dependency('sinatra', '~> 2.0')
-#  s.add_dependency('thin', '~> 1.7')
+  s.add_dependency('mini_exiftool', '~> 2.0')
+  s.add_dependency('sinatra', '~> 2.0')
+  s.add_dependency('sinatra-reloader', '~> 1.0')
+  s.add_dependency('thin', '~> 1.7')
   s.add_dependency('writeexcel', '~> 1.0')
   
+  ## --------------------------------------------
+  ##
+  ## Tailored installer to include Postgresql
+  if ENV.include?("MINARC_PG") == true then
+     s.add_dependency('pg', '~> 1')
+  end
+  ## --------------------------------------------
+  
+  
   ## ----------------------------------------------
   
-   s.add_development_dependency('sqlite3', '~> 1.4')
-   s.add_development_dependency('test-unit', '~> 3.0')
+  s.add_development_dependency('sqlite3', '~> 1.4')
+  s.add_development_dependency('test-unit', '~> 3.0')
 
   ## ----------------------------------------------
-  
-  
   
   ## ----------------------------------------------
 

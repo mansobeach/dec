@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-##
-## === Ruby source for #DEC repository management
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Data Exchange Component (DEC) repository
-## 
-## Git: rakefile,v $Id$ $Date$
-##
-## module DEC
-##
+###
+### === Ruby source for #DEC repository management
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component (DEC) repository
+### 
+### Git: rakefile,v $Id$ $Date$
+###
+### module DEC
+###
 #########################################################################
 
 require 'rake'
@@ -44,7 +44,7 @@ namespace :dec do
 
    ## ----------------------------------------------------------------
 
-   desc "build docker DEC image"
+   desc "build docker DEC image [user , host , prefix]"
 
    task :image_build, [:user, :host, :suffix] do |t, args|
       args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
@@ -140,20 +140,40 @@ namespace :dec do
    desc "build DEC gem [user, host, suffix = s2 | s2odata]"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2")
-      puts "building gem #{args[:suffix]} DEC with config #{args[:user]}@#{args[:host]}"
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_pg")
+      puts "building gem dec #{args[:suffix]} DEC with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
          puts "DEC configuration not present in repository"
          exit(99)
       end
    
+      ## -------------------------------
+      ##
+      ## Build flags
+      ##
       if args[:suffix].include?("odata") == true then
-         puts "Building gem with DEC_ODATA flag"
+         puts "building gem dec #{args[:suffix]} with flag DEC_ODATA"
          ENV['DEC_ODATA'] = "true"
       else
          ENV.delete('DEC_ODATA')
       end
+
+      if args[:suffix].include?("test") == true then
+         puts "building gem dec #{args[:suffix]} with flag DEC_TEST"
+         ENV['DEC_TEST'] = "true"
+      else
+         ENV.delete('DEC_TEST')
+      end
+      
+      if args[:suffix].include?("pg") == true then
+         puts "building gem dec #{args[:suffix]} with flag DEC_PG"
+         ENV['DEC_PG'] = "true"
+      else
+         ENV.delete('DEC_PG')
+      end
+            
+      ## -------------------------------
    
       cmd = "gem build gem_dec.gemspec"
       ret = `#{cmd}`
@@ -276,7 +296,7 @@ namespace :dec do
    desc "install DEC"
 
    task :install ,[:user, :host, :suffix] => :build do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2_pg)
       puts
       puts @filename
       puts
@@ -314,6 +334,28 @@ namespace :dec do
       puts cmd
       system(cmd)
    end
+
+
+   ## --------------------------------------------------------------------
+
+   desc "help in the kitchen"
+
+   task :help do
+      puts "The kitchen supports the following parameters"
+      puts "user" 
+      puts "host"
+      puts "suffix: odata | test | pg"
+      puts
+      puts "Some of the above flags can be combined:"
+      puts
+      puts "odata: it ships only the decODataClient"
+      puts
+      puts "test: it ships the DEC test tools"
+      puts
+      puts "pg: it includes installation requirement for postgresql gem"
+      puts
+   end
+   ## --------------------------------------------------------------------
 
    ## --------------------------------------------------------------------
 

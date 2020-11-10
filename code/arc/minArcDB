@@ -7,6 +7,7 @@
 #     --drop-tables     drops all minarc tables
 #     --Update-tables   performs a migration update of minarc tables
 #     --export-rows     it exports all rows
+#     --Debug           shows Debug info during the execution
 #     --help            shows this help
 # 
 # == Author
@@ -46,6 +47,7 @@ def main
    @bExport       = false
    @bShowVersion  = false
    @bShowUsage    = false
+   @bIsDebugMode  = false
    
    opts = GetoptLong.new(
      ["--drop-tables",     "-d",       GetoptLong::NO_ARGUMENT],
@@ -54,6 +56,7 @@ def main
      ["--export-rows",     "-e",       GetoptLong::NO_ARGUMENT],
      ["--version", "-v",               GetoptLong::NO_ARGUMENT],
      ["--usage",   "-u",               GetoptLong::NO_ARGUMENT],
+     ["--Debug",   "-D",               GetoptLong::NO_ARGUMENT],
      ["--help",            "-h",       GetoptLong::NO_ARGUMENT]
      )
     
@@ -66,6 +69,7 @@ def main
             when "--export-rows"       then @bExport              = true
             when "--usage"             then @bShowUsage           = true
 			   when "--help"              then @bShowUsage           = true
+            when "--Debug"             then @bIsDebugMode         = true
             when "--version"           then @bShowVersion         = true
          end
       end
@@ -111,6 +115,11 @@ def main
       exit(99)
    end
 
+   # -------------------------------------------------------
+   
+   if @bIsDebugMode == true then
+      self.print_environment
+   end
    # -------------------------------------------------------
 
    if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
@@ -189,7 +198,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -17 #{fullpathFile}"}`
+   value = `#{"head -18 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

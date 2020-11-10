@@ -32,25 +32,28 @@ require 'arc/ReadMinarcConfig'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-#  0.1  - test_ReadConfig
-#  0.2  - test_commandline_helpers
-#  1  - test_local_minArcStore
-#  2  - test_local_minArcRetrieve
-#  3  - test_local_purge
-#  4  - test_local_status_filename
-#  5  - test_remote_status_filename
-#  6  - test_remote_delete
-#  7  - test_remote_retrieve
-#  8  - test_remote_api_version
-#  9  - test_remote_api_retrieve_file
-# 10  - test_remote_api_retrieve_type
-# 11  - test_remote_api_delete
-# 12  - test_local_and_remote_status_global
-# 13  - test_handler_s2pdgs
-# 14  - test_handler_m2ts_local
-# 15  - test_handler_m2ts_local_mp4
-# 16  - test_local_minArcFile
-# 17  - test_contingency
+##  0.1  - test_ReadConfig
+##  0.2  - test_commandline_helpers
+##  1.0  - test_local_minArcStore
+##  1.1  - test_local_minArcStore_Bulk
+##  2  - test_local_minArcRetrieve
+##  3  - test_local_purge
+##  4  - test_local_status_filename
+##  5  - test_remote_status_filename
+##  6  - test_remote_delete
+##  7  - test_remote_retrieve
+##  8  - test_remote_api_version
+##  9  - test_remote_api_retrieve_file
+## 10  - test_remote_api_retrieve_type
+## 11  - test_remote_api_delete
+## 12  - test_remote_api_requestArchive
+## 13  - test_local_and_remote_status_global
+## 14  - test_handler_s2pdgs
+## 15  - test_handler_m2ts_local
+## 16  - test_handler_m2ts_local_mp4
+## 17  - test_local_minArcFile
+## 18  - test_minArcServer
+## 19  - test_contingency
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -93,6 +96,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts      
       @@conf.wrapper_print_environment
       puts
+ 
+      ## Mixin does not work !!!!!
+      ## checkDirectory(ENV["MINARC_ARCHIVE_ROOT"])
+      system("mkdir -p /tmp/minarc/archive_root")
+      system("mkdir -p /tmp/minarc/tmp")
  
       if @@conf.wrapper_check_environment == false then
          puts "minArc environment not suited for unit tests"
@@ -162,26 +170,52 @@ class TestCaseStore < Test::Unit::TestCase
             
       puts "init server"
       FileUtils.rm_f("#{ENV['MINARC_TMP']}/minarc_server.out")
+      # @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
       @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
       Dir.chdir (prevDir)
       puts @serverPID
+
+
+      @@arrInputFiles = [ \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
             
    end
    
    # --------------------------------------------------------
    
    Test::Unit.at_exit do
-      puts "End of tests"
+#       puts "End of tests"
+#             
+#       puts "Killing MINARC_Server"
+#       cmd = "minArcServer -k"
+#       system(cmd)
+#       
+#       Process.kill(9, @serverPID)
             
-      puts "Killing MINARC_Server"
-      cmd = "minArcServer -k"
-      system(cmd)
-      
-      Process.kill(9, @serverPID)
-      
-      cmd = "\\rm -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336*"
-      system(cmd)
-      
    end
    
    # --------------------------------------------------------   
@@ -195,7 +229,15 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
-      @@conf.wrapper_load_config_development
+      cmd = "minArcPurge -Y"
+      ret = system(cmd)
+
+      if ret == false then
+         puts "Error when cleaning the minarc root directory ! :-("
+         puts
+         exit(99)
+      end
+
       
       @path = "#{ENV['MINARC_BASE']}/code/arc"
       
@@ -222,19 +264,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-
-      @@conf.wrapper_load_config_development
-
-      # ENV.delete("MINARC_SERVER")
-
-      cmd = "minArcPurge -Y"
-      ret = system(cmd)
-
-      if ret == false then
-         puts "Error when cleaning the minarc root directory ! :-("
-         puts
-         exit(99)
-      end
+      
       puts
       puts "END OF MINARC_UnitTests::#{__method__.to_s}"
       puts
@@ -374,11 +404,11 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcFile"
       assert(!system(cmd), cmd)
 
-      @@conf.wrapper_load_config_development
+      
       
    end
    
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def test_local_minArcStore
       puts __method__.to_s
@@ -387,7 +417,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
-      @@conf.wrapper_load_config_development
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} --noserver"
       puts cmd
@@ -395,8 +429,57 @@ class TestCaseStore < Test::Unit::TestCase
       
       system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
    end
-   # --------------------------------------------------------
+   ## ------------------------------------------------------
 
+   ## Handler_S2PDGS works with
+   ## > the -m --move flag
+   ## > the -M --Mutex flag
+   
+   def test_local_minArcStore_Bulk
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      @@arrInputFiles.each{|filename|
+         puts "minArcUnitTests::#{__method__.to_s} #{filename}"
+         system("echo \'#{filename}\' > /tmp/minarc/tmp//#{filename}")
+      }
+
+      sleep(3.0)
+
+      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
+      puts cmd
+      assert(spawn(cmd), "minArcStore bulk mode")
+      sleep(1.0)
+
+      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
+      puts cmd
+      assert(!system(cmd), "minArcStore bulk mode should be blocked")
+
+      cmd = "minArcRetrieve -T"
+      puts cmd
+      assert(system(cmd), "minArcStore Types")
+
+
+      @@arrInputFiles.each{|filename|
+         cmd = "minArcStatus -f #{File.basename(filename, ".*")}"
+         puts cmd
+         assert(system(cmd), "minArcStatus")
+      }
+
+      sleep(6.0)
+
+      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
+      puts cmd
+      assert(system(cmd), "minArcStore bulk mode")
+
+   end
+   ## ------------------------------------------------------
+   
    def test_local_minArcRetrieve
       puts __method__.to_s
       puts
@@ -503,7 +586,7 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")} -D"
       puts cmd
       assert(system(cmd), "minArcDelete")
-      @@conf.wrapper_load_config_development
+      
    end
 
    # -------------------------------------------------------------
@@ -715,7 +798,47 @@ class TestCaseStore < Test::Unit::TestCase
              )
    end
 
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
+
+   def test_remote_api_requestArchive
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      system("mkdir -p /tmp/minarc/tmp/")
+
+      @@arrInputFiles.each{|filename|
+         puts "minArcUnitTests::#{__method__.to_s} #{filename}"
+         cmd = "echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}"
+         puts cmd
+         system(cmd)
+      }
+
+      sleep(3.0)
+
+
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "curl localhost:4567/#{ARC::API_URL_REQUEST_ARCHIVE}"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      sleep(10.0)
+      
+      arr = Dir["/tmp/minarc/tmp/*"]
+      puts arr
+      
+      cmd = "curl localhost:4567/dec/arc/minArcRetrieve/S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001"
+      puts 
+      puts cmd
+         
+   end
+
+   ## -------------------------------------------------------------
 
    def test_local_and_remote_status_global
       puts __method__.to_s
@@ -752,9 +875,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-   
-      @@conf.wrapper_load_config_development
-      
+         
       testFile1 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml"
       testFile2 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml"
       
@@ -811,8 +932,6 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-   
-      @@conf.wrapper_load_config_development
       
       cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.m2ts -D --noserver"
       puts cmd
@@ -852,8 +971,6 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-   
-      @@conf.wrapper_load_config_development
       
       cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.mp4 -D --noserver"
       puts cmd
@@ -916,7 +1033,68 @@ class TestCaseStore < Test::Unit::TestCase
 
 
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
+   ##
+   ## minARC inventory is not created
+
+   def test_minArcServer
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      puts cmd
+      assert(spawn(cmd), cmd)
+
+      puts
+      
+      sleep(5.0)
+ 
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -V"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      ## store file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "curl localhost:4567/dec/arc/requestArchive/*"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "curl localhost:4567/dec/arc/requestArchive/S2A_OPER_REP_OPDPC__SGS*"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      return
+
+      cmd = "minArcRetrieve -f NON_EXISTING_FILE"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+   end
+   ## -------------------------------------------------------------
 
    ## -----------------------------------------------------------
    ##
@@ -987,7 +1165,7 @@ class TestCaseStore < Test::Unit::TestCase
 end
 
 
-#=====================================================================
+# =====================================================================
 
 
 #-----------------------------------------------------------

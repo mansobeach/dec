@@ -109,6 +109,11 @@ class ReadMinarcConfig
    end
    ## -----------------------------------------------------------
 
+   def getArchiveIntray
+      return @workflow[:archiveIntray]
+   end
+   ## -----------------------------------------------------------
+
 
 private
 
@@ -117,9 +122,9 @@ private
    @isDebugMode        = false
    @@configDirectory   = ""  
 
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
    
-   # Check that everything needed by the class is present.
+   ## Check that everything needed by the class is present.
    def checkModuleIntegrity
       
       bDefined = true
@@ -224,6 +229,7 @@ private
       archiveServer  = ""
       archiveRoot    = nil
       archiveError   = nil
+      archiveIntray  = nil
       tempDir        = nil
    
       XPath.each(xmlFile, "Configuration/Workflow"){     
@@ -248,6 +254,11 @@ private
             archiveError = expandPathValue(value.text)
          }
 
+         XPath.each(workflow, "ArchiveIntray"){      
+            |value|
+            archiveIntray = expandPathValue(value.text)
+         }
+
          XPath.each(workflow, "TempDir"){      
             |value|
             tempDir = expandPathValue(value.text)
@@ -260,6 +271,7 @@ private
       return Struct::Workflow.new(archiveServer, 
                                   archiveRoot,
                                   archiveError,
+                                  archiveIntray,
                                   tempDir)
 
    end
@@ -352,6 +364,7 @@ private
       Struct.new("Workflow",     :archiveServer,\
                                  :archiveRoot,\
                                  :archiveError,\
+                                 :archiveIntray,\
                                  :archiveTemp)
 
       if Struct::const_defined? "Inventory" then

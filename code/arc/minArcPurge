@@ -34,6 +34,8 @@
 require 'getoptlong'
 require 'rdoc'
 
+require 'cuc/Log4rLoggerFactory'
+
 require 'arc/MINARC_Environment'
 
 
@@ -91,14 +93,14 @@ def main
       exit(0)
    end
 
-   # -------------------------------------------------------
+   ## ------------------------------------------------------
 
    if @bConfirmed == false then
       usage
       exit(99)
    end
 
-   # -------------------------------------------------------
+   ## ------------------------------------------------------
 
    if self.checkEnvironmentEssential == false then
       puts
@@ -106,6 +108,29 @@ def main
       puts
       exit(99)
    end
+
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcPurge", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
+
 
    # -------------------------------------------------------
 
@@ -130,9 +155,15 @@ def main
    puts "Clean up of the Archive in #{archiveRoot}"
    puts
 
+   begin
+      Dir.chdir(archiveRoot)
+   rescue Exception => e
+      @logger.error("[ARC_601] Archive Root does not exist #{archiveRoot} #{'1F480'.hex.chr('UTF-8')}")
+      exit(99)
+   end
    
-   Dir.chdir(archiveRoot)
-
+   @logger.info("[ARC_000] Purge (Inventory wiped out / Archive Root deletion #{archiveRoot})")
+   
    ArchivedFile.delete_all
 
    cmd = "chmod -R a+x *"

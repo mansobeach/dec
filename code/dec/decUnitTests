@@ -1150,6 +1150,10 @@ class DECTestCase < Test::Unit::TestCase
    ## --------------------------------------------------------
 
    ## verification of the protocol LOCAL using interface "FILESYSTEM"
+   ##
+   ## this test contains integration with minArcServer ; an archive request
+   ##
+   ##
 
    def test_decGetFromInterface_LOCAL
       puts __method__.to_s
@@ -1157,6 +1161,11 @@ class DECTestCase < Test::Unit::TestCase
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
+
+      cmd = "minArcServer -s"
+      puts cmd
+      spawn(cmd)
+      sleep(2.0)
 
       cmd = "decManageDB -d"
       ret = system(cmd)
@@ -1194,6 +1203,11 @@ class DECTestCase < Test::Unit::TestCase
 
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      system(cmd)
+
 
       arr = Dir["/tmp/DEC*.log"]
                   

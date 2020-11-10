@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileRetriever class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id$: FileRetriever.rb,v 1.14 2008/11/26 12:40:47 decdev Exp $
-#
-# module MINARC
-#
+###
+### === Ruby source for #FileRetriever class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Mini Archive Component (MinArc)
+### 
+### Git: $Id$: FileRetriever.rb,v 1.14 2008/11/26 12:40:47 decdev Exp $
+###
+### module MINARC
+###
 #########################################################################
 
 require 'fileutils'
@@ -30,13 +30,14 @@ module ARC
 class FileRetriever
 
    include CUC::DirUtils
-   #-------------------------------------------------------------   
+   ## ----------------------------------------------------------- 
    
-   # Class contructor
-   def initialize(bListOnly = false, bNoServer = false)
+   ## Class contructor
+   def initialize(bListOnly = false, bNoServer = false, logger = nil)
       @bListOnly     = bListOnly
       @rule          = "ALL"
       @arrInv        = Array.new
+      @logger        = logger
       @isDebugMode   = false
       
       if ENV['MINARC_SERVER'] and !bNoServer then
@@ -48,14 +49,16 @@ class FileRetriever
 
       checkModuleIntegrity
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "FileRetriever debug mode is on"
+      if @logger != nil then
+         @logger.debug("FileRetriever debug mode is on")
+      end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def disableListMode
       @bListOnly = false
@@ -341,7 +344,11 @@ class FileRetriever
                # puts e.to_s
             end
             
-            puts "(Retrieved) : " << File.basename(file,File.extname(file))
+            if @logger != nil then
+               @logger.info("[ARC_200] Retrieved: #{File.basename(file,File.extname(file))}")
+            else
+               puts "(Retrieved) : " << File.basename(file,File.extname(file))
+            end
             
             if bUnpack == true then    
                unPackFile(destination, file)
@@ -588,7 +595,12 @@ private
             end
          end
       
-         puts "(Retrieved) : " << fileName
+         if @logger != nil then
+            @logger.info("[ARC_200] Retrieved: #{File.basename(fileName,File.extname(fileName))}")
+         else
+            puts "(Retrieved) : " << File.basename(fileName,File.extname(fileName))
+         end
+
          
          return true
 

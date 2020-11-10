@@ -24,15 +24,19 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.34"
+   @@version = "1.0.35"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.35" =>    "blah blah blah", \
       "1.0.34"  =>   "minarc_config.xml Inventory item added for database configuration\n\
-         Support to remote inventory / db different than localhost\n\
-         Inventory config now includes Database_Host & Database_Port items\n\
-         TBW2",\
+          Support to remote inventory / db different than localhost\n\
+          Inventory config now includes Database_Host & Database_Port items\n\
+          minarc_config.xml includes configuration item Workflow ArchiveIntray for server\n\
+          log messages formalisation\n\
+          Containerised support:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-287",\
       "1.0.33" =>    "Fix of https://jira.elecnor-deimos.com/browse/S2MPASUP-290\n\
           DEC RetrievedFiles report is now supported by Handler_S2PDGS:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-308\n\
@@ -169,7 +173,7 @@ module ARC
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
       ENV['MINARC_DATABASE_USER']         = "root"
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
-      ENV['RACK_ENV']                     = "development"
+      ENV['RACK_ENV']                     = "production"
    end
    
    ## ----------------------------------------------------------------

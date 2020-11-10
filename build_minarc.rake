@@ -38,14 +38,33 @@ namespace :minarc do
    desc "build minarc gem"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :borja, :host => "localhost", :suffix => :s2)
-      puts "building gem minarc_#{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
+      args.with_defaults(:user => :borja, :host => "localhost", :suffix => "s2_test_pg")
+      puts "building gem minarc #{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
          puts "minARC configuration not present in repository"
          exit(99)
       end
    
+      ## -------------------------------
+      ##
+      ## Build flags
+      ##
+      
+      if args[:suffix].include?("pg") == true then
+         puts "building gem minarc #{args[:suffix]} with flag MINARC_PG"
+         ENV['MINARC_PG'] = "true"
+      else
+         ENV.delete('MINARC_PG')
+      end
+   
+      if args[:suffix].include?("test") == true then
+         puts "building gem minarc #{args[:suffix]} with flag MINARC_TEST"
+         ENV['MINARC_TEST'] = "true"
+      else
+         ENV.delete('MINARC_TEST')
+      end
+      
       cmd = "gem build gem_minarc.gemspec"
       ret = `#{cmd}`
       if $?.exitstatus != 0 then
@@ -127,15 +146,15 @@ namespace :minarc do
    end
    ## ----------------------------------------------------------------
 
-   task :install ,[:user, :host] => :build do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost)
+   task :install ,[:user, :host, :suffix] => :build do |t, args|
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2_pg)
       puts
       puts @filename
       puts
       
       Rake::Task["minarc:uninstall"].invoke
       
-      cmd = "gem install #{@filename}"
+      cmd = "gem install #{@filename} --no-document"
       puts cmd
       system(cmd)
       rm @filename
@@ -147,6 +166,27 @@ namespace :minarc do
 #   
 #   end
    ## --------------------------------------------------------------------
+
+   ## --------------------------------------------------------------------
+
+   desc "help in the kitchen"
+
+   task :help do
+      puts "The kitchen supports the following parameters:"
+      puts "suffix" 
+      puts "user" 
+      puts "host"
+      puts "suffix: test | pg"
+      puts
+      puts "Some of the above flags can be combined:"
+      puts
+      puts "test: it ships the minArc test tools"
+      puts
+      puts "pg: it includes installation requirement for postgresql gem"
+      puts
+   end
+   ## --------------------------------------------------------------------
+
 
 end
 

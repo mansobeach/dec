@@ -15,7 +15,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.17'
+  s.version     = '1.0.18'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -29,14 +29,21 @@ Gem::Specification.new do |s|
                   Dir['code/ctc/*.rb'] + \
                   Dir['code/dec/*.rb'] + \
                   Dir['schemas/*.xsd'] + \
-                  Dir['config/dec_interfaces.xml'] + \
-                  Dir['config/dec_outgoing_files.xml'] + \
-                  Dir['config/ft_mail_config.xml'] + \
                   Dir['config/dec_log_config.xml'] + \
-                  Dir['config/dec_config.xml'] + \
-                  Dir['config/dec_incoming_files.xml'] + \
-                  Dir['config/oper/*.xml'] + \
-                  Dir['config/profile_dec'] # + \
+                  Dir['config/dec_config.xml']
+
+   ## --------------------------------------------
+   ##
+   ## Tailored installer to avoid shipping un-necessary only the OData client
+   if ENV.include?("DEC_ODATA") == false then
+      s.files = s.files + Dir['config/dec_incoming_files.xml']
+      s.files = s.files + Dir['config/dec_outgoing_files.xml']
+      s.files = s.files + Dir['config/dec_interfaces.xml']
+      s.files = s.files + Dir['config/ft_mail_config.xml']
+   end
+   ## --------------------------------------------
+
+
 
   s.require_paths = [ 'code', 'code/dcc', 'code/ddc', 'code/ctc', 'code/dec' ]
 
@@ -77,6 +84,27 @@ Gem::Specification.new do |s|
    end
    ## --------------------------------------------
 
+   ## --------------------------------------------
+   ##
+   ## Tailored installer to include only the OData client
+   if ENV.include?("DEC_TEST") == true then
+
+      if ENV.include?("DEC_ODATA") == false then
+         s.executables   << 'decUnitTests'
+         s.executables   << 'decUnitTests_ADP'
+         s.executables   << 'decUnitTests_FTPS'
+         s.executables   << 'decUnitTests_IERS'
+         s.executables   << 'decUnitTests_ncftpput'
+         s.executables   << 'decUnitTests_SBOA'
+         s.executables   << 'decUnitTests_WEBDAV_SECURE'
+         s.executables   << 'decUnitTests_mail'
+      end
+
+      s.executables   << 'decUnitTests_DHUS'
+      s.executables   << 'decUnitTests_PRIP'
+   end
+   ## --------------------------------------------
+
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
@@ -100,8 +128,15 @@ Gem::Specification.new do |s|
   ##
   ## Tailored installer to avoid some gems only for the OData client
   if ENV.include?("DEC_ODATA") == false then
-#      s.add_dependency('curb', '~> 0.9')
-#      s.add_dependency('pg', '~> 1')
+     s.add_dependency('curb', '~> 0.9')
+  end
+  ## --------------------------------------------
+
+  ## --------------------------------------------
+  ##
+  ## Tailored installer to include Postgresql
+  if ENV.include?("DEC_PG") == true then
+     s.add_dependency('pg', '~> 1')
   end
   ## --------------------------------------------
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# ===       
-#
-# === Written by Borja Lopez Fernandez
-#
-# === Casale & Beach
-# 
-#
-#
+###
+### ===       
+###
+### === Written by Borja Lopez Fernandez
+###
+### === Casale & Beach
+### 
+###
+###
 #########################################################################
 
 # This class allows minarc to handle S2PDGS files:
@@ -213,9 +213,9 @@ class Handler_S2PDGS
          @size_in_disk  = 0
       end
 
-      if args[:bDeleteSource] == true then
-         File.delete(name)
-      end
+#      if args[:bDeleteSource] == true then
+#         File.delete(@full_path_filename)
+#      end
 
    end
 

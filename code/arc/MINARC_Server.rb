@@ -9,11 +9,14 @@ require 'json'
 require 'ftools'
 
 require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
 require 'arc/MINARC_API'
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Status'
 require 'arc/MINARC_DatabaseModel'
 require 'arc/FileStatus'
+require 'arc/ReadMinarcConfig'
 
 include CUC::DirUtils
 include FileUtils::Verbose
@@ -31,16 +34,53 @@ class MINARC_Server < Sinatra::Base
    helpers Sinatra::CustomLogger
 
    configure do
-      puts "MINARC_Server: Loading general configuration"
+   
+   
+      puts "MINARC_Server: Loading general configuration " ##{settings.isDebugMode}"
       # set :bind, '0.0.0.0'
       set :server, :thin
       # set :server, :puma
       set :threaded, true
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
-      set :isDebugMode,       true
-      set :logger, Logger.new(STDOUT)
+      set :isDebugMode,       false
+      set :environment, :production
+      
+      # set :logger, Logger.new(STDOUT)
    
+   
+      ## ------------------------------------------------------
+      ##
+      ## Log configuration
+      
+      @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+      ## initialise the logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("minArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+      if settings.isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      
+      @@logger = loggerFactory.getLogger   
+      # @logger = Logger.new(STDOUT)
+   
+      if @@logger == nil then
+         puts
+		   puts "Could not initialize logging system !  :-("
+         puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		   exit(99)
+      end
+
+      ## ------------------------------------------------------
+      
+      @@inTray = ARC::ReadMinarcConfig.instance.getArchiveIntray
+      @@tmpDir = ARC::ReadMinarcConfig.instance.getTempDir
+      
+      @@logger.debug("Intray: #{@@inTray}")
+      @@logger.debug("TmpDir: #{@@tmpDir}")
+      ## ------------------------------------------------------
+      
       # Racks environment variable
       if !ENV['TMPDIR'] then
          ENV['TMPDIR'] = "#{ENV['MINARC_TMP']}"
@@ -55,42 +95,42 @@ class MINARC_Server < Sinatra::Base
       end
    end
 
-   # ----------------------------------------------------------
+   ## -----------------------------------------------------------
 
    configure :production do
-      puts
-      puts "Loading production configuration"
-      puts
-      puts ""
-      puts "========================================"
-      puts "Production Environment:"
-      print_environment
-      puts "========================================"
-      puts
-      puts
+      @@logger.debug("Loading production configuration")
+      if settings.isDebugMode == true then
+         puts ""
+         puts "========================================"
+         puts "Production Environment:"
+         print_environment
+         puts "========================================"
+         puts
+         puts
+      end
       check_environment_dirs      
    end
-   # ----------------------------------------------------------
+   ## ----------------------------------------------------------
 
    configure :development do
-      puts
-      puts "Loading development configuration"
-      puts
+      @@logger.debug("Loading development configuration")
       
       load_config_development
-               
-      puts "========================================"
-      puts "Development Environment:"
-      print_environment
-      puts "========================================"
-      puts
-      puts
 
+      if settings.isDebugMode == true then               
+         puts "========================================"
+         puts "Development Environment:"
+         print_environment
+         puts "========================================"
+         puts
+         puts
+      end
+      
       check_environment_dirs
       
       Dir.chdir(ENV['TMPDIR'])
    end
-   # ----------------------------------------------------------
+   ## ----------------------------------------------------------
 
    configure :test do
       # test configuration
@@ -102,40 +142,75 @@ class MINARC_Server < Sinatra::Base
    
    get "#{API_URL_RETRIEVE}/:filename" do |filename|
       msg = "GET #{API_URL_RETRIEVE} : get #{params[:filename]}"
-      logger.info msg
+      @@logger.info(msg)
 
       if settings.isDebugMode == true then
-         puts "==================================================="  
-         puts
-         puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
-         puts
+         @@logger.debug("MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}")
       end
       
       aFile = nil
       aFile = ArchivedFile.where(name: filename)
-      
+                  
       if aFile.size != 0 then
          theFile = aFile.to_a[0]
+         
          if settings.isDebugMode == true
+            @@logger.info("found #{theFile.filename}")
             puts "---------------------------------------------"
             theFile.print_introspection
             puts "---------------------------------------------"
             puts "Reading file #{theFile.path}/#{theFile.filename}"
             puts
          end
+                  
+         if File.extname(theFile.filename) == ".7z" then
+            prevDir = Dir.pwd
+            Dir.chdir(@@tmpDir)
+            ## enforces overwritting
+            cmd = "7z x #{theFile.path}/#{theFile.filename} -aoa"
+            ## avoids overwritting existing files
+            cmd = "7z x #{theFile.path}/#{theFile.filename} -aos"
+            ## -----------------------------------
+            if settings.isDebugMode == true
+               @@logger.debug(cmd)
+            end
+            ## -----------------------------------
+            ret = system(cmd)
+            arr = Dir["#{File.basename(theFile.filename, ".*")}*"]
+            @@logger.info("[ARC_200] Retrieved: #{arr[0]}")
+            send_file(arr[0])
+            Dir.chdir(prevDir)
+         end
+         
          send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
+         
 #         content = File.read("#{theFile.path}/#{theFile.filename}")             
 #         response.headers['filename']     = theFile.filename
 #         response.headers['Content-Type'] = "application/octet-stream"
 #         attachment(theFile.filename)
       else
-         puts "file #{params[:filename]} not found"
+         @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
          status API_RESOURCE_NOT_FOUND      
       end      
    end
 
-   # =================================================================
-
+   ## =================================================================
+   ##
+   ## Request Archive from the Intray
+   ##
+   ## GET API_URL_REQUEST_ARCHIVE?name=S2__OPER_REP_ARC____EPA
+   ##
+   get ARC::API_URL_REQUEST_ARCHIVE do
+      wildcard = params['name']
+      cmd      = "minArcStore -t S2PDGS -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
+      if settings.isDebugMode == true then
+         @@logger.debug(request.url)
+         @@logger.debug(cmd)
+      end
+      @@logger.info("[ARC_075] Request to archive from Intray #{@@inTray}/#{wildcard}")
+      spawn(cmd)
+      status API_RESOURCE_FOUND
+   end
 
    ## =================================================================
    ##
@@ -171,7 +246,7 @@ class MINARC_Server < Sinatra::Base
 
    get ARC::API_URL_VERSION do
       msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC.class_variable_get(:@@version)}"
-      logger.info msg      
+      @@logger.info(msg)
       "#{ARC.class_variable_get(:@@version)}"
    end
    
@@ -214,7 +289,7 @@ class MINARC_Server < Sinatra::Base
    ##
    get "#{API_URL_STAT_FILENAME}/:filename" do |filename|
       msg = "GET #{API_URL_STAT_FILENAME} : get #{params[:filename]}"
-      logger.info msg
+      @@logger.info(msg)
       
       if settings.isDebugMode == true then
          puts "==================================================="  
@@ -486,7 +561,7 @@ class MINARC_Server < Sinatra::Base
    # =================================================================
 
    not_found do
-      "driverSinatra: page not found"
+      "MINARC_Server shit: page #{request.path_info} not found"
    end
 
    # ----------------------------------------------------------
@@ -499,7 +574,8 @@ class MINARC_Server < Sinatra::Base
    # ----------------------------------------------------------
    
    get '/' do
-      erb :home
+      code = "<%= Time.now %>"
+      erb code
    end
    
    # ----------------------------------------------------------
@@ -541,15 +617,10 @@ class MINARC_Server < Sinatra::Base
    
    end
 
-   # ----------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # ----------------------------------------------------------
-   
-   get '/:param1/:param2/:param3' do
-      "List of params \n#{params[:param1]}\n#{params[:param2]}\n#{params[:param3]}\n"
-   end
 
-   ## ----------------------------------------------------------
+   ## -----------------------------------------------------------
    ##
    ## Release the activerecord connection upon every request
    
@@ -557,7 +628,7 @@ class MINARC_Server < Sinatra::Base
       ActiveRecord::Base.connection.close
    end
 
-   ## ----------------------------------------------------------
+   ## -----------------------------------------------------------
 
    run! if __FILE__ == $0
 

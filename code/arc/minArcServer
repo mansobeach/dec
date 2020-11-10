@@ -24,17 +24,19 @@
 #
 
 #########################################################################
-##
-## === Mini Archive Component (MinArc)
-##
-##  minArcServer
-##
+###
+### === Mini Archive Component (MinArc)
+###
+###  minArcServer
+###
 #########################################################################
 
 require 'getoptlong'
 require 'rdoc'
 
-require 'cuc/Listener'
+require 'cuc/Log4rLoggerFactory'
+require 'cuc/CheckerProcessUniqueness'
+
 require 'arc/MINARC_Environment'
 
 # require 'arc/MINARC_Server' (cf. require below)
@@ -120,6 +122,31 @@ def main
 
    # -------------------------------------------------------
 
+
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
    if @bCheckStatus == true then
       checkStatus
    end
@@ -134,15 +161,17 @@ def main
    
    exit(0)
 
+   # -------------------------------------------------------
+
 end
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-# It checks whether the server is running or not
-# It returns:
-# * 0 -> server is running
-# * 1 -> server is not running
-#
+## It checks whether the server is running or not
+## It returns:
+## * 0 -> server is running
+## * 1 -> server is not running
+##
 def checkStatus
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
    if @isDebugMode == true then
@@ -150,51 +179,63 @@ def checkStatus
    end
    ret     = checker.isRunning
    if ret == false then
-      puts "minArcServer is not running !"
-      exit(1)
+      @logger.info("[ARC_031] No daemon is running for minArcServer")
+      exit(0)
    else
-      puts "minArcServer is running :-)"
+      @logger.info("[ARC_032] minArcServer is running with PID #{checker.getRunningPID}")
       exit(0)
    end
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def startServer
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP']) 
    if @locker.isRunning == true then
-      puts "\n#{File.basename($0)} is already running !\n\n"
+      @logger.warning("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
       exit(99)
    end  
-   # Register in lock file the daemon
+   
    @locker.setRunning
+   
+   @logger.info("[ARC_005] Starting minArcServer")
    
    require 'arc/MINARC_Server'
 
-   MINARC_Server.run!
+   MINARC_Server.set :isDebugMode, @isDebugMode
 
+   # run MINARC_Server
+
+   begin
+      MINARC_Server.run!
+   rescue Exception => e
+      if @isDebugMode == true then
+         puts e.backtrace
+      end
+      @logger.error("[ARC_666] Cannot start server: #{e.to_s}")
+   end
    exit(0)
    
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
-#-------------------------------------------------------------
+## --------------------------------------------------------------
 
-# It stops the listener for the given I/F
+## It stops the server for the given I/F
 def stopServer
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
    pid     = checker.getRunningPID
    if pid == false then
-      msg = "minArcServer was not running :-|"
-      puts msg
-      # @logger.info(msg)
+      @logger.warn("[ARC_312] minArcServer was not running")
    else
-      puts "Sending signal SIGKILL to Process #{pid} for killing minArcServer"
+      if @isDebugMode == true then
+         @logger.debug("Sending signal SIGKILL to Process #{pid} for killing minArcServer")
+      end
       Process.kill(9, pid.to_i)
 	   checker.release
-      # @logger.info("minArcServer has been shut-down")
+      @logger.info("[ARC_060] minArcServer has been shut-down")
    end
 end
-#-------------------------------------------------------------
+## --------------------------------------------------------------
 
 
 # -------------------------------------------------------------

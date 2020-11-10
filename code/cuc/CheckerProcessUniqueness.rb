@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #CheckerProcessUniqueness class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Utils Component
-# 
-# CVS: $Id: CheckerProcessUniqueness.rb,v 1.3 2007/09/04 04:09:43 decdev Exp $
-#
-#
-#
+###
+### === Ruby source for #CheckerProcessUniqueness class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Common Utils Component
+### 
+### Git: $Id: CheckerProcessUniqueness.rb,v 1.3 2007/09/04 04:09:43 decdev Exp $
+###
+###
+###
 #########################################################################
 
 require 'cuc/DirUtils'
@@ -62,11 +62,11 @@ class CheckerProcessUniqueness
       @isDebugMode = true
       puts "CheckerProcessUniqueness debug mode is on"
    end
-   #-------------------------------------------------------------
+   ## ------------------------------------------------------------
    
-   # Checks if the process is already running.
-   # * Returns True if it is running.
-   # * Returns False if its not.
+   ## Checks if the process is already running.
+   ## * Returns True if it is running.
+   ## * Returns False if its not.
    def isRunning
       if FileTest.exist?(@fileLock) == false then
          return false
@@ -119,15 +119,15 @@ class CheckerProcessUniqueness
    end
    #-------------------------------------------------------------
    
-   # Remove lock file.
-   # This method must be invoked from the process just before
-   # finishing
+   ## Remove lock file.
+   ## This method must be invoked from the process just before
+   ## finishing
    def release
       if FileTest.exist?(@fileLock) == true then
          File.delete(@fileLock)
       end
    end
-   #-------------------------------------------------------------   
+   ## ----------------------------------------------------------- 
    
 	# it kills the given process
    def kill
@@ -235,10 +235,10 @@ private
       end
       return pid.chop
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # It writes the File Lock with the new PID.
-   # If a previous File Lock existed, it is deleted.
+   ## It writes the File Lock with the new PID.
+   ## If a previous File Lock existed, it is deleted.
    def writePID(extpid = -1)
 	   pid = nil
       if FileTest.exist?(@fileLock) == true then
@@ -255,16 +255,16 @@ private
       aFile.flush
       aFile.close    
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # It checks if a process name is running with the given PID.
-   # * It returns true if the given process is running.
-   # * Otherwise It returns false. 
+   ## It checks if a process name is running with the given PID.
+   ## * It returns true if the given process is running.
+   ## * Otherwise It returns false. 
    def checkProcess(pid)
       if @isRuby == true then
          #ruby = `which ruby`.chop
          ruby = "ruby"
-         command = %Q{ps -f -p #{pid} | grep #{ruby} }
+         command = %Q{ps -f -p #{pid} | grep #{ruby} | grep #{@processName} }
       else
          command = %Q{ps -f -p #{pid} | grep #{@processName} }
       end
@@ -279,8 +279,8 @@ private
          return false
       end
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-end # class
+end ### class
 
-end # module
+end ### module

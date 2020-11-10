@@ -34,15 +34,16 @@ class FileArchiver
    ## Class contructor
    ## move : boolean. If true a move is made, otherwise it is moved from source
    ## debug: boolean. If true it shows debug info.
-   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = false, debugMode = false)
+   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = false, logger = nil, debugMode = false)
       @bMove               = bMove
       @bHLink              = bHLink
       @bUpdate             = bUpdate
       @bInvOnly            = bInvOnly
       @bIsAlreadyArchived  = false
+      @logger              = logger
       @isDebugMode         = debugMode
       @isProfileMode       = false
-      
+            
       if ENV['MINARC_SERVER'] and !bNoServer then
          @bRemoteMode = true
       else
@@ -274,7 +275,10 @@ class FileArchiver
       # therefore an update is needed here
 
       if ret == true then
-         puts "(Archived) : " << File.basename(full_path_file, ".*")
+         # puts "(Archived) : " << File.basename(full_path_file, ".*")
+         if @logger != nil then
+            @logger.info("[ARC_100] Archived: #{File.basename(full_path_file, ".*")}")
+         end
       end
 
       # -------------------------------------------
@@ -503,7 +507,12 @@ class FileArchiver
       if retVal == true then
          # code commented since plug-ins can now modify the final filename used for the archive
          # puts "(Archived) : " << fileName
-         puts "(Archived) : " << newFilename
+         #puts "(Archived) : " << newFilename
+         
+         if @logger != nil then
+            @logger.info("[ARC_100] Archived: #{File.basename(full_path_file, ".*")}")
+         end
+
       end
       
       

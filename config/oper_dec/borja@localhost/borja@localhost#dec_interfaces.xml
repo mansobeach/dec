@@ -39,12 +39,11 @@
        <Address>borja.lopez@deimos-space.com</Address>
       </To>
     </Notify>
-    <Events>
-         <!--
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
-    -->
+    <Events>    
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl localhost:4567/dec/arc/requestArchive/*"/>
+    <!--
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-    <!--     
+         
          <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
     -->
     </Events>

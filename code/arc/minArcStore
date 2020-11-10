@@ -13,6 +13,11 @@
 # This option is used to specify the file to be archived. 
 # File must be specified with the full path location.
 #
+# It is possible to include wildcards within the filename,
+# for that purpose double quotes are required to avoid the shell
+# to perform the substitution.
+# -f "/full_path/file.*"
+#
 #
 # -t flag:
 #
@@ -30,6 +35,13 @@
 # Source file location must be in the same Archive filesystem ($MINARC_ARCHIVE_ROOT).
 # By default minArcStore.rb copies source file from the specified location and optionally
 # once it is archived it deletes it (see "-d" flag). This flag is not compatible with -d & -H flags.
+#
+#
+# -M flag:
+#
+# Optional flag, stands for "--Mutex".
+# This flag is used to "Mutex" the execution of minArcStore:
+# (e.g. usage of the bulk mode in the same directory).
 #
 #
 # -d flag:
@@ -102,6 +114,7 @@
 #     --Hardlink                 enables hardlinking the file to the archive.
 #     --Types                    it shows all file-types archived
 #     --Superbulk                Activates the superbulk mode
+#     --Mutex                    Activates Mutex execution wrt supplied directory
 #     --help                     shows this help
 #     --Usage                    shows the usage
 #     --Debug                    shows Debug info during the execution
@@ -116,16 +129,19 @@
 #
 
 #########################################################################
-#
-# === Mini Archive Component (MinArc)
-#
-# Git: $Id: minArcStore.rb,v 1.13 2008/09/25 11:37:23 decdev Exp $
-#
+##
+## === Mini Archive Component (MinArc)
+##
+## Git: $Id: minArcStore.rb,v 1.13 2008/09/25 11:37:23 decdev Exp $
+##
 #########################################################################
 
 require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
+
+require 'cuc/Log4rLoggerFactory'
+require 'cuc/CheckerProcessUniqueness'
 
 require 'arc/MINARC_Environment'
 require 'arc/FileArchiver'
@@ -156,6 +172,7 @@ def main
    @bNoServer              = false
    @bShowVersion           = false
    @bShowUsage             = false
+   @bMutex                 = false
 
    
    opts = GetoptLong.new(
@@ -163,6 +180,7 @@ def main
      ["--type", "-t",               GetoptLong::REQUIRED_ARGUMENT],
      ["--Location", "-L",           GetoptLong::REQUIRED_ARGUMENT],
      ["--additional-fields", "-a",  GetoptLong::REQUIRED_ARGUMENT],
+     ["--Mutex", "-M",              GetoptLong::NO_ARGUMENT],
      ["--noserver", "-n",           GetoptLong::NO_ARGUMENT],
      ["--Hardlink", "-H",           GetoptLong::NO_ARGUMENT],
      ["--Inventory", "-I",          GetoptLong::NO_ARGUMENT],
@@ -188,6 +206,7 @@ def main
             when "--Superbulk"         then @isSuperbulk          = true
             when "--delete"            then @bDelete              = true
             when "--move"              then @bMove                = true
+            when "--Mutex"             then @bMutex               = true
             when "--update"            then @bUpdate              = true
             when "--version"           then @bShowVersion         = true
 	         when "--file"              then @full_path_filename   = arg.to_s
@@ -228,6 +247,29 @@ def main
 
    # -------------------------------------------------------
 
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcStore", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
+
+
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
    end
@@ -260,10 +302,28 @@ def main
 
    # -------------------------------------------------------
 
+   if @bMutex == true then
+      @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, File.dirname(@full_path_filename)) 
+      
+      # @locker.setDebugMode
+      
+      if @locker.isRunning == true then
+         # @locker.getAllRunningProcesses
+         @logger.error("[ARC_675] Mutex of #{File.dirname(@full_path_filename)} not available for PID #{Process.pid}")
+         exit(99)
+      end  
+   
+      @locker.setRunning
+   end
+
+   # -------------------------------------------------------
+
    # if parameters are quoted to avoid variable expansion by shell
    if @full_path_filename.slice(0,1) == "\"" then
       @full_path_filename = @full_path_filename.dup.gsub!("\"","")
    end
+
+   # -------------------------------------------------------
 
    if ENV['MINARC_SERVER'] and @bNoServer == false then
       @bRemoteMode = true
@@ -272,6 +332,10 @@ def main
       require 'arc/MINARC_DatabaseModel'
    end
  
+   # -------------------------------------------------------
+   #
+   # show filetype
+   #
    if bShowFileTypes then
       if @bRemoteMode == false then
          arrFiles = ArchivedFile.getFileTypes().sort
@@ -297,6 +361,26 @@ def main
          end
       end
    end  
+   
+   # -------------------------------------------------------
+   
+   # ---------------------------------------------
+   #
+   # 20170603 - Bulk mode archive
+   if @full_path_filename.include?("?") == true or @full_path_filename.include?("*") == true then
+            
+      if @isDebugMode == true then
+         puts "Wildcard detected / bulk archiving"
+      end
+      
+      if @isSuperbulk == true then
+         superBulk
+      else
+         bulkArchive
+      end
+      exit(0)
+   end
+   # ---------------------------------------------
    
    if @full_path_filename.slice(0,1) != "/" then
       @full_path_filename = "#{Dir.pwd}/#{@full_path_filename.dup}"
@@ -336,27 +420,8 @@ def main
       exit(99)
    end
 
-   # ---------------------------------------------
-   #
-   # 20170603 - Bulk mode archive
-   if @full_path_filename.include?("?") == true or @full_path_filename.include?("*") == true then
-      
-      if @isDebugMode == true then
-         puts "Wildcard detected / bulk archiving"
-      end
-      
-      if @isSuperbulk == true then
-         superBulk
-      else
-         bulkArchive
-      end
-      exit(0)
-   else
-      # puts "bulkk - #{@full_path_filename}"
-   end
-   # ---------------------------------------------
 
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer, @logger)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -385,6 +450,10 @@ def main
       puts
    end
  
+   if @bMutex == true then
+      @locker.release
+   end
+ 
    exit(0)
 
 end
@@ -398,7 +467,7 @@ def superBulk
       puts "superbulk mode detected"
    end
    
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer, @logger)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -431,7 +500,7 @@ def bulkArchive
       puts "bulk mode detected"
    end
    
-   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer)
+   archiver  = ARC::FileArchiver.new(@bMove, @bHardLink, @bUpdate, @bInventoryOnly, @bNoServer, @logger)
    
    if @isDebugMode then
       archiver.setDebugMode
@@ -459,20 +528,28 @@ def bulkArchive
       arrFile << @full_path_location
       arrFile << Time.now
       
-      
-      ret = archiver.archive(file, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
+      begin
+         ret = archiver.archive(file, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
    
-      if ret == false then
-         retVal = false
-         puts
-         puts "MINARC could not archive #{file}"
-         puts
-      end
+         if ret == false then
+            retVal = false
+            @logger.error("[ARC_666] Could not archive #{file}")
+            next
+         end
 
-      if @isDebugMode then
-         puts
-         puts "Operation successful !"
-         puts
+         if @isDebugMode then
+            puts
+            puts "Operation successful !"
+            puts
+         end
+      rescue Exception => e
+         @logger.error("[ARC_666] Could not archive #{file} / #{e.to_s}")
+         if @isDebugMode == true then
+            puts
+            puts e.backtrace
+            puts
+         end
+         next
       end      
       
    }
@@ -484,13 +561,13 @@ def bulkArchive
    end
    
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def usage
 
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -115 #{fullpathFile}"}`
+   value = `#{"head -129 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
@@ -498,11 +575,13 @@ def usage
       puts line[2, len]
    }
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
+##
 main
-# End of the main body
-#===============================================================================
+##
+## End of the main body
+## ===============================================================================

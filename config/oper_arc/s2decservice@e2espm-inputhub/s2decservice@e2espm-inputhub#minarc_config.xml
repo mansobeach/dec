@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <CleanUp Frequency="10" Unit="s">
+  
+    <List_of_CleanUpRules>
+      <CleanUpRule Filetype="TLM_MIRA0_" Rule="Older"  Date="archive_date"    Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_VS_PRO" Rule="Older"  Date="validity_start"  Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
+    </List_of_CleanUpRules>
+  
+  </CleanUp>
+
+   <Archive>
+      <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
+   </Archive>
+
+   <Workflow>
+   <!-- 10.182.17.86:4567 -->
+      <ArchiveServer>10.182.17.86:4567</ArchiveServer>
+      <ArchiveRoot>/volumes/dec/interfaces/minarc/minarc_root</ArchiveRoot>
+      <ArchiveError>/volumes/dec/interfaces/minarc/archive_error</ArchiveError>
+      <ArchiveIntray>/volumes/dec/interfaces/archive.all</ArchiveIntray>
+      <TempDir>/tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>minarc_db_s2</Database_Host>
+      <Database_Port>5432</Database_Port>      
+      <Database_Name>postgres</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
+   </Inventory>
+
+
+</Configuration>

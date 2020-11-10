@@ -1,0 +1,31 @@
+Modules
+- minArcPurge
+- 
+- 
+
+INFO:
+ARC_000: Purge Archive
+ARC_031: Status => No daemon is running
+ARC_032: Status => server is running with $PID
+ARC_060: minArcServer stopped
+ARC_075: Request to archive from Intray
+ARC_100: Archived: $file
+
+WARNING:
+
+ARC_310: server is already running
+ARC_312: server was not running
+
+
+ERROR:
+ARC_601: Archive Root does not exist
+ARC_605: Could not archive $file
+ARC_610: $file not present in the archive
+ARC_666: Cannot start server: $error_message
+ARC_675: Mutex of $directory not available for $pid
+
+ORC_602: $file $type filetype not configured
+ORC_611: $file archiving failed
+ORC_612: $file retrieval failed
+ORC_666: failed job
+

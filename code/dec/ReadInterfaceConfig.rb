@@ -30,7 +30,7 @@ class ReadInterfaceConfig
    include CUC::DirUtils
    ## -------------------------------------------------------------   
    
-   # Class contructor
+   ## Class contructor
    def initialize
       @@isModuleOK        = false
       @@isModuleChecked   = false
@@ -602,11 +602,15 @@ private
       end
       
       if !xmlstruct.elements["User"].nil? then
-         user    = xmlstruct.elements["User"].text.gsub('"', '\"')
+         if !xmlstruct.elements["User"].text.nil? then
+            user    = xmlstruct.elements["User"].text.gsub('"', '\"')
+         end
       end
 
       if !xmlstruct.elements["Pass"].nil? then
-         pass    = xmlstruct.elements["Pass"].text.gsub('"', '\"')
+         if !xmlstruct.elements["Pass"].text.nil? then
+            pass    = xmlstruct.elements["Pass"].text.gsub('"', '\"')
+         end
       end
 
       if !xmlstruct.elements["SecureFlag"].nil? and !xmlstruct.elements["SecureFlag"].text.nil? then

@@ -26,7 +26,8 @@
 
 module PRIP
    API_URL_ODATA_PRODUCT            = "https://90.84.179.7/odata/v1/Products?"
-   API_ODATA_FILTER_CONTAINS        = "$filter=contains"
+   API_ODATA_FILTER_CONTAINS        = "&$filter=contains"
+   API_ODATA_FILTER_STARTSWITH      = "&$filter=startswith"
    API_ODATA_FILTER_ENDSWITH        = "&$filter=endswith"
    API_RESOURCE_FOUND               = "200"
 end
