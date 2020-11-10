@@ -16,16 +16,20 @@
    </Archive>
 
    <Workflow>
-      <TempDir>/tmp/dec/tmp</TempDir>
+      <ArchiveServer>localhost:4567</ArchiveServer>
+      <ArchiveRoot>/tmp/minarc</ArchiveRoot>
+      <ArchiveError>/tmp/minarc_error2</ArchiveError>
+      <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
+      <TempDir>/tmp</TempDir>
    </Workflow>
 
    <Inventory>
-      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Adapter>postgresql</Database_Adapter>
       <Database_Host>localhost</Database_Host>
-      <Database_Port></Database_Port>
-      <Database_Name>/tmp/minarc_inventory</Database_Name>
-      <Database_User>root</Database_User>
-      <Database_Password>2mysql</Database_Password>
+      <Database_Port>5432</Database_Port>      
+      <Database_Name>postgres</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
    </Inventory>
 
 

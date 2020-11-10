@@ -1,5 +1,6 @@
 **/.DS_Store
 **/gem
 *.gem
+gem
 data/
 reek.yml

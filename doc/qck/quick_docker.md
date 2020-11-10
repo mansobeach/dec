@@ -198,6 +198,7 @@ Docker volumes are created in the *host* directory /var/lib/docker/volumes/<volu
 Tools & Tips
 ============
 
+- Copy a file into a container
 `docker cp orc-0.0.6dev1_boa_app_s2boa@e2espm-inputhub.gem boa_app_s2boa:/tmp`
 
 
