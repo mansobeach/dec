@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo docker-compose -f install/docker/docker-compose.s2decservice.yml up -d
+sudo docker-compose -f install/docker/docker-compose.minarc.s2.e2espm-inputhub.e2edc.yml up -d
 

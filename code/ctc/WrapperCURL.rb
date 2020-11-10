@@ -180,8 +180,8 @@ module WrapperCURL
    ## option -J
 
    def getFile(url, filename, isDebugMode = false)
-      ## --silent mode commented
-      cmd = "curl -L --progress-bar --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      ## --progress-bar commented
+      cmd = "curl -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
       
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -220,6 +220,9 @@ module WrapperCURL
    def getDirtyFile_obsoleteCurl(url, filename, isDebugMode = false)
       if isDebugMode == true then
          puts "WrapperCURL::getDirtyFile_obsoleteCurl"
+         puts
+         puts self.backtrace
+         puts
       end
    
       # curl -sI  $url | grep -o -E 'filename=.*$' | sed -e 's/filename=//'

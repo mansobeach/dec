@@ -34,9 +34,14 @@ class MINARC_Server < Sinatra::Base
    helpers Sinatra::CustomLogger
 
    configure do
-   
-   
-      puts "MINARC_Server: Loading general configuration " ##{settings.isDebugMode}"
+ 
+      if ENV.include?('MINARC_DEBUG') == true then
+         @@isDebugMode = true
+      else
+         @@isDebugMode = false
+      end 
+
+      puts "MINARC_Server: Loading general configuration / debug = #{@@isDebugMode}"
       # set :bind, '0.0.0.0'
       set :server, :thin
       # set :server, :puma
@@ -139,10 +144,65 @@ class MINARC_Server < Sinatra::Base
 
    ## =================================================================
    ##
+
+   get "#{API_URL_RETRIEVE_CONTENT}/:filename" do |filename|
+      @@logger.info("[ARC_200] Requested: #{params[:filename]} (Content)")
+
+      if settings.isDebugMode == true then
+         @@logger.debug("MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}")
+      end
+      
+      aFile = nil
+      aFile = ArchivedFile.where(name: filename)
+                  
+      if aFile.size != 0 then
+         theFile = aFile.to_a[0]
+         
+         if @@isDebugMode == true
+            @@logger.info("found #{theFile.filename}")
+            puts "---------------------------------------------"
+            theFile.print_introspection
+            puts "---------------------------------------------"
+            puts "Reading file #{theFile.path}/#{theFile.filename}"
+            puts
+         end
+                  
+         if File.extname(theFile.filename) == ".7z" then
+            prevDir = Dir.pwd
+            Dir.chdir(@@tmpDir)
+            ## enforces overwritting
+            cmd = "7z x #{theFile.path}/#{theFile.filename} -aoa -bsp0 -bso0"
+            ## avoids overwritting existing files
+            cmd = "7z x #{theFile.path}/#{theFile.filename} -aos -bsp0 -bso0"
+            ## -----------------------------------
+            if @@isDebugMode == true
+               @@logger.debug(cmd)
+            end
+            ## -----------------------------------
+            ret = system(cmd)
+            arr = Dir["#{File.basename(theFile.filename, ".*")}*"]
+            @@logger.info("[ARC_200] Retrieved: #{arr[0]}")
+            send_file(arr[0])
+            Dir.chdir(prevDir)
+         end
+         
+         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
+         
+#         content = File.read("#{theFile.path}/#{theFile.filename}")             
+#         response.headers['filename']     = theFile.filename
+#         response.headers['Content-Type'] = "application/octet-stream"
+#         attachment(theFile.filename)
+      else
+         @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
+         status API_RESOURCE_NOT_FOUND      
+      end      
+   end
    
+   ## =================================================================
+   ##
    get "#{API_URL_RETRIEVE}/:filename" do |filename|
       msg = "GET #{API_URL_RETRIEVE} : get #{params[:filename]}"
-      @@logger.info(msg)
+      @@logger.info("[ARC_200] Requested: #{params[:filename]}")
 
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}")
@@ -162,32 +222,9 @@ class MINARC_Server < Sinatra::Base
             puts "Reading file #{theFile.path}/#{theFile.filename}"
             puts
          end
-                  
-         if File.extname(theFile.filename) == ".7z" then
-            prevDir = Dir.pwd
-            Dir.chdir(@@tmpDir)
-            ## enforces overwritting
-            cmd = "7z x #{theFile.path}/#{theFile.filename} -aoa"
-            ## avoids overwritting existing files
-            cmd = "7z x #{theFile.path}/#{theFile.filename} -aos"
-            ## -----------------------------------
-            if settings.isDebugMode == true
-               @@logger.debug(cmd)
-            end
-            ## -----------------------------------
-            ret = system(cmd)
-            arr = Dir["#{File.basename(theFile.filename, ".*")}*"]
-            @@logger.info("[ARC_200] Retrieved: #{arr[0]}")
-            send_file(arr[0])
-            Dir.chdir(prevDir)
-         end
-         
-         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
-         
-#         content = File.read("#{theFile.path}/#{theFile.filename}")             
-#         response.headers['filename']     = theFile.filename
-#         response.headers['Content-Type'] = "application/octet-stream"
-#         attachment(theFile.filename)
+           
+         @@logger.info("[ARC_201] Served: #{theFile.filename}")
+         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)         
       else
          @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
          status API_RESOURCE_NOT_FOUND      
@@ -256,13 +293,13 @@ class MINARC_Server < Sinatra::Base
    ##
    get "#{API_URL_LIST_FILENAME}/:filename" do |filename|
       msg = "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"      
-      logger.info msg
+      @@logger.info("[ARC_205] Search: #{params[:filename]}")
       
       cmd = "minArcRetrieve -f \'#{params[:filename]}\' --noserver -l"
             
       if settings.isDebugMode == true then 
          msg = "MINARC_Server::#{cmd}"
-         logger.debug msg
+         @@logger.debug(msg)
       end
 
       listFiles = `#{cmd}`

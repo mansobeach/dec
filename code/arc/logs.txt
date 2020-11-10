@@ -1,7 +1,8 @@
 Modules
 - minArcPurge
-- 
-- 
+- minArcServer
+- minArcStore
+- minArcRtrv
 
 INFO:
 ARC_000: Purge Archive
@@ -10,6 +11,10 @@ ARC_032: Status => server is running with $PID
 ARC_060: minArcServer stopped
 ARC_075: Request to archive from Intray
 ARC_100: Archived: $file
+
+ARC_200: Requested: $file
+ARC_201: Served: $file
+ARC_202: Retrieved: $file
 
 WARNING:
 
@@ -28,4 +33,13 @@ ORC_602: $file $type filetype not configured
 ORC_611: $file archiving failed
 ORC_612: $file retrieval failed
 ORC_666: failed job
+
+
+[ INFO] 2020-11-10 15:47:30 MINARC.minArcServer - [ARC_075] Request to archive from Intray /volumes/dec/interfaces/archive.all/*
+[ INFO] 2020-11-10 15:47:31 MINARC.minArcStore - [ARC_100] Archived: S2A_OPER_REP_PASS_E_VGS2_20201110T154318_V20201110T153615_20201110T154316
+[ INFO] 2020-11-10 15:47:31 MINARC.minArcStore - [ARC_100] Archived: S2A_OPER_REP_PASS_E_VGS2_20201110T154258_V20201110T153613_20201110T154256
+[ INFO] 2020-11-10 15:48:52 MINARC.minArcServer - [ARC_075] Request to archive from Intray /volumes/dec/interfaces/archive.all/*
+[ INFO] 2020-11-10 15:48:53 MINARC.minArcStore - [ARC_100] Archived: S2__OPER_REP_OPDAM1_PDMC_20201110T154502_V20201110T104716_20201110T104716
+[ INFO] 2020-11-10 15:50:53 MINARC.minArcServer - [ARC_075] Request to archive from Intray /volumes/dec/interfaces/archive.all/*
+[ INFO] 2020-11-10 15:50:54 MINARC.minArcStore - [ARC_100] Archived: S2A_OPER_REP_OPDPC__VGS2_20201110T154612_V20201110T154612_20201110T154612
 

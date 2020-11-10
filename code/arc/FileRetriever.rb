@@ -335,7 +335,7 @@ class FileRetriever
          arr.each{|file|
             
             if @isDebugMode == true then
-               puts "Processing #{file} ; destination => #{destination} ; unpack => #{bUnpack}"
+               puts "FileRetriever Processing #{file} ; destination => #{destination} ; unpack => #{bUnpack}"
             end
             
             begin
@@ -345,7 +345,7 @@ class FileRetriever
             end
             
             if @logger != nil then
-               @logger.info("[ARC_200] Retrieved: #{File.basename(file,File.extname(file))}")
+               @logger.info("[ARC_202] Retrieved: #{File.basename(file,File.extname(file))}")
             else
                puts "(Retrieved) : " << File.basename(file,File.extname(file))
             end
@@ -596,7 +596,7 @@ private
          end
       
          if @logger != nil then
-            @logger.info("[ARC_200] Retrieved: #{File.basename(fileName,File.extname(fileName))}")
+            @logger.info("[ARC_202] Retrieved: #{File.basename(fileName,File.extname(fileName))}")
          else
             puts "(Retrieved) : " << File.basename(fileName,File.extname(fileName))
          end

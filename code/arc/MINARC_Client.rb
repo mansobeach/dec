@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileArchiver class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# CVS: $Id: MINARC_Client.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
-#
-# module MINARC
-#
+##
+## === Ruby source for #FileArchiver class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id: MINARC_Client.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
+##
+## module MINARC
+##
 #########################################################################
 
 require 'benchmark'
@@ -27,16 +27,16 @@ class MINARC_Client
    include Benchmark
    include CTC::WrapperCURL
 
-   # ------------------------------------------------  
+   ## ------------------------------------------------  
    
-   # Class contructor
-   # debug: boolean. If true it shows debug info.
+   ## Class contructor
+   ## debug: boolean. If true it shows debug info.
    def initialize(debugMode = false)
       @isDebugMode         = debugMode
       @isProfileMode       = false
       checkModuleIntegrity
    end
-   # ------------------------------------------------
+   ## ------------------------------------------------
    
    # Set the flag for debugging on.
    def setDebugMode
@@ -104,7 +104,7 @@ class MINARC_Client
       end
       return getURL(url, @isDebugMode)
    end
-   # ------------------------------------------------
+   ## -------------------------------------------------
    
    def retrieveFile(filename)
       url = "#{@minArcServer}#{API_URL_RETRIEVE}/#{filename}"
@@ -113,10 +113,10 @@ class MINARC_Client
          puts "MINARC_Client::retrieveFile => #{url}"
          puts
       end
-      return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
-      # return getFile(url, filename, @isDebugMode)
+      # return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
+      return getFile(url, filename, @isDebugMode)
    end
-   # ------------------------------------------------
+   ## -------------------------------------------------
    
    def deleteFile(filename)
       url = "#{@minArcServer}#{API_URL_DELETE}/#{filename}"

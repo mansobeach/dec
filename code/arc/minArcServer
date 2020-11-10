@@ -122,6 +122,11 @@ def main
 
    # -------------------------------------------------------
 
+   if @isDebugMode == false then
+      ENV.delete('MINARC_DEBUG')
+   else
+      ENV['MINARC_DEBUG'] = "true"
+   end
 
    ## ------------------------------------------------------
 
@@ -203,10 +208,9 @@ def startServer
 
    MINARC_Server.set :isDebugMode, @isDebugMode
 
-   # run MINARC_Server
-
    begin
       MINARC_Server.run!
+      #run MINARC_Server
    rescue Exception => e
       if @isDebugMode == true then
          puts e.backtrace

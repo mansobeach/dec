@@ -20,6 +20,7 @@ module ARC
    API_URL_REQUEST_ARCHIVE    = '/dec/arc/requestArchive/:name'
    API_URL_STORE              = '/dec/arc/minArcStore'
    API_URL_RETRIEVE           = '/dec/arc/minArcRetrieve'
+   API_URL_RETRIEVE_CONTENT   = '/dec/arc/file'
    API_URL_LIST_FILENAME      = '/dec/arc/minArcList/filename'
    API_URL_LIST_FILETYPE      = '/dec/arc/minArcList/filetype'
    API_URL_DELETE             = '/dec/arc/minArcDelete'

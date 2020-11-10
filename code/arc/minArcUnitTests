@@ -409,7 +409,8 @@ class TestCaseStore < Test::Unit::TestCase
    end
    
    ## -----------------------------------------------------------
-   
+   ##
+   ## 
    def test_local_minArcStore
       puts __method__.to_s
       puts
@@ -423,11 +424,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       system(cmd)
       
-      cmd = "minArcStore -t S2PDGS -f #{@@testDataDir}/#{@@testFile1} --noserver"
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
       puts cmd
       assert(system(cmd), "minArcStore")
       
-      system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
    end
    ## ------------------------------------------------------
 
@@ -1044,6 +1045,14 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
+      cmd = "minArcPurge -Y"
+      puts cmd
+      ret = system(cmd)
+
+      cmd = "rm -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001*"
+      puts cmd
+      system(cmd)
+      
       cmd = "minArcServer -c"
       puts cmd
       assert(system(cmd), cmd)
@@ -1057,6 +1066,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
       cmd = "minArcServer -s -D"
+      cmd = "minArcServer -s"
       puts cmd
       assert(spawn(cmd), cmd)
 
@@ -1072,21 +1082,39 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
+      ## ------------------------------------
       ## store file
       test_local_minArcStore
+      ## ------------------------------------
 
       cmd = "minArcStatus -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
       puts cmd
       assert(system(cmd), cmd)
 
+      ## ------------------------------------
+      ## request archive polling
       cmd = "curl localhost:4567/dec/arc/requestArchive/*"
       puts cmd
       assert(system(cmd), cmd)
-
+      
       cmd = "curl localhost:4567/dec/arc/requestArchive/S2A_OPER_REP_OPDPC__SGS*"
       puts cmd
       assert(system(cmd), cmd)
 
+      ## ------------------------------------
+
+      puts
+      puts
+      sleep(2.0)
+      
+      ## ------------------------------------
+      ## retrieve file
+      cmd = "minArcRetrieve -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      ## ------------------------------------
+      
       return
 
       cmd = "minArcRetrieve -f NON_EXISTING_FILE"

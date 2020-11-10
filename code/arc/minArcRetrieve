@@ -204,10 +204,6 @@ def main
    @bShowUsage                = false
    @logger                    = nil
 
-   if !ENV['MINARC_SERVER'] then
-      @bNoServer   = true
-   end
-
    arrRules = Array["ALL", "OLDEST", "NEWEST", "FIRST", "LAST"]
    
    opts = GetoptLong.new(
@@ -296,14 +292,19 @@ def main
       exit(99)
    end
 
-   # -------------------------------------------------------
+   ## -------------------------------------------------------
+
+   if !ENV['MINARC_SERVER'] then
+      @bNoServer   = true
+   end
+
 
    ## ------------------------------------------------------
 
    @minArcConfigDir       = ENV['MINARC_CONFIG']
 
    ## initialise the logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("minArcStore", "#{@minArcConfigDir}/minarc_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcRetrieve", "#{@minArcConfigDir}/minarc_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
