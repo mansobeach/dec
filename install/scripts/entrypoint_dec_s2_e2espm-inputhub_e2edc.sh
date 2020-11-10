@@ -3,8 +3,8 @@ set -e
 
 [ "$DEBUG" == 'true' ] && set -x
 
-# echo "decManageDB -c"
-# decManageDB -c
+#echo "decManageDB -c"
+#decManageDB -c
 
 # echo "decConfigInterface2DB -p EXTERNAL"
 # decConfigInterface2DB -p EXTERNAL

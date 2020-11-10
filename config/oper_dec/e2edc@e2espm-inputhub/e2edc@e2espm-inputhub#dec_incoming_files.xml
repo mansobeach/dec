@@ -189,6 +189,10 @@
       <ListFilesDisseminated>
     
       <!--
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-385
+      -->
+    
+      <!--
     
       => S2MPASUP-371: REP_OPHKTM gathering with the rule VGS*
     
@@ -344,6 +348,7 @@
                     <Intray>CLOUD_SBOA.FTPOutbox</Intray>
                     <Intray>OPERATIONAL_S2PDGS</Intray>
                     <Intray>SHADOW_S2PDGS</Intray>
+                    <Intray>S2BOA</Intray>
                     <Intray>S2BOA_SHADOW</Intray>
                     <Intray>ARCHIVE_S2PDGS</Intray>
           </ToList>
@@ -355,6 +360,7 @@
                  <ToList>
                     <Intray>OPERATIONAL_S2PDGS</Intray>
                     <Intray>SHADOW_S2PDGS</Intray>
+                    <Intray>S2BOA</Intray>
                     <Intray>S2BOA_SHADOW</Intray>
                     <Intray>ARCHIVE_S2PDGS</Intray>
           </ToList>
@@ -368,6 +374,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            -->
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -391,6 +398,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            -->
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -475,6 +483,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
@@ -551,6 +560,7 @@
            <Intray>OPERATIONAL_S2PDGS</Intray>
            -->
            <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 
