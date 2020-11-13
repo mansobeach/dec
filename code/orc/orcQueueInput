@@ -81,14 +81,16 @@
 #
 
 #########################################################################
-#
-# === SMOS NRTP Orchestrator
-#
-# Git: $Id: orcQueueInput,v 1.16 2009/03/24 17:33:27 decdev Exp $
-#
+##
+## === SMOS NRTP Orchestrator
+##
+## Git: $Id: orcQueueInput,v 1.16 2009/03/24 17:33:27 decdev Exp $
+##
 #########################################################################
 
 require 'getoptlong'
+
+require 'cuc/Log4rLoggerFactory'
 
 require 'orc/ORC_Environment'
 
@@ -253,7 +255,32 @@ def main
 #      exit(99)
 #   end
 
+   self.load_config
    # -------------------------------------------------------
+
+
+   ## ----------------------------------
+   ## initialize logger
+   
+   @orcConfigDir       = ENV['ORC_CONFIG']
+      
+   loggerFactory = CUC::Log4rLoggerFactory.new("MrQueue " , "#{@orcConfigDir}/orchestrator_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ----------------------------------
+
 
    require 'orc/ORC_DataModel'
    require 'orc/ReportQueuedFiles'
@@ -494,9 +521,9 @@ def main
 
       if @bPending == false then
          Pending2QueueFile.where(filename: @filename).destroy_all
-         puts
-         puts "#{@filename} has been successfully queued :-)" 
-         puts
+         if @isDebugMode == true then
+            @logger.debug("#{@filename} has been successfully queued #{'1F4E1'.hex.chr('UTF-8')}")
+         end
       else
 #         puts
 #         puts "#{@filename} is classified as pending :-)" 
@@ -675,7 +702,7 @@ def generateReport
    writer.write(listFiles)
 
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def deleteFile
    theFilename = File.basename(@filename)
@@ -696,7 +723,7 @@ def deleteFile
          puts "#{theFilename} removed from Orchestrator Queue"
       rescue Exception => e
          puts e.to_s
-         puts "Could not delete #{theFilename} from Orchestrator Queue :-("
+         @logger.error("Could not delete #{theFilename} from Orchestrator Queue #{'1F480'.hex.chr('UTF-8')}")
       end
    end
 
@@ -707,7 +734,7 @@ def deleteFile
          orcFile.destroy
          puts "#{theFilename} removed from Orchestrator Failed Triggers"
       rescue Exception => e
-         puts "Could not delete #{theFilename} from Orchestrator Failed Triggers :-("
+         @logger.error("Could not delete #{theFilename} from Orchestrator Failed Triggers #{'1F480'.hex.chr('UTF-8')}")
       end
    end
 
@@ -718,7 +745,7 @@ def deleteFile
          orcFile.destroy
          puts "#{theFilename} removed from Orchestrator Successful Triggers"
       rescue Exception => e
-         puts "Could not delete #{theFilename} from Orchestrator Successful Triggers :-("
+         @logger.error("Could not delete #{theFilename} from Orchestrator Successful Triggers #{'1F480'.hex.chr('UTF-8')}")
       end
    end
 
@@ -729,7 +756,7 @@ def deleteFile
          orcFile.destroy
          puts "#{theFilename} removed from Orchestrator Obsolete Triggers"
       rescue Exception => e
-         puts "Could not delete #{theFilename} from Orchestrator Obsolete Triggers :-("
+         @logger.error("Could not delete #{theFilename} from Orchestrator Obsolete Triggers #{'1F480'.hex.chr('UTF-8')}")
       end
    end
 
@@ -745,7 +772,7 @@ def deleteFile
    end
 
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 ## -------------------------------------------------------------
 
@@ -790,11 +817,11 @@ def usage
    }
 end
 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

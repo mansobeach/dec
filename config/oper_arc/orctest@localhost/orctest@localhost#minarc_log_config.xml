@@ -1,19 +1,22 @@
   <log4r_config>
  
    <pre_config>
-    <parameter name="mainLoggerName" value="MINARC"/>
+    <parameter name="mainLoggerName" value="ARC"/>
    </pre_config>
  
-   <outputter name="minarc_log">
+   <outputter name="minarc_log" level="DEBUG" >
     <type>RollingFileOutputter</type>
-    <filename>/tmp/minarc_log_file.log</filename>
+    <filename>/tmp/dec_orchestrator.log</filename>
     <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
     </formatter>
     <trunc>false</trunc>
+    <maxsize>10000000</maxsize>
+    <max_backups>4</max_backups>
+    <maxtime>2592000</maxtime>
    </outputter>
 
-   <outputter name="minarc_log_stdout">
+   <outputter name="minarc_log_stdout" level="INFO">
     <type>StdoutOutputter</type>
     <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
@@ -22,9 +25,9 @@
    </outputter>
 
 
-   <logger name="MINARC" level="DEBUG" trace="false">
-    <outputters>minarc_log</outputters>
-    <outputters>minarc_log_stdout</outputters>
+   <logger name="ARC" level="DEBUG" trace="false">
+    <outputter>minarc_log</outputter>
+    <outputter>minarc_log_stdout</outputter>
    </logger>
  
   </log4r_config>

@@ -35,8 +35,7 @@ ActiveRecord::Base.establish_connection(
                                           :cast       => false,
                                           :pool       => 30
                                           )
-
-
+                                          
 ## =====================================================================
 
 class HandleDBConnection

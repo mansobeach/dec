@@ -229,9 +229,9 @@
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
       <!--
-      <Database_Host>host.docker.internal</Database_Host>
-      -->
       <Database_Host>localhost</Database_Host>
+      -->
+      <Database_Host></Database_Host>
       <Database_Port>5432</Database_Port>      
       <Database_Name>postgres</Database_Name>
       <Database_User>e2edc</Database_User>

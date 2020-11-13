@@ -29,7 +29,8 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.18" =>    "TBW / Blah blah Update of the OData client for S2PRIP", \
+      "1.0.18" =>    "Update of the OData client for DHUS & S2PRIP to support pagination\n\
+          OData client for DHUS to stream to the console the received XML",
       "1.0.17" =>    "Support to push parallelisation driven by ParallelDownload config\n\
           OData client for DHUS supports pagination:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-376",

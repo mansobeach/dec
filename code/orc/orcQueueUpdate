@@ -56,20 +56,21 @@
 #
 
 #########################################################################
-#
-# === SMOS NRTP Orchestrator
-#
-# Git: $Id: orcQueueUpdate,v 1.8 2009/03/18 14:33:41 bolf Exp $
-#
+###
+### === SMOS NRTP Orchestrator
+###
+### Git: $Id: orcQueueUpdate,v 1.8 2009/03/18 14:33:41 bolf Exp $
+###
 #########################################################################
 
 require 'getoptlong'
+
+require 'cuc/Log4rLoggerFactory'
+
 require 'orc/ORC_Environment'
-require 'orc/ORC_DataModel'
 
 
-
-# MAIN script function
+## MAIN script function
 def main
 
    include ORC
@@ -179,6 +180,14 @@ def main
       exit(0)
    end
 
+   ## -------------------------------------------------------
+   
+   self.load_config
+   
+   ## -------------------------------------------------------
+
+   require 'orc/ORC_DataModel'
+
    ######################## Coherency Checks & Data Extraction ########################
    
    if @bDeleteAll == true then
@@ -190,6 +199,30 @@ def main
       puts "-start and -stop options must go together"
       exit(99)
    end  
+
+
+
+   ## ----------------------------------
+   ## initialize logger
+   
+   @orcConfigDir       = ENV['ORC_CONFIG']
+      
+   loggerFactory = CUC::Log4rLoggerFactory.new("QueueUpdt" , "#{@orcConfigDir}/orchestrator_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check ORC logs configuration under \"#{@orcConfigDir}/orchestrator_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ----------------------------------
 
    if @bFileOrId == true then
       if @filename == "" or @filename.length > 100 then
@@ -220,13 +253,8 @@ def main
       end
    end
    
-
    if @triggerProd == nil then
-      puts
-      puts "#{@filename} is not registered as a trigger product :-("
-      puts
-      # usage
-      puts
+      @logger.error("#{@filename} is not registered as a trigger product #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    else
       @trigger_prod_id = @triggerProd.id
@@ -235,18 +263,12 @@ def main
    #check that the file is in the orchestrator queue
    @queuedProd = OrchestratorQueue.where(trigger_product_id: @trigger_prod_id)
    if @queuedProd == nil then
-      puts
-      puts "The trigger product is not present in the orchestrator queue :-("
-      puts
-      puts
+      @logger.error("#{@filename} trigger product is not present in the orchestrator queue #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
 
    if @arrStatus.include?(@newStatus) == false then
-      puts
-      puts "Status \"#{@newStatus}\" is not a valid status :-("
-      puts
-      puts
+      @logger.error("Status \"#{@newStatus}\" is not a valid status #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
 
@@ -359,11 +381,7 @@ def set_product_to_success
    # check that the file is not already present in the successful products list
    tmpProd = SuccessfulTriggerProduct.find_by_trigger_product_id(@trigger_prod_id)
    if tmpProd != nil then
-      puts
-      puts "The trigger product is registered in both 'orchestrator queue' and 'successful trigger products' :-("
-      puts "Incoherent orchestrator status !"
-      puts
-      puts
+      @logger.error("Trigger is in 'orchestrator queue' and 'successful products / Inconsistency #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
 
@@ -394,17 +412,15 @@ def set_product_to_success
 
       begin
          tmpProd.save!
-      rescue
-         puts
-         puts "Unable to register #{@filename} as a successful trigger product :-("
-         puts "Unknown error !"
-         puts
+      rescue Exception => e
+         @logger.error("Unable to register #{@filename} as a successful trigger product #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error(e.to_s)
          exit(99)
       end
 
-      puts
-      puts "File #{@triggerProd.filename} is classified as successfully processed :-)"
-      puts
+      if @isDebugMode == true then
+         @logger.debug("File #{@triggerProd.filename} is classified as successfully processed #{'1F4E1'.hex.chr('UTF-8')}")
+      end
 
       # ==> remove trigger product from queue
       
@@ -418,17 +434,12 @@ end
 
 def set_product_to_failure
 
-   #check that the file is not allready present in the failing products list
+   # check that the file is not already present in the failing products list
    tmpProd = FailingTriggerProduct.find_by_trigger_product_id(@trigger_prod_id)
    if tmpProd != nil then
-      puts
-      puts "The trigger product is already registered 'failing trigger products' :-("
-      puts
-      puts
-      
+      @logger.error("The trigger product is already registered 'failing trigger products' #{'1F480'.hex.chr('UTF-8')}")
       # ==> remove trigger product from queue
       OrchestratorQueue.where(:trigger_product_id => @triggerProd.id).destroy_all
-
       exit(99)
    end
 
@@ -449,26 +460,21 @@ def set_product_to_failure
          exit(99)
       end
 
-      puts
-      puts "File #{@triggerProd.filename} is classified as failed processed :-|"
-      puts
+      if @isDebugMode == true then
+         @logger.debug("File #{@triggerProd.filename} is classified as failed processed :-|")
+      end
 
       OrchestratorQueue.where(:trigger_product_id => @trigger_prod_id).delete_all
 
    end
 
-   if @isDebugMode then
-      puts
-      puts "updateOrcProduct => update status to 'failing trigger product'..."
-      puts "Product name : #{@filename}"
-      puts "Product id   : #{@trigger_prod_id}"
-      puts "update completed :-)"
-      puts
+   if @isDebugMode == true then
+      @logger.debug("updateOrcProduct => update status to 'failing trigger product' => #{@filename} : #{@trigger_prod_id}")
    end
  
 end
 
-#-------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 def set_product_to_obsolete
 
@@ -516,7 +522,7 @@ def set_product_to_obsolete
  
 end
 
-#-------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------
 
 
 def set_product_to_discarded
@@ -570,6 +576,7 @@ end
 ## -----------------------------------------------------------------------------
 
 def deleteAll
+   require 'orc/ORC_DataModel'
    if @bDeleteQueued == true or @bDeleteTUTTO == true then
       OrchestratorQueue.delete_all
       puts "orchestrator queued files deleted"
@@ -608,7 +615,7 @@ def deleteAll
 end
 ## -----------------------------------------------------------------------------
 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -622,11 +629,11 @@ def usage
    }
 end
 
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## ===============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## ===============================================================================

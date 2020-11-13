@@ -1,7 +1,13 @@
-Modules
-- OrcBolg
+Modules <9 characters>
+- Orchtratr
 - Ingestion
 - Scheduler
+- manageDB
+- MrQueue  
+
+- ArcStore
+- Retrieve  
+- ArcPurge
 
 INFO:
 
@@ -36,7 +42,8 @@ WARNING:
 ORC_301: Discarded $file
 ORC_305: $file $datatype is not trigger type
 ORC_310: Scheduler is already running
-ORC_311: Ingester is already running 
+ORC_311: Ingester is already running
+ORC_314: Stop -> Ingester was not running 
 
 
 ERROR:
@@ -45,3 +52,4 @@ ORC_602: $file $type filetype not configured
 ORC_611: $file archiving failed
 ORC_612: $file retrieval failed
 ORC_666: failed job
+ORC_705: ORC miss-configuration

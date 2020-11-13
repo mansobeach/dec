@@ -29,9 +29,9 @@ module ORC
    @@change_record = { \
       "0.0.10"  =>   "orchestratorConfigFile.xml Inventory item added for database configuration\n\
          Support to remote inventory / db different than localhost\n\
-         Inventory config now includes Database_Host & Database_Port items\n\
-         log messages rationalisation and clean-up\n\
-         TBW2",\
+         Inventory config now includes Database_Host & Database_Port items:\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-384\n\
+         log messages rationalisation and clean-up",\
       "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n\
          orcQueueUpdate removes from the queue a previously failed product\n\
          orcValidateConfig has been created:\n\
@@ -129,14 +129,14 @@ module ORC
    
    ## -----------------------------------------------------------------
    
-   def load_config_development
-      ENV['ORC_DB_ADAPTER']               = "sqlite3"
-      ENV['ORC_TMP']                      = "/tmp"
-      ENV['ORC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/inventory/orc_inventory"
-      ENV['ORC_DATABASE_USER']            = "root"
-      ENV['ORC_DATABASE_PASSWORD']        = "1mysql"
-      ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-   end
+#   def load_config_development
+#      ENV['ORC_DB_ADAPTER']               = "sqlite3"
+#      ENV['ORC_TMP']                      = "/tmp"
+#      ENV['ORC_DATABASE_NAME']            = "#{ENV['HOME']}/Sandbox/inventory/orc_inventory"
+#      ENV['ORC_DATABASE_USER']            = "root"
+#      ENV['ORC_DATABASE_PASSWORD']        = "1mysql"
+#      ENV['ORC_CONFIG']                   = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+#   end
    
    ## -----------------------------------------------------------------
    
@@ -164,6 +164,8 @@ module ORC
       puts "HOME                          => #{ENV['HOME']}"
       puts "ORC_TMP                       => #{ENV['ORC_TMP']}"
       puts "ORC_DB_ADAPTER                => #{ENV['ORC_DB_ADAPTER']}"
+      puts "ORC_DATABASE_HOST             => #{ENV['ORC_DATABASE_HOST']}"
+      puts "ORC_DATABASE_PORT             => #{ENV['ORC_DATABASE_PORT']}"
       puts "ORC_DATABASE_NAME             => #{ENV['ORC_DATABASE_NAME']}"
       puts "ORC_DATABASE_USER             => #{ENV['ORC_DATABASE_USER']}"
       puts "ORC_DATABASE_PASSWORD         => #{ENV['ORC_DATABASE_PASSWORD']}"

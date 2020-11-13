@@ -126,7 +126,8 @@ def main
       exit(66)
    end
 
-   if self.check_environment == false then
+   ## Different to avoid checking the directories
+   if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
@@ -181,6 +182,12 @@ def main
       puts "================================================"         
    end
 
+   ## Check directories also this time
+   ret = self.check_environment
+   
+   if !ret then
+      bReturn = false
+   end
 
    if bReturn == true then
       exit(0)

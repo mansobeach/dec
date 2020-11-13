@@ -17,12 +17,15 @@
 
  
    <outputter name="orchestrator_log" level="DEBUG" >
-    <type>FileOutputter</type>
-    <filename>/tmp/dec_orchestrator.log</filename>
+    <type>RollingFileOutputter</type>
+    <filename>/log/dec_orchestrator.log</filename>
     <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
     </formatter>
     <trunc>false</trunc>
+    <maxsize>10000000</maxsize>
+    <max_backups>4</max_backups>
+    <maxtime>2592000</maxtime>
    </outputter>
 
  <!-- ============================================= -->

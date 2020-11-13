@@ -252,7 +252,7 @@ def main
    @minArcConfigDir       = ENV['MINARC_CONFIG']
 
    ## initialise the logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("minArcStore", "#{@minArcConfigDir}/minarc_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("ArcStore ", "#{@minArcConfigDir}/minarc_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -443,12 +443,6 @@ def main
       puts
       exit(99)
    end
-
-   if @isDebugMode then
-      puts
-      puts "Operation successful !"
-      puts
-   end
  
    if @bMutex == true then
       @locker.release
@@ -458,7 +452,7 @@ def main
 
 end
 
-#-------------------------------------------------------------
+## -----------------------------------------------------------
 
 
 def superBulk
@@ -536,12 +530,6 @@ def bulkArchive
             @logger.error("[ARC_666] Could not archive #{file}")
             next
          end
-
-         if @isDebugMode then
-            puts
-            puts "Operation successful !"
-            puts
-         end
       rescue Exception => e
          @logger.error("[ARC_666] Could not archive #{file} / #{e.to_s}")
          if @isDebugMode == true then
@@ -550,8 +538,7 @@ def bulkArchive
             puts
          end
          next
-      end      
-      
+      end
    }
    
    if retVal == true then

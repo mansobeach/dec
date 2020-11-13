@@ -32,7 +32,8 @@ module ARC
       "1.0.35" =>    "New Server API primitive API_URL_RETRIEVE_CONTENT", \
       "1.0.34"  =>   "minarc_config.xml Inventory item added for database configuration\n\
           Support to remote inventory / db different than localhost\n\
-          Inventory config now includes Database_Host & Database_Port items\n\
+          Inventory config now includes Database_Host & Database_Port items:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-384\n\
           minarc_config.xml includes configuration item Workflow ArchiveIntray for server\n\
           log messages formalisation\n\
           Containerised support:\n\

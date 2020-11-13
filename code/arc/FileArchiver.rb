@@ -650,23 +650,21 @@ private
          anArchivedFile.save!
          
          
-         if @isDebugMode == true then
-            puts "===================================="
-            puts "         NEW FILE ARCHIVING         "
-         
-         
-            puts "...................................."
-            puts "Source File       -> #{full_path_filename}"
-            puts "Destination       -> #{path}"
-            puts "File-Type         -> #{type}"
-            puts "Validity Start    -> #{start}"
-            puts "Validity Stop     -> #{stop}"
-            puts "Archiving date    -> #{archival_date}"
-            puts "Size              -> #{size}"
-            puts "Original Size     -> #{size_original}"
-            puts "Disk occupation   -> #{size_in_disk}"
-            puts "==================================="
-         end
+#         if @isDebugMode == true then
+#            puts "===================================="
+#            puts "         NEW FILE ARCHIVING         "         
+#            puts "...................................."
+#            puts "Source File       -> #{full_path_filename}"
+#            puts "Destination       -> #{path}"
+#            puts "File-Type         -> #{type}"
+#            puts "Validity Start    -> #{start}"
+#            puts "Validity Stop     -> #{stop}"
+#            puts "Archiving date    -> #{archival_date}"
+#            puts "Size              -> #{size}"
+#            puts "Original Size     -> #{size_original}"
+#            puts "Disk occupation   -> #{size_in_disk}"
+#            puts "==================================="
+#         end
       
       rescue Exception => e
          puts
@@ -730,25 +728,25 @@ private
 
       #-------------------------------------------
 
-      if @isDebugMode == true then
-         puts "===================================="
-         if @bIsAlreadyArchived == false then
-            puts "         NEW FILE ARCHIVING         "
-         else
-            puts "         UPDATE ARCHIVED FILE       "
-         end
-         puts "...................................."
-         puts "Source File       -> #{full_path_filename}"
-         puts "Destination       -> #{destDir}"
-         puts "File-Type         -> #{type}"
-         puts "Validity Start    -> #{start}"
-         puts "Validity Stop     -> #{stop}"
-         puts "Archiving date    -> #{archival_date}"
-         puts "Size              -> #{size}"
-         puts "Original Size     -> #{size_original}"
-         puts "Disk occupation   -> #{size_in_disk}"
-         puts "==================================="
-      end
+#      if @isDebugMode == true then
+#         puts "===================================="
+#         if @bIsAlreadyArchived == false then
+#            puts "         NEW FILE ARCHIVING         "
+#         else
+#            puts "         UPDATE ARCHIVED FILE       "
+#         end
+#         puts "...................................."
+#         puts "Source File       -> #{full_path_filename}"
+#         puts "Destination       -> #{destDir}"
+#         puts "File-Type         -> #{type}"
+#         puts "Validity Start    -> #{start}"
+#         puts "Validity Stop     -> #{stop}"
+#         puts "Archiving date    -> #{archival_date}"
+#         puts "Size              -> #{size}"
+#         puts "Original Size     -> #{size_original}"
+#         puts "Disk occupation   -> #{size_in_disk}"
+#         puts "==================================="
+#      end
 
 
       # Copy / Move the source file to the archive
@@ -1040,7 +1038,7 @@ private
 
    #--------------------------------------------------------
 
-end # class
+end ## class
 
-end # module
-#=================================================
+end ## module
+

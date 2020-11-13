@@ -18,9 +18,10 @@ ARC_202: Retrieved: $file
 
 WARNING:
 
-ARC_310: server is already running
-ARC_312: server was not running
-
+ARC_310: Start => Scheduler is already running
+ARC_311: Start => Ingester is already running
+ARC_312: Stop => Scheduler was not running
+ARC_313: Stop => Ingester was not running
 
 ERROR:
 ARC_601: Archive Root does not exist

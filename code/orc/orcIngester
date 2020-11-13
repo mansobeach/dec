@@ -33,11 +33,11 @@
 #
 
 #########################################################################
-#
-# === ORC Orchestrator
-#
-# Git: $Id: orcIngester,v 1.2 2009/03/17 12:47:03 decdev Exp $
-#
+##
+## === ORC Orchestrator
+##
+## Git: $Id: orcIngester,v 1.2 2009/03/17 12:47:03 decdev Exp $
+##
 #########################################################################
 
 require 'getoptlong'
@@ -182,12 +182,12 @@ def start
    @logger.info(msg)
  
    # Check input parameters
-   if (@intervalSeconds == 0) then
-      @logger.error("daemon polling interval is missing ! :-(")
+   if @intervalSeconds == 0 then
+      @logger.error("[ORC_705] daemon polling interval is missing ! :-(")
       exit(99)
    end
  
-   if (@pollingDir == "") then
+   if @pollingDir == "" then
       @logger.error("the polling directory is missing ! :-(")
       exit(99)
    end
@@ -219,20 +219,19 @@ end
 
 ## =============================================================================
 
-# It stops the Orchestrator Ingestor 
+## It stops the Orchestrator Ingestor 
 
 def stopIngestor
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
    pid     = checker.getRunningPID
 
    if pid == false then
-      puts "There was no #{File.basename(File.expand_path(__FILE__))} daemon running !"
+      @logger.warn("[ORC_314] There was no #{File.basename(File.expand_path(__FILE__))} daemon running")
       exit(99)
    else
-#      if @isDebugMode == true then
-         puts "Sending SIGKILL to Process #{pid} to stop IngesterComponent"
-#      end      
-      @logger.debug("Sending SIGKILL to Process #{pid} to stop IngesterComponent")
+      if @isDebugMode == true then
+         @logger.debug("Sending SIGKILL to Process #{pid} to stop IngesterComponent")
+      end      
       Process.kill(9, pid.to_i)
       checker.release
    end

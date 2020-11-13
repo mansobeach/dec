@@ -351,8 +351,9 @@ def queryDHUS(user, password, query)
    iPending = response.body.to_i
    iSkip    = 0
    
-   puts "Found #{iPending} items"
-               
+   if @isDebugMode == true then
+      puts "Found #{iPending} items"
+   end            
    ## --------------------------------------------
    ##
    ## Product Select 
@@ -376,19 +377,36 @@ def queryDHUS(user, password, query)
       puts "Error in request #{response.code} / #{response.message}"
       return false 
    end
+   
+   newDoc = ""
       
    doc = Nokogiri::XML(response.body)
+   
+   newDoc = doc.to_s
+#   puts doc  
+
             
-   elements = doc.xpath("//xmlns:title")
+#   elements = doc.xpath("//xmlns:title")
+   
+   elements = doc.xpath("//xmlns:entry")
+   
+#   puts elements
+#   puts 
+#   puts 
+#   puts response.body
+   # system("clear")
+#   puts doc
+#   exit
    
    arrItems = Array.new
       
    elements.each{|item|
+      puts item
       if item.text.include?(creation) == true then
          arrItems << item.text
       end
    }   
-   puts arrItems.sort
+   # puts arrItems.sort
 
    iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
    iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
@@ -428,24 +446,31 @@ def queryDHUS(user, password, query)
       end
       
       doc = Nokogiri::XML(response.body)
+      
+#      puts doc
+      newDoc = newDoc.dup + doc.to_s
             
-      elements = doc.xpath("//xmlns:title")
+     # elements = doc.xpath("//xmlns:title")
+      elements = doc.xpath("//xmlns:entry")
    
       arrItems = Array.new
       
       elements.each{|item|
+         puts item
          if item.text.include?(creation) == true then
             arrItems << item.text
          end
       }
    
-      puts arrItems.sort   
+      # puts arrItems.sort   
    
       iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
       iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
    
    end
    ## --------------------------------------------
+   
+   # puts newDoc
    
    return true
 end

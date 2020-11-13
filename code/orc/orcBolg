@@ -142,7 +142,7 @@ def main
 
    ## ----------------------------------
    ## initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("orcBolg", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("Orchtratr", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -313,9 +313,7 @@ def stop
       end
       Process.kill(15, pid.to_i)
    else
-      if @isDebugMode == true then
-         @logger.debug("Ingester  was not running")
-      end
+      @logger.warn("[ORC_313] Ingester  was not running")
    end
 
    if @schedulerChecker.isRunning == true then
@@ -331,7 +329,7 @@ def stop
          Process.kill(9, pid.to_i)
       end
    else
-      @logger.warn("Scheduler was not running")
+      @logger.warn("[ORC_312] Scheduler was not running")
    end
    @logger.info("[ORC_060] Stopped Orchestrator")
 end
