@@ -5,9 +5,10 @@ Modules <9 characters>
 - manageDB
 - MrQueue  
 
-- ArcStore
+- ArcStore 
 - Retrieve  
-- ArcPurge
+- ArcPurge 
+- ArcServer
 
 INFO:
 

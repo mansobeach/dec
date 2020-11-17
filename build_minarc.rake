@@ -14,8 +14,9 @@
 ###
 #########################################################################
 
-require 'rake'
+## rake -f build_minarc.rake minarc:build[s2decservice,e2espm-inputhub,s2_pg]
 
+require 'rake'
 
 ## =============================================================================
 ##
@@ -172,10 +173,12 @@ namespace :minarc do
    desc "help in the kitchen"
 
    task :help do
+      puts
       puts "The kitchen supports the following parameters:"
-      puts "suffix" 
-      puts "user" 
-      puts "host"
+      puts "suffix: item to tailor the component library dependencies" 
+      puts "user: item to define the node kept in the repository" 
+      puts "host: item to define the node kept in the repository"
+      puts
       puts "suffix: test | pg"
       puts
       puts "Some of the above flags can be combined:"
@@ -183,6 +186,11 @@ namespace :minarc do
       puts "test: it ships the minArc test tools"
       puts
       puts "pg: it includes installation requirement for postgresql gem"
+      puts
+      puts "unit tests : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
+      puts "s2decservice : rake -f build_minarc.rake minarc:build[s2decservice,e2espm-inputhub,s2_pg]"
+      puts "s2boa : rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
+      puts
       puts
    end
    ## --------------------------------------------------------------------

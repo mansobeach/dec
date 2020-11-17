@@ -24,12 +24,14 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.35"
+   @@version = "1.0.36"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.35" =>    "New Server API primitive API_URL_RETRIEVE_CONTENT", \
+      "1.0.36" =>    "minArcServer fix to avoid uncontrolled children upon archive request:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-393",\
+      "1.0.35"  =>    "New Server API primitive API_URL_RETRIEVE_CONTENT", \
       "1.0.34"  =>   "minarc_config.xml Inventory item added for database configuration\n\
           Support to remote inventory / db different than localhost\n\
           Inventory config now includes Database_Host & Database_Port items:\n\
@@ -176,6 +178,10 @@ module ARC
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
       ENV['RACK_ENV']                     = "production"
    end
+   
+   ## ----------------------------------------------------------------
+   
+   
    
    ## ----------------------------------------------------------------
    

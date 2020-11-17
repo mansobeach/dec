@@ -45,7 +45,7 @@ class MINARC_Server < Sinatra::Base
       # set :bind, '0.0.0.0'
       set :server, :thin
       # set :server, :puma
-      set :threaded, true
+      set :threaded, false
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :isDebugMode,       false
@@ -61,7 +61,7 @@ class MINARC_Server < Sinatra::Base
       @minArcConfigDir       = ENV['MINARC_CONFIG']
 
       ## initialise the logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("minArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("ArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
    
       if settings.isDebugMode then
          loggerFactory.setDebugMode
@@ -245,7 +245,8 @@ class MINARC_Server < Sinatra::Base
          @@logger.debug(cmd)
       end
       @@logger.info("[ARC_075] Request to archive from Intray #{@@inTray}/#{wildcard}")
-      spawn(cmd)
+      pid = spawn(cmd)
+      Process.detach(pid)
       status API_RESOURCE_FOUND
    end
 
