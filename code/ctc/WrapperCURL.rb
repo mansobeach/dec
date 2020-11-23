@@ -1,18 +1,18 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FTPClientCommands module
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Transfer Component
-# 
-# === module Common Transfer Component module WrapperCURL
-#
-# This module contains methods for creating the curl
-# command line parameters. 
-#
+###
+### === Ruby source for #WrapperCURL module
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Common Transfer Component
+### 
+### === module Common Transfer Component module WrapperCURL
+###
+### This module contains methods for creating the curl
+### command line parameters. 
+###
 #########################################################################
 
 require 'shell'
@@ -266,6 +266,283 @@ module WrapperCURL
    end
    ## -------------------------------------------------------------
 
-end # module FTPClientCommands
+   ## FTPS list files from a directory
+   def ftpsListFiles(host, \
+                     port, \
+                     directory, \
+                     user, \
+                     password, \
+                     verifyPeerSSL, \
+                     logger, \
+                     isDebugMode\
+                     )
+      cmd = "curl --ftp-ssl --list-only"
+
+      if isDebugMode == true then
+         cmd = "#{cmd} -v"
+      else
+         cmd = "#{cmd} -s"
+      end
+      
+      if verifyPeerSSL == false then
+         cmd = "#{cmd} -k --insecure"
+      end
+      
+      cmd = "#{cmd} --user #{user}:#{password}"
+      
+      ## 990 Implicit Mode
+      if port.to_i == 990 then
+         cmd = "#{cmd} ftps://#{host}/#{directory}/"
+      else
+         cmd = "#{cmd} ftp://#{host}/#{directory}/"
+      end
+      
+      if isDebugMode == true then
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+      
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         raise "Failed execution of #{cmd} / Exit code #{$?}"
+      end
+      
+      arrFiles = output.split("\n")
+      
+      return arrFiles
+   end
+   ## -------------------------------------------------------------
+
+   ## https://stackoverflow.com/questions/28721515/curl-command-line-tool-delete-file-from-ftp-server
+   def ftpsDeleteFile(host, \
+                      port, \
+                      filename, \
+                      user, \
+                      password, \
+                      verifyPeerSSL, \
+                      logger, \
+                      isDebugMode\
+                     )
+                     
+      cmd = "curl --ftp-ssl"
+
+      if isDebugMode == true then
+         cmd = "#{cmd} -v"
+      else
+         cmd = "#{cmd} -s"
+      end
+
+      if verifyPeerSSL == false then
+         cmd = "#{cmd} -k --insecure"
+      end
+      
+      cmd = "#{cmd} --user #{user}:#{password}"
+      
+      ## 990 Implicit Mode
+      if port.to_i == 990 then
+         cmd = "#{cmd} ftps://#{host}/#{File.dirname(filename)}/"
+      else
+         cmd = "#{cmd} ftp://#{host}/#{File.dirname(filename)}/"
+      end
+
+      ## Delete Command
+      cmd = "#{cmd} -Q \"DELE #{filename}\""
+               
+      
+      if isDebugMode == true then
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+      
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         raise "Failed execution of #{cmd} / Exit code #{$?} / #{output}"
+      end
+      
+      return true
+
+                     
+   end
+   ## -------------------------------------------------------------
+
+   ## https://stackoverflow.com/questions/28721515/curl-command-line-tool-delete-file-from-ftp-server
+   
+   ## https://stackoverflow.com/questions/49031463/removing-a-file-from-ftp-with-curl
+   
+   ## curl -v --ftp-ssl -s -k --insecure --user dec:dec -o file.txt ftps://localhost/tmp/dir1/file.txt -Q "-DELE file.txt"
+   
+   def ftpsGetFile(host, \
+                   port, \
+                   filename, \
+                   bDelete, \
+                   user, \
+                   password, \
+                   verifyPeerSSL, \
+                   logger, \
+                   isDebugMode\
+                   )
+   
+      cmd = "curl --ftp-ssl"
+
+      if isDebugMode == true then
+         cmd = "#{cmd} -v"
+      else
+         cmd = "#{cmd} -s"
+      end
+
+      if verifyPeerSSL == false then
+         cmd = "#{cmd} -k --insecure"
+      end
+      
+      cmd = "#{cmd} --user #{user}:#{password}"
+      
+      ## 990 Implicit Mode
+      if port.to_i == 990 then
+         cmd = "#{cmd} -o #{File.basename(filename)} ftps://#{host}/#{filename}"
+      else
+         cmd = "#{cmd} -o #{File.basename(filename)} ftp://#{host}/#{filename}"
+      end
+
+      if bDelete == true then
+         cmd = "#{cmd} -Q \"-DELE #{File.basename(filename)}\""
+      end                 
+      
+      if isDebugMode == true then
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+      
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         raise "Failed execution of #{cmd} / Exit code #{$?}"
+      end
+      
+      return true
+      
+   end
+   ## -------------------------------------------------------------
+   
+   def ftpsPutFile(host, \
+                   port, \
+                   filename, \
+                   targetDirectory, \
+                   user, \
+                   password, \
+                   verifyPeerSSL, \
+                   logger, \
+                   isDebugMode\
+                   )
+   
+      cmd = "curl --ftp-ssl"
+
+      if isDebugMode == true then
+         cmd = "#{cmd} -v"
+      else
+         cmd = "#{cmd} -s"
+      end
+
+      if verifyPeerSSL == false then
+         cmd = "#{cmd} -k --insecure"
+      end
+      
+      cmd = "#{cmd} --user #{user}:#{password}"
+      
+      ## 990 Implicit Mode
+      if port.to_i == 990 then
+         cmd = "#{cmd} -T #{File.basename(filename)} ftps://#{host}/#{targetDirectory}"
+      else
+         cmd = "#{cmd} -T #{File.basename(filename)} ftp://#{host}/#{targetDirectory}"
+      end
+                         
+      if isDebugMode == true then
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         raise "Failed execution of #{cmd} / Exit code #{$?} / #{output}"
+      end
+      
+      return true
+   end
+   ## -------------------------------------------------------------
+   
+   ## curl -T localfile ftp://ftp.example.com/dir/path/
+   ##
+   ## curl -T localfile ftp://ftp.example.com/dir/path/remote-file
+
+   def ftpsPutFileRename(host, \
+                   port, \
+                   filename, \
+                   targetDirectory, \
+                   targetTemp, \
+                   user, \
+                   password, \
+                   verifyPeerSSL, \
+                   logger, \
+                   isDebugMode\
+                   )
+   
+      cmd = "curl --ftp-ssl"
+
+      if isDebugMode == true then
+         cmd = "#{cmd} -v"
+      else
+         cmd = "#{cmd} -s"
+      end
+
+      if verifyPeerSSL == false then
+         cmd = "#{cmd} -k --insecure"
+      end
+      
+      cmd = "#{cmd} --user #{user}:#{password}"
+      
+      ## 990 Implicit Mode
+      if port.to_i == 990 then
+         cmd = "#{cmd} -T #{File.basename(filename)} ftps://#{host}/#{targetTemp}"
+      else
+         cmd = "#{cmd} -T #{File.basename(filename)} ftp://#{host}/#{targetTemp}"
+      end
+                      
+      ## RENAME upon upload
+      cmd = "#{cmd} -Q \"-RENAME #{targetTemp} #{targetDirectory}\""
+   
+      if isDebugMode == true then
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         raise "Failed execution of #{cmd} / Exit code #{$?} / #{output}"
+      end
+      
+      return true
+                      
+   end
+   ## -------------------------------------------------------------
+
+end # module WrapperCURL
 
 end # module CTC

@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.18"
+   @@version = "1.0.19"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.19" =>    "FTPS Implicit mode (port 990) support for pull & push mode", \
       "1.0.18" =>    "Update of the OData client for DHUS & S2PRIP to support pagination\n\
           OData client for DHUS to stream to the console the received XML",
       "1.0.17" =>    "Support to push parallelisation driven by ParallelDownload config\n\
@@ -41,8 +42,8 @@ module DEC
           Support of HTTP(S) protocol verb PUT for push circulations\n\
           Support of HTTP(S) protocol verb GET for pull directories\n\
           Support of HTTP(S) protocol verb HEAD for checking interface URL\n\
-          Migration of FTPS/FTPES protocol for pull circulations\n\
-          Migration of FTPS/FTPES protocol for push circulations\n\
+          Migration of FTPS (explicit mode) protocol for pull circulations\n\
+          Migration of FTPS (explicit mode) protocol for push circulations\n\
           dec_config.xml Inventory item added for database configuration\n\
           dec_config.xml reshuffle of some configuration items\n\
           dec_interfaces.xml configuration item DeleteFlag removed\n\

@@ -1,18 +1,18 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #InterfaceHandlerFTPS class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Data Collector Component
-# 
-# Git: $Id: InterfaceHandlerFTPS.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
-#
-# Module Interface
-# This class polls a given FTPS Interface and gets all registered available files
-#
+##
+## === Ruby source for #InterfaceHandlerFTPS class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component -> Data Collector Component
+## 
+## Git: $Id: InterfaceHandlerFTPS.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
+##
+## Module Interface
+## This class polls a given FTPS Interface and gets all registered available files
+##
 #########################################################################
 
 require 'dec/ReadInterfaceConfig'
@@ -63,11 +63,9 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
    end
    ## -----------------------------------------------------------
 
-   def checkConfig(entity, bDCC, bDDC)
-      checker     = CheckerInterfaceConfig.new(entity, bDCC, bDDC, @logger)
-      
+   def checkConfig(entity, pull, push)
+      checker     = CheckerInterfaceConfig.new(entity, pull, push, @logger)
       retVal      = checker.check
- 
       if retVal == true then
          if @isDebugMode == true then
             @logger.debug("#{entity} I/F is configured correctly")
@@ -81,16 +79,12 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
 
    def pushFile(sourceFile, targetFile, targetTemp)
       login()
-      
       @ftps.put(sourceFile,   targetTemp)
       @ftps.rename(targetTemp, targetFile)
       @ftps.close
-      
-      return true
-      
+      return true     
    end
    ## -----------------------------------------------------------
-   ##
    ##
    
    def getUploadDirList(bTemp = false)
@@ -99,9 +93,7 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerFTPS::getUploadDirList tmp => #{bTemp}")
       end
       
-      if @ftps == nil then
-         login()
-      end
+      login()
    
       dir      = nil
       if bTemp == false then
@@ -109,6 +101,11 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       else
          dir = @outConfig.getUploadTemp(@entity)
       end
+      
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerFTPS::getUploadDirList tmp => #{bTemp} / #{dir}")
+      end
+
             
       begin
          @ftps.chdir(dir)
@@ -130,15 +127,14 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
    ## DEC - Pull
 
    def getList
-      @depthLevel    = 0
-      pwd            = nil
-      login()
-      
+      @depthLevel       = 0
+      pwd               = nil
       arrFiles          = Array.new
       arrDownloadDirs   = @inConfig.getDownloadDirs(@entity)        
       
-
       arrDownloadDirs.each{|downDir|
+         
+         login()
          
          remotePath = downDir[:directory]
          maxDepth   = downDir[:depthSearch]
@@ -172,50 +168,7 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
    ## -----------------------------------------------------------
 
    def exploreTree(relativeFile)
-
-      if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerFTPS::exploreLocalTree #{relativeFile}")
-      end
-
-      # Treat normal files
-      if File.file?(relativeFile) then
-         if @isDebugMode == true then  @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
-         @newArrFile << %Q{#{@pwd}/#{relativeFile}}
-      else #its a dir
-         #be sure if it is
-         if File.directory?(relativeFile) then
-            # and the flag to download dirs is deactivated 
-
-            if !@manageDirs then
-               #and the depth is okey explore dir.
-               if @depthLevel < @maxDepth then
-                  if @isDebugMode == true then
-                     @logger.debug("InterfaceHandlerFTPS::exploreLocalTree change dir to #{relativeFile}")
-                  end 
-                  #get into directory (stack recursion)
-                  Dir.chdir(relativeFile)
-                  @pwd = Dir.pwd     
-                  @depthLevel = @depthLevel + 1 
-
-                  # get etnries and call to recursion
-                  entries = Dir["*"]
-                  entries.each{|element|
-                     exploreLocalTree(element)
-                  }
-     
-                  # unstack recursion
-                  Dir.chdir("..")
-                  @pwd = Dir.pwd
-                  @depthLevel = @depthLevel - 1
-               end             
-            else #download whole dir
-               if @isDebugMode == true then @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
-               @newArrFile << %Q{#{@pwd}/#{relativeFile}}
-            end
-
-         end
-      end
-
+      raise "Not implemented"
    end
    ## -----------------------------------------------------------
    
@@ -259,7 +212,6 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       else
          return false
       end
-      #everything ik ok
       return true
    end	
 	## -----------------------------------------------------------
@@ -273,11 +225,14 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerFTPS::deleteFromEntity: I/F #{@entity}")
       end
 
+      login()
+
       begin
-         FileUtils.rm_rf(filename)    
-      rescue
+         @ftps.delete(filename)    
+      rescue Exception => e
          if @isdebugMode == true then 
             @logger.debug("[DEC_XXX] I/F #{@entity}: InterfaceHandlerFTPS::deleteFromEntity: Could not delete #{filename}")
+            @logger.debug(e.to_s)
          end
          return false
       end

@@ -85,7 +85,7 @@ class DEC_FileSender
          @interface   = @entity
       end
 
-      @logger.debug("#{@interface}")
+#      @logger.debug("#{@interface}")
 
       @ftReadConf    = ReadInterfaceConfig.instance
       txparams       = @ftReadConf.getTXRXParams(@entity)

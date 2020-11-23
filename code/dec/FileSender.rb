@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileSender class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Transfer Component
-# 
-# Git: $Id: FileSender.rb,v 1.18 2014/05/20 14:41:04 algs Exp $
-#
+###
+### === Ruby source for #FileSender class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Common Transfer Component
+### 
+### Git: $Id: FileSender.rb,v 1.18 2014/05/20 14:41:04 algs Exp $
+###
 #########################################################################
 
 require 'net/ssh'
@@ -23,6 +23,7 @@ require 'cuc/CommandLauncher'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerHTTP'
 require 'dec/InterfaceHandlerFTPS'
+require 'dec/InterfaceHandlerFTPS_Implicit'
 
 module DEC
 
@@ -61,13 +62,14 @@ class FileSender
       @ftBatchFilename  = %Q{.BatchSenderFile4#{@pushServer[:mnemonic]}}
       @isDebugMode      = false
       @fileListLoaded   = false
+      @port             = @pushServer[:port].to_i
       @entity           = @pushServer[:mnemonic]
       @secureMode       = @pushServer[:isSecure]
       @passiveMode      = @pushServer[:isPassive]
       @url              = nil
       @dynamic          = false
       @mirroring        = false
-      @prefix           = "temp_"
+      @prefix           = ".temp_"
       @handler          = nil
       
       
@@ -83,11 +85,16 @@ class FileSender
       end
       ## ---------------------------------------------------
   
-      if @protocol == 'FTPS' or @protocol == 'FTPES' then
+      if @protocol == 'FTPS' or @protocol == 'FTPES' and @port == 21 then
          @handler = DEC::InterfaceHandlerFTPS.new(@entity, @logger, false, true, false)
       end
       ## ---------------------------------------------------      
-      
+ 
+      if @protocol == 'FTPS' and @port == 990 then
+         @handler = DEC::InterfaceHandlerFTPS_Implicit.new(@entity, @logger, false, true, false)
+      end
+      ## ---------------------------------------------------      
+     
       
    end
    ## -----------------------------------------------------------

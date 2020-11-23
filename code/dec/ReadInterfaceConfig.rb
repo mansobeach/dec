@@ -375,8 +375,7 @@ private
          if ENV['DEC_CONFIG'] then
             configDir         = %Q{#{ENV['DEC_CONFIG']}}  
          end
-            
-              
+               
          @@configDirectory = configDir
         
          @configFile = %Q{#{configDir}/dec_interfaces.xml}        

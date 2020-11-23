@@ -124,6 +124,7 @@ class DEC_ReceiverFromInterface
       @entityConfig     = ReadInterfaceConfig.instance
       @protocol         = @entityConfig.getProtocol(@entity)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
+      @port             = @ftpserver[:port]
       @ftpserver[:arrDownloadDirs] = ReadConfigIncoming.instance.getDownloadDirs(@entity)
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
@@ -222,8 +223,13 @@ class DEC_ReceiverFromInterface
          when "FTPS"
          
             begin
+               @ftps = nil
                
-               @ftps = DEC::InterfaceHandlerFTPS.new(@entity, @logger, true, false, @decConfig.getDownloadDirs)
+               if @port.to_i == 990 then
+                  @ftps = DEC::InterfaceHandlerFTPS_Implicit.new(@entity, @logger, true, false, false)
+               else
+                  @ftps = DEC::InterfaceHandlerFTPS.new(@entity, @logger, true, false, @decConfig.getDownloadDirs)
+               end
                
                if @isDebugMode then 
                   @ftps.setDebugMode
@@ -830,11 +836,11 @@ class DEC_ReceiverFromInterface
             
             fork{
                if @isDebugMode == true then
-                  @logger.debug("Child process created to download #{File.basename(file)}")
+                  @logger.debug("Child process #{i} created to download #{File.basename(file)}")
             	end
                ret = downloadFile(file)
                if ret == false then
-                  @logger.error("Child process failed to download #{File.basename(file)}")
+                  @logger.error("Child process #{i} failed to download #{File.basename(file)}")
                   @retValFilesReceived  = false
                   exit(1)
                else
@@ -1328,10 +1334,14 @@ private
       if @protocol == "FTPS" or @protocol == "FTPES" then
          retVal = @ftps.downloadFile(filename)
          
-         size = File.size("#{@localDir}/#{File.basename(filename)}")
-         
-			copyFileToInBox(File.basename(filename), size)
-			         
+         size = nil
+         if @port == 21 then
+            size = File.size("#{@localDir}/#{File.basename(filename)}")
+			   copyFileToInBox(File.basename(filename), size)
+			else
+            size = File.size("#{@finalDir}/#{File.basename(filename)}")
+         end
+                 
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 
@@ -1639,11 +1649,21 @@ private
 		   if @isDebugMode == true then
 			   @logger.debug("DeleteFlag is #{@bDeleteDownloaded} | ForceFlag is #{bForce} for #{@entity} I/F ")
 			end
+
+         ## FTPS Implicit Mode
+         if @protocol == "FTPS" and @port == 990 then
+            return @ftps.deleteFromEntity(filename)
+         end
+
+         ## FTPS Explicit Mode
+         if @protocol == "FTPS" and @port != 990 then
+            return @ftps.deleteFromEntity(filename)
+         end
          
          if @protocol == "LOCAL" then
             return @local.deleteFromEntity(filename)
-         end
-
+         end         
+         
          if @protocol == "WEBDAV" then
             return deleteFromEntity_HTTP(filename)
          end

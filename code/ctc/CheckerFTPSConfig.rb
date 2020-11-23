@@ -1,18 +1,20 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# Ruby source for #CheckerFTPConfig class
-#
-# Written by DEIMOS Space S.L. (bolf)
-#
-# Data Exchange Component -> Common Transfer Component
-# 
-# Git: $Id: CheckerFTPSConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
-#
+###
+### Ruby source for #CheckerFTPConfig class
+###
+### Written by DEIMOS Space S.L. (bolf)
+###
+### Data Exchange Component -> Common Transfer Component
+### 
+### Git: $Id: CheckerFTPSConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
+###
 #########################################################################
 
 require 'net/ftp'
+
+require 'dec/InterfaceHandlerFTPS_Implicit'
 
 module CTC
 
@@ -253,15 +255,26 @@ private
       passive  = @ftpElement[:isPassive]
       chkSSL   = @ftpElement[:verifyPeerSSL]
       ftps     = nil
+      
+      if port == 990 then
+         handler = InterfaceHandlerFTPS_Implicit.new("LOCALHOST_FTPS", @logger, true, false, false)
+         if @isDebugMode == true then
+            handler.setDebugMode
+         end
+         return handler.checkRemoteDirectory(dir)
+      end
             
       begin
-         if chkSSL == true then
-            hOptions = Hash.new
-            hOptions[:ssl] = true
-            ftps = Net::FTP.new(host,hOptions)
+         hOptions          = Hash.new
+         #hOptions[:port]   = port.to_i 
+         if chkSSL == false then
+            hOptions[:ssl]    = {:verify_mode => OpenSSL::SSL::VERIFY_NONE}
          else
-            ftps = Net::FTP.new(host, ssl: {:verify_mode => OpenSSL::SSL::VERIFY_NONE})
+            hOptions[:ssl]    = true
          end
+#         ftps = Net::FTP.new(host, hOptions)
+         ftps = Net::FTP.open(host, hOptions)
+#         ftps = ImplicitTlsFTP.open(host, hOptions)
       rescue Exception => e
          if @isDebugMode == true then
             puts
@@ -273,6 +286,7 @@ private
 
 
       begin
+         ftps.connect(host,port.to_i)
          ftps.login(user, pass)      
       rescue Exception => e
          raise "[DEC_611] I/F #{@entity}: #{e.to_s}"
@@ -288,6 +302,11 @@ private
          end
          
          items = ftps.list
+         
+         if @isDebugMode == true then 
+            puts items
+         end
+         
       rescue Exception => e
          raise e
       end            

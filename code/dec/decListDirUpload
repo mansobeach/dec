@@ -23,18 +23,18 @@
 #
 
 #########################################################################
-#
-# === Ruby script decListDirUpload
-# 
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: decListDirUpload,v 1.2 2007/06/26 15:53:35 decdev Exp $
-#
-# decListDirUpload checks what it has been sent to a given entity.
-# It checks in the UploadDir and UploadTemp directories 
-#
+###
+### === Ruby script decListDirUpload
+### 
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component
+### 
+### Git: $Id: decListDirUpload,v 1.2 2007/06/26 15:53:35 decdev Exp $
+###
+### decListDirUpload checks what it has been sent to a given entity.
+### It checks in the UploadDir and UploadTemp directories 
+###
 #########################################################################
 
 require 'getoptlong'
@@ -45,6 +45,7 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerFTPS'
+require 'dec/InterfaceHandlerFTPS_Implicit'
                                    
 ## MAIN script function
 def main
@@ -209,7 +210,12 @@ def main
    # ---------------------------------------------
    
    if entConf[:protocol].upcase == "FTPS" or entConf[:protocol].upcase == "FTPES" then
-      handler = InterfaceHandlerFTPS.new(@entity, @logger)
+      
+      if entConf[:port].to_i == 990 then
+         handler = InterfaceHandlerFTPS_Implicit.new(@entity, @logger)
+      else
+         handler = InterfaceHandlerFTPS.new(@entity, @logger)
+      end
       
       if @isDebugMode == true then
          handler.setDebugMode

@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #decUnitTests_FTPS class
-#
-# === Written by DEIMOS Space S.L.
-#
-# === Data Exchange Component
-#
-# # git: decUnitTests_FTPS,v $Id$: 
-# 
-# module DEC
-#
+###
+### === Ruby source for #decUnitTests_FTPS class
+###
+### === Written by DEIMOS Space S.L.
+###
+### === Data Exchange Component
+###
+### # git: decUnitTests_FTPS,v $Id$: 
+### 
+### module DEC
+###
 #########################################################################
 
 require 'rubygems'
@@ -19,12 +19,23 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'dec/InterfaceHandlerFTPS_Implicit'
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 
+## http://index-of.es/Varios-2/Everything%20Curl.pdf
+
+
+## https://rubydoc.info/gems/curb/Curl/Easy
+
+## https://en.wikipedia.org/wiki/FTPS
+## https://www.loadbalancer.org/blog/ftps-implicit-vs-ftps-explicit-who-will-win/
+
 ### ---------------------------------------------------------
 ###
-### Test Environment
+### Test Environment#2 FTPS Explicit Mode (need to change config port to 21)
 ###
 ### sudo docker image build -t dec_ftp:latest . -f ./docker/Dockerfile.dec.vsftpd
 ###
@@ -39,6 +50,8 @@ require 'dec/ReadConfigDEC'
 ## openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
 
 ## To configure vsftpd edit /opt/local/etc/vsftpd.conf
+## ssl_enable=YES
+
 ## sudo port load vsftpd
 ## sudo port unload vsftpd
 
@@ -48,14 +61,30 @@ require 'dec/ReadConfigDEC'
 ### https://tools.ietf.org/html/rfc4217
 ###
 
-
 ## curl -k --ftp-ssl --insecure --user dec:dec ftp://localhost/
 ##
 ## lftp :~> set ssl:verify-certificate no
 ## lftp :~> set ssl-force true
 ## lftp :~> set ssl-protect-data true
+
+## Explicit TLS port 21 and requests AUTH TLS command.
 ## lftp :~> connect localhost
+
+## Implicit Mode port 990
+## lftp :~> connect ftps://localhost
+
 ## lftp :~> login dec
+
+## https://www.glftpd.com/
+## https://www.wftpserver.com/
+##
+##
+## curl -k --list-only --ftp-ssl --insecure --user dec:dec ftps://127.0.0.1/tmp/dir2/
+
+## curl -s -k --ftp-ssl --insecure --user dec:dec ftps://127.0.0.1/tmp/dir2/pedo > pedo
+
+### https://github.com/bnix/double-bag-ftps/issues/17
+### https://gist.github.com/jnimety/01c63faea799385862100b5a16b013d8#file-implicit_tls_ftp-rb
 
 class DECTestCase_FTPS < Test::Unit::TestCase
 
@@ -111,15 +140,37 @@ class DECTestCase_FTPS < Test::Unit::TestCase
                            "tai-utc.dat" \
                            ]
 
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("DECTEST", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in decUnitTests_FTPS"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
    
    end
    
-   # --------------------------------------------------------
+   ## --------------------------------------------------------
    
    Test::Unit.at_exit do
       puts "End of DEC tests FTPS"
    end
-   #--------------------------------------------------------   
+   ## --------------------------------------------------------   
    
    # Setup before every test-case
    #
@@ -134,7 +185,52 @@ class DECTestCase_FTPS < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
    
+   def test_implicit
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      entityConfig      = ReadInterfaceConfig.instance
+      ftpServer         = entityConfig.getFTPServer4Receive("LOCALHOST_FTPS")
+      port              = ftpServer[:port].to_i
+      
+      if port == 21 then
+         return
+      end
+
+      inConfig         = ReadConfigIncoming.instance
+      inDirectory      = inConfig.getIncomingDir("LOCALHOST_FTPS")
+           
+      cmd = "rm -f #{inDirectory}/*"
+      puts cmd
+      system(cmd)
+      
+      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
+      
+      handler = InterfaceHandlerFTPS_Implicit.new("LOCALHOST_FTPS", @@logger, true, false, false)
+      
+      # handler.setDebugMode
+      
+      arr = handler.getList
+      
+      arr.each{|file|
+         puts file
+         puts "------"
+         assert(handler.downloadFile(file), "File download #{file}")
+      }
+      
+      
+      arr = Dir["#{inDirectory}/*"]
+      puts arr
+      
+   end
    ## ------------------------------------------------------
+   
+   ##
    
    ## PULL Circulations
    def test_pull
@@ -148,6 +244,9 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       
       system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
 
+      cmd = "rm -f /tmp/DEC*.log"
+      puts cmd
+      system(cmd)
 
       cmd = "decManageDB -d"
       ret = system(cmd)
@@ -166,6 +265,14 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
       
+      ## -----------------------------------------
+      ## list mode and subsequent download
+      
+      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
+            
       cmd = "decGetFromInterface -m LOCALHOST_FTPS -l"
       puts cmd
       assert(system(cmd), cmd)
@@ -174,17 +281,31 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch_*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch*"]      
       assert(arrFiles.length == 4, "Number of files pulled")
+      
+      ## -----------------------------------------
+
+      
+      ## -----------------------------------------
+      ## Download again since --nodb is used to avoid filtering by previous download
           
       system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
       
+      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
+            
       cmd = "decGetFromInterface -m LOCALHOST_FTPS --nodb"
       puts cmd
       assert(system(cmd), cmd)
  
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch_*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch*"]      
       assert(arrFiles.length == 4, "Number of files pulled")
+
+      ## -----------------------------------------
+      ## Now no files should be present for download
 
       system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
       
@@ -192,13 +313,39 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
             
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch_*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch*"]      
       assert(arrFiles.length == 0, "Number of files pulled")
+
+      ## -----------------------------------------
 
       cmd = "decStats -H 1"
       puts cmd
       assert(system(cmd), cmd)
       
+      
+      ## -----------------------------------------
+      
+      arr = Dir["/tmp/DEC*.log"]
+
+      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
+      
+      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
+            
+      cmd = "decGetFromInterface -m LOCALHOST_FTPS"
+      puts cmd
+      assert(system(cmd), cmd)
+ 
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftps/touch*"]      
+      assert(arrFiles.length == 0, "Duplicated files should not be pulled")
+                      
+      cmd = "grep DEC_125 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
+
+      ## -----------------------------------------
       
    end
    ## ------------------------------------------------------
@@ -213,9 +360,21 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
 
+      cmd = "rm -f /tmp/DEC*.log"
+      puts cmd
+      system(cmd)
+
       checkDirectory("/tmp/dec/in_basket_if_localhost_ftps")
       
       system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftps/*")
+
+      cmd = "rm -f /tmp/tmp/dir1/finals.all"
+      puts cmd
+      system(cmd)
+
+      cmd = "rm -f /tmp/tmp/dir1/tai-utc.dat"
+      puts cmd
+      system(cmd)
 
 
       cmd = "decManageDB -d"

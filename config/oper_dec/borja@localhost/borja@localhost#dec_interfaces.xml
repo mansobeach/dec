@@ -935,7 +935,7 @@
   <Interface Name="LOCALHOST_FTPS">
     <Desc>Unit tests for FTPS</Desc>
     <TXRXParams>
-      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
@@ -947,7 +947,10 @@
     <Server>
       <Protocol>FTPS</Protocol>
       <Hostname>localhost</Hostname>
-      <Port>21</Port>      
+      <!--
+      <Port>21</Port>
+      -->
+      <Port>990</Port>      
       <User>dec</User>
       <Pass>dec</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
@@ -955,7 +958,8 @@
       <SecureFlag>true</SecureFlag>
       <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
-      <PassiveFlag>true</PassiveFlag>
+      <PassiveFlag>false</PassiveFlag>
+     <!-- <PassiveFlag>true</PassiveFlag> -->
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </Server>
     <DeliverByMailTo>

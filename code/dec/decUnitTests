@@ -2022,10 +2022,9 @@ class DECTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), cmd)
       
-      # There should be warnings reporting the duplications available
-      cmd = "grep WARN #{arr[0]}"
+      cmd = "grep ERROR #{arr[0]}"
       puts cmd
-      assert(system(cmd), "WARN not found in DEC logs in #{__method__.to_s}") 
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
    end
 

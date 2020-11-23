@@ -15,7 +15,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.18'
+  s.version     = '1.0.19'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -117,6 +117,7 @@ Gem::Specification.new do |s|
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
+  s.add_dependency('ftpfxp', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('net_dav', '~> 0.5')
   s.add_dependency('net-sftp', '~> 2.1')

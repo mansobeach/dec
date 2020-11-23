@@ -1,24 +1,23 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #InterfaceHandlerFTPS class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Data Collector Component
-# 
-# Git: $Id: InterfaceHandlerAbstract.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
-#
-# Module Interface
-# This is an abstract class that defines the interface handler methods
-#
+###
+### === Ruby source for #InterfaceHandlerAbstract class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component -> Data Collector Component
+### 
+### Git: $Id: InterfaceHandlerAbstract.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
+###
+### Module Interface
+### This is an abstract class that defines the interface handler methods
+###
 #########################################################################
 
+## http://morningcoffee.io/interfaces-in-ruby.html
 
 module DEC
-
-## http://morningcoffee.io/interfaces-in-ruby.html
 
 class InterfaceHandlerAbstract
 
@@ -41,11 +40,10 @@ class InterfaceHandlerAbstract
 
    def to_s
       raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
-
    end
    ## -----------------------------------------------------------
 
-   def checkConfig(entity, bDCC, bDDC)
+   def checkConfig(entity, pull, push)
       raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
    end
    ## -----------------------------------------------------------
@@ -66,6 +64,9 @@ class InterfaceHandlerAbstract
    end
    ## -----------------------------------------------------------
 
+   def checkRemoteDirectory(directory)
+      raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
+   end
    ## -----------------------------------------------------------
    
    ## We are placed on the right directory (tmp dir): 
@@ -78,10 +79,15 @@ class InterfaceHandlerAbstract
 	## -----------------------------------------------------------
 
    ## Download a file from the I/F
-   def downloadDir(filename)      
+   def downloadDir(directory)      
       raise NotImplementedError.new("#{__method__.to_s} needs to be implemented")
 	end
    ## -----------------------------------------------------------
+
+   ## Download a file from the I/F
+   def deleteFromEntity(filename)      
+      raise NotImplementedError.new("#{__method__.to_s} needs to be implemented")
+	end
 
    ## -------------------------------------------------------------
 

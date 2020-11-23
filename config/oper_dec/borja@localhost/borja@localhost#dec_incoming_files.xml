@@ -106,13 +106,17 @@
          <Name>LOCALHOST_FTPS</Name>
          <LocalInbox>/tmp/dec/in_basket_if_localhost_ftps</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/tmp</Directory>
-            <Directory DepthSearch="0">/tmp/dir1/</Directory>
-            <Directory DepthSearch="0">/tmp/dir2/</Directory>
-            <Directory DepthSearch="0">/tmp/dir3/</Directory>
+            <Directory DepthSearch="0">tmp/dir1</Directory>
+            <Directory DepthSearch="0">tmp/dir2</Directory>
+            <!--
+            <Directory DepthSearch="0">/dir1/</Directory>
+            <Directory DepthSearch="0">/dir2/</Directory>
+            <Directory DepthSearch="0">/dir3/</Directory>
+            -->
          </DownloadDirs>
          <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <!-- Delete Duplicated for FTPS not working -->
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LogDuplicated>true</LogDuplicated>
@@ -128,7 +132,8 @@
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>true</DeleteDuplicated>
+            <!-- Delete Duplicated must be false for the tests -->
+            <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
@@ -284,6 +289,13 @@
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
        <File Type="touch_file*">
+         <Description>test file</Description>
+         <FromList>
+            <Interface>LOCALHOST_FTPS</Interface>
+         </FromList>
+      </File>
+
+       <File Type="touchfile*">
          <Description>test file</Description>
          <FromList>
             <Interface>LOCALHOST_FTPS</Interface>

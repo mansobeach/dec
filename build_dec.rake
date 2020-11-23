@@ -140,8 +140,8 @@ namespace :dec do
    desc "build DEC gem [user, host, suffix = s2 | s2odata]"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_pg")
-      puts "building gem dec #{args[:suffix]} DEC with config #{args[:user]}@#{args[:host]}"
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg")
+      puts "building gem dec #{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
          puts "DEC configuration not present in repository"
