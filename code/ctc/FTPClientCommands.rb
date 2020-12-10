@@ -130,19 +130,26 @@ module FTPClientCommands
    # ======================================================================================= "
    
    
+   ## Create ncftpget command for downloading a given file.
+   ## %2F literal slash character is required for managing full path directories
+   ## - host (IN): string containing the host name.
+   ## - port (IN): string containing the port number.
+   ## - user (IN): string containing the user name.
+   ## - pass (IN): string containing the password.
+   ## - dir  (IN): string containing the dir where the file is placed.
+   ## - file (IN): string of the filename.
+   ## - delete (IN): boolean containing whether it is desired
+   ##                        to delete the file once retrieved or not
+   ## - verbose (IN): boolean for activating or not the verbose mode.
+   ## - passive (IN): boolean to switch between Passive or Port mode.
+   def createNcFtpGet(host, port, user, pass, dir, file, delete, verbose, passive = nil)
    
-   # Create ncftpget command for downloading a given file.
-   # %2F literal slash character is required for managing full path directories
-   # - host (IN): string containing the host name.
-   # - port (IN): string containing the port number.
-   # - user (IN): string containing the user name.
-   # - pass (IN): string containing the password.
-   # - dir  (IN): string containing the dir where the file is placed.
-   # - file (IN): string of the filename.
-   # - delete (IN): boolean containing whether it is desired
-   #                        to delete the file once retrieved or not
-   # - verbose (IN): boolean for activating or not the verbose mode.
-   def createNcFtpGet(host, port, user, pass, dir, file, delete, verbose)      
+      ## Esr!@$Pm or ein6eemaeH2Uo"ph
+      pass    = pass.dup.gsub('"', '\"')
+      pass    = pass.dup.gsub('!', '\!')
+      pass    = pass.dup.gsub('@', '\@')
+      pass    = pass.dup.gsub('$', '\$')
+          
       if dir[0,1] == '/' then
          dir = '%2F'+dir
       end      
@@ -151,7 +158,13 @@ module FTPClientCommands
          file = '%2F'+file
       end      
 
-      command = %Q{ncftpget -P #{port} -u #{user} -p #{pass} -F}
+      ## Passive vs Port
+      if passive == nil or passive == false then
+         command = %Q{ncftpget -P #{port} -u #{user} -p #{pass} -E}
+      else
+         command = %Q{ncftpget -P #{port} -u #{user} -p #{pass} -F}
+      end
+      
       if verbose == true then
          command = %Q{#{command} -v}
       else
@@ -169,18 +182,27 @@ module FTPClientCommands
       end
       return command         
    end
-   # -------------------------------------------------------------
+   ## -------------------------------------------------------------
    
-   # Create ncftpput command line for sending a given file.
-   # - host (IN): string containing the host name.
-   # - port (IN): string containing the port number.
-   # - user (IN): string containing the user name.
-   # - pass (IN): string containing the password.
-   # - dir  (IN): string containing the dir where the file is placed.
-   # - file (IN): string of the filename.
-   # - verbose (IN): boolean for activating or not the verbose mode.
-   # - passive (IN): boolean to switch between Passive or Port mode.
+   ## Create ncftpput command line for sending a given file.
+   ## - host (IN): string containing the host name.
+   ## - port (IN): string containing the port number.
+   ## - user (IN): string containing the user name.
+   ## - pass (IN): string containing the password.
+   ## - dir  (IN): string containing the dir where the file is placed.
+   ## - file (IN): string of the filename.
+   ## - verbose (IN): boolean for activating or not the verbose mode.
+   ## - passive (IN): boolean to switch between Passive or Port mode.
    def createNcFtpPut(host, port, user, pass, tmpDir, dir, file, prefix, verbose, passive = nil)
+
+      ## esrin_e2espm
+
+      ## Esr!@$Pm or ein6eemaeH2Uo"ph
+      pass    = pass.dup.gsub('"', '\"')
+      pass    = pass.dup.gsub('!', '\!')
+      pass    = pass.dup.gsub('@', '\@')
+      pass    = pass.dup.gsub('$', '\$')
+            
       if dir[0,1] != '/' then
          dir='~/'+dir
       end      
@@ -189,11 +211,7 @@ module FTPClientCommands
       optionPassive = ""
       if passive == nil or passive == false then
          optionPassive = "-E"
-#         puts
-#         puts "SHIT NO PAASOV"
-#         puts
       else
-#         puts "PUERCO PASIVO"
          optionPassive = "-F"
       end
       # --------------------------------
@@ -258,6 +276,13 @@ module FTPClientCommands
    # - file    (IN): string of the filename.
    # - verbose (IN): boolean for activating or not the verbose mode.
    def createNcFtpMkd(host,port,user,pass,dir, dirFile, file,verbose)
+
+      ## Esr!@$Pm or ein6eemaeH2Uo"ph
+      pass    = pass.dup.gsub('"', '\"')
+      pass    = pass.dup.gsub('!', '\!')
+      pass    = pass.dup.gsub('@', '\@')
+      pass    = pass.dup.gsub('$', '\$')
+   
          if !FileTest.exists?(dirFile+'/'+file) then
             File.open(dirFile+'/'+file, "w" ) do |new_file| 
                new_file.puts "create dynamic dirs" 

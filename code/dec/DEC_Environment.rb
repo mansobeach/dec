@@ -29,7 +29,9 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.19" =>    "FTPS Implicit mode (port 990) support for pull & push mode", \
+      "1.0.19" =>    "FTPS Implicit mode (port 990) support for pull & push mode\n\
+          Pull local dissemination Compress 7z-x mode to decompress 7z files\n\
+          Escape special characters for user / password credentials",
       "1.0.18" =>    "Update of the OData client for DHUS & S2PRIP to support pagination\n\
           OData client for DHUS to stream to the console the received XML",
       "1.0.17" =>    "Support to push parallelisation driven by ParallelDownload config\n\

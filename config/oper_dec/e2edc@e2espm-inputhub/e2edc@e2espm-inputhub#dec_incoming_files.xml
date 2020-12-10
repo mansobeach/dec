@@ -5,6 +5,22 @@
    <!-- =========================================================== -->
 
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+      <Interface>
+         <Name>VPMC</Name>
+         <LocalInbox>/volumes/dec/interfaces/dec_basket.vpmc</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">E2ESPM_OUT/</Directory>
+                 <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/1.nominal</Directory-->
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
             
       <Interface>
          <Name>S2PDGS</Name>
@@ -54,13 +70,15 @@
       <FromList>
          <Interface>SUPER_TCI</Interface>
          <Interface>S2PDGS</Interface>
+         <Interface>VPMC</Interface>
       </FromList>
    </File>
 
   <File Type="EDR_OPER_SER_SR*">
       <Description>Download of the link execution status for EDRS</Description>
       <FromList>
-	 <Interface>S2PDGS</Interface>
+	   <Interface>S2PDGS</Interface>
+      <Interface>VPMC</Interface>
       </FromList>
   </File>
 

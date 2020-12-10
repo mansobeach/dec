@@ -63,17 +63,7 @@ Gem::Specification.new do |s|
                      'decODataClient', \
                      'decSend2Interface', \
                      'decSmokeTests', \
-                     'decStats', \
-                     'decUnitTests', \
-                     'decUnitTests_ADP', \
-                     'decUnitTests_DHUS', \
-                     'decUnitTests_FTPS', \
-                     'decUnitTests_IERS', \
-                     'decUnitTests_ncftpput', \
-                     'decUnitTests_PRIP', \
-                     'decUnitTests_SBOA', \
-                     'decUnitTests_WEBDAV_SECURE', \
-                     'decUnitTests_mail' \
+                     'decStats'\
                      ]
   
    ## --------------------------------------------
@@ -92,6 +82,8 @@ Gem::Specification.new do |s|
       if ENV.include?("DEC_ODATA") == false then
          s.executables   << 'decUnitTests'
          s.executables   << 'decUnitTests_ADP'
+         s.executables   << 'decUnitTests_FTP'
+         s.executables   << 'decUnitTests_FTP_PASSIVE'
          s.executables   << 'decUnitTests_FTPS'
          s.executables   << 'decUnitTests_IERS'
          s.executables   << 'decUnitTests_ncftpput'

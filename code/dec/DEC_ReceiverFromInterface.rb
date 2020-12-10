@@ -125,6 +125,7 @@ class DEC_ReceiverFromInterface
       @protocol         = @entityConfig.getProtocol(@entity)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
       @port             = @ftpserver[:port]
+      @passive          = @ftpserver[:isPassive]
       @ftpserver[:arrDownloadDirs] = ReadConfigIncoming.instance.getDownloadDirs(@entity)
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
       
@@ -391,13 +392,13 @@ class DEC_ReceiverFromInterface
 
       begin
          if @isDebugMode == true then
-            @logger.debug("FTP #{host} #{port} #{user} #{pass} | passive = #{bPassive}")
+            @logger.debug("getNonSecureFileList => FTP #{host} #{port} #{user} #{pass} | passive = #{bPassive}")
          end
          @ftp = Net::FTP.new(host)
          @ftp.login(user, pass)
          @ftp.passive = bPassive
       rescue Exception => e
-         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} with #{@protocol} / passive mode #{bPassive}")
+         @logger.error("[DEC_610] I/F #{@entity}: Unable to connect to #{host} #{user} / #{pass} with #{@protocol} / passive mode #{bPassive}")
          @logger.error("[DEC_611] I/F #{@entity}: #{e.to_s}")
          @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
          exit(99)
@@ -1414,7 +1415,8 @@ private
                                    "",
                                    filename,
                                    @bDeleteDownloaded, 
-                                   @isDebugMode)
+                                   @isDebugMode,
+                                   @ftpserver[:isPassive])
       end
       
       if @isDebugMode == true and @ftpserver[:isSecure] == false then

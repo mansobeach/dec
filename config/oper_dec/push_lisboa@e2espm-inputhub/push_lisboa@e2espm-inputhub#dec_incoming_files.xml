@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- UNUSED -->
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            
+      <Interface>
+         <Name>VPMC</Name>
+         <LocalInbox>/volumes/dec/interfaces/dec_basket.vpmc</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">E2ESPM_OUT/</Directory>
+                 <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/1.nominal</Directory-->
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
+
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+
+
+   <!-- =========================================================== -->
+
+<DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+
+   <File Type="S2?_*">
+      <Description>Brute Force Download for any Sentinel-2 file</Description>
+      <FromList>
+         <Interface>VPMC</Interface>
+      </FromList>
+   </File>
+
+  <File Type="EDR_OPER_SER_SR*">
+      <Description>Download of the link execution status for EDRS</Description>
+      <FromList>
+         <Interface>VPMC</Interface>
+      </FromList>
+  </File>
+
+  
+</DownloadRules>
+
+   <!-- =========================================================== -->
+
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+
+      <Intray>
+         <Name>CLOUD_SBOA.FTPOutbox</Name>
+         <Directory>/volumes/dec/interfaces/cloud_sboa.out/ftp</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+         <Intray>
+            <Name>DUPLICATED_FROM_VPMC</Name>
+            <Directory>/volumes/dec/interfaces/0.duplicated_from_vpmc</Directory>
+         </Intray>
+
+      <Intray>
+         <Name>HP_DPC</Name>
+         <Directory>/volumes/dec/interfaces/hp_dpc</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_MET</Name>
+         <Directory>/volumes/dec/interfaces/rep_met</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_OPLTAS_TCI_7Z</Name>
+         <Directory>/volumes/dec/interfaces/REP_OPLTAS_TCI_7Z</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_ARC_TCI</Name>
+         <Directory>/volumes/dec/interfaces/REP_ARC_TCI</Directory>
+      </Intray>      
+
+      <Intray>
+         <Name>REP_ARC_TCI_7Z_EPA</Name>
+         <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/EPA</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_ARC_TCI_7Z_UPA</Name>
+         <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/UPA</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_ARC_TCI_7Z_MTI</Name>
+         <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/MTI</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_ARC_TCI_7Z_SGS</Name>
+	      <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/SGS</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>REP_ARC_TCI_7Z_MPS</Name>
+         <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/MPS</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+          <Name>REP_ARC_TCI_7Z_MPC</Name>
+          <Directory>/volumes/dec/interfaces/REP_ARC_TCI_7Z/MPC</Directory>
+         <!--  <Compress>7z</Compress> -->
+      </Intray>
+                                 
+      <Intray>
+         <Name>OPERATIONAL_S2PDGS</Name>
+         <Directory>/volumes/dec/interfaces/operational.all</Directory>
+      </Intray>
+
+      <Intray>
+         <Name>ARCHIVE_S2PDGS</Name>
+         <Directory>/volumes/dec/interfaces/archive.all</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>SHADOW_S2PDGS</Name>
+         <Directory>/volumes/dec/interfaces/shadow.all</Directory>
+      </Intray>
+
+
+      <Intray>
+         <Name>S2BOA</Name>
+         <Directory>/volumes/dec/interfaces/s2boa</Directory>
+      </Intray>
+
+      <Intray>
+         <Name>S2BOA_SHADOW</Name>
+         <Directory>/volumes/dec/interfaces/s2boa_shadow</Directory>
+      </Intray>
+
+      <Intray>
+      	 <Name>UNDESIRED</Name>
+         <Directory>/volumes/dec/interfaces/undesired</Directory>
+      </Intray>
+
+      <Intray>
+      	 <Name>GRAVEYARD_SUPER_TCI</Name>
+          <Directory>/volumes/dec/interfaces/dec_f_recv_super_tci</Directory>
+      </Intray>
+
+
+      </ListIntrays>
+
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+
+
+      <File Type="S2?_OPER_REP_MET???_VPMC*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUD_SBOA.FTPOutbox</Intray>
+          </ToList>
+      </File>
+
+      <File Type="*VPMC*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUD_SBOA.FTPOutbox</Intray>
+               <Intray>SHADOW_S2PDGS</Intray>
+               <Intray>OPERATIONAL_S2PDGS</Intray>
+               <Intray>S2BOA</Intray>
+	            <Intray>S2BOA_SHADOW</Intray>
+          </ToList>
+      </File>
+   
+   
+      <File Type="*">
+      	  <HardLink>False</HardLink>
+	         <ToList>
+               <Intray>DUPLICATED_FROM_VPMC</Intray>
+          </ToList>
+      </File>
+  
+  
+  
+        </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+   <!-- =========================================================== -->
+
+
+
+</Config>

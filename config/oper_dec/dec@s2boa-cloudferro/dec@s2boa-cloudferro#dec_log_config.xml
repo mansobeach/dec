@@ -1,7 +1,7 @@
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="E2ESPM-ESRIN"/>
+  <parameter name="mainLoggerName" value="SBOA"/>
  </pre_config>
 
  <outputter name="console"  level="DEBUG" >
@@ -14,7 +14,7 @@
  <outputter name="dec_log" level="INFO">
    <type>RollingFileOutputter</type>
   
-   <filename>/volumes/dec/log_dec/s2decservice_dec.log</filename>
+   <filename>/volume1/dec/log_dec/DEC_S2BOA.log</filename>
   
    <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
       <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
@@ -30,7 +30,7 @@
   
  </outputter>
 
- <logger name="E2ESPM-ESRIN" level="INFO" trace="false">
+ <logger name="SBOA" level="INFO" trace="false">
     <outputter>console</outputter>
     <outputter>dec_log</outputter>
  </logger>

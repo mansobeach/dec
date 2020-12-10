@@ -9,7 +9,8 @@
 # -f flag:
 #
 # This is a "selection criteria" flag. This option is used to specify the file to be retrieved. 
-# Wildcards are allowed. If more than one file matches Rule flag is applied.
+# Wildcards are allowed ; double quote them to avoid shell to expand the value (e.g. -f "S2*"). 
+# If more than one file matches Rule flag is applied.
 # This flag is not compatible with file-type flag "-t" and validity times.
 #
 #
@@ -131,7 +132,7 @@
 # == Usage
 # minArcRetrieve -t file-type -s <start> -e <end> -L <full_path_to_location> [-d] [-l]
 #     --noserver                 operations are performed locally
-#     --file <filename>          it retrieves a given filename
+#     --file <filename>          filename to be retrieved or correspondent wildcard -f "S2*"
 #     --type <file-type>         it specifies the file-type of the file to be retrieved
 #     --start <YYYYMMDDThhmmss>  
 #     --end   <YYYYMMDDThhmmss>
@@ -609,13 +610,13 @@ def remote_get_multiple_files
    }
    
 end
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
-# Print command line help
+## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -159 #{fullpathFile}"}`
+   value = `#{"head -160 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
@@ -623,7 +624,7 @@ def usage
       puts line[2, len]
    }
 end
-# -------------------------------------------------------------
+## -------------------------------------------------------------
 
 ## ===============================================================================
 ## Start of the main body

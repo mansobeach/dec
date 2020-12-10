@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>DEC</Name>
+      <Id>ESA_</Id>
+      <Mission>Sentinel-2</Mission>
+      <SatPrefix>S2_</SatPrefix>
+   </Project>
+   <Filters>
+      <IncomingFilters>
+         <Filter>*</Filter>
+         <!--
+         <Filter>SM_MREP_*.zip</Filter>
+         <Filter>GO_*EEF</Filter>
+         <Filter>GO_*HDR</Filter>
+         <Filter>GO_*TGZ</Filter>
+         <Filter>CORG*Z</Filter>
+         <Filter>SM_*EEF</Filter>
+         <Filter>SM_*TGZ</Filter>
+         <Filter>*sp3*</Filterftproot/remote/RPF_R/fromRPF_R/>
+         <Filter>*clk*</Filter>
+         <Filter>igrg*.Z</Filter>
+         -->
+      </IncomingFilters>
+            
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+
+      
+   </Filters>
+   
+   
+   <Options>
+      <Upload>
+         <DeleteSourceFiles>true</DeleteSourceFiles>
+         <UploadFilePrefix>false</UploadFilePrefix>
+         <UploadDirs>false</UploadDirs>
+      </Upload>
+      <Download>
+         <DownloadDirs>false</DownloadDirs>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
+      </Download>
+   </Options>
+
+
+   
+   
+   <!-- currently placed in DEC basket intray -->
+   
+   
+   <Reports>
+
+      <Report Name="RetrievedFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_RECV</FileType>
+      </Report>
+
+<!--  -->
+      <Report Name="UnknownFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of unknown Files present</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DECUNKNOWN</FileType>
+      </Report>
+
+   </Reports>
+   
+   <Workflow>
+      <!-- SourceDir is not used by e2edc@e2espm-inputhub -->
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
+      <GlobalOutbox>/tmp/dec_tmp/outbox</GlobalOutbox>
+      <ReportDir>/volume1/dec/interfaces/dec_basket.lisboa</ReportDir>
+      <TempDir>/tmp/dec_tmp</TempDir>
+   </Workflow>   
+   
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>
+      <Database_Name>/volumes/dec/db_dec_sboa/db.sqlite3</Database_Name>
+      <Database_User>e2edc</Database_User>
+      <Database_Password>e2edc</Database_Password>
+   </Inventory>
+   
+</Configuration>

@@ -499,6 +499,13 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "minArcStore bulk mode")
 
+      ## minArcRetrieve remote mode
+      
+      cmd = "minArcRetrieve -f \"S2*\" --list"
+      puts cmd
+      assert(system(cmd), "list files using remote mode")
+      
+
    end
    ## ------------------------------------------------------
    

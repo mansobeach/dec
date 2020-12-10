@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- UNUSED -->
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            
+      <Interface>
+         <Name>LISBOA</Name>
+         <LocalInbox>/volume1/dec/interfaces/dec_basket.lisboa</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">s2pdgs_in</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
+
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+
+
+   <!-- =========================================================== -->
+
+<DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+
+   <File Type="S2?_*">
+      <Description>Brute Force Download for any Sentinel-2 file</Description>
+      <FromList>
+         <Interface>LISBOA</Interface>
+      </FromList>
+   </File>
+
+  <File Type="EDR_OPER_SER_SR*">
+      <Description>Download of the link execution status for EDRS</Description>
+      <FromList>
+	      <Interface>LISBOA</Interface>
+      </FromList>
+  </File>
+
+  
+</DownloadRules>
+
+   <!-- =========================================================== -->
+
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+
+      <Intray>
+         <Name>MINARC</Name>
+         <Directory>/volume1/dec/interfaces/intray_minarc</Directory>
+      </Intray>
+
+      <Intray>
+         <Name>S2BOA</Name>
+         <Directory>/volume1/dec/interfaces/intray_s2boa</Directory>
+         <Compress>7z-x</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>S2BOA_SHADOW</Name>
+         <Directory>/volume1/dec/interfaces/intray_s2boa_shadow</Directory>
+         <Compress>7z-x</Compress>
+      </Intray>
+
+      <Intray>
+      	<Name>UNDESIRED</Name>
+         <Directory>/volume1/dec/interfaces/intray_undesired</Directory>
+      </Intray>
+
+
+      </ListIntrays>
+
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+
+      <File Type="S2*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+	            <Intray>MINARC</Intray>
+               <Intray>S2BOA</Intray>
+               <Intray>S2BOA_SHADOW</Intray>	 	  
+          </ToList>
+      </File>
+   
+
+     <File Type="EDR_OPER_SER_SR*">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>MINARC</Intray>
+            <Intray>UNDESIRED</Intray>
+         </ToList>
+     </File>
+  
+  
+  
+        </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+   <!-- =========================================================== -->
+
+
+
+</Config>

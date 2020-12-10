@@ -261,9 +261,9 @@ namespace :dec do
 
    desc "load DEC configuration package"
 
-   task :load_config, [:user, :host] do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost)
-      puts "loading configuration for #{args[:user]}@#{args[:host]}"      
+   task :load_config, [:user, :host, :suffix] do |t, args|
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg")
+      puts "loading configuration for #{args[:user]}@#{args[:host]} for #{args[:suffix]}"      
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
       if File.exist?(path) == false then
@@ -338,21 +338,36 @@ namespace :dec do
 
    ## --------------------------------------------------------------------
 
+   ## Use this task to maintain an index of the relevant configurations
+   ##
    desc "help in the kitchen"
 
    task :help do
       puts "The kitchen supports the following parameters"
-      puts "user" 
-      puts "host"
+      puts "user => used to define the node" 
+      puts "host => used to define the node"
       puts "suffix: odata | test | pg"
       puts
       puts "Some of the above flags can be combined:"
       puts
-      puts "odata: it ships only the decODataClient"
+      puts "> odata : it ships only the decODataClient"
+      puts "> test  : it ships the DEC test tools"
+      puts "> pg    : it includes installation requirement for postgresql gem"
       puts
-      puts "test: it ships the DEC test tools"
       puts
-      puts "pg: it includes installation requirement for postgresql gem"
+      puts "Most used recipees:" 
+      puts
+      puts "DEC unit tests"
+      puts "rake -f build_dec.rake dec:build[borja,localhost,s2_test_pg]"
+      puts "rake -f build_dec.rake dec:build[borja,localhost,s2_test_odata]"
+      puts
+      puts "S2PDGSENG / Inputhub"
+      puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
+      puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
+      puts "rake -f build_dec.rake dec:build[push_lisboa,e2espm-inputhub,s2]"
+      puts
+      puts "CloudFerro / S2BOA"
+      puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"
       puts
    end
    ## --------------------------------------------------------------------

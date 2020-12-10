@@ -1,18 +1,18 @@
 #!/usr/bin/ruby
 
 #########################################################################
-#
-# Ruby source for #PackageUtils class
-#
-# Fullfils FTR-1.10 Requirement (CS-RS-ESA-GS-0212)
-#
-# Written by DEIMOS Space S.L. (bolf)
-#
-# Data Exchange Component -> Common Utils Component
-# 
-# CVS:
-#  $Id: PackageUtils.rb,v 1.3 2007/11/30 10:57:22 decdev Exp $
-#
+##
+## Ruby source for #PackageUtils class
+##
+## Fullfils FTR-1.10 Requirement (CS-RS-ESA-GS-0212)
+##
+## Written by DEIMOS Space S.L. (bolf)
+##
+## Data Exchange Component -> Common Utils Component
+## 
+## Git:
+##  $Id: PackageUtils.rb,v 1.3 2007/11/30 10:57:22 decdev Exp $
+##
 #########################################################################
 
 require 'fileutils'
@@ -66,6 +66,49 @@ module PackageUtils
       end
       Dir.chdir(prevDir)
       remove_dir(@localDir, true)
+   end
+   ## -----------------------------------------------------------
+
+   ## uncompress 7z file
+   ##
+   ## - full_path_file   (IN): File to be compressed
+   ## - deleteSourceFile (IN): Flag to delete the source file
+   ##
+   ## Silent compression
+   ## https://serverfault.com/questions/108024/silent-7za-compression
+   
+   def unpack7z( full_path_file, \
+               bDeleteSourceFile = true, \
+               bIsDebugMode = false, \
+               logger = nil \
+               )
+      checkModuleIntegrity
+      
+      if FileTest.exist?(full_path_file) == false then
+         return false
+      end
+
+      cmd  = %Q{7za x #{full_path_file} -o#{File.dirname(full_path_file)}}
+
+      ## silent mode
+      ## > progress redirected to 0
+      ## > output redirected to 0
+      if bIsDebugMode == false then
+         cmd = "#{cmd} -y -bsp0 -bso0"
+      end
+
+      if bIsDebugMode == true and logger != nil then
+         logger.debug(cmd)
+      end
+
+      retVal = system(cmd)
+
+      if retVal == true and bDeleteSourceFile == true then
+         FileUtils::rm_f(full_path_file)
+      end
+
+      return retVal
+
    end
    ## -----------------------------------------------------------
 

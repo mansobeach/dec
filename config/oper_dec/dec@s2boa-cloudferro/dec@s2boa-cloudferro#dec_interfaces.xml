@@ -5,11 +5,11 @@
   
   <!-- ================================================================ -->
 
-  <Interface Name="CLOUD_SBOA">
+  <Interface Name="LISBOA">
     <Desc>DME internal server for CLOUD_SBOA</Desc>
     <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
-      <Enabled4Receiving>false</Enabled4Receiving>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">10</LoopDelay>
@@ -24,7 +24,7 @@
       <User>s2pdgseng</User>
       <Pass>ein6eemaeH2Uo"ph</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>false</RetrieveContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
       <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>

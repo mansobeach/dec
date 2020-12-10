@@ -103,11 +103,53 @@
       </Interface>
 
       <Interface>
+         <Name>LOCALHOST_FTP</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_ftp</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/tmp/tmp/dir1</Directory>
+            <Directory DepthSearch="0">/tmp/tmp/dir2</Directory>
+            <!--
+            <Directory DepthSearch="0">/dir1/</Directory>
+            <Directory DepthSearch="0">/dir2/</Directory>
+            <Directory DepthSearch="0">/dir3/</Directory>
+            -->
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>LOCALHOST_FTP_PASSIVE</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_ftp_passive</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/tmp/tmp/dir1</Directory>
+            <Directory DepthSearch="0">/tmp/tmp/dir2</Directory>
+            <!--
+            <Directory DepthSearch="0">/dir1/</Directory>
+            <Directory DepthSearch="0">/dir2/</Directory>
+            <Directory DepthSearch="0">/dir3/</Directory>
+            -->
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
          <Name>LOCALHOST_FTPS</Name>
          <LocalInbox>/tmp/dec/in_basket_if_localhost_ftps</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">tmp/dir1</Directory>
-            <Directory DepthSearch="0">tmp/dir2</Directory>
+            <Directory DepthSearch="0">/tmp/tmp/dir1</Directory>
+            <Directory DepthSearch="0">/tmp/tmp/dir2</Directory>
             <!--
             <Directory DepthSearch="0">/dir1/</Directory>
             <Directory DepthSearch="0">/dir2/</Directory>
@@ -291,6 +333,8 @@
        <File Type="touch_file*">
          <Description>test file</Description>
          <FromList>
+            <Interface>LOCALHOST_FTP_PASSIVE</Interface>
+            <Interface>LOCALHOST_FTP</Interface>
             <Interface>LOCALHOST_FTPS</Interface>
          </FromList>
       </File>
@@ -298,6 +342,8 @@
        <File Type="touchfile*">
          <Description>test file</Description>
          <FromList>
+            <Interface>LOCALHOST_FTP_PASSIVE</Interface>
+            <Interface>LOCALHOST_FTP</Interface>
             <Interface>LOCALHOST_FTPS</Interface>
          </FromList>
       </File>

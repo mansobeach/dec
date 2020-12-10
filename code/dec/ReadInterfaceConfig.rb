@@ -600,15 +600,17 @@ private
          port    = xmlstruct.elements["Port"].text.to_i
       end
       
+      ## Esr!@$Pm
       if !xmlstruct.elements["User"].nil? then
          if !xmlstruct.elements["User"].text.nil? then
-            user    = xmlstruct.elements["User"].text.gsub('"', '\"')
+            user    = xmlstruct.elements["User"].text
          end
       end
 
+      ## Esr!@$Pm
       if !xmlstruct.elements["Pass"].nil? then
          if !xmlstruct.elements["Pass"].text.nil? then
-            pass    = xmlstruct.elements["Pass"].text.gsub('"', '\"')
+            pass    = xmlstruct.elements["Pass"].text
          end
       end
 

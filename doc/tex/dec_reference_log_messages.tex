@@ -252,6 +252,8 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 "directory" using mv command
 	\item \textbf{[DEC\_626]} Dissemination failure of "file" into intray
 "directory" using hard-links command
+	\item \textbf{[DEC\_627]} Compression / Uncompression failure of "file" into intray
+"directory" using hard-links command
 	\item \textbf{[DEC\_628]} Failure when executing command
 	\item \textbf{[DEC\_666]} I/F "interface": Could not download "file"
 	\item \textbf{[DEC\_705]} I/F "interface": Push miss-configuration
@@ -356,8 +358,12 @@ The file retrieved from the interface could not be copied into the final directo
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using a mv command. This is usually associated to file permission problems of the \textit{Intray} directory.
 
 \subsection{[DEC\_626] File Hard-Link Dissemination Failure}
-\label{DEC625}
+\label{DEC626}
 This error is raised when DEC could not disseminate a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}} using hard-links. This is usually associated to file permission problems of the \textit{Intray} directory.
+
+\subsection{[DEC\_627] File Dissemination Compress / Uncompress Failure}
+\label{DEC627}
+This error is raised when DEC could not compress / uncompress a file into a given \textit{Intray} according to the \hyperref[Dissemination rules]{\textit{Dissemination rules}}.
 
 \subsection{[DEC\_628] Command Execution Failure}
 \label{DEC628}

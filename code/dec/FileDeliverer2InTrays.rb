@@ -1,16 +1,16 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# = Ruby source for #FileDeliverer2InTrays class
-#
-# = Written by DEIMOS Space S.L. (bolf)
-#
-# = Data Exchange Component
-# 
-# Git:
-#   $Id: FileDeliverer2InTrays.rb,v 1.16 2008/07/03 11:38:07 decdev Exp $
-#
+##
+## = Ruby source for #FileDeliverer2InTrays class
+##
+## = Written by DEIMOS Space S.L. (bolf)
+##
+## = Data Exchange Component
+## 
+## Git:
+##   $Id: FileDeliverer2InTrays.rb,v 1.16 2008/07/03 11:38:07 decdev Exp $
+##
 #########################################################################
 
 require 'fileutils'
@@ -66,6 +66,9 @@ class FileDeliverer2InTrays
 
       # Not used by this class at the time being
       # @satPrefix = DEC::ReadConfigDEC.instance.getSatPrefix
+      
+      @tmpDir = DEC::ReadConfigDEC.instance.getTempDir
+      
    end
    ## -----------------------------------------------------------
    
@@ -598,8 +601,13 @@ private
             retVal = false
             next
          end
-                  
+         
+         bManaged = false
+         
+         ## ----------------------------         
          if compress == "7z" then
+            
+            bManaged = true
                                      
             ret = pack7z(sourceFile, targetFile, true, @isDebugMode, @logger)
                      
@@ -611,7 +619,42 @@ private
                msg = "[DEC_116] Intray #{dim}: #{file} compressed in #{compress} at #{inTray}"
                @logger.info(msg)
             end
-         else
+         end
+         
+         ## ----------------------------
+
+         if compress == "7z-x" then
+            
+            bManaged = true
+                                     
+            ret = unpack7z(sourceFile, true, @isDebugMode, @logger)
+                     
+            if ret == false then
+               @logger.error("[DEC_627] Intray #{dim}: Could not uncompress in #{compress} #{sourceFile}")
+               
+               ## Need to move the file elsewhere
+               cmd = "mv -f #{sourceFile} #{@tmpDir}"
+               if @isDebugMode == true then
+                  @logger.debug(cmd)
+               end
+               ret = system(cmd)
+               
+               if ret == true then
+                  @logger.warn("[DEC_XXX] Intray #{dim}: Moved #{File.basename(sourceFile,".*")} into #{@tmpDir}")
+               else
+                  @logger.error("[DEC_627BIS] Intray #{dim}: Failed to move #{sourceFile} into #{@tmpDir}")
+                  @logger.error(cmd)
+                  ## Block files in the interface LocalInbox to avoid loss of data
+                  retVal = false
+               end
+               
+            else
+               msg = "[DEC_116] Intray #{dim}: #{file} uncompressed in #{compress} at #{inTray}"
+               @logger.info(msg)
+            end
+         end
+         
+         if bManaged == false then
             @logger.error("Compression mode #{compress} not supported")
             retVal = false
          end

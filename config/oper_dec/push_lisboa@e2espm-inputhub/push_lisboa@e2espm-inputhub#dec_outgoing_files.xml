@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces>
+            
+      <Interface>
+         <Name>PUSH_LISBOA</Name>
+         <LocalOutbox>/volumes/dec/interfaces/cloud_sboa.out</LocalOutbox>
+         <UploadDir>/s2pdgs_in</UploadDir>
+         <UploadTemp>/s2pdgs_in/_TEMP_</UploadTemp>
+      </Interface>
+            
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+   <ListFiles>
+
+      <File Type="*MPL_ORBPRE*">
+         <Description>FOS Predicted Orbit File</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*MPL__NPPF_*">
+         <Description>Satellite Plan File</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*MPL_SP????*">
+         <Description>Station Plan File</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPHKTM*">
+         <Description>HKTM PDI downlink orbit</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_OPDPC*">
+         <Description>DPC Processing Reports</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????.EOF">
+         <Description>DPC Processing Reports</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="S2?_????_REP_OPDHUS_????_????????T??????.*">
+         <Description>DAGC DHUS Pick-up Point</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPDAM?*">
+         <Description>DAM Ingestion Report</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPDC__*">
+         <Description>DC Circulation Report</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_OPAI__*">
+         <Description>DC Circulation Report</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="*REP_PASS_?*">
+         <Description>EISP / DFEP Report</Description>
+         <ToList>
+            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+
+   </ListFiles>
+
+   <!-- =========================================================== -->
+
+</Config>
