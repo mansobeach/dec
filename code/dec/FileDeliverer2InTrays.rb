@@ -355,14 +355,7 @@ private
    ## > get execution command
    
    def disseminate(entity, afile, fromDir, arrToIntray, hardlinked = false)
-      
-#      puts
-#      puts
-#      puts caller
-      
-      # @logger.info(arrToIntray)
-      
-      
+            
       bReturn = true
       
       if hardlinked == true and arrToIntray.length <2
@@ -380,14 +373,15 @@ private
 		bFirst      = true
 		firstDir    = ""
       
+      
+      # @dimConfig
+      
       arrToIntray.each{|intray|
                
          targetDir = @dimConfig.getInTrayDir(intray)
          exec      = @dimConfig.getInTrayExecution(intray)
                   
 #         
-
-      
          checkDirectory(targetDir)
 		   cmd = ""
          
@@ -602,14 +596,34 @@ private
             next
          end
          
+         ## ----------------------------
+         ## move the file to be compressed / uncompressed to TempDir      
+         cmd = "mv -f #{sourceFile} #{@tmpDir}"
+               
+         if @isDebugMode == true then
+            @logger.debug(cmd)
+         end
+         ret = system(cmd)
+         
+         tmpsourceFile = ""
+         if ret == true then
+            tmpsourceFile = "#{@tmpDir}/#{file}"
+         else
+            @logger.error("Failed to mv prior compression => #{cmd}")
+            @logger.error("#{file} compression skipped")
+            next
+         end
+         ## ----------------------------
+         
          bManaged = false
          
          ## ----------------------------         
          if compress == "7z" then
             
             bManaged = true
-                                     
-            ret = pack7z(sourceFile, targetFile, true, @isDebugMode, @logger)
+                          
+            ret = pack7z(tmpsourceFile, targetFile, true, @isDebugMode, @logger)                         
+            #ret = pack7z(sourceFile, targetFile, true, @isDebugMode, @logger)
                      
             if ret == false then
                @logger.error("Could not compress in #{compress} #{targetFile}")
@@ -626,8 +640,9 @@ private
          if compress == "7z-x" then
             
             bManaged = true
-                                     
-            ret = unpack7z(sourceFile, true, @isDebugMode, @logger)
+                               
+            ret = unpack7z(tmpsourceFile, inTray, true, @isDebugMode, @logger)                         
+            # ret = unpack7z(sourceFile, true, @isDebugMode, @logger)
                      
             if ret == false then
                @logger.error("[DEC_627] Intray #{dim}: Could not uncompress in #{compress} #{sourceFile}")

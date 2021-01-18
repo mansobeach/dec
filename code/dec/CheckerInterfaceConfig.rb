@@ -22,10 +22,13 @@
 
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
-require 'ctc/CheckerWebDAVConfig'
+
 require 'ctc/CheckerFTPConfig'
 require 'ctc/CheckerFTPSConfig'
-require 'ctc/CheckerHTTPConfig'
+
+require 'dec/CheckerHTTPConfig'
+require 'dec/CheckerWebDAVConfig'
+
 require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
@@ -48,11 +51,11 @@ class CheckerInterfaceConfig
    ## IN (bool) [optional] - check parameters required for receiving
    ##
    ## IN (bool) [optional] - check parameters required for sending
-   def initialize(entity, bCheckIncoming = true, bCheckOutgoing = true, logger = nil)
+   def initialize(entity, bCheckIncoming = true, bCheckOutgoing = true, logger = nil, isDebug = false)
       @bCheckIncoming                  = bCheckIncoming
       @bCheckOutgoing                  = bCheckOutgoing
       @logger                          = logger
-      @isDebugMode                     = false
+      @isDebugMode                     = isDebug
       @entity                          = entity
       checkModuleIntegrity
       @inConf                          = ReadConfigIncoming.instance
@@ -72,7 +75,7 @@ class CheckerInterfaceConfig
       ## Checkers for Receive / Pull      
            
       if @ftpRecv[:protocol].upcase == "WEBDAV" then
-         @check4Recv                      = CheckerWebDAVConfig.new(@ftpRecv, @entity)
+         @check4Recv                      = CheckerWebDAVConfig.new(@ftpRecv, @entity, @logger)
       end
       
       if @ftpRecv[:protocol].upcase == "FTPS" or @ftpSend[:protocol].upcase == "FTPES" then
@@ -95,11 +98,14 @@ class CheckerInterfaceConfig
       end
             
       if @ftpSend[:protocol].upcase == "WEBDAV" then
-         @check4Send                      = CheckerWebDAVConfig.new(@ftpSend, @entity)
+         @check4Send                      = CheckerWebDAVConfig.new(@ftpSend, @entity, @logger)
       end
       
       if @ftpSend[:protocol].upcase == "HTTP" then
          @check4Send                      = CheckerHTTPConfig.new(@ftpSend, @entity, @logger)
+         if @isDebugMode == true then
+            @check4Send.setDebugMode
+         end
       end
  
       if @ftpSend[:protocol].upcase == "FTP" or @ftpSend[:protocol].upcase == "SFTP" then
@@ -194,7 +200,7 @@ class CheckerInterfaceConfig
    ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "CheckerInterfaceConfig debug mode is on"
+      @logger.debug("CheckerInterfaceConfig debug mode is on")
    end
    ## -----------------------------------------------------------
 

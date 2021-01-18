@@ -25,6 +25,8 @@ require 'arc/MINARC_Client'
 require 'arc/MINARC_Status'
 require 'arc/ReadMinarcConfig'
 
+### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
+
 # Preconditions:
 # 1 - setup 
 # 1.1 - load_config_development
@@ -1247,11 +1249,24 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
 
+      system("echo \'#{@@testFile1}\' > /tmp/#{@@testFile1}")
+      assert(File.exist?("/tmp/#{@@testFile1}"), "test file in place")
+
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -m"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), 
+
+
+      ## -------------------------------------
+      ## Remove the tables to induce errors 
+
       cmd = "minArcDB -d"
       puts cmd
       ret = system(cmd)
       
-      # -------------------------------------
+      ## -------------------------------------
       ## contingency with storing with move      
       system("echo \'#{@@testFile1}\' > /tmp/#{@@testFile1}")
       assert(File.exist?("/tmp/#{@@testFile1}"), "test file in place")
@@ -1271,9 +1286,9 @@ class TestCaseStore < Test::Unit::TestCase
       assert(!File.exist?("/tmp/#{arr[0]}"), "test file removed")
 
       Dir.chdir(prevDir)
-      # -------------------------------------
+      ## -------------------------------------
 
-      # -------------------------------------
+      ## -------------------------------------
       ## contingency with storing without move      
       system("echo \'#{@@testFile1}\' > /tmp/#{@@testFile1}")
       assert(File.exist?("/tmp/#{@@testFile1}"), "test file in place")

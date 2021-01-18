@@ -179,10 +179,15 @@ class OrchestratorIngester
             
             file = arrPolledFiles.shift
 
-            if file.to_s.slice(0,1) == "_" or file.to_s.slice(0,2) != "S2" then
+            if file.to_s.slice(0,1) == "_" or file.to_s.slice(0,1) == "." then
                @logger.warn(%Q{[ORC_301] Discarded #{file}})
                next
             end
+
+#            if file.to_s.slice(0,1) == "_" or file.to_s.slice(0,2) != "S2" then
+#               @logger.warn(%Q{[ORC_301] Discarded #{file}})
+#               next
+#            end
             
             fork{
             	ret = ingestFile(file)

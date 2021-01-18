@@ -21,6 +21,57 @@ require 'fileutils'
 module CTC
 
 module WrapperCURL
+   
+   ## -------------------------------------------------------------
+   ## 
+   ## curl -u myuser:mypassword -X MOVE --header 'Destination: http://185.52.193.141:81/fromESRIN/test2' http://185.52.193.141:81/fromESRIN/.test2
+   
+   def moveFile(currentUrl, \
+                  newUrl, \
+                  currentName, \
+                  newName, \
+                  user, \
+                  pass, \
+                  logger = nil, \
+                  isDebugMode = false)      
+
+      if currentUrl[-1, 1] != "/" then
+         currentUrl = "#{currentUrl}/"
+      end
+   
+      if newUrl[-1, 1] != "/" then
+         newUrl = "#{newUrl}/"
+      end
+
+      cmd = "curl -u #{user}:#{escapePassword(pass)} -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
+            
+      if isDebugMode == true then
+         cmd = "#{cmd} -v "
+         if logger != nil then
+            logger.debug(cmd)
+         else
+            puts cmd
+         end
+      end
+      return system(cmd)
+   end
+  
+   ## -------------------------------------------------------------
+   ##  
+  
+   def propfind(url, user, pass, isDebugMode = false)
+      if url[-1, 1] != "/" then
+         url = "#{url}/"  
+      end
+
+      cmd = "curl -u #{user}:#{escapePassword(pass)} -X PROPFIND #{url}"
+            
+      if isDebugMode == true then
+         cmd = "#{cmd} -v "
+         puts cmd
+      end
+      return system(cmd)   
+   end
   
    ## -------------------------------------------------------------
    ##
@@ -51,12 +102,12 @@ module WrapperCURL
    
    ## curl -X DELETE http://localhost:8080/tmp/test1.txt
    
-   def deleteFile(url, file, isDebugMode = false)
+   def deleteFile(url, user, pass, file, isDebugMode = false)
       if url[-1, 1] != "/" then
          url = "#{url}/"  
       end
 
-      cmd = "curl -X DELETE #{url}#{file}"
+      cmd = "curl -u #{user}:#{escapePassword(pass)} -X DELETE #{url}#{file}"
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -71,19 +122,25 @@ module WrapperCURL
 
    ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
 
-   def putFile(url, file, isDebugMode = false, logger = nil)
+   def putFile(url, user, pass, file, isDebugMode = false, logger = nil)
+      if isDebugMode == true then
+         puts "WrapperCURL::putFile"
+      end
       
       ## -----------------------------------------
       ## Behaviour with WebDAVNav Server to include slash
       ## for uploading files into a directory
       if url[-1, 1] != "/" then
          url = "#{url}/"  
-      end
+      end   
       ## -----------------------------------------
-
       
-            
-      cmd = "curl -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      cmd = ""
+      if user != nil and user != "" then
+         cmd = "curl -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      else
+         cmd = "curl -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      end      
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -118,20 +175,34 @@ module WrapperCURL
 
    ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
    
-   def putFileSilent(url, file, isDebugMode = false)
-   
+   def putFileSilent(url, user, pass, file, isDebugMode = false)
+      if isDebugMode == true then
+         puts "WrapperCURL::putFileSilent #{url} #{file}"
+      end
+
       if url[-1, 1] != "/" then
          url = "#{url}/"  
       end
    
-      cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      cmd = ""
+      if user != nil and user != "" then
+         cmd = "curl -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      else
+         cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      end  
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
          puts cmd
       end
+   
+      retVal = system(cmd)
+      
+      if retVal == false and isDebugMode == true then
+         raise
+      end
 
-      return system(cmd)
+      return retVal
    
    end
    ## -------------------------------------------------------------
@@ -540,6 +611,15 @@ module WrapperCURL
       
       return true
                       
+   end
+   ## -------------------------------------------------------------
+
+   def escapePassword(pass)
+      pass    = pass.dup.gsub('"', '\"')
+      pass    = pass.dup.gsub('!', '\!')
+      pass    = pass.dup.gsub('@', '\@')
+      pass    = pass.dup.gsub('$', '\$')
+      return pass
    end
    ## -------------------------------------------------------------
 

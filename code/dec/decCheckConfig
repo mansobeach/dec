@@ -115,7 +115,7 @@ require 'dec/CheckerInTrayConfig'
 @bTrays           = false
 @isNoDB           = false
 @bLog             = false
-@interface        = ""
+
 @logger           = nil
 
 # MAIN script function
@@ -127,6 +127,7 @@ def main
    @bShowVersion     = false
    @bShowUsage       = false
    @retVal           = true
+   @interface        = ""
 
    opts = GetoptLong.new(     
      ["--all", "-a",            GetoptLong::NO_ARGUMENT],
@@ -199,8 +200,10 @@ def main
     
    checkModuleIntegrity
 
+   ## ------------------------------------------------------
+
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("chck", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
@@ -214,6 +217,21 @@ def main
 		puts
 		exit(99)
    end
+
+   ## ------------------------------------------------------
+   ##
+   ## Check configuration
+   ##
+
+   if @interface != "" then
+      cnf = DEC::ReadInterfaceConfig.instance
+      if cnf.exists?(@interface) == false
+         @logger.error("[DEC_605] I/F #{@interface}: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
+         exit(99)
+      end 
+   end
+   ## ------------------------------------------------------
+
 
    @projectName = ReadConfigDEC.instance.getProjectName
    @projectID   = ReadConfigDEC.instance.getProjectID

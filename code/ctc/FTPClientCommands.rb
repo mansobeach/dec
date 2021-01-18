@@ -298,18 +298,18 @@ module FTPClientCommands
    #-------------------------------------------------------------
    
    
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Create secureftp (sftp) command. Also creates or appends into 
-   # the batchFile passed as parameter.
-   # - host (IN): string containing the host name.
-   # - port (IN): string containing the port number.
-   # - user (IN): string containing the user name.
-   # - batchFile (IN): string containing the batchfile filename.
-   # - cmd (IN): string containing the sftp command to be executed.
-   # - arg1 (IN): string containing an argument for the sftp cmd or nil.
-   # - arg2 (IN): string containing an argument for the sftp cmd or nil.
-   # - compress (IN): optional argument for compressing SSH communication. 
+   ## Create secureftp (sftp) command. Also creates or appends into 
+   ## the batchFile passed as parameter.
+   ## - host (IN): string containing the host name.
+   ## - port (IN): string containing the port number.
+   ## - user (IN): string containing the user name.
+   ## - batchFile (IN): string containing the batchfile filename.
+   ## - cmd (IN): string containing the sftp command to be executed.
+   ## - arg1 (IN): string containing an argument for the sftp cmd or nil.
+   ## - arg2 (IN): string containing an argument for the sftp cmd or nil.
+   ## - compress (IN): optional argument for compressing SSH communication. 
    def createSftpCommand(host, port, user, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
          command = %Q{sftp -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
@@ -319,7 +319,7 @@ module FTPClientCommands
       addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
       return command      
    end
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------   
    
    private
    

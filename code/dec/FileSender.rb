@@ -22,6 +22,7 @@ require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerHTTP'
+require 'dec/InterfaceHandlerWebDAV'
 require 'dec/InterfaceHandlerFTPS'
 require 'dec/InterfaceHandlerFTPS_Implicit'
 
@@ -75,13 +76,17 @@ class FileSender
       
       ## ---------------------------------------------------
       if @protocol == 'LOCAL' then
-         #false stands for use DCC; true stands for use DDC
          @local = DEC::InterfaceHandlerLocal.new(@entity, false, true, false)
       end
       ## ---------------------------------------------------
       
-      if @protocol == 'HTTP' or @protocol == 'WEBDAV' then
+      if @protocol == 'HTTP' then
          @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, false, true, false)
+      end
+      ## ---------------------------------------------------
+
+      if @protocol == 'WEBDAV' then
+         @handler = DEC::InterfaceHandlerWebDAV.new(@entity, @logger, false, true, false)
       end
       ## ---------------------------------------------------
   

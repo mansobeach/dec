@@ -1,0 +1,213 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+###
+### === Ruby source for #decTestInterface_CloudFerro class
+###
+### === Written by DEIMOS Space S.L.
+###
+### === Data Exchange Component
+###
+### # git: decTestInterface_CloudFerro,v $Id$: 
+### 
+### module DEC
+###
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+
+## rake -f build_dec.rake dec:install[push_lisboa,e2espm-inputhub,s2_test]
+
+## Protocol for HTTP_FERRO is WebDAV
+
+class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
+
+   include Test::Unit::Data
+   
+   include CUC::DirUtils
+   
+   include DEC
+         
+   # Order of the test cases execution according to definition within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   # --------------------------------------------------------
+   
+   Test::Unit.at_start do
+      system("clear")
+      puts
+      puts "======================================"
+      puts "DEC Interface CloudFerro Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT / DURING OPERATIONS !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+   
+      @@arrFiles = [ \
+                           "S2A_OPER_REP_OPDAM1_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF", \
+                           "S2A_OPER_REP_OPDAM6_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF" \
+                           ]
+
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("CLOUDFERRO", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in DECTestCase_Interface_CloudFerro"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
+   
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DECTestCase_Interface_CloudFerro"
+   end
+   ## --------------------------------------------------------   
+   
+   # Setup before every test-case
+   #
+   def setup
+      cmd = "mkdir -p /tmp/tmp/dir1"
+      puts cmd
+      system(cmd)
+
+      cmd = "mkdir -p /tmp/tmp/dir2"
+      puts cmd
+      system(cmd)
+      
+      return
+   end
+   ## ------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      return
+   end
+   ## ------------------------------------------------------
+   
+   ## ------------------------------------------------------
+   
+   ##
+   
+   ## PULL Circulations
+   def test_pull
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      puts "pull not required"
+      ## -----------------------------------------
+      
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   
+   ## PUSH Circulations
+   def test_push
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)   
+   
+      cmd = "decCheckConfig -e HTTP_FERRO"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      ifConfig    = ReadInterfaceConfig.instance
+      protocol    = ifConfig.getProtocol("HTTP_FERRO").downcase
+      
+      outConfig   = ReadConfigOutgoing.instance
+      localOutBox = outConfig.getOutgoingDir("HTTP_FERRO")
+
+      checkDirectory(localOutBox)
+      checkDirectory("#{localOutBox}/#{protocol}")
+            
+      @@arrFiles.each{|filename|
+         cmd = "echo \'#{filename}\' > #{localOutBox}/#{protocol}/#{filename}"
+         puts cmd
+         system(cmd)
+      }
+
+      cmd = "decSend2Interface --mnemonic HTTP_FERRO --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decListDirUpload -m HTTP_FERRO -t"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts      
+      
+   end
+   ## ------------------------------------------------------
+
+end
+
+### ==================================================================

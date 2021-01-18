@@ -53,7 +53,7 @@
    <Reports>
 
       <Report Name="RetrievedFiles">
-         <Enabled>false</Enabled>
+         <Enabled>true</Enabled>
          <Desc>List of Files Retrieved</Desc>
          <FileClass>OPER</FileClass>
          <FileType>DEC_F_RECV</FileType>
@@ -71,11 +71,11 @@
    
    <Workflow>
       <!-- SourceDir is not used by e2edc@e2espm-inputhub -->
-      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <SourceDir>/volumes/dec/dec_delivery_root</SourceDir>
       <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
-      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
-      <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
-      <TempDir>/tmp/dec_tmp</TempDir>
+      <GlobalOutbox>/volumes/dec/interfaces/outbox</GlobalOutbox>
+      <ReportDir>/volumes/dec/interfaces/dec_basket.vpmc</ReportDir>
+      <TempDir>/volumes/dec/interfaces/dec_tmp</TempDir>
    </Workflow>   
    
    <Inventory>

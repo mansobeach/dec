@@ -47,6 +47,8 @@ require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerFTPS'
+require 'dec/InterfaceHandlerHTTP'
+require 'dec/InterfaceHandlerWebDAV'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
@@ -102,7 +104,7 @@ class DEC_ReceiverFromInterface
 			exit(99)
       end
 
-      checker     = CheckerInterfaceConfig.new(entity, true, false)
+      checker     = CheckerInterfaceConfig.new(entity, true, false, @logger)
       
       if @isDebugMode == true then
          checker.setDebugMode
@@ -287,10 +289,15 @@ class DEC_ReceiverFromInterface
             end
                         
             perf = measure { 
-               list = getWebDavFileList 
+            
+               handler = InterfaceHandlerWebDAV.new(@entity, @logger, true, false, false, @isDebugMode)   
+   
+               list = handler.getPullList
+            
                if @isDebugMode == true then
                   @logger.debug("Found #{list.length} files")
                end
+
             }            
                      
          # ---------------------------------------
@@ -300,15 +307,21 @@ class DEC_ReceiverFromInterface
             if @isDebugMode == true then
                @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
             end
+            
+            @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, true, false, false)
+               
+            if @isDebugMode == true then 
+               @handler.setDebugMode
+            end
+
                         
-            perf = measure { 
-               list = getHTTPList 
+            perf = measure {
+               list = @handler.getPullList(false)
+  
                if @isDebugMode == true then
                   @logger.debug("Found #{list.length} files")
                end
-            }            
-
-         
+            }                     
          # ---------------------------------------
             
       end
@@ -520,198 +533,8 @@ class DEC_ReceiverFromInterface
    
    ## -----------------------------------------------------------
    
-   ## Returns an array of URLs
-   def getHTTPListDir(url)
-      if @isDebugMode == true then
-         @logger.debug("DEC_ReceiverFromInterface::getHTTPListDir => #{url} treated as a directory")
-      end
-   
-      uri = URI.parse(url)
-      
-      response = Net::HTTP.get_response(uri)
-      
-      if @isDebugMode == true then
-         @logger.debug("HTTP GET #{url} => #{response.code}")
-      end   
-
-      arr = Array.new
-
-      doc   = Nokogiri::HTML.parse(response.body)
-      tags  = doc.xpath("//a")
-   
-      tags.each do |tag|
-         arr << "#{url}#{tag.text}"
-      end
-   
-      return arr
-   
-   end
-   ## -----------------------------------------------------------
-   
-   ##
-   
-   def getHTTPList
-      @newArrFile = Array.new
-      host        = ""
-      url         = ""
-      if isSecureMode == false then
-         host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
-      else
-         host        = "https://#{@ftpserver[:hostname]}/"
-      end
-      port        = @ftpserver[:port].to_i
-      user        = @ftpserver[:user]
-      pass        = @ftpserver[:password]
-      
-      @depthLevel = 0
-      arrElements = @ftpserver[:arrDownloadDirs]
-
-      arrElements.each{|element|
-         @remotePath    = element[:directory]
-         
-         url = "#{host}#{@remotePath}"
-         
-         if @isDebugMode == true then
-            @logger.debug("Checking URL #{url}")
-         end
-
-         # ---------------------------------------
-         # URL ends with "/" treat it as a directory         
-         if @remotePath[-1, 1] == "/" then
-            @newArrFile << getHTTPListDir(url)
-            next
-         end 
-         # ---------------------------------------
-         
-         begin
-
-            bFound = false
-
-            ret = Curl::Easy.http_head(url)
-
-            if @isDebugMode == true then
-               @logger.debug("#{url} => #{ret.status}")
-            end
-                        
-            ## -----------------------------------
-            ## Permanent re-direction
-            if ret.status.include?("301") == true then               
-               new_url = ret.header_str.split("Location:")[1].split("\n")[0].gsub(/\s+/, "")
-               @newArrFile << new_url
-               bFound = true
-               if @isDebugMode == true then
-                  @logger.debug("Found #{File.basename(new_url)}")
-               end
-            end
-            
-            ## -----------------------------------
-                        
-            if ret.status.include?("200") == true then
-               @newArrFile << url
-               bFound = true
-            
-               if @isDebugMode == true then
-                  @logger.debug("Found #{File.basename(url)}")
-               end
-            end
-
-            if bFound == false then
-               @logger.error("[DEC_614] I/F #{@entity}: Cannot GET #{url}")
-               next
-            end
-         rescue Exception => e
-            @logger.error("[DEC_614] I/F #{@entity}: Cannot GET #{url}")
-            @logger.error(e.to_s)
-            if @isDebugMode == true then
-               @logger.debug(e.backtrace)
-            end
-            next
-         end
-      }   
-      
-      return @newArrFile.flatten
-      
-   end
    ## -----------------------------------------------------------
 
-   ## retrieving of the list of files available using WebDAV protocol   
-   def getWebDavFileList
-
-      @newArrFile = Array.new
-      host        = ""
-      if isSecureMode == false then
-         host        = "http://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
-      else
-         host        = "https://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
-      end
-      port        = @ftpserver[:port].to_i
-      user        = @ftpserver[:user]
-      pass        = @ftpserver[:password]
-      dav         = Net::DAV.new(host, :curl => false)
-      
-      ## -------------------------------
-      ## new configuration item VerifyPeerSSL is needed
-      ##
-
-      dav.verify_server = @entityConfig.isVerifyPeerSSL?(@entity)
-
-      ## -------------------------------
- 
-      ## -------------------------------
-      ## if credentials are not empty in the configuration file
-      if user != "" or (pass != "" and pass != nil) then
-         if @isDebugMode == true then
-            @logger.debug("Passing Credentials to WebDAV server")
-         end
-         
-         dav.credentials(user, pass)
-      end
-      ## -------------------------------
-      
-      @depthLevel = 0
-      arrElements = @ftpserver[:arrDownloadDirs]
-
-      arrElements.each{|element|
-         @remotePath    = element[:directory]
-         
-         if @remotePath[-1, 1] != "/" then
-            @remotePath = "#{@remotePath}/"
-         end 
-                  
-         @recursive     = (element[:depthSearch].to_i > 0)
-         
-         if @isDebugMode == true then
-            @logger.debug("Checking directory with PROPFIND #{@remotePath} - recursive search is #{@recursive}")
-         end
-         
-         begin
-            bFound = false
-            dav.find(@remotePath,:recursive => @recursive,:suppress_errors=>true) do | item |
-               bFound = true
-               if @isDebugMode == true then
-                  @logger.debug("Found #{item.url.to_s}")
-               end 
-               if item.type.to_s.downcase == "file" then
-                  @newArrFile << item.url.to_s
-               end
-            end
-            # dirty hack since exception is not raised but Warning: 401 "Unauthorized": /tmp
-            if bFound == false then
-               @logger.error("Could not reach #{@remotePath} for #{@entity} / check credentials")
-               next
-            end
-         rescue Exception => e
-            @logger.error("Could not reach #{@remotePath}")
-            @logger.error(e.to_s)
-            if @isDebugMode == true then
-               @logger.debug(e.backtrace)
-            end
-            next
-         end
-      }   
-      
-      return @newArrFile
-   end
    ## -----------------------------------------------------------
 
    def getSecureFileList
@@ -1187,7 +1010,7 @@ private
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
-               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download")
+               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
             else
                @logger.error("[DEC_670] I/F #{@entity}: #{File.basename(filename)} delete failure")
             end
@@ -1467,7 +1290,7 @@ private
    	      retVal = deleteFromEntity(filename)
          
             if retVal == true then
-               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download")
+               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
             else
                @logger.error("[DEC_670] I/F #{@entity}: #{File.basename(filename)} delete failure")
             end
@@ -1630,7 +1453,7 @@ private
          end
          return false
       end
-      msg = "[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted upon download"
+      msg = "[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted"
       @logger.info(msg)
       return true
    end

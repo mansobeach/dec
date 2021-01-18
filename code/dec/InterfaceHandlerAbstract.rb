@@ -36,6 +36,14 @@ class InterfaceHandlerAbstract
    end
    ## -----------------------------------------------------------
 
+   ## -----------------------------------------------------------
+   ## DEC - Pull
+
+   def getPullList
+      raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
+   end
+
+   ## -----------------------------------------------------------
    ## to inspect object
 
    def to_s
@@ -57,14 +65,13 @@ class InterfaceHandlerAbstract
       raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
    end
    ## -----------------------------------------------------------
-   ## DEC - Pull
 
-   def getList
+   def checkRemoteDirectory(directory)
       raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
    end
    ## -----------------------------------------------------------
 
-   def checkRemoteDirectory(directory)
+   def getDirList(directory)
       raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
    end
    ## -----------------------------------------------------------

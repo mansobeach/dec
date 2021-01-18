@@ -141,9 +141,9 @@ class ReadOrchestratorConfig
       }
       return false
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # Checks if the fileType provided exists
+   ## Checks if the fileType provided exists
    def isValidFileType?(fileType_)
       @@arrOrchDataProvider.each { |x|
       
@@ -160,7 +160,7 @@ class ReadOrchestratorConfig
       }
       return false
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Checks if the dataType provided exists
    def isValidDataType?(dataType_)

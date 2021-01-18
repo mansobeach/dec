@@ -243,8 +243,8 @@
       <Protocol>HTTP</Protocol>
       <Hostname>localhost</Hostname>
       <Port>8080</Port>      
-      <User></User>
-      <Pass></Pass>
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -297,8 +297,8 @@
       <Protocol>WEBDAV</Protocol>
       <Hostname>localhost</Hostname>
       <Port>8080</Port>      
-      <User></User>
-      <Pass></Pass>
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -354,8 +354,8 @@
       <Protocol>WEBDAV</Protocol>
       <Hostname>localhost</Hostname>
       <Port>8080</Port>      
-      <User>borja</User>
-      <Pass>perrillo</Pass>
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -408,8 +408,8 @@
       <Protocol>WEBDAV</Protocol>
       <Hostname>localhost</Hostname>
       <Port>8080</Port>      
-      <User>borja</User>
-      <Pass>perrillo</Pass>
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>

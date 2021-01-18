@@ -39,7 +39,9 @@ ActiveRecord::Base.establish_connection(
 class CreateTriggerProducts < ActiveRecord::Migration[6.0]
    def self.up
       create_table(:trigger_products) do |t|
+         t.index  :id
          t.column :filename,            :string,  :limit => 100
+         t.index  :filename
          t.column :filetype,            :string,  :limit => 20
          t.column :detection_date,      :datetime
          t.column :sensing_start,       :datetime
@@ -60,6 +62,11 @@ class CreateOrchestratorQueue < ActiveRecord::Migration[6.0]
   
    def self.up
       create_table(:orchestrator_queue, :id => false) do |t|
+         t.column       :filename,            :string,  :limit => 100
+         t.index        :filename
+         t.column       :filetype,            :string,  :limit => 20
+         t.column       :queue_date,          :datetime
+
          t.primary_key :trigger_product_id
       end
       add_foreign_key :orchestrator_queue, :trigger_products
@@ -145,6 +152,8 @@ class CreatePending2QueueFiles < ActiveRecord::Migration[6.0]
       create_table(:pending2queue_files, :id => false) do |t|
          t.primary_key  :trigger_product_id
          t.column       :filename,            :string,  :limit => 100
+         t.index        :filename
+         t.column       :filetype,            :string,  :limit => 20
          t.column       :detection_date,      :datetime
       end
       add_foreign_key :pending2queue_files, :trigger_products

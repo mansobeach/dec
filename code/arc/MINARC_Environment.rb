@@ -24,12 +24,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.37"
+   @@version = "1.0.38"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.37"  =>    "TBW", \
+      "1.0.38"  =>    "TBW", \
+      "1.0.37"  =>    "Ghost version", \
       "1.0.36"  =>    "minArcServer fix to avoid uncontrolled children upon archive request:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-393",\
       "1.0.35"  =>    "New Server API primitive API_URL_RETRIEVE_CONTENT", \

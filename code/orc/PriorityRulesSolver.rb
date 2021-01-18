@@ -8,7 +8,7 @@
 #
 # === MDS-LEGOS => ORC Component
 # 
-# CVS: $Id: PriorityRulesSolver.rb,v 1.3 2009/03/18 11:50:06 decdev Exp $
+# Git: $Id: PriorityRulesSolver.rb,v 1.3 2009/03/18 11:50:06 decdev Exp $
 #
 # module ORC
 #

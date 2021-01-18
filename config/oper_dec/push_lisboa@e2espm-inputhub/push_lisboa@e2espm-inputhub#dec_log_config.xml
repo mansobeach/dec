@@ -30,7 +30,7 @@
   
  </outputter>
 
- <logger name="SBOA" level="INFO" trace="false">
+ <logger name="SBOA" level="DEBUG" trace="false">
     <outputter>console</outputter>
     <outputter>dec_log</outputter>
  </logger>

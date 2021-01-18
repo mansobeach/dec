@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #OrchestratorScheduler class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Orchestrator => ORC Component
-# 
-# Git: $Id: OrchestratorScheduler.rb,v 1.9 2009/04/30 11:58:52 decdev Exp $
-#
-# module ORC
-#
+##
+## === Ruby source for #OrchestratorScheduler class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Orchestrator => ORC Component
+## 
+## Git: $Id: OrchestratorScheduler.rb,v 1.9 2009/04/30 11:58:52 decdev Exp $
+##
+## module ORC
+##
 #########################################################################
 
 require 'cuc/Log4rLoggerFactory'
@@ -99,7 +99,9 @@ class OrchestratorScheduler
       
       HandleDBConnection.new      
       
-      @arrQueuedFiles = OrchestratorQueue.getQueuedFiles
+      ## https://jira.elecnor-deimos.com/browse/S2MPASUP-402
+      # @arrQueuedFiles = OrchestratorQueue.getQueuedFiles
+      @arrQueuedFiles = OrchestratorQueue.all
       
       if @isDebugMode == true then
          @arrQueuedFiles.each{|item|
@@ -154,7 +156,7 @@ class OrchestratorScheduler
          @logger.debug(msg) 
       end
 
-      @arrPendingFiles = Pending2QueueFile.getPendingFiles     
+      @arrPendingFiles = Pending2QueueFile.all  
 
       if @arrPendingFiles.empty? == true then
          if @isDebugMode == true then
@@ -169,11 +171,19 @@ class OrchestratorScheduler
       OrchestratorQueue.transaction do
          @arrPendingFiles.each{|file|
             new_queued_file = OrchestratorQueue.new
-            new_queued_file.trigger_product_id = file.trigger_product_id
+            new_queued_file.trigger_product_id  = file.trigger_product_id
+            new_queued_file.filename            = file.filename
+            new_queued_file.filetype            = file.filetype
+            new_queued_file.queue_date          = Time.now
             new_queued_file.save
             @logger.info("[ORC_215] #{file.filename} queued for dispatch")
             Pending2QueueFile.destroy_by(trigger_product_id: file.trigger_product_id)  
          }
+      end
+
+      if @isDebugMode == true then
+         msg = "OrchestratorScheduler::enqueuePendingFiles end"
+         @logger.debug(msg) 
       end
          
    end

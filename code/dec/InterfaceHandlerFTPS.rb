@@ -34,13 +34,17 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
    ##
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, log, bPull=true, bPush=true, manageDirs=false)
+   def initialize(entity, log, bPull=true, bPush=true, manageDirs=false, isDebug=false)
       @entity     =  entity
       @logger     =  log
       @bPull      =  bPull
       @bPush      =  bPush
       @manageDirs =  manageDirs
-                   
+      
+      if isDebug == true then
+         self.setDebugMode
+      end
+
       @entityConfig     = ReadInterfaceConfig.instance
       @outConfig        = ReadConfigOutgoing.instance
       @inConfig         = ReadConfigIncoming.instance
@@ -105,7 +109,6 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       if @isDebugMode == true then
          @logger.debug("InterfaceHandlerFTPS::getUploadDirList tmp => #{bTemp} / #{dir}")
       end
-
             
       begin
          @ftps.chdir(dir)

@@ -307,7 +307,7 @@ class ReadInterfaceConfig
    # * It returns true if exists.
    # * Otherwise It returns false.
    def exists?(mnemonic)
-      @@arrExtEntities.each{ |x| 
+      @@arrExtEntities.each{ |x|
         if mnemonic == x[:mnemonic] then return true end
       }
       return false

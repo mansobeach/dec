@@ -467,8 +467,8 @@ def main
       newProd = TriggerProduct.new(:filename => @filename,
                                    :filetype => @filetype, 
                                    :detection_date => @detectionDate,
-                                   :sensing_start => @sensing_start,
-                                   :sensing_stop => @sensing_stop,
+                                   :sensing_start  => @sensing_start,
+                                   :sensing_stop   => @sensing_stop,
                                    :runtime_status => "UKN",
                                    :initial_status => @initialStatus)
 
@@ -487,14 +487,23 @@ def main
             newProd = oldTrigger.to_a[0]
          end
 
+#         puts Pending2QueueFile.column_names
+#         puts "xxx"
+#         puts Pending2QueueFile.columns
+#         puts "---"
+
          if @bPending == true
             newQueuedProd = Pending2QueueFile.new
             newQueuedProd.filename           = @filename
+            newQueuedProd.filetype           = @filetype
             newQueuedProd.detection_date     = Time.now
             newQueuedProd.trigger_products   = newProd
          else
             newQueuedProd = OrchestratorQueue.new
-            newQueuedProd.trigger_products = newProd
+            newQueuedProd.filename           = @filename
+            newQueuedProd.filetype           = @filetype
+            newQueuedProd.queue_date         = Time.now
+            newQueuedProd.trigger_products   = newProd
          end
 
          begin
@@ -542,17 +551,22 @@ def list
 
    if @bQueued == true then
       puts
-      print "QUEUE_DATE--------ID---FILENAME-------------------------------------------------------START------------STOP--------------INI", "\n"
+      print "QUEUE_DATE-------FILENAME-------------------------------------------------------FILETYPE----START------------STOP--------------", "\n"
 
-      listFiles = OrchestratorQueue::getQueuedFiles
+      # listFiles = OrchestratorQueue::getQueuedFiles
 
-      listFiles.each{|triggerFile|
-         print triggerFile.detection_date.strftime("%Y%m%dT%H%M%S ").ljust(17), 
-               triggerFile.id.to_s.center(4).ljust(6),
-               triggerFile.filename.slice(0..59).ljust(63),
+      listFiles = OrchestratorQueue.all
+
+      listFiles.each{|queueFile|         
+      
+         triggerFile = TriggerProduct.where(:id => queueFile.trigger_product_id).to_a[0]
+         
+         print queueFile.queue_date.strftime("%Y%m%dT%H%M%S ").ljust(17),
+               queueFile.filename.slice(0..59).ljust(63),
+               queueFile.filetype.slice(0..10).ljust(12),
                triggerFile.sensing_start.strftime("%Y%m%dT%H%M%S ").ljust(17), 
                triggerFile.sensing_stop.strftime("%Y%m%dT%H%M%S ").ljust(18),
-               triggerFile.initial_status, "\n"
+               "\n"
       }
       puts
    end
@@ -679,12 +693,12 @@ def list
 
 
    if @bPending == true then
-      print "PENDING_DATE-----FILENAME------------------------------------------------------", "\n"
+      print "PENDING_DATE-----FILENAME------------------------------------------------------FILETYPE--", "\n"
  
       pendingFiles = Pending2QueueFile.order(detection_date: :asc).all
       pendingFiles.each{|penFile|
          print penFile.detection_date.strftime("%Y%m%dT%H%M%S ").ljust(17),
-              penFile.filename.slice(0..59), "\n"        
+              penFile.filename.slice(0..59).ljust(60, ' '), "  ", penFile.filetype.slice(0..10), "\n"        
       }
       puts
    end
@@ -781,7 +795,7 @@ def bulkQueueing
    
    require 'activerecord-import'
    
-   @arrPendingFiles = Pending2QueueFile.getPendingFiles     
+   @arrPendingFiles = Pending2QueueFile.all     
 
    if @arrPendingFiles.empty? == true then
       msg = "No new input files are pending to be queued"
@@ -789,18 +803,26 @@ def bulkQueueing
       return
    end
   
-   arrIds = Array.new
+   arr = Array.new
   
    @arrPendingFiles.each{|file|
-      ids = Array.new
-      ids << file.id
-      arrIds << ids
+      arr << OrchestratorQueue.new( trigger_product_id: file.trigger_product_id, \
+                                    filename: file.filename, \
+                                    filetype: file.filetype, \
+                                    queue_date: Time.now)
    }
 
    OrchestratorQueue.transaction do
-      OrchestratorQueue.import [:trigger_product_id], arrIds, validate: false
+      OrchestratorQueue.import arr, validate: false
       Pending2QueueFile.destroy_all
    end
+
+
+#
+#   OrchestratorQueue.transaction do
+#      OrchestratorQueue.import [:trigger_product_id], arrIds, validate: false
+#      Pending2QueueFile.destroy_all
+#   end
    
 end
 ## -------------------------------------------------------------

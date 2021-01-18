@@ -1,18 +1,18 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DirUtils module
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component -> Common Utils Component
-# 
-# CVS: $Id: DirUtils.rb,v 1.6 2007/02/05 14:35:10 decdev Exp $
-#
-# Module Common Utils Component
-# This module contains utility methods for handling directories
-#
+##
+## === Ruby source for #DirUtils module
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component -> Common Utils Component
+## 
+## Git: $Id: DirUtils.rb,v 1.6 2007/02/05 14:35:10 decdev Exp $
+##
+## Module Common Utils Component
+## This module contains utility methods for handling directories
+##
 #########################################################################
 
 module CUC
@@ -25,14 +25,15 @@ module DirUtils
    ## - str (IN): string with a path that contains an environment variable
    def expandPathValue(str)
       bPath = true
+
+      if str == nil then
+		   return ""
+		end
       
       if str[-1, 1] != "/" then
          bPath = false
       end
       
-      if str == nil then
-		   return ""
-		end
       bIsFullPath = false
       if str[0,1] == "/" then
          bIsFullPath = true

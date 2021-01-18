@@ -12,10 +12,9 @@
 ###
 #########################################################################
 
-
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.19'
+  s.version     = '1.0.20'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -42,8 +41,6 @@ Gem::Specification.new do |s|
       s.files = s.files + Dir['config/ft_mail_config.xml']
    end
    ## --------------------------------------------
-
-
 
   s.require_paths = [ 'code', 'code/dcc', 'code/ddc', 'code/ctc', 'code/dec' ]
 
@@ -80,6 +77,9 @@ Gem::Specification.new do |s|
    if ENV.include?("DEC_TEST") == true then
 
       if ENV.include?("DEC_ODATA") == false then
+         s.executables   << 'decTestInterface_CloudFerro'
+         s.executables   << 'decTestInterface_ECDC'
+         s.executables   << 'decTestInterface_SCIHUB'
          s.executables   << 'decUnitTests'
          s.executables   << 'decUnitTests_ADP'
          s.executables   << 'decUnitTests_FTP'
@@ -88,11 +88,12 @@ Gem::Specification.new do |s|
          s.executables   << 'decUnitTests_IERS'
          s.executables   << 'decUnitTests_ncftpput'
          s.executables   << 'decUnitTests_SBOA'
-         s.executables   << 'decUnitTests_WEBDAV_SECURE'
+         s.executables   << 'decUnitTests_WebDAV'
+         s.executables   << 'decUnitTests_WebDAV_Secure'
          s.executables   << 'decUnitTests_mail'
       end
 
-      s.executables   << 'decUnitTests_DHUS'
+      s.executables   << 'decTestInterface_DHUS_OData'
       s.executables   << 'decUnitTests_PRIP'
    end
    ## --------------------------------------------

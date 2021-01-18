@@ -78,6 +78,7 @@ module PackageUtils
    ## https://serverfault.com/questions/108024/silent-7za-compression
    
    def unpack7z( full_path_file, \
+               destination_path, \
                bDeleteSourceFile = true, \
                bIsDebugMode = false, \
                logger = nil \
@@ -88,7 +89,8 @@ module PackageUtils
          return false
       end
 
-      cmd  = %Q{7za x #{full_path_file} -o#{File.dirname(full_path_file)}}
+      # cmd  = %Q{7za x #{full_path_file} -o#{File.dirname(full_path_file)}}
+      cmd  = %Q{7za e #{full_path_file} -o#{destination_path}}
 
       ## silent mode
       ## > progress redirected to 0

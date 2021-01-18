@@ -219,7 +219,9 @@ class ORCTestCase < Test::Unit::TestCase
       system("minArcDB -c")
       
       
-      @@arrInputFiles = [ \
+      @@arrInputFiles_with_error = [ \
+                           "bizarre_file.sht", \
+                           "EDR_OPER_SER_SR1_OA_PDMC_20210111T060002_V20210111T052640_20210111T054055.EOF", \
                            "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
                            "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
                            "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
@@ -245,7 +247,35 @@ class ORCTestCase < Test::Unit::TestCase
                            "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
                            "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
                            ]
-                           
+
+      @@arrInputFiles = [ \
+                           "EDR_OPER_SER_SR1_OA_PDMC_20210111T060002_V20210111T052640_20210111T054055.EOF", \
+                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
+                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
+                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
+                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
+                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
+                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
+                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
+                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
+                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
+                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
+                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
+                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
+                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
+                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
+                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
+                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
+                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
+                           ]
+                            
            @@arrInputFiles2 = [ \
                            "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
                            "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
@@ -528,18 +558,26 @@ class ORCTestCase < Test::Unit::TestCase
 
       # assert(orcConf.isValidFileType?("GIP_PROBAS"), "REP_OPDPC_ file-type configuration")
 
+
+      assert(!orcConf.isValidFileType?("bizarre.sht"), "no rule")
+
       puts
       
       @@arrInputFiles.each{|file|
          puts file
                
-         assert(orcConf.isValidFileType?(file), "wild-card configuration")
-
          if file.include?("MPC_") == true then
             assert(!orcConf.isFileTypeTrigger?(file), "wild-card configuration")
-         else
-            assert(orcConf.isFileTypeTrigger?(file), "wild-card configuration")
+            next
          end
+         
+         if file.include?("bizarre") == true then
+            assert(!orcConf.isFileTypeTrigger?(file), "wild-card configuration")
+            next
+         end
+         
+         assert(orcConf.isValidFileType?(file), "wild-card configuration")
+
       }
 
       puts
@@ -1256,15 +1294,17 @@ class ORCTestCase < Test::Unit::TestCase
       system("orcManageDB -c")
       
       system("orcIngester -c stop")
-      
-      cmd = "orcIngester -c start -i 5 -d /tmp"
-      assert(system(cmd), cmd)
-
-      sleep(5.0)
 
       orcConf = ORC::ReadOrchestratorConfig.instance
       orcConf.update
       pollingDir = orcConf.getPollingDir
+      
+      cmd = "orcIngester -c start -i 5 -d #{pollingDir}"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
 
 
       @@arrInputFiles.each{|filename|
@@ -1277,11 +1317,12 @@ class ORCTestCase < Test::Unit::TestCase
       sleep(60.0)
 
       cmd = "orcIngester -c stop"
+      puts cmd
       assert(system(cmd), cmd)
 
       sleep(5.0)
 
-      cmd = "orcIngester -c start -i 5 -d /tmp"
+      cmd = "orcIngester -c start -i 5 -d #{pollingDir}"
       assert(system(cmd), cmd)
 
       sleep(40.0)
@@ -1301,6 +1342,13 @@ class ORCTestCase < Test::Unit::TestCase
       puts arrFiles
       
       assert(!arrFiles.to_s.include?("_MPC_"), "no MPC files queued")
+      
+      cmd = "orcIngester -c stop"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+      
       
       arr = Dir["/tmp/dec_orchestrator*.log"]
       cmd = "grep ERROR #{arr[0]}"

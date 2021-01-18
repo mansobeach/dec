@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-##
-## === Ruby source for #ORC_Environment class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Orchestrator (generic orchestrator)
-## 
-## Git: $Id: ORC_Environment.rb $Date$
-##
-## module ORC
-##
+###
+### === Ruby source for #ORC_Environment class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Orchestrator (generic orchestrator)
+### 
+### Git: $Id: ORC_Environment.rb $Date$
+###
+### module ORC
+###
 #########################################################################
 
 require 'dotenv'
@@ -22,15 +22,18 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.10"
+   @@version = "0.0.11"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.11"  =>   "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-409 / S2 hardcoded filtering", \
       "0.0.10"  =>   "orchestratorConfigFile.xml Inventory item added for database configuration\n\
          Support to remote inventory / db different than localhost\n\
          Inventory config now includes Database_Host & Database_Port items:\n\
          https://jira.elecnor-deimos.com/browse/S2MPASUP-384\n\
+         Datamodel & Index updated to deal with previously queued items:\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-402\n\
          log messages rationalisation and clean-up",\
       "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n\
          orcQueueUpdate removes from the queue a previously failed product\n\

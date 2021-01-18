@@ -97,6 +97,13 @@
 	      <FileType>S2*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
+ 
+      <DataProvider isTriggerType='no'>
+	      <DataType>S2_UNKNOWN</DataType>
+	      <FileType>EDR*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+ 
       
    </List_of_DataProviders>
 

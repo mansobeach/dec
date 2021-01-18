@@ -26,6 +26,9 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
+### Required for test of integration with minArc
+### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
+
 ### Preconditions:
 ### 1 - setup 
 ### 1.1 - load_config_development
@@ -73,8 +76,11 @@ require 'dec/ReadConfigIncoming'
 ## sudo /usr/local/sbin/pure-ftpd
 ## PAMAuthentication            yes
 
+### ------------------------------------
 ### MacOS Mojave
 ## sudo /usr/local/sbin/pure-ftpd -lpam
+## sudo /usr/local/sbin/pure-ftpd /Users/borja/Projects/dec/config/ftp/pure-ftpd.conf
+### ------------------------------------
 
 # Stop FTP Server
 # launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
@@ -619,75 +625,111 @@ class DECTestCase < Test::Unit::TestCase
       @@conf.wrapper_unset_config
       
       cmd = "decConfigInterface2DB"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "decConfigInterface2DB -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decConfigInterface2DB -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decListener"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "decListener -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decListener -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decCheckConfig"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "decCheckConfig -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decCheckConfig -h"
+      puts cmd
       assert(system(cmd), cmd)
 
+      cmd = "decCheckConfig -e non_existing_if"
+      puts cmd
+      assert(!system(cmd), cmd)
+
       cmd = "decGetFromInterface"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "decGetFromInterface -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decGetFromInterface -h"
+      puts cmd
       assert(system(cmd), cmd)
 
+      cmd = "decGetFromInterface -m non_existing_if"
+      puts cmd
+      assert(!system(cmd), cmd)
+
       cmd = "decGetFiles4Transfer -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decGetFiles4Transfer -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decGetFiles4Transfer -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface -m non_existing_if"
+      puts cmd
       assert(!system(cmd), cmd)
 
+      cmd = "decListDirUpload -S"
+      puts cmd
+      assert(system(cmd), cmd)
+
       cmd = "decListDirUpload -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decListDirUpload -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decDeliverFiles -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decDeliverFiles -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decDeliverFiles -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decStats -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "decStats -v"
+      puts cmd
       assert(system(cmd), cmd)
 
 

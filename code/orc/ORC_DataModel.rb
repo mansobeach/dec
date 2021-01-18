@@ -104,6 +104,9 @@ class Pending2QueueFile < ActiveRecord::Base
    self.table_name   = 'pending2queue_files'
    self.primary_key  = 'trigger_product_id'   
 
+   validates_presence_of   :filename
+   validates_presence_of   :filetype
+   
    belongs_to  :trigger_products,
                :class_name    => "TriggerProduct",
                :foreign_key   => "trigger_product_id"

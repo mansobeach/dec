@@ -39,18 +39,19 @@
 
 require 'getoptlong'
 
-require 'ctc/FTPClientCommands'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/InterfaceHandlerLocal'
+require 'dec/InterfaceHandlerHTTP'
+require 'dec/InterfaceHandlerWebDAV'
 require 'dec/InterfaceHandlerFTPS'
 require 'dec/InterfaceHandlerFTPS_Implicit'
+require 'dec/InterfaceHandlerSFTP'
                                    
 ## MAIN script function
 def main
    
-   include CTC::FTPClientCommands
    include DEC
 
    @isDebugMode      = false              
@@ -124,7 +125,7 @@ def main
    @logger = loggerFactory.getLogger
    if @logger == nil then
       puts
-		puts "Error in send2Interface::main"
+		puts "Error in decListDirUpload::main"
 		puts "Could not set up logging system !  :-("
       puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
 		puts
@@ -132,9 +133,7 @@ def main
 		exit(99)
    end
    # -----------------------------------------------------------------
-
- 
- 
+   
    if @bShowMnemonics == true then
    
       require 'dec/DEC_DatabaseModel'
@@ -150,7 +149,7 @@ def main
             puts "Sorry, there are no configured I/Fs :-|"
             puts
          else
-            puts "=== Data Collector Component Registered I/Fs ==="
+            puts "========= DEC I/Fs ========="
             arrInterfaces.each{|interface|
                print interface.name
                1.upto(25 - interface.name.length) do
@@ -176,7 +175,7 @@ def main
    # Check Module Integrity
    checkModuleIntegrity
    
-   @configFile = ReadInterfaceConfig.instance
+   @configFile = DEC::ReadInterfaceConfig.instance
 
    ## --------------------------------------------
 
@@ -185,180 +184,71 @@ def main
       exit(99)
    end
 
-   entConf = @configFile.getFTPServer4Send(@entity)  
+   @entConf = @configFile.getFTPServer4Send(@entity)  
+   
+   bProcessed = false
+   
+   handler = nil
+   
+   ## ----------------------------------
+   ##
+   
+   ## create handler object driven by the protocol 
+   
+   case @entConf[:protocol].upcase
+
+      when "SFTP"  then handler = InterfaceHandlerSFTP.new(@entity, @logger, false, true, false, @isDebugMode)
+   
+      when "FTP"   then handler = InterfaceHandlerFTPS.new(@entity, @logger, false, true, false, @isDebugMode)
+   
+      when "FTPS"  then
+         if @entConf[:port].to_i == 990 then
+            handler = InterfaceHandlerFTPS_Implicit.new(@entity, @logger)
+         else
+            handler = InterfaceHandlerFTPS.new(@entity, @logger)
+         end
+
+      when "LOCAL"  then handler = InterfaceHandlerLocal.new(@entity)
       
-   # ---------------------------------------------
-   if entConf[:protocol].upcase == "LOCAL" then
-      handler = InterfaceHandlerLocal.new(@entity)
+	   when "HTTP"   then handler = InterfaceHandlerHTTP.new(@entity, @logger, false, true, false, @isDebugMode)
       
-      list = handler.getUploadDirList
+      when "WEBDAV" then handler = InterfaceHandlerWebDAV.new(@entity, @logger, false, true, false, @isDebugMode) 
+      else
+         @logger.error("#{'1F480'.hex.chr('UTF-8')} #{@entConf[:protocol].upcase} protocol not supported")
+         exit(99)
+   end
+   ## ----------------------------------
+
+
+   if @isDebugMode == true then
+      @logger.debug("I/F #{@entity}:  Checking UploadDir")
+   end   
+   
+   list = handler.getUploadDirList
       
+   if list.class.to_s.include?("Array") == true then
       list.each{|file|
          @logger.debug("I/F #{@entity}:  UploadDir: #{file} found")
       }
-      
-      if @checkUploadTmp == true then
-         list = handler.getUploadDirList(true)
-      
-         list.each{|file|
-            @logger.debug("I/F #{@entity}:  UploadTemp: #{file} found")
-         }
-      end
-      
-      exit(0)
-   end 
-   # ---------------------------------------------
-   
-   if entConf[:protocol].upcase == "FTPS" or entConf[:protocol].upcase == "FTPES" then
-      
-      if entConf[:port].to_i == 990 then
-         handler = InterfaceHandlerFTPS_Implicit.new(@entity, @logger)
-      else
-         handler = InterfaceHandlerFTPS.new(@entity, @logger)
-      end
-      
-      if @isDebugMode == true then
-         handler.setDebugMode
-      end
-      
-      list = handler.getUploadDirList
-      
-      list.each{|file|
-         @logger.debug("#{@entity} I/F UploadDir: item #{file} found")
-      }
-      
-      if @checkUploadTmp == true then
-         list = handler.getUploadDirList(true)
-      
-         list.each{|file|
-            @logger.debug("I/F #{@entity}:  UploadTemp: #{file} found")
-         }
-      end
+   end
             
+   if @checkUploadTmp != true then
       exit(0)
    end
-   # ---------------------------------------------
-   
-   if entConf[:isSecure] == true then
-      @isSecure = true
-   end 
-   
-   if @isVerboseMode == true then
-      showInterfaceConfig(entConf)
-   end
-   
-   if @isSecure == false then
-   
-#      cmd = self.createCurlFTPList(entConf[:hostname],
-#                              entConf[:port],
-#                              entConf[:user],
-#                              entConf[:password],
-#                              ReadConfigOutgoing.instance.getUploadDir(@entity),
-#                              entConf[:isPassive],   
-#                              nil)
-   
-      cmd = self.createNcFtpLs(entConf[:hostname],
-                              entConf[:port],
-                              entConf[:user],
-                              entConf[:password],
-                              ReadConfigOutgoing.instance.getUploadDir(@entity),
-                              entConf[:isPassive],   
-                              nil)
-   else
-      cmd = self.createSftpCommand(entConf[:hostname],
-                                  entConf[:port],
-                                  entConf[:user],
-                                  @batchFile,
-                                  "cd #{ReadConfigOutgoing.instance.getUploadDir(@entity)}",
-                                  nil,
-                                  nil)
-      cmd = self.createSftpCommand(entConf[:hostname],
-                                  entConf[:port],
-                                  entConf[:user],
-                                  @batchFile,
-                                  "ls",
-                                  "-1",
-                                  nil)
-   end
-   
+      
    if @isDebugMode == true then
-      puts cmd
-   end
-   
-   puts
-   puts "============================================================="
-   puts "Checking #{@entity} I/F Upload Directory"
-   puts
-   retVal = system(cmd)
-   puts "============================================================="
-   puts
-   if @isSecure == true and FileTest.exist?(@batchFile) then
-      n = File.delete(@batchFile)
-   end     
+      @logger.debug("I/F #{@entity}:  Checking UploadTemp")
+   end   
+      
+   list = handler.getUploadDirList(true)
 
-   # If check to uploadTemp has not been requested, we've finished!.
-   if @checkUploadTmp == false then
-      if retVal == true then
-         exit(0)
-      else
-         exit(99)
-      end
+   if list.class.to_s.include?("Array") == true then
+      list.each{|file|
+         @logger.debug("I/F #{@entity}:  UploadTemp: #{file} found")
+      }
    end
-
-   if @isSecure == false then
-#      cmd = self.createCurlFTPList(entConf[:hostname],
-#                              entConf[:port],
-#                              entConf[:user],
-#                              entConf[:password],
-#                              ReadConfigOutgoing.instance.getUploadTemp(@entity),
-#                              entConf[:isPassive], 
-#                              "*")
-                              
-      cmd = self.createNcFtpLs(entConf[:hostname],
-                              entConf[:port],
-                              entConf[:user],
-                              entConf[:password],
-                              ReadConfigOutgoing.instance.getUploadTemp(@entity),
-                              entConf[:isPassive],
-                              "*")
-   else
-      cmd = self.createSftpCommand(entConf[:hostname],
-                                  entConf[:port],
-                                  entConf[:user],
-                                  @batchFile,
-                                  "cd #{ReadConfigOutgoing.instance.getUploadTemp(@entity)}",
-                                  nil,
-                                  nil)
-      cmd = self.createSftpCommand(entConf[:hostname],
-                                  entConf[:port],
-                                  entConf[:user],
-                                  @batchFile,
-                                  "ls",
-                                  "",
-                                  nil)
-   end
-
-   if @isDebugMode == true then
-      puts cmd
-   end
-   
-   puts
-   puts "============================================================="
-   puts "Checking #{@entity} I/F Upload TEMP Directory"
-   puts
-   retVal = system(cmd)
-   puts "============================================================="
-   puts
-   if @isSecure == true and FileTest.exist?(@batchFile) then
-      n = File.delete(@batchFile)
-   end     
-   
-   if retVal == true then
-      exit(0)
-   else
-      exit(99)
-   end
-
+      
+   exit(0)
    
 end
 
@@ -371,12 +261,12 @@ end
 def showInterfaceConfig(entity)
    puts
    puts "============================================================="
-   puts "Configuration of #{entity[:mnemonic]} I/F for sending data :"
+   puts "Configuration of #{entity[:mnemonic]} I/F with #{@entConf[:protocol].upcase} for sending data :"
    puts
    if @isSecure == true then 
-     puts "Secure conection is used (sftp)"
+     puts "Secure conection is used"
    else
-     puts "NON Secure conection is used (ftp)"
+     puts "NON Secure conection is used"
    end
    puts "hostname     -> #{entity[:hostname]}"
    puts "port         -> #{entity[:port]}"
@@ -407,10 +297,6 @@ def checkModuleIntegrity
      exit(99)
    end     
    
-   time    = Time.new   
-   strTime = time.to_i.to_s
-   @batchFile = %Q{#{ENV['DEC_TMP']}/.batchCheckSent2#{@entity}#{strTime}}
-
 end 
 ## ---------------------------------------------------------
 

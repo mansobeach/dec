@@ -139,7 +139,7 @@ def main
             when "--interval" then @intervalSeconds      = arg.to_i
 	         when "--stop"     then
                if existEntity?(arg.to_s) == false then
-                        @logger.error("[DEC_605] I/F #{@entity}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
+                        @logger.error("[DEC_605] I/F #{@mnemonic}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
                   exit(99)
                end
                @bStopInterface         = true
@@ -210,8 +210,8 @@ def main
    else
       
       if existEntity?(@mnemonic) == false then
-         @logger.error("[DEC_605] I/F #{@entity}: db inventory is not configured / reachable #{'1F480'.hex.chr('UTF-8')}")
-         @logger.error("[DEC_601] I/F #{@entity}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error("[DEC_605] I/F #{@mnemonic}: db inventory is not configured / reachable #{'1F480'.hex.chr('UTF-8')}")
+         @logger.error("[DEC_601] I/F #{@mnemonic}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
    

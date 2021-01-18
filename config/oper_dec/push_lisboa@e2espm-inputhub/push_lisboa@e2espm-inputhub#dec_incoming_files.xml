@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- UNUSED -->
+<!-- 
+
+List of tickets 
+
+> https://jira.elecnor-deimos.com/browse/S2MPASUP-410 :
+DEC_F_RECV files to S2BOA CloudFerro instance
+
+> https://jira.elecnor-deimos.com/browse/S2MPASUP-406 :
+ "to ** not ** disseminate REP_PASS_E_EDRS to the E2ESPM Shadow"
+
+-->
+
+
 
 <Config>
 
@@ -24,6 +36,20 @@
          </Switches>         
       </Interface>
 
+      <Interface>
+         <Name>VPMC_TCI</Name>
+         <LocalInbox>/volumes/dec/interfaces/dec_basket.vpmc_tci</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">E2ESPM_OUT/REP_ARC_TCI</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
    </ListInterfaces>
 
    <!-- =========================================================== -->
@@ -33,7 +59,13 @@
    <!-- =========================================================== -->
 
 <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
- 
+
+   <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????_A??????_T?????.EOF">
+      <Description>REP_ARC_TCI from VPMC</Description>
+      <FromList>
+         <Interface>VPMC_TCI</Interface>
+      </FromList>
+   </File> 
 
    <File Type="S2?_*">
       <Description>Brute Force Download for any Sentinel-2 file</Description>
@@ -60,10 +92,17 @@
       <ListIntrays>
 
       <Intray>
-         <Name>CLOUD_SBOA.FTPOutbox</Name>
+         <Name>CLOUDFERRO_WEBDAVOUTBOX</Name>
+         <Directory>/volumes/dec/interfaces/cloud_sboa.out.webdav/webdav</Directory>
+         <Compress>7z</Compress>
+      </Intray>
+
+      <Intray>
+         <Name>CLOUDFERRO_FTPOUTBOX</Name>
          <Directory>/volumes/dec/interfaces/cloud_sboa.out/ftp</Directory>
          <Compress>7z</Compress>
       </Intray>
+
 
          <Intray>
             <Name>DUPLICATED_FROM_VPMC</Name>
@@ -147,7 +186,7 @@
 
 
       <Intray>
-         <Name>S2BOA</Name>
+         <Name>S2BOA_OPERATIONAL</Name>
          <Directory>/volumes/dec/interfaces/s2boa</Directory>
       </Intray>
 
@@ -177,27 +216,133 @@
             Only the first rule matching the file pattern is applied     
       -->
 
-
-      <File Type="S2?_OPER_REP_MET???_VPMC*">
-      	  <HardLink>true</HardLink>
-	         <ToList>
-               <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUD_SBOA.FTPOutbox</Intray>
+      <!--
+      
+         CENTRE level filters BEFORE "file-type" rules
+      
+      -->
+      
+      <File Type="*_?MPC_*">
+          <HardLink>False</HardLink>
+                 <ToList>
+                    <Intray>ARCHIVE_S2PDGS</Intray>
           </ToList>
       </File>
 
-      <File Type="*VPMC*">
+      <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????_A??????_T?????.EOF">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>REP_ARC_TCI</Intray>           
+            <Intray>ARCHIVE_S2PDGS</Intray>
+            <!--
+            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+            -->
+         </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_MET???*">
       	  <HardLink>true</HardLink>
 	         <ToList>
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUD_SBOA.FTPOutbox</Intray>
+               <!--
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               -->
+          </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_ARC____EPA__*.EOF">
+         <HardLink>True</HardLink>
+         <ToList>
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+               <Intray>OPERATIONAL_S2PDGS</Intray>
+	            <Intray>S2BOA_SHADOW</Intray>
+         </ToList>
+      </File>
+
+      <File Type="S2?_OPER_REP_OPDC___EPA__*.EOF">
+         <HardLink>True</HardLink>
+         <ToList>
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+               <Intray>OPERATIONAL_S2PDGS</Intray>
+	            <Intray>S2BOA_SHADOW</Intray>
+         </ToList>
+      </File>
+
+
+
+      <File Type="*_VGS4_*">
+         <HardLink>True</HardLink>
+         <ToList>      
+            <Intray>ARCHIVE_S2PDGS</Intray>
+            <Intray>SHADOW_S2PDGS</Intray>
+            <!--
+            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+            -->
+         </ToList>
+      </File>
+
+      <File Type="*_EPAE_*">
+         <HardLink>True</HardLink>
+         <ToList>      
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+               <Intray>OPERATIONAL_S2PDGS</Intray>
+	            <Intray>S2BOA_SHADOW</Intray>
+            <!--
+            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+            -->
+         </ToList>
+      </File>
+
+
+      <File Type="*DEC_F_RECV*SUPER_TCI*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+	            <Intray>GRAVEYARD_SUPER_TCI</Intray>
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>	  
+          </ToList>
+      </File>
+   
+   
+      <File Type="*DEC_F_RECV*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+	            <Intray>S2BOA_SHADOW</Intray>	
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>  
+          </ToList>
+      </File>
+
+     <File Type="*REP_PASS_E_EDRS*">
+        <HardLink>true</HardLink>
+        <ToList>
+            <Intray>ARCHIVE_S2PDGS</Intray>
+            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+            <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+            <Intray>OPERATIONAL_S2PDGS</Intray>
+	         <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+      <File Type="*">
+      	  <HardLink>true</HardLink>
+	         <ToList>
+               <Intray>ARCHIVE_S2PDGS</Intray>
+               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>SHADOW_S2PDGS</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
-               <Intray>S2BOA</Intray>
 	            <Intray>S2BOA_SHADOW</Intray>
           </ToList>
       </File>
    
+   <!--
    
       <File Type="*">
       	  <HardLink>False</HardLink>
@@ -206,7 +351,7 @@
           </ToList>
       </File>
   
-  
+  -->
   
         </ListFilesDisseminated>
    </DisseminationRules>

@@ -677,7 +677,14 @@ def deliverByFTP
             end
          end
       else
-         bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         
+         begin
+            bSent = sender.deliver(@isDeliveredOnce, @hParams)
+         rescue Exception => e
+            @logger.error(e.to_s)
+            @logger.error("[DEC_700] I/F #{@entity}: Push iterations problems #{'1F4A9'.hex.chr('UTF-8')}")
+            exit(99)
+         end
 
          # Configure Mail Notification
          mailParams  = @ftReadConf.getMailParams(@entity)

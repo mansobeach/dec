@@ -6,7 +6,7 @@
  
  <!-- ============================================= -->
 
-<outputter name="console"  level="INFO" >
+<outputter name="console"  level="DEBUG" >
    <type>StdoutOutputter</type>
 	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
 		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>

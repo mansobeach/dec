@@ -1,34 +1,41 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #InterfaceHandlerHTTP class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: InterfaceHandlerHTTP.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
-#
-# Module Interface
-# This class polls a given HTTP Interface and gets all registered available files
-#
+##
+## === Ruby source for #InterfaceHandlerHTTP class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## Git: $Id: InterfaceHandlerHTTP.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
+##
+## Module Interface
+## This class pushes (pending pull) a given HTTP Interface and gets all registered available files
+##
 #########################################################################
+
+### https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+
+### HTTP verbs used:
+### > HEAD: same as GET but does not return the message body (to list files prior pull operations)
 
 require 'ctc/WrapperCURL'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
-require 'dec/CheckerInterfaceConfig'
+require 'dec/InterfaceHandlerAbstract'
 
-require 'net/ftp'
+require 'uri'
+require 'net/http'
+require 'curb'
+require 'nokogiri'
 require 'fileutils'
 
 module DEC
 
-## https://ruby-doc.org/stdlib-2.4.0/libdoc/net/ftp/rdoc/Net/FTP.html
 
-class InterfaceHandlerHTTP
+class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
    include CTC::WrapperCURL
 
@@ -36,21 +43,26 @@ class InterfaceHandlerHTTP
    ##
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, log, bDCC=true, bDDC=true, manageDirs=false)
+   def initialize(entity, log, pull=true, push=true, manageDirs=false, isDebug=false)
       @entity     =  entity
       @logger     =  log
       @manageDirs =  manageDirs
-                   
+      
+      if isDebug == true then
+         self.setDebugMode
+      end
+
       @entityConfig     = ReadInterfaceConfig.instance
       @outConfig        = ReadConfigOutgoing.instance
       @inConfig         = ReadConfigIncoming.instance
+      @isSecure         = @entityConfig.isSecure?(@entity)
       @server           = @entityConfig.getServer(@entity)
       @uploadDir        = @outConfig.getUploadDir(@entity)
+      @arrPullDirs      = @inConfig.getDownloadDirs(@entity)
             
       @http             = nil
       @url              = nil
       
-      self.checkConfig(entity, bDCC, bDDC)      
    end   
    ## -----------------------------------------------------------
    ##
@@ -62,33 +74,35 @@ class InterfaceHandlerHTTP
    ## -----------------------------------------------------------
 
    def pushFile(file)
-      buildURLPush()
-      if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerHTTP::pushFile => #{file} / #{@url}")
-      end
-      return putFile(@url, file, @isDebugMode, @logger)
-   end
-   ## -----------------------------------------------------------
-
-   def buildURLPush   
-      if @server[:user] != "" and @server[:user] != nil then
-         @url = "#{@server[:user]}:#{@server[:password]}@#{@server[:hostname]}:#{@server[:port]}#{@@uploadDir}"
+      url = ""
+      
+      if @uploadDir[0,1] == '/' then
+         url = "#{@server[:hostname]}:#{@server[:port]}#{@uploadDir}"
       else
-         @url = "#{@server[:hostname]}:#{@server[:port]}#{@uploadDir}"
+         url = "#{@server[:hostname]}:#{@server[:port]}/#{@uploadDir}"
       end
       
       if @server[:isSecure] == false then
-         @url = "http://#{@url}"
+         url = "http://#{url}"
       else
-         @url = "https://#{@url}/"
+         url = "https://#{url}/"
       end
-      return @url
+      
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::pushFile => #{file} / #{@url} by @server[:user]")
+      end
+      return putFile(url, @server[:user], @server[:password], file, @isDebugMode, @logger)
    end
+   ## -----------------------------------------------------------
 
    ## -----------------------------------------------------------
 
-   def checkConfig(entity, bDCC, bDDC)
-      checker     = CheckerInterfaceConfig.new(entity, bDCC, bDDC)
+   def checkConfig(entity, pull, push)
+      checker     = CheckerInterfaceConfig.new(entity, pull, push, @logger, @isDebugMode)
+      
+      if @isDebugMode == true then
+         checker.setDebugMode
+      end
       
       retVal      = checker.check
  
@@ -106,166 +120,247 @@ class InterfaceHandlerHTTP
    ## -----------------------------------------------------------
    ## DEC - Pull
 
-   def getList
-      @depthLevel    = 0
-      pwd            = nil
-      login()
-      
-      arrFiles          = Array.new
-      arrDownloadDirs   = @inConfig.getDownloadDirs(@entity)        
-      
 
-      arrDownloadDirs.each{|downDir|
-         
-         remotePath = downDir[:directory]
-         maxDepth   = downDir[:depthSearch]
-
-         if @isDebugMode then
-            @logger.debug("Polling #{remotePath}")
-         end
-        
-         begin
-            @ftps.chdir(remotePath)
-            pwd = @ftps.pwd
-         rescue Exception => e
-            @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@remotePath} directory")
-            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
-         end
-
-         begin
-            # items = ftps.list
-            items = @ftps.nlst
-            items.each{|file|
-               arrFiles << "#{pwd}/#{file}"
-            }
-         rescue Exception => e
-            @logger.error("[DEC_615] I/F #{@entity}: Failed to get list of files / FTPS passive mode is #{ftps.passive}")
-            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
-         end
-
-      }
-      return arrFiles.flatten
-   end
    ## -----------------------------------------------------------
 
-   def exploreTree(relativeFile)
-
-      if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerFTPS::exploreLocalTree #{relativeFile}")
-      end
-
-      # Treat normal files
-      if File.file?(relativeFile) then
-         if @isDebugMode == true then  @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
-         @newArrFile << %Q{#{@pwd}/#{relativeFile}}
-      else #its a dir
-         #be sure if it is
-         if File.directory?(relativeFile) then
-            # and the flag to download dirs is deactivated 
-
-            if !@manageDirs then
-               #and the depth is okey explore dir.
-               if @depthLevel < @maxDepth then
-                  if @isDebugMode == true then
-                     @logger.debug("InterfaceHandlerFTPS::exploreLocalTree change dir to #{relativeFile}")
-                  end 
-                  #get into directory (stack recursion)
-                  Dir.chdir(relativeFile)
-                  @pwd = Dir.pwd     
-                  @depthLevel = @depthLevel + 1 
-
-                  # get etnries and call to recursion
-                  entries = Dir["*"]
-                  entries.each{|element|
-                     exploreLocalTree(element)
-                  }
-     
-                  # unstack recursion
-                  Dir.chdir("..")
-                  @pwd = Dir.pwd
-                  @depthLevel = @depthLevel - 1
-               end             
-            else #download whole dir
-               if @isDebugMode == true then @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
-               @newArrFile << %Q{#{@pwd}/#{relativeFile}}
-            end
-
-         end
-      end
-
-   end
    ## -----------------------------------------------------------
-   
-   ## We are placed on the right directory (tmp dir): 
-   ##          receiveAllFiles->downloadFile->self
-   
-   ## Download a file from the I/F
-   def downloadFile(filename)
-   
+   ## -----------------------------------------------------------
+
+   def getUploadDirList(bTemp = false)
       if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerFTPS::downloadFile(#{filename})")
+         @logger.debug("InterfaceHandlerHTTP::getUploadDirList tmp => #{bTemp}")
       end
       
-      login()
+      dir      = nil
       
-      @ftps.getbinaryfile(filename)
-      @ftps.close
-      
-      if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerFTPS::downloadFile / Completed")
-      end
-
-      return true
-   end	
-	## -----------------------------------------------------------
-
-   ## Download a file from the I/F
-   def downloadDir(filename)      
-       #we are placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
-      if  @manageDirs then
-         begin
-            target=File.basename(filename)         
-            FileUtils.cp_r(filename,'.'+target)
-            if File.exists?(target) then FileUtils.rm_rf(target) end
-            FileUtils.move('.'+target, target)
-         rescue
-            @logger.error("[DEC_003] Error: Could not make a copy of #{filename} dir")
-            if @isdebugMode then puts"Error: Could not make a copy of #{filename} dir" end
-            return false
-        end
+      if bTemp == false then
+         dir = @outConfig.getUploadDir(@entity)
       else
-         return false
+         dir = @outConfig.getUploadTemp(@entity)
       end
-      #everything ik ok
-      return true
-   end	
+      
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::getUploadDirList tmp => #{bTemp} / #{dir}")
+      end
+   
+      return self.getDirList(dir)
+   
+   end
+   ## -----------------------------------------------------------
+   
+   def getPullList(bShortCircuit = false)
+      newArrFile = Array.new      
+      @arrPullDirs.each{|element|
+         dir         = element[:directory]
+         
+         # ---------------------------------------
+         # URL ends with "/" treat it as a directory         
+         if dir[-1, 1] == "/" then
+            newArrFile << getDirList(dir, bShortCircuit)
+            next
+         else
+            newArrFile << getListFile(dir, bShortCircuit)
+            next         
+         end 
+         # ---------------------------------------
+      }
+      return newArrFile.flatten
+   end
+   ## -----------------------------------------------------------
+   
+   ## Need to make it pure HTTP
+   
+   def getDirList(remotePath, shortCircuit = false)
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::getDirList => #{remotePath} url treated as a directory")
+      end
+
+      host        = ""
+      url         = ""
+      port        = @server[:port].to_i
+      user        = @server[:user]
+      pass        = @server[:password]
+   
+      if @isSecure == false then
+         host        = "http://#{@server[:hostname]}:#{@server[:port]}/"
+      else
+         host        = "https://#{@server[:hostname]}/"
+      end
+
+      url = "#{host}#{remotePath}"
+      uri = URI.parse(url)
+      
+      ## ------------------
+      ## Request headers
+      response = nil
+      response = Net::HTTP.get_response(uri)
+      
+      if @isDebugMode == true then
+         @logger.debug("HTTP HEAD #{url} => #{response.code}")
+      end
+                  
+      if response.code.to_i == 404 or response.code.to_i == 400 then
+         if shortCircuit == true then 
+            raise "I/F #{@entity}: #{response.code} / #{url}"
+         else
+            @logger.error("I/F #{@entity}: #{response.code} / #{url}")
+         end
+      end
+      ## ------------------
+      
+      arr = Array.new
+
+      doc   = Nokogiri::HTML.parse(response.body)
+      tags  = doc.xpath("//a")
+   
+      tags.each do |tag|
+         arr << "#{url}#{tag.text}"
+      end
+   
+      return arr
+   end
 	## -----------------------------------------------------------
 
-	## This method is invoked after placing the files into the operational
-	## directory. It deletes the file in the remote Entity if the Config
-	## flag DeleteFlag is enable.
-	def deleteFromEntity(filename)
-
-      if @isDebugMode == true then 
-         @logger.debug("InterfaceHandlerFTPS::deleteFromEntity: I/F #{@entity}")
+   def getListFile(remotePath, shortCircuit = false)
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} url treated as a file")
       end
+
+      host        = ""
+      url         = ""
+      port        = @server[:port].to_i
+      user        = @server[:user]
+      pass        = @server[:password]
+   
+      if @isSecure == false then
+         host        = "http://#{@server[:hostname]}:#{@server[:port]}/"
+      else
+         host        = "https://#{@server[:hostname]}/"
+      end
+
+      url = "#{host}#{remotePath}"
 
       begin
-         FileUtils.rm_rf(filename)    
-      rescue
-         if @isdebugMode == true then 
-            @logger.debug("[DEC_XXX] I/F #{@entity}: InterfaceHandlerFTPS::deleteFromEntity: Could not delete #{filename}")
+
+         bFound = false
+
+         ret = Curl::Easy.http_head(url)
+
+         if @isDebugMode == true then
+            @logger.debug("#{url} => #{ret.status}")
          end
-         return false
+                        
+         ## -----------------------------------
+         ## Permanent re-direction
+         if ret.status.include?("301") == true then               
+            new_url = ret.header_str.split("Location:")[1].split("\n")[0].gsub(/\s+/, "")
+            url = new_url
+            bFound = true
+            if @isDebugMode == true then
+               @logger.debug("Found #{File.basename(new_url)}")
+            end
+         end
+            
+         ## -----------------------------------
+                        
+         if ret.status.include?("200") == true then
+            bFound = true
+            
+            if @isDebugMode == true then
+               @logger.debug("Found #{File.basename(url)}")
+            end
+         end
+
+         if bFound == false then
+            @logger.error("[DEC_614] I/F #{@entity}: Cannot HEAD #{url}")
+         end
+      rescue Exception => e
+         @logger.error("[DEC_614] I/F #{@entity}: Cannot HEAD #{url}")
+         @logger.error(e.to_s)
+         if @isDebugMode == true then
+            @logger.debug(e.backtrace)
+         end
+      end
+         
+      ## -----------------------------------
+      
+      return url  
+   
+   end
+	## -------------------------------------------------------------
+   
+   ## -------------------------------------------------------------
+   ##
+   ## download file using HTTP protocol verb GET 
+   ##
+   def downloadFile(url)
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::downloadFile => #{url} url treated as a file")
+      end
+      
+      http = Curl::Easy.new(url)
+      
+      # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
+      
+      http.ssl_verify_peer = false
+      
+      # Curl::Err::SSLPeerCertificateError ?????
+      http.ssl_verify_host = false
+      
+      http.http_auth_types = :basic
+
+      user        = @server[:user]
+      pass        = @server[:password]
+
+      if user != "" and user != nil then
+         http.username = user
+      end
+      
+      if pass != "" and pass != nil then
+         http.password = pass
       end
 
+      http.perform
+
+#      uri = URI.parse(url)
+#      http = Net::HTTP.get_response(uri)
+
+      ## TO DO : replace in memory file with 
+      ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
+
+      # @logger.debug(http.code)
+
+      # puts url
+      # filename = getFilenameFromFullPath(url)
+      
+      filename = File.basename(url)
+      
+      aFile = File.new(filename, "wb")
+      # aFile.write(http.body)
+      aFile.write(http.body_str)
+      aFile.flush
+      aFile.close
+ 
+      size = File.size("#{@localDir}/#{File.basename(filename)}")
+         
+      @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
+		
+      # File is made available at the interface inbox	
+      copyFileToInBox(File.basename(filename), size)
+			         
+		# Update DEC Inventory
+	   setReceivedFromEntity(File.basename(filename), size)
+	
+      # if deleteFlag is enable delete it from remote directory
+      ret = deleteFromEntity(url)
+
       return true
-	end
-   ## -----------------------------------------------------------
+      
+      
+   end
+      
+   ## -------------------------------------------------------------
 
-	## -----------------------------------------------------------
-
-	## -------------------------------------------------------------
 
 private
 

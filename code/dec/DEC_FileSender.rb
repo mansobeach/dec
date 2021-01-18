@@ -230,7 +230,13 @@ class DEC_FileSender
             1.upto(@parallelSlots) {|i|
                break if listFiles.empty?
                file = listFiles.shift
-               size = File.size("#{@outboxDir}/#{File.basename(file)}")
+               
+               begin
+                  size = File.size("#{@outboxDir}/#{File.basename(file)}")
+               rescue Exception => e
+                  @logger.error("[DEC_714] I/F #{@entity}: #{@outboxDir}/#{File.basename(file)} cannot be read to extract its size")
+                  raise e
+               end
                
                ### ---------------------------------------------------------
                ### 20201021 Super-dirty 

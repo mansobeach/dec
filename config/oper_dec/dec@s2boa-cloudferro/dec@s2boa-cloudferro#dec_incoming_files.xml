@@ -23,6 +23,21 @@
          </Switches>         
       </Interface>
 
+      <Interface>
+         <Name>LOCALFERRO</Name>
+         <LocalInbox>/volume1/dec/interfaces/dec_basket.esrin</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">/volume1/dec/interfaces/ftp/fromESRIN/fromESRIN</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
+
    </ListInterfaces>
 
    <!-- =========================================================== -->
@@ -38,6 +53,7 @@
       <Description>Brute Force Download for any Sentinel-2 file</Description>
       <FromList>
          <Interface>LISBOA</Interface>
+         <Interface>LOCALFERRO</Interface>
       </FromList>
    </File>
 
@@ -45,6 +61,7 @@
       <Description>Download of the link execution status for EDRS</Description>
       <FromList>
 	      <Interface>LISBOA</Interface>
+         <Interface>LOCALFERRO</Interface>
       </FromList>
   </File>
 
@@ -70,12 +87,6 @@
       </Intray>
 
       <Intray>
-         <Name>S2BOA_SHADOW</Name>
-         <Directory>/volume1/dec/interfaces/intray_s2boa_shadow</Directory>
-         <Compress>7z-x</Compress>
-      </Intray>
-
-      <Intray>
       	<Name>UNDESIRED</Name>
          <Directory>/volume1/dec/interfaces/intray_undesired</Directory>
       </Intray>
@@ -96,7 +107,6 @@
 	         <ToList>
 	            <Intray>MINARC</Intray>
                <Intray>S2BOA</Intray>
-               <Intray>S2BOA_SHADOW</Intray>	 	  
           </ToList>
       </File>
    

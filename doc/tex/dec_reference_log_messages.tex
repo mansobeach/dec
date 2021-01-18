@@ -76,12 +76,14 @@ The file referenced in the message has been compressed according to the \hyperre
 \subsection{[DEC\_120] Unknown File Deleted}
 According to the configuration item \hyperref[DeleteUnknownFiles]{\textit{DeleteUnknownFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which did not match any filtering rule defined in the configuration \textit{dec\_incoming\_files.xml} has been deleted from the \textit{DownloadDirs} \textit{Directory} of such interface it was present.
 
+\label{DEC125}
 \subsection{[DEC\_125] Duplicated File Deleted}
 According to the configuration item \hyperref[DeleteDuplicatedFiles]{\textit{DeleteDuplicatedFiles}} defined in \textit{dec\_config.xml} configuration, a file available in the \textit{pull} interface, which has been previously downloaded successfully such interface is considered duplicated and it is removed directly in download directory without downloading it.
 
 \label{DEC126}
-\subsection{[DEC\_126] Downloaded File Deleted}
+\subsection{[DEC\_126] File Deleted}
 According to the configuration item \hyperref[DeleteFlag]{\textit{DeleteDownloaded}} defined in \textit{dec\_incoming\_files.xml} for every interface, the file which has been successfully \textit{pulled} is deleted subsequently.
+This message can also be logged when deleting duplicated files.
 
 \subsection{[DEC\_130] Event Triggered}
 The message traces some event which has been triggered for a given interface according to the configuration items defined in \hyperref[Events]{Events}.
@@ -327,6 +329,7 @@ This error code can bring different messages associated to the connection failur
 \end{verbatim}
 
 \subsubsection{Failed authentication}
+The authentication failure message differs depending on the network protocol used for pull.
 \begin{verbatim}
 [DEC_611] LOCALHOST_NOT_SECURE I/F: 530 Login authentication failed
 \end{verbatim}
@@ -415,6 +418,10 @@ Failed to reach \textit{UploadDir} for a given interface.
 \label{DEC713}
 \subsection{[DEC\_713] File Hard-link Failure into LocalOutbox}
 This error is raised when hard-linking from the source directory to the local outbox.
+
+\label{DEC714}
+\subsection{[DEC\_714] File Read Error in LocalOutbox}
+This error is raised when a file previously detected in the LocalOutbox for push is not found when reading it to extract its size. This is usually an integration problem of the data-flow and the component workflow.
 
 \label{DEC715}
 \subsection{[DEC\_715] Push Server Error Message}

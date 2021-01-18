@@ -1,29 +1,28 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# Ruby source for #CheckerHTTPConfig class
-#
-# Written by DEIMOS Space S.L. (bolf)
-#
-# Data Exchange Component -> Common Transfer Component
-# 
-# Git: $Id: CheckerHTTPConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
-#
+##
+## Ruby source for #CheckerHTTPConfig class
+##
+## Written by DEIMOS Space S.L. (bolf)
+##
+## Data Exchange Component
+## 
+## Git: $Id: CheckerHTTPConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
+##
 #########################################################################
 
 require 'curb'
 require 'uri'
 require 'net/dav'
 
-require 'ctc/WrapperCURL'
+require 'dec/InterfaceHandlerHTTP'
 
-module CTC
+module DEC
 
 class CheckerHTTPConfig
 
-   include CTC
-   include CTC::WrapperCURL
+   include DEC
    
    ## ----------------------------------------------------------------
 
@@ -39,6 +38,7 @@ class CheckerHTTPConfig
       else
          @entity = "Generic"
       end
+      @handler = InterfaceHandlerHTTP.new(@entity, @logger)
    end
    ## ----------------------------------------------------------------
    
@@ -58,7 +58,7 @@ class CheckerHTTPConfig
    def check4Send
    
       if @isDebugMode == true then
-         puts "Checking Push Configuration for HTTP protocol"
+         @logger.debug("Checking Push Configuration for HTTP protocol")
       end
    
       if @isDebugMode == true then
@@ -87,7 +87,8 @@ class CheckerHTTPConfig
    ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "CheckerHTTPConfig debug mode is on"
+      @logger.debug("CheckerHTTPConfig debug mode is on")
+      @handler.setDebugMode
    end
    ## -----------------------------------------------------------
 
@@ -95,7 +96,6 @@ private
 
    @isDebugMode         = false      
    @@httpElement        = nil
-   @sftpClient          = nil
    @ftReadConf          = nil
 
    ## -----------------------------------------------------------
@@ -172,31 +172,21 @@ private
       # --------------------------------
       # Check 4 Sending
       if bCheck4Send == true then
-         ret = putTestFile
          
-           
+         retVal = @handler.getDirList(@httpElement[:uploadDir])
+            
+         if retVal == false then
+            ret = false
+         end           
       end
       # --------------------------------
       
-      if bCheck4Receive == true then   
-         arrElements = @httpElement[:arrDownloadDirs]
+      if bCheck4Receive == true then
          bError = false
-         arrElements.each{|element|
-            dir = element[:directory]
-            retVal = checkRemoteDirectory(dir)
-            if retVal == false then
-               if @logger != nil then
-                  @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{element[:directory]} directory")
-               else 
-                  puts "Error: #{@entity} I/F: Unable to access to remote dir #{element[:directory]} :-(\n\n"
-               end
-               
-               bError = true
-            end
+         listOfFiles = @handler.getPullList(true)
+         listOfFiles.each{|fullpath|
+            @logger.debug("[DEC_XXX] I/F #{@entity}: File #{File.basename(fullpath)} is available")
          }
-         if ret == true then
-            ret = !bError
-         end
       end
       
       # --------------------------------

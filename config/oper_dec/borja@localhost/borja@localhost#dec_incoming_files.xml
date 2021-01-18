@@ -40,23 +40,6 @@
          <Name>SCIHUB</Name>
          <LocalInbox>/tmp/dec/in_basket_if_scihub</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/02/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/03/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/04/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/05/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/06/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/07/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/08/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/09/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/10/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/11/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2A/2020/12/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/02/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/03/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/04/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/05/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/06/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/07/</Directory>
             <Directory DepthSearch="0">catalogueview/S2B/2020/08/</Directory>
             <Directory DepthSearch="0">catalogueview/S2B/2020/09/</Directory>
             <Directory DepthSearch="0">catalogueview/S2B/2020/10/</Directory>
@@ -356,7 +339,7 @@
          </FromList>
       </File>
  
-      <File Type="tai-utc*">
+      <File Type="*tai-utc*">
          <Description>TAI UTC correlation</Description>
          <FromList>
             <Interface>WEBDAV</Interface>
@@ -405,7 +388,7 @@
          </FromList>
       </File>
 
-      <File Type="finals.a*">
+      <File Type="*finals.a*">
          <Description>TAI UTC correlation</Description>
          <FromList>
             <Interface>WEBDAV</Interface>
@@ -705,7 +688,7 @@ WWWW/igsWWWWD.clk.Z
             </ToList>
          </File>   
    
-         <File Type="tai-utc*">
+         <File Type="tai-utc.dat">
             <HardLink>true</HardLink>
             <ToList>
                <Intray>GPS</Intray>
@@ -713,7 +696,7 @@ WWWW/igsWWWWD.clk.Z
             </ToList>
          </File>
    
-         <File Type="finals.*">
+         <File Type="finals.all">
             <HardLink>true</HardLink>
             <ToList>
                <Intray>S2A</Intray>
