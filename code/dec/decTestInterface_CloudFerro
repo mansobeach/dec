@@ -28,7 +28,7 @@ require 'dec/ReadConfigOutgoing'
 
 ## rake -f build_dec.rake dec:install[push_lisboa,e2espm-inputhub,s2_test]
 
-## Protocol for HTTP_FERRO is WebDAV
+## Protocol for TEST_HTTP_FERRO & HTTP_FERRO is WebDAV
 
 class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
 
@@ -177,15 +177,15 @@ class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)   
    
-      cmd = "decCheckConfig -e HTTP_FERRO"
+      cmd = "decCheckConfig -e TEST_HTTP_FERRO"
       puts cmd
       assert(system(cmd), cmd)
       
       ifConfig    = ReadInterfaceConfig.instance
-      protocol    = ifConfig.getProtocol("HTTP_FERRO").downcase
+      protocol    = ifConfig.getProtocol("TEST_HTTP_FERRO").downcase
       
       outConfig   = ReadConfigOutgoing.instance
-      localOutBox = outConfig.getOutgoingDir("HTTP_FERRO")
+      localOutBox = outConfig.getOutgoingDir("TEST_HTTP_FERRO")
 
       checkDirectory(localOutBox)
       checkDirectory("#{localOutBox}/#{protocol}")
@@ -196,11 +196,11 @@ class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
          system(cmd)
       }
 
-      cmd = "decSend2Interface --mnemonic HTTP_FERRO --nodb"
+      cmd = "decSend2Interface --mnemonic TEST_HTTP_FERRO --nodb"
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decListDirUpload -m HTTP_FERRO -t"
+      cmd = "decListDirUpload -m TEST_HTTP_FERRO -t"
       puts cmd
       assert(system(cmd), cmd)
       puts      

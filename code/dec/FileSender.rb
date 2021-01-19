@@ -556,7 +556,7 @@ private
       end
       if file != "" then
          if File.exist?("#{@srcDirectory}/#{file}") == false then
-            @logger.error("File {file} is not present in the outbox ! :-(")
+            @logger.error("#{file} is not present in the outbox ! :-(")
             @logger.error("Fatal Error in FileSender::isReadyToSend(#{file})")
             raise "Fatal Error in FileSender::isReadyToSend(#{file})"
          end

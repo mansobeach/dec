@@ -188,9 +188,9 @@
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
-            <LogDuplicated>false</LogDuplicated>
+            <LogDuplicated>true</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
       </Interface>

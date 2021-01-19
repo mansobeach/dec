@@ -24,11 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.20"
+   @@version = "1.0.21"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.21" =>    "Pull local dissemination chmod robustified for errors\n\
+          TBW", \
       "1.0.20" =>    "Support of WebDAV protocol verbs PUT + MOVE for push circulations", \
       "1.0.19" =>    "FTPS Implicit mode (port 990) support for pull & push mode\n\
           Pull local dissemination Compress 7z-x mode to decompress 7z files\n\

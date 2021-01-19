@@ -75,7 +75,7 @@
       <!-- GlobalOutbox is not used by e2edc@e2espm-inputhub -->
       <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
       <ReportDir>/volumes/dec/interfaces/dec_basket.s2pdgs</ReportDir>
-      <TempDir>/tmp/dec_tmp</TempDir>
+      <TempDir>/volumes/dec/interfaces/dec_tmp</TempDir>
    </Workflow>   
    
    <Inventory>

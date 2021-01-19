@@ -20,6 +20,14 @@
          <UploadTemp>/.tmp</UploadTemp>
       </Interface>
  
+       <Interface>
+         <Name>TEST_HTTP_FERRO</Name>
+         <LocalOutbox>/volumes/dec/interfaces/cloud_sboa.out.webdav</LocalOutbox>
+         <UploadDir>/.tmp/test_final</UploadDir>
+         <UploadTemp>/.tmp/test_final/tmp</UploadTemp>
+      </Interface>
+
+ 
       <Interface>
          <Name>PUSH_FERRO</Name>
          <LocalOutbox>/volumes/dec/interfaces/cloud_sboa.out</LocalOutbox>
@@ -37,117 +45,130 @@
       <File Type="*MPL_ORBPRE*">
          <Description>FOS Predicted Orbit File</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA" Compress="NONE"   DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE"   DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*MPL__NPPF_*">
          <Description>Satellite Plan File</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*MPL_SP????*">
          <Description>Station Plan File</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*REP_OPHKTM*">
          <Description>HKTM PDI downlink orbit</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="S2?_OPER_REP_OPDPC*">
          <Description>DPC Processing Reports</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????.EOF">
          <Description>DPC Processing Reports</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="S2?_????_REP_OPDHUS_????_????????T??????.*">
          <Description>DAGC DHUS Pick-up Point</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*REP_OPDAM?*">
          <Description>DAM Ingestion Report</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*REP_OPDC__*">
          <Description>DC Circulation Report</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*REP_OPAI__*">
          <Description>DC Circulation Report</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*REP_PASS_*">
          <Description>EISP / DFEP Report</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*SRA_EDRS_A*">
          <Description>SRA File for EDRS_A</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA" Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 
       <File Type="*DEC_F_RECV*">
          <Description>DEC pulled files</Description>
          <ToList>
-            <Interface Name="PUSH_LISBOA" Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="PUSH_FERRO"  Compress="NONE" DeliveryMethods="FTP" />
-            <Interface Name="HTTP_FERRO"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="PUSH_LISBOA"       Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="PUSH_FERRO"        Compress="NONE"   DeliveryMethods="FTP" />
+            <Interface Name="HTTP_FERRO"        Compress="NONE"   DeliveryMethods="HTTP" />
+            <Interface Name="TEST_HTTP_FERRO"   Compress="NONE"   DeliveryMethods="HTTP" />
          </ToList>
       </File>
 

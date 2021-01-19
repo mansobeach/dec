@@ -92,6 +92,8 @@
    
       <ListIntrays>
 
+
+
          <Intray>
             <Name>S2ALL</Name>
             <Directory>/tmp/dec_local_dissemination/S2ALL</Directory>
@@ -233,13 +235,6 @@
             Only the first rule matching the file pattern is applied     
       -->
 
-      <File Type="*DEC_F_RECV*SUPER_TCI*">
-      	  <HardLink>False</HardLink>
-	         <ToList>
-	            <Intray>GRAVEYARD_SUPER_TCI</Intray>	  
-          </ToList>
-      </File>
-   
    
       <File Type="*DEC_F_RECV*">
       	  <HardLink>False</HardLink>

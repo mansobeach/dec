@@ -425,7 +425,7 @@ private
             # Remove in target directory any eventual copy of a file with the same name
             if File.exists?(targetDir+'/'+file) then 
                @logger.warn("[DEC_555] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
-               @logger.warn("[DEC_556] Intray #{intray}: #{file} duplicated will be deleted before dissemination")
+               @logger.warn("[DEC_556] Intray #{intray}: #{file} n")
                FileUtils.rm_rf(targetDir+'/'+file) 
             end
             # --------------------------
@@ -441,9 +441,15 @@ private
                bReturn = false
             else
                if @isDebugMode == true then
-                  @logger.debug("chmod a+r #{targetDir}/#{file}")
+                  @logger.debug("chmod a=r #{targetDir}/#{file}")
                end
-               FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+               
+               begin
+                  FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+               rescue Exception => e
+                  @logger.error("Failed chmod a=r #{targetDir}/#{file}")
+                  @logger.error(e.to_s)
+               end
             
                @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                                
@@ -496,8 +502,14 @@ private
                   if @isDebugMode == true then
                      @logger.debug("chmod a=r #{targetDir}/#{file}")
                   end
-                  FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
                   
+                  begin
+                     FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+                  rescue Exception => e
+                     @logger.error("Failed chmod a=r #{targetDir}/#{file}")
+                     @logger.error(e.to_s)
+                  end
+                                    
                   @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                   
                   event  = EventManager.new

@@ -1,0 +1,297 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+###
+### === Ruby source for #decUnitTests_LOCAL class
+###
+### === Written by DEIMOS Space S.L.
+###
+### === Data Exchange Component
+###
+### # git: decUnitTests_LOCAL,v $Id$: 
+### 
+### module DEC
+###
+#########################################################################
+
+## Interface: LOCAL file-system
+
+## rake -f build_dec.rake dec:install[borja,localhost]
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadConfigIncoming'
+
+class DECTestCase_LOCAL < Test::Unit::TestCase
+
+   include Test::Unit::Data
+   
+   include CUC::DirUtils
+   
+   include DEC
+         
+   # Order of the test cases execution according to definition within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   # --------------------------------------------------------
+   
+   Test::Unit.at_start do
+      system("clear")
+      puts
+      puts "======================================"
+      puts "DEC LOCAL Unit Test Cases"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+   
+   
+      @@arrDownloadFiles = [ \
+                           "finals.all", \
+                           "tai-utc.dat" \
+                           ]
+
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("DECTEST", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in decUnitTests_LOCAL"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/dec_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
+   
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "End of DEC tests LOCAL"
+   end
+   ## --------------------------------------------------------   
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      checkDirectory("/tmp/dec_simul_if/filesystem/upload")
+      checkDirectory("/tmp/dec_simul_if/filesystem/upload/_TEMP_")
+   end
+   ## ------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      return
+   end
+   ## ------------------------------------------------------
+   
+   ## ------------------------------------------------------
+   
+   ##
+   
+   ## PULL Circulations
+   def test_pull
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      ## -------------------------------
+      ## start the minArcServer
+      cmd = "minArcServer -s"
+      puts cmd
+      spawn(cmd)
+      sleep(2.0)
+      ## -------------------------------
+      
+      checkDirectory("/tmp/dec/if_local_filesystem")
+      
+      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+
+      cmd = "rm -f /tmp/DEC*.log"
+      puts cmd
+      system(cmd)
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      ret = system(cmd)
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)   
+   
+      cmd = "decCheckConfig -e FILESYSTEM -i"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      ## -----------------------------------------
+      ## list mode and subsequent download
+      
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("FILESYSTEM")
+            
+      checkDirectory(@finalDir)
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
+      }
+            
+      cmd = "decGetFromInterface -m FILESYSTEM -l"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "decGetFromInterface -m FILESYSTEM --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
+      assert(arrFiles.length == 2, "Number of files pulled")
+      
+      ## -----------------------------------------
+
+      
+      ## -----------------------------------------
+      ## Download again since --nodb is used to avoid filtering by previous download
+          
+      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
+      }      
+            
+      cmd = "decGetFromInterface -m FILESYSTEM --nodb --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+ 
+      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
+      assert(arrFiles.length == 2, "Number of files pulled")
+
+      ## -----------------------------------------
+      ## Now no files should be present for download
+
+      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+      
+      cmd = "decGetFromInterface -m FILESYSTEM --no-intray"
+      puts cmd
+      assert(system(cmd), cmd)
+            
+      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
+      assert(arrFiles.length == 0, "Number of files pulled")
+
+      ## -----------------------------------------
+
+      cmd = "decStats -H 1"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      ## -----------------------------------------
+      
+      ## Detection of duplications
+      
+      arr = Dir["/tmp/DEC*.log"]
+
+      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
+      }      
+      
+            
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+ 
+      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
+      assert(arrFiles.length == 0, "Duplicated files should not be pulled")
+                      
+      cmd = "grep DEC_125 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
+
+      ## -----------------------------------------
+      
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   
+   ## PUSH Circulations
+   def test_push
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+      puts
+      puts "LOCAL protocol push test not implemented yet"
+      puts
+   end
+   ## ------------------------------------------------------
+
+
+
+end
+
+### ==================================================================

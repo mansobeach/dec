@@ -358,16 +358,19 @@ namespace :dec do
       puts "Most used recipees:" 
       puts
       puts "DEC unit tests"
-      puts "rake -f build_dec.rake dec:build[borja,localhost,s2_test_pg]"
-      puts "rake -f build_dec.rake dec:build[borja,localhost,s2_test_odata]"
+      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]"
+      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_odata]"
       puts
       puts "S2PDGSENG / Inputhub"
       puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
-      puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
       puts "rake -f build_dec.rake dec:build[push_lisboa,e2espm-inputhub,s2]"
+      puts "Pending ftp port management within containers:"
+      puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
       puts
       puts "CloudFerro / S2BOA"
       puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"
+      puts "pull LISBOA"
+      puts "pull LOCALFERRO"
       puts
    end
    ## --------------------------------------------------------------------

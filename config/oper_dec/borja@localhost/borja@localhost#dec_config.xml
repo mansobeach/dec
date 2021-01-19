@@ -35,7 +35,8 @@
       <Download>
          <DownloadDirs>false</DownloadDirs>
          <DeleteUnknownFiles>false</DeleteUnknownFiles>
-         <DeleteDuplicatedFiles>true</DeleteDuplicatedFiles>
+         <!-- DeleteDuplicatedFiles item should be deprecated -->
+         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
          <!--
          <LogUnknownFiles>false</LogUnknownFiles>
          <LogDuplicatedFiles>false</LogDuplicatedFiles>     

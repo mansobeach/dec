@@ -5,7 +5,8 @@
 List of tickets 
 
 > https://jira.elecnor-deimos.com/browse/S2MPASUP-410 :
-DEC_F_RECV files to S2BOA CloudFerro instance
+DEC_F_RECV by VPMC file to S2BOA CloudFerro instance
+DEC_F_RECV by VPMC_TCI file to Graveyard
 
 > https://jira.elecnor-deimos.com/browse/S2MPASUP-406 :
  "to ** not ** disseminate REP_PASS_E_EDRS to the E2ESPM Shadow"
@@ -300,12 +301,14 @@ DEC_F_RECV files to S2BOA CloudFerro instance
       </File>
 
 
-      <File Type="*DEC_F_RECV*SUPER_TCI*">
+      <File Type="*DEC_F_RECV*VPMC_TCI*">
       	  <HardLink>true</HardLink>
 	         <ToList>
 	            <Intray>GRAVEYARD_SUPER_TCI</Intray>
+               <!--
                <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
-               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>	  
+               <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+               -->
           </ToList>
       </File>
    

@@ -92,6 +92,16 @@
    
       <ListIntrays>
 
+      <Intray>
+      	 <Name>PDMC_DUPLICATED</Name>
+          <Directory>/volumes/dec/interfaces/pdmc_duplicated</Directory>
+      </Intray>
+
+      <Intray>
+      	 <Name>PDMC_TCI_DUPLICATED</Name>
+          <Directory>/volumes/dec/interfaces/pdmc_tci_duplicated</Directory>
+      </Intray>
+
          <Intray>
             <Name>S2ALL</Name>
             <Directory>/tmp/dec_local_dissemination/S2ALL</Directory>
@@ -232,6 +242,34 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+
+      <File Type="S2?_OPER_REP_ARC____????_???????????????_V???????????????_???????????????_A??????_T?????.EOF">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>PDMC_TCI_DUPLICATED</Intray>
+         </ToList>
+      </File>
+
+
+
+      <File Type="*">
+      	  <HardLink>False</HardLink>
+	         <ToList>
+	            <Intray>PDMC_DUPLICATED</Intray>	  
+          </ToList>
+      </File>
+   
+      <!--
+   
+      *
+      *
+      *
+      *
+      *
+      
+      -->
+
+
 
       <File Type="*DEC_F_RECV*SUPER_TCI*">
       	  <HardLink>False</HardLink>

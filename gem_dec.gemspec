@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.20'
+  s.version     = '1.0.21'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -86,6 +86,7 @@ Gem::Specification.new do |s|
          s.executables   << 'decUnitTests_FTP_PASSIVE'
          s.executables   << 'decUnitTests_FTPS'
          s.executables   << 'decUnitTests_IERS'
+         s.executables   << 'decUnitTests_LOCAL'
          s.executables   << 'decUnitTests_ncftpput'
          s.executables   << 'decUnitTests_SBOA'
          s.executables   << 'decUnitTests_WebDAV'

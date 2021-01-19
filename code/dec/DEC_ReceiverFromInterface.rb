@@ -198,6 +198,11 @@ class DEC_ReceiverFromInterface
       cmd   = ""
       perf  = ""
       list  = nil
+      
+      if @isDebugMode == true then
+         @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
+      end
+
             
       case @protocol
          
@@ -257,20 +262,16 @@ class DEC_ReceiverFromInterface
             
          when "LOCAL"
          
-            if @isDebugMode == true then
-               @logger.debug("I/F #{@entity} does not use network / #{@protocol}")
-            end
-
           
             begin
                
-               @local = DEC::InterfaceHandlerLocal.new(@entity, true, false, @decConfig.getDownloadDirs)
+               @local = DEC::InterfaceHandlerLocal.new(@entity, @logger, true, false, false, @isDebugMode)
                
-               if @isDebugMode then 
+               if @isDebugMode == true then 
                   @local.setDebugMode
                end
                   
-               perf = measure { list = @local.getLocalList }      
+               perf = measure { list = @local.getPullList }      
             
             rescue Exception => e
                   @logger.error(e.to_s)
@@ -283,10 +284,6 @@ class DEC_ReceiverFromInterface
          # ---------------------------------------
          
          when "WEBDAV"
-
-            if @isDebugMode == true then
-               @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
-            end
                         
             perf = measure { 
             
@@ -303,10 +300,6 @@ class DEC_ReceiverFromInterface
          # ---------------------------------------
          
          when "HTTP"
-
-            if @isDebugMode == true then
-               @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
-            end
             
             @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, true, false, false)
                
@@ -1746,7 +1739,7 @@ private
                   
                else
                   if @isDebugMode == true then
-                     @logger.debug("Duplicated files removal is #{DEC::ReadConfigDEC.instance.getDeleteDuplicated} / #{File.basename(filename)} ")
+                     @logger.debug("Duplicated files removal is #{@bDeleteDuplicated} / #{File.basename(filename)} ")
                   end
                end
                ## --------------------------------

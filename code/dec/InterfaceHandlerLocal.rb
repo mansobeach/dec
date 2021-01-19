@@ -1,25 +1,24 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #InterfaceHandlerLocal class
-#
-# === Written by DEIMOS Space S.L. (algk)
-#
-# === Data Exchange Component -> Data Collector Component
-# 
-# Git: $Id: InterfaceHandlerLocal.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
-#
-# Module Data Collector Component
-# This class polls a given LOCAL Interface and gets all registered available files
-#
+##
+## === Ruby source for #InterfaceHandlerLocal class
+##
+## === Written by DEIMOS Space S.L. (algk)
+##
+## === Data Exchange Component
+## 
+## Git: $Id: InterfaceHandlerLocal.rb,v 1.12 2014/05/16 00:14:38 algs Exp $
+##
+## Module Data Collector Component
+## This class polls a given LOCAL Interface and gets all registered available files
+##
 #########################################################################
 
 require 'cuc/Log4rLoggerFactory'
-#require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
-require 'dec/CheckerInterfaceConfig'
+
 
 require 'fileutils'
 
@@ -31,59 +30,34 @@ class InterfaceHandlerLocal
    ##
    ## Class constructor.
    ## * entity (IN):  Entity textual name (i.e. FOS)
-   def initialize(entity, bDCC=true, bDDC=true, manageDirs=false)
+   def initialize(entity, log, pull=true, push=true, manageDirs=false, isDebug=false)
       @entity     = entity
-      # initialize logger
-      
-      if !ENV['DEC_CONFIG'] then
-         puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
-      end
- 
-      configDir = nil
-         
-      if ENV['DEC_CONFIG'] then
-         configDir         = %Q{#{ENV['DEC_CONFIG']}}  
-      end
-            
-      loggerFactory = CUC::Log4rLoggerFactory.new("InterfaceHandlerLocal", "#{configDir}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-      if @logger == nil then
-         puts
-			puts "Error in InterfaceHandlerLocal::initialize"
-			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-			puts
-			exit(99)
-      end
-
-      self.checkConfigLocal(entity, bDCC, bDDC)
+      @logger     = log
 
       #to manage whole dirs
-      @manageDirs=manageDirs
+      @manageDirs       = manageDirs
 
-     #load classes needed
       @entityConfig     = ReadInterfaceConfig.instance
-      @outConfig        = ReadConfigOutgoing.instance      
+      @outConfig        = ReadConfigOutgoing.instance
+      @inConfig         = ReadConfigIncoming.instance
+      @isSecure         = @entityConfig.isSecure?(@entity)
+      @server           = @entityConfig.getServer(@entity)
+      @uploadDir        = @outConfig.getUploadDir(@entity)
+      @uploadTemp       = @outConfig.getUploadTemp(@entity)
+      @arrPullDirs      = @inConfig.getDownloadDirs(@entity)
       
-#       if Interface.find_by_name(@entity) == nil then
-# 	      @logger.error("[DEC_001] #{entity} is not a registered I/F !")
-#          raise "\n#{@entity} is not a registered I/F ! :-(" + "\ntry registering it with addInterfaces2Database.rb tool !  ;-) \n\n"
-#       end
-
    end   
    ## -----------------------------------------------------------
    ##
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "InterfaceHandlerLocal debug mode is on"
+      @logger.debug("InterfaceHandlerLocal debug mode is on") 
    end
    ## -----------------------------------------------------------
 
    def checkConfigLocal (entity, bDCC, bDDC)
+      raise
 #       #check if I/F is correcly configured      
 #       localChecker     = CTC::CheckerLocalConfig.new(entity)     
 #       if @isDebugMode then
@@ -142,33 +116,30 @@ class InterfaceHandlerLocal
    end
 
    ## -----------------------------------------------------------
-   ## DCC - Pull
+   ## Pull
 
-   def getLocalList
+   def getPullList
       @newArrFile    = Array.new      
       @depthLevel    = 0
-      @ftpserver     = @entityConfig.getFTPServer4Receive(@entity)
 
-      arrDownloadDirs = @ftpserver[:arrDownloadDirs]
-
-      arrDownloadDirs.each{|downDir|
+      @arrPullDirs.each{|downDir|
          
-         @remotePath = downDir[:directory]
+         path        = downDir[:directory]
          @maxDepth   = downDir[:depthSearch]
 
-         if @isDebugMode then
-            @logger.debug("Polling #{@remotePath}")
+         if @isDebugMode == true then
+            @logger.debug("[DEC_XXX] I/F #{@entity}: Polling #{path}")
          end
          
          formerDir= Dir.pwd #shuold not be necessary; safety reasons
          begin
-            Dir.chdir(@remotePath)
+            Dir.chdir(path)
          rescue Exception => e
-            @logger.error("[DEC_002] Directory #{@remotePath} is unreachable. Check with CheckconfigDCC.rb -e")
+            @logger.error("[DEC_002] Directory #{path} is unreachable. Check with CheckconfigDCC.rb -e")
          end
 
          entries  = Dir["*"].sort_by{|time| File.stat(time).mtime}
-         @pwd     = @remotePath
+         @pwd     = path
          
          entries.each{|entry|
             exploreLocalTree(entry)
@@ -186,9 +157,11 @@ class InterfaceHandlerLocal
          @logger.debug("InterfaceHandlerLocal::exploreLocalTree #{relativeFile}")
       end
 
-      # Treat normal files
+      ## Treat normal files
       if File.file?(relativeFile) then
-         if @isDebugMode == true then  @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}") end
+         if @isDebugMode == true then  
+            @logger.debug("Found #{%Q{#{@pwd}/#{relativeFile}}}")
+         end
          @newArrFile << %Q{#{@pwd}/#{relativeFile}}
       else #its a dir
          #be sure if it is

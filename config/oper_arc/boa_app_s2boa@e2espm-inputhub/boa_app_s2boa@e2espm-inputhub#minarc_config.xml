@@ -19,7 +19,7 @@
       <ArchiveServer></ArchiveServer>
       <ArchiveRoot>/minarc_root</ArchiveRoot>
       <ArchiveError>/minarc_root/.errors</ArchiveError>
-      <ArchiveIntray></ArchiveIntray>
+      <ArchiveIntray>/</ArchiveIntray>
       <TempDir>/orc/tmp</TempDir>
    </Workflow>
 

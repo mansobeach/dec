@@ -139,6 +139,31 @@ namespace :orc do
    end
    ## --------------------------------------------------------------------
 
+   ## Use this task to maintain an index of the relevant configurations
+   ##
+   desc "help in the kitchen"
+
+   task :help do
+      puts "The kitchen supports the following parameters"
+      puts "user => used to define the node" 
+      puts "host => used to define the node"
+      puts
+      puts
+      puts "Most used recipees:" 
+      puts
+      puts "ORC unit tests"
+      puts "rake -f build_orc.rake orc:build[orctest,localhost]"
+      puts
+      puts "S2PDGSENG / Inputhub"
+      puts "rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
+      puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"
+      puts
+      puts "CloudFerro / S2BOA"
+      puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"
+      puts
+   end
+   ## --------------------------------------------------------------------
+
    ## --------------------------------------------------------------------
 
 end
