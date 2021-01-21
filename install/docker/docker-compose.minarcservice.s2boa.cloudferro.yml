@@ -1,0 +1,66 @@
+##
+## DOCKER COMPOSE MINARC SERVICE
+##
+## 1/ build app_minarc_s2
+### sudo docker image build --rm=false -t app_minarc_s2 . -f install/docker/Dockerfile.s2decservice.minarc
+## 2/ start only minarc_db_s2 service
+### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2boa.cloudferro.yml up -d minarc_db_s2
+## 3/ create database in the container
+### docker exec -it minarc_db_s2 psql -U postgres -c "create database s2minarc"
+## 4/ start-up all the services
+### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2boa.cloudferro.yml up
+## Docker POSTGRES reference environment variables & initdb reference
+### https://hub.docker.com/_/postgres
+##
+## https://www.postgresql.org/docs/9.2/auth-pg-hba-conf.html
+## https://github.com/docker-library/postgres/issues/482
+## host all all 0.0.0.0/0 trust
+## 
+## Docker Networking
+## https://docs.docker.com/compose/networking/
+##
+## Docker Volumes
+## https://docs.docker.com/compose/compose-file/#volumes
+##
+## Create a named volume beforehand
+## https://stackoverflow.com/questions/52152231/how-to-mount-docker-directory-into-host-directory-with-docker-compose
+##
+## network mode host for FTP
+## https://docs.docker.com/compose/compose-file/#network_mode
+##
+## network_mode: "host"
+##
+## https://docs.docker.com/compose/compose-file/#network-configuration-reference
+##
+##
+## > s2decservices
+## - rake -f build_minarc.rake minarc:install[s2decservice,e2espm-inputhub]
+##
+##
+version: '3'
+
+services:
+  minarc_db_s2:
+     image: "postgres:11"
+     container_name: minarc_db_s2
+     restart: always
+     environment:
+        POSTGRES_DB: "s2minarc"
+        POSTGRES_USER: "s2minarc"
+        POSTGRES_PASSWORD: "s2minarc"
+        POSTGRES_HOST_AUTH_METHOD: "trust"
+     ports:
+      - "5432:5432"
+     volumes:
+      - /volume1/dec/arc/minarc_db:/var/lib/postgresql/data
+  minarc_s2:
+      depends_on:
+         - "minarc_db_s2"
+      image: app_minarc_s2
+      container_name: minarc_s2
+      user: 1002:1007
+      ports:
+      - "4567:4567"
+      restart: always
+      volumes:
+        - /volume1/dec:/volume1/dec

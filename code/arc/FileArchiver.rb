@@ -873,7 +873,7 @@ private
          cmd = "chmod 744 #{destDir}; \\chmod 444 #{destDir}/" << File.basename(full_path_filename)
       end
 
-      if @isDebugMode then
+      if @isDebugMode == true then
          puts cmd
       end
       

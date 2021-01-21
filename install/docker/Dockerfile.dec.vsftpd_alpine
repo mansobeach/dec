@@ -1,0 +1,24 @@
+## -----------------------------------------------
+##
+## Data Exchange Component
+##
+## DEC vsftpd
+##
+## -----------------------------------------------
+##
+## https://github.com/delfer/docker-alpine-ftp-server/blob/master/Dockerfile
+##
+##
+## execution point from dec git root directory
+##
+FROM alpine:3.10
+RUN apk --no-cache add vsftpd
+
+COPY ./config/ftp/ftp_banner /etc/vsftpd/
+COPY start_vsftpd.sh /bin/start_vsftpd.sh
+COPY config/vsftpd.conf /etc/vsftpd/vsftpd.conf
+
+EXPOSE 21 21000-21010
+VOLUME /ftp/ftp
+
+ENTRYPOINT ["/bin/start_vsftpd.sh"]

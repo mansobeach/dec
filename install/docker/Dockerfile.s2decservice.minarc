@@ -33,8 +33,8 @@ RUN apt-get update && \
 RUN apt-get install -y postgresql-client
 # ------------------------------------------------
 # ------------------------------------------------
-RUN groupadd -g 10001 e2edc && \
-    useradd -u 10001 -ms /bin/bash -g e2edc -d /home/e2edc e2edc
+RUN groupadd -g 10001 s2minarc && \
+    useradd -u 10001 -ms /bin/bash -g s2minarc -d /home/s2minarc s2minarc
 # ------------------------------------------------
 COPY ./install/scripts/entrypoint_s2decservice_minarc.sh /usr/bin/
 RUN ln -s /usr/bin/entrypoint_s2decservice_minarc.sh /    
@@ -52,7 +52,7 @@ COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10
 RUN mkdir -p /volumes/dec/minarc/log && \
     chown -R 10001:10001 /volumes/dec
 # ------------------------------------------------
-USER e2edc
+USER s2minarc
 ENV   HOSTNAME=minarc GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
 # "------------------------------------------------
 ENTRYPOINT ["/usr/bin/entrypoint_s2decservice_minarc.sh"]

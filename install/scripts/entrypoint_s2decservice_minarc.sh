@@ -9,6 +9,9 @@ echo "entrypoint minarc"
 # echo "minArcDB -c"
 # minArcDB -c
 
+echo "minArcServer -k"
+minArcServer -k
+
 echo "minArcServer -s"
 minArcServer -s
 

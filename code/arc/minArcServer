@@ -196,7 +196,7 @@ end
 def startServer
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP']) 
    if @locker.isRunning == true then
-      @logger.warning("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
+      @logger.warn("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
       exit(99)
    end  
    
@@ -234,7 +234,11 @@ def stopServer
       if @isDebugMode == true then
          @logger.debug("Sending signal SIGKILL to Process #{pid} for killing minArcServer")
       end
-      Process.kill(9, pid.to_i)
+      begin
+         Process.kill(9, pid.to_i)
+      rescue Exception => e
+         @logger.warn(e.to_s)
+      end
 	   checker.release
       @logger.info("[ARC_060] minArcServer has been shut-down")
    end

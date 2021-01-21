@@ -113,6 +113,7 @@ class MINARC_Server < Sinatra::Base
          puts
          puts
       end
+      @@logger.debug("checking directories")
       check_environment_dirs      
    end
    ## ----------------------------------------------------------

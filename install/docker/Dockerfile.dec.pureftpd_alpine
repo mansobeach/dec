@@ -1,0 +1,16 @@
+# https://github.com/stilliard/docker-pure-ftpd
+FROM stilliard/pure-ftpd
+
+# e.g. you could change the defult command run:
+CMD /run.sh -c 50 -C 50 -l puredb:/etc/pure-ftpd/passwd/pureftpd.passwd -E -j -R -p 30000:60009 -P "PUBLICHOST=185.52.193.141"
+
+#/usr/sbin/pure-ftpd # path to pure-ftpd executable
+#-c 50 # --maxclientsnumber (no more than 50 people at once)
+#-C 10 # --maxclientsperip (no more than 10 requests from the same ip)
+#-l puredb:/etc/pure-ftpd/pureftpd.pdb # --login (login file for virtual users)
+#-E # --noanonymous (only real users)
+#-j # --createhomedir (auto create home directory if it doesnt already exist)
+#-R # --nochmod (prevent usage of the CHMOD command)
+#-P $PUBLICHOST # IP/Host setting for PASV support, passed in your the PUBLICHOST env var
+#-p 30000:30009 # PASV port range
+#-tls 1 # Enables optional TLS support

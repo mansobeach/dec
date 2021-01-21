@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <CleanUp Frequency="10" Unit="s">
+  
+    <List_of_CleanUpRules>
+      <CleanUpRule Filetype="TLM_MIRA0_" Rule="Older"  Date="archive_date"    Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_VS_PRO" Rule="Older"  Date="validity_start"  Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
+    </List_of_CleanUpRules>
+  
+  </CleanUp>
+
+   <Archive>
+      <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
+   </Archive>
+
+   <Workflow>
+      <ArchiveServer>185.52.193.141:4567</ArchiveServer>
+      <ArchiveRoot>/volume1/dec/arc/minarc_root</ArchiveRoot>
+      <ArchiveError>/volume1/dec/arc/minarc_error</ArchiveError>
+      <ArchiveIntray>/volume1/dec/arc/minarc_intray</ArchiveIntray>
+      <TempDir>/volume1/dec/arc/minarc_temp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>minarc_db_s2</Database_Host>
+      <Database_Port>5432</Database_Port>      
+      <Database_Name>s2minarc</Database_Name>
+      <Database_User>s2minarc</Database_User>
+      <Database_Password>s2minarc</Database_Password>
+   </Inventory>
+
+
+</Configuration>

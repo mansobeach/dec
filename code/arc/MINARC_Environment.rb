@@ -29,7 +29,7 @@ module ARC
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.38"  =>    "TBW", \
+      "1.0.38"  =>    "minArcServer robustification", \
       "1.0.37"  =>    "Ghost version", \
       "1.0.36"  =>    "minArcServer fix to avoid uncontrolled children upon archive request:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-393",\
@@ -220,6 +220,7 @@ module ARC
       puts "MINARC_DATABASE_PASSWORD      => #{ENV['MINARC_DATABASE_PASSWORD']}"
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
       puts "MINARC_ARCHIVE_ERROR          => #{ENV['MINARC_ARCHIVE_ERROR']}"
+      puts "Workflow/ArchiveIntray        => #{ARC::ReadMinarcConfig.instance.getArchiveIntray}"
    end
    ## ----------------------------------------------------------------
 
@@ -228,7 +229,7 @@ module ARC
       checkDirectory(ENV['MINARC_TMP'])
       checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
-      checkDirectory("#{ENV['HOME']}/Sandbox/inventory/")
+      checkDirectory(ARC::ReadMinarcConfig.instance.getArchiveIntray)
    end
    ## ----------------------------------------------------------------
 
@@ -288,7 +289,6 @@ module ARC
          return false
       end
       return true
-      
       
    end
    ## ----------------------------------------------------------------
