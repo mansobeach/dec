@@ -42,9 +42,9 @@ class Handler_VIDEO
    @generation_date     = nil
    @full_path_filename  = ""
    
-   #------------------------------------------------
+   ## --------------------------------------------
 
-   # Class constructor
+   ## destination is used as suffix to the filename and the directory
    def initialize (full_path_name, destination = nil, args = {})
       full_path   = File.dirname(full_path_name)
       @filename   = File.basename(full_path_name)

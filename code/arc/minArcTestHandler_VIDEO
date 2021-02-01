@@ -1,0 +1,172 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+##
+## === Ruby source for #MINARC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## module MINARC
+##
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'arc/MINARC_Client'
+
+## Preconditions:
+### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
+
+#  1   - test_local_store
+#  2   - test_remote_store
+
+class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include ARC
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   # --------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "minARC Handler_VIDEO Test Cases"
+      puts
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+                  
+      if c != 'Y' then
+         exit(99)
+      end
+                  
+   end
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      puts "end of test suite"      
+   end
+   
+   ## ------------------------------------------------------ 
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      
+      begin
+         cmd = "minArcDB -d"
+         puts cmd
+         ret = system(cmd)
+
+         cmd = "minArcDB -c"
+         puts cmd
+         ret = system(cmd)
+      rescue
+      end
+
+      begin
+         cmd = "minArcPurge -Y"
+         puts cmd
+         ret = system(cmd)
+      rescue
+      end
+
+   end
+   ## ------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      puts "end of test-case"
+   end
+   ## ------------------------------------------------------
+
+   def test_local_store
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      
+      prevDir = Dir.pwd     
+      
+      testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      
+      cmd = "cp -f #{testDataDir}/example_1.mp4 /tmp/example_1.mp4"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t VIDEO -f /tmp/example_1.mp4 -L 2018.Comida.Leon.Carmen.Isabel.Amigos -d --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      Dir.chdir(prevDir)
+      
+   end
+   ## --------------------------------------------------------
+
+   def test_remote_store
+      puts
+      puts "================================================"
+      puts "MINARC_SmokeTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcServer -k"
+      puts cmd
+      system(cmd)
+      
+      sleep(2.0)
+ 
+      cmd = "minArcServer -s"
+      puts cmd
+      spawn(cmd)
+     
+      sleep(10.0)    
+
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -V"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      
+      cmd = "cp -f #{testDataDir}/example_1.mp4 /tmp/example_1.mp4"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t VIDEO -f /tmp/example_1.mp4 -L 2018.Comida.Leon.Carmen.Isabel.Amigos -d"
+      output = `#{cmd}`
+      assert($?, cmd)
+      puts output
+      newName = output.split("Archived: ")[1].chop
+      
+      cmd = "minArcStatus -f #{newName}"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcDelete -f #{newName}"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+   end
+   ## --------------------------------------------------------
+
+end
+
+
+## ===================================================================
+
+

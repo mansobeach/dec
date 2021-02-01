@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <Node>minARC unit tests node</Node>
-
+  <Node>Manso Video Archive</Node>
+   
   <CleanUp Frequency="10" Unit="s">
   
     <List_of_CleanUpRules>
@@ -18,20 +18,20 @@
    </Archive>
 
    <Workflow>
-      <ArchiveServer>localhost:4567</ArchiveServer>
-      <ArchiveRoot>/tmp/minarc</ArchiveRoot>
-      <ArchiveError>/tmp/minarc_error2</ArchiveError>
-      <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
-      <TempDir>/tmp</TempDir>
+      <ArchiveServer>mansobeach.sytes.net:4567</ArchiveServer>
+      <ArchiveRoot>/Users/borja/Volumes/archive</ArchiveRoot>
+      <ArchiveError>/Users/borja/Volumes/minarc_error</ArchiveError>
+      <ArchiveIntray>/Users/borja/Volumes/minarc_intray</ArchiveIntray>
+      <TempDir>/Users/borja/Volumes/minarc_temp</TempDir>
    </Workflow>
 
    <Inventory>
-      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Adapter>sqlite3</Database_Adapter>
       <Database_Host>localhost</Database_Host>
-      <Database_Port>5432</Database_Port>      
-      <Database_Name>postgres</Database_Name>
-      <Database_User>e2edc</Database_User>
-      <Database_Password>e2edc</Database_Password>
+      <Database_Port></Database_Port>      
+      <Database_Name>/Users/borja/Volumes/inventory/minarc_inventory</Database_Name>
+      <Database_User></Database_User>
+      <Database_Password></Database_Password>
    </Inventory>
 
 

@@ -29,7 +29,9 @@ module ARC
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.38"  =>    "minArcServer robustification", \
+      "1.0.38"  =>    "minArcServer robustification\n\
+          Node identification configuration item added to minarc_config.xml\n\
+          minArcReallocate support to change location of previously archived files",\
       "1.0.37"  =>    "Ghost version", \
       "1.0.36"  =>    "minArcServer fix to avoid uncontrolled children upon archive request:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-393",\

@@ -52,12 +52,20 @@ namespace :minarc do
       ## Build flags
       ##
       
+      if args[:suffix].include?("sqlite") == true then
+         puts "building gem minarc #{args[:suffix]} with flag MINARC_SQLITE3"
+         ENV['MINARC_SQLITE3'] = "true"
+      else
+         ENV.delete('MINARC_SQLITE3')
+      end
+
       if args[:suffix].include?("pg") == true then
          puts "building gem minarc #{args[:suffix]} with flag MINARC_PG"
          ENV['MINARC_PG'] = "true"
       else
          ENV.delete('MINARC_PG')
       end
+
    
       if args[:suffix].include?("test") == true then
          puts "building gem minarc #{args[:suffix]} with flag MINARC_TEST"
@@ -168,6 +176,57 @@ namespace :minarc do
 #   end
    ## --------------------------------------------------------------------
 
+   desc "build minarc gem & docker image (container)"
+
+   task :build_service, [:user, :host, :suffix] do |t, args|
+      args.with_defaults(:user => "borja", :host => "localhost", :suffix => "s2")
+      puts "building Docker Container DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
+   
+      cmd = "rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]"
+      puts cmd
+      system(cmd)
+   
+      ### sudo docker image build --rm=false -t app_minarc_s2 . -f install/docker/Dockerfile.decservice.minarc.s2.cloudferro
+   
+      dockerFile  = "Dockerfile.decservice.minarc.#{args[:suffix]}.#{args[:host]}"
+      composeFile = "docker-compose.minarcservice.#{args[:suffix]}.#{args[:host]}.yml"
+      dbName      = "minarc_db_#{args[:suffix]}"
+      appName     = "app_minarc_#{args[:suffix]}"
+      
+      if File.exist?("install/docker/#{dockerFile}") == false then
+         puts "DEC Dockerfile #{dockerFile} not present in repository"
+         exit(99)
+      end
+   
+      # cmd = "docker create --name dec_#{args[:suffix]} . -f \"install/docker/#{dockerFile}\""
+      
+      ## Create directories
+      cmd = "mkdir -p /volume1/dec/arc/minarc_log"
+      puts cmd
+      retval = system(cmd)
+      
+      
+      cmd = "docker image build --rm=false -t #{appName} . -f \"install/docker/#{dockerFile}\""
+      puts cmd
+      retval = system(cmd)
+      
+      cmd = "docker-compose -f install/docker/#{composeFile} up -d #{dbName}"
+      puts cmd
+      retval = system(cmd)
+
+      cmd = "docker exec -it minarc_db_s2 psql -U s2minarc -c \"create database s2minarc\""
+      puts cmd
+      retval = system(cmd)
+
+      cmd = "docker-compose -f install/docker/#{composeFile} up"
+      puts cmd
+      retval = system(cmd)
+
+   end
+   
+   ## ----------------------------------------------------------------
+
+
    ## --------------------------------------------------------------------
 
    desc "help in the kitchen"
@@ -179,7 +238,7 @@ namespace :minarc do
       puts "user: item to define the node kept in the repository" 
       puts "host: item to define the node kept in the repository"
       puts
-      puts "suffix: test | pg"
+      puts "suffix: test | pg | sqlite3"
       puts
       puts "Some of the above flags can be combined:"
       puts
@@ -187,11 +246,15 @@ namespace :minarc do
       puts
       puts "pg: it includes installation requirement for postgresql gem"
       puts
-      puts "unit tests : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
-      puts "s2decservice : rake -f build_minarc.rake minarc:build[s2decservice,e2espm-inputhub,s2_pg]"
-      puts "s2boa : rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
+      puts "unit tests           : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
+      puts "s2decservice         : rake -f build_minarc.rake minarc:build[s2decservice,e2espm-inputhub,s2_pg]"
+      puts "s2boa@cloudferro     : rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]"
+      puts "s2boa@inputhub       : rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
+      puts "mansovideo@macblind  : rake -f build_minarc.rake minarc:build[mansovideo,macblind,sqlite3]"
       puts
       puts
+      puts "image build : rake -f build_minarc.rake minarc:build_service[s2decservice,cloudferro,s2_pg]"
+      puts 
    end
    ## --------------------------------------------------------------------
 

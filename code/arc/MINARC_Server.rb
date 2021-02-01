@@ -81,6 +81,7 @@ class MINARC_Server < Sinatra::Base
       
       @@inTray = ARC::ReadMinarcConfig.instance.getArchiveIntray
       @@tmpDir = ARC::ReadMinarcConfig.instance.getTempDir
+      @@node   = ARC::ReadMinarcConfig.instance.getNode
       
       @@logger.debug("Intray: #{@@inTray}")
       @@logger.debug("TmpDir: #{@@tmpDir}")
@@ -286,7 +287,7 @@ class MINARC_Server < Sinatra::Base
    get ARC::API_URL_VERSION do
       msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC.class_variable_get(:@@version)}"
       @@logger.info(msg)
-      "#{ARC.class_variable_get(:@@version)}"
+      "#{@@node} : #{ARC.class_variable_get(:@@version)}"
    end
    
    ## =================================================================
@@ -327,14 +328,9 @@ class MINARC_Server < Sinatra::Base
    ## minArcStatus by filename
    ##
    get "#{API_URL_STAT_FILENAME}/:filename" do |filename|
-      msg = "GET #{API_URL_STAT_FILENAME} : get #{params[:filename]}"
-      @@logger.info(msg)
-      
       if settings.isDebugMode == true then
-         puts "==================================================="  
-         puts
-         puts "MINARC_Server #{API_URL_STAT_FILENAME} => #{params[:filename]}"
-         puts
+         msg = "GET #{API_URL_STAT_FILENAME} : get #{params[:filename]}"
+         @@logger.debug(msg)
       end
    
       fileStatus = ARC::FileStatus.new(params[:filename], true)
@@ -350,6 +346,8 @@ class MINARC_Server < Sinatra::Base
          puts ret
          puts "----------------------------------"
       end
+
+      @@logger.info("[ARC_204] Status: #{params[:filename]}")
 
       content_type :json 
       ret.to_json
@@ -385,7 +383,7 @@ class MINARC_Server < Sinatra::Base
    ##
    post ARC::API_URL_STORE do
    
-      logger.info "POST #{ARC::API_URL_STORE}/#{params[:file][:filename]}"
+      @@logger.info "POST #{ARC::API_URL_STORE}/#{params[:file][:filename]}"
    
    #   if true then
    #      puts JSON.pretty_generate(request.env)
@@ -394,7 +392,6 @@ class MINARC_Server < Sinatra::Base
    #      puts request.query_string
    #   end
    
-
       prevDir  = Dir.pwd
       reqDir   = "minArcStore_#{Time.now.to_f}.#{Random.new.rand(1.5)}"   
       FileUtils.mkdir(reqDir)
@@ -408,14 +405,15 @@ class MINARC_Server < Sinatra::Base
       # rename file into the original name
       filename = params[:file][:filename] 
       tempfile = params[:file][:tempfile]
-      mv(tempfile.path, filename)   
+      FileUtils.mv(tempfile.path, filename)   
+      
       # ---------------------------------------------
       #
       # Process the form parameters
          
       cmd = "minArcStore"
    
-      cmd = "#{cmd} -D -f #{Dir.pwd}/#{filename} --noserver"
+      cmd = "#{cmd} -f #{Dir.pwd}/#{filename} --noserver"
    
       params.each{|param|
          if param[0].slice(0,1) != "-" then
@@ -425,14 +423,19 @@ class MINARC_Server < Sinatra::Base
       }
    
       if settings.isDebugMode == true then
-         puts "MINARC_Server::#{cmd}"
+         @@logger.debug("MINARC_Server::API_URL_STORE => #{cmd}")
       end
    
       retStr = `#{cmd}`
 
       if $?.exitstatus != 0 then
+         @@logger.error("#{retStr}")
          "#{retStr}"
          status API_RESOURCE_ERROR
+      else
+         @@logger.info("[ARC_203] Archived: #{retStr.split("Archived: ")[1].chop}")
+         response.headers['filename'] = retStr.split("Archived: ")[1]
+         status API_RESOURCE_CREATED
       end
       
       #
@@ -443,35 +446,36 @@ class MINARC_Server < Sinatra::Base
    
    end
 
-   # =================================================================
-   #
-   #
-   # minArcDelete
-   #
+   ## ================================================================
+   ##
+   ##
+   ## minArcDelete
+   ##
    get "#{API_URL_DELETE}/:filename" do |filename|
-      puts "==================================================="  
-      puts 
-      puts "MINARC_Server #{API_URL_DELETE} => #{params[:filename]}"
-
-      cmd = "minArcDelete -f #{params[:filename]} --noserver -D"
+   
+      if settings.isDebugMode == true then
+         msg = "GET #{API_URL_DELETE} : get #{params[:filename]}"
+         @@logger.debug(msg)
+      end
+   
+      cmd = "minArcDelete -f #{params[:filename]} --noserver"
 
       if settings.isDebugMode == true then
-         msg = "GET #{API_URL_DELETE}/#{params[:filename]}"
-         logger.info msg
-         msg = "MINARC_Server::#{cmd}"
-         logger.info msg
+         @@logger.debug(cmd)
       end
 
       ret = system(cmd)
    
       if ret == false then
-         msg = "file #{params[:filename]} not found"
-         logger.error msg
-         status API_RESOURCE_NOT_FOUND      
+         @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
+         status API_RESOURCE_NOT_FOUND
+      else
+         @@logger.info("[ARC_205] Deleted : #{params[:filename]}")
+         status API_RESOURCE_DELETED
       end
 
    end
-   # ----------------------------------------------------------
+   ## ----------------------------------------------------------
 
    # ----------------------------------------------------------
    #
@@ -587,8 +591,12 @@ class MINARC_Server < Sinatra::Base
       if settings.isDebugMode == true then
          arcStatus.setDebugMode
       end
-     
-      ret = arcStatus.statusGlobal
+
+      begin     
+         ret = arcStatus.statusGlobal
+      rescue Exception => e
+         @@logger.error(e.to_s)
+      end
       
       if settings.isDebugMode == true then
          puts ret

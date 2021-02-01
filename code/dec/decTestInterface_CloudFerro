@@ -26,7 +26,7 @@ require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 
-## rake -f build_dec.rake dec:install[push_lisboa,e2espm-inputhub,s2_test]
+### rake -f build_dec.rake dec:install[push_lisboa,e2espm-inputhub,s2_test]
 
 ## Protocol for TEST_HTTP_FERRO & HTTP_FERRO is WebDAV
 
@@ -79,8 +79,8 @@ class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
       end   
    
       @@arrFiles = [ \
-                           "S2A_OPER_REP_OPDAM1_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF", \
-                           "S2A_OPER_REP_OPDAM6_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF" \
+                           "S2A_TEST_REP_OPDAM1_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF", \
+                           "S2A_TEST_REP_OPDAM6_VPMC_20201113T172538_V20201113T141739_20201113T142705.EOF" \
                            ]
 
       @@conf = DEC_Environment.new
@@ -196,7 +196,7 @@ class DECTestCase_Interface_CloudFerro < Test::Unit::TestCase
          system(cmd)
       }
 
-      cmd = "decSend2Interface --mnemonic TEST_HTTP_FERRO --nodb"
+      cmd = "decSend2Interface --mnemonic TEST_HTTP_FERRO --nodb" # -D is used to trace curl updates for evidences
       puts cmd
       assert(system(cmd), cmd)
 

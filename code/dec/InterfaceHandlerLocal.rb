@@ -203,14 +203,16 @@ class InterfaceHandlerLocal
    
    ## Download a file from the I/F
    def downloadFile(filename)      
-       #we are placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
+      # $PWD is already placed on the right directory (tmp dir): receiveAllFiles->downloadFile->self
       if File.directory?(filename) then
          return downloadDir(filename)
       else  
          begin
-            FileUtils.link(filename,File.basename(filename))
+            FileUtils.link(filename, File.basename(filename))
          rescue
-            if @isdebugMode then @logger.debug("Could not make a Hardlink of #{filename} to #{Dir.pwd}. Copying the file") end
+            if @isdebugMode then 
+               @logger.debug("Could not make a Hardlink of #{filename} to #{Dir.pwd}. Copying the file") 
+            end
             begin
                FileUtils.copy(filename,'.'+File.basename(filename))
                FileUtils.move('.'+File.basename(filename), File.basename(filename))
@@ -242,7 +244,6 @@ class InterfaceHandlerLocal
       else
          return false
       end
-      #everything ik ok
       return true
    end	
 	## -----------------------------------------------------------
@@ -270,7 +271,7 @@ class InterfaceHandlerLocal
    ## -----------------------------------------------------------
 
 
-# DDC =============================================================
+# PUSH =============================================================
 
   # Upload a file to the I/F  (DDC)
    def uploadFile(filename,targetFile,targetTemp)      

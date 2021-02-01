@@ -90,6 +90,8 @@
 require 'getoptlong'
 require 'rdoc'
 
+require 'cuc/Log4rLoggerFactory'
+
 require 'arc/MINARC_Environment'
 
 # MAIN script function
@@ -130,10 +132,10 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode          = true
             when "--noserver"          then @bNoServer            = true
             when "--list"              then @bListOnly            = true
             when "--version"           then @bShowVersion         = true
+            when "--Debug"             then @isDebugMode          = true
             when "--file"              then @filename             = arg.to_s
             when "--directory"         then @dirname              = arg.to_s
                                             deleteDirectory
@@ -151,6 +153,8 @@ def main
       exit(99)
    end
 
+   # -------------------------------------------------------
+
    if @bShowVersion == true then
       print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
       hRecord = ARC.class_variable_get(:@@change_record)
@@ -166,26 +170,6 @@ def main
       usage
       exit(0)
    end
-
-   # -------------------------------------------------------
-
-
-   if @isDebugMode == true and @bNoServer == true then
-      puts "MINARC Local Mode"
-   end
-
-   # -------------------------------------------------------
-
-   if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
-      hRecord = ARC.class_variable_get(:@@change_record)
-      hRecord.each_pair{|key, value|
-         puts "#{key} => #{value}"
-      }
-      exit(0)
-   end
-
-   # -------------------------------------------------------
  
    # -------------------------------------------------------
 
@@ -197,7 +181,37 @@ def main
    end
 
    # -------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("ArcStore ", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
  
+   # -------------------------------------------------------
+
+   if @isDebugMode == true and @bNoServer == true then
+      @logger.debug("MINARC Local Mode")
+   end
+
+   # -------------------------------------------------------
+   
    if !ENV['MINARC_SERVER'] then
       @bNoServer   = true
    end
@@ -271,13 +285,13 @@ def main
       ret = fileDeleter.delete_by_name(@filename)
       
       if ret == false then
-         puts
          if @bNoServer == false then
-            puts "#{File.basename(@filename, ".*").gsub("%2A", "*")} not present in the archive :-|"
+            @logger.error("[ARC_620] #{File.basename(@filename, ".*").gsub("%2A", "*")} could not be deleted")
          else
-            puts "#{File.basename(@filename, ".*").gsub("%", "*")} not present in the archive :-|"
+            @logger.error("[ARC_620] #{File.basename(@filename, ".*").gsub("%", "*")} could not be deleted")
          end
-         puts
+      else
+         @logger.info("[ARC_105] Deleted : #{File.basename(@filename)}")
       end
       
    end
@@ -290,7 +304,7 @@ def main
 
 end
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def deleteDirectory
    pwd = Dir.pwd
@@ -315,7 +329,7 @@ def deleteDirectory
    
    exit(0)
 end
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -329,13 +343,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 
-#-------------------------------------------------------------
-
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

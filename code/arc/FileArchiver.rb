@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileArchiver class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# CVS: $Id: FileArchiver.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
-#
-# module MINARC
-#
+##
+## === Ruby source for #FileArchiver class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id: FileArchiver.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
+##
+## module MINARC
+##
 #########################################################################
 
 require 'benchmark'
@@ -34,7 +34,7 @@ class FileArchiver
    ## Class contructor
    ## move : boolean. If true a move is made, otherwise it is moved from source
    ## debug: boolean. If true it shows debug info.
-   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = false, logger = nil, debugMode = false)
+   def initialize(bMove = false, bHLink = false, bUpdate = false, bInvOnly = false, bNoServer = true, logger = nil, debugMode = false)
       @bMove               = bMove
       @bHLink              = bHLink
       @bUpdate             = bUpdate
@@ -266,7 +266,11 @@ class FileArchiver
    
    def remote_archive(full_path_file, fileType, bDelete, destination)
       arc = ARC::MINARC_Client.new(@isDebugMode)
-      ret = arc.storeFile(full_path_file, fileType, bDelete, destination)
+      
+      ## the name of the file archived can be changed by the server
+      new_file = full_path_file.dup
+      
+      ret = arc.storeFile(new_file, fileType, bDelete, destination)
 
       # ------------------------------------------
       #
@@ -275,9 +279,8 @@ class FileArchiver
       # therefore an update is needed here
 
       if ret == true then
-         # puts "(Archived) : " << File.basename(full_path_file, ".*")
          if @logger != nil then
-            @logger.info("[ARC_100] Archived: #{File.basename(full_path_file, ".*")}")
+            @logger.info("[ARC_100] Archived: #{File.basename(new_file)}")
          end
       end
 

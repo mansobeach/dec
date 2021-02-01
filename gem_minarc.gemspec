@@ -73,11 +73,12 @@ Gem::Specification.new do |s|
      s.executables   << 'minArcUnitTests'
      s.executables   << 'minArcSmokeTestLocal'
      s.executables   << 'minArcSmokeTestRemote'
+     s.executables   << 'minArcTestHandler_VIDEO'
   end
   ## --------------------------------------------
 
   s.homepage    = 'http://www.deimos-space.com'
-  s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
+  s.metadata    = { "source_code_uri" => "https://bitbucket.org/borja_lopez_fernandez/dec.git" }
   
   ## ----------------------------------------------
   
@@ -103,11 +104,20 @@ Gem::Specification.new do |s|
      s.add_dependency('pg', '~> 1')
   end
   ## --------------------------------------------
+
+  ## --------------------------------------------
+  ##
+  ## Tailored installer to include sqlite3
+  if ENV.include?("MINARC_SQLITE3") == true then
+     s.add_dependency('sqlite3', '~> 1.4')
+  end
+  ## --------------------------------------------
+
   
   
   ## ----------------------------------------------
   
-  s.add_development_dependency('sqlite3', '~> 1.4')
+  # s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('test-unit', '~> 3.0')
 
   ## ----------------------------------------------

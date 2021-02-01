@@ -2,10 +2,11 @@
 
 #
 # == Usage
-# minArcDB --create-tables | --drop-tables
+# minArcDB --create-tables | --drop-tables [-H]
 #     --create-tables   create all minarc required tables
 #     --drop-tables     drops all minarc tables
 #     --Update-tables   performs a migration update of minarc tables
+#     --Happy           it ensures a happy ending despite eventual errors
 #     --export-rows     it exports all rows
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
@@ -48,11 +49,13 @@ def main
    @bShowVersion  = false
    @bShowUsage    = false
    @bIsDebugMode  = false
+   @bHappy        = false
    
    opts = GetoptLong.new(
      ["--drop-tables",     "-d",       GetoptLong::NO_ARGUMENT],
      ["--create-tables",   "-c",       GetoptLong::NO_ARGUMENT],
      ["--Update-tables",   "-U",       GetoptLong::NO_ARGUMENT],
+     ["--Happy",   "-H",               GetoptLong::NO_ARGUMENT],
      ["--export-rows",     "-e",       GetoptLong::NO_ARGUMENT],
      ["--version", "-v",               GetoptLong::NO_ARGUMENT],
      ["--usage",   "-u",               GetoptLong::NO_ARGUMENT],
@@ -69,6 +72,7 @@ def main
             when "--export-rows"       then @bExport              = true
             when "--usage"             then @bShowUsage           = true
 			   when "--help"              then @bShowUsage           = true
+            when "--Happy"             then @bHappy               = true
             when "--Debug"             then @bIsDebugMode         = true
             when "--version"           then @bShowVersion         = true
          end
@@ -139,8 +143,18 @@ def main
             File.delete(@dbName)
          end
          exit(0)
-      rescue
-         exit(99)
+      rescue Exception => e
+         if @bIsDebugMode == true then
+            puts e.backtrace
+            puts
+         end
+         puts e.to_s
+
+         if @bHappy == true then
+            exit(0)
+         else
+            exit(99)
+         end
       end
    end
 
@@ -151,8 +165,17 @@ def main
          puts "Right !"
          puts "Bye"
       rescue Exception => e
+         if @bIsDebugMode == true then
+            puts e.backtrace
+            puts
+         end
          puts e.to_s
-         exit(99)
+
+         if @bHappy == true then
+            exit(0)
+         else
+            exit(99)
+         end
       end
       exit(0)
    end
@@ -193,7 +216,7 @@ def main
 
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -207,11 +230,11 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 
-#=====================================================================
-# Start of the main body
+## ===================================================================
+## Start of the main body
 main
-# End of the main body
-#=====================================================================
+## End of the main body
+## ===================================================================

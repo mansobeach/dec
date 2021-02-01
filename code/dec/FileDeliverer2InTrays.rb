@@ -360,7 +360,7 @@ private
       
       if hardlinked == true and arrToIntray.length <2
 		   if @isDebugMode == true then
-			   @logger.debug("HardLink flag for #{file} is useless for one target dir")
+			   @logger.debug("HardLink flag for #{afile} is useless for one target dir")
 			end
 		end
 		

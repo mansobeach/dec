@@ -1,8 +1,9 @@
 Modules
 - minArcPurge
 - minArcServer
-- minArcStore
+- "ArcStore "
 - minArcRtrv
+- "Realloc  "
 
 INFO:
 ARC_000: Purge Archive
@@ -11,10 +12,17 @@ ARC_032: Status => server is running with $PID
 ARC_060: minArcServer stopped
 ARC_075: Request to archive from Intray
 ARC_100: Archived: $file
+ARC_105: Deleted : $file
 
+(server side)
 ARC_200: Requested: $file
 ARC_201: Served: $file
 ARC_202: Retrieved: $file
+ARC_203: Archived: $file
+ARC_204: Status: $file (request of status acknowledge by the server)
+ARC_205: Deleted : $file
+
+ARC_301: $file reallocated to $path
 
 WARNING:
 
@@ -27,6 +35,8 @@ ERROR:
 ARC_601: Archive Root does not exist
 ARC_605: Could not archive $file
 ARC_610: $file not present in the archive
+ARC_620: $file could not be deleted
+ARC_635: $file reallocation failure
 ARC_666: Cannot start server: $error_message
 ARC_675: Mutex of $directory not available for $pid
 

@@ -57,7 +57,7 @@ class MINARC_Client
    def getVersion
       return getURL("#{@minArcServer}#{API_URL_VERSION}", @isDebugMode)
    end
-   # ------------------------------------------------
+   ## -------------------------------------------------
 
    def storeFile(full_path_filename, fileType, bIsDelete, destination = nil)
       hParams = Hash.new
@@ -71,18 +71,23 @@ class MINARC_Client
       if destination != nil then
          hParams["--Location"] = destination
       end
+      
+      newVal = full_path_filename.dup
             
-      ret = postFile("#{@minArcServer}#{API_URL_STORE}", full_path_filename, hParams, @isDebugMode)
+      # ret = postFile("#{@minArcServer}#{API_URL_STORE}", full_path_filename, hParams, @isDebugMode)
+      ret = postFile("#{@minArcServer}#{API_URL_STORE}", newVal, hParams, @isDebugMode)
       
       if ret == false then
          puts
          puts "Failed to archive #{full_path_filename} :-("
          puts
+      else
+         full_path_filename.replace(newVal)
       end
       
       return ret
    end
-   # ------------------------------------------------
+   ## -------------------------------------------------
    
    def listFile_By_Filetype(filetype)
       url = "#{@minArcServer}#{API_URL_LIST_FILETYPE}/#{filetype}"
@@ -158,7 +163,19 @@ class MINARC_Client
          puts "MINARC_Client::statusGlobal => #{url}"
          puts
       end
-      return JSON.parse(getURL(url, @isDebugMode))   
+      begin
+         return JSON.parse(getURL(url, @isDebugMode))
+      rescue Exception => e
+         if @isDebugMode == true then
+            puts e.backtrace
+            puts
+         end
+         puts e.to_s
+         hash = {
+            'status' => "archive likely to be empty",
+         }
+         return JSON.parse(hash)
+      end   
    end
    # ------------------------------------------------
    

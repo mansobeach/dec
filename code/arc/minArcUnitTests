@@ -38,6 +38,7 @@ require 'arc/ReadMinarcConfig'
 
 ##  0.1  - test_ReadConfig
 ##  0.2  - test_commandline_helpers
+##  0.3  - test_minArcDB
 ##  1.0  - test_local_minArcStore
 ##  1.1  - test_local_minArcStore_Bulk
 ##  2  - test_local_minArcRetrieve
@@ -58,7 +59,8 @@ require 'arc/ReadMinarcConfig'
 ## 17  - test_local_minArcFile
 ## 18  - test_minArcServer
 ## 19  - test_train_server
-## 20  - test_contingency
+## 20  - test_minArcReallocate
+## 21  - test_contingency
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -326,6 +328,9 @@ class TestCaseStore < Test::Unit::TestCase
       puts tmpDir
       assert(tmpDir != nil, "get temp directory")
 
+      node = config.getNode
+      puts node
+      assert(node != nil, "get node")
    
    end
    ## ------------------------------------------------------
@@ -335,102 +340,160 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_unset_config
 
       cmd = "minArcFile -v"
+      puts cmd
       assert(system(cmd), cmd)
    
       cmd = "minArcDelete -v"
+      puts cmd
       assert(system(cmd), cmd)
       
       cmd = "minArcStore -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -v"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcStore -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcStore -g"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcFile -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -u"
       assert(system(cmd), cmd)
 
       cmd = "minArcDelete -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcDelete -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -h"
+      puts cmd
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -u"
+      puts cmd
       assert(system(cmd), cmd)
 
       # invoke command line parameters without parameters to do nothing
       # and return error in parameters
 
       cmd = "minArcDelete"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcRetrieve"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcDB"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcPurge"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcServer"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcStatus"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcStore"
+      puts cmd
       assert(!system(cmd), cmd)
 
       cmd = "minArcFile"
+      puts cmd
       assert(!system(cmd), cmd)
 
+      cmd = "minArcReallocate -v"
+      puts cmd
+      assert(system(cmd), cmd)
       
       
    end
    
+   ## -----------------------------------------------------------
+   
+   def test_minArcDB
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(!system(cmd), "minArcDB second time / error raised")
+
+      cmd = "minArcDB -c -H"
+      puts cmd
+      assert(system(cmd), "minArcDB second time / happy ending")
+            
+   end
    ## -----------------------------------------------------------
    ##
    ## 
@@ -1242,6 +1305,49 @@ class TestCaseStore < Test::Unit::TestCase
    ##
    ## minARC inventory is not created
    ##
+   def test_minArcReallocate
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+      
+      cmd = "minArcStatus -f #{@@testFile1} | jq"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+
+      cmd = "minArcStatus -f #{@@testFile1} | jq .path"
+      path = `#{cmd}`
+      path = path.dup.gsub!('"', '').chop
+      
+      cmd = "\\mv -f #{path}/#{@@filename1_noext}.7z /tmp/minarc/tmp/"
+      puts cmd
+      assert(system(cmd), "move file")
+
+      cmd = "minArcReallocate -f /tmp/minarc/tmp/#{@@filename1_noext}.7z"
+      puts cmd
+      assert(system(cmd), "minArcReallocate")
+
+      cmd = "minArcStatus -f #{@@testFile1} | jq"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+
+   end
+   ## -----------------------------------------------------------
+   
+   ## -----------------------------------------------------------
+   ##
+   ## minARC inventory is not created
+   ##
    def test_contingency
       puts __method__.to_s
       puts
@@ -1256,7 +1362,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       puts cmd
       puts
-      assert(system(cmd), 
+      assert(system(cmd), "minArcStore -t S2PDGS")
 
 
       ## -------------------------------------
@@ -1321,8 +1427,4 @@ end
 
 
 # =====================================================================
-
-
-#-----------------------------------------------------------
-
 

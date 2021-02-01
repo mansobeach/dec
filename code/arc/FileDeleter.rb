@@ -119,7 +119,7 @@ class FileDeleter
          if ret == false then
             return ret
          end
-         puts "(Deleted)  : " << filename
+         # puts "(Deleted)  : " << filename
          return true
       end
 
@@ -196,7 +196,7 @@ private
 
       if retVal == true then
          aFile.destroy
-         puts "(Deleted)  : " << aFile.filename
+         # puts "(Deleted)  : " << aFile.filename
          return true
       else
          puts "Could not delete #{aFile.filename} from archive :-("

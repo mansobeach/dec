@@ -43,7 +43,7 @@ module WrapperCURL
          newUrl = "#{newUrl}/"
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
+      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -64,7 +64,7 @@ module WrapperCURL
          url = "#{url}/"  
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} -X PROPFIND #{url}"
+      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X PROPFIND #{url}"
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -107,7 +107,7 @@ module WrapperCURL
          url = "#{url}/"  
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} -X DELETE #{url}#{file}"
+      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X DELETE #{url}#{file}"
             
       if isDebugMode == true then
          cmd = "#{cmd} -v "
@@ -211,28 +211,36 @@ module WrapperCURL
 
    def postFile(url, file, hFormParams, isDebugMode = false)
       ## --silent mode removed
-      cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST "
+      cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
       
-      if isDebugMode == true then
-         cmd = "#{cmd} -v "
-      end
+#      if isDebugMode == true then
+#         cmd = "#{cmd} -v "
+#      end
       
       hFormParams.each{|key,value|
          cmd = "#{cmd} -S -f -F '#{key}=#{value}'"
       }
-      cmd = "#{cmd} -F file=@#{file} #{url}"
+      cmd = "#{cmd} -F file=@#{file} #{url} 2>&1"
       
       if isDebugMode == true then
          puts cmd
       end
       
       output = `#{cmd}`
-      
-      if isDebugMode == true and $? != 0 then
-         puts "Failed execution of #{cmd} ! :-("
-         puts
-         puts "curl exit code is #{$?}"
-         puts
+            
+      if isDebugMode == true then
+         if $? != 0 then
+            puts "Failed execution of #{cmd} ! :-("
+            puts
+            puts "curl exit code is #{$?}"
+            puts
+         else
+            puts
+            puts "------------------"
+            puts output
+            puts "------------------"
+            puts
+         end
       end
       
       FileUtils.rm_f("upload.txt")
@@ -240,6 +248,7 @@ module WrapperCURL
       if $? != 0 then
          return false
       else
+         file.replace(output.split("< filename: ")[1].to_s.split("\n")[0].to_s)
          return true
       end
 

@@ -2,15 +2,15 @@
 
 # == Synopsis
 #
-# This is a MINARC command line tool that reallocates a given file previosuly archived. 
-# Archive reallocation is meant by changing the directory location
+# This is a minARC command line tool that reallocates a given file previously archived. 
+# Archive reallocation is meant by changing the directory location.
 # If reallocated file is not already archived in the system, an error will be raised.
 # 
 # 
 # -f flag:
 #
 # Mandatory flag, stands for "--file".
-# This option is used to specify the file to be archived. 
+# This option is used to specify the file to be reallocated. 
 # File must be specified with the full path location of the new storage directory.
 #
 # -d flag:
@@ -19,8 +19,8 @@
 #
 #
 # == Usage
-# minArcReallocate.rb -f <full_path_file> [-R]
-#     --file <full_path_file>    it specifies the file to be archived
+# minArcReallocate -f <full_path_file> [-R]
+#     --file <full_path_file>    it specifies the file to be reallocated
 #     --directory <full_path>    it specifies the directory containing files
 #     --Recursive                recursivity through directory
 #     --help                     shows this help
@@ -51,18 +51,17 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
-require 'arc/FileArchiver'
-require 'arc/MINARC_DatabaseModel'
+require 'cuc/Log4rLoggerFactory'
 
-# Global variables
-@dateLastModification = "$Date$"   # to keep control of the last modification
-                                       # of this script
-                                       # execution showing Debug Info
+require 'arc/MINARC_Environment'
+require 'arc/FileArchiver'
 
 
 # MAIN script function
 def main
 
+   include ARC
+   
    @full_path_filename     = ""
    @full_path_dir          = ""
    @filename               = ""
@@ -72,7 +71,7 @@ def main
    @bMove                  = false
    @bUnpack                = false
    bShowFileTypes          = false
-   showVersion             = false
+   @bShowVersion           = false
    @arrAddFields           = Array.new
    @bRecursive             = true
    @bUpdate                = false
@@ -92,12 +91,12 @@ def main
    begin
       opts.each do |opt, arg|
          case opt      
-            when "--Debug"             then @isDebugMode = true
-            when "--version"           then showVersion  = true
-	         when "--file"              then @full_path_filename = arg.to_s
-            when "--directory"         then @full_path_dir      = arg.to_s
-	         when "--type"              then @filetype           = arg.to_s
-            when "--additional-fields" then @arrAddFields       = arg.to_s.split(":")
+            when "--Debug"             then @isDebugMode          = true
+            when "--version"           then @bShowVersion         = true
+	         when "--file"              then @full_path_filename   = arg.to_s
+            when "--directory"         then @full_path_dir        = arg.to_s
+	         when "--type"              then @filetype             = arg.to_s
+            when "--additional-fields" then @arrAddFields         = arg.to_s.split(":")
 			   when "--help"              then usage
 	         when "--usage"             then usage
             when "--Recursive"         then @bRecursive  = true
@@ -107,24 +106,53 @@ def main
       exit(99)
    end
 
-   if showVersion then 
-      if File.exist?("#{ENV['MINARC_BASE']}/bin/minarc/version.txt") then
-         aFile = File.new("#{ENV['MINARC_BASE']}/bin/minarc/version.txt")
-      else
-         puts "version.txt is not present !"
-         exit(99)
-      end
+   # -------------------------------------------------------
 
-      binVersion = aFile.gets.chomp
-
-      puts
-      puts "Mini-Archive Component - Version #{binVersion}"
-      puts
-
-      aFile.close
+   if @bShowVersion == true then
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
+      hRecord = ARC.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
       exit(0)
    end
+
+   # -------------------------------------------------------
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   # -------------------------------------------------------
  
+   require 'arc/MINARC_DatabaseModel'
+ 
+   # -------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("Realloc  ", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
 
    if @full_path_filename == "" and @full_path_dir == "" then
       usage
@@ -165,21 +193,17 @@ def main
    ret = archiver.reallocate(@full_path_filename)
    
    if ret == false then
-      puts
-      puts "MINARC could not reallocate #{@filename} in #{@full_path}"
-      puts
+      @logger.error("[ARC_615] #{@filename} could not be reallocated to #{@full_path}")
       exit(99)
    end
 
-   puts
-   puts "Operation successful ! :-)"
-   puts
+   @logger.info("[ARC_301] #{@filename} path reallocated to #{@full_path}")
   
    exit(0)
 
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 def reallocateDir(directory)
    pwd = Dir.pwd
@@ -209,8 +233,10 @@ def reallocateDir(directory)
       ret = archiver.reallocate(strFile)
    
       if ret == false then
-         puts "MINARC could not reallocate #{aFile} in #{strFile}"
+         @logger.error("[ARC_615] #{aFile} could not be reallocated to #{strFile}")
          next
+      else
+         @logger.info("[ARC_301] #{aFile} path reallocated to #{strFile}")
       end
    }
 
@@ -218,19 +244,27 @@ def reallocateDir(directory)
 
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 def usage
-   fullpathFile = `which #{File.basename($0)}` 
-   system("head -36 #{fullpathFile}")
-   exit
+
+   fullpathFile = File.expand_path(__FILE__)
+      
+   value = `#{"head -36 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }
+   
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

@@ -37,7 +37,8 @@ class ReadMinarcConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @inventory          = nil 
+      @inventory          = nil
+      @node               = "node not defined" 
       checkModuleIntegrity
 		defineStructs
       loadData
@@ -83,6 +84,11 @@ class ReadMinarcConfig
       return arrTmp
    end
    ## ------------------------------------------------------------
+
+   def getNode
+      return @node
+   end
+   ## -----------------------------------------------------------
 
    def getInventory
       return @inventory
@@ -170,11 +176,21 @@ private
          puts "\nProcessing minarc_config.xml"
       end
       
+      processNode(xmlFile)
       @arrRules = processRules(xmlFile)
       @workflow = parseWorkflow(xmlFile)
       
       parseInventoryConfig(xmlFile)
    end   
+   ## -----------------------------------------------------------
+   
+   def processNode(xmlFile)
+      XPath.each(xmlFile, "Configuration/Node"){ |node|
+         if node.text != nil and node.text != "" then
+            @node = expandPathValue(node.text)
+         end
+      }
+   end
    ## -----------------------------------------------------------
    
    ## Process the xml file decoding all the Rules
