@@ -165,6 +165,38 @@ class ReadConfigIncoming
       return false
    end 
    ## -------------------------------------------------------------
+
+   def isUnCompressed?(arrName)
+      raise if !arrName.class.to_s.include?("Array")
+            
+      arrName.each{|name|
+         if getInTrayCompress(name) == nil then
+            next
+         end
+         if getInTrayCompress(name) == "7z-x" or getInTrayCompress(name) == "7Z-X" then
+            return true
+         end
+      }
+      return false
+   end
+   
+   ## -------------------------------------------------------------
+   
+   def isCompressed?(arrName)
+      raise if !arrName.class.to_s.include?("Array")
+            
+      arrName.each{|name|
+         if getInTrayCompress(name) == nil then
+            next
+         end
+         if getInTrayCompress(name) == "7z" or getInTrayCompress(name) == "7Z" then
+            return true
+         end
+      }
+      return false
+   end
+   
+   ## -------------------------------------------------------------
     
    def getInTrayCompress(name)
       @@arrIntrays.each{|dim|

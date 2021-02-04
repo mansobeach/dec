@@ -375,7 +375,13 @@ class FileSender
       ## -----------------------------------------
       
       if retVal == true and bDeleteSource == true then
-         File.delete(%Q{#{@srcDirectory}/#{file}})
+         begin
+            File.delete(%Q{#{@srcDirectory}/#{file}})
+         rescue Exception => e
+            @logger.error("[DEC_799] I/F #{@entity}: integration problem when deleting upon successful push")
+            @logger.error("Could not delete #{@srcDirectory}/#{file}")
+            @logger.error(e.to_s)
+         end
       end
 
       ## -----------------------------------------

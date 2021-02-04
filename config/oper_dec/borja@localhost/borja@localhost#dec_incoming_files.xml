@@ -187,7 +187,7 @@
 		      <Directory DepthSearch="0">/tmp/dec_simul_if/filesystem/download</Directory>
          </DownloadDirs>
          <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LogDuplicated>true</LogDuplicated>
@@ -388,7 +388,7 @@
          </FromList>
       </File>
 
-      <File Type="*finals.a*">
+      <File Type="*finals.*">
          <Description>TAI UTC correlation</Description>
          <FromList>
             <Interface>WEBDAV</Interface>
@@ -510,6 +510,7 @@ WWWW/igsWWWWD.clk.Z
          <Intray>
             <Name>DIAS</Name>
             <Directory>/tmp/dec_final_dissemination/DIAS/</Directory>
+            
          </Intray>
 
 
@@ -554,6 +555,33 @@ WWWW/igsWWWWD.clk.Z
             <!--
             <Execute>7z</Execute>
             -->
+         </Intray>
+
+         <Intray>
+            <Name>S2_7Z</Name>
+            <Directory>/tmp/dec_local_dissemination/S2_7Z</Directory>
+            <Compress>7z</Compress>
+            <!--
+            <Execute>7z</Execute>
+            -->
+         </Intray>
+
+         <Intray>
+            <Name>S2_7Z-X_1</Name>
+            <Directory>/tmp/dec_local_dissemination/S2_7Z-X_1</Directory>
+            <Compress>7z-x</Compress>
+         </Intray>
+
+         <Intray>
+            <Name>S2_7Z-X_2</Name>
+            <Directory>/tmp/dec_local_dissemination/S2_7Z-X_2</Directory>
+            <Compress>7z-x</Compress>
+         </Intray>
+
+         <Intray>
+            <Name>S2_7Z-X_3</Name>
+            <Directory>/tmp/dec_local_dissemination/S2_7Z-X_3</Directory>
+            <Compress>7z-x</Compress>
          </Intray>
 
          <Intray>
@@ -695,12 +723,36 @@ WWWW/igsWWWWD.clk.Z
                <Intray>S2A</Intray>
             </ToList>
          </File>
+
+         <File Type="tai-utc.7z">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+               <Intray>S2_7Z-X_1</Intray>
+               <Intray>S2_7Z-X_2</Intray>
+               <Intray>S2_7Z-X_3</Intray>
+            </ToList>
+         </File>
+
+         <File Type="finals.7z">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+               <Intray>S2_7Z-X_1</Intray>
+               <Intray>S2_7Z-X_2</Intray>
+               <Intray>S2_7Z-X_3</Intray>
+            </ToList>
+         </File>
+
    
          <File Type="finals.all">
             <HardLink>true</HardLink>
             <ToList>
                <Intray>S2A</Intray>
                <Intray>GPS</Intray>
+               <Intray>S2B</Intray>
+               <Intray>S2_7Z</Intray>
+               <Intray>S2ALL</Intray>
             </ToList>
          </File>
    

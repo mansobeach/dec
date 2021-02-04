@@ -29,7 +29,10 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.23" =>    "TBW", \
+      "1.0.23" =>    "Local dissemination upon pull is safely compressed:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-414\n\
+          Update of the OData client for S2PRIP to support download of PDI\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-418",
       "1.0.22" =>    "WebDAV verb MOVE for push does not carry time-out parameters:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-418",
       "1.0.21" =>    "Pull local dissemination chmod robustified for errors", \

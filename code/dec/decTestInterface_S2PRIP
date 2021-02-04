@@ -270,7 +270,7 @@ class DECTestCasePRIP < Test::Unit::TestCase
       puts
 
       ## Query for HKTM
-      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:HKTM"
+      cmd = "decODataClient -u pripuser1 -p 12qwas -q prip:HKTM -V"
       puts cmd
       assert(system(cmd), "#{cmd} PRIP query")
 
@@ -283,6 +283,24 @@ class DECTestCasePRIP < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
+   def test_MSI
+      puts
+      puts "================================================"
+      puts "DEC_UnitTestsPRIP::#{__method__.to_s}"
+      puts
+
+      ## Query for MSI datastrip
+      cmd = "decODataClient -V -u pripuser1 -p 12qwas -q prip:S2B_OPER_MSI_L0__DS_VGS1_20210126T095435_S20210126T080454_N02.09"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+      ## Download MSI datastrip
+      cmd = "decODataClient -V -d -u pripuser1 -p 12qwas -q prip:S2B_OPER_MSI_L0__DS_VGS1_20210126T095435_S20210126T080454_N02.09"
+      puts cmd
+      assert(system(cmd), "#{cmd} PRIP query")
+
+   
+   end
 
    ## ------------------------------------------------------
 

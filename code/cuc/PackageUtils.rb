@@ -90,7 +90,7 @@ module PackageUtils
       end
 
       # cmd  = %Q{7za x #{full_path_file} -o#{File.dirname(full_path_file)}}
-      cmd  = %Q{7za e #{full_path_file} -o#{destination_path}}
+      cmd  = %Q{7za e #{full_path_file} -o#{destination_path} -aoa }
 
       ## silent mode
       ## > progress redirected to 0

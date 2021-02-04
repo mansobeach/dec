@@ -40,7 +40,7 @@
     </Notify>
     <Events>
       <Event Name="OnReceiveNewFilesOK"     executeCmd="curl 10.182.17.86:4567/dec/arc/requestArchive/*"/>
-      <Event Name="OnReceiveOK"             executeCmd="decSend2Interface -m HTTP_FERRO -n" />
+      <Event Name="OnReceiveOK"             executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>
       <!--
       <Event Name="ONRECEIVENEWFILESOK"     executeCmd="decSend2Interface -m "/>
       -->
@@ -249,7 +249,7 @@
       <LoopDelay unit="s">10</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
-      <ParallelDownload>7</ParallelDownload>
+      <ParallelDownload>6</ParallelDownload>
     </TXRXParams>    
     <Server>
       <Protocol>WEBDAV</Protocol>

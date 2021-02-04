@@ -97,9 +97,14 @@ class EventManager
             # At least '&' required for background execution
             anewCmd = cmd.sub!("&amp;", "&")
             if anewCmd != nil then
-               cmd = anewCmd
+               cmd         = anewCmd
             end
             
+            bBackground = false
+            
+            if cmd.include?("&") then
+               bBackground = true
+            end
             # --------------------------
             
             if params != nil then            
@@ -128,6 +133,14 @@ class EventManager
             if log != nil then
                log.info("[DEC_130] I/F #{interface}: event triggered #{eventName.downcase} => #{cmd}")
             end
+            
+            ## -----------------------------------
+            if bBackground == true then
+               spawn(cmd)
+               log.info("[DEC_130] I/F #{interface}: event spawned #{eventName.downcase} => #{cmd}")
+               next
+            end
+            ## -----------------------------------
             
             exit_status = nil
             

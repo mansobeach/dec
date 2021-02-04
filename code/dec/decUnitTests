@@ -26,6 +26,8 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
+### rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]
+
 ### Required for test of integration with minArc
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
@@ -46,12 +48,14 @@ require 'dec/ReadConfigIncoming'
 ###  3.3   - test_decConfigInterface2DB
 ###  4    - test_decGetFromInterface
 ###  4.1  - test_decGetFromInterface_LOCAL
-###  4.2  - test_decGetFromInterface_WEBDAV
-###  4.3  - test_decGetFromInterface_WEBDAV_SECURE => decUnitTests_WEBDAV_SECURE
-###  4.4  - test_decGetFromInterface_PARALLEL_HTTP
-###  4.5  - test_decGetFromInterface_contingency_1
-###  4.6  - test_decGetFromInterface_contingency_2
-###  4.7  - test_decGetFromInterface_contingency_3
+###  4.2  - test_decGetFromInterface_LOCAL_7z
+###  4.3  - test_decGetFromInterface_LOCAL_7z_x
+###  4.4  - test_decGetFromInterface_WEBDAV
+###  4.5  - test_decGetFromInterface_WEBDAV_SECURE => decUnitTests_WEBDAV_SECURE
+###  4.6  - test_decGetFromInterface_PARALLEL_HTTP
+###  4.7  - test_decGetFromInterface_contingency_1
+###  4.8  - test_decGetFromInterface_contingency_2
+###  4.9  - test_decGetFromInterface_contingency_3
 ###  5  - test_decListener
 ###  6  - test_decGetFiles4Transfer
 ###  7  - test_decSend2Interface
@@ -741,7 +745,7 @@ class DECTestCase < Test::Unit::TestCase
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
-            
+                  
       ftReadConf = ReadInterfaceConfig.instance
       ftReadConf.update
       ftpRecv    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
@@ -770,8 +774,19 @@ class DECTestCase < Test::Unit::TestCase
 
       puts inConfig.getInTrayCompress("S3_IN")
       puts inConfig.getInTrayExecution("S3_IN")
+            
+      puts "isCompressed S3_IN, S2A => #{inConfig.isCompressed?(["S3_IN", "S2A"])}"
+      assert(inConfig.isCompressed?(["S3_IN", "S2A"]), "isCompressed?")
       
-      
+      puts "isCompressed S3_IN, S2B => #{inConfig.isCompressed?(["S3_IN", "S2B"])}"
+      assert(!inConfig.isCompressed?(["S3_IN", "S2B"]), "isCompressed?")
+
+      puts "isCompressed GPS, S2_7Z-X_1 , S2_7Z-X_2 , S2_7Z-X_3 => #{inConfig.isCompressed?(["S3_IN", "S2B"])}"
+      assert(!inConfig.isCompressed?(["GPS", "S2_7Z-X_1" , "S2_7Z-X_2" , "S2_7Z-X_3"]), "isCompressed?")
+
+      puts "isUnCompressed GPS, S2_7Z-X_1 , S2_7Z-X_2 , S2_7Z-X_3 => #{inConfig.isUnCompressed?(["GPS", "S2_7Z-X_1", "S2_7Z-X_2", "S2_7Z-X_3"])}"
+      assert(inConfig.isUnCompressed?(["GPS", "S2_7Z-X_1" , "S2_7Z-X_2" , "S2_7Z-X_3"]), "isUnCompressed?")
+
       puts inConfig.getSwitches("SCIHUB")
       
       puts inConfig.deleteDownloaded?("SCIHUB")
@@ -1189,6 +1204,174 @@ class DECTestCase < Test::Unit::TestCase
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
    end
+   
+   ## --------------------------------------------------------
+
+   ## verification of the protocol LOCAL using interface "FILESYSTEM"
+   ##
+   ## this test contains integration with minArcServer ; an archive request
+   ##
+   ##
+
+   def test_decGetFromInterface_LOCAL_7z
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
+      }
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("FILESYSTEM")
+      
+      checkDirectory(@finalDir)
+
+      # finals.all / tai-utc.dat
+            
+      FileUtils.rm_f("#{@finalDir}/finals.all")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f finals.all"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.dat"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      ## test dissemination of previously files pulled
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > /tmp/dec/if_local_filesystem/#{filename}")
+      }
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+
+      arr = Dir["/tmp/DEC*.log"]  
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+   end
+   
+   ## --------------------------------------------------------   
+
+   ## --------------------------------------------------------
+
+   ## verification of the protocol LOCAL and the uncompression
+   ##
+
+   def test_decGetFromInterface_LOCAL_7z_x
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      prevDir = Dir.pwd
+      
+      Dir.chdir("/tmp/dec_simul_if/filesystem/download/")
+      
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{filename}")
+         cmd = "7za a #{File.basename(filename, ".*")}.7z #{filename}"
+         puts cmd
+         system(cmd)
+         cmd = "rm -f #{filename}"
+         puts cmd
+         system(cmd)
+         
+      }
+      Dir.chdir(prevDir)
+
+      cmd = "decManageDB -d"
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+
+      inConfig          = ReadConfigIncoming.instance
+      @finalDir         = inConfig.getIncomingDir("FILESYSTEM")
+      
+      checkDirectory(@finalDir)
+
+      # finals.all / tai-utc.dat
+            
+      FileUtils.rm_f("#{@finalDir}/finals.7z")
+      FileUtils.rm_f("#{@finalDir}/tai-utc.7z")
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f tai-utc.7z"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decStats -f finals.7z"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      ## test dissemination of previously files pulled
+      prevDir = Dir.pwd
+      Dir.chdir("/tmp/dec_simul_if/filesystem/download/")
+      @@arrDownloadFiles.each{|filename|
+         puts filename
+         system("echo \'#{filename}\' > #{filename}")
+         cmd = "7za a #{File.basename(filename, ".*")}.7z #{filename}"
+         puts cmd
+         system(cmd)
+         cmd = "rm -f #{filename}"
+         puts cmd
+         system(cmd)
+         
+      }
+      Dir.chdir(prevDir)
+
+      cmd = "decGetFromInterface -m FILESYSTEM"
+      puts cmd
+      assert(system(cmd), cmd)
+
+
+      arr = Dir["/tmp/DEC*.log"]  
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+     
+   end
+
    ## --------------------------------------------------------
 
    ## verification of the protocol LOCAL using interface "FILESYSTEM"

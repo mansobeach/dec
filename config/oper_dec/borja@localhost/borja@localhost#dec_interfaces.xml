@@ -13,7 +13,7 @@
       <LoopDelay unit="s">300</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
-      <ParallelDownload>5</ParallelDownload>
+      <ParallelDownload>1</ParallelDownload>
     </TXRXParams>    
     <Server>
       <Protocol>LOCAL</Protocol>
@@ -40,8 +40,12 @@
       </To>
     </Notify>
     <Events>    
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl localhost:4567/dec/arc/requestArchive/*"/>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl localhost:4567/dec/arc/requestArchive/* &amp; "/>
     <!--
+    
+             <Event Name="OnReceiveOK"              executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>
+         <Event Name="OnReceiveNewFilesOK"      executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>
+
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
          
          <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
@@ -547,9 +551,8 @@
       </To>
     </Notify>
     <Events>
-    
          
-                  
+         
          <!--
          
          <Event Name="OnReceiveNewFilesOK"     executeCmd="decSend2Interface -m POD_PUSH"/>

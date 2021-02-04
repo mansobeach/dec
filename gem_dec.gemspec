@@ -76,26 +76,26 @@ Gem::Specification.new do |s|
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_TEST") == true then
 
-      if ENV.include?("DEC_ODATA") == false then
-         s.executables   << 'decTestInterface_CloudFerro'
-         s.executables   << 'decTestInterface_ECDC'
-         s.executables   << 'decTestInterface_SCIHUB'
-         s.executables   << 'decUnitTests'
-         s.executables   << 'decUnitTests_ADP'
-         s.executables   << 'decUnitTests_FTP'
-         s.executables   << 'decUnitTests_FTP_PASSIVE'
-         s.executables   << 'decUnitTests_FTPS'
-         s.executables   << 'decUnitTests_IERS'
-         s.executables   << 'decUnitTests_LOCAL'
-         s.executables   << 'decUnitTests_ncftpput'
-         s.executables   << 'decUnitTests_SBOA'
-         s.executables   << 'decUnitTests_WebDAV'
-         s.executables   << 'decUnitTests_WebDAV_Secure'
-         s.executables   << 'decUnitTests_mail'
-      end
+      s.executables   << 'decTestInterface_CloudFerro'
+      s.executables   << 'decTestInterface_ECDC'
+      s.executables   << 'decTestInterface_SCIHUB'
+      s.executables   << 'decUnitTests'
+      s.executables   << 'decUnitTests_ADP'
+      s.executables   << 'decUnitTests_FTP'
+      s.executables   << 'decUnitTests_FTP_PASSIVE'
+      s.executables   << 'decUnitTests_FTPS'
+      s.executables   << 'decUnitTests_IERS'
+      s.executables   << 'decUnitTests_LOCAL'
+      s.executables   << 'decUnitTests_ncftpput'
+      s.executables   << 'decUnitTests_SBOA'
+      s.executables   << 'decUnitTests_WebDAV'
+      s.executables   << 'decUnitTests_WebDAV_Secure'
+      s.executables   << 'decUnitTests_mail'
 
-      s.executables   << 'decTestInterface_DHUS_OData'
-      s.executables   << 'decUnitTests_PRIP'
+      if ENV.include?("DEC_ODATA") == true then
+         s.executables   << 'decTestInterface_DHUS_OData'
+         s.executables   << 'decTestInterface_S2PRIP'
+      end
    end
    ## --------------------------------------------
 

@@ -17,12 +17,15 @@
 #
 # --query prip:S2B_OPER_MSI_L0__DS_VGS2_20201028T163228_S20201028T144729_N02.09:MSI_L0__GR
 #
+# The queries can be done also specifically by PDI:
+# decODataClient -u <user> -p <pass> -q prip:S2B_OPER_MSI_L0__DS_VGS1_20210126T095435_S20210126T080454_N02.09 -V
 #
 # == Usage
 # decODataClient 
 #     --user      <username>
 #     --password  <password>
 #     --query     <dhus:l2a:GS2B_20200903T104429_018252_N02.14> | <prip>
+#     --Verbose   it shows OData metadata
 # 
 #
 # prip:S2A_OPER_MSI_L0__DS_VGS2:MSI_L0__GR
@@ -69,6 +72,7 @@ def main
    @bShowVersion  = false
    @isVerboseMode = false
    @isDebugMode   = false
+   @bDownload     = false
    
    opts = GetoptLong.new(
      ["--user", "-u",               GetoptLong::REQUIRED_ARGUMENT],
@@ -76,6 +80,7 @@ def main
      ["--query", "-q",              GetoptLong::REQUIRED_ARGUMENT],
      ["--Verbose", "-V",            GetoptLong::NO_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
+     ["--download", "-d",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
      ["--help", "-h",               GetoptLong::NO_ARGUMENT]
      )
@@ -84,6 +89,7 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--Debug"             then @isDebugMode    = true
+            when "--download"          then @bDownload      = true
             when "--user"              then @user           = arg.to_s.chomp
             when "--password"          then @password       = arg.to_s.chomp
             when "--query"             then @query          = arg.to_s.upcase
@@ -215,10 +221,16 @@ def queryPRIP(user, password, query)
       puts item["Name"]
       if @isVerboseMode == true then
          # puts item["ContentLength"]
+         puts "Id                : #{item["Id"]}"
+         puts "ContentLength     : #{item["ContentLength"]}"
          puts "ContentDate       : #{item["ContentDate"]}"
          puts "PublicationDate   : #{item["PublicationDate"]}"
          puts "EvictionDate      : #{item["EvictionDate"]}"
          puts
+      end
+      
+      if @bDownload == true then
+         ret = downloadPDI(item["Id"])
       end
       
       if bQueryDS == true and subitem != nil then
@@ -276,6 +288,8 @@ def queryPRIP_DS_to_PDI(user, password, pdi)
       puts item["Name"]
       if @isVerboseMode == true then
          # puts item["ContentLength"]
+         puts "Id                : #{item["Id"]}"
+         puts "ContentLength     : #{item["ContentLength"]}"
          puts "ContentDate       : #{item["ContentDate"]}"
          puts "PublicationDate   : #{item["PublicationDate"]}"
          puts "EvictionDate      : #{item["EvictionDate"]}"
@@ -475,6 +489,20 @@ def queryDHUS(user, password, query)
    return true
 end
 
+## -------------------------------------------------------------
+
+def downloadPDI(uuid)
+   ## cmd = "curl -k -L -J -O -v -u #{@user}:#{@password} \"https://90.84.179.7/odata/v1/Products(#{uuid})/\\$value\" "
+   
+   cmd = "curl --progress-bar -k -L -J -O -u #{@user}:#{@password} \"https://90.84.179.7/odata/v1/Products(#{uuid})/\\$value\" "
+   if @isDebugMode == true then
+      puts cmd
+   end
+   
+   ret = system(cmd)
+   
+   return ret
+end
 ## -------------------------------------------------------------
 
 ## Print command line help

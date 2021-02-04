@@ -41,12 +41,13 @@ class FileDeliverer2InTrays
    ## Class contructor
    ##
    def initialize(debugMode = false)
-      @@isModuleOK        = false
-      @@isModuleChecked   = false
-      @isDebugMode        = debugMode
+      @@isModuleOK         = false
+      @@isModuleChecked    = false
+      @isDebugMode         = debugMode
       checkModuleIntegrity
-	   @entConfig = ReadInterfaceConfig.instance
-		@dimConfig = ReadConfigIncoming.instance
+	   @entConfig           = ReadInterfaceConfig.instance
+		@dimConfig           = ReadConfigIncoming.instance
+      @entity              = "not initialised"
                   
       # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{@@configDirectory}/dec_log_config.xml")
@@ -84,6 +85,7 @@ class FileDeliverer2InTrays
    ## Main method of the class which delivers the incoming files
    ## from the local Entities In-Boxes to the DIMs In-Trays
    def deliver(mnemonic = "")
+      @entity = mnemonic
 #	   setDebugMode
           
       if mnemonic != "" and @isDebugMode == true then
@@ -170,12 +172,12 @@ class FileDeliverer2InTrays
 
 					ret = disseminate(entity, file, dir, dimsName, hdlinked)
                
-               ## ---------------------------------
-               # 20170601 - Patch to compress locally disseminated files               
-               if ret == true then
-                  ret = compressFile(dimsName, file)
-               end
-               ## ---------------------------------
+#               ## ---------------------------------
+#               # 20170601 - Patch to compress locally disseminated files               
+#               if ret == true then
+#                  ret = compressFile(dimsName, file)
+#               end
+#               ## ---------------------------------
                
                ## ---------------------------------
                
@@ -221,7 +223,7 @@ class FileDeliverer2InTrays
    
    ## It delivers a given file
    def deliverFile(entity, directory, afile)
-      
+      @entity = entity
       file = File.basename(afile)                        
                               
 #      @logger.info("deliverFile directory => #{directory}")
@@ -268,14 +270,14 @@ class FileDeliverer2InTrays
 
          ret = disseminate(entity, file, directory, dimsName, hdlinked)
 
-         # ---------------------------------
-         # 20170601 - Patch to compress locally disseminated files               
-         
-         if ret == true then
-            ret = compressFile(dimsName, file)
-         end
-               
-         # ---------------------------------
+#         # ---------------------------------
+#         # 20170601 - Patch to compress locally disseminated files               
+#         
+#         if ret == true then
+#            ret = compressFile(dimsName, file)
+#         end
+#               
+#         # ---------------------------------
 
          
          # The original file is only deleted if the dissemination has been
@@ -355,91 +357,132 @@ private
    ## > get execution command
    
    def disseminate(entity, afile, fromDir, arrToIntray, hardlinked = false)
-            
-      bReturn = true
       
-      if hardlinked == true and arrToIntray.length <2
-		   if @isDebugMode == true then
-			   @logger.debug("HardLink flag for #{afile} is useless for one target dir")
-			end
-		end
-		
-		prevDir = Dir.pwd
-      
-      file = File.basename(afile)
+      bCompressAny   = false
+      bUnCompressAny = false                
+      bReturn        = true
+		prevDir        = Dir.pwd
+      file           = File.basename(afile)
+		bFirst         = true
+      cmd            = ""
       
 		Dir.chdir(fromDir)
       
-		bFirst      = true
-		firstDir    = ""
-      
-      
-      # @dimConfig
-      
-      arrToIntray.each{|intray|
-               
+      if @dimConfig.isCompressed?(arrToIntray) == true then
+         bCompressAny = true
+      end
+    
+      if @dimConfig.isUnCompressed?(arrToIntray) == true then
+         bUnCompressAny = true
+      end
+        
+      arrToIntray.each{|intray| 
+         ## ------------------------------------------------     
          targetDir = @dimConfig.getInTrayDir(intray)
-         exec      = @dimConfig.getInTrayExecution(intray)
-                  
-#         
+         exec      = @dimConfig.getInTrayExecution(intray)               
          checkDirectory(targetDir)
-		   cmd = ""
-         
-         # -------------------------------------------
-         # Management of event NewFile2Intray
-         
+         compress  = @dimConfig.getInTrayCompress(intray)     
+         ## ------------------------------------------------
+         ## Management of event NewFile2Intray     
          hParams              = Hash.new
-         hParams["filename"]  = file 
-
+         hParams["filename"]  = file
          hParams["directory"] = targetDir
-      
-         # -------------------------------------------  
+         ## ------------------------------------------------  
+         
+         ## first file is firstly placed at @tmpDir
          
 		   if bFirst == true then
 			   bFirst   = false
            
+            ## -----------------------------------
+            ## Place the file in the @tmpDir
+            
+            cmd  = "\\ln -f #{file} #{@tmpDir}/#{file}"         
+            bRet = execute(cmd, "pull")
+
+            if @isDebugMode == true then
+	   		   @logger.debug("[DEC_941.0] Intray #{intray}: Disseminate command (I) : #{cmd}")
+		   	end
+
+            if bRet == true then
+               if @isDebugMode == true then
+	   		      @logger.debug("[DEC_941.0] Success : #{cmd}")
+		   	   end
+            else
+               @logger.error("[DEC_941.0] Failed #{cmd}")
+            end
+            
+            ## -----------------------------------
+            ## file is compressed at the @tmpDir directory
+            if bCompressAny == true then
+               compress7z(file)
+            end
+            
+            ## -----------------------------------
+            
+            if compress == "7z" or compress == "7Z" then
+               if @isDebugMode == true then
+                  @logger.debug("Compress mode detected for #{intray}")
+               end
+                        
+               targetFile =  File.basename(file, ".*")
+               targetFile = "#{targetFile}.7z"
+               cmd = "\\ln -f #{@tmpDir}/7z/#{targetFile} #{targetDir}/#{targetFile}"
+               bRet = execute(cmd, "pull")
+               if bRet == true then
+                  @logger.info("[DEC_115] Intray #{intray}: #{targetFile} disseminated into #{targetDir}")
+               else
+                  @logger.error("[DEC_626] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
+               end
+               next
+            end
+            ## -----------------------------------
+            
+            ## if file is to be decompressed
+            if compress == "7z-x" or compress == "7Z-X" then
+               if @isDebugMode == true then
+                  @logger.debug("Decompress mode detected for #{intray}")
+               end
+               uncompress7z(file, fromDir, targetDir)
+               next
+            end
+            
+            ## -----------------------------------
+            
             ### 20200316 UPDATE
             ### First operation is a hardlink to avoid copies
             # Move operation is not safe.
             # When dissemination is performed to several In-Trays, it is not
             # possible to rely on that a file would be still present in the first intray
             # a file is disseminated in.
-             
-            cmd  = "\\ln -f #{file} #{targetDir}/.TEMP_#{file}"
-            #cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
-            #cmd  = "\\mv -f #{file} #{targetDir}/.TEMP_#{file}"
+            
+            # --------------------------
+            # Remove in target directory any eventual copy of a file with the same name
+            if File.exists?(targetDir+'/'+file) then 
+               @logger.warn("[DEC_555_1] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
+               @logger.warn("[DEC_556_1] Intray #{intray}: #{file} duplicated will be deleted before dissemination")
+               FileUtils.rm_rf(targetDir+'/'+file) 
+            end
+            # --------------------------
+
+            cmd  = "\\ln -f #{file} #{targetDir}/#{file}"
                        
             if @isDebugMode == true then
-	   		   @logger.debug("[DEC_941] Intray #{intray}: Disseminate command (I) : #{cmd}")
+	   		   @logger.debug("[DEC_942.0] Intray #{intray}: Disseminate command (I) : #{cmd}")
 		   	end
             bRet = execute(cmd, "pull")
             
             if bRet == false then
-               @logger.error("[DEC_625] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
+               @logger.error("[DEC_626] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
                Dir.chdir(prevDir)
                bReturn = false
                return false
             end
             
-            # --------------------------
-            # Remove in target directory any eventual copy of a file with the same name
-            if File.exists?(targetDir+'/'+file) then 
-               @logger.warn("[DEC_555] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
-               @logger.warn("[DEC_556] Intray #{intray}: #{file} n")
-               FileUtils.rm_rf(targetDir+'/'+file) 
-            end
-            # --------------------------
-            
-			   cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
-   			if @isDebugMode == true then
-	   		   @logger.debug("[DEC_942.1] Intray #{intray}: Disseminate command (II) : #{cmd}")
-		   	end
-            bRet = execute(cmd, "pull")
-
             if bRet == false then
                @logger.error("FileDeliverer2InTrays::disseminate Could not place #{file} in Target Directory #{targetDir} ! :-(")
                bReturn = false
-            else
+            else  
                if @isDebugMode == true then
                   @logger.debug("chmod a=r #{targetDir}/#{file}")
                end
@@ -452,8 +495,7 @@ private
                end
             
                @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
-                               
-               firstDir = targetDir                            
+                                                         
                event  = EventManager.new
       
                if exec != "" and exec != nil then
@@ -473,108 +515,192 @@ private
                
                # -------------------------------------------
             end
-                                   
-			  
-			else
-			   
-            if hardlinked == true then
-               
-               # ---------------------------------
-               # Delete if the file previously exists in the target dir
-               if File.exist?("#{targetDir}/#{file}") == true then
-                  cmd = "\\rm -f #{targetDir}/#{file}"
-                  @logger.warn("[DEC_555] Intray #{intray}: #{file} duplicated already existed in #{targetDir}")
-                  @logger.warn("[DEC_556] Intray #{intray}: #{file} duplicated will be deleted before dissemination")
-                  execute(cmd, "pull")
-               end
-               
-               # ---------------------------------
-			      cmd = "ln #{firstDir}/#{file} #{targetDir}"
-               if @isDebugMode == true then
-	   		      @logger.debug("[DEC_942.2] Intray #{intray}: Disseminate command : #{cmd}")
-		   	   end
-               bRet = execute(cmd, "pull")
-
-               if bRet == false then
-                  @logger.error("[DEC_626] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
-                  bReturn = false
-               else
-                  if @isDebugMode == true then
-                     @logger.debug("chmod a=r #{targetDir}/#{file}")
-                  end
-                  
-                  begin
-                     FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
-                  rescue Exception => e
-                     @logger.error("Failed chmod a=r #{targetDir}/#{file}")
-                     @logger.error(e.to_s)
-                  end
-                                    
-                  @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
-                  
-                  event  = EventManager.new
-      
-                  if @isDebugMode == true then
-                     event.setDebugMode
-                  end
-
-                  #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
-                  
-                  if @isDebugMode == true then
-                     @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
-                  end
-                  
-                  event.trigger(@entity, "NEWFILE2INTRAY", hParams, @logger)   
-
-               end
-				else
-			      cmd  = "\\cp -f #{file} #{targetDir}/.TEMP_#{file}"
-               #cmd  = "\\cp -f #{firstDir}/#{file} #{targetDir}/.TEMP_#{file}"
-   			   if @isDebugMode == true then
-	   		      @logger.debug(cmd)
-		   	   end
-               bRet = execute(cmd, "pull")
             
-               if bRet == false then
-                  @logger.error("Could not copy file #{file} into target Directory")
-                  bReturn = false
-               end
+			   next
             
-			      cmd  = "\\mv -f #{targetDir}/.TEMP_#{file} #{targetDir}/#{file}"
-   			   if @isDebugMode == true then
-	   		      @logger.debug(cmd)
-		   	   end
-               bRet = execute(cmd, "pull")
-               
-               if bRet == false then
-                  @logger.error("Could not disseminate into #{targetDir} intray")
-                  bReturn = false
-                  Dir.chdir(prevDir)
-                  return false
-               else
-                  @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
+         end
+         
+         ## ------------------------------------------------  
+
+         ## if file is to be decompressed
+         if compress == "7z-x" or compress == "7Z-X" then
+            if @isDebugMode == true then
+               @logger.debug("Decompress mode detected for #{intray}")
+            end
+            uncompress7z(file, fromDir, targetDir)
+            next
+         end
+            
+         fullTarget  = ""
+         thecmd      = ""
+            
+         ## either link from @tmpDir or from LocalInbox
+         
+         ## ---------------------------------
+            
+         if compress == "7z" or compress == "7Z" then
+            targetFile =  File.basename(file, ".*")
+            targetFile = "#{targetFile}.7z"
+            fullTarget = "#{targetDir}/#{targetFile}"
+            thecmd = "\\ln -f #{@tmpDir}/7z/#{targetFile} #{fullTarget}"
+         else
+            targetFile = file
+            fullTarget = "#{targetDir}/#{file}"
+            thecmd = "\\ln -f #{@tmpDir}/#{file} #{fullTarget}"
+         end
+
+         ## ---------------------------------
+         ## Delete if the file previously exists in the target dir
+         if File.exist?("#{fullTarget}") == true then
+            cmd = "\\rm -f #{fullTarget}"
+            @logger.warn("[DEC_555] Intray #{intray}: #{targetFile} duplicated already existed in #{fullTarget}")
+            @logger.warn("[DEC_556] Intray #{intray}: #{targetFile} duplicated will be deleted before dissemination")
+            execute(cmd, "pull")
+         end
+         ## ---------------------------------
+
+         if @isDebugMode == true then
+	         @logger.debug("[DEC_942.2] Intray #{intray}: Disseminate command : #{thecmd}")
+		   end
+            
+         # ---------------------------------
+            
+         bRet = execute(thecmd, "pull")
+
+         if bRet == false then
+            @logger.error("[DEC_626] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
+            bReturn = false
+            next
+         else
+            @logger.info("[DEC_115] Intray #{intray}: #{targetFile} disseminated into #{targetDir}")
+         end
+            
+         # ---------------------------------
+                              
+         begin
+            if @isDebugMode == true then
+               @logger.debug("chmod a=r #{targetDir}/#{targetFile}")
+            end
+            FileUtils.chmod "a=r", "#{targetDir}/#{targetFile}" #, :verbose => true
+         rescue Exception => e
+            @logger.error("Failed chmod a=r #{targetDir}/#{targetFile}")
+            @logger.error(e.to_s)
+         end
+         
+         # ---------------------------------
+            
+         event  = EventManager.new
+      
+         if @isDebugMode == true then
+            event.setDebugMode
+         end
+
+         #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
                   
-                  event  = EventManager.new
-      
-                  if @isDebugMode == true then
-                     event.setDebugMode
-                  end
-      
-                  event.trigger(entity, "NEWFILE2INTRAY")
-   
-                  #@logger.info("Event NEWFILE2INTRAY #{file} => #{targetDir}")
-                  if @isDebugMode == true then
-                     @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
-                  end
-               end
-				end
-			end
+         if @isDebugMode == true then
+            @logger.debug("Event NEWFILE2INTRAY #{file} => #{targetDir}")            
+         end
+                  
+         event.trigger(@entity, "NEWFILE2INTRAY", hParams, @logger)
+            
+			
 		}
+      
 		Dir.chdir(prevDir)
+      
+      if bReturn == true then
+         begin
+            if File.exist?("#{@tmpDir}/#{file}") == true then
+               File.delete("#{@tmpDir}/#{file}")
+            end
+            if File.exist?("#{@tmpDir}/7z/#{File.basename(file, ".*")}.7z") == true then
+               File.delete("#{@tmpDir}/7z/#{File.basename(file, ".*")}.7z")
+            end
+         rescue Exception => e
+            @logger.error(e.to_s)
+         end
+      end
+      
       return bReturn
    end
-	# -------------------------------------------------------------
+   ## ------------------------------------------------------
 
+   def uncompress7z(file, fromDir, inTray)
+      if @isDebugMode == true then
+         @logger.debug("FileDeliverer2InTrays::uncompress7z(#{file})")
+      end
+      
+      tmpsourceFile  = "#{fromDir}/#{file}"
+
+      ## ----------------------------
+
+      if File.exist?(tmpsourceFile) == false then
+         @logger.error("missing #{tmpsourceFile}")
+         @logger.error("skip decompression in 7z into #{inTray}")
+         return false
+      end
+                     
+      ## ----------------------------
+
+      ret = unpack7z(tmpsourceFile, inTray, false, @isDebugMode, @logger)  
+                           
+      if ret == false then
+         @logger.error("[DEC_627] Could not uncompress in #{tmpsourceFile} into #{inTray}")
+         retVal = false
+      else
+         msg = "[DEC_117] I/F #{@entity}: #{file} uncompressed in 7z at #{inTray}"
+         @logger.info(msg)
+      end
+
+      ## ----------------------------
+
+   end
+   
+   ## ------------------------------------------------------
+
+   def compress7z(file)
+      if @isDebugMode == true then
+         @logger.debug("FileDeliverer2InTrays::compress(#{file})")
+      end
+      checkDirectory("#{@tmpDir}/7z")
+      sourceFile     = file
+      tmpsourceFile  = "#{@tmpDir}/7z/#{file}"
+      targetFile     = File.basename(file, ".*")
+      targetFile     = "#{targetFile}.7z"
+      targetFile     = "#{@tmpDir}/7z/#{targetFile}"
+
+      if File.exist?(sourceFile) == false then
+         @logger.error("missing #{sourceFile}")
+         @logger.error("skip compression in #{compress} to #{targetFile}")
+      end
+      
+      cmd = "\\ln -f #{sourceFile} #{tmpsourceFile}"
+      
+      if @isDebugMode == true then
+         @logger.debug(cmd)
+      end
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         @logger.error("Could not copy in #{tmpsourceFile}")
+         return false
+      end     
+               
+      ## ----------------------------
+
+      ret = pack7z(tmpsourceFile, targetFile, true, @isDebugMode, @logger)
+                     
+      if ret == false then
+         @logger.error("Could not compress in 7z #{targetFile}")
+         File.delete(targetFile)
+         retVal = false
+      else
+         msg = "[DEC_116] I/F #{@entity}: #{file} compressed in 7z at TempDir #{@tmpDir}/7z"
+         @logger.info(msg)
+      end
+
+   end
    ## -----------------------------------------------------
    ##
    ## 20170601 Eventual compression upon local dissemination
