@@ -1,27 +1,35 @@
 #!/usr/bin/env ruby
 
 require 'sinatra'
+require 'sinatra/json'
 require 'sinatra/reloader' # if development?
 require 'sinatra/custom_logger'
 require 'active_record'
+require 'bcrypt'
+require 'byebug'
 require 'logger'
 require 'json'
 require 'ftools'
+#require "bundler/setup"
 
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 
 require 'arc/MINARC_API'
+require 'arc/MINARC_API_OData'
+
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Status'
 require 'arc/MINARC_DatabaseModel'
 require 'arc/FileStatus'
 require 'arc/ReadMinarcConfig'
+require 'arc/SinatraControllerOData'
+
 
 include CUC::DirUtils
 include FileUtils::Verbose
 include ARC
-
+include ARC_ODATA
 
 ## ----------------------------------------------------------
 ##
@@ -39,7 +47,7 @@ class MINARC_Server < Sinatra::Base
          @@isDebugMode = true
       else
          @@isDebugMode = false
-      end 
+      end
 
       puts "MINARC_Server: Loading general configuration / debug = #{@@isDebugMode}"
       # set :bind, '0.0.0.0'
@@ -145,6 +153,53 @@ class MINARC_Server < Sinatra::Base
    # ----------------------------------------------------------
 
    ## =================================================================
+
+   ## Enforce basic authentication for the complete API
+   
+   use Rack::Auth::Basic, "Check your credentials" do |username, password|
+      User.find_by name: username and User.find_by(name: username).authenticate(password)
+   end
+   ## =================================================================
+
+   ### ODATA API START
+
+   ## =================================================================
+   
+   ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
+   
+   get ARC_ODATA::API_URL_PRODUCT_QUERY do
+      if settings.isDebugMode == true then
+         @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY}")
+      end
+
+      ret = ARC_ODATA::ControllerODataProductQuery.new(self, \
+                        @@logger, \
+                        settings.isDebugMode).query
+      content_type :json 
+      body ret            
+   end
+
+   ## =================================================================
+
+   ## https://<service-root-uri>/odata/v1/Products(Id)/$value
+
+   get ARC_ODATA::API_URL_PRODUCT_DOWNLOAD do
+      if settings.isDebugMode == true then
+         @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_DOWNLOAD}")
+      end
+
+      ARC_ODATA::ControllerODataProductDownload.new(self, \
+                        @@logger, \
+                        settings.isDebugMode).download
+   end
+   ## =================================================================
+
+  
+   ### ODATA API END
+
+   ### =================================================================
+
+   ## =================================================================
    ##
 
    get "#{API_URL_RETRIEVE_CONTENT}/:filename" do |filename|
@@ -240,6 +295,9 @@ class MINARC_Server < Sinatra::Base
    ## GET API_URL_REQUEST_ARCHIVE?name=S2__OPER_REP_ARC____EPA
    ##
    get ARC::API_URL_REQUEST_ARCHIVE do
+#      @@logger.info("sleep start")
+#      sleep(3.0)
+#      @@logger.info("sleep stop")
       wildcard = params['name']
       cmd      = "minArcStore -t S2PDGS -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
       if settings.isDebugMode == true then
@@ -608,7 +666,7 @@ class MINARC_Server < Sinatra::Base
    # =================================================================
 
    not_found do
-      "MINARC_Server shit: page #{request.path_info} not found"
+      "MINARC_Server shit: page #{request.path_info} not found\n"
    end
 
    # ----------------------------------------------------------
@@ -618,14 +676,20 @@ class MINARC_Server < Sinatra::Base
       "There is nothing wrong really :-p"
    end
 
-   # ----------------------------------------------------------
+   ## -----------------------------------------------------------
    
    get '/' do
+      user = request.env["REMOTE_USER"]
+      puts
+      puts user 
+      puts
+      puts params[:name]
+      puts
       code = "<%= Time.now %>"
       erb code
    end
    
-   # ----------------------------------------------------------
+   ## -----------------------------------------------------------
    
    get '/hello' do
       "Hello Blimey !"
@@ -677,6 +741,11 @@ class MINARC_Server < Sinatra::Base
 
    ## -----------------------------------------------------------
 
+   ## ================================================================
+
+   ## MAIN
    run! if __FILE__ == $0
+
+   ## ================================================================
 
 end # class

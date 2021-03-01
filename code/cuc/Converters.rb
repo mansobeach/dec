@@ -21,15 +21,16 @@ module Converters
 
    ## -----------------------------------------------------------
    
-   # String formats supported: 
-   # - 20120325                     => "%Y%m%d"
-   # - 20120325T154814              => "%Y%m%dT%H%M%S"                        => XL_ASCII_CCSDSA_COMPACT
-   # - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
-   # - 21-MAY-2015 14:00:01.516     => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
-   # - 01-FEB-2016 02:20:40.59      => "%e-%b-%Y %H:%M:%S.%L"  / length 23
-   # - 01-FEB-2016 02:20:40.5       => "%e-%b-%Y %H:%M:%S.%L"  / length 22
-   # - 22-FEB-2016 15:13:08         => "%e-%b-%Y %H:%M:%S"     / length 20
-   # - 2015-11-16T00:30:27          => "%Y-%m-%dT%H:%M:%S"
+   ## String formats supported: 
+   ## - 20120325                     => "%Y%m%d"
+   ## - 20120325T154814              => "%Y%m%dT%H%M%S"                        => XL_ASCII_CCSDSA_COMPACT
+   ## - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
+   ## - 21-MAY-2015 14:00:01.516     => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
+   ## - 01-FEB-2016 02:20:40.59      => "%e-%b-%Y %H:%M:%S.%L"  / length 23
+   ## - 01-FEB-2016 02:20:40.5       => "%e-%b-%Y %H:%M:%S.%L"  / length 22
+   ## - 22-FEB-2016 15:13:08         => "%e-%b-%Y %H:%M:%S"     / length 20
+   ## - 2015-11-16T00:30:27          => "%Y-%m-%dT%H:%M:%S"
+   ## - 2020-05-15T00:00:00.000Z     => "%Y-%m-%dT%H:%M:%S"
    
    
    def str2date(str)
@@ -52,6 +53,18 @@ module Converters
 
       begin
          if str.length == 19 and str.include?("T") then
+            return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S")
+         end
+      rescue Exception => e
+         puts e.to_s
+         puts
+         puts str
+         puts
+         exit(99)
+      end
+
+      begin
+         if str.length == 24 and str.include?("T") then
             return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S")
          end
       rescue Exception => e

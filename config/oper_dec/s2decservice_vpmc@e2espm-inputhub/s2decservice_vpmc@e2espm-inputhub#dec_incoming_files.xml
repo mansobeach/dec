@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- 
+
+List of tickets 
+
+-->
+
+
 <Config>
 
    <!-- =========================================================== -->
@@ -169,9 +176,6 @@
 
       <ListFilesDisseminated>
     
-      <!--
-         https://jira.elecnor-deimos.com/browse/S2MPASUP-385
-      -->
     
       <!--
     
@@ -463,6 +467,17 @@
            <Intray>ARCHIVE_S2PDGS</Intray>
            <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>SHADOW_S2PDGS</Intray>
+           <Intray>S2BOA</Intray>
+           <Intray>S2BOA_SHADOW</Intray>
+        </ToList>
+     </File>
+
+     <File Type="*REP_PASS_E_EDRS*">
+        <HardLink>True</HardLink>
+        <ToList>
+           <Intray>CLOUD_SBOA.FTPOutbox</Intray>
+           <Intray>ARCHIVE_S2PDGS</Intray>
+           <Intray>OPERATIONAL_S2PDGS</Intray>
            <Intray>S2BOA</Intray>
            <Intray>S2BOA_SHADOW</Intray>
         </ToList>

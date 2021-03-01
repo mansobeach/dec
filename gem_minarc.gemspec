@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
                   Dir['code/arc/MINARC_*.rb'] + \
                   Dir['code/arc/ReadMinarcConfig.rb'] + \
                   Dir['code/arc/ReportEditor.rb'] + \
+                  Dir['code/arc/SinatraControllerOData.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
@@ -70,6 +71,7 @@ Gem::Specification.new do |s|
   ## Include test executables
   if ENV.include?("MINARC_TEST") == true then
      s.executables   << 'minArcUnitTests'
+     s.executables   << 'minArcUnitTestsOData'
      s.executables   << 'minArcSmokeTestLocal'
      s.executables   << 'minArcSmokeTestRemote'
      s.executables   << 'minArcTestHandler_VIDEO'
@@ -84,6 +86,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('bcrypt', '~> 3.1')
+  s.add_dependency('byebug', '~> 11.1')
   s.add_dependency('dotenv', '~> 2.7')
   s.add_dependency('exiftool', '~> 1.2')
   s.add_dependency('filesize', '~> 0.1')

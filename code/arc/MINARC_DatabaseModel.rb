@@ -8,11 +8,14 @@
 ##
 ## === Mini Archive Component (MinArc)
 ## 
-## Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 decdev
+## Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 bolf
 ##
 ## module MINARC
 ##
 #########################################################################
+
+### https://bigbinary.com/blog/application-record-in-rails-5
+### https://github.com/rails/rails/pull/22567#discussion-diff-47831156
 
 require 'rubygems'
 require 'json'
@@ -64,12 +67,25 @@ ActiveRecord::Base.establish_connection(
 ## =====================================================================
 
 class User < ActiveRecord::Base
+   include BCrypt
    has_secure_password
+   validates_uniqueness_of :name
+   validates :name, presence: true, uniqueness: { case_sensitive: false }
+   # has_secure_password :password, validations: false
+   
+  def validate
+    super
+    validates_unique(:name)
+    validates_presence([:name])
+    validates_format(USERNAME_REGEXP, :name)
+  end   
 end
 
 ## =====================================================================
 
 class ArchivedFile < ActiveRecord::Base
+
+   self.implicit_order_column = "id"
 
    validates_presence_of   :name
    validates_uniqueness_of :name
@@ -78,18 +94,30 @@ class ArchivedFile < ActiveRecord::Base
    validates_uniqueness_of :filename
 
    validates_presence_of   :filetype
-
    validates_presence_of   :archive_date
 
    # --------------------------------------------------------
    
    def json_introspection
-      return JSON.pretty_generate(hash_introspection.to_s)
+      return hash_introspection.to_json
+      # return JSON.pretty_generate(hash_introspection.to_json)
    end
    # --------------------------------------------------------
    
    def hash_introspection
       hFile = Hash.new
+
+#      ## ----------------------------
+#      ## recover if model is still 1.0
+#      begin
+#         hFile['uuid']              = self.uuid
+#      rescue Exception => e
+#         puts e.to_s
+#         hFile['uuid']              = ""
+#      end
+#      ## ----------------------------
+      hFile['uuid']              = self.uuid
+      
       hFile['name']              = self.name
       hFile['filename']          = self.filename
       hFile['path']              = self.path
@@ -101,11 +129,25 @@ class ArchivedFile < ActiveRecord::Base
       hFile['last_access_date']  = self.last_access_date
       hFile['access_counter']    = self.access_counter
       hFile['info']              = self.info
+      
+      hFile['md5']               = self.md5
+      
+#      ## ----------------------------
+#      ## recover if model is still 1.0
+#      begin
+#         hFile['md5']               = self.md5
+#      rescue Exception => e
+#         puts e.to_s
+#         hFile['md5']               = ""
+#      end
+#      ## ----------------------------
+      
       return hFile
    end
    # --------------------------------------------------------
    
    def print_introspection
+      puts "uuid            : #{self.uuid}"
       puts "Logical name    : #{self.name}"
       puts "Physical name   : #{self.filename}"
       puts "Path            : #{self.path}"
@@ -113,6 +155,7 @@ class ArchivedFile < ActiveRecord::Base
       puts "Size            : #{self.size} Bytes"
       puts "Size Original   : #{self.size_original} Bytes"
       puts "Disk Occupation : #{self.size_in_disk} Bytes"
+      puts "md5             : #{self.md5}"
       puts "Archive Date    : #{self.archive_date}"
       puts "Last Access     : #{self.last_access_date}"
       puts "Info            : #{self.info}"
@@ -340,9 +383,6 @@ private
 end
 
 
-#=====================================================================
-
-
-#-----------------------------------------------------------
+## ===================================================================
 
 

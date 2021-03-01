@@ -38,7 +38,9 @@ class ReadMinarcConfig
       @@isModuleChecked   = false
       @isDebugMode        = false
       @inventory          = nil
-      @node               = "node not defined" 
+      @node               = "node not defined"
+      @clientUser         = nil
+      @clientPass         = nil
       checkModuleIntegrity
 		defineStructs
       loadData
@@ -120,7 +122,16 @@ class ReadMinarcConfig
    end
    ## -----------------------------------------------------------
 
+   def getClientUser
+      return @clientUser
+   end
+   ## -----------------------------------------------------------
 
+   def getClientPassword
+      return @clientPass
+   end
+   ## -----------------------------------------------------------
+   
 private
 
    @@isModuleOK        = false
@@ -177,10 +188,13 @@ private
       end
       
       processNode(xmlFile)
+      
       @arrRules = processRules(xmlFile)
       @workflow = parseWorkflow(xmlFile)
       
       parseInventoryConfig(xmlFile)
+      
+      processClientConfig(xmlFile)
    end   
    ## -----------------------------------------------------------
    
@@ -354,6 +368,32 @@ private
       ## -----------------------------------------
 
    end
+
+   ## -----------------------------------------------------------
+   
+   def processClientConfig(xmlFile)
+         
+      ## -----------------------------------------
+      ## Process Reports Configuration
+      XPath.each(xmlFile, "Configuration/Client"){      
+         |client|
+
+         XPath.each(client, "User"){
+            |user|  
+            @clientUser = user.text.to_s
+         }
+
+         XPath.each(client, "Password"){
+            |password|  
+            @clientPass = password.text.to_s
+         }
+      }
+      
+      ## -----------------------------------------
+      
+   end
+   
+   ## -----------------------------------------------------------
 
    # converts times in seconds according to the original unit.
    def conv2seconds(value, unit)

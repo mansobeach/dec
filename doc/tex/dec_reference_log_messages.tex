@@ -70,7 +70,12 @@ The file referenced in the message has been downloaded from the interface and pl
 \subsection{[DEC\_115] File Disseminated}
 The file referenced in the message met any of the and it has been moved from \hyperref[LocalInbox]{\textit{LocalInbox}} into the Intray(s) matching the first \hyperref[Dissemination rules]{\textit{dissemination rule}}.
 
+\label{DEC116}
 \subsection{[DEC\_116] File Compressed}
+The file referenced in the message has been compressed according to the \hyperref[Dissemination rules]{\textit{dissemination rule}} \textit{Compress} optional configuration item of the \textit{Intray} entity.
+
+\label{DEC117}
+\subsection{[DEC\_117] File Uncompressed}
 The file referenced in the message has been compressed according to the \hyperref[Dissemination rules]{\textit{dissemination rule}} \textit{Compress} optional configuration item of the \textit{Intray} entity.
 
 \subsection{[DEC\_120] Unknown File Deleted}
@@ -261,6 +266,7 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 	\item \textbf{[DEC\_705]} I/F "interface": Push miss-configuration
 	\item \textbf{[DEC\_711]} Could not reach directory from \textit{SourceDir} to fetch files for push
 	\item \textbf{[DEC\_713]} Could not place file in  \textit{LocalOutbox} to prepare files out-tray for push	
+	\item \textbf{[DEC\_799]} Integration problem
 \end{itemize}
 
 \label{DEC600}
@@ -469,6 +475,10 @@ This message is the (SMTP) server error when sending notification emails.
 \label{DEC750}
 \subsection{[DEC\_750] Event Error}
 This message is logged when the command executed associated to some \hyperref[Events]{\textit{Event}} raised.
+
+\label{DEC799}
+\subsection{[DEC\_799] Integration Error}
+This message is logged when some unexpected error raised.
 
 % ------------------------------------------------------------------------------
 % Debug Messages

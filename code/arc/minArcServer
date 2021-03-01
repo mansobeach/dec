@@ -203,8 +203,9 @@ def startServer
    @locker.setRunning
    
    @logger.info("[ARC_005] Starting minArcServer")
-   
+
    require 'arc/MINARC_Server'
+
 
    MINARC_Server.set :isDebugMode, @isDebugMode
 

@@ -75,8 +75,16 @@ module WrapperCURL
   
    ## -------------------------------------------------------------
    ##
-   def getURL(url, isDebugMode = false)
-      cmd = "curl -L -f -s -X GET #{url}"
+   def getURL(url, user = nil, pass = nil, isDebugMode = false)
+      
+      cmd = ""
+      if user != nil and user != "" then
+         cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+      else
+         cmd = "curl --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+      end      
+
+      
       if isDebugMode == true then
          puts cmd
       end
@@ -209,10 +217,15 @@ module WrapperCURL
    
    ## curl parameters tailored for sending big files
 
-   def postFile(url, file, hFormParams, isDebugMode = false)
-      ## --silent mode removed
-      cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+   def postFile(url, user, pass, file, hFormParams, isDebugMode = false)
       
+      cmd = ""
+      if user != nil and user != "" then
+         cmd = "curl -u #{user}:#{escapePassword(pass)} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+      else
+         cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+      end  
+    
 #      if isDebugMode == true then
 #         cmd = "#{cmd} -v "
 #      end
@@ -259,20 +272,29 @@ module WrapperCURL
    ##  --remote-header-name / -J 
    ## option -J
 
-   def getFile(url, filename, isDebugMode = false)
+   def getFile(url, user, pass, filename, isDebugMode = false)
       ## --progress-bar commented
-      cmd = "curl -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
-      
+
+      if user != nil and user != "" then
+         cmd = "curl --progress-bar -u #{user}:#{escapePassword(pass)} -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      else
+         cmd = "curl --progress-bar -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      end  
+  
       if isDebugMode == true then
          cmd = "#{cmd} -v "
       end
 
       # cmd = "#{cmd} #{url} > #{filename}"
       
-      cmd = "#{cmd} #{url}"
+      cmd = "#{cmd} \'#{url}\'"
       
       if isDebugMode == true then
+         puts "-------------------------"
+         puts "WrapperCURL::getFile"
          puts cmd
+         puts
+         puts "-------------------------"
       end
       
       system(cmd)

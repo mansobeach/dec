@@ -92,6 +92,12 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
+      <DataProvider isTriggerType="yes">
+	      <DataType>TLM__REQ_B</DataType>
+	      <FileType>*TLM__REQ_B*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
       <DataProvider isTriggerType='no'>
 	      <DataType>S2_UNKNOWN</DataType>
 	      <FileType>S2*</FileType>
@@ -99,7 +105,7 @@
       </DataProvider>
  
       <DataProvider isTriggerType='no'>
-	      <DataType>S2_UNKNOWN</DataType>
+	      <DataType>EDRS_UNKNOWN</DataType>
 	      <FileType>EDR*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
@@ -124,6 +130,7 @@
       <PriorityRule rank="11"    class='DataType' type='OPLTA'       sort='DESC' />
       <PriorityRule rank="12"    class='DataType' type='OPLTAS'      sort='DESC' />
       <PriorityRule rank="13"    class='DataType' type='OPDAM'       sort='DESC' />
+      <PriorityRule rank="14"    class="DataType" type="TLM__REQ_B"  sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -204,6 +211,12 @@
 
       <ProcessingRule dataType='OPDAM' triggerType='OPDAM' coverage='SAME'>
 	      <executable>orc_eboa_triggering -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="TLM__REQ_B" triggerType="TLM__REQ_B" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   

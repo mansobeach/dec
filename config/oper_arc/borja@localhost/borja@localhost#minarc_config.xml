@@ -34,5 +34,9 @@
       <Database_Password>e2edc</Database_Password>
    </Inventory>
 
+   <Client>
+      <User>test</User>
+      <Password>test</Password>
+   </Client>
 
 </Configuration>

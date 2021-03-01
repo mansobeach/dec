@@ -258,7 +258,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
                <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
-	            <Intray>S2BOA_SHADOW</Intray>
          </ToList>
       </File>
 
@@ -269,7 +268,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
                <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
-	            <Intray>S2BOA_SHADOW</Intray>
          </ToList>
       </File>
 
@@ -280,20 +278,20 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
          <ToList>      
             <Intray>ARCHIVE_S2PDGS</Intray>
             <Intray>SHADOW_S2PDGS</Intray>
+            <Intray>S2BOA_SHADOW</Intray>
             <!--
             <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
             -->
          </ToList>
       </File>
 
-      <File Type="*_EPAE_*">
+      <File Type="*_EPA*">
          <HardLink>True</HardLink>
          <ToList>      
                <Intray>ARCHIVE_S2PDGS</Intray>
                <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
-	            <Intray>S2BOA_SHADOW</Intray>
             <!--
             <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
             -->
@@ -329,7 +327,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
             <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
             <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
             <Intray>OPERATIONAL_S2PDGS</Intray>
-	         <Intray>S2BOA_SHADOW</Intray>
         </ToList>
      </File>
 

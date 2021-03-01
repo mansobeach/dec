@@ -2,7 +2,8 @@
 
 # == Synopsis
 #
-# This is a MINARC command line tool that shows status according to given criteria. 
+# This is a MINARC command line tool that shows status according to given criteria.
+# The output format is given in JSON to eventually support m2m exchanges
 # 
 # == Usage
 # minArcStatus -t <filetype> [-s <start> -e <end>] | -f <filename>
@@ -239,7 +240,8 @@ def main
    if @bGlobal == true then
       ret = Hash.new
       if @bNoServer == true then
-         fileStatus = ARC::MINARC_Status.new(nil)
+         fileStatus = ARC::FileStatus.new(nil)
+         # fileStatus = ARC::MINARC_Status.new(nil)
          if @isDebugMode == true then
             fileStatus.setDebugMode
          end
@@ -272,7 +274,7 @@ end
 
 #-------------------------------------------------------------
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
@@ -286,13 +288,10 @@ def usage
    }
 end
 
-#-------------------------------------------------------------
+## ---------------------------------------------------------
 
-
-#-------------------------------------------------------------
-
-#===============================================================================
-# Start of the main body
+## =============================================================================
+## Start of the main body
 main
-# End of the main body
-#===============================================================================
+## End of the main body
+## =============================================================================

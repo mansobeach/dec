@@ -17,14 +17,16 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
-
 require 'cuc/Log4rLoggerFactory'
+
+require 'ctc/WrapperCURL'
 
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
 require 'arc/MINARC_Status'
 require 'arc/ReadMinarcConfig'
-
+require 'arc/MINARC_API_OData'
+      
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
 # Preconditions:
@@ -36,11 +38,13 @@ require 'arc/ReadMinarcConfig'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
+##  0.0  - test_md5
 ##  0.1  - test_ReadConfig
 ##  0.2  - test_commandline_helpers
 ##  0.3  - test_minArcDB
 ##  1.0  - test_local_minArcStore
-##  1.1  - test_local_minArcStore_Bulk
+##  1.1  - test_local_minArcStore_Errors
+##  1.2  - test_local_minArcStore_Bulk
 ##  2  - test_local_minArcRetrieve
 ##  3  - test_local_purge
 ##  4  - test_local_status_filename
@@ -58,15 +62,23 @@ require 'arc/ReadMinarcConfig'
 ## 16  - test_handler_m2ts_local_mp4
 ## 17  - test_local_minArcFile
 ## 18  - test_minArcServer
-## 19  - test_train_server
-## 20  - test_minArcReallocate
-## 21  - test_contingency
+## 19  - test_odata_server
+## 20  - test_train_server
+## 21  - test_minArcReallocate
+## 22  - test_contingency
+## 22  - test_odata_download
+## 23  - test_odata_query_name
+## 24  - test_odata_query_date
+## 24  - test_odata_query_count
 
 class TestCaseStore < Test::Unit::TestCase
 
+   include CTC::WrapperCURL
+
    include CUC::DirUtils
    include ARC
-   
+   include ARC_ODATA
+
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
    
@@ -128,7 +140,12 @@ class TestCaseStore < Test::Unit::TestCase
          cmd = "minArcDB -c"
          puts cmd
          ret = system(cmd)
-      rescue
+         
+         cmd = "minArcDB -a test:test"
+         puts cmd
+         ret = system(cmd)
+         
+      rescue Exception => e
       end
 
       begin
@@ -159,7 +176,9 @@ class TestCaseStore < Test::Unit::TestCase
       
       @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
       @@testFile1          = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
+      @@testFile2          = "S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
       @@filename1_noext    = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
+      @@filename2_noext    = "S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
       @@errorZone          = ENV['MINARC_ARCHIVE_ERROR']
 
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
@@ -168,6 +187,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@prevDir = Dir.pwd     
       Dir.chdir(@@testDataDir)
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      system("echo \'S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       Dir.chdir(@@prevDir)
 
       system("minArcServer -k")
@@ -182,6 +202,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir (prevDir)
       puts @serverPID
 
+      sleep(2.0)
 
       @@arrInputFiles = [ \
                            "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
@@ -255,6 +276,23 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
+
+
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+      
+      cmd = "minArcDB -a test:test"
+      puts cmd
+      assert(system(cmd), "created used test")
+      
+      
+      
+      system("\\rm -rf /tmp/minarc_log_file*.log")
       
       cmd = "minArcPurge -Y"
       ret = system(cmd)
@@ -297,6 +335,23 @@ class TestCaseStore < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
+   def test_md5
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+
+      require 'cuc/Wrapper_md5sum'
+      full_path_filename = "/tmp/test_file_md5"
+      system("echo \'my test md5\' > #{full_path_filename}")
+      
+      assert(CUC::WrapperMD5SUM.new(full_path_filename).md5 != nil, "MD5 computation")
+      assert(CUC::WrapperMD5SUM.new(full_path_filename).md5.length == 32, "32 bytes")
+   end
+
+   ## ------------------------------------------------------
+   
    def test_ReadConfig
       puts __method__.to_s
       puts
@@ -331,6 +386,15 @@ class TestCaseStore < Test::Unit::TestCase
       node = config.getNode
       puts node
       assert(node != nil, "get node")
+   
+      name = config.getClientUser
+      puts name
+      assert(name != nil, "client name")
+ 
+      pass = config.getClientPassword
+      puts pass
+      assert(pass != nil, "client password")
+  
    
    end
    ## ------------------------------------------------------
@@ -492,7 +556,66 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcDB -c -H"
       puts cmd
       assert(system(cmd), "minArcDB second time / happy ending")
+      
+      ## -----------------------------------------
+      ## Need to alter MINARC_Migrations::CreateArchivedFiles
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+
+      cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+      
+      ## -----------------------------------------
+      
+      cmd = "minArcDB -U"
+      puts cmd
+      assert(system(cmd), "minArcDB Update")
+
+      cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+
+
+      ## -------------------------------
+      ## Users management
+
+      @@conf = MINARC_Environment.new
+      
+      @@conf.wrapper_load_config
+
+      @@conf.wrapper_print_environment
+      
+      require 'arc/MINARC_DatabaseModel'
+      
+      now = Time.now
+      
+      user = User.new(name: 'mario', password: 'cipollini', created_at: now)
+      user.save
             
+      assert(user.authenticate('cipollini') != false, "authenticated password for #{user.name}")
+      assert(user.authenticate('wrong_pass') == false, "not authenticated password for #{user.name}")
+
+      user = User.new(name: 'mario', password: 'cipollini', created_at: now)
+      user.save
+
+      
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+      
+      user = User.find_by name: "test"
+      assert(user.authenticate('test') != false, "authenticated password for #{user.name}")
+            
+      @@conf.unset_config
+      
+      ## -------------------------------      
    end
    ## -----------------------------------------------------------
    ##
@@ -509,12 +632,96 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
       puts cmd
       system(cmd)
+
+      cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
       puts cmd
       assert(system(cmd), "minArcStore")
-      
+
+      cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+ 
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+
+      cmd = "minArcStatus -f #{@@filename2_noext} --noserver"
+      puts cmd
+      assert(system(cmd), "minArcStatus")
+     
       system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename2_noext}.7z")
+      
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_100 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see successful operations #{__method__.to_s}") 
+
+   end
+   ## ------------------------------------------------------
+
+
+   ## -----------------------------------------------------------
+   ##
+   ## 
+   def test_local_minArcStore_Errors
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+
+      cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+ 
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+     
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename2_noext}.7z")
+      
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_100 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see successful operations #{__method__.to_s}") 
+
+      ## archive repetition which shall fail due to missing file in input     
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(!system(cmd), "minArcStore")
+
+
+      ## archive repetition which shall fail due to previously archived file     
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(!system(cmd), "minArcStore")
+
+      cmd = "grep ARC_605 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see successful operations #{__method__.to_s}") 
+      
    end
    ## ------------------------------------------------------
 
@@ -538,7 +745,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       sleep(3.0)
 
-      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
+      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M -D"
       puts cmd
       assert(spawn(cmd), "minArcStore bulk mode")
       sleep(1.0)
@@ -731,12 +938,23 @@ class TestCaseStore < Test::Unit::TestCase
    end
 
    ## ----------------------------------------------------------- 
+   ##
+   
    def test_remote_api_version
-      puts __method__.to_s
       puts
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
+
+#      cmd = "minArcServer -k"
+#      puts cmd
+#      system(cmd)
+#
+#      sleep(2.0)
+#
+#      cmd = "minArcServer -s &"
+#      puts cmd
+#      spawn(cmd)
 
       @@conf = MINARC_Environment.new
       
@@ -745,7 +963,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_print_environment
 
       arc = ARC::MINARC_Client.new
-      # arc.setDebugMode
+      arc.setDebugMode
 
       version = arc.getVersion
       
@@ -754,7 +972,15 @@ class TestCaseStore < Test::Unit::TestCase
       
       @@conf.wrapper_unset_config 
       
+      
       @@conf.wrapper_print_environment
+      
+      puts
+      puts "END OF MINARC_UnitTests::#{__method__.to_s}"
+      puts "================================================"
+      puts
+
+      
    end
    ## -----------------------------------------------------------
 
@@ -988,10 +1214,23 @@ class TestCaseStore < Test::Unit::TestCase
       
       Dir.chdir(@@prevDir)
       
-      test_local_minArcStore
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
 
-      puts
-      puts
+      cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
+ 
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
+      puts cmd
+      assert(system(cmd), "minArcStore")
 
       cmd = "minArcStatus -g --noserver"
       puts cmd
@@ -1262,6 +1501,63 @@ class TestCaseStore < Test::Unit::TestCase
    end
    ## -------------------------------------------------------------
 
+   ## -------------------------------------------------------------
+   ##
+   ## odata server
+
+   def test_odata_server
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcPurge -Y"
+      puts cmd
+      ret = system(cmd)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+
+      puts
+      
+      sleep(5.0)
+ 
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+
+
+      ## ------------------------------------
+      ## request archive polling
+      cmd = "curl \"localhost:4567/odata/v1/Products?\\$filter=startswith(Name,'S1A_AUX_')\" "
+      puts
+      puts cmd
+      puts
+      system(cmd)
+            
+      cmd = "curl \"localhost:4567/odata/v1/Products?\\$filter=contains(Name,'S2__OPER_AUX_UT1UTC')\" "
+      puts
+      puts cmd
+      puts
+      system(cmd)
+            
+      
+   end
+   ## -------------------------------------------------------------
+
    def test_train_server
       puts __method__.to_s
       puts
@@ -1325,7 +1621,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "minArcStatus")
 
-      cmd = "minArcStatus -f #{@@testFile1} | jq .path"
+      cmd = "minArcStatus --noserver -f #{@@testFile1} | jq .path"
       path = `#{cmd}`
       path = path.dup.gsub!('"', '').chop
       
@@ -1410,6 +1706,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir(@@errorZone)
       
       arr = Dir["#{File.basename(@@testFile1, ".*")}*"] 
+      puts arr
       assert(!arr.empty?, "test file in error zone")
       assert(!File.exist?("/tmp/#{arr[0]}"), "test file removed")
 
@@ -1422,6 +1719,421 @@ class TestCaseStore < Test::Unit::TestCase
       
    end
    ## -----------------------------------------------------------
+
+   def test_odata_download
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts
+        
+      cmd = ""
+
+      config = ReadMinarcConfig.instance   
+      server = config.getArchiveServer
+       
+      url = "localhost:4567/odata/v1/Products"
+   
+      ## -------------------------------
+      
+      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
+         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
+      end
+
+      ## -------------------------------
+      ## well-formed download request
+      uuid = "1234-acds-22e2e121e"
+
+      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
+      puts cmd
+      system(cmd)
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed unsupported request / bad request
+      uuid = "1234-acds-22e2e121e"
+
+      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$count\' "
+      puts cmd
+      system(cmd)
+      ## -------------------------------
+
+      ## store a test file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      uuid =  ret.chop.gsub("\"","")
+      assert($?.exitstatus, "Retrieving the uuid")
+      ## -------------------------------
+   
+      ## -------------------------------
+      ## well-formed download request / good request
+#      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
+#      puts cmd
+#      ret = system(cmd)      
+#      assert(ret, "successful curl download")
+      
+      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
+         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
+      end
+      
+      theURL = "#{url}(#{uuid})/\$value"
+      ret = getFile(theURL, "test", "test", "thefile", true)
+      
+      assert(ret, "File download with WrapperCURL.getFile")
+      
+      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
+         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
+      end
+
+      ## -------------------------------
+   
+   end
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def test_odata_query_name
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts
+        
+      cmd = ""
+
+      config = ReadMinarcConfig.instance   
+      server = config.getArchiveServer
+      
+      
+      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
+   
+      ## -------------------------------
+      
+      ## store a test file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      uuid =  ret.chop.gsub("\"","")
+      assert($?.exitstatus, "Retrieving the uuid")
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / bad function request
+      cmd = "curl -v -u test:test \'#{url}$filter=notsupportedfunction(Name,'S2')' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / bad property request
+      cmd = "curl -v -u test:test \'#{url}$filter=startswith(File,'S2')' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      
+      ## -------------------------------
+
+   
+      ## -------------------------------
+      ## well-formed query request / good request
+      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+          
+      ## -------------------------------
+ 
+      ## -------------------------------
+      ## well-formed query request / good request with no results
+      cmd = "curl -v -u test:test \'#{url}$filter=endswith(Name,'S2')'"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+          
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / good request
+      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+          
+      ## -------------------------------
+
+  
+   end
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def test_odata_query_date
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts
+        
+      cmd = ""
+
+      config = ReadMinarcConfig.instance   
+      server = config.getArchiveServer
+      
+      
+      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
+   
+      ## -------------------------------
+      
+      ## store test file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      uuid =  ret.chop.gsub("\"","")
+      assert($?.exitstatus, "Retrieving the uuid")
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate lt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate le 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20le%202020-05-15T00:00:00.000Z' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate ge 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_210 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see query traces #{__method__.to_s}") 
+
+
+      ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
+  
+   end
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def test_odata_query_count
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts
+        
+      cmd = ""
+
+      config = ReadMinarcConfig.instance   
+      server = config.getArchiveServer
+      
+      
+      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
+   
+      ## -------------------------------
+      
+      ## store test file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      uuid =  ret.chop.gsub("\"","")
+      assert($?.exitstatus, "Retrieving the uuid")
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$count=true
+      
+      cmd = "curl -v -u test:test \'#{url}Products?$count=true' "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_210 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see query traces #{__method__.to_s}") 
+
+  
+   end
+   ## -----------------------------------------------------------
+
 
 end
 

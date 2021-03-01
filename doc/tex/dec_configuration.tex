@@ -234,6 +234,7 @@ Below the possible \textit{Event Name} values which can be configured:
 %% ========================================================= 
 %% ========================================================= 
 
+\newpage
 \section{Pull circulations}
 
 The mechanism to \textit{select}, \textit{download} and locally \textit{disseminate} files to a DEC node is referred to \textit{pull mode}.
@@ -450,15 +451,48 @@ Then the rules for local dissemination of the pulled files into the in-tray(s) a
 \end{lstlisting}
 
 % ==========================================================
-	
+
+%% PUSH CIRCULATIONS
+
+\newpage	
 \section{Push circulations}
 
 The mechanism to fetch and upload files from a DEC node is referred to \textit{push mode}.
 
-This needs to be written
+The configuration of the pull circulation rules is defined in dec\_ outgoing\_files.xml.
 
 \subsection{Interface pick-up point}
-TBW
+The \textit{Interface} configuration item defines the interfaces pick-up point(s) from which the files are pushed into.
+\label{LocalOutbox}
+\label{UploadDir}
+\label{UploadTemp}
+\begin{itemize}
+	\item \textit{Name} : this is the configuration item \textit{identifier} which is used to identify a given interface and refer to it in other sections of the configuration
+	\item \textit{LocalOutbox} : this is the \textit{local} directory in which files are initially placed prior their upload ; a sub-directory is created with the name of the protocol in lowercase to temporarily host the files
+	\item \textit{UploadDir} : a list of \textit{Directory} configuration items to define the \textit{remote} directories of this interface where the files will be pushed into
+	\item \textit{UploadTemp} : a list of \textit{Directory} configuration items to define the \textit{remote} directories of this interface where the files will be temporarily pushed into in which the interface consumer is expected to not poll
+\end{itemize}
+
+
+\begin{lstlisting}
+<ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+     <Interface>
+        <Name>LOCALHOST_NOT_SECURE</Name>
+        <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_notsecure</LocalOutbox>
+        <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
+        <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
+     </Interface>
+
+      <Interface>
+	     <Name>LOCALHOST_FTP_PASSIVE</Name>
+         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftp_passive</LocalOutbox>
+         <UploadDir>/tmp/tmp/dir1/</UploadDir>
+         <UploadTemp>/tmp/tmp/dir2/</UploadTemp>
+     </Interface>
+
+</ListInterfaces>
+\end{lstlisting}
 
 \label{Upload Rules}
 \subsection{Upload rules}

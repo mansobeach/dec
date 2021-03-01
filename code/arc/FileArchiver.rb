@@ -17,6 +17,7 @@
 require 'benchmark'
 
 require 'cuc/DirUtils'
+require 'cuc/Wrapper_md5sum'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
 
@@ -56,15 +57,20 @@ class FileArchiver
    end
    ## --------------------------------------------
    
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "FileArchiver debug mode is on"
-      puts "Update mode is #{@bUpdate}"
+      if @logger != nil then
+         @logger.debug("FileArchiver debug mode is on")
+         @logger.debug("Update mode is #{@bUpdate}")
+      else
+         puts "FileArchiver debug mode is on"
+         puts "Update mode is #{@bUpdate}"
+      end
    end
    ## --------------------------------------------
 
-   # Set the flag for profiling execution time.
+   ## Set the flag for profiling execution time.
    def setProfileMode
       @isProfileMode = true
       puts "FileArchiver profile mode is on"
@@ -289,9 +295,11 @@ class FileArchiver
 
       if bDelete then
          cmd = "\\rm -rf #{full_path_file}"
-         if @isDebugMode then
-            puts cmd
-         end
+#
+#  problematic to break tests
+#         if @isDebugMode == true then
+#            puts cmd
+#         end
          retVal = system(cmd)
          if retVal == false then
             puts "WARNING : Could not delete source file ! :-("
@@ -325,13 +333,14 @@ class FileArchiver
                
       path = ""
 
-      # CHECK WHETHER SPECIFIED FILE EXISTS
+      ## -------------------------------
+      ## CHECK WHETHER SPECIFIED FILE EXISTS
       if File.exists?(full_path_file) == false then
-         puts
-         puts "#{full_path_file} does not exist ! :-("
-         return false
+         raise "#{full_path_file} does not exist ! #{'1F480'.hex.chr('UTF-8')}"
+         #return false
       end
-
+      ## -------------------------------
+      
       fileName = ""
 
       if bUnPack == false then
@@ -479,8 +488,23 @@ class FileArchiver
 
 
       if @bInvOnly == true then
+               
+         md5 = CUC::WrapperMD5SUM.new(full_path_filename).md5
+         if @isDebugMode == true then
+            @logger.debug("path => #{full_path_filename} / md5 => #{md5}")
+         end
+      
          perf = measure {
-            return inventoryNewFile(full_path_file, fileType, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+            return inventoryNewFile(full_path_file, \
+                                    fileType, \
+                                    start, \
+                                    stop, \
+                                    arrAddFields, \
+                                    path, \
+                                    size, \
+                                    size_in_disk, \
+                                    size_original, \
+                                    md5)
          }
          if @isDebugMode == true then
             puts
@@ -607,7 +631,16 @@ private
    
    ## -----------------------------------------------------------
    
-   def inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path = "", size = 0, size_in_disk = 0, size_original = 0)
+   def inventoryNewFile(full_path_filename, \
+      type, \
+      start, \
+      stop, \
+      arrAddFields, \
+      path = "", \
+      size = 0, \
+      size_in_disk = 0, \
+      size_original = 0, \
+      md5 = nil)
   
       archival_date = Time.now
   
@@ -626,6 +659,17 @@ private
          anArchivedFile.size_in_disk   = size_in_disk
          anArchivedFile.size_original  = size_original
 
+         ## ----------------------------
+         ## recover if model is still 1.0
+         begin
+            if md5 != nil then
+               anArchivedFile.md5 = md5
+            end
+         rescue Exception => e
+            @logger.error(e.to_s)
+         end
+         ## ----------------------------
+         
          if start != "" and start != nil then
             anArchivedFile.validity_start = start
          end
@@ -670,12 +714,19 @@ private
 #         end
       
       rescue Exception => e
-         puts
-         puts e.to_s
-         puts
-         puts "Could not inventory #{File.basename(full_path_filename)} :-("
-         puts
-         return false
+          cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
+          if @isDebugMode == true then
+             @logger.debug("Move to ArchiveError: #{cmd}")
+          end
+          system(cmd)
+
+#         puts
+#         puts e.to_s
+#         puts
+#         puts "Could not inventory #{File.basename(full_path_filename)} :-("
+#         puts
+         raise e
+         # return false
       end  
    
       return true
@@ -773,9 +824,8 @@ private
             arrFiles.each {|entry|
                cmd = "\\ln -f #{full_path_filename}/#{entry} #{destDir}/#{File.basename(full_path_filename, ".*")}/#{entry}"
 
-               if @isDebugMode then
-                  puts
-                  puts cmd
+               if @isDebugMode and @logger != nil then
+                  @logger.debug(cmd)
                end
          
                tmpVal = system(cmd)
@@ -865,8 +915,8 @@ private
          return false 
       end
 
-      #-------------------------------------------
-      # Set access rights (read only)
+      ## -------------------------------------------
+      ## Set access rights (read only)
 
       if bUnPack then
          cmd = "\\chmod 555 #{destDir}; chmod 444 #{destDir}/*"
@@ -880,11 +930,10 @@ private
          puts cmd
       end
       
-
       ret = system(cmd)
 
       if ret == false then
-         puts "WARNING : Could not set access rights to the archived file ! :-("
+         logger.warn("Could not set access rights to the archived file ! :-(")
       end      
 
       ## -------------------------------------------
@@ -895,8 +944,23 @@ private
 
       if bInventory == true then
 
+         md5 = CUC::WrapperMD5SUM.new("#{destDir}/#{File.basename(full_path_filename)}").md5
+      
+         if @isDebugMode == true then
+            @logger.debug("MD5 => #{destDir}/#{File.basename(full_path_filename)} / #{md5}")
+         end
+         
          perf = measure {
-            retVal = inventoryNewFile(full_path_filename, type, start, stop, arrAddFields, path, size, size_in_disk, size_original)
+            retVal = inventoryNewFile(full_path_filename, \
+                                       type, \
+                                       start, \
+                                       stop, \
+                                       arrAddFields, \
+                                       path, \
+                                       size, \
+                                       size_in_disk, \
+                                       size_original, \
+                                       md5)
          }
       
          if @isDebugMode == true then
@@ -1025,9 +1089,10 @@ private
 
       if bDelete then
          cmd = "\\rm -rf #{full_path_filename}"
-         if @isDebugMode then
-            puts cmd
-         end
+#         Eventual problematic write to stdout
+#         if @isDebugMode == true then
+#            puts cmd
+#         end
          ret = system(cmd)
 
          if ret == false then

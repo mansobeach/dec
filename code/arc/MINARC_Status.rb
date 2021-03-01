@@ -75,12 +75,14 @@ class MINARC_Status
 
    def statusGlobal   
 
-      ret = require 'arc/MINARC_DatabaseModel'
-      ret = load("arc/MINARC_DatabaseModel.rb")
+      # ret = require 'arc/MINARC_DatabaseModel'
+      # ret = load("arc/MINARC_DatabaseModel.rb")
 
 #      puts
 #      puts ret
 #      puts
+
+      require 'arc/MINARC_DatabaseModel'
 
       hResult = Hash.new
       
@@ -88,6 +90,13 @@ class MINARC_Status
       numTotalFiles     = ArchivedFile.count
       lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
       lastHourCount     = lastHourFiles.count
+      puts "pedo"
+      puts lastHourCount
+      puts "pedo"
+      puts ArchivedFile.last
+      puts
+      puts ArchivedFile.last.archive_date
+      puts
       lastArchiveDate   = ArchivedFile.last.archive_date
       sizeOriginal      = Filesize.from("#{arrFiles.sum(:size_original)} B").pretty
       sizefile          = Filesize.from("#{arrFiles.sum(:size)} B").pretty
@@ -239,7 +248,7 @@ private
       end
       return aFile
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 end # class
 

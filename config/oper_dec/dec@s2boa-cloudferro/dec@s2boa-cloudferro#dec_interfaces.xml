@@ -99,7 +99,7 @@
       </To>
     </Notify>
     <Events>
-      <Event Name="OnReceiveNewFilesOK"     executeCmd="curl 185.52.193.141:4567/dec/arc/requestArchive/*"/>
+      <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -u dec:dec 185.52.193.141:4567/dec/arc/requestArchive/*"/>
 
 	    <!--
        <Event Name="OnReceiveOK"             executeCmd="decSend2Interface -m HTTP_FERRO -n" />

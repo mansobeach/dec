@@ -16,7 +16,7 @@
       <maxtime>2592000</maxtime>
    </outputter>
 
-   <outputter name="minarc_log_stdout" level="INFO" >
+   <outputter name="minarc_log_stdout" level="DEBUG" >
       <type>StdoutOutputter</type>
       <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
          <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>

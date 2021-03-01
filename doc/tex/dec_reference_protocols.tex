@@ -19,7 +19,11 @@ This section refers to the different protocols \& associated verbs which are sup
 
 
 \section{Network Protocols for Pull}
-TBW
+
+\subsection{Local}
+The files from the \hyperref[DownloadDirs]{\textit{DownloadDirs}} are 
+pulled using the OS file management operations. 
+The files \textit{"downloaded"} into the \hyperref[LocalInbox]{\textit{LocalInbox}} is perfomed using the \hyperlink{https://en.wikipedia.org/wiki/POSIX}{POSIX} \hyperlink{https://en.wikipedia.org/wiki/Hard_link}{hard-link} operation whenever both configuration items point to the same file-system, otherwise a copy is perfomed.
 
 \section{Network Protocols for Push}
 
@@ -27,9 +31,11 @@ TBW
 PUT
 
 \subsection{WebDAV}
-The WebDAV extension of HTTP allows to rename files, hence the file is initially pushed with a "." prepended into the filename 
-PUT + RENAME
+The WebDAV extension of \href{https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html}{HTTP}, which is defined in \href{https://tools.ietf.org/html/rfc4918}{RFC4918} allows to rename files so that DEC can make them visible just upon complete upload.
 
+\par
+\noindent
+Initially the file is uploaded into the \hyperref[UploadTemp]{\textit{UploadTemp}} using the HTTP verb PUT. Upon its successful upload the file is \textit{moved} into the final \hyperref[UploadDir]{\textit{UploadDir}} using the verb MOVE of the WebDAV extension.
 
 \end{document}
 

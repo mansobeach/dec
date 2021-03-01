@@ -113,6 +113,12 @@
       </DataProvider>
 
       <DataProvider isTriggerType="yes">
+	      <DataType>TLM__REQ_B</DataType>
+	      <FileType>*TLM__REQ_B*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType="yes">
  	      <DataType>OPDC</DataType>
  	      <FileType>*REP_OPDC__*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
@@ -154,6 +160,7 @@
       <PriorityRule rank="15"    class="DataType" type="OPDHUS"      sort="DESC" />
       <PriorityRule rank="16"    class="DataType" type="OPDC"        sort="DESC" />
       <PriorityRule rank="17"    class="DataType" type="DEC_F_RECV"  sort="DESC" />
+      <PriorityRule rank="18"    class="DataType" type="TLM__REQ_B"  sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -257,6 +264,12 @@
       </ProcessingRule>   
 
       <ProcessingRule dataType="DEC_F_RECV" triggerType="DEC_F_RECV" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="TLM__REQ_B" triggerType="TLM__REQ_B" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>

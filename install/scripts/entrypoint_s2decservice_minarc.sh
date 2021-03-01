@@ -6,8 +6,8 @@ set -e
 
 echo "entrypoint minarc"
 
-# echo "minArcDB -c"
-# minArcDB -c
+echo "minArcDB -c -H"
+minArcDB -c -H
 
 echo "minArcServer -k"
 minArcServer -k

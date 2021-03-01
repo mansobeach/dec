@@ -7,6 +7,7 @@
 #     --drop-tables     drops all minarc tables
 #     --Update-tables   performs a migration update of minarc tables
 #     --Happy           it ensures a happy ending despite eventual errors
+#     --add-user        <user:pass>
 #     --export-rows     it exports all rows
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
@@ -30,10 +31,16 @@
 ###
 #########################################################################
 
+### Privilege extensions for 
+### https://gorails.com/forum/pg-insufficientprivilege-error-permission-denied-to-create-extension-pgcrypto-hint-must-be-superuser-to-create-this-extension-create-extension-if-not-exists-pgcrypto
+
+### ALTER ROLE <Database_User> SUPERUSER;
+
 require 'rubygems'
 require 'active_record'
 require 'getoptlong'
-require 'rdoc'
+
+require 'cuc/Log4rLoggerFactory'
 
 require 'arc/MINARC_Environment'
 
@@ -50,6 +57,9 @@ def main
    @bShowUsage    = false
    @bIsDebugMode  = false
    @bHappy        = false
+   @user          = false
+   @name          = nil
+   @pass          = nil
    
    opts = GetoptLong.new(
      ["--drop-tables",     "-d",       GetoptLong::NO_ARGUMENT],
@@ -60,6 +70,7 @@ def main
      ["--version", "-v",               GetoptLong::NO_ARGUMENT],
      ["--usage",   "-u",               GetoptLong::NO_ARGUMENT],
      ["--Debug",   "-D",               GetoptLong::NO_ARGUMENT],
+     ["--add-user", "-a",              GetoptLong::REQUIRED_ARGUMENT],
      ["--help",            "-h",       GetoptLong::NO_ARGUMENT]
      )
     
@@ -75,12 +86,15 @@ def main
             when "--Happy"             then @bHappy               = true
             when "--Debug"             then @bIsDebugMode         = true
             when "--version"           then @bShowVersion         = true
+            when "--add-user"          then @user                 = arg.to_s
          end
       end
    rescue Exception => e
       # puts e.to_s
       exit(99)
    end
+
+   # -------------------------------------------------------
 
    if @bShowVersion == true then
       print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC.class_variable_get(:@@version)}]", "\n")
@@ -105,7 +119,7 @@ def main
       exit(0)
    end
 
-   if !@bDown and !@bUp and !@bUpdate and !@bExport then 
+   if !@bDown and !@bUp and !@bUpdate and !@bExport and !@user then 
       usage
       exit(66)
    end
@@ -120,6 +134,28 @@ def main
    end
 
    # -------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcDB ", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
    
    if @bIsDebugMode == true then
       self.print_environment
@@ -180,6 +216,8 @@ def main
       exit(0)
    end
  
+   ## --------------------------------------------------------------------------
+ 
    if @bUpdate then
       
       if ActiveRecord::Base.connection.index_exists?(:archived_files, :filename) == false
@@ -198,23 +236,58 @@ def main
          puts "Index on name already exists :-)"
       end
             
-      if ArchivedFile.columns_hash["size_in_disk"].type == :integer then
-         puts "Updating columns type to bigint: size, size_original, size_in_disk, access_counter"
-         migration4 = ModifySizeColumns.new
-         migration4.change
+#      if ArchivedFile.columns_hash["size_in_disk"].type == :integer then
+#         puts "Updating columns type to bigint: size, size_original, size_in_disk, access_counter"
+#         migration4 = ModifySizeColumns.new
+#         migration4.change
+#      end
+ 
+      if ArchivedFile.columns_hash["uuid"] == nil or \
+         ArchivedFile.columns_hash["md5"] == nil then
+         puts "Updating table archived_files to meet version 1.1"
+         migration5 = Add_version_1_1.new
+         migration5.change
+         puts
+         puts
+         puts ArchivedFile.columns_hash["uuid"]
+         puts ArchivedFile.columns_hash["md5"]
+      else
+         puts "uuid, md5 columns already exists :-)"
       end
-      
+     
       exit(0)
       
    end 
+ 
+   ## --------------------------------------------------------------------------
  
    if @bExport then
       Export2CSV.new
    end
  
+   ## ----------------------------------------------------------------
+   
+   if @user != false then
+      @name = @user.split(":")[0]
+      @pass = @user.split(":")[1]
+      
+      if @bIsDebugMode == true then
+         @logger.debug("Creating user #{@name} : #{@pass}")
+      end
+      
+      now   = Time.now
+      user  = User.new(name: @name, password: @pass, created_at: now)
+      user.save
+      @logger.info("[ARC_001] Created user #{@name} : #{@pass}")
+   end
+   
+   ## ----------------------------------------------------------------
+   
    exit(0)
 
 end
+
+## ---------------------------------------------------------
 
 ## ---------------------------------------------------------
 

@@ -54,6 +54,10 @@ https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-develop
 https://geekflare.com/free-ssl-tls-certificate/
 
 
+## sqlite visual browser
+
+brew install --cask db-browser-for-sqlite
+
 
 ###
 

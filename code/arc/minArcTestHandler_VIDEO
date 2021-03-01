@@ -65,6 +65,10 @@ class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
    ##
    def setup
       
+      cmd = "\\rm -rf /tmp/minarc_log_file*.log"
+      puts cmd
+      system(cmd)
+      
       begin
          cmd = "minArcDB -d"
          puts cmd
@@ -73,6 +77,11 @@ class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
          cmd = "minArcDB -c"
          puts cmd
          ret = system(cmd)
+         
+         cmd = "minArcDB -a test:test"
+         puts cmd
+         ret = system(cmd)
+
       rescue
       end
 
@@ -127,11 +136,11 @@ class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
       
       sleep(2.0)
  
-      cmd = "minArcServer -s"
+      cmd = "minArcServer -s -D"
       puts cmd
       spawn(cmd)
      
-      sleep(10.0)    
+      sleep(7.0)    
 
       cmd = "minArcServer -c"
       puts cmd
@@ -147,12 +156,18 @@ class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
       puts cmd
       system(cmd)
       
+      ## usage with -D created problems when extracting the new filename
       cmd = "minArcStore -t VIDEO -f /tmp/example_1.mp4 -L 2018.Comida.Leon.Carmen.Isabel.Amigos -d"
+      puts cmd
       output = `#{cmd}`
       assert($?, cmd)
       puts output
       newName = output.split("Archived: ")[1].chop
       
+      puts "xxxxxxxxxxxxx"
+      puts newName
+      puts "xxxxxxxxxxxxx"
+            
       cmd = "minArcStatus -f #{newName}"
       puts cmd
       assert(system(cmd), cmd)
@@ -160,6 +175,17 @@ class MINARC_TestHandler_VIDEO < Test::Unit::TestCase
       cmd = "minArcDelete -f #{newName}"
       puts cmd
       assert(system(cmd), cmd)
+      
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "no Error should have been raised")
+      
+      puts
+      puts "END OF MINARC_SmokeTests::#{__method__.to_s}"
+      puts "================================================"
+      puts
+
       
    end
    ## --------------------------------------------------------

@@ -108,6 +108,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '> 2.6.0.preview2'
   
   s.add_dependency('activerecord', '~> 6.0')
+  s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')

@@ -15,13 +15,16 @@
 #
 FROM ruby:2.6
 # ================================================
+# coreutils expected to bring md5sum
 RUN apt-get update && \
     apt-get install -y apt-utils && \
     apt-get install -y --no-install-recommends \
+    jq \
     net-tools \
     ftp \
     libxml2 \
     libxml2-utils \
+    coreutils \
     xml-twig-tools \
     p7zip-full \
     sqlite3 \

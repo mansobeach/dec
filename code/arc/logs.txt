@@ -1,12 +1,16 @@
 Modules
 - minArcPurge
 - minArcServer
-- "ArcStore "
+-"ArcStore "
 - minArcRtrv
-- "Realloc  "
+-"Realloc  "
+-"minArcDB "
+-"minArcDel"
 
 INFO:
 ARC_000: Purge Archive
+ARC_001: User Created
+ARC_005: Server Started
 ARC_031: Status => No daemon is running
 ARC_032: Status => server is running with $PID
 ARC_060: minArcServer stopped
@@ -15,12 +19,13 @@ ARC_100: Archived: $file
 ARC_105: Deleted : $file
 
 (server side)
-ARC_200: Requested: $file
+ARC_200: Requested: $file / $uuid
 ARC_201: Served: $file
 ARC_202: Retrieved: $file
 ARC_203: Archived: $file
 ARC_204: Status: $file (request of status acknowledge by the server)
 ARC_205: Deleted : $file
+ARC_210: Query Product (OData)
 
 ARC_301: $file reallocated to $path
 
@@ -39,6 +44,8 @@ ARC_620: $file could not be deleted
 ARC_635: $file reallocation failure
 ARC_666: Cannot start server: $error_message
 ARC_675: Mutex of $directory not available for $pid
+ARC_777: Server Request not supported
+
 
 ORC_602: $file $type filetype not configured
 ORC_611: $file archiving failed

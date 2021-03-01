@@ -19,6 +19,7 @@ require 'json'
 
 require 'ctc/WrapperCURL'
 require 'arc/MINARC_API'
+require 'arc/ReadMinarcConfig'
 
 module ARC
 
@@ -32,9 +33,14 @@ class MINARC_Client
    ## Class contructor
    ## debug: boolean. If true it shows debug info.
    def initialize(debugMode = false)
+      @user                = nil
+      @pass                = nil
       @isDebugMode         = debugMode
       @isProfileMode       = false
       checkModuleIntegrity
+      config               = ReadMinarcConfig.instance
+      @user                = config.getClientUser
+      @pass                = config.getClientPassword
    end
    ## ------------------------------------------------
    
@@ -55,7 +61,7 @@ class MINARC_Client
    # ------------------------------------------------
    
    def getVersion
-      return getURL("#{@minArcServer}#{API_URL_VERSION}", @isDebugMode)
+      return getURL("#{@minArcServer}#{API_URL_VERSION}", @user, @pass, @isDebugMode)
    end
    ## -------------------------------------------------
 
@@ -75,7 +81,7 @@ class MINARC_Client
       newVal = full_path_filename.dup
             
       # ret = postFile("#{@minArcServer}#{API_URL_STORE}", full_path_filename, hParams, @isDebugMode)
-      ret = postFile("#{@minArcServer}#{API_URL_STORE}", newVal, hParams, @isDebugMode)
+      ret = postFile("#{@minArcServer}#{API_URL_STORE}", @user, @pass, newVal, hParams, @isDebugMode)
       
       if ret == false then
          puts
@@ -96,7 +102,7 @@ class MINARC_Client
          puts "MINARC_Client::listFile_By_Filetype => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)   
+      return getURL(url, @user, @pass, @isDebugMode)   
    end
    # ------------------------------------------------
    
@@ -107,7 +113,7 @@ class MINARC_Client
          puts "MINARC_Client::listFile_By_Name => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)
+      return getURL(url, @user, @pass, @isDebugMode)
    end
    ## -------------------------------------------------
    
@@ -119,7 +125,7 @@ class MINARC_Client
          puts
       end
       # return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
-      return getFile(url, filename, @isDebugMode)
+      return getFile(url, @user, @pass, filename, @isDebugMode)
    end
    ## -------------------------------------------------
    
@@ -130,7 +136,7 @@ class MINARC_Client
          puts "MINARC_Client::deleteFile => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)
+      return getURL(url, @user, @pass, @isDebugMode)
    end
    # ------------------------------------------------
    
@@ -141,7 +147,7 @@ class MINARC_Client
          puts "MINARC_Client::getAllFileTypes => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)
+      return getURL(url, @user, @pass, @isDebugMode)
    end
    # ------------------------------------------------
    
@@ -152,7 +158,7 @@ class MINARC_Client
          puts "MINARC_Client::statusFileType => #{url}"
          puts
       end
-      return getURL(url, @isDebugMode)   
+      return getURL(url, @user, @pass, @isDebugMode)   
    end
    # ------------------------------------------------
 
@@ -164,7 +170,7 @@ class MINARC_Client
          puts
       end
       begin
-         return JSON.parse(getURL(url, @isDebugMode))
+         return JSON.parse(getURL(url, @user, @pass, @isDebugMode))
       rescue Exception => e
          if @isDebugMode == true then
             puts e.backtrace
@@ -187,7 +193,7 @@ class MINARC_Client
          puts
       end
       # return JSON.parse(getURL(url, @isDebugMode))
-      return getURL(url, @isDebugMode) 
+      return getURL(url, @user, @pass, @isDebugMode) 
    end
    # ------------------------------------------------
    
@@ -210,8 +216,6 @@ private
    end
    # --------------------------------------------------------
       
-   
-   
 end # class
 
 end # module

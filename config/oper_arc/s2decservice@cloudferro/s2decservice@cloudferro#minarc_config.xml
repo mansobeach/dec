@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+  <Node>S2BOA minARC Long Term Preservation</Node>
+
   <CleanUp Frequency="10" Unit="s">
   
     <List_of_CleanUpRules>
@@ -31,6 +33,11 @@
       <Database_User>s2minarc</Database_User>
       <Database_Password>s2minarc</Database_Password>
    </Inventory>
+
+   <Client>
+      <User>dec</User>
+      <Password>dec</Password>
+   </Client>
 
 
 </Configuration>

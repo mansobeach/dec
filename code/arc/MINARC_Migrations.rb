@@ -1,16 +1,19 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# ===       
-#
-# === Written by Borja Lopez Fernandez
-#
-# === Casale & Beach
-# 
-#
-#
+##
+## ===       
+##
+## === Written by Borja Lopez Fernandez
+##
+## === Casale & Beach
+## 
+##
+##
 #########################################################################
+
+## Install Extensions into Persistent Schemas (uuid)
+## https://github.com/influitive/apartment#installing-extensions-into-persistent-schemas
 
 require 'rubygems'
 require 'active_record'
@@ -52,8 +55,9 @@ end
 
 ## =====================================================================
 
-class CreateArchivedFiles < ActiveRecord::Migration[6.0]
-   
+class CreateArchivedFiles_OLD_1_0 < ActiveRecord::Migration[6.0]
+
+## class CreateArchivedFiles < ActiveRecord::Migration[6.0]   
    def self.up
       create_table(:archived_files) do |t|
          # filename includes the file extension
@@ -68,6 +72,48 @@ class CreateArchivedFiles < ActiveRecord::Migration[6.0]
          t.column :size,                :bigint
          t.column :size_in_disk,        :bigint
          t.column :size_original,       :bigint
+         t.column :detection_date,      :datetime
+         t.column :validity_start,      :datetime
+         t.column :validity_stop,       :datetime
+         t.column :archive_date,        :datetime
+         t.column :last_access_date,    :datetime
+         t.column :access_counter,      :bigint, default: 0, null: false
+         # t.column :deleted              :boolean, default: false, null: false
+      end
+   end
+
+   def self.down
+      drop_table :archived_files
+   end
+end
+
+## =====================================================================
+
+## class CreateArchivedFiles_NEW_1_1 < ActiveRecord::Migration[6.0]
+class CreateArchivedFiles < ActiveRecord::Migration[6.0]     
+   def self.up
+   
+      if ENV['MINARC_DB_ADAPTER'] == "postgresql" then
+         enable_extension 'pgcrypto'
+         enable_extension 'uuid-ossp'
+      end
+
+      create_table(:archived_files) do |t|
+         t.column :uuid,                :uuid,  default: "uuid_generate_v4()", null: false, :unique => true
+         t.index  :uuid,                 unique: true
+         # filename includes the file extension
+         t.column :filename,            :string,  :limit => 255, :unique => true
+         t.index  :filename,             unique: true
+         # name to be the filename without extension
+         t.column :name,                :string,  :limit => 255, :unique => true
+         t.index  :name,                 unique: true
+         t.column :filetype,            :string,  :limit => 64
+         t.column :path,                :string,  :limit => 255
+         t.column :info,                :string,  :limit => 255
+         t.column :size,                :bigint
+         t.column :size_in_disk,        :bigint
+         t.column :size_original,       :bigint
+         t.column :md5,                 :string,  :limit => 32
          t.column :detection_date,      :datetime
          t.column :validity_start,      :datetime
          t.column :validity_stop,       :datetime
@@ -103,7 +149,7 @@ class AddNewColumns < ActiveRecord::Migration[6.0]
      add_column :archived_files, :name, :string, {:limit=>255, :null=>true}
      add_index :archived_files, :name
   end
-  
+    
 end
 
 ## ===================================================================
@@ -131,6 +177,33 @@ class ModifySizeColumns < ActiveRecord::Migration[6.0]
       change_column :archived_files, :size_original,  :bigint
       change_column :archived_files, :access_counter, :bigint
    end
+end
+
+## ===================================================================
+
+class Add_version_1_1 < ActiveRecord::Migration[6.0]
+  def change
+     if ENV['MINARC_DB_ADAPTER'] == "postgresql" then
+        enable_extension 'pgcrypto'
+        enable_extension 'uuid-ossp'
+     end
+     ## ADD does not work since there is already a primary key
+     ## execute "ALTER TABLE archived_files ADD PRIMARY KEY (uuid);"
+     ## For the time being native ActiveRecord/Rails "id" PK is kept
+     begin
+        add_column :archived_files, :uuid, :uuid, default: "uuid_generate_v4()", null: false, :unique => true
+        add_index  :archived_files, :uuid
+     rescue Exception => e
+        puts e.to_s
+     end
+     
+     begin
+        add_column :archived_files, :md5, :string, :limit => 32
+     rescue Exception => e
+        puts e.to_s
+     end
+  end
+
 end
 
 ## ===================================================================

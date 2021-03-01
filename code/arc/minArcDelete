@@ -187,7 +187,7 @@ def main
    @minArcConfigDir       = ENV['MINARC_CONFIG']
 
    ## initialise the logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("ArcStore ", "#{@minArcConfigDir}/minarc_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("minArcDel", "#{@minArcConfigDir}/minarc_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode

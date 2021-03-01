@@ -15,27 +15,31 @@
 #########################################################################
 
 require 'dotenv'
-
 require 'cuc/DirUtils'
-
 require 'arc/ReadMinarcConfig'
 
 module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.0.38"
+   @@version = "1.1.0"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.38"  =>    "minArcServer robustification\n\
+      "1.1.0"   =>    "uuid, md5 & Users has been added to the model for postgresql database\n\
+          Client credentials configuration items added into minarc_config.xml
+          Server API protected with HTTP Basic Authentication\n\
+          gems bcrypt, byebug added as a dependency at installation time\n\
+          FOSS tools: jq, md5sum added as a dependency at execution time\n\
+          minArcStatus CLI information supplied as JSON",\
+      "1.0.38"  =>   "minArcServer robustification\n\
           Node identification configuration item added to minarc_config.xml\n\
           minArcReallocate support to change location of previously archived files",\
-      "1.0.37"  =>    "Ghost version", \
-      "1.0.36"  =>    "minArcServer fix to avoid uncontrolled children upon archive request:\n\
+      "1.0.37"  =>   "Ghost version", \
+      "1.0.36"  =>   "minArcServer fix to avoid uncontrolled children upon archive request:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-393",\
-      "1.0.35"  =>    "New Server API primitive API_URL_RETRIEVE_CONTENT", \
+      "1.0.35"  =>   "New Server API primitive API_URL_RETRIEVE_CONTENT", \
       "1.0.34"  =>   "minarc_config.xml Inventory item added for database configuration\n\
           Support to remote inventory / db different than localhost\n\
           Inventory config now includes Database_Host & Database_Port items:\n\
@@ -104,6 +108,8 @@ module ARC
 
    @@arrTools = [ \
                   "curl", \
+                  "jq", \
+                  "md5sum", \
                   "7za", \
                   "exiftool", \
                   "gzip", \
@@ -184,9 +190,7 @@ module ARC
    end
    
    ## ----------------------------------------------------------------
-   
-   
-   
+      
    ## ----------------------------------------------------------------
    
    def unset_config
@@ -305,7 +309,8 @@ module ARC
                
          if isToolPresent[0,1] != '/' then
             puts "\n\nMINARC_Environment::checkToolDependencies\n"
-            puts "Fatal Error: #{tool} not present in PATH !!   :-(\n\n\n"
+            puts
+            puts "Fatal Error: #{tool} not present in PATH   #{'1F480'.hex.chr('UTF-8')}#{'1F480'.hex.chr('UTF-8')}#{'1F480'.hex.chr('UTF-8')}\n"
             bCheckOK = false
          end
 

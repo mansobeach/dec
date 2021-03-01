@@ -168,7 +168,6 @@
 #########################################################################
 
 require 'getoptlong'
-require 'rdoc'
 
 require 'cuc/Log4rLoggerFactory'
 

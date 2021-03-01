@@ -436,8 +436,14 @@ def main
       exit(99)
    end
 
-
-   ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
+   ret = true
+   
+   begin
+      ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
+   rescue Exception => e
+      @logger.error("[ARC_605] could not archive #{@filename}: #{e.to_s}")
+      exit(66)
+   end
    
    if ret == false then
       puts

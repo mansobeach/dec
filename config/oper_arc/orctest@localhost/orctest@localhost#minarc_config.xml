@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+  <Node>minARC ORC unit tests node</Node>
+
   <CleanUp Frequency="10" Unit="s">
   
     <List_of_CleanUpRules>
@@ -19,6 +21,7 @@
       <ArchiveServer></ArchiveServer>
       <ArchiveRoot>/tmp/minarc</ArchiveRoot>
       <ArchiveError>/tmp/minarc_error2</ArchiveError>
+      <ArchiveIntray>/tmp/minarc</ArchiveIntray>
       <TempDir>/tmp/minarc</TempDir>
    </Workflow>
 
@@ -30,6 +33,11 @@
       <Database_User>e2edc</Database_User>
       <Database_Password>e2edc</Database_Password>
    </Inventory>
+
+   <Client>
+      <User>test</User>
+      <Password>test</Password>
+   </Client>
 
 
 </Configuration>

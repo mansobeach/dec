@@ -48,7 +48,8 @@ Gem::Specification.new do |s|
 
   ## ----------------------------------------------
   
-  s.add_dependency('minarc', '~> 1.0.34')
+  ### PENDING COMPLETION OF MINARC 1.1.0
+  ### s.add_dependency('minarc', '> 1.0.34')
 
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('log4r', '~> 1.0')  
