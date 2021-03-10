@@ -636,34 +636,22 @@ class MINARC_Server < Sinatra::Base
       ret.to_json
    end
 
-   # =================================================================
-
-   #
-   # minArcStatus global
-   #
+   ## ================================================================
+   ##
+   ## minArcStatus global
+   ##
 
    get ARC::API_URL_STAT_GLOBAL do
-   
-      arcStatus = ARC::MINARC_Status.new(nil)
-
+      @@logger.info("[ARC_230] Requested Status Global")
+      cmd = "minArcStatus -g --noserver"
       if settings.isDebugMode == true then
-         arcStatus.setDebugMode
+         @@logger.debug(cmd)
       end
-
-      begin     
-         ret = arcStatus.statusGlobal
-      rescue Exception => e
-         @@logger.error(e.to_s)
-      end
-      
-      if settings.isDebugMode == true then
-         puts ret
-      end
-
-      content_type :json 
+      ret = `#{cmd}`
+      content_type :json
       ret.to_json
    end
-   # =================================================================
+   ## ================================================================
 
    not_found do
       "MINARC_Server shit: page #{request.path_info} not found\n"

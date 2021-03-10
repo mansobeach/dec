@@ -249,6 +249,7 @@ namespace :minarc do
       puts "unit tests           : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
       puts "s2boa@cloudferro     : rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]"
       puts "client@cloudferro    : rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2]"
+      puts "testclient@cloudferro: rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_test]"
       puts "mansovideo@macblind  : rake -f build_minarc.rake minarc:build[mansovideo,macblind,sqlite3]"
       puts "s2decservice   (obsolete) : rake -f build_minarc.rake minarc:build[s2decservice,e2espm-inputhub,s2_pg]"
       puts "s2boa@inputhub (obsolete) : rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"     

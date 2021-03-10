@@ -104,7 +104,7 @@ class ControllerODataProductDownload < SinatraControllerOData
            @app.send_file(full_path, :filename => aFile.filename)
         end
      else
-        @logger.error("[ARC_777] Query #{@request.query_string}: not valid / or badly managed: #{@request.path_info}") 
+        @logger.error("[ARC_778] Query #{@request.query_string}: not valid / or badly managed: #{@request.path_info}") 
         @response.status = ARC_ODATA::API_BAD_REQUEST
         @response.headers['Message'] = "property #{@property} not supported"
      end
@@ -142,7 +142,10 @@ class ControllerODataProductQuery < SinatraControllerOData
      @queryValue      = nil
      @property        = nil
      @function        = nil
+     ## count supported as option
      @option          = nil
+     @orderby         = nil
+     @order           = "ASC"
      @skip            = 0
      ## results limit
      ## the page size configurable to support at least 1000 results per page
@@ -152,17 +155,29 @@ class ControllerODataProductQuery < SinatraControllerOData
   ## -------------------------------------------------------
   ##
   def query
+  
+     ret = true
+   
      if @logger != nil and @isDebugMode == true then
+        @logger.debug("ControllerODataProductQuery::query")
         @logger.debug("path_info    :   #{@request.path_info}")
         @logger.debug("query_string :   #{URI.unescape(@request.query_string)}")
-        @logger.debug("url          :   #{@request.url}")
+        @logger.debug("url          :   #{URI.unescape(@request.url)}")
         @logger.debug("path         :   #{@request.path}")
      end
      
-     ret = parseQuery(@request.query_string)
+     begin
+        ret = parseQuery(URI.unescape(@request.query_string))
+     rescue Exception => e
+        @logger.error(e.to_s)
+        @logger.error("[ARC_777] Query #{URI.unescape(@request.query_string)}: not valid / or badly managed")
+        @response.status = ARC_ODATA::API_BAD_REQUEST
+        @response.headers['Message'] = e.to_s
+        return  
+     end
      
      if ret == false then
-        @logger.error("[ARC_777] Query #{URI.unescape(@request.query_string)}: not valid / or badly managed: #{@request.query_string}")
+        @logger.error("[ARC_777.7] Query #{URI.unescape(@request.query_string)}: not valid / or badly managed: #{@request.query_string}")
         @response.status = ARC_ODATA::API_BAD_REQUEST
         
         if @filterParam != nil then
@@ -176,28 +191,27 @@ class ControllerODataProductQuery < SinatraControllerOData
         return
      end
           
-#     if @property != "Name" then
-#        @logger.error("[ARC_777] Property #{@property} not supported : #{@request.query_string}")
-#        @response.status = ARC_ODATA::API_BAD_REQUEST
-#        @response.headers['Message'] = "Property #{@property} not supported"
-#        return     
-#     end
      
      aFile = nil
      
      @logger.debug(@property)
      
+     ## ------------------------------------------
      ## Query all when no property
      if @property == nil then
         aFile = ArchivedFile.all
      end
+     ## ------------------------------------------
      
+     ## ------------------------------------------
      ## Query by property Name
      if @property == 'Name' then
         @logger.debug("Property Name LIKE #{@queryValue}")
         aFile = ArchivedFile.where("name LIKE ?", @queryValue)
      end
-               
+     ## ------------------------------------------
+     
+     ## ------------------------------------------          
      ## Query by any date property PublicationDate
      if @property == 'PublicationDate' or @property == 'ContentDate/Start' or @property == 'ContentDate/End' then
         @logger.debug(ARC_ODATA::oData2Model(@property))
@@ -205,21 +219,67 @@ class ControllerODataProductQuery < SinatraControllerOData
         @logger.debug(ARC_ODATA::filterOperations2Model(@function))
         aFile = ArchivedFile.where("#{ARC_ODATA::oData2Model(@property)} #{ARC_ODATA::filterOperations2Model(@function)} ?", self.str2date(@queryValue))
      end
-         
+     ## ------------------------------------------
+     
+     ## ------------------------------------------    
+     ## Query is an array of properties
+     
+     if @property.class.to_s.include?("Array") == true then
+        @logger.debug("Array of properties #{@property}")
+        strQuery = ""
+        idx      = 0
+        @property.each{|prop|
+           if idx == 0 then
+              strQuery = "#{ARC_ODATA::oData2Model(prop)} #{ARC_ODATA::filterOperations2Model(@function[idx])} ?"
+           else
+              strQuery = "#{strQuery.dup} AND #{ARC_ODATA::oData2Model(prop)} #{ARC_ODATA::filterOperations2Model(@function[idx])} ?"
+           end
+           idx += 1
+        }
+        
+        query = Array.new
+        query << strQuery
+        query << @queryValue
+        query = query.dup.flatten
+        
+        @logger.debug("Composed query => #{strQuery}")
+        @logger.debug("Composed query => #{query}")
+        
+        aFile = ArchivedFile.where(query)
+        
+     end    
+     ## ------------------------------------------
+                  
      if aFile == nil then
         @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@property} #{@function} #{@queryValue} / products not found") 
         @response.status = ARC_ODATA::API_RESOURCE_NOT_FOUND
         @response.headers['Message']  = "#{@queryValue} / products not found"
      else
+          
         if @property != nil then
            @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@property} #{@function} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
         else
            @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@option} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
         end 
-        response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)      
+        
+        if @orderby != nil then
+           if ARC_ODATA::oData2Model(@orderby) == false then
+              @logger.warn("$orderby #{@orderby} not supported")
+              response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)
+           else
+              @logger.debug("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
+              response = ARC_ODATA::oDataQueryResponse(aFile.order("#{ARC_ODATA::oData2Model(@orderby)} #{@order}").to_a, @option, @skip, @top)
+           end
+        else
+           response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)  
+        end
+
+        
+              
         #@response.body           = response
         @response.content_type   = :json
         @response.status         = ARC_ODATA::API_RESOURCE_FOUND
+        
         if @property == nil and @option == 'count' then
            @response.headers['Message']  = "Hey girls ; Hey boys ; Superstar DJ's ; Here we go ..."
         else
@@ -228,6 +288,8 @@ class ControllerODataProductQuery < SinatraControllerOData
         
         return response
      end    
+     
+     ## ------------------------------------------
        
   end
   ## -------------------------------------------------------
@@ -264,13 +326,41 @@ private
          @logger.debug("top => #{@top}")
       end
 
+      ## $orderby
+      if query_string.include?("$orderby") == true then
+         @orderby   = "#{query_string.split("$orderby=")[1]}"
+         if @orderby.include?("&") == true then
+            @orderby = @orderby.dup.split("&")[0]
+         end
+         if @orderby.include?(" ") == true then
+            @order   = @orderby.dup.split(" ")[1]
+            @orderby = @orderby.dup.split(" ")[0]
+         end
+         @logger.debug("$orderby => #{@orderby} #{@order}")
+         
+         if ARC_ODATA::EDM_AUXIP_PRODUCT_PROPERTY.include?(@orderby) == false then
+            raise "$orderby property #{@orderby} not supported"
+         end
+         
+         if @order.downcase != "desc" and @order.downcase != "asc" then
+            raise "$orderby property #{@orderby} with sorting #{@order} not supported"
+         end
+      end
+
+      ## $count
+      if query_string.include?("$count") == true then
+         @option    = 'count'
+      end
+
+      ## -------------------------------
+
       ## -------------------------------
       ##
       ## Process the query
    
       ## From most restrictive conditions to simpler ones
       
-      ## query by count alone
+      ## query by expand alone
       if query_string.include?("$expand") == true and query_string.include?("&") == false then
          return parseQueryExpand(query_string)
       end
@@ -280,14 +370,21 @@ private
          return parseQueryCount(query_string)
       end
 
-      ## query by count plus filter
-      if query_string.include?("$count") == true and query_string.include?("&") == true then
-         return parseQueryCountFilter(query_string)
-      end
-   
       ## query by date / weak constrain
-      if query_string.include?("(") == false or query_string.include?(")") == false then
+      if (query_string.include?("(") == false or \
+         query_string.include?(")") == false) and \
+         query_string.include?("$filter") == true then
          return parseQueryDate(query_string)
+      end
+
+#      ## query by count plus filter
+#      if query_string.include?("$count") == true and query_string.include?("&") == true then
+#         return parseQueryCountFilter(query_string)
+#      end
+      
+      ## no $filter choice
+      if query_string.include?("$filter") == false then
+         return true
       end
    
       ## -------------------------------
@@ -321,11 +418,10 @@ private
   
    ## -------------------------------------------------------
   
-   ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z
-   
-   ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z   
-   
-   ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
+   ## /odata/v1/Products?$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z
+   ## /odata/v1/Products?$count=true&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z
+   ## /odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z
+   ## /odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
    def parseQueryDate(query_string)
            
       bRet = false
@@ -362,10 +458,23 @@ private
          bRet        = true
       end
 
-      if @isDebugMode == true then
-         @logger.debug("parseQueryDate #{@property} #{@function} #{@queryValue}")
-      end
+      if @filterParam.include?("ContentDate/Start") == true and @filterParam.include?("ContentDate/End") == true then
+         @property   = Array.new
+         @function   = Array.new
+         @queryValue = Array.new
+         
+         @property   << "ContentDate/Start"
+         @function   << @filterParam.split("ContentDate/Start ")[1].split(" ")[0]
+         @queryValue << @filterParam.split("ContentDate/Start ")[1].split(" ")[1]
+                  
+         @property   << "ContentDate/End"
+         @function   << @filterParam.split("ContentDate/End ")[1].split(" ")[0]
+         @queryValue << @filterParam.split("ContentDate/End ")[1].split(" ")[1]
 
+      end 
+
+      @logger.debug("parseQueryDate #{@property} #{@function} #{@queryValue}")
+      
       return bRet
       
    end
@@ -388,42 +497,43 @@ private
    end
    ## -------------------------------------------------------  
 
-   ## System query $count alone
-   ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
-   def parseQueryCountFilter(query_string)
-      bRet = false
-      
-      @filterParam   = "#{query_string.split("$filter=")[1]}"
-      @queryValue    = @filterParam.split(",")[1].split(")")[0]
-      @property      = @filterParam.split("(")[1].split(",")[0]      
-      @option        = 'count'
-      @queryValue    = @filterParam.split(",")[1].split(")")[0]
-      
-      if @filterParam.include?("startswith") == true then 
-         @function   = "startswith"
-         @queryValue = "#{@queryValue.dup}%"
-         bRet        = true
-      end
-      
-      if @filterParam.include?("endswith") == true then
-         @function   = "endswith"
-         @queryValue = "%#{@queryValue.dup}"
-         bRet        = true
-      end
-      
-      if @filterParam.include?("contains") == true then
-         @function   = "contains"
-         @queryValue = "%#{@queryValue.dup}%"
-         bRet        = true
-      end
-      
-      if @isDebugMode == true then
-         @logger.debug("parseQueryCountFilter @filterParam => #{@filterParam} ; @function => #{@function}; @property => #{@property} ; @queryValue => #{@queryValue} ; @option => #{@option} ")
-      end
-
-      return bRet
-      
-   end
+#   ## System query $count alone
+#   ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
+#   ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=PublicationDate gt 2020-05-15T00:00:00.000Z&$orderby=PublicationDate
+#   def parseQueryCountFilter(query_string)
+#      bRet = false
+#      
+#      @filterParam   = "#{query_string.split("$filter=")[1]}"
+#      @queryValue    = @filterParam.split(",")[1].split(")")[0]
+#      @property      = @filterParam.split("(")[1].split(",")[0]      
+#      @option        = 'count'
+#      @queryValue    = @filterParam.split(",")[1].split(")")[0]
+#      
+#      if @filterParam.include?("startswith") == true then 
+#         @function   = "startswith"
+#         @queryValue = "#{@queryValue.dup}%"
+#         bRet        = true
+#      end
+#      
+#      if @filterParam.include?("endswith") == true then
+#         @function   = "endswith"
+#         @queryValue = "%#{@queryValue.dup}"
+#         bRet        = true
+#      end
+#      
+#      if @filterParam.include?("contains") == true then
+#         @function   = "contains"
+#         @queryValue = "%#{@queryValue.dup}%"
+#         bRet        = true
+#      end
+#      
+#      if @isDebugMode == true then
+#         @logger.debug("parseQueryCountFilter @filterParam => #{@filterParam} ; @function => #{@function}; @property => #{@property} ; @queryValue => #{@queryValue} ; @option => #{@option} ")
+#      end
+#
+#      return bRet
+#      
+#   end
    ## -------------------------------------------------------  
   
    ## {{service-root-uri}}/odata/v1/Products?$expand=Attributes&$format=json

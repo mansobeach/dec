@@ -4,6 +4,10 @@
 
 List of tickets 
 
+> https://jira.elecnor-deimos.com/browse/S2MPASUP-429 : 
+DEC][INPUT-HUB] Configure DEC to circulate EPA and VGS4 reports to all monitoring instances (2 E2ESPMs and 2 BOAs)
+
+
 > https://jira.elecnor-deimos.com/browse/S2MPASUP-410 :
 DEC_F_RECV by VPMC file to S2BOA CloudFerro instance
 DEC_F_RECV by VPMC_TCI file to Graveyard
@@ -235,9 +239,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
          <ToList>
             <Intray>REP_ARC_TCI</Intray>           
             <Intray>ARCHIVE_S2PDGS</Intray>
-            <!--
-            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
-            -->
          </ToList>
       </File>
 
@@ -245,9 +246,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       	  <HardLink>true</HardLink>
 	         <ToList>
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <!--
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
-               -->
           </ToList>
       </File>
 
@@ -255,7 +253,8 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
          <HardLink>True</HardLink>
          <ToList>
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>SHADOW_S2PDGS</Intray>
+               <Intray>S2BOA_SHADOW</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
          </ToList>
@@ -265,7 +264,8 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
          <HardLink>True</HardLink>
          <ToList>
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>SHADOW_S2PDGS</Intray>
+               <Intray>S2BOA_SHADOW</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
          </ToList>
@@ -279,9 +279,8 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
             <Intray>ARCHIVE_S2PDGS</Intray>
             <Intray>SHADOW_S2PDGS</Intray>
             <Intray>S2BOA_SHADOW</Intray>
-            <!--
-            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
-            -->
+            <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
+            <Intray>OPERATIONAL_S2PDGS</Intray>
          </ToList>
       </File>
 
@@ -289,12 +288,10 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
          <HardLink>True</HardLink>
          <ToList>      
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+               <Intray>SHADOW_S2PDGS</Intray>
+               <Intray>S2BOA_SHADOW</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>
-            <!--
-            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
-            -->
          </ToList>
       </File>
 
@@ -304,7 +301,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
 	         <ToList>
 	            <Intray>GRAVEYARD_SUPER_TCI</Intray>
                <!--
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                -->
           </ToList>
@@ -314,8 +310,7 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       <File Type="*DEC_F_RECV*">
       	  <HardLink>true</HardLink>
 	         <ToList>
-	            <Intray>S2BOA_SHADOW</Intray>	
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
+	            <Intray>S2BOA_SHADOW</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>  
           </ToList>
       </File>
@@ -324,7 +319,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
         <HardLink>true</HardLink>
         <ToList>
             <Intray>ARCHIVE_S2PDGS</Intray>
-            <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
             <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
             <Intray>OPERATIONAL_S2PDGS</Intray>
         </ToList>
@@ -334,7 +328,6 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       	  <HardLink>true</HardLink>
 	         <ToList>
                <Intray>ARCHIVE_S2PDGS</Intray>
-               <Intray>CLOUDFERRO_FTPOUTBOX</Intray>
                <Intray>CLOUDFERRO_WEBDAVOUTBOX</Intray>
                <Intray>SHADOW_S2PDGS</Intray>
                <Intray>OPERATIONAL_S2PDGS</Intray>

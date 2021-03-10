@@ -29,6 +29,8 @@ require 'arc/MINARC_API_OData'
       
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
+
+
 # Preconditions:
 # 1 - setup 
 # 1.1 - load_config_development
@@ -38,16 +40,17 @@ require 'arc/MINARC_API_OData'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-## 0  - test_local_minArcStore
-## 1  - test_odata_download
-## 2  - test_odata_query_name
-## 3  - test_odata_query_date
-## 4  - test_odata_query_validity_date
-## 5  - test_odata_query_count
-## 6  - test_odata_query_count_name
-## 7  - test_odata_query_skip
-## 8  - test_odata_query_top
-## 9  - test_odata_query_expand
+##  0  - test_local_minArcStore
+##  1  - test_odata_download
+##  2  - test_odata_query_name
+##  3  - test_odata_query_orderby
+##  4  - test_odata_query_date
+##  5  - test_odata_query_validity_date
+##  6  - test_odata_query_count
+##  7  - test_odata_query_count_name
+##  8  - test_odata_query_skip
+##  9  - test_odata_query_top
+## 10  - test_odata_query_expand
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -558,6 +561,244 @@ class TestCaseStore < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
+   def test_odata_query_orderby
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      assert(system(cmd), "minArcDB first time")
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      assert(system(cmd), "created used test")
+
+      cmd = "minArcServer -k"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      puts
+
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      assert(system(cmd), cmd)
+      puts
+        
+      cmd = ""
+
+      config = ReadMinarcConfig.instance   
+      server = config.getArchiveServer
+      
+      
+      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
+   
+      ## -------------------------------
+      
+      ## store a test file
+      test_local_minArcStore
+
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      uuid =  ret.chop.gsub("\"","")
+      assert($?.exitstatus, "Retrieving the uuid")
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate%20ASC' | jq .value[].PublicationDate"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate' | jq .value[].PublicationDate"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20DESC' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20ASC' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=Name' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=DonaldDuck%20ASC' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20rescending' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / correct attribute request
+      cmd = "curl -v -u test:test \'#{url}$orderby=ContentLength%20DESC' | jq .value[].ContentLength"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / good request
+      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=Name%20DESC' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+          
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=Name%20DESC' | jq .value[].Name"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq .value[].PublicationDate"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate lt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$count=true\&$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$count=true\&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
+      
+      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC\&$count=true' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request / good request
+      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=ContentDate/Start%20DESC' | jq .value[].ContentDate.Start"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+          
+      ## -------------------------------
+
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_210 #{arr[0]}"
+      puts cmd
+      assert(system(cmd), "see query traces #{__method__.to_s}") 
+  
+   end
+   ## -----------------------------------------------------------
+   ## -----------------------------------------------------------
+
    def test_odata_query_date
       puts
       puts "================================================"
@@ -761,7 +1002,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## -------------------------------
       ## well-formed query request request with start > end which should never return results
       
-      ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2119-05-15T00:00:00.000Z and ContentDate/End lt 2119-05-16T00:00:00.000Z
+      ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2119-05-15T00:00:00.000Z AND ContentDate/End lt 2119-05-16T00:00:00.000Z
 
             
       cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/Start%20gt%202119-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
@@ -770,6 +1011,20 @@ class TestCaseStore < Test::Unit::TestCase
       assert(ret, "successful curl query")
       
       ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request with start > end which should never return results
+      
+      ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2119-05-15T00:00:00.000Z AND ContentDate/End lt 2119-05-16T00:00:00.000Z
+
+            
+      cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/Start%20ge%202019-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
 
       ## -------------------------------
 
@@ -939,6 +1194,19 @@ class TestCaseStore < Test::Unit::TestCase
       ## -------------------------------
 
       ## -------------------------------
+      ## well-formed query request request with negative results
+      
+      ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S1B')
+      
+      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S1B')\&$count=true' | jq '.count, .value[].Name'"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+
+      ## -------------------------------
       ## well-formed query request request with positive results
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
@@ -968,6 +1236,30 @@ class TestCaseStore < Test::Unit::TestCase
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2')
       
       cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2')' | jq "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request with positive results
+      
+      ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2')
+      
+      cmd = "curl -v -u test:test \'#{url}Products?$filter=startswith(Name,'S2')\&$count=true' | jq "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request with positive results
+      
+      ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
+      
+      cmd = "curl -v -u test:test \'#{url}Products?$filter=startswith(Name,'S2B')\&$count=true' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")

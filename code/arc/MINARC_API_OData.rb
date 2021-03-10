@@ -14,8 +14,12 @@
 ###
 #########################################################################
 
-### https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html
+### SPRs
+## JSON status with backslash quotes
+## HTTP HEAD to be tested
+## curl -u test:test --head '185.52.193.141:4567/odata/v1/Products(60c4b746-711b-4f7d-81cd-51cf2330d19a)/$value'
 
+### https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html
 ### https://docs.oasis-open.org/odata/odata/v4.01/cos01/part2-url-conventions/odata-v4.01-cos01-part2-url-conventions.pdf
 
 
@@ -37,10 +41,30 @@
 ### Section 3.3.1.2 Query by Product Publication Date => OK
 ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
 
-### Section 3.3.1.3 Query by Validity Date => PARTIAL
-## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
+### Section 3.3.1.3 Query by Validity Date => OK (currently only AND is supported)
+## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z AND ContentDate/End lt 2019-05-16T00:00:00.000Z
+
+### Section 3.3.1.4 Query by Attributes => PENDING
+##[AD-1], [AD-2], [AD-3], [AD-4] and [AD-5] provide the definition of the minimum metadata that shall be indexed for each product, and their origin within the product
+
+## The list of products associated with a particular attribute Name value can be obtained as follows:
+## https://<service-root-uri>/odata/v1/Products?$filter=Attributes/OData.CSC.ValueTypeAttribute/any(att:att/Name eq '[Attribute.Name]' and att/OData.CSC.ValueTypeAttribute/Value eq '[Attribute.Value]')
+## Where the ValueTypeAttribute is the defined type for the Named attribute, e.g. StringAttribute, DateTimeOffsetAttribute, IntegerAttribute.
+
+
+## https://<service-root-uri>/odata/v1/Products?$filter=Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'AUX_ECMWFD') and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'platformShortName' and att/OData.CSC.StringAttribute/Value eq 'SENTINEL-2')
+
+
 
 ### Section 3.3.1.5 Additional Options => PARTIAL
+
+### $orderby 
+## If asc or desc not specified, then the resources will be ordered in ascending order
+
+## https://<service-root-uri>/odata/v1/Products?$orderby=PublicationDate desc
+
+
+
 ## pagination     => $top, $skip and $count
 
 ## https://<service-root-uri>/odata/v1/Products$top=2&$filter=startswith(Name,'S2') => OK
@@ -117,6 +141,10 @@ module ARC_ODATA
                               "ContentDate/Start", \
                               "ContentDate/End" \
                               ]
+   
+   ## ------------------------------------------------------
+   
+   
    ## ------------------------------------------------------
    
    EDM_AUXIP_ATTRIBUTE_PROPERTY = []
@@ -124,7 +152,7 @@ module ARC_ODATA
    ## ------------------------------------------------------
    
    ## option can be : count
-   def oDataQueryResponse(arrFiles, option, skip = 0, top = 0)
+   def oDataQueryResponse(arrFiles, option, skip = 0, top = 0, total = 0)
       hProducts   = Hash.new
       arrProducts = Array.new
       count       = 0
@@ -144,7 +172,8 @@ module ARC_ODATA
       hResponse["@odata.context"]   = "$metadata#Products"      
       
       if option == 'count' then
-         hResponse["count"]  = "#{count}"
+         # hResponse["count"]  = "#{count}"
+         hResponse["count"]  = "#{arrFiles.length - skip}"
       end
       
       hResponse["value"]            = arrProducts
@@ -168,7 +197,20 @@ module ARC_ODATA
    ## ------------------------------------------------------
    
    def oData2Model(property)
+
+      if property == "ContentLength" then
+         return "size"
+      end
+
+      if property == "Name" then
+         return "name"
+      end
+
       if property == "PublicationDate" then
+         return "archive_date"
+      end
+
+      if property == "ChecksumDate" then
          return "archive_date"
       end
       

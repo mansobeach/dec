@@ -1232,16 +1232,22 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "minArcStore")
 
-      cmd = "minArcStatus -g --noserver"
+      cmd = "minArcStatus -g --noserver | jq"
       puts cmd
       assert(system(cmd), cmd)
       
       puts
       puts
 
-      cmd = "minArcStatus -g"
+      cmd = "minArcStatus -g | jq"
       puts cmd
       assert(system(cmd), cmd)
+
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_230 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see status request traces #{__method__.to_s}") 
             
    end
 

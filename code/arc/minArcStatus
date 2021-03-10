@@ -226,6 +226,11 @@ def main
 
          hReturn = JSON.parse(ret)
 
+         puts hReturn
+         
+         exit(0)
+
+
          hReturn.each{|key, value|
             puts "#{key} : #{value}"
          }
@@ -255,16 +260,10 @@ def main
          ret = arc.statusGlobal
       end
       
-      if @isDebugMode == true then
-         puts
-         puts ret
-         puts
-      end
+      puts ret
 
-      ret.sort.each{|key, value|
-         puts "#{key} : #{value}"
-      }
       exit(0)
+
    end
 
 

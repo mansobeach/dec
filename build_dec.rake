@@ -362,15 +362,18 @@ namespace :dec do
       puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_odata]"
       puts
       puts "S2PDGSENG / Inputhub"
-      puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
+      puts "pull VPMC & VPMC_TCI"
+      puts "push HTTP_FERRO"
       puts "rake -f build_dec.rake dec:build[push_lisboa,e2espm-inputhub,s2]"
+      puts "Obsolete:"
+      puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
       puts "Pending ftp port management within containers:"
       puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
       puts
       puts "CloudFerro / S2BOA"
-      puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"
       puts "pull LISBOA"
       puts "pull LOCALFERRO"
+      puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"
       puts
    end
    ## --------------------------------------------------------------------

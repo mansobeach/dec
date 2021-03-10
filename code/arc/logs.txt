@@ -26,7 +26,7 @@ ARC_203: Archived: $file
 ARC_204: Status: $file (request of status acknowledge by the server)
 ARC_205: Deleted : $file
 ARC_210: Query Product (OData)
-
+ARC_230: Status global
 ARC_301: $file reallocated to $path
 
 WARNING:

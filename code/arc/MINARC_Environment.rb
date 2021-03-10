@@ -22,14 +22,16 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.1.0"
+   @@version = "1.1.1"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.1.0"   =>    "uuid, md5 & Users has been added to the model for postgresql database\n\
+      "1.1.1"  =>     "OData fix ($count not limited to return results)", \
+      "1.1.0"  =>     "uuid, md5 & Users has been added to the model for postgresql database\n\
           Client credentials configuration items added into minarc_config.xml
           Server API protected with HTTP Basic Authentication\n\
+          Basic OData support for AUXIP\n\
           gems bcrypt, byebug added as a dependency at installation time\n\
           FOSS tools: jq, md5sum added as a dependency at execution time\n\
           minArcStatus CLI information supplied as JSON",\

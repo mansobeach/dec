@@ -160,8 +160,8 @@ class FileStatus
       
       if lastHourCount == 0 then
          # ActiveRecord::Base.remove_connection
-         puts "No files archived during period"
-         return hResult
+         # puts "No files archived during period"
+         return hResult.to_json
       end
       
       lastHourSizeO     = lastHourFiles.sum(:size_original)
@@ -205,7 +205,7 @@ class FileStatus
       puts
       
       # ActiveRecord::Base.remove_connection
-      return hResult
+      return hResult.to_json
       
    end
    #-------------------------------------------------------------
@@ -304,29 +304,30 @@ class FileStatus
       
       if lastHourCount == 0 then
          # ActiveRecord::Base.remove_connection
-         puts "No files archived during period"
-         return hResult
+         # puts "No files archived during period"
+         return hResult.to_json
       end
-            
-      puts 
-            
-      arrTypes = ArchivedFile.select(:filetype).distinct
-            
-      arrTypes.each{|record|
-         # puts record.filetype
-         
-         arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
-         
-         puts "#{record.filetype} / #{arrFiles.count} files"
-         
-         # puts ArchivedFile.all.group(:filetype).count
-         
-      }
-      
-      puts
+
+## comment by filetype            
+#      puts 
+#            
+#      arrTypes = ArchivedFile.select(:filetype).distinct
+#            
+#      arrTypes.each{|record|
+#         # puts record.filetype
+#         
+#         arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
+#         
+#         puts "#{record.filetype} / #{arrFiles.count} files"
+#         
+#         # puts ArchivedFile.all.group(:filetype).count
+#         
+#      }
+#      
+#      puts
       
       # ActiveRecord::Base.remove_connection
-      return hResult
+      return hResult.to_json
       
    end
 

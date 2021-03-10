@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.1.0'
+  s.version     = '1.1.1'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -74,6 +74,7 @@ Gem::Specification.new do |s|
      s.executables   << 'minArcUnitTestsOData'
      s.executables   << 'minArcSmokeTestLocal'
      s.executables   << 'minArcSmokeTestRemote'
+     s.executables   << 'minArcTest_AUXIP_CloudFerro'
      s.executables   << 'minArcTestHandler_VIDEO'
   end
   ## --------------------------------------------
