@@ -30,6 +30,7 @@ module WrapperCURL
                   newUrl, \
                   currentName, \
                   newName, \
+                  verifySSL, \
                   user, \
                   pass, \
                   logger = nil, \
@@ -43,10 +44,18 @@ module WrapperCURL
          newUrl = "#{newUrl}/"
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
+      cmd = ""
+      
+      if verifySSL == false then
+         cmd = "curl -k"
+      else
+         cmd = "curl"
+      end
+
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
             
       if isDebugMode == true then
-         cmd = "#{cmd} -v "
+         cmd = "#{cmd.dup} -v "
          if logger != nil then
             logger.debug(cmd)
          else
@@ -59,15 +68,23 @@ module WrapperCURL
    ## -------------------------------------------------------------
    ##  
   
-   def propfind(url, user, pass, isDebugMode = false)
+   def propfind(url, verifySSL, user, pass, isDebugMode = false)
       if url[-1, 1] != "/" then
          url = "#{url}/"  
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X PROPFIND #{url}"
+      cmd = ""
+      
+      if verifySSL == false then
+         cmd = "curl -k"
+      else
+         cmd = "curl"
+      end
+
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X PROPFIND #{url}"
             
       if isDebugMode == true then
-         cmd = "#{cmd} -v "
+         cmd = "#{cmd.dup} -v "
          puts cmd
       end
       return system(cmd)   
@@ -75,13 +92,20 @@ module WrapperCURL
   
    ## -------------------------------------------------------------
    ##
-   def getURL(url, user = nil, pass = nil, isDebugMode = false)
+   def getURL(url, verifySSL = false, user = nil, pass = nil, isDebugMode = false)
       
       cmd = ""
-      if user != nil and user != "" then
-         cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+      
+      if verifySSL == false then
+         cmd = "curl -k"
       else
-         cmd = "curl --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+         cmd = "curl"
+      end
+      
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+      else
+         cmd = "#{cmd.dup} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
       end      
 
       
@@ -110,15 +134,23 @@ module WrapperCURL
    
    ## curl -X DELETE http://localhost:8080/tmp/test1.txt
    
-   def deleteFile(url, user, pass, file, isDebugMode = false)
+   def deleteFile(url, verifySSL, user, pass, file, isDebugMode = false)
       if url[-1, 1] != "/" then
          url = "#{url}/"  
       end
 
-      cmd = "curl -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X DELETE #{url}#{file}"
+      cmd = ""
+      
+      if verifySSL == false then
+         cmd = "curl -k"
+      else
+         cmd = "curl"
+      end
+
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X DELETE #{url}#{file}"
             
       if isDebugMode == true then
-         cmd = "#{cmd} -v "
+         cmd = "#{cmd.dup} -v "
          puts cmd
       end
       return system(cmd)
@@ -130,7 +162,7 @@ module WrapperCURL
 
    ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
 
-   def putFile(url, user, pass, file, isDebugMode = false, logger = nil)
+   def putFile(url, verifySSL, user, pass, file, isDebugMode = false, logger = nil)
       if isDebugMode == true then
          puts "WrapperCURL::putFile"
       end
@@ -142,16 +174,23 @@ module WrapperCURL
          url = "#{url}/"  
       end   
       ## -----------------------------------------
-      
+
       cmd = ""
-      if user != nil and user != "" then
-         cmd = "curl -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      
+      if verifySSL == false then
+         cmd = "curl -k"
       else
-         cmd = "curl -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "curl"
+      end
+
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      else
+         cmd = "#{cmd.dup} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
       end      
             
       if isDebugMode == true then
-         cmd = "#{cmd} -v "
+         cmd = "#{cmd.dup} -v "
          output = `#{cmd}`
       else
          system(cmd)
@@ -183,7 +222,7 @@ module WrapperCURL
 
    ## curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
    
-   def putFileSilent(url, user, pass, file, isDebugMode = false)
+   def putFileSilent(url, verifySSL, user, pass, file, isDebugMode = false)
       if isDebugMode == true then
          puts "WrapperCURL::putFileSilent #{url} #{file}"
       end
@@ -193,14 +232,21 @@ module WrapperCURL
       end
    
       cmd = ""
-      if user != nil and user != "" then
-         cmd = "curl -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      
+      if verifySSL == false then
+         cmd = "curl -k"
       else
-         cmd = "curl --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "curl"
+      end
+
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+      else
+         cmd = "#{cmd.dup} --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
       end  
             
       if isDebugMode == true then
-         cmd = "#{cmd} -v "
+         cmd = "#{cmd.dup} -v "
          puts cmd
       end
    
@@ -217,13 +263,22 @@ module WrapperCURL
    
    ## curl parameters tailored for sending big files
 
-   def postFile(url, user, pass, file, hFormParams, isDebugMode = false)
+   def postFile(url, verifySSL, user, pass, file, hFormParams, isDebugMode = false)
       
       cmd = ""
-      if user != nil and user != "" then
-         cmd = "curl -u #{user}:#{escapePassword(pass)} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+      
+      
+      if verifySSL == false then
+         cmd = "curl -k"
       else
-         cmd = "curl --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+         cmd = "curl"
+      end
+      
+      
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+      else
+         cmd = "#{cmd.dup} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
       end  
     
 #      if isDebugMode == true then
@@ -272,13 +327,21 @@ module WrapperCURL
    ##  --remote-header-name / -J 
    ## option -J
 
-   def getFile(url, user, pass, filename, isDebugMode = false)
+   def getFile(url, verifySSL, user, pass, filename, isDebugMode = false)
       ## --progress-bar commented
 
-      if user != nil and user != "" then
-         cmd = "curl --progress-bar -u #{user}:#{escapePassword(pass)} -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      cmd = ""
+            
+      if verifySSL == false then
+         cmd = "curl -k"
       else
-         cmd = "curl --progress-bar -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+         cmd = "curl"
+      end
+
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} --progress-bar -u #{user}:#{escapePassword(pass)} -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+      else
+         cmd = "#{cmd.dup} --progress-bar -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
       end  
   
       if isDebugMode == true then

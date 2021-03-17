@@ -53,6 +53,7 @@ class InterfaceHandlerWebDAV < InterfaceHandlerAbstract
       @inConfig         = ReadConfigIncoming.instance
       @isSecure         = @entityConfig.isSecure?(@entity)
       @server           = @entityConfig.getServer(@entity)
+      @verifyPeerSSL    = @entityConfig.isVerifyPeerSSL?(mnemonic)
       @uploadDir        = @outConfig.getUploadDir(@entity)
       @uploadTemp       = @outConfig.getUploadTemp(@entity)
       @arrPullDirs      = @inConfig.getDownloadDirs(@entity)
@@ -103,7 +104,7 @@ class InterfaceHandlerWebDAV < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerWebDAV::pushFile => #{file} / #{url} by #{@server[:user]}")
       end
    
-      ret = putFile(url, @server[:user], @server[:password], file, @isDebugMode, @logger)
+      ret = putFile(url, @verifyPeerSSL, @server[:user], @server[:password], file, @isDebugMode, @logger)
    
       if ret == false then
          return false
@@ -135,7 +136,7 @@ class InterfaceHandlerWebDAV < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerWebDAV::pushFile => #{file} / #{url} by @server[:user]")
       end
       
-      ret = moveFile(currentUrl, url, file, file, @server[:user], @server[:password], @logger, @isDebugMode)
+      ret = moveFile(currentUrl, url, file, file, @verifyPeerSSL, @server[:user], @server[:password], @logger, @isDebugMode)
       
       if ret == false then
          return false

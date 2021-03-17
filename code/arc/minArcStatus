@@ -38,7 +38,8 @@
 
 require 'getoptlong'
 require 'json'
-require 'rdoc'
+
+require 'cuc/Log4rLoggerFactory'
 
 require 'arc/MINARC_Status'
 require 'arc/FileStatus'
@@ -153,6 +154,28 @@ def main
       exit(99)
    end
 
+   ## ------------------------------------------------------
+
+   @minArcConfigDir       = ENV['MINARC_CONFIG']
+
+   ## initialise the logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("ArcStatus", "#{@minArcConfigDir}/minarc_log_config.xml")
+   
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+      
+   @logger = loggerFactory.getLogger
+   
+   if @logger == nil then
+      puts
+		puts "Could not initialize logging system !  :-("
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
+
    # -------------------------------------------------------
 
    if !ENV['MINARC_SERVER'] then
@@ -179,7 +202,7 @@ def main
    # -------------------------------------------------------
 
    if @filename != "" then
-      fileStatus = ARC::FileStatus.new(@filename, @bNoServer)
+      fileStatus = ARC::FileStatus.new(@filename, @bNoServer, @logger)
 
       if @isDebugMode == true then
          fileStatus.setDebugMode
@@ -200,7 +223,7 @@ def main
    
    if @filetype != "" then
       if @bNoServer == true then
-         fileStatus = ARC::FileStatus.new(nil)
+         fileStatus = ARC::FileStatus.new(nil, @bNoServer, @logger)
 
          if @isDebugMode == true then
             fileStatus.setDebugMode
@@ -245,12 +268,20 @@ def main
    if @bGlobal == true then
       ret = Hash.new
       if @bNoServer == true then
-         fileStatus = ARC::FileStatus.new(nil)
+         fileStatus = ARC::FileStatus.new(nil, @bNoServer, @logger)
          # fileStatus = ARC::MINARC_Status.new(nil)
          if @isDebugMode == true then
             fileStatus.setDebugMode
          end
-         ret = fileStatus.statusGlobal
+         begin
+            ret = fileStatus.statusGlobal
+         rescue Exception => e
+            @logger.error("[ARC_XXX] #{e.to_s.chop}")
+            if @isDebugMode == true then
+               @logger.debug(e.backtrace)
+            end
+            exit(66)
+         end
       else
          arc = ARC::MINARC_Client.new
          

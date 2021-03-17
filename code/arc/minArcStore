@@ -346,7 +346,7 @@ def main
          }
          exit(0)
       else
-         arc = ARC::MINARC_Client.new
+         arc = ARC::MINARC_Client.new(@logger)
          
          if @isDebugMode == true then
             arc.setDebugMode

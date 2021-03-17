@@ -18,7 +18,7 @@
    </Archive>
 
    <Workflow>
-      <ArchiveServer>localhost:4567</ArchiveServer>
+      <ArchiveServer>https://localhost:4567</ArchiveServer>
       <ArchiveRoot>/tmp/minarc</ArchiveRoot>
       <ArchiveError>/tmp/minarc_error2</ArchiveError>
       <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
@@ -35,6 +35,7 @@
    </Inventory>
 
    <Client>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <User>test</User>
       <Password>test</Password>
    </Client>

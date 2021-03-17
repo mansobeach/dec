@@ -66,10 +66,6 @@ require 'arc/MINARC_API_OData'
 ## 20  - test_train_server
 ## 21  - test_minArcReallocate
 ## 22  - test_contingency
-## 22  - test_odata_download
-## 23  - test_odata_query_name
-## 24  - test_odata_query_date
-## 24  - test_odata_query_count
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -962,7 +958,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       @@conf.wrapper_print_environment
 
-      arc = ARC::MINARC_Client.new
+      arc = ARC::MINARC_Client.new(@@logger)
       arc.setDebugMode
 
       version = arc.getVersion
@@ -1020,7 +1016,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       @@conf.wrapper_print_environment
          
-      arc = ARC::MINARC_Client.new(true)
+      arc = ARC::MINARC_Client.new(@@logger, true)
       arc.setDebugMode
       
       Dir.chdir(@@prevDir)
@@ -1150,7 +1146,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_print_environment
       
       
-      arc = ARC::MINARC_Client.new(true)
+      arc = ARC::MINARC_Client.new(@@logger, true)
       assert( \
                arc.deleteFile(File.basename(@@testFile1, ".*") ), \
                "Verification remote API_URL_DELETE: #{API_URL_DELETE}" \
@@ -1187,8 +1183,17 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcServer -c"
       puts cmd
       assert(system(cmd), cmd)
+ 
+      config = ReadMinarcConfig.instance 
+      server = config.getArchiveServer      
+      user   = config.getClientUser
+      pass   = config.getClientPassword
+      verifyPeerSSL = config.getClientVerifyPeerSSL
+
       
-      cmd = "curl localhost:4567/#{ARC::API_URL_REQUEST_ARCHIVE}"
+      assert(server != nil, "get Archive Server")   
+        
+      cmd = "curl -k -s -u #{user}:#{pass} #{server}/dec/arc/requestArchive/*"
       puts cmd
       assert(system(cmd), cmd)
       
@@ -1197,9 +1202,20 @@ class TestCaseStore < Test::Unit::TestCase
       arr = Dir["/tmp/minarc/tmp/*"]
       puts arr
       
-      cmd = "curl localhost:4567/dec/arc/minArcRetrieve/S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001"
+      cmd = "minArcStatus -f S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00 | jq"
       puts 
       puts cmd
+      assert(system(cmd), cmd)
+
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "cat #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see status request traces #{__method__.to_s}") 
+      
+      cmd = "cat /tmp/minarc_server.out"
+      puts cmd
+      assert(system(cmd), "see status request traces #{__method__.to_s}") 
          
    end
 
@@ -1474,13 +1490,19 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
+      config = ReadMinarcConfig.instance 
+      server = config.getArchiveServer    
+      user   = config.getClientUser
+      pass   = config.getClientPassword
+      verifyPeerSSL = config.getClientVerifyPeerSSL
+
       ## ------------------------------------
       ## request archive polling
-      cmd = "curl localhost:4567/dec/arc/requestArchive/*"
+      cmd = "curl -s -k -u #{user}:#{pass} #{server}/dec/arc/requestArchive/*"
       puts cmd
       assert(system(cmd), cmd)
       
-      cmd = "curl localhost:4567/dec/arc/requestArchive/S2A_OPER_REP_OPDPC__SGS*"
+      cmd = "curl -s -k -u #{user}:#{pass} #{server}/dec/arc/requestArchive/S2A_OPER_REP_OPDPC__SGS*"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -1545,16 +1567,20 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-
+      config = ReadMinarcConfig.instance 
+      server = config.getArchiveServer 
+      user   = config.getClientUser
+      pass   = config.getClientPassword
+      
       ## ------------------------------------
       ## request archive polling
-      cmd = "curl \"localhost:4567/odata/v1/Products?\\$filter=startswith(Name,'S1A_AUX_')\" "
+      cmd = "curl -s -k -u #{user}:#{pass} \"#{server}/odata/v1/Products?\\$filter=startswith(Name,'S1A_AUX_')\" "
       puts
       puts cmd
       puts
       system(cmd)
             
-      cmd = "curl \"localhost:4567/odata/v1/Products?\\$filter=contains(Name,'S2__OPER_AUX_UT1UTC')\" "
+      cmd = "curl -s -k -u #{user}:#{pass} \"#{server}/odata/v1/Products?\\$filter=contains(Name,'S2__OPER_AUX_UT1UTC')\" "
       puts
       puts cmd
       puts
@@ -1582,13 +1608,20 @@ class TestCaseStore < Test::Unit::TestCase
       @@logger.info("#{__method__.to_s} START")
       
       sleep(3.0)
+
+      config = ReadMinarcConfig.instance 
+      server = config.getArchiveServer  
+      user   = config.getClientUser
+      pass   = config.getClientPassword
+    
+      assert(server != nil, "get Archive Server")   
       
       @@arrInputFiles.each{|filename|
          cmd = "echo \'#{filename}\' > /tmp/minarc/tmp//#{filename}"
          @@logger.info(cmd)
          assert(system(cmd), cmd)
          sleep(3.0)
-         cmd = "curl localhost:4567/dec/arc/requestArchive/*"
+         cmd = "curl -s -k -u #{user}:#{pass} #{server}/dec/arc/requestArchive/*"
          @@logger.info(cmd)
          assert(system(cmd), cmd)
          
@@ -1726,418 +1759,7 @@ class TestCaseStore < Test::Unit::TestCase
    end
    ## -----------------------------------------------------------
 
-   def test_odata_download
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
 
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
-      cmd = ""
-
-      config = ReadMinarcConfig.instance   
-      server = config.getArchiveServer
-       
-      url = "localhost:4567/odata/v1/Products"
-   
-      ## -------------------------------
-      
-      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
-         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
-      end
-
-      ## -------------------------------
-      ## well-formed download request
-      uuid = "1234-acds-22e2e121e"
-
-      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
-      puts cmd
-      system(cmd)
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed unsupported request / bad request
-      uuid = "1234-acds-22e2e121e"
-
-      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$count\' "
-      puts cmd
-      system(cmd)
-      ## -------------------------------
-
-      ## store a test file
-      test_local_minArcStore
-
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
-      ret = `#{cmd}`
-      puts cmd
-      puts 
-      uuid =  ret.chop.gsub("\"","")
-      assert($?.exitstatus, "Retrieving the uuid")
-      ## -------------------------------
-   
-      ## -------------------------------
-      ## well-formed download request / good request
-#      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
-#      puts cmd
-#      ret = system(cmd)      
-#      assert(ret, "successful curl download")
-      
-      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
-         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
-      end
-      
-      theURL = "#{url}(#{uuid})/\$value"
-      ret = getFile(theURL, "test", "test", "thefile", true)
-      
-      assert(ret, "File download with WrapperCURL.getFile")
-      
-      if File.exist?("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z") == true
-         File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
-      end
-
-      ## -------------------------------
-   
-   end
-   ## -----------------------------------------------------------
-
-   ## -----------------------------------------------------------
-
-   def test_odata_query_name
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
-      cmd = ""
-
-      config = ReadMinarcConfig.instance   
-      server = config.getArchiveServer
-      
-      
-      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
-   
-      ## -------------------------------
-      
-      ## store a test file
-      test_local_minArcStore
-
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
-      ret = `#{cmd}`
-      puts cmd
-      puts 
-      uuid =  ret.chop.gsub("\"","")
-      assert($?.exitstatus, "Retrieving the uuid")
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request / bad function request
-      cmd = "curl -v -u test:test \'#{url}$filter=notsupportedfunction(Name,'S2')' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request / bad property request
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(File,'S2')' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      
-      ## -------------------------------
-
-   
-      ## -------------------------------
-      ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')' | jq"
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-          
-      ## -------------------------------
- 
-      ## -------------------------------
-      ## well-formed query request / good request with no results
-      cmd = "curl -v -u test:test \'#{url}$filter=endswith(Name,'S2')'"
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-          
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')' | jq"
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-          
-      ## -------------------------------
-
-  
-   end
-   ## -----------------------------------------------------------
-
-   ## -----------------------------------------------------------
-
-   def test_odata_query_date
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
-      cmd = ""
-
-      config = ReadMinarcConfig.instance   
-      server = config.getArchiveServer
-      
-      
-      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
-   
-      ## -------------------------------
-      
-      ## store test file
-      test_local_minArcStore
-
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
-      ret = `#{cmd}`
-      puts cmd
-      puts 
-      uuid =  ret.chop.gsub("\"","")
-      assert($?.exitstatus, "Retrieving the uuid")
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request request
-      
-      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate lt 2020-05-15T00:00:00.000Z
-      
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request request
-      
-      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate le 2020-05-15T00:00:00.000Z
-      
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20le%202020-05-15T00:00:00.000Z' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request request
-      
-      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
-      
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request request
-      
-      ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate ge 2020-05-15T00:00:00.000Z
-      
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
-
-
-      ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
-  
-   end
-   ## -----------------------------------------------------------
-
-   ## -----------------------------------------------------------
-
-   def test_odata_query_count
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
-      cmd = ""
-
-      config = ReadMinarcConfig.instance   
-      server = config.getArchiveServer
-      
-      
-      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
-   
-      ## -------------------------------
-      
-      ## store test file
-      test_local_minArcStore
-
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
-      ret = `#{cmd}`
-      puts cmd
-      puts 
-      uuid =  ret.chop.gsub("\"","")
-      assert($?.exitstatus, "Retrieving the uuid")
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed query request request
-      
-      ## https://<service-root-uri>/odata/v1/Products?$count=true
-      
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true' "
-      puts cmd
-      ret = system(cmd)      
-      assert(ret, "successful curl query")
-      
-      ## -------------------------------
-
-
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
-
-  
-   end
    ## -----------------------------------------------------------
 
 

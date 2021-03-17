@@ -353,7 +353,7 @@ class OrchestratorScheduler
          retVal = system(cmd)
          
          while (retVal == false) do
-            @logger.info("[ORC_225] No resources available / queue length: #{@arrQueuedFiles.length} / sleeping #{@freqScheduling} s")
+            @logger.info("[ORC_230] No resources available / queue length: #{@arrQueuedFiles.length} / sleeping #{@freqScheduling} s")
             sleep(@freqScheduling)
             retVal = system(cmd)
          end         

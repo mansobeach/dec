@@ -18,7 +18,7 @@
    </Archive>
 
    <Workflow>
-      <ArchiveServer>185.52.193.141:4567</ArchiveServer>
+      <ArchiveServer>https://185.52.193.141:4567</ArchiveServer>
       <ArchiveRoot>/volume1/dec/arc/minarc_root</ArchiveRoot>
       <ArchiveError>/volume1/dec/arc/minarc_error</ArchiveError>
       <ArchiveIntray>/volume1/dec/arc/minarc_intray</ArchiveIntray>
@@ -35,6 +35,7 @@
    </Inventory>
 
    <Client>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
       <User>dec</User>
       <Password>dec</Password>
    </Client>

@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileDeleter class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id: FileDeleter.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
-#
-# module MINARC
-#
+##
+## === Ruby source for #FileDeleter class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id: FileDeleter.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
+##
+## module MINARC
+##
 #########################################################################
 
 require 'cuc/DirUtils'
@@ -28,9 +28,9 @@ class FileDeleter
    ## -----------------------------------------------------------
    
    # Class contructor
-   def initialize(bListOnly = false, bNoServer = false)
+   def initialize(bListOnly = false, bNoServer = false, logger = nil)
       @bListOnly     = bListOnly
-      
+      @logger        = logger
       # puts "FileDeleter::initialize #{ENV['MINARC_SERVER']} | #{bNoServer}"
       
       if ENV['MINARC_SERVER'] and bNoServer == false then
@@ -104,7 +104,7 @@ class FileDeleter
       if @isDebugMode == true then
          puts "FileDeleter::remote_delete_by_name"
       end
-      arc = ARC::MINARC_Client.new
+      arc = ARC::MINARC_Client.new(@logger, @isDebugMode)
       if @isDebugMode == true then
          arc.setDebugMode
       end

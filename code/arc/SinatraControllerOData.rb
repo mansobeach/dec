@@ -90,7 +90,9 @@ class ControllerODataProductDownload < SinatraControllerOData
         
         aFile = ArchivedFile.where(uuid: @uuid).to_a[0]
         
-        @logger.debug("aFile #{aFile} / #{@uuid}")
+        if @isDebugMode == true then
+           @logger.debug("aFile #{aFile} / #{@uuid}")
+        end
         
         if aFile == nil then
            @logger.info("[ARC_200] Requested: #{@uuid} / File not found") 
@@ -194,7 +196,9 @@ class ControllerODataProductQuery < SinatraControllerOData
      
      aFile = nil
      
-     @logger.debug(@property)
+     if @isDebugMode == true then
+        @logger.debug(@property)
+     end
      
      ## ------------------------------------------
      ## Query all when no property
@@ -206,7 +210,9 @@ class ControllerODataProductQuery < SinatraControllerOData
      ## ------------------------------------------
      ## Query by property Name
      if @property == 'Name' then
-        @logger.debug("Property Name LIKE #{@queryValue}")
+        if @isDebugMode == true then
+           @logger.debug("Property Name LIKE #{@queryValue}")
+        end
         aFile = ArchivedFile.where("name LIKE ?", @queryValue)
      end
      ## ------------------------------------------
@@ -214,9 +220,12 @@ class ControllerODataProductQuery < SinatraControllerOData
      ## ------------------------------------------          
      ## Query by any date property PublicationDate
      if @property == 'PublicationDate' or @property == 'ContentDate/Start' or @property == 'ContentDate/End' then
-        @logger.debug(ARC_ODATA::oData2Model(@property))
-        @logger.debug(self.str2date(@queryValue))
-        @logger.debug(ARC_ODATA::filterOperations2Model(@function))
+        if @isDebugMode == true then
+           @logger.debug(ARC_ODATA::oData2Model(@property))
+           @logger.debug(self.str2date(@queryValue))
+           @logger.debug(ARC_ODATA::filterOperations2Model(@function))
+        end
+        
         aFile = ArchivedFile.where("#{ARC_ODATA::oData2Model(@property)} #{ARC_ODATA::filterOperations2Model(@function)} ?", self.str2date(@queryValue))
      end
      ## ------------------------------------------
@@ -225,7 +234,9 @@ class ControllerODataProductQuery < SinatraControllerOData
      ## Query is an array of properties
      
      if @property.class.to_s.include?("Array") == true then
-        @logger.debug("Array of properties #{@property}")
+        if @isDebugMode == true then
+           @logger.debug("Array of properties #{@property}")
+        end
         strQuery = ""
         idx      = 0
         @property.each{|prop|
@@ -242,8 +253,10 @@ class ControllerODataProductQuery < SinatraControllerOData
         query << @queryValue
         query = query.dup.flatten
         
-        @logger.debug("Composed query => #{strQuery}")
-        @logger.debug("Composed query => #{query}")
+        if @isDebugMode == true then
+           @logger.debug("Composed query => #{strQuery}")
+           @logger.debug("Composed query => #{query}")
+        end
         
         aFile = ArchivedFile.where(query)
         
@@ -267,7 +280,9 @@ class ControllerODataProductQuery < SinatraControllerOData
               @logger.warn("$orderby #{@orderby} not supported")
               response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)
            else
-              @logger.debug("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
+              if @isDebugMode == true then
+                 @logger.debug("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
+              end
               response = ARC_ODATA::oDataQueryResponse(aFile.order("#{ARC_ODATA::oData2Model(@orderby)} #{@order}").to_a, @option, @skip, @top)
            end
         else
@@ -312,7 +327,9 @@ private
          else
             @skip = @skip.dup.to_i
          end
-         @logger.debug("skip => #{@skip}")
+         if @isDebugMode == true then
+            @logger.debug("skip => #{@skip}")
+         end
       end
 
       ## $top
@@ -323,7 +340,9 @@ private
          else
             @top = @top.dup.to_i
          end
-         @logger.debug("top => #{@top}")
+         if @isDebugMode == true then
+            @logger.debug("top => #{@top}")
+         end
       end
 
       ## $orderby
@@ -336,7 +355,10 @@ private
             @order   = @orderby.dup.split(" ")[1]
             @orderby = @orderby.dup.split(" ")[0]
          end
-         @logger.debug("$orderby => #{@orderby} #{@order}")
+         
+         if @isDebugMode == true then
+            @logger.debug("$orderby => #{@orderby} #{@order}")
+         end
          
          if ARC_ODATA::EDM_AUXIP_PRODUCT_PROPERTY.include?(@orderby) == false then
             raise "$orderby property #{@orderby} not supported"
@@ -473,7 +495,9 @@ private
 
       end 
 
-      @logger.debug("parseQueryDate #{@property} #{@function} #{@queryValue}")
+      if @isDebugMode == true then
+         @logger.debug("parseQueryDate #{@property} #{@function} #{@queryValue}")
+      end
       
       return bRet
       
@@ -549,11 +573,15 @@ private
       end
       
       if @expandEntity != "Attributes" then
-         @logger.debug("parseQueryExpand => expand => #{@expandEntity} not supported")
+         if @isDebugMode == true then
+            @logger.debug("parseQueryExpand => expand => #{@expandEntity} not supported")
+         end
          return false
       end
       
-      @logger.debug("parseQueryExpand => expand => #{@expandEntity}")
+      if @isDebugMode == true then
+         @logger.debug("parseQueryExpand => expand => #{@expandEntity}")
+      end
       return bRet
    end
    ## -------------------------------------------------------

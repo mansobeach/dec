@@ -9,6 +9,12 @@ echo "entrypoint minarc"
 echo "minArcDB -c -H"
 minArcDB -c -H
 
+echo "minArcDB -a dec:dec"
+minArcDB -a dec:dec
+
+echo "minArcDB -a test:test"
+minArcDB -a test:test
+
 echo "minArcServer -k"
 minArcServer -k
 

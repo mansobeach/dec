@@ -22,11 +22,14 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.1.1"
+   @@version = "1.1.2"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.1.2"  =>     "minArcServer support of SSL over HTTP\n\
+          gems rack-ssl, rack-ssl-enforcer added as a dependency at installation time\n\
+          VerifyPeerSSL configuration item added to bypass self-signed certificates",\
       "1.1.1"  =>     "OData fix ($count not limited to return results)", \
       "1.1.0"  =>     "uuid, md5 & Users has been added to the model for postgresql database\n\
           Client credentials configuration items added into minarc_config.xml

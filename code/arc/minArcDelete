@@ -260,7 +260,7 @@ def main
    end
 
 
-   fileDeleter = ARC::FileDeleter.new(@bListOnly, @bNoServer)
+   fileDeleter = ARC::FileDeleter.new(@bListOnly, @bNoServer, @logger)
 
    if @isDebugMode == true then
       fileDeleter.setDebugMode

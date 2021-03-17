@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #FileDeleter class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id: FileStatus.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
-#
-# module MINARC
-#
+##
+## === Ruby source for #FileDeleter class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Mini Archive Component (MinArc)
+## 
+## Git: $Id: FileStatus.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
+##
+## module MINARC
+##
 #########################################################################
 
 require 'filesize'
@@ -23,14 +23,10 @@ module ARC
 
 class FileStatus
 
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------  
    
-   # Class contructor
-   def initialize(filename = nil, bNoServer = false)
-#      puts "FileStatus::initialize"
-#      puts filename
-#      puts bNoServer
-      
+   ## Class contructor
+   def initialize(filename = nil, bNoServer = false, logger = nil)      
       @filename     = filename
       
       if ENV['MINARC_SERVER'] and bNoServer == false then
@@ -40,25 +36,28 @@ class FileStatus
          require 'arc/MINARC_DatabaseModel'
       end
       
+      @logger = logger
       checkModuleIntegrity
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "FileStatus debug mode is on"
+      if @logger != nil then
+         @logger.debug("FileStatus debug mode is on")
+      end
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    def statusFileName(filename)
       if @bRemoteMode == true then
       
          if @isDebugMode == true then
-            puts "Remote mode is true"
+            @logger.debug("Remote mode is true")
          end
       
-         arc = ARC::MINARC_Client.new
+         arc = ARC::MINARC_Client.new(@logger)
       
          if @isDebugMode == true then
             arc.setDebugMode
@@ -69,7 +68,7 @@ class FileStatus
       else
       
          if @isDebugMode == true then
-            puts "Remote mode is false"
+            @logger.debug("Remote mode is true")
          end
       
          aFile = queryInventoryByName(filename)
@@ -91,7 +90,7 @@ class FileStatus
       aFile = queryInventory
       
       if aFile == nil then
-         puts "#{@filename} not present in the archive"
+         @logger.debug("#{@filename} not present in the archive")
          return false
       end
       
@@ -269,20 +268,23 @@ class FileStatus
 
       require 'arc/MINARC_DatabaseModel'      
          if @isDebugMode == true then
-            puts "Remote mode is false"
+            @logger.debug("Remote mode is false")
          end
 
       hResult = Hash.new
-            
+      
+        
       arrFiles          = ArchivedFile.all   
       numTotalFiles     = ArchivedFile.count
       lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
-      lastHourCount     = lastHourFiles.count
       lastArchiveDate   = ArchivedFile.last.archive_date
+      arrTypes          = ArchivedFile.select(:filetype).distinct
+       
+      lastHourCount     = lastHourFiles.count
       sizeOriginal      = Filesize.from("#{arrFiles.sum(:size_original)} B").pretty
       sizefile          = Filesize.from("#{arrFiles.sum(:size)} B").pretty
       sizeInDisk        = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      arrTypes          = ArchivedFile.select(:filetype).distinct
+      
       lastHourSizeO     = lastHourFiles.sum(:size_original)
       lastHourSize      = lastHourFiles.sum(:size)
       lastHourDisk      = lastHourFiles.sum(:size_in_disk)
@@ -302,12 +304,9 @@ class FileStatus
       hResult[:last_hour_size]            = prettyHourSize
       hResult[:last_hour_size_in_disk]    = prettyHourDisk
       
-      if lastHourCount == 0 then
-         # ActiveRecord::Base.remove_connection
-         # puts "No files archived during period"
-         return hResult.to_json
-      end
-
+      return hResult.to_json
+   
+         
 ## comment by filetype            
 #      puts 
 #            
@@ -327,7 +326,7 @@ class FileStatus
 #      puts
       
       # ActiveRecord::Base.remove_connection
-      return hResult.to_json
+      
       
    end
 

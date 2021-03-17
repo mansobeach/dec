@@ -24,11 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.23"
+   @@version = "1.0.25"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.25" =>    "TBW / VerifyPeerSSL is used by HTTP handlers", \
+      "1.0.24" =>    "Pull local dissemination chmod robustified for errors", \
       "1.0.23" =>    "Local dissemination upon pull is safely compressed:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-414\n\
           Update of the OData client for S2PRIP to support download of PDI\n\

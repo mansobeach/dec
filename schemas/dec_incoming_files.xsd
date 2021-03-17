@@ -108,7 +108,10 @@
 
  <xs:complexType name="IntrayType">
   <xs:sequence>
+  <!--
    <xs:element name="Name"       type="SimpleAcronymType"/>
+   -->
+   <xs:element name="Name"       type="xs:string"/>
    <xs:element name="Directory"  type="xs:string"/>
    <xs:element name="Compress"   type="xs:string" minOccurs="0" maxOccurs="1" />
    <xs:element name="Execute"    type="xs:string" minOccurs="0" maxOccurs="1" />

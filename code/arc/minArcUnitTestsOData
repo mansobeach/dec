@@ -29,8 +29,6 @@ require 'arc/MINARC_API_OData'
       
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
-
-
 # Preconditions:
 # 1 - setup 
 # 1.1 - load_config_development
@@ -40,7 +38,6 @@ require 'arc/MINARC_API_OData'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-##  0  - test_local_minArcStore
 ##  1  - test_odata_download
 ##  2  - test_odata_query_name
 ##  3  - test_odata_query_orderby
@@ -51,6 +48,7 @@ require 'arc/MINARC_API_OData'
 ##  8  - test_odata_query_skip
 ##  9  - test_odata_query_top
 ## 10  - test_odata_query_expand
+## 10  - test_odata_bad_queries
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -107,53 +105,7 @@ class TestCaseStore < Test::Unit::TestCase
          puts
          exit(99)
       end
- 
-#      puts "call start teardown"
-#      self.teardown
-#      puts "call end teardown"
 
-
-      begin
-         cmd = "minArcDB -d"
-         puts cmd
-         ret = system(cmd)
-
-         cmd = "minArcDB -c"
-         puts cmd
-         ret = system(cmd)
-         
-         cmd = "minArcDB -a test:test"
-         puts cmd
-         ret = system(cmd)
-         
-      rescue Exception => e
-      end
-
-      begin
-         cmd = "minArcPurge -Y"
-         puts cmd
-         # ret = system(cmd)
-      rescue
-      end
-
-
-
-=begin
-      puts
-      puts "GEM DATADIR = #{Gem.datadir("minarc")}"
-      puts
-      
-      rootpath = nil
-      
-      if Gem.datadir("minarc") == nil then
-         rootpath = ENV['DEC_BASE']
-         @testDir = File.join(rootpath, "code/arc/plugins/test/")
-      else
-         rootpath = Gem.datadir("minarc")
-         @testDir = File.join(rootpath, "../../code/arc/plugins/test/")
-      end
-      
-=end
       
       @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
       @@testFile1          = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
@@ -169,49 +121,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir(@@testDataDir)
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       system("echo \'S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      Dir.chdir(@@prevDir)
-
-      system("minArcServer -k")
-      prevDir = Dir.pwd
-      Dir.chdir(ENV['MINARC_TMP'])
-      
-            
-      puts "init server"
-      FileUtils.rm_f("#{ENV['MINARC_TMP']}/minarc_server.out")
-      # @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
-      @serverPID = spawn("minArcServer -s > #{ENV['MINARC_TMP']}/minarc_server.out 2>&1")
-      Dir.chdir (prevDir)
-      puts @serverPID
-
-      sleep(2.0)
-
-      @@arrInputFiles = [ \
-                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
-                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
-                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
-                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
-                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
-                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
-                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
-                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
-                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
-                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
-                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
-                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
-                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
-                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
-                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
-                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
-                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
-                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
-                           ]
-                       
+      Dir.chdir(@@prevDir)                       
                        
       @@arcConfigDir = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       puts
@@ -219,6 +129,9 @@ class TestCaseStore < Test::Unit::TestCase
       puts                   
       ## ----------------------------------
       ## initialize logger
+      
+      system("\\rm -rf /tmp/minarc_log_file*.log")
+      
       loggerFactory = CUC::Log4rLoggerFactory.new("ARCTEST", "#{@@arcConfigDir}/minarc_log_config.xml")
    
       @@logger = loggerFactory.getLogger   
@@ -230,6 +143,67 @@ class TestCaseStore < Test::Unit::TestCase
  	      puts
    	   exit(99)
       end
+
+      Dir.chdir(@@testDataDir)
+      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
+      system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
+      
+      Dir.chdir(@@prevDir)    
+
+      cmd = "minArcDB -d"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      puts cmd
+      system(cmd)
+ 
+      cmd = "minArcDB -a test:test -D"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcDB -a dec:dec -D"
+      puts cmd
+      system(cmd)
+
+      cmd = "minArcServer -k"
+      puts cmd
+      system(cmd)
+
+      puts
+
+      #cmd = "minArcServer -s -D"
+      cmd = "minArcServer -s"
+      puts cmd
+      spawn(cmd)
+ 
+      sleep(5.0)
+      
+      cmd = "minArcServer -c"
+      puts cmd
+      system(cmd)
+      puts
+
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+
+      cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d -D"
+      puts cmd
+      system(cmd)
+ 
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d -D"
+      puts cmd
+      system(cmd)
+     
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
+      system("\\rm -f /tmp/minarc/tmp/#{@@filename2_noext}.7z")
 
             
    end
@@ -260,26 +234,18 @@ class TestCaseStore < Test::Unit::TestCase
       
       system("\\rm -rf /tmp/minarc_log_file*.log")
       
-      cmd = "minArcPurge -Y"
-      ret = system(cmd)
-
-      if ret == false then
-         puts "Error when cleaning the minarc root directory ! :-("
+      loggerFactory = CUC::Log4rLoggerFactory.new("ARCTEST", "#{@@arcConfigDir}/minarc_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
          puts
-         exit(99)
+		   puts "Error in OrchestratorIngester::initialize"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check minARC logs configuration under \"#{@@arcConfigDir}/minarc_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
       end
-
-      
-      @path = "#{ENV['MINARC_BASE']}/code/arc"
-      
-      Dir.chdir(@@testDataDir)
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      system("\\rm -f #{@@testDataDir}/#{@@filename1_noext}.7z")
-      
-      Dir.chdir(@@prevDir)    
-
-      puts
-      puts Dir.pwd
+            
       puts
       puts "END OF MINARC_UnitTests::#{__method__.to_s}"
       puts
@@ -302,39 +268,6 @@ class TestCaseStore < Test::Unit::TestCase
    ## ------------------------------------------------------
 
    ## -----------------------------------------------------------
-   ##
-   ## 
-   def test_local_minArcStore
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      system("mkdir -p /tmp/minarc/tmp/")
-      
-      cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
-      system(cmd)
-
-      cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
-      puts cmd
-      system(cmd)
-      
-      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d -D"
-      puts cmd
-      assert(system(cmd), "minArcStore")
- 
-      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d -D"
-      puts cmd
-      assert(system(cmd), "minArcStore")
-     
-      system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
-      system("\\rm -f /tmp/minarc/tmp/#{@@filename2_noext}.7z")
-   end
-   ## ------------------------------------------------------
-
-   ## -----------------------------------------------------------
 
    def test_odata_download
       puts
@@ -342,42 +275,13 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
         
       cmd = ""
 
       config = ReadMinarcConfig.instance   
       server = config.getArchiveServer
        
-      url = "localhost:4567/odata/v1/Products"
+      url = "https://localhost:4567/odata/v1/Products"
    
       ## -------------------------------
       
@@ -385,26 +289,23 @@ class TestCaseStore < Test::Unit::TestCase
          File.delete("S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
       end
 
-      ## -------------------------------
-      ## well-formed download request
-      uuid = "1234-acds-22e2e121e"
-
-      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
-      puts cmd
-      system(cmd)
-      ## -------------------------------
-
-      ## -------------------------------
-      ## well-formed unsupported request / bad request
-      uuid = "1234-acds-22e2e121e"
-
-      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$count\' "
-      puts cmd
-      system(cmd)
-      ## -------------------------------
-
-      ## store a test file
-      test_local_minArcStore
+#      ## -------------------------------
+#      ## well-formed download request
+#      uuid = "1234-acds-22e2e121e"
+#
+#      cmd = "curl -s -k -u test:test \'#{url}(#{uuid})/\$value\' "
+#      puts cmd
+#      system(cmd)
+#      ## -------------------------------
+#
+#      ## -------------------------------
+#      ## well-formed unsupported request / bad request
+#      uuid = "1234-acds-22e2e121e"
+#
+#      cmd = "curl -s -k -u test:test \'#{url}(#{uuid})/\$count\' "
+#      puts cmd
+#      system(cmd)
+#      ## -------------------------------
 
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
@@ -416,7 +317,7 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       ## well-formed download request / good request
-#      cmd = "curl -v -u test:test \'#{url}(#{uuid})/\$value\' "
+#      cmd = "curl -s -k -u test:test \'#{url}(#{uuid})/\$value\' "
 #      puts cmd
 #      ret = system(cmd)      
 #      assert(ret, "successful curl download")
@@ -426,7 +327,7 @@ class TestCaseStore < Test::Unit::TestCase
       end
       
       theURL = "#{url}(#{uuid})/\$value"
-      ret = getFile(theURL, "test", "test", "thefile", true)
+      ret = getFile(theURL, false, "test", "test", "thefile", false)
       
       assert(ret, "File download with WrapperCURL.getFile")
       
@@ -446,37 +347,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -486,9 +357,6 @@ class TestCaseStore < Test::Unit::TestCase
       url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
    
       ## -------------------------------
-      
-      ## store a test file
-      test_local_minArcStore
 
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
@@ -500,7 +368,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / bad function request
-      cmd = "curl -v -u test:test \'#{url}$filter=notsupportedfunction(Name,'S2')' "
+      cmd = "curl -s -k -u test:test \'#{url}$filter=notsupportedfunction(Name,'S2')' "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -509,7 +377,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / bad property request
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(File,'S2')' "
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(File,'S2')' "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -520,7 +388,7 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -529,7 +397,7 @@ class TestCaseStore < Test::Unit::TestCase
  
       ## -------------------------------
       ## well-formed query request / good request with no results
-      cmd = "curl -v -u test:test \'#{url}$filter=endswith(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=endswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -538,7 +406,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / good request with results
-      cmd = "curl -v -u test:test \'#{url}$filter=endswith(Name,'21000101T000001')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=endswith(Name,'21000101T000001')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -548,7 +416,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=contains(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -567,36 +435,8 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+      # system("\\rm -rf /tmp/minarc_log_file*.log")
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -607,9 +447,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store a test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -620,7 +457,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -629,7 +466,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate%20ASC' | jq .value[].PublicationDate"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=PublicationDate%20ASC' | jq .value[].PublicationDate"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -638,7 +475,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=PublicationDate' | jq .value[].PublicationDate"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=PublicationDate' | jq .value[].PublicationDate"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -647,7 +484,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20DESC' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=Name%20DESC' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -656,7 +493,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20ASC' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=Name%20ASC' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -665,7 +502,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=Name' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=Name' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -674,7 +511,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=DonaldDuck%20ASC' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=DonaldDuck%20ASC' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -683,7 +520,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=Name%20rescending' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=Name%20rescending' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -692,7 +529,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / correct attribute request
-      cmd = "curl -v -u test:test \'#{url}$orderby=ContentLength%20DESC' | jq .value[].ContentLength"
+      cmd = "curl -s -k -u test:test \'#{url}$orderby=ContentLength%20DESC' | jq .value[].ContentLength"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -701,7 +538,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=Name%20DESC' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=Name%20DESC' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -713,7 +550,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=Name%20DESC' | jq .value[].Name"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=Name%20DESC' | jq .value[].Name"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -725,7 +562,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC' | jq .value[].PublicationDate"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -737,7 +574,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq .value[].PublicationDate"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq .value[].PublicationDate"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -749,7 +586,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate lt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$count=true\&$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$count=true\&$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -761,7 +598,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$count=true\&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$count=true\&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -773,7 +610,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC\&$count=true' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z\&$orderby=PublicationDate%20DESC\&$count=true' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -782,18 +619,18 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / good request
-      cmd = "curl -v -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=ContentDate/Start%20DESC' | jq .value[].ContentDate.Start"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=contains(Name,'S2')\&$orderby=ContentDate/Start%20DESC' | jq .value[].ContentDate.Start"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
           
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
   
    end
    ## -----------------------------------------------------------
@@ -804,37 +641,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -845,9 +652,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -861,7 +665,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate lt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20lt%202020-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -873,7 +677,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate le 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20le%202020-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20le%202020-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -885,7 +689,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -897,18 +701,18 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate ge 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
       
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
 
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z and ContentDate/End lt 2019-05-16T00:00:00.000Z
@@ -923,37 +727,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -964,9 +738,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -980,7 +751,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z
             
-      cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/Start%20gt%202019-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=ContentDate/Start%20gt%202019-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -992,7 +763,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/End le 2119-05-15T00:00:00.000Z
             
-      cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/End%20le%202119-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=ContentDate/End%20le%202119-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1005,7 +776,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2119-05-15T00:00:00.000Z AND ContentDate/End lt 2119-05-16T00:00:00.000Z
 
             
-      cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/Start%20gt%202119-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=ContentDate/Start%20gt%202119-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1018,7 +789,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2119-05-15T00:00:00.000Z AND ContentDate/End lt 2119-05-16T00:00:00.000Z
 
             
-      cmd = "curl -v -u test:test \'#{url}$filter=ContentDate/Start%20ge%202019-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=ContentDate/Start%20ge%202019-05-15T00:00:00.000Z%20and%20ContentDate/End%20lt%202119-05-16T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1028,11 +799,11 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
 
    end
@@ -1046,37 +817,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -1087,9 +828,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -1103,7 +841,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$count=true
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1111,11 +849,11 @@ class TestCaseStore < Test::Unit::TestCase
       ## -------------------------------
 
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
    end
    ## -----------------------------------------------------------
@@ -1129,37 +867,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -1170,9 +878,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -1186,7 +891,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S1B')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S1B')' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S1B')' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1198,7 +903,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S1B')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S1B')\&$count=true' | jq '.count, .value[].Name'"
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S1B')\&$count=true' | jq '.count, .value[].Name'"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1211,7 +916,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2B')' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2B')' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1223,7 +928,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2A')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2A')' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2A')' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1235,7 +940,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2')' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true\&$filter=startswith(Name,'S2')' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1247,7 +952,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$filter=startswith(Name,'S2')\&$count=true' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$filter=startswith(Name,'S2')\&$count=true' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1259,7 +964,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products$count=true&$filter=startswith(Name,'S2B')
       
-      cmd = "curl -v -u test:test \'#{url}Products?$filter=startswith(Name,'S2B')\&$count=true' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}Products?$filter=startswith(Name,'S2B')\&$count=true' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1267,11 +972,11 @@ class TestCaseStore < Test::Unit::TestCase
       ## -------------------------------
 
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
    end
    ## -----------------------------------------------------------
@@ -1283,37 +988,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -1324,9 +999,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store a test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -1337,7 +1009,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 item / 0 items left
-      cmd = "curl -v -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2A')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2A')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1346,7 +1018,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 item / 0 items left
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2B')\&$skip=1' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2B')\&$skip=1' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1356,7 +1028,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 item
-      cmd = "curl -v -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1365,7 +1037,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 item
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')\&$skip=1' | jq "
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2')\&$skip=1' | jq "
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1377,7 +1049,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$skip=1\&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=1\&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1389,7 +1061,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=PublicationDate gt 2020-05-15T00:00:00.000Z
       
-      cmd = "curl -v -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z\&$skip=1' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=PublicationDate%20ge%202020-05-15T00:00:00.000Z\&$skip=1' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1399,11 +1071,11 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
   
    end
@@ -1416,37 +1088,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -1457,9 +1099,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store a test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -1471,7 +1110,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / top 1 item
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=1' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=1' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1480,7 +1119,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request changing order / top 1 items
-      cmd = "curl -v -u test:test \'#{url}$top=1\&$filter=startswith(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$top=1\&$filter=startswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1490,7 +1129,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / top 1 item
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=2' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=2' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1500,7 +1139,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 + top 1 item
-      cmd = "curl -v -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')\&$top=1' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')\&$top=1' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1509,7 +1148,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / top 1 + skip 1 item
-      cmd = "curl -v -u test:test \'#{url}$top=1\&$skip=1\&$filter=startswith(Name,'S2')' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$top=1\&$skip=1\&$filter=startswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1518,7 +1157,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / top 1 + skip 1 item
-      cmd = "curl -v -u test:test \'#{url}$top=1\&$filter=startswith(Name,'S2')\&$skip=1' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$top=1\&$filter=startswith(Name,'S2')\&$skip=1' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1528,7 +1167,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 + top 2 item => replies just one
-      cmd = "curl -v -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')\&$top=2' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=1\&$filter=startswith(Name,'S2')\&$top=2' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1537,7 +1176,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 2 + top 2 item => no replies
-      cmd = "curl -v -u test:test \'#{url}$skip=2\&$filter=startswith(Name,'S2')\&$top=2' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$skip=2\&$filter=startswith(Name,'S2')\&$top=2' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1546,7 +1185,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request / skip 1 + top 2 item => replies just one
-      cmd = "curl -v -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=2\&$skip=1' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$filter=startswith(Name,'S2')\&$top=2\&$skip=1' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1556,11 +1195,11 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
   
    end
@@ -1573,37 +1212,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
-      
-      cmd = "minArcDB -d"
-      puts cmd
-      system(cmd)
-
-      cmd = "minArcDB -c"
-      puts cmd
-      assert(system(cmd), "minArcDB first time")
- 
-      cmd = "minArcDB -a test:test -D"
-      puts cmd
-      assert(system(cmd), "created used test")
-
-      cmd = "minArcServer -k"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      puts
-
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
-      puts cmd
-      assert(spawn(cmd), cmd)
- 
-      sleep(5.0)
-      
-      cmd = "minArcServer -c"
-      puts cmd
-      assert(system(cmd), cmd)
-      puts
-        
+              
       cmd = ""
 
       config = ReadMinarcConfig.instance   
@@ -1614,9 +1223,6 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
       
-      ## store a test file
-      test_local_minArcStore
-
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
       puts cmd
@@ -1627,7 +1233,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request but not recognized entity
-      cmd = "curl -v -u test:test \'#{url}$expand=Donald' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$expand=Donald' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1636,7 +1242,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request 
-      cmd = "curl -v -u test:test \'#{url}$expand=Attributes' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$expand=Attributes' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
@@ -1646,15 +1252,15 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
 
-      arr = Dir["/tmp/minarc_log_file*.log"]
-
-      cmd = "grep ARC_777 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
-      
-      cmd = "grep ARC_210 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      arr = Dir["/tmp/minarc_log_file*.log"]
+#
+#      cmd = "grep ARC_777 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
+#      
+#      cmd = "grep ARC_210 #{arr[0]}"
+#      puts cmd
+#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
   
    end

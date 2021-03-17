@@ -41,6 +41,7 @@ class ReadMinarcConfig
       @node               = "node not defined"
       @clientUser         = nil
       @clientPass         = nil
+      @verifyPeerSSL      = false
       checkModuleIntegrity
 		defineStructs
       loadData
@@ -129,6 +130,11 @@ class ReadMinarcConfig
 
    def getClientPassword
       return @clientPass
+   end
+   ## -----------------------------------------------------------
+
+   def getClientVerifyPeerSSL
+      return @verifyPeerSSL
    end
    ## -----------------------------------------------------------
    
@@ -377,6 +383,15 @@ private
       ## Process Reports Configuration
       XPath.each(xmlFile, "Configuration/Client"){      
          |client|
+
+         XPath.each(client, "VerifyPeerSSL"){
+            |ssl|  
+             if ssl.text.to_s.downcase! == "true" then
+                @verifyPeerSSL = true
+             else
+                @verifyPeerSSL = false
+             end
+         }
 
          XPath.each(client, "User"){
             |user|  

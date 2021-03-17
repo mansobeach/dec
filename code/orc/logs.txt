@@ -37,9 +37,9 @@ ORC_200: Load queue for dispatch
 ORC_205: Dispatching jobs
 ORC_210: Queue pending triggers into dispatch
 ORC_215: $file queued for dispatch
-ORC_225: No resources available / queue length
 ORC_220: Schedule loop completed
 ORC_225: Waiting for new inputs
+ORC_230: No resources available / queue length
 ORC_240: Triggering Job $file 
 ORC_250: $file job successful 
 

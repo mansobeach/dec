@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.1.1'
+  s.version     = '1.1.2'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -32,6 +32,8 @@ Gem::Specification.new do |s|
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
+                  Dir['config/cert.pem'] + \
+                  Dir['config/key.pem'] + \
                   Dir['config/minarc_config.xml'] + \
                   Dir['config/minarc_log_config.xml'] + \
                   Dir['install/minarc_test.env'] + \
@@ -95,6 +97,8 @@ Gem::Specification.new do |s|
   s.add_dependency('json', '~> 2.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('mini_exiftool', '~> 2.0')
+  s.add_dependency('rack-ssl', '~> 1.4')
+  s.add_dependency('rack-ssl-enforcer', '~> 0.2')
   s.add_dependency('sinatra', '~> 2.0')
   s.add_dependency('sinatra-reloader', '~> 1.0')
   s.add_dependency('thin', '~> 1.7')
@@ -116,7 +120,6 @@ Gem::Specification.new do |s|
   end
   ## --------------------------------------------
 
-  
   ## ----------------------------------------------
   
   # s.add_development_dependency('sqlite3', '~> 1.4')

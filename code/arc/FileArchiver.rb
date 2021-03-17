@@ -21,6 +21,7 @@ require 'cuc/Wrapper_md5sum'
 require 'cuc/EE_ReadFileName'
 require 'cuc/FT_PackageUtils'
 
+require 'arc/MINARC_Client'
 require 'arc/FileDeleter'
 
 module ARC
@@ -271,7 +272,7 @@ class FileArchiver
    ##
    
    def remote_archive(full_path_file, fileType, bDelete, destination)
-      arc = ARC::MINARC_Client.new(@isDebugMode)
+      arc = ARC::MINARC_Client.new(@logger, @isDebugMode)
       
       ## the name of the file archived can be changed by the server
       new_file = full_path_file.dup
@@ -385,7 +386,7 @@ class FileArchiver
             return false
          end
          puts "Updating the archive ..."
-         delFile = FileDeleter.new
+         delFile = FileDeleter.new(@logger, @isDebugMode)
          if @isDebugMode == true then
             delFile.setDebugMode 
          end

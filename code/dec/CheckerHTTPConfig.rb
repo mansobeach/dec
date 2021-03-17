@@ -369,7 +369,8 @@ private
       
       ret = putFileSilent(url, user, pass, "./test1.txt", @isDebugMode)
       
-      deleteFile(url, user, pass, "test1.txt", @isDebugMode)
+      ## second parameter should be changed to <VerifyPeerSSL>false</VerifyPeerSSL>
+      deleteFile(url, false, user, pass, "test1.txt", @isDebugMode)
                
    end
    ## -------------------------------------------------------------

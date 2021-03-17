@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'rack/ssl'
 require 'sinatra'
 require 'sinatra/json'
 require 'sinatra/reloader' # if development?
@@ -123,7 +124,13 @@ class MINARC_Server < Sinatra::Base
          puts
       end
       @@logger.debug("checking directories")
-      check_environment_dirs      
+      check_environment_dirs
+    
+    @@logger.debug("require rack/ssl-enforcer")  
+    require 'rack/ssl-enforcer'
+    use Rack::SslEnforcer
+      
+         
    end
    ## ----------------------------------------------------------
 
@@ -728,6 +735,23 @@ class MINARC_Server < Sinatra::Base
    end
 
    ## -----------------------------------------------------------
+
+   ## ================================================================
+  
+   def self.run!
+      puts
+      puts "MINARC_Server::run!"
+      puts
+      super do |server|
+         puts "making SSL true"
+         server.ssl = true
+         server.ssl_options = {
+            :cert_chain_file  => File.join(File.dirname(File.expand_path(__FILE__)), "../../config") + "/cert.pem",
+            :private_key_file => File.join(File.dirname(File.expand_path(__FILE__)), "../../config") + "/key.pem",
+            :verify_peer      => true
+         }
+      end
+   end
 
    ## ================================================================
 

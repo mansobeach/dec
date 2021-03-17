@@ -21,7 +21,7 @@ module ARC
    ### -------------------------------------------
    ### Used by DEC Events:
    ### <Event Name="OnReceiveNewFilesOK" 
-   ###   executeCmd="curl -u dec:dec 185.52.193.141:4567/dec/arc/requestArchive/*"/>
+   ###   executeCmd="curl -u dec:dec https://185.52.193.141:4567/dec/arc/requestArchive/*"/>
 
    API_URL_REQUEST_ARCHIVE       = '/dec/arc/requestArchive/:name'
    ### -------------------------------------------

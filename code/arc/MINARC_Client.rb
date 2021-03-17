@@ -32,15 +32,17 @@ class MINARC_Client
    
    ## Class contructor
    ## debug: boolean. If true it shows debug info.
-   def initialize(debugMode = false)
+   def initialize(logger = nil, debugMode = false)
       @user                = nil
       @pass                = nil
+      @logger              = logger
       @isDebugMode         = debugMode
       @isProfileMode       = false
       checkModuleIntegrity
       config               = ReadMinarcConfig.instance
       @user                = config.getClientUser
       @pass                = config.getClientPassword
+      @verifyPeerSSL       = config.getClientVerifyPeerSSL
    end
    ## ------------------------------------------------
    
@@ -61,7 +63,7 @@ class MINARC_Client
    # ------------------------------------------------
    
    def getVersion
-      return getURL("#{@minArcServer}#{API_URL_VERSION}", @user, @pass, @isDebugMode)
+      return getURL("#{@minArcServer}#{API_URL_VERSION}", @verifyPeerSSL, @user, @pass, @isDebugMode)
    end
    ## -------------------------------------------------
 
@@ -81,7 +83,7 @@ class MINARC_Client
       newVal = full_path_filename.dup
             
       # ret = postFile("#{@minArcServer}#{API_URL_STORE}", full_path_filename, hParams, @isDebugMode)
-      ret = postFile("#{@minArcServer}#{API_URL_STORE}", @user, @pass, newVal, hParams, @isDebugMode)
+      ret = postFile("#{@minArcServer}#{API_URL_STORE}", @verifyPeerSSL, @user, @pass, newVal, hParams, @isDebugMode)
       
       if ret == false then
          puts
@@ -102,7 +104,7 @@ class MINARC_Client
          puts "MINARC_Client::listFile_By_Filetype => #{url}"
          puts
       end
-      return getURL(url, @user, @pass, @isDebugMode)   
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)   
    end
    # ------------------------------------------------
    
@@ -113,7 +115,7 @@ class MINARC_Client
          puts "MINARC_Client::listFile_By_Name => #{url}"
          puts
       end
-      return getURL(url, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
    end
    ## -------------------------------------------------
    
@@ -125,7 +127,7 @@ class MINARC_Client
          puts
       end
       # return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
-      return getFile(url, @user, @pass, filename, @isDebugMode)
+      return getFile(url, @verifyPeerSSL, @user, @pass, filename, @isDebugMode)
    end
    ## -------------------------------------------------
    
@@ -136,7 +138,7 @@ class MINARC_Client
          puts "MINARC_Client::deleteFile => #{url}"
          puts
       end
-      return getURL(url, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
    end
    # ------------------------------------------------
    
@@ -147,7 +149,7 @@ class MINARC_Client
          puts "MINARC_Client::getAllFileTypes => #{url}"
          puts
       end
-      return getURL(url, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
    end
    # ------------------------------------------------
    
@@ -158,7 +160,7 @@ class MINARC_Client
          puts "MINARC_Client::statusFileType => #{url}"
          puts
       end
-      return getURL(url, @user, @pass, @isDebugMode)   
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)   
    end
    # ------------------------------------------------
 
@@ -170,7 +172,7 @@ class MINARC_Client
          puts
       end
       begin
-         return JSON.parse(getURL(url, @user, @pass, @isDebugMode))
+         return JSON.parse(getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode))
       rescue Exception => e
          if @isDebugMode == true then
             puts e.backtrace
@@ -193,7 +195,7 @@ class MINARC_Client
          puts
       end
       # return JSON.parse(getURL(url, @isDebugMode))
-      return getURL(url, @user, @pass, @isDebugMode) 
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode) 
    end
    # ------------------------------------------------
    

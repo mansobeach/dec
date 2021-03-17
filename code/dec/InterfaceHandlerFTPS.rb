@@ -18,7 +18,6 @@
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
-require 'dec/CheckerInterfaceConfig'
 require 'dec/InterfaceHandlerAbstract'
 
 require 'net/ftp'
@@ -50,8 +49,7 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       @inConfig         = ReadConfigIncoming.instance
       @ftpServer        = @entityConfig.getFTPServer4Receive(@entity)
       @ftps             = nil
-      
-      self.checkConfig(entity, bPull, bPush)         
+            
    end   
    ## -----------------------------------------------------------
    ##
@@ -268,13 +266,22 @@ private
       end
       
       begin
-         if chkSSL == true then
-            hOptions = Hash.new
+         hOptions = Hash.new
+         if chkSSL == true then   
             hOptions[:ssl] = true
-            @ftps = Net::FTP.new(host,hOptions)
          else
-            @ftps = Net::FTP.new(host, ssl: {:verify_mode => OpenSSL::SSL::VERIFY_NONE})
+            hOptions[:ssl] = {:verify_mode => OpenSSL::SSL::VERIFY_NONE}
          end
+         
+         if @isDebugMode == true
+            hOptions[:debug_mode]   = true
+         end
+
+         hOptions[:username]     = user
+         hOptions[:password]     = pass   
+        
+         @ftps = Net::FTP.new(host, hOptions)
+
       rescue Exception => e
          if @isDebugMode == true then
             puts

@@ -1,10 +1,12 @@
 ##
 ## DOCKER COMPOSE MINARC SERVICE
 ##
+## 0/ build minarc_s2_pg.gem
+### rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]
 ## 1/ build app_minarc_s2
 ### sudo docker image build --rm=false -t app_minarc_s2 . -f install/docker/Dockerfile.decservice.minarc.s2.cloudferro
 ## 2/ start only minarc_db_s2 service
-### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2.cloudferro.yml up -d minarc_db_s2
+### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2boa.cloudferro.yml up -d minarc_db_s2
 ## 3/ create database in the container
 ### docker exec -it minarc_db_s2 psql -U s2minarc -c "create database s2minarc"
 ## 4/ start-up all the services

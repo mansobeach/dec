@@ -365,6 +365,7 @@ namespace :dec do
       puts "pull VPMC & VPMC_TCI"
       puts "push HTTP_FERRO"
       puts "rake -f build_dec.rake dec:build[push_lisboa,e2espm-inputhub,s2]"
+      puts
       puts "Obsolete:"
       puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
       puts "Pending ftp port management within containers:"

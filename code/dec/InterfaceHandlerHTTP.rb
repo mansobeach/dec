@@ -57,12 +57,11 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       @inConfig         = ReadConfigIncoming.instance
       @isSecure         = @entityConfig.isSecure?(@entity)
       @server           = @entityConfig.getServer(@entity)
+      @verifyPeerSSL    = @entityConfig.isVerifyPeerSSL?(mnemonic)
       @uploadDir        = @outConfig.getUploadDir(@entity)
-      @arrPullDirs      = @inConfig.getDownloadDirs(@entity)
-            
+      @arrPullDirs      = @inConfig.getDownloadDirs(@entity)    
       @http             = nil
-      @url              = nil
-      
+      @url              = nil   
    end   
    ## -----------------------------------------------------------
    ##
@@ -91,7 +90,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       if @isDebugMode == true then
          @logger.debug("InterfaceHandlerHTTP::pushFile => #{file} / #{@url} by @server[:user]")
       end
-      return putFile(url, @server[:user], @server[:password], file, @isDebugMode, @logger)
+      return putFile(url, @verifyPeerSSL, @server[:user], @server[:password], file, @isDebugMode, @logger)
    end
    ## -----------------------------------------------------------
 
@@ -302,7 +301,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       
       # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
       
-      http.ssl_verify_peer = false
+      http.ssl_verify_peer = @verifyPeerSSL
       
       # Curl::Err::SSLPeerCertificateError ?????
       http.ssl_verify_host = false
