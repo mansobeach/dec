@@ -124,8 +124,20 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
-      <DataProvider isTriggerType="no">
-	      <DataType>EDRS Files</DataType>
+      <DataProvider isTriggerType="yes">
+ 	      <DataType>OPPRIP</DataType>
+ 	      <FileType>*OPER_REP_OPPRIP*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType="yes">
+ 	      <DataType>WEPRIP</DataType>
+ 	      <FileType>*OPER_REP_WEPRIP*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType="yes">
+	      <DataType>EDRSMOC</DataType>
 	      <FileType>EDR*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
@@ -161,6 +173,9 @@
       <PriorityRule rank="16"    class="DataType" type="OPDC"        sort="DESC" />
       <PriorityRule rank="17"    class="DataType" type="DEC_F_RECV"  sort="DESC" />
       <PriorityRule rank="18"    class="DataType" type="TLM__REQ_B"  sort="DESC" />
+      <PriorityRule rank="19"    class="DataType" type="OPPRIP"      sort="DESC" />
+      <PriorityRule rank="20"    class="DataType" type="WEPRIP"      sort="DESC" />
+      <PriorityRule rank="21"    class="DataType" type="EDRSMOC"     sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->

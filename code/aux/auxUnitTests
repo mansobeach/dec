@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_TestCases class
-#
-# === Written by DEIMOS Space S.L.
-#
-# === AUX Module
-#
-# # git: auxUnitTests,v $Id$: 
-# 
-# module AUX
-#
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L.
+##
+## === AUX Module
+##
+## # git: auxUnitTests,v $Id$: 
+## 
+## module AUX
+##
 #########################################################################
 
 require 'rubygems'

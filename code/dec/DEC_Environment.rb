@@ -29,7 +29,8 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.25" =>    "TBW / VerifyPeerSSL is used by HTTP handlers", \
+      "1.0.25" =>    "VerifyPeerSSL is used by HTTP handlers\n\
+          decODataClient support for DHUS / Sentinel-1",
       "1.0.24" =>    "Pull local dissemination chmod robustified for errors", \
       "1.0.23" =>    "Local dissemination upon pull is safely compressed:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-414\n\

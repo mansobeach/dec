@@ -55,6 +55,39 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
             <LogUnknown>true</LogUnknown>
          </Switches>         
       </Interface>
+      
+      
+      <Interface>
+         <Name>SVPMC</Name>
+         <LocalInbox>/volumes/dec/interfaces/dec_basket.vpmc</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">E2ESPM_OUT/</Directory>
+                 <!--Directory DepthSearch="0">/data/DC_BASKET/E2ESPM_OUT/0.test/1.nominal</Directory-->
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
+
+      <Interface>
+         <Name>SVPMC_TCI</Name>
+         <LocalInbox>/volumes/dec/interfaces/dec_basket.vpmc_tci</LocalInbox>
+         <DownloadDirs>
+                 <Directory DepthSearch="0">E2ESPM_OUT/REP_ARC_TCI</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>
+      
    </ListInterfaces>
 
    <!-- =========================================================== -->

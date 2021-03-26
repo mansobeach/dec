@@ -415,7 +415,7 @@ class MINARC_Server < Sinatra::Base
       @@logger.info("[ARC_204] Status: #{params[:filename]}")
 
       content_type :json 
-      ret.to_json
+      ret
    end
 
    ## =================================================================

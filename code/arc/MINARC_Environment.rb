@@ -22,16 +22,20 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.1.2"
+   @@version = "1.1.4"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.1.2"  =>     "minArcServer support of SSL over HTTP\n\
+      "1.1.4"  =>      "Handler_S2PDGS updated to support OData JSON by DEC", \
+      "1.1.3"  =>      "minArcStatus --filename supplies the URL\n\
+          Fixed supply of correct JSON for minArcStatus --filename:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-441",\
+      "1.1.2"  =>      "minArcServer support of SSL over HTTP\n\
           gems rack-ssl, rack-ssl-enforcer added as a dependency at installation time\n\
           VerifyPeerSSL configuration item added to bypass self-signed certificates",\
-      "1.1.1"  =>     "OData fix ($count not limited to return results)", \
-      "1.1.0"  =>     "uuid, md5 & Users has been added to the model for postgresql database\n\
+      "1.1.1"  =>      "OData fix ($count not limited to return results)", \
+      "1.1.0"  =>      "uuid, md5 & Users has been added to the model for postgresql database\n\
           Client credentials configuration items added into minarc_config.xml
           Server API protected with HTTP Basic Authentication\n\
           Basic OData support for AUXIP\n\

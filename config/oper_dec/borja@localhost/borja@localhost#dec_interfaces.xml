@@ -187,6 +187,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>FTP</Protocol>
+      <!-- ftp.cddis.eosdis.nasa.gov /products/iers-->
       <Hostname>ftp.iers.org</Hostname>
 	   <Port>21</Port>
       <User>anonymous</User>
@@ -529,7 +530,14 @@
     </TXRXParams>    
     <Server>
       <Protocol>FTP</Protocol>
-      <Hostname>cddis.gsfc.nasa.gov</Hostname>
+      <!--
+      
+      ftp://igs.ensg.ign.fr/pub/igs/products/
+      ftp://garner.ucsd.edu/pub/products/
+      ftp://cddis.gsfc.nasa.gov/gnss/products/
+      
+      -->
+      <Hostname>igs.ensg.ign.fr</Hostname>
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>

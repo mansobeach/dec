@@ -116,11 +116,11 @@
 ###
 ### The $select and $expand system query options enable the client to specify the set of structural properties and navigation properties to include in a response. The service MAY include additional properties not specified in $select and $expand, including properties not defined in the metadata document.
 
-
 require 'json'
 
 module ARC_ODATA
 
+   API_URL_PRODUCT                     = '/odata/v1/Products'
    API_URL_PRODUCT_QUERY               = '/odata/v1/Products?'
    API_URL_PRODUCT_DOWNLOAD            = '/odata/v1/Products(*)'
    API_RESOURCE_FOUND                  = 200

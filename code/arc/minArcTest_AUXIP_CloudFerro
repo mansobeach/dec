@@ -236,6 +236,19 @@ class TestCaseStore < Test::Unit::TestCase
    
       ## -------------------------------
 
+## S2__OPER_REP_ARC____EPA__20210318T194417_V20210316T155015_20210316T160249
+
+      ## -------------------------------
+      ## well-formed query request
+      puts "QUERY startswith(Name,'S2__OPER_REP_ARC____EPA__20210318T194417_V20210316T155015_20210316T160249')"
+      cmd = "curl -s -k -u test:test \'#{url}$count=true\&$filter=startswith(Name,'S2__OPER_REP_ARC____EPA__20210318T194417_V20210316T155015_20210316T160249')' | jq "
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      puts "-------------------------"  
+      
+      ## -------------------------------
+
       ## -------------------------------
       ## well-formed query request
       puts "QUERY startswith(Name,'S2A_OPER_REP_OPDPC__VGS4_20210303')"
@@ -448,7 +461,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T01:00:00.000Z
 
-      puts "QUERY $top=10 ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T00:10:00.000Z"        
+      puts "QUERY $top=5 ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T00:10:00.000Z"        
       cmd = "curl -s -k -u test:test \'#{url}$count=true\&$top=5\&$filter=ContentDate/Start%20gt%202021-03-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-03-01T00:10:00.000Z' | jq '.value[].Name, .value[].PublicationDate, .count'"
       puts cmd
       ret = system(cmd)      
@@ -461,7 +474,7 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$filter=ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T01:00:00.000Z
 
-      puts "QUERY $skip=10 $top=10 ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T00:10:00.000Z"
+      puts "QUERY $skip=10 $top=5 ContentDate/Start gt 2021-03-01T00:00:00.000Z and ContentDate/End lt 2021-03-01T00:10:00.000Z"
       cmd = "curl -k -s -u test:test \'#{url}$count=true\&$skip=10\&$top=5\&$filter=ContentDate/Start%20gt%202021-03-01T00:00:00.000Z%20and%20ContentDate/End%20lt%202021-03-01T00:10:00.000Z' | jq '.value[].Name, .value[].PublicationDate, .count'"
       puts cmd
       ret = system(cmd)      
@@ -690,8 +703,8 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## -------------------------------
       ## well-formed query request changing order / top 1 items
-      puts "QUERY $top=1 startswith(Name,'S2')"
-      cmd = "curl -k -s -u test:test \'#{url}$top=1\&$filter=startswith(Name,'S2')' | jq"
+      puts "QUERY $top=1 $skip=400000 startswith(Name,'S2')"
+      cmd = "curl -k -s -u test:test \'#{url}$top=1\&$skip=400000\&$filter=startswith(Name,'S2')' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")

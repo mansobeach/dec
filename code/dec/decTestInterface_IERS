@@ -65,7 +65,7 @@ class DECTestCase < Test::Unit::TestCase
    Test::Unit.at_start do      
       puts
       puts "======================================"
-      puts "DEC Unit Test Cases"
+      puts "DEC Interface Test Cases for IERS"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -172,66 +172,67 @@ class DECTestCase < Test::Unit::TestCase
       configIn    = ReadConfigIncoming.instance
       arrEnts     = ftConfig.getAllMnemonics
 
-      arrEnts.each{|x|
-                  
-         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
-         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
-
-         ## --------------------------------------
-
-         if bEnabled4Send == true then
-         
-            uploadDir = configOut.getUploadDir(x)
-         
-            if uploadDir == nil or uploadDir == "" then
-               next
-            end
-         
-            if uploadDir[0,1] != '/' then
-               uploadDir = '~/' + uploadDir
-            end
-            checkDirectory(uploadDir)
-
-            uploadTemp = configOut.getUploadTemp(x)
-         
-            if uploadTemp[0,1] != '/' then
-               uploadTemp = '~/' + uploadTemp
-            end
-            checkDirectory(uploadTemp)
-         end
-
-         ## --------------------------------------
-
-         if bEnabled4Recv == true then
-            arr = configIn.getDownloadDirs(x)
-            
-            arr.each{|dir|
-               
-               downloadDir = ""
-
-               if dir[:directory][0,1] != '/' then
-                  downloadDir = '~/' + dir[:directory]
-               else
-                  downloadDir = dir[:directory]
-               end
-               
-               checkDirectory(downloadDir)
-            }
-            
-#            ## create the files available for pulling
-#            
-#            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
-#               @@arrDownloadFiles.each{|filename|
-#                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
-#                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
-#               }
+#      arrEnts.each{|x|
+#                  
+#         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
+#         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
+#
+#         ## --------------------------------------
+#
+#         if bEnabled4Send == true then
+#         
+#            uploadDir = configOut.getUploadDir(x)
+#         
+#            if uploadDir == nil or uploadDir == "" then
+#               next
 #            end
-            
-         end
-
-         ## --------------------------------------
-      }
-      
+#         
+#            if uploadDir[0,1] != '/' then
+#               uploadDir = '~/' + uploadDir
+#            end
+#            
+#            checkDirectory(uploadDir)
+#
+#            uploadTemp = configOut.getUploadTemp(x)
+#         
+#            if uploadTemp[0,1] != '/' then
+#               uploadTemp = '~/' + uploadTemp
+#            end
+#            checkDirectory(uploadTemp)
+#         end
+#
+#         ## --------------------------------------
+#
+#         if bEnabled4Recv == true then
+#            arr = configIn.getDownloadDirs(x)
+#            
+#            arr.each{|dir|
+#               
+#               downloadDir = ""
+#
+#               if dir[:directory][0,1] != '/' then
+#                  downloadDir = '~/' + dir[:directory]
+#               else
+#                  downloadDir = dir[:directory]
+#               end
+#               
+#               checkDirectory(downloadDir)
+#            }
+#            
+##            ## create the files available for pulling
+##            
+##            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
+##               @@arrDownloadFiles.each{|filename|
+##                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
+##                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
+##               }
+##            end
+#            
+#         end
+#
+#         ## --------------------------------------
+#      }
+#      
       
       cmd = "decManageDB -c"
       ret = system(cmd)
@@ -430,6 +431,110 @@ class DECTestCase < Test::Unit::TestCase
       
    end
    ## ------------------------------------------------------
+
+   def test_IERS_Bulletin_A_B
+      puts
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      cmd = "decValidateConfig -a"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      cmd = "decCheckConfig -a -e IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+            
+      cmd = "decGetFromInterface -m IERS -l --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      sleep(2.0)
+      
+      cmd = "decGetFromInterface -m IERS --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      dimConfig = ReadConfigIncoming.instance
+      
+      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
+
+      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
+      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
+
+      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
+      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
+
+   end
+
+   ## ------------------------------------------------------
+
+   def test_IERS_S3_Bulletin_C
+
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("LEAP"))
+      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3"))
+      
+      ReadConfigIncoming.instance.getDownloadDirs("PUBLISH_S3").each do |dir|
+         checkDirectory(dir[:directory])
+      end
+
+      cmd = "decGetFromInterface -m LEAP -l"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m LEAP --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      cmd = "decGetFromInterface -m PUBLISH_S3"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      file = "/tmp/dec_final_dissemination/S3/S3__GN_1_LSC_AX_*"
+      
+      arr = Dir["#{file}"]
+      
+      assert(File.exist?(arr[0]), "S3__GN_1_LSC_AX Downloaded")
+
+      cmd = "decGetFromInterface -m LEAP --nodb"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      sleep(5.0)
+
+      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
+      puts cmd
+      assert(system(cmd), cmd)      
+
+      cmd = "decGetFromInterface -m PUBLISH_S3"
+      puts cmd
+      assert(system(cmd), cmd)      
+      
+      arr = Dir["/tmp/DEC*.log"]
+            
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+   end
+   ## ------------------------------------------------------
+
+
 
 end
 

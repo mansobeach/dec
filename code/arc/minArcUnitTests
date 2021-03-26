@@ -853,11 +853,18 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       puts
 
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver"
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq"
+      puts
+      puts cmd
+      puts
+      assert(system(cmd), cmd)
+      
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq '.url'"
       puts
       puts cmd
       puts
       assert(system(cmd), cmd)      
+    
    end
 
    # -------------------------------------------------------------
@@ -872,10 +879,17 @@ class TestCaseStore < Test::Unit::TestCase
             
       Dir.chdir(@@prevDir)
       
-      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} -D"
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} | jq"
       puts
       puts cmd
       puts
+      assert(system(cmd), cmd) 
+      
+      cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} | jq '.name'"
+      puts
+      puts cmd
+      puts
+
       assert(system(cmd), cmd)  
    end
    # -------------------------------------------------------------
@@ -920,16 +934,25 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -D"
       puts cmd
       assert(system(cmd), cmd)
-            
+      
+      assert(File.exist?("#{File.basename(@@testFile1, ".*")}.7z"), "file retrieved")
+                  
+      cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.7z"
+      puts cmd
+      system(cmd)
+  
+      cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -D -U"
+      puts cmd
+      assert(system(cmd), cmd)
+      
+      assert(File.exist?("#{File.basename(@@testFile1, ".*")}.EOF"), "file retrieved")
+  
       puts Dir.pwd
       puts      
       cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.EOF"
       puts cmd
       system(cmd)
-      
-      cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.7z"
-      puts cmd
-      system(cmd)
+  
       
    end
 
@@ -1278,6 +1301,8 @@ class TestCaseStore < Test::Unit::TestCase
          
       testFile1 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml"
       testFile2 = "S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml"
+      testFile3 = "DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json"
+      testFile4 = "WrongFile_DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json"
       
       system("echo \'#{testFile1}\' > /tmp/#{testFile1}")
       
@@ -1315,6 +1340,47 @@ class TestCaseStore < Test::Unit::TestCase
       assert($?.exitstatus, "Decoding of the file with handler")
 
       cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      ## ---------------------------------------------------
+
+      system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile4} --noserver"
+      puts cmd
+      assert(!system(cmd), cmd)
+      ## ---------------------------------------------------
+
+
+
+      system("echo \'#{testFile3}\' > /tmp/#{testFile3}")
+      
+      cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile3} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcFile -T S2PDGS -f WrongFile_DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000 -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcFile -T S2PDGS -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcStatus -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json --noserver | jq"
       ret = `#{cmd}`
       puts cmd
       puts

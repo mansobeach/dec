@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- UNUSED -->
+<!--
+
+https://jira.elecnor-deimos.com/browse/S2MPASUP-444
+> EDR reports to BOA in Cloud Ferro
+
+-->
 
 <Config>
 
@@ -115,7 +120,7 @@
          <HardLink>True</HardLink>
          <ToList>
             <Intray>MINARC</Intray>
-            <Intray>UNDESIRED</Intray>
+            <Intray>S2BOA</Intray>
          </ToList>
      </File>
   

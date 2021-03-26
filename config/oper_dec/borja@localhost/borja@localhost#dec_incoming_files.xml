@@ -215,7 +215,7 @@
          <Name>NOAA</Name>
          <LocalInbox>/tmp/dec/if_noaa_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/pub/warehouse/2020/RSGA</Directory>
+		      <Directory DepthSearch="0">/pub/warehouse/2021/RSGA</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -247,7 +247,7 @@
          <LocalInbox>/tmp/dec/if_igs_in_basket</LocalInbox>
          <DownloadDirs>
             
-		      <Directory DepthSearch="0">/pub/gps/products/latest/final</Directory>
+		      <Directory DepthSearch="0">/pub/igs/products/latest/final</Directory>
             
             <!-- GPS Messages -->
             <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>

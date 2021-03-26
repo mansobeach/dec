@@ -118,6 +118,7 @@ private
    ## -------------------------------------------------------
    
    def parseQuery(path_info)
+      @logger.debug("SinatraControllerOData::parseQuery => #{path_info}")
       @uuid       = path_info.split("(")[1].split(")")[0]
       @bValue     = path_info.split("$")[1].include?("value")
       @property   = "$#{path_info.split("$")[1]}"

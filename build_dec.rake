@@ -355,27 +355,28 @@ namespace :dec do
       puts "> pg    : it includes installation requirement for postgresql gem"
       puts
       puts
-      puts "Most used recipees:" 
+      puts "Most used recipes:" 
       puts
-      puts "DEC unit tests"
+      puts "DEC Unit Tests"
       puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]"
-      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_odata]"
+      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg_odata]"
       puts
       puts "S2PDGSENG / Inputhub"
-      puts "pull VPMC & VPMC_TCI"
+      puts "pull VPMC & VPMC_TCI or SVPMC & SVPMC_TCI"
       puts "push HTTP_FERRO"
       puts "rake -f build_dec.rake dec:build[push_lisboa,e2espm-inputhub,s2]"
-      puts
-      puts "Obsolete:"
-      puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
-      puts "Pending ftp port management within containers:"
-      puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
       puts
       puts "CloudFerro / S2BOA"
       puts "pull LISBOA"
       puts "pull LOCALFERRO"
-      puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"
-      puts
+      puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"      
+      puts      
+      puts "Obsolete:"
+      puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
+      puts "Pending ftp port management within containers:"
+      puts "rake -f build_dec.rake dec:build[s2decservice_vpmc,e2espm-inputhub,s2]"
+
+
    end
    ## --------------------------------------------------------------------
 

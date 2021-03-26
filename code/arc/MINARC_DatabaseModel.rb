@@ -23,6 +23,9 @@ require 'active_record'
 require 'activerecord-import'
 require 'bcrypt'
 
+require 'arc/ReadMinarcConfig'
+require 'arc/MINARC_API_ODATA'
+
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbHost      = ENV['MINARC_DATABASE_HOST']
 dbPort      = ENV['MINARC_DATABASE_PORT']
@@ -105,6 +108,10 @@ class ArchivedFile < ActiveRecord::Base
    # --------------------------------------------------------
    
    def hash_introspection
+   
+      config   = ReadMinarcConfig.instance
+      server   = config.getArchiveServer
+   
       hFile = Hash.new
 
 #      ## ----------------------------
@@ -120,6 +127,7 @@ class ArchivedFile < ActiveRecord::Base
       
       hFile['name']              = self.name
       hFile['filename']          = self.filename
+      hFile['url']               = "#{server}#{ARC_ODATA::API_URL_PRODUCT}(#{self.uuid})/$value"
       hFile['path']              = self.path
       hFile['filetype']          = self.filetype
       hFile['size']              = self.size
@@ -147,9 +155,14 @@ class ArchivedFile < ActiveRecord::Base
    # --------------------------------------------------------
    
    def print_introspection
+   
+      config   = ReadMinarcConfig.instance
+      server   = config.getArchiveServer
+   
       puts "uuid            : #{self.uuid}"
       puts "Logical name    : #{self.name}"
       puts "Physical name   : #{self.filename}"
+      puts "URL             : #{server}#{ARC_ODATA::API_URL_PRODUCT}(#{self.uuid})/$value"
       puts "Path            : #{self.path}"
       puts "Filetype        : #{self.filetype}"
       puts "Size            : #{self.size} Bytes"

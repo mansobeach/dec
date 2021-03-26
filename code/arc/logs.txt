@@ -37,6 +37,8 @@ ARC_311: Start => Ingester is already running
 ARC_312: Stop => Scheduler was not running
 ARC_313: Stop => Ingester was not running
 
+ARC_340: unrecognized $file moved to error area
+
 ERROR:
 ARC_601: Archive Root does not exist
 ARC_605: Could not archive $file

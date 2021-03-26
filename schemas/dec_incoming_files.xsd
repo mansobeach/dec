@@ -126,7 +126,7 @@
 
  <xs:complexType name="ToListType">
   <xs:sequence>
-   <xs:element name="Intray" type="SimpleAcronymType" maxOccurs="unbounded"/>
+   <xs:element name="Intray" type="xs:string" maxOccurs="unbounded"/>
   </xs:sequence>
  </xs:complexType>
 

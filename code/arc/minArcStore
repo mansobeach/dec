@@ -251,8 +251,10 @@ def main
 
    ## ------------------------------------------------------
 
-   @minArcConfigDir       = ENV['MINARC_CONFIG']
-
+   @archiveError           = ENV['MINARC_ARCHIVE_ERROR']
+   @minArcConfigDir        = ENV['MINARC_CONFIG']
+   checkDirectory(@archiveError)
+   
    ## initialise the logger
    loggerFactory = CUC::Log4rLoggerFactory.new("ArcStore ", "#{@minArcConfigDir}/minarc_log_config.xml")
    
@@ -438,10 +440,28 @@ def main
 
    ret = true
    
-   begin
+   if File.exist?(@full_path_filename) == false then
+      @logger.error("[ARC_605] could not archive #{@filename}: #{@full_path_filename} does not exist ! #{'1F480'.hex.chr('UTF-8')}")
+      exit(66)
+   end
+   
+   begin      
       ret = archiver.archive(@full_path_filename, @filetype, @bDelete, @bUnpack, @arrAddFields, @full_path_location)
    rescue Exception => e
       @logger.error("[ARC_605] could not archive #{@filename}: #{e.to_s}")
+
+      if File.exist?(@full_path_filename) == true then
+         cmd      = "\\mv -f #{@full_path_filename} #{@archiveError}/"
+         retVal   = system(cmd)
+         @logger.warn("[ARC_340] Move to ArchiveError: #{cmd} | #{retVal}")
+      end
+      
+      if @isDebugMode == true then
+         puts
+         puts e.backtrace
+         puts
+      end
+      
       exit(66)
    end
    

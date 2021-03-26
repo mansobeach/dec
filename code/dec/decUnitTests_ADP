@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-#
-# === Ruby source for #DEC_TestCases class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# module DEC
-#
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## module DEC
+##
 #########################################################################
 
 require 'rubygems'
@@ -281,7 +281,7 @@ class DECTestCase < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-#   data("1",     ["ILRS",  false])
+   data("1",     ["ILRS",  false])
    data("2",     ["NOAA",  false])
 #   data("3",     ["IERS",  false])
 #   data("4",     ["IGS",   false])
@@ -406,7 +406,7 @@ class DECTestCase < Test::Unit::TestCase
    
    end
    ## ------------------------------------------------------
-
+   
    ## Test to publish IERS Bulletin C Leap Second
 
    def test_ADP_S3_2

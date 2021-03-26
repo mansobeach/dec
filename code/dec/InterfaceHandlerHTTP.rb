@@ -57,7 +57,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       @inConfig         = ReadConfigIncoming.instance
       @isSecure         = @entityConfig.isSecure?(@entity)
       @server           = @entityConfig.getServer(@entity)
-      @verifyPeerSSL    = @entityConfig.isVerifyPeerSSL?(mnemonic)
+      @verifyPeerSSL    = @entityConfig.isVerifyPeerSSL?(@entity)
       @uploadDir        = @outConfig.getUploadDir(@entity)
       @arrPullDirs      = @inConfig.getDownloadDirs(@entity)    
       @http             = nil

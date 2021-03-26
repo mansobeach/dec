@@ -715,11 +715,11 @@ private
 #         end
       
       rescue Exception => e
-          cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
-          if @isDebugMode == true then
-             @logger.debug("Move to ArchiveError: #{cmd}")
-          end
-          system(cmd)
+#          cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
+#          if @isDebugMode == true then
+#             @logger.debug("Move to ArchiveError: #{cmd}")
+#          end
+#          system(cmd)
 
 #         puts
 #         puts e.to_s

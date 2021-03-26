@@ -25,7 +25,7 @@
 # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 # S2__OPER_REP_OPDHUS_DHUS_20180404T165255.xml
 # S2__OPER_REP_ARC__A_UPA__20170517T150557_V20170518T001000_21000101T000000_<pid>.EOF
-#
+# DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_112_000.json (70 character)
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
 # - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
 #
@@ -73,6 +73,25 @@ class Handler_S2PDGS
       @filename      = File.basename(name, ".*")
       @archive_path  = ""
       @validated     = false
+
+      # ----------------------------------------------------
+      #
+      # DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_<variable>
+      
+      if @filename.length > 57 and @filename.slice(0,3) == "DEC" &&
+         @filename.slice(41,1) == "V" &&
+         @filename.slice(3,1) == "_" &&
+         @filename.slice(8,1) == "_" then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(25, 15)    
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(42, 15))
+         @stop             = @generation_date         
+         @validated        = true
+      end 
+      # ----------------------------------------------------
+
 
       # ----------------------------------------------------
       # E2ESPM Analytics Reports 
