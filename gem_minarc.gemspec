@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.1.4'
+  s.version     = '1.1.5'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
   ## Tailored installer to include Postgresql
   if ENV.include?("MINARC_TEST") == true then
      s.files = s.files + Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF']
+     s.files = s.files + Dir['code/arc/plugins/test/S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006.EOF']
      s.files = s.files + Dir['code/arc/plugins/test/example_1.m2ts']
      s.files = s.files + Dir['code/arc/plugins/test/example_1.mp4']
   end
@@ -123,6 +124,7 @@ Gem::Specification.new do |s|
   ## ----------------------------------------------
   
   # s.add_development_dependency('sqlite3', '~> 1.4')
+  s.add_development_dependency('simplecov', '~> 0.21')
   s.add_development_dependency('test-unit', '~> 3.0')
 
   ## ----------------------------------------------

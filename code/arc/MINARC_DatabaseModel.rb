@@ -24,7 +24,6 @@ require 'activerecord-import'
 require 'bcrypt'
 
 require 'arc/ReadMinarcConfig'
-require 'arc/MINARC_API_ODATA'
 
 dbAdapter   = ENV['MINARC_DB_ADAPTER']
 dbHost      = ENV['MINARC_DATABASE_HOST']
@@ -127,9 +126,11 @@ class ArchivedFile < ActiveRecord::Base
       
       hFile['name']              = self.name
       hFile['filename']          = self.filename
-      hFile['url']               = "#{server}#{ARC_ODATA::API_URL_PRODUCT}(#{self.uuid})/$value"
+      hFile['url']               = "#{server}/odata/v1/Products(#{self.uuid})/$value"
       hFile['path']              = self.path
       hFile['filetype']          = self.filetype
+      hFile['validity_start']    = self.validity_start
+      hFile['validity_stop']     = self.validity_stop
       hFile['size']              = self.size
       hFile['size_original']     = self.size_original
       hFile['size_in_disk']      = self.size_in_disk
@@ -162,7 +163,7 @@ class ArchivedFile < ActiveRecord::Base
       puts "uuid            : #{self.uuid}"
       puts "Logical name    : #{self.name}"
       puts "Physical name   : #{self.filename}"
-      puts "URL             : #{server}#{ARC_ODATA::API_URL_PRODUCT}(#{self.uuid})/$value"
+      puts "URL             : #{server}/odata/v1/Products(#{self.uuid})/$value"
       puts "Path            : #{self.path}"
       puts "Filetype        : #{self.filetype}"
       puts "Size            : #{self.size} Bytes"

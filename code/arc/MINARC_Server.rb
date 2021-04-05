@@ -306,7 +306,7 @@ class MINARC_Server < Sinatra::Base
 #      sleep(3.0)
 #      @@logger.info("sleep stop")
       wildcard = params['name']
-      cmd      = "minArcStore -t S2PDGS -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
+      cmd      = "minArcStore -t AUXIP -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
       if settings.isDebugMode == true then
          @@logger.debug(request.url)
          @@logger.debug(cmd)

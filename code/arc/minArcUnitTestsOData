@@ -12,9 +12,30 @@
 ###
 #########################################################################
 
+
+require 'simplecov'
+
+
+SimpleCov.start do     # ommit test classes from the report
+  add_filter 'test'
+end
+
+#### ---------------------------
+#
+#puts "SimpleCov.start"
+#
+#SimpleCov.command_name 'test:units'
+#SimpleCov.start
+#### ---------------------------
+
 require 'rubygems'
 require 'test/unit'
+require 'simplecov'
+
 require 'fileutils'
+
+
+
 
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'

@@ -57,7 +57,8 @@ require 'arc/MINARC_API_OData'
 ## 11  - test_remote_api_delete
 ## 12  - test_remote_api_requestArchive
 ## 13  - test_local_and_remote_status_global
-## 14  - test_handler_s2pdgs
+## 14.1  - test_handler_s2pdgs
+## 14.2  - test_handler_auxip
 ## 15  - test_handler_m2ts_local
 ## 16  - test_handler_m2ts_local_mp4
 ## 17  - test_local_minArcFile
@@ -1293,7 +1294,6 @@ class TestCaseStore < Test::Unit::TestCase
    ## -----------------------------------------------------------
 
    def test_handler_s2pdgs
-      puts __method__.to_s
       puts
       puts "================================================"
       puts "MINARC_UnitTests::#{__method__.to_s}"
@@ -1390,8 +1390,64 @@ class TestCaseStore < Test::Unit::TestCase
 
    end
 
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
 
+   def test_handler_auxip
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      testDataDir          = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
+      testFile1            = "S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006.EOF"
+      
+      cmd = "cp -f #{testDataDir}/#{testFile1} /tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile1} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcFile -T AUXIP -f #{testFile1} -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts 
+      puts ret
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcStatus -f #{testFile1} --noserver | jq"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "File Status")
+
+      cmd = "minArcDelete -f S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006 --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "cp -f #{testDataDir}/#{testFile1} /tmp/"
+      puts cmd
+      system(cmd)
+      
+      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile1}"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcStatus -f #{testFile1} | jq"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "File Status")
+
+   end
+
+   ## -----------------------------------------------------------
+   
    def test_handler_m2ts_local
       puts __method__.to_s
       puts

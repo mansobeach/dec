@@ -4,3 +4,4 @@
 gem
 data/
 reek.yml
+coverage

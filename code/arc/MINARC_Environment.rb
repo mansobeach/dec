@@ -22,11 +22,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.1.4"
+   @@version = "1.1.5"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.1.5"  =>      "Handler_AUXIP created to support multi-mission", \
       "1.1.4"  =>      "Handler_S2PDGS updated to support OData JSON by DEC", \
       "1.1.3"  =>      "minArcStatus --filename supplies the URL\n\
           Fixed supply of correct JSON for minArcStatus --filename:\n\
