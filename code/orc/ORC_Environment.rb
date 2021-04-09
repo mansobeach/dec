@@ -22,12 +22,14 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.12"
+   @@version = "0.0.13"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.12"  =>   "TBW / new log message ORC_230", \
+      "0.0.13"  =>   "Robustification to handle miss-configuration of processing rules:\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-449",\
+      "0.0.12"  =>   "Logs updated to report new message ORC_230", \
       "0.0.11"  =>   "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-409 / S2 hardcoded filtering", \
       "0.0.10"  =>   "orchestratorConfigFile.xml Inventory item added for database configuration\n\
          Support to remote inventory / db different than localhost\n\

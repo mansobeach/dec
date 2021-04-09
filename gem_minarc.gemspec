@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
                   Dir['code/arc/MINARC_*.rb'] + \
                   Dir['code/arc/ReadMinarcConfig.rb'] + \
                   Dir['code/arc/ReportEditor.rb'] + \
-                  Dir['code/arc/SinatraControllerOData.rb'] + \
+                  Dir['code/arc/SinatraController*.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \

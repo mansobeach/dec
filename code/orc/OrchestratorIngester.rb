@@ -247,9 +247,6 @@ class OrchestratorIngester
             end
          end      
       rescue SystemCallError => e
-#         puts e.to_s
-#         puts
-#         puts e.backtrace
          @logger.error("Could not Poll #{@pollingDir}  !")
          @logger.error(e.to_s)
          @logger.error(e.backtrace)

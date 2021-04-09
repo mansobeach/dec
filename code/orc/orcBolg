@@ -325,7 +325,7 @@ def stop
       Process.kill(15, pid.to_i)
       sleep(60)
       if @schedulerChecker.isRunning == true then
-         logger.debug("Sending signal SIGKILL to Process #{pid} to kill SchedulerComponent")
+         @logger.debug("Sending signal SIGKILL to Process #{pid} to kill SchedulerComponent")
          Process.kill(9, pid.to_i)
       end
    else

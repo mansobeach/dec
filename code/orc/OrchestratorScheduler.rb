@@ -254,7 +254,7 @@ class OrchestratorScheduler
    end
    ## -----------------------------------------------------------
    
-   def triggerJobS2(selectedQueuedFile)
+   def triggerJob(selectedQueuedFile)
       @bJobJustTriggered = true
       
       @logger.info("[ORC_240] Triggering Job => #{selectedQueuedFile.filename}")
@@ -276,8 +276,23 @@ class OrchestratorScheduler
          @logger.error("[ORC_612] #{selectedQueuedFile.filename} retrieval failed")
       end
      
-      dataType = @ftReadConf.getDataType(selectedQueuedFile.filetype)
+      dataType = @ftReadConf.getDataType(selectedQueuedFile.filename)
+      ##dataType = @ftReadConf.getDataType(selectedQueuedFile.filetype)
+      
+      if dataType == nil then
+         msg = "[ORC_705] Configuration failure => could not find datatype for filetype #{selectedQueuedFile.filetype}"
+         @logger.error(msg)
+         raise msg
+      end
+      
       procCmd  = @ftReadConf.getExecutable(dataType)
+      
+      if procCmd == nil then
+         msg = "[ORC_705] Configuration failure => could not find ProcessingRule executable for #{dataType}"
+         @logger.error(msg)
+         raise msg
+      end
+      
       procCmd  = procCmd.gsub("%F", "#{@procWorkingDir}/#{selectedQueuedFile.filename}")
       
       if @isDebugMode == true then
@@ -346,7 +361,22 @@ class OrchestratorScheduler
       
       while !@arrQueuedFiles.empty? do
 
-         triggerJobS2(@arrQueuedFiles.shift)
+         jobfile = @arrQueuedFiles.shift
+         begin
+            triggerJob(jobfile)
+         rescue Exception => e
+            ## job failure due to unexpected error
+            ## need to enforce that file is classified as failure
+            @logger.error("[ORC_666] #{jobfile.filename} job failed")
+            cmd = "orcQueueUpdate -f #{jobfile.filename} -s FAILURE"
+            if @isDebugMode == true then
+               @logger.debug(cmd)
+            end
+            retVal = system(cmd)
+            if retVal == false then
+               @logger.error("Failed exec of #{cmd}")
+            end
+         end
 
          cmd = "#{@resourceManager}"
          

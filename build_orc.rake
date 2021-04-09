@@ -149,16 +149,17 @@ namespace :orc do
       puts "host => used to define the node"
       puts
       puts
-      puts "Most used recipees:" 
+      puts "Most used recipes:" 
       puts
-      puts "ORC unit tests"
-      puts "rake -f build_orc.rake orc:build[orctest,localhost]"
+      puts " *** ORC unit tests ***"
+      puts "rake -f build_minarc.rake minarc:install[orctest,localhost]"
+      puts "rake -f build_orc.rake orc:install[orctest,localhost]"
       puts
-      puts "S2PDGSENG / Inputhub"
+      puts " *** S2PDGSENG / Inputhub ***"
       puts "rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
       puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"
       puts
-      puts "CloudFerro / S2BOA"
+      puts "*** CloudFerro / S2BOA ***"
       puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"
       puts
    end

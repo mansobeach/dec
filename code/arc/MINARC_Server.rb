@@ -24,7 +24,8 @@ require 'arc/MINARC_Status'
 require 'arc/MINARC_DatabaseModel'
 require 'arc/FileStatus'
 require 'arc/ReadMinarcConfig'
-require 'arc/SinatraControllerOData'
+require 'arc/SinatraControllerODataProductDownload'
+require 'arc/SinatraControllerODataProductQuery'
 
 
 include CUC::DirUtils

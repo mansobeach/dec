@@ -20,7 +20,7 @@ ARC_100: Archived: $file
 ARC_105: Deleted : $file
 
 (server side)
-ARC_200: Requested: $file / $uuid
+ARC_200: $user : Requested $file / $uuid ; [IP Address]
 ARC_201: Served: $file
 ARC_202: Retrieved: $file
 ARC_203: Archived: $file

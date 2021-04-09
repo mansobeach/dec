@@ -715,19 +715,26 @@ private
 #         end
       
       rescue Exception => e
+         
+#         ## necessary for the ORC contingency test
+#         
 #          cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
+#          ret = system(cmd)
 #          if @isDebugMode == true then
-#             @logger.debug("Move to ArchiveError: #{cmd}")
+#             @logger.debug("Move to ArchiveError: #{cmd} / #{ret}")
 #          end
-#          system(cmd)
+
 
 #         puts
 #         puts e.to_s
 #         puts
 #         puts "Could not inventory #{File.basename(full_path_filename)} :-("
 #         puts
-         raise e
-         # return false
+         
+         ## quarantine this
+         #raise e
+         
+         return false
       end  
    
       return true

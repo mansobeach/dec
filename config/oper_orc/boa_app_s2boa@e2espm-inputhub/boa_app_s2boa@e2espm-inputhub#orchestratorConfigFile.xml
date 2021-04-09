@@ -290,6 +290,24 @@
 	      </List_of_Inputs>
       </ProcessingRule>   
 
+      <ProcessingRule dataType='OPPRIP' triggerType='OPPRIP' coverage='SAME'>
+         <executable>eboa_triggering.py -r -f %F</executable>
+         <List_of_Inputs>
+         </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType='WEPRIP' triggerType='WEPRIP' coverage='SAME'>
+         <executable>eboa_triggering.py -r -f %F</executable>
+         <List_of_Inputs>
+         </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType='EDRSMOC' triggerType='EDRSMOC' coverage='SAME'>
+         <executable>eboa_triggering.py -r -f %F</executable>
+         <List_of_Inputs>
+         </List_of_Inputs>
+      </ProcessingRule>
+
    </List_of_ProcessingRules>
    
    <List_of_Breakpoints>

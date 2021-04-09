@@ -78,18 +78,20 @@ class ReadOrchestratorConfig
       @@arrOrchDataProvider.each { |x| arrDataType << x[:dataType] }    
       return arrDataType
    end
-   #-------------------------------------------------------------  
+   ## -----------------------------------------------------------
 
-   # Gets the dataType providing a fileType
-   def getDataType (fileType_)
+   ## Gets the dataType providing a fileType
+   def getDataType(fileType_)
       @@arrOrchDataProvider.each { |x|
+         # puts "fnmatch #{x[:fileType]} => #{fileType_}"
          if x[:fileType] == fileType_ or \
                File.fnmatch(x[:fileType], fileType_) == true then
             return x[:dataType]
          end
       }
+      return nil
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Gets the fileType providing a dataType
    def getFileType(dataType_)
@@ -250,10 +252,10 @@ class ReadOrchestratorConfig
      @@arrOrchProcessRule.each { |x| @arrAllOutputs << x[:output]}
      return @arrAllOutputs
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
-   # Returns the executable command for the triggerType
-   # else it returns nil
+   ## It returns the executable command for the triggerType
+   ## else it returns nil
    def getExecutable(triggerType_)
       @@arrOrchProcessRule.each { |x|
          if x[:triggerInput] == triggerType_ then
@@ -262,7 +264,7 @@ class ReadOrchestratorConfig
       }
       return nil
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
    # Wrap for getListOfInputs
    def getListOfInputsByTriggerDataType(dataType_)

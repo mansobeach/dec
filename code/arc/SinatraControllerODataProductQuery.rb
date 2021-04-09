@@ -8,7 +8,7 @@
 ###
 ### === Mini Archive Component (MinArc)
 ### 
-### Git: $Id: SinatraControllerOData,v 1.8 2008/11/26 12:40:47 bolf Exp $
+### Git: $Id: SinatraControllerODataProductQuery,v 1.8 2008/11/26 12:40:47 bolf Exp $
 ###
 ### module ARC_ODATA
 ###
@@ -18,124 +18,13 @@ require 'sinatra'
 
 require 'cuc/Converters'
 
+require 'arc/SinatraControllerBase'
 require 'arc/MINARC_API_OData'
 require 'arc/MINARC_DatabaseModel'
 
 module ARC_ODATA
 
-## ===================================================================
-
-class SinatraControllerOData
-
-   include CUC::Converters
-   ## ------------------------------------------------------
-   
-   ## Class contructor
-   def initialize(sinatra_app, logger = nil, isDebug = false)
-      @app           = sinatra_app
-      @params        = sinatra_app.params
-      @request       = sinatra_app.request
-      @response      = sinatra_app.response
-      @logger        = logger
-      @isDebugMode   = isDebug
-      if @isDebugMode == true then
-         self.setDebugMode
-      end
-   end
-   ## ------------------------------------------------------
-   
-   ## Set the flag for debugging on.
-   def setDebugMode
-      @isDebugMode = true
-      if @logger != nil then
-         @logger.debug("SinatraControllerOData debug mode is on")
-      end
-   end
-   ## ------------------------------------------------------
-
-private
-
-
-end ## class
-
-## ===================================================================
-
-class ControllerODataProductDownload < SinatraControllerOData
-
-  ## -------------------------------------------------------
-
-  def initialize(sinatra_app, logger = nil, isDebug = false)
-     @uuid     = nil
-     @bValue   = false
-     @property = nil
-     super(sinatra_app, logger, isDebug)
-  end
-  ## -------------------------------------------------------
-  ##
-  def download
-     if @logger != nil and @isDebugMode == true then
-        @logger.debug("path_info    :   #{@request.path_info}")
-        @logger.debug("query_string :   #{@request.query_string}")
-        @logger.debug("url          :   #{@request.url}")
-        @logger.debug("path         :   #{@request.path}")
-     end
-     
-     parseQuery(@request.path_info)
-     
-     if @bValue == true then
-          
-        if @isDebugMode == true then
-           @logger.debug("requested uuid : #{@uuid}")
-        end
-        
-        aFile = ArchivedFile.where(uuid: @uuid).to_a[0]
-        
-        if @isDebugMode == true then
-           @logger.debug("aFile #{aFile} / #{@uuid}")
-        end
-        
-        if aFile == nil then
-           @logger.info("[ARC_200] Requested: #{@uuid} / File not found") 
-           @response.status = ARC_ODATA::API_RESOURCE_NOT_FOUND
-           @response.headers['Message']  = "#{@uuid} not found"
-        else
-           @logger.info("[ARC_200] Requested: #{@uuid} / #{aFile.filename}") 
-           full_path = "#{aFile.path}/#{aFile.filename}"
-           @response.status = ARC_ODATA::API_RESOURCE_FOUND
-           @response.headers['Message']  = "Woo-hoo ; I got my head checked ; By a jumbo jet ; It wasn't easy ; But nothing is ... No"
-           @app.send_file(full_path, :filename => aFile.filename)
-        end
-     else
-        @logger.error("[ARC_778] Query #{@request.query_string}: not valid / or badly managed: #{@request.path_info}") 
-        @response.status = ARC_ODATA::API_BAD_REQUEST
-        @response.headers['Message'] = "property #{@property} not supported"
-     end
-  end
-  ## -------------------------------------------------------
-  
-private
-
-   ## -------------------------------------------------------
-   
-   def parseQuery(path_info)
-      @logger.debug("SinatraControllerOData::parseQuery => #{path_info}")
-      @uuid       = path_info.split("(")[1].split(")")[0]
-      @bValue     = path_info.split("$")[1].include?("value")
-      @property   = "$#{path_info.split("$")[1]}"
-   end
-  
-   ## -------------------------------------------------------
-  
-end ## class
-
-## ===================================================================
-
-
-
-
-## ===================================================================
-
-class ControllerODataProductQuery < SinatraControllerOData
+class ControllerODataProductQuery < ARC::SinatraControllerBase
 
   ## -------------------------------------------------------
 
