@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.25'
+  s.version     = '1.0.27'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -108,6 +108,8 @@ Gem::Specification.new do |s|
   ## ----------------------------------------------
   
   s.required_ruby_version = '> 2.6.0.preview2'
+  
+  ## ----------------------------------------------
   
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('bcrypt', '~> 3.1')

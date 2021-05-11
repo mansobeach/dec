@@ -146,6 +146,12 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
+      <DataProvider isTriggerType="yes">
+	      <DataType>FOSUNAV</DataType>
+	      <FileType>*OPER_REP__SUP__*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
       <DataProvider isTriggerType="no">
 	      <DataType>S2_UNKNOWN</DataType>
 	      <FileType>S2*</FileType>
@@ -181,6 +187,7 @@
       <PriorityRule rank="20"    class="DataType" type="WEPRIP"      sort="DESC" />
       <PriorityRule rank="21"    class="DataType" type="EDRSFAILURE" sort="DESC" />
       <PriorityRule rank="21"    class="DataType" type="EDRSMOC"     sort="DESC" />
+      <PriorityRule rank="22"    class="DataType" type="FOSUNAV"     sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -284,6 +291,12 @@
       </ProcessingRule>
 
       <ProcessingRule dataType='EDRSMOC' triggerType='EDRSMOC' coverage='SAME'>
+         <executable>eboa_triggering.py -r -f %F</executable>
+         <List_of_Inputs>
+         </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType='FOSUNAV' triggerType='FOSUNAV' coverage='SAME'>
          <executable>eboa_triggering.py -r -f %F</executable>
          <List_of_Inputs>
          </List_of_Inputs>

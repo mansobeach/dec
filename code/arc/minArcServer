@@ -55,6 +55,7 @@ def main
    @bShowVersion           = false
    @bDevelopment           = false
    @bShowUsage             = false
+   @bHappy                 = false
    
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
@@ -67,6 +68,7 @@ def main
      ["--Debug", "-D",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",           GetoptLong::NO_ARGUMENT],
      ["--version", "-v",         GetoptLong::NO_ARGUMENT],
+     ["--Happy",   "-H",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
       
@@ -80,6 +82,7 @@ def main
             when "--kill"              then @bStopServer          = true
 	         when "--check"             then @bCheckStatus         = true
 			   when "--help"              then @bShowUsage           = true
+            when "--Happy"             then @bHappy               = true
 	         when "--usage"             then @bShowUsage           = true
          end
       end
@@ -197,7 +200,11 @@ def startServer
    @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP']) 
    if @locker.isRunning == true then
       @logger.warn("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
-      exit(99)
+      if @bHappy == true then
+         exit(0)
+      else
+         exit(99)
+      end
    end  
    
    @locker.setRunning

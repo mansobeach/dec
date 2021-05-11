@@ -132,15 +132,16 @@ class FileArchiver
             # --------------------------------------------------------
             
             if nameDecoder != nil and nameDecoder.isValid == true then
-               filename       = File.basename(full_path_file)
-               fileType       = nameDecoder.fileType.upcase
-               start          = nameDecoder.start_as_dateTime
-               stop           = nameDecoder.stop_as_dateTime
-               path           = nameDecoder.archive_path
-               size           = nameDecoder.size
-               size_in_disk   = nameDecoder.size_in_disk
-               size_original  = nameDecoder.size_original
-               newFilename    = nameDecoder.filename
+               filename          = File.basename(full_path_file)
+               fileType          = nameDecoder.fileType.upcase
+               start             = nameDecoder.start_as_dateTime
+               stop              = nameDecoder.stop_as_dateTime
+               path              = nameDecoder.archive_path
+               size              = nameDecoder.size
+               size_in_disk      = nameDecoder.size_in_disk
+               size_original     = nameDecoder.size_original
+               newFilename       = nameDecoder.filename
+               filename_original = nameDecoder.filename_original
                
                puts "Detected #{filename} for bulk import"
                               
@@ -183,22 +184,24 @@ class FileArchiver
 #                                  )
                
                hFile = {
-                                 :filename         => filename,
-                                 :filetype         => fileType,
-                                 :path             => path,
-                                 :size             => size,
-                                 :size_original    => size_original,
-                                 :size_in_disk     => size_in_disk,
-                                 :archive_date     => Time.now,
-                                 :validity_start   => start,
-                                 :validity_stop    => stop
+                                 :filename            => filename,
+                                 :filename_original   => filename_original,
+                                 :filetype            => fileType,
+                                 :path                => path,
+                                 :size                => size,
+                                 :size_original       => size_original,
+                                 :size_in_disk        => size_in_disk,
+                                 :archive_date        => Time.now,
+                                 :validity_start      => start,
+                                 :validity_stop       => stop
 
                }
                                                             
                retVal = true
                
                perf = measure {
-                  retVal = store(   full_path_file, 
+                  retVal = store(filename_original,
+                                    full_path_file, 
                                     fileType, 
                                     start, 
                                     stop, 
@@ -469,15 +472,16 @@ class FileArchiver
             # --------------------------------------------------------
             
             if nameDecoder != nil and nameDecoder.isValid == true then
-               fileType       = nameDecoder.fileType.upcase
-               start          = nameDecoder.start_as_dateTime
-               stop           = nameDecoder.stop_as_dateTime
-               path           = nameDecoder.archive_path
-               full_path_file = nameDecoder.fileName
-               size           = nameDecoder.size
-               size_in_disk   = nameDecoder.size_in_disk
-               size_original  = nameDecoder.size_original
-               newFilename    = nameDecoder.filename
+               fileType          = nameDecoder.fileType.upcase
+               start             = nameDecoder.start_as_dateTime
+               stop              = nameDecoder.stop_as_dateTime
+               path              = nameDecoder.archive_path
+               full_path_file    = nameDecoder.fileName
+               size              = nameDecoder.size
+               size_in_disk      = nameDecoder.size_in_disk
+               size_original     = nameDecoder.size_original
+               newFilename       = nameDecoder.filename
+               filename_original = nameDecoder.filename_original
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -496,7 +500,8 @@ class FileArchiver
          end
       
          perf = measure {
-            return inventoryNewFile(full_path_file, \
+            return inventoryNewFile(filename_original, \
+                                    full_path_file, \
                                     fileType, \
                                     start, \
                                     stop, \
@@ -521,7 +526,18 @@ class FileArchiver
       
       
       perf = measure {
-         retVal = store(full_path_file, fileType, start, stop, bDelete, bUnPack, arrAddFields, path, size, size_in_disk, size_original)
+         retVal = store(filename_original, \
+                              full_path_file, \
+                              fileType, \
+                              start, \
+                              stop, \
+                              bDelete, \
+                              bUnPack, \
+                              arrAddFields, \
+                              path, \
+                              size, \
+                              size_in_disk, \
+                              size_original)
       }
       
       if @isDebugMode == true then
@@ -632,7 +648,8 @@ private
    
    ## -----------------------------------------------------------
    
-   def inventoryNewFile(full_path_filename, \
+   def inventoryNewFile(filename_original,
+      full_path_filename, \
       type, \
       start, \
       stop, \
@@ -651,14 +668,15 @@ private
       begin
          anArchivedFile = ArchivedFile.new
          
-         anArchivedFile.name           = File.basename(full_path_filename, ".*")
-         anArchivedFile.filename       = File.basename(full_path_filename)
-         anArchivedFile.filetype       = type
-         anArchivedFile.archive_date   = archival_date
-         anArchivedFile.path           = path
-         anArchivedFile.size           = size
-         anArchivedFile.size_in_disk   = size_in_disk
-         anArchivedFile.size_original  = size_original
+         anArchivedFile.name              = File.basename(full_path_filename, ".*")
+         anArchivedFile.filename          = File.basename(full_path_filename)
+         anArchivedFile.filename_original = filename_original
+         anArchivedFile.filetype          = type
+         anArchivedFile.archive_date      = archival_date
+         anArchivedFile.path              = path
+         anArchivedFile.size              = size
+         anArchivedFile.size_in_disk      = size_in_disk
+         anArchivedFile.size_original     = size_original
 
          ## ----------------------------
          ## recover if model is still 1.0
@@ -748,7 +766,7 @@ private
    ## Sets access rights
    ## Registers the file in the database
    ## ------------------------------------------------------------
-   def store(  
+   def store(  filename_original,
                full_path_filename, 
                type, 
                start, 
@@ -959,7 +977,8 @@ private
          end
          
          perf = measure {
-            retVal = inventoryNewFile(full_path_filename, \
+            retVal = inventoryNewFile(filename_original, \
+                                       full_path_filename, \
                                        type, \
                                        start, \
                                        stop, \

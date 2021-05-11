@@ -46,6 +46,7 @@ class Handler_S2PDGS
 
    @type                = ""
    @filename            = ""
+   @filename_original   = nil
    @validated           = false
    @start               = nil
    @stop                = nil 
@@ -54,7 +55,7 @@ class Handler_S2PDGS
    @size                = 0
    @size_in_disk        = 0
 
-   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :start, :stop, :str_start, :str_stop
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :filename_original, :start, :stop, :str_start, :str_stop
 
    ## -----------------------------------------------------------
 
@@ -71,6 +72,7 @@ class Handler_S2PDGS
       
       archRoot       = ENV['MINARC_ARCHIVE_ROOT']
       @filename      = File.basename(name, ".*")
+      @filename_original   = File.basename(name)
       @archive_path  = ""
       @validated     = false
 

@@ -162,7 +162,7 @@ class MINARC_Client
       end
       return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)   
    end
-   # ------------------------------------------------
+   ## ------------------------------------------------------
 
    def statusGlobal
       url = "#{@minArcServer}#{API_URL_STAT_GLOBAL}"
@@ -171,21 +171,9 @@ class MINARC_Client
          puts "MINARC_Client::statusGlobal => #{url}"
          puts
       end
-      begin
-         return JSON.parse(getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode))
-      rescue Exception => e
-         if @isDebugMode == true then
-            puts e.backtrace
-            puts
-         end
-         puts e.to_s
-         hash = {
-            'status' => "archive likely to be empty",
-         }
-         return JSON.parse(hash)
-      end   
+      return JSON.parse(getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode))
    end
-   # ------------------------------------------------
+   ## ------------------------------------------------------
    
    def statusFileName(filename)
       url = "#{@minArcServer}#{API_URL_STAT_FILENAME}/#{filename}"

@@ -45,6 +45,7 @@ ARC_605: Could not archive $file
 ARC_610: $file not present in the archive
 ARC_620: $file could not be deleted
 ARC_635: $file reallocation failure
+ARC_640: Failed to obtain status
 ARC_666: Cannot start server: $error_message
 ARC_675: Mutex of $directory not available for $pid
 ARC_777: Server Request not supported

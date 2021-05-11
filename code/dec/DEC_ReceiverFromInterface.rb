@@ -1141,12 +1141,14 @@ private
    ##
    ## Download a file from the I/F and local dissemination
    ##
+   ## It also deletes the file downloaded from the server 
+   ##
    def downloadFile(filename)
             
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 
-      # ------------------------------------------
+      ## --------------------------------------------------------
 
       if @protocol == "FTPS" or @protocol == "FTPES" then
          retVal = @ftps.downloadFile(filename)
@@ -1163,12 +1165,27 @@ private
 			setReceivedFromEntity(File.basename(filename), size)
 
          @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
+
+         ## --------------------------------------
+         ##
+         ## if delete flag is enabled  
+         if @bDeleteDownloaded == true then
+   	      retVal2 = deleteFromEntity(filename)
+         
+            if retVal2 == true then
+               @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
+            else
+               @logger.error("[DEC_670] I/F #{@entity}: #{File.basename(filename)} delete failure")
+            end
+         end
+         ##
+         ## --------------------------------------
          
          return retVal
          
       end
 
-      # ------------------------------------------
+      ## --------------------------------------------------------
 
       if @protocol == "LOCAL" then
          return downloadFileLocal(filename)

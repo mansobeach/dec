@@ -258,6 +258,7 @@ class ORCTestCase < Test::Unit::TestCase
                            ]
 
       @@arrInputFiles = [ \
+                           "S2A_OPER_REP__SUP___20201128T134025_20201128T134611_0001.EOF", \
                            "S2__OPER_REP_OPPRIP_PDMC_20210227T060003_V20210226T235001_20210227T055001.EOF", \
                            "S2__OPER_REP_WEPRIP_PDMC_20210325T180000_V20210317T030000_20210324T025959.TGZ", \
                            "S2A_OPER_TLM__REQ_B_20210209T000000_20210210T000000_0001.TGZ", \

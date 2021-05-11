@@ -134,7 +134,7 @@ module ARC_ODATA
                               "ContentType", \
                               "ContentLength", \
                               "PublicationDate", \
-                              ## "EvictionDate", \ ## NOT Mandatory for AUXIP
+                              "EvictionDate", \
                               "Checksum/Algorithm", \
                               "Checksum/Value", \
                               "Checksum/ChecksumDate", \
@@ -189,6 +189,7 @@ module ARC_ODATA
       hFile["Name"]                    = aFile.filename
       hFile["ContentType"]             = "application/octet-stream"
       hFile["ContentLength"]           = aFile.size
+      hFile["EvictionDate"]            = nil
       hFile["PublicationDate"]         = aFile.archive_date
       hFile["Checksum"]                = { "Algorithm" => "MD5", "Value" => "#{aFile.md5}", "ChecksumDate" => aFile.archive_date}
       hFile["ContentDate"]             = { "Start" => "#{aFile.validity_start}" , "End" => "#{aFile.validity_stop}"}

@@ -15,10 +15,10 @@ minArcDB -a dec:dec
 echo "minArcDB -a test:test"
 minArcDB -a test:test
 
-echo "minArcServer -k"
+echo "minArcServer -k -H"
 minArcServer -k
 
-echo "minArcServer -s"
+echo "minArcServer -s -H"
 minArcServer -s
 
 ## Infinite loop tailing foo

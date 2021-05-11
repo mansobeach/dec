@@ -33,6 +33,7 @@ https://jira.elecnor-deimos.com/browse/S2MPASUP-444
          <LocalInbox>/volume1/dec/interfaces/dec_basket.esrin</LocalInbox>
          <DownloadDirs>
                  <Directory DepthSearch="0">/volume1/dec/interfaces/ftp/fromESRIN/fromESRIN</Directory>
+                 <Directory DepthSearch="0">/volume1/dec/interfaces/dhus_odata</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
@@ -53,6 +54,27 @@ https://jira.elecnor-deimos.com/browse/S2MPASUP-444
 
 <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+  <File Type="EDR_OPER_SER_SR*">
+      <Description>Download of the link execution status for EDRS</Description>
+      <FromList>
+	      <Interface>LISBOA</Interface>
+         <Interface>LOCALFERRO</Interface>
+      </FromList>
+  </File>
+
+  <File Type="DEC_OPER_OPDHUS*">
+      <Description>Download of the DEC OData report from DHUS</Description>
+      <FromList>
+         <Interface>LOCALFERRO</Interface>
+      </FromList>
+  </File>
+
+  <File Type="DEC_OPER_AVDHUS*">
+      <Description>Download of the DEC OData report from DHUS</Description>
+      <FromList>
+         <Interface>LOCALFERRO</Interface>
+      </FromList>
+  </File>
 
    <File Type="S2?_*">
       <Description>Brute Force Download for any Sentinel-2 file</Description>
@@ -62,13 +84,6 @@ https://jira.elecnor-deimos.com/browse/S2MPASUP-444
       </FromList>
    </File>
 
-  <File Type="EDR_OPER_SER_SR*">
-      <Description>Download of the link execution status for EDRS</Description>
-      <FromList>
-	      <Interface>LISBOA</Interface>
-         <Interface>LOCALFERRO</Interface>
-      </FromList>
-  </File>
 
   
 </DownloadRules>
@@ -107,6 +122,29 @@ https://jira.elecnor-deimos.com/browse/S2MPASUP-444
             Only the first rule matching the file pattern is applied     
       -->
 
+     <File Type="EDR_OPER_SER_SR*">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>MINARC</Intray>
+            <Intray>S2BOA</Intray>
+         </ToList>
+     </File>
+  
+
+     <File Type="DEC_OPER_OPDHUS*">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>MINARC</Intray>
+         </ToList>
+     </File>
+
+     <File Type="DEC_OPER_AVDHUS*">
+         <HardLink>True</HardLink>
+         <ToList>
+            <Intray>MINARC</Intray>
+         </ToList>
+     </File>
+
       <File Type="S2*">
       	  <HardLink>true</HardLink>
 	         <ToList>
@@ -116,14 +154,6 @@ https://jira.elecnor-deimos.com/browse/S2MPASUP-444
       </File>
    
 
-     <File Type="EDR_OPER_SER_SR*">
-         <HardLink>True</HardLink>
-         <ToList>
-            <Intray>MINARC</Intray>
-            <Intray>S2BOA</Intray>
-         </ToList>
-     </File>
-  
   
   
         </ListFilesDisseminated>

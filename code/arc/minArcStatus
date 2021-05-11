@@ -241,29 +241,14 @@ def main
          
          ret = arc.statusFileType(@filetype)
 
-         if @isDebugMode == true then
-            puts
-            puts ret
-            puts
-         end
-
-         hReturn = JSON.parse(ret)
-
-         puts hReturn
-         
-         exit(0)
-
-
-         hReturn.each{|key, value|
-            puts "#{key} : #{value}"
-         }
+         puts ret
          
          exit(0)
 
       end
    end
-   # -------------------------------------------------------
-   # status global
+   ## ------------------------------------------------------
+   ## status global
 
    if @bGlobal == true then
       ret = Hash.new
@@ -288,7 +273,15 @@ def main
          if @isDebugMode == true then
             arc.setDebugMode
          end
-         ret = arc.statusGlobal
+         begin
+            ret = arc.statusGlobal
+         rescue Exception => e
+            @logger.error("[ARC_640] Failed to obtain the minARC status")
+            if @isDebugMode == true then
+               @logger.debug(e.backtrace)
+            end
+            exit(66)
+         end
       end
       
       puts ret
@@ -301,8 +294,6 @@ def main
    exit(0)
 
 end
-
-#-------------------------------------------------------------
 
 ## ---------------------------------------------------------
 

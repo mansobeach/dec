@@ -32,9 +32,41 @@ module DHUS
    API_URL_ODATA_PRODUCT_SELECT_ID  =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=xml&$select=Id,Online,ContentLength,CreationDate,IngestionDate,EvictionDate,ContentDate,ContentGeometry"
    API_URL_ODATA_PRODUCT_PAGING_S1     =\
-    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=IngestionDate asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate&$top=50&$skip="
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
    API_URL_ODATA_PRODUCT_SELECT_ID_S1  =\
-    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=IngestionDate asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate"
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
+   API_URL_ODATA_PRODUCT_PAGING_S1_CSV    =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=text/csv&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+   API_URL_ODATA_PRODUCT_SELECT_ID_S1_CSV  =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=text/csv&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+   API_URL_ODATA_PRODUCT_PAGING_S1_JSON    =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+   API_URL_ODATA_PRODUCT_SELECT_ID_S1_JSON  =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
+   API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_NOT_SORT  =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
+   API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_NOT_SORT     =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+
+   API_URL_ODATA_PRODUCT_SELECT_BY_SENSING =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
+   API_URL_ODATA_PRODUCT_PAGING_BY_SENSING =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+
+   API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_CSV =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=text/csv&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+   API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_CSV =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=text/csv&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+
+   API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_JSON =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+   API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_JSON =\
+    "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+
 
    # API_URL_ODATA_PRODUCT_SELECT_ID  = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$select=*"
    API_URL_ODATA_PRODUCT_COUNT      = "https://scihub.copernicus.eu/dhus/odata/v1/Products/$count?"
@@ -46,6 +78,10 @@ module DHUS
    API_ODATA_ORDERBY_ASC            = "&$filter=IngestionDate gt datetime'2021-03-24T00:00:00.000'"
    
    API_ODATA_FILTER_INGESTIONDATE   = "&$filter=IngestionDate gt datetime'2021-03-24T00:00:00.000'"
+
+   ## https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=year(IngestionDate) eq 2017 and month(IngestionDate) eq 12
+   
+   API_ODATA_FILTER_VALIDITY        = "&$filter=ContentDate/Start ge datetime '2021-03-24T00:00:00.000 and ContentDate/End le datetime'2021-03-25T00:00:00.000'"
    
    API_RESOURCE_FOUND               = "200"
    API_TOP_LIMIT_ITEMS              = 50

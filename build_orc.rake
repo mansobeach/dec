@@ -161,6 +161,7 @@ namespace :orc do
       puts
       puts "*** CloudFerro / S2BOA ***"
       puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"
+      puts "rake -f build_orc.rake orc:build[s1boa,cloud_sboa]"
       puts
    end
    ## --------------------------------------------------------------------

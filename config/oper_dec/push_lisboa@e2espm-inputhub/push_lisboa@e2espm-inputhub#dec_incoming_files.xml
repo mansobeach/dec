@@ -102,6 +102,7 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       <Description>REP_ARC_TCI from VPMC</Description>
       <FromList>
          <Interface>VPMC_TCI</Interface>
+         <Interface>SVPMC_TCI</Interface>
       </FromList>
    </File> 
 
@@ -109,6 +110,7 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       <Description>Brute Force Download for any Sentinel-2 file</Description>
       <FromList>
          <Interface>VPMC</Interface>
+         <Interface>SVPMC</Interface>
       </FromList>
    </File>
 
@@ -116,6 +118,7 @@ DEC_F_RECV by VPMC_TCI file to Graveyard
       <Description>Download of the link execution status for EDRS</Description>
       <FromList>
          <Interface>VPMC</Interface>
+         <Interface>SVPMC</Interface>
       </FromList>
   </File>
 

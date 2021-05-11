@@ -27,7 +27,13 @@
 # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 # S2__OPER_REP_OPDHUS_DHUS_20180404T165255.xml
 # S2__OPER_REP_ARC__A_UPA__20170517T150557_V20170518T001000_21000101T000000_<pid>.EOF
+#
+# DEC_OPER_OPDHUS_S1A_AUIP_20210326T143003_V20210326T120000_274_000.json (70 character)
 # DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_112_000.json (70 character)
+# DEC_OPER_OPDHUS_S1A_AUIP_20210412T182233_V20210318T000000_20210319T000000_2302_2300.json
+# DEC_OPER_AVDHUS_S2A_AUIP_20210511T072003_V20210511T040000_20210511T050000_520_500.xml
+# ( > 73 character)
+#
 # - Non compressed files (.EOF .xml, others) are natively managed as 7z (thus apply compression)
 # - Compressed files with extension zip, tgz, 7z are handled without further compression into 7z
 #
@@ -48,6 +54,7 @@ class Handler_AUXIP
 
    @type                = ""
    @filename            = ""
+   @filename_original   = nil
    @validated           = false
    @start               = nil
    @stop                = nil 
@@ -56,7 +63,7 @@ class Handler_AUXIP
    @size                = 0
    @size_in_disk        = 0
 
-   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :start, :stop, :str_start, :str_stop
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :filename_original, :start, :stop, :str_start, :str_stop
 
    ## -----------------------------------------------------------
 
@@ -71,11 +78,14 @@ class Handler_AUXIP
          @bDecodeNameOnly = false
       end
       
-      archRoot       = ENV['MINARC_ARCHIVE_ROOT']
-      @filename      = File.basename(name, ".*")
-      @source_prefix = ""
-      @archive_path  = ""
-      @validated     = false
+      ## ---------------------------------------------------
+      
+      archRoot             = ENV['MINARC_ARCHIVE_ROOT']
+      @filename            = File.basename(name, ".*")
+      @filename_original   = File.basename(name)
+      @source_prefix       = ""
+      @archive_path        = ""
+      @validated           = false
 
       ## ---------------------------------------------------
       ## append source prefix to the archive path
@@ -108,7 +118,7 @@ class Handler_AUXIP
       ##
       ## DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_<variable>
       
-      if @filename.length > 57 and @filename.slice(0,3) == "DEC" &&
+      if @filename.length > 57 and @filename.length < 73 and @filename.slice(0,3) == "DEC" &&
          @filename.slice(41,1) == "V" &&
          @filename.slice(3,1) == "_" &&
          @filename.slice(8,1) == "_" then
@@ -120,10 +130,25 @@ class Handler_AUXIP
          @stop             = @generation_date         
          @validated        = true
       end 
-      # ----------------------------------------------------
+      ## ---------------------------------------------------
 
+      ##
+      ## DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_20210325T183000_<variable>
+      
+      if @filename.length > 73 and @filename.slice(0,3) == "DEC" &&
+         @filename.slice(41,1) == "V" &&
+         @filename.slice(3,1) == "_" &&
+         @filename.slice(8,1) == "_" then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(58, 15)    
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(42, 15))
+         @stop             = self.str2date(@filename.slice(58, 15))         
+         @validated        = true
+      end 
 
-      # ----------------------------------------------------
+      ## ---------------------------------------------------
       # E2ESPM Analytics Reports 
       if @filename.length == 72 then
          @str_start        = @filename.slice(41, 15)

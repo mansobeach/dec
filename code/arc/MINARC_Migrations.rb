@@ -105,6 +105,7 @@ class CreateArchivedFiles < ActiveRecord::Migration[6.0]
          t.column :filename,            :string,  :limit => 255, :unique => true
          t.index  :filename,             unique: true
          # name to be the filename without extension
+         t.column :filename_original,   :string,  :limit => 255
          t.column :name,                :string,  :limit => 255, :unique => true
          t.index  :name,                 unique: true
          t.column :filetype,            :string,  :limit => 64
@@ -204,6 +205,18 @@ class Add_version_1_1 < ActiveRecord::Migration[6.0]
      end
   end
 
+end
+
+## ===================================================================
+
+class Add_version_1_2 < ActiveRecord::Migration[6.0]
+  def change
+     begin
+        add_column :archived_files, :filename_original, :string,  :limit => 255, null: true, :unique => false
+     rescue Exception => e
+        puts e.to_s
+     end
+  end
 end
 
 ## ===================================================================

@@ -108,7 +108,8 @@ class ArchivedFile < ActiveRecord::Base
    
    def hash_introspection
    
-      config   = ReadMinarcConfig.instance
+      # require 'arc/ReadMinarcConfig'
+      config   = ARC::ReadMinarcConfig.instance
       server   = config.getArchiveServer
    
       hFile = Hash.new
@@ -126,6 +127,7 @@ class ArchivedFile < ActiveRecord::Base
       
       hFile['name']              = self.name
       hFile['filename']          = self.filename
+      hFile['filename_original'] = self.filename_original
       hFile['url']               = "#{server}/odata/v1/Products(#{self.uuid})/$value"
       hFile['path']              = self.path
       hFile['filetype']          = self.filetype
@@ -157,12 +159,14 @@ class ArchivedFile < ActiveRecord::Base
    
    def print_introspection
    
-      config   = ReadMinarcConfig.instance
+      # require 'arc/ReadMinarcConfig'
+      config   = ARC::ReadMinarcConfig.instance
       server   = config.getArchiveServer
    
       puts "uuid            : #{self.uuid}"
       puts "Logical name    : #{self.name}"
       puts "Physical name   : #{self.filename}"
+      puts "Original name   : #{self.filename_original}"
       puts "URL             : #{server}/odata/v1/Products(#{self.uuid})/$value"
       puts "Path            : #{self.path}"
       puts "Filetype        : #{self.filetype}"

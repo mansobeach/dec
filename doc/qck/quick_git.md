@@ -96,3 +96,22 @@ git rm --cached code/ws23rb
 
 git diff <commit_id> /path/filename
 
+
+
+### Management
+
+status of the HEAD pointer
+==========================
+
+git cat-file -p HEAD
+
+git cat-file -p HEAD^{tree}
+
+git log -3
+
+
+
+Configuration
+=============
+git config pull.rebase true
+git config branch.autosetuprebase always

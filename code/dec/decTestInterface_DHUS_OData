@@ -16,7 +16,11 @@ require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 
+require 'Date'
+
+require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
+
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 
@@ -26,10 +30,18 @@ require 'dec/ReadConfigDEC'
 
 # 2 - teardown
 
-##  1  - test_protocol
-##  2  - test_commandline_helpers
-##  3  - test_s1
-##  3  - test_s2
+##  1  - test_class_delay_s1
+##  2  - test_class_delay_s2
+##  3  - test_class_sensing_s1
+##  4  - test_command_delay_s1a
+##  5  - test_command_creation_s1a
+##  6  - test_command_creation_s1a_long
+##  7  - test_command_creation_delay_s1a
+##  8  - test_s1a_validity
+##  9  - test_s1b_validity_json
+##  10 - test_s1a_string
+##  11 - test_s1b_creation
+##  12 - test_s2_datatake
 
 
 # Select a single test of the suite
@@ -37,23 +49,24 @@ require 'dec/ReadConfigDEC'
 # ruby decUnitTests_DHUS -n test_my_method 
 
 
-class DECTestCaseDHUS < Test::Unit::TestCase
+class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    include CUC::DirUtils
    include DEC
 
    
    # Order of the test cases execution according to defintion within code
-   self.test_order = :defined
+   #self.test_order = :defined
    
-   @my_argv = ARGV.dup
-   
+      
    ## ------------------------------------------------------
    
    Test::Unit.at_start do      
+   #def setup
+      @my_argv = ARGV.dup
       puts
       puts "======================================"
-      puts "DEC Unit Test Cases"
+      puts "DEC Interface Test Cases #{self.class.name.split('::').last}"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -126,40 +139,260 @@ class DECTestCaseDHUS < Test::Unit::TestCase
          exit(99)
       end
       
-      
    end
    
    ## ------------------------------------------------------
-   
+
    Test::Unit.at_exit do
-      puts "End of DEC test for DHUS interface"
+      puts "End of DEC tests 4 DHUS"
    end
-   
-   ## ------------------------------------------------------
-   
-   ## Setup before every test-case
-   ##
+
    def setup
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      
-      @@conf.wrapper_load_config_development
-            
+      puts "setup"
    end
-   ## --------------------------------------------------------
-   ## After every test case
 
    def teardown
-      puts __method__.to_s
+      puts "teardown"
+   end
+
+   ## --------------------------------------------------------
+   ## test class 1
+
+   def test_class_delay_s1
       puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
+      
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+
+      ## --------------------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+         puts
+	      puts "Error in getFromInterface::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+      ## --------------------------------------------
+     
+      require 'dec/ODataClientDHUS'
+      
+      currentTime = DateTime.now - (5.0/24.0)
+      datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", datetime, nil, "/tmp", @logger)
+      client.setDebugMode
+      assert(client.exec_query, "hour delay")
+      ## --------------------------------------------
+         
+        
    end
    ## ------------------------------------------------------
+
+
+   ## --------------------------------------------------------
+   ## 
+
+   def test_class_delay_s2
+      puts
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+
+      ## --------------------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+         puts
+	      puts "Error in getFromInterface::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+      ## --------------------------------------------
+     
+      require 'dec/ODataClientDHUS'
+      
+      currentTime = DateTime.now - (1.5/24.0)
+      datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", datetime, nil, "/tmp", @logger)
+      client.setDebugMode
+      assert(client.exec_query, "hour delay")
+      ## --------------------------------------------
+         
+        
+   end
+   ## ------------------------------------------------------
+
+   
+   ## --------------------------------------------------------
+   ## 
+
+   def test_class_delay_s3
+      puts
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+
+      ## --------------------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+         puts
+	      puts "Error in getFromInterface::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+      ## --------------------------------------------
+     
+      require 'dec/ODataClientDHUS'
+      
+      currentTime = DateTime.now - (5.0/24.0)
+      datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", datetime, nil, "/tmp", @logger)
+      client.setDebugMode
+      assert(client.exec_query, "hour delay")
+      ## --------------------------------------------
+         
+        
+   end
+   ## ------------------------------------------------------
+
+   ## --------------------------------------------------------
+   ## 
+
+   def test_class_sensing_s1
+      puts
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+
+      ## --------------------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+         puts
+	      puts "Error in getFromInterface::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+      ## --------------------------------------------
+     
+      require 'dec/ODataClientDHUS'
+      
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, "2021-03-17T23:59:00.000,2021-03-18T00:00:00.000", "/tmp", @logger)
+      client.setDebugMode
+      assert(client.exec_query, "sensing range")
+      ## --------------------------------------------
+            
+      
+   end
+   ## ------------------------------------------------------
+
+   ## --------------------------------------------------------
+   ## 
+
+   def test_class_sensing_s2
+      puts
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+
+      ## --------------------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+         puts
+	      puts "Error in getFromInterface::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+      ## --------------------------------------------
+     
+      require 'dec/ODataClientDHUS'
+      
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, "2021-03-18T00:00:00.000,2021-03-18T00:05:00.000", "/tmp", @logger)
+      client.setDebugMode
+      assert(client.exec_query, "sensing range")
+      ## --------------------------------------------
+            
+      
+   end
+   ## ------------------------------------------------------
+
 
    ## ------------------------------------------------------
 
@@ -170,7 +403,7 @@ class DECTestCaseDHUS < Test::Unit::TestCase
    
       puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
       require 'net/http'
@@ -205,8 +438,18 @@ class DECTestCaseDHUS < Test::Unit::TestCase
       puts uri.request_uri
       
       request.basic_auth("borjalf", "perrillo.pwd")
-
-      response = http.request(request)
+      
+      response = nil
+      
+      while response == nil do
+         begin
+            response = http.request(request)
+         rescue Exception => e
+            puts e.to_s
+            response = nil
+            sleep(1.0)
+         end
+      end
    
       puts response.code
       puts
@@ -227,7 +470,7 @@ class DECTestCaseDHUS < Test::Unit::TestCase
 
    def test_commandline_helpers
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
       cmd = "decODataClient -v"
@@ -250,14 +493,13 @@ class DECTestCaseDHUS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def test_s2
+   def test_s2_datatake
    
       ## References:
       ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
    
-      puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
       ## Query by Datatake
@@ -276,23 +518,28 @@ class DECTestCaseDHUS < Test::Unit::TestCase
    ## ------------------------------------------------------
    
    
+   ## ------------------------------------------------------
+   
    def test_s1_all
       
-      puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
-      ## Query by IngestionTime for Sentinel-1A
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -t 2021-03-24T00:00:00.000 -q dhus:s1:S1A -D"
+      require 'Date'
+      
+      currentTime = DateTime.now - (2/24.0)
+
+      ## Query by CreationDate for Sentinel-1A
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -t #{currentTime.strftime("%Y-%m-%dT%H:00:00.000")} -q dhus:s1:S1A -D"
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts
 
       sleep(10.0)
 
-      ## Query by IngestionTime for Sentinel-1B
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -t 2021-03-24T00:00:00.000 -q dhus:s1:S1B -D"
+      ## Query by CreationDate for Sentinel-1B
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -t #{currentTime.strftime("%Y-%m-%dT%H:00:00.000")} -q dhus:s1:S1B -D"
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts
@@ -300,14 +547,14 @@ class DECTestCaseDHUS < Test::Unit::TestCase
       sleep(10.0)
 
 
-      ## Query by IngestionTime for GRD products Medium Resolution
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -t 2021-03-24T00:00:00.000 -q dhus:s1:S1A_EW_GRDM_1 -D"
+      ## Query by CreationDate for GRD products Medium Resolution
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -t #{currentTime.strftime("%Y-%m-%dT%H:00:00.000")} -q dhus:s1:S1A_EW_GRDM_1 -D"
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts
 
-      ## Query by IngestionTime for GRD products Medium Resolution
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -t 2021-03-23T00:00:00.000 -q dhus:s1:S1A_EW_OCN -D"
+      ## Query by CreationDate for GRD products Medium Resolution
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -t #{currentTime.strftime("%Y-%m-%dT%H:00:00.000")} -q dhus:s1:S1A_EW_OCN -D"
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts
@@ -316,16 +563,204 @@ class DECTestCaseDHUS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def test_s1
+   def test_command_delay_s1a
 
-      puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
       require 'Date'
 
-      ## Query by IngestionTime for Sentinel-1A
+      ## Query by CreationDate for Sentinel-1A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -H 2 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_s1a
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -c \"2021-04-01T23:50:00.000,2021-04-02T00:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
+      
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+   ## ------------------------------------------------------
+
+   def test_command_creation_s1a_long
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -c \"2021-04-02T08:00:00.000,2021-04-02T10:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
+      
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_delay_s1a
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -d 2 --query dhus:s1:S1A -D -L /tmp"
+      
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   ## ( beginPosition:[2021-03-17T23:59:00.000Z TO 2021-03-18T00:00:00.000Z] ) AND ( (platformname:Sentinel-1 AND filename:S1A_*))
+
+   ## S1A_IW_RAW__0SDV_20210317T235918_20210317T235951_037045_045C26_347B
+
+   ## DEC_OPER_OPDHUS_S1A_AUIP_20210422T110156_V20210317T235900_20210318T000050_9_0
+
+   def test_s1a_validity
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      ## Query by ContentDate/Start ContentDate/End for Sentinel-1A
+   
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -s \"2021-03-17T23:59:00.000,2021-03-18T00:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
+      
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+   end
+   ## ------------------------------------------------------
+
+   def test_s1b_validity_json
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -s 2021-03-17T00:00:00.000,2021-03-17T00:20:00.000 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus -f json -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+   end
+   ## ------------------------------------------------------
+
+   def test_s1a_string
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+
+      ## Query by ContentDate/Start ContentDate/End for Sentinel-1A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -q dhus:s1:S1A:S1A_WV_SLC__1SSV_20210101 -L /Users/borja/Projects/dec/data/dhus -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+   
+   end
+
+
+   ## ------------------------------------------------------
+   def test_s1b_creation
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1B
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -H 4.5 -q dhus:s1:S1B -L /Users/borja/Projects/dec/data/dhus"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   def test_s2b_creation
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1B
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -H 2 -q dhus:s2:S2B -L /Users/borja/Projects/dec/data/dhus"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_s1_2
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1A
       
       currentTime = DateTime.now - (2/24.0)
       
@@ -333,15 +768,6 @@ class DECTestCaseDHUS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts
-
-      sleep(10.0)
-
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -H 2 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus"
-      puts cmd
-      assert(system(cmd), "#{cmd} Datatake query")
-      puts
-
-      sleep(10.0)
    
    end
 
@@ -352,9 +778,8 @@ class DECTestCaseDHUS < Test::Unit::TestCase
       ## References:
       ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
    
-      puts
       puts "================================================"
-      puts "DEC_UnitTestsDHUS::#{__method__.to_s}"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
 
       ## Query by Datatake
@@ -374,15 +799,19 @@ class DECTestCaseDHUS < Test::Unit::TestCase
    ## ------------------------------------------------------
 
    def test_contingency
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
       ## Non existing user
       cmd = "decODataClient -u mario -p cipollini -q dhus:s2:l2a:GS2B_20200903T104429_018252_N02.14"
       puts cmd
-      assert(!system(cmd), "#{cmd} user non existent I believe")
-
-   
+      assert(!system(cmd), "#{cmd} user non existent I believe")   
    end
 
    ## ------------------------------------------------------
+
+
 
 
 end

@@ -868,8 +868,8 @@ class TestCaseStore < Test::Unit::TestCase
     
    end
 
-   # -------------------------------------------------------------
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
+   ## -----------------------------------------------------------
    def test_remote_status_filename
       puts
       puts "================================================"
@@ -890,10 +890,16 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       puts cmd
       puts
-
+      assert(system(cmd), cmd)
+      
+      cmd = "minArcStatus -t REP_OPDPC_ | jq"
+      puts
+      puts cmd
+      puts
       assert(system(cmd), cmd)  
+
    end
-   # -------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    def test_remote_delete
       puts __method__.to_s
@@ -1400,6 +1406,8 @@ class TestCaseStore < Test::Unit::TestCase
       
       testDataDir          = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
       testFile1            = "S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006.EOF"
+      testFile3            = "DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json"
+      testFile4            = "DEC_OPER_OPDHUS_S1A_AUIP_20210412T182233_V20210318T000000_20210319T000000_2302_2300.xml"
       
       cmd = "cp -f #{testDataDir}/#{testFile1} /tmp/"
       puts cmd
@@ -1443,6 +1451,65 @@ class TestCaseStore < Test::Unit::TestCase
       puts ret
       puts
       assert($?.exitstatus, "File Status")
+
+      system("echo \'#{testFile3}\' > /tmp/#{testFile3}")
+      
+      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile3} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+   
+      cmd = "minArcFile -T AUXIP -f WrongFile_DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000 -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcFile -T AUXIP -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcStatus -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json --noserver | jq"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+
+      system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
+      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile4} --noserver"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
+      
+#      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile4} --noserver"
+#      puts cmd
+#      assert(!system(cmd), cmd)
+   
+      cmd = "minArcFile -T AUXIP -f #{testFile4} -t"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
+      cmd = "minArcStatus  -f #{testFile4} --noserver | jq"
+      ret = `#{cmd}`
+      puts cmd
+      puts
+      puts ret
+      puts
+      assert($?.exitstatus, "Decoding of the file with handler")
+
 
    end
 
@@ -1574,13 +1641,17 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       system(cmd)
       
-      cmd = "minArcServer -c"
+      cmd = "minArcServer -c -D"
       puts cmd
       assert(system(cmd), cmd)
 
       puts
 
-      cmd = "minArcServer -k"
+      cmd = "minArcServer -k -D"
+      puts cmd
+      assert(system(cmd), cmd)
+
+      cmd = "minArcServer -k -D"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -1588,6 +1659,14 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcServer -s -D"
       cmd = "minArcServer -s"
+      puts cmd
+      assert(spawn(cmd), cmd)
+
+      puts
+      
+      sleep(5.0)
+
+      cmd = "minArcServer -s -D"
       puts cmd
       assert(spawn(cmd), cmd)
 

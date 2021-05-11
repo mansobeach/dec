@@ -24,11 +24,20 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.25"
+   @@version = "1.0.27"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.27" =>    "curl --connect-timeout raised to 60 to absorb high latencies\n\
+          decODataClient updates:\n\
+          > new AVDHUS generated for CreationDate intervals\n\
+          > request retries implemented for DHUS",
+      "1.0.26" =>    "Patch to delete sucessful download files in FTPS protocol:\n\
+          Update of the OData client for DHUS:\n\
+          > to query by sensing dates referred to ContentDate/Start\n\
+          > to define a configurable delay wrt the catalogue CreationDate
+          > to request XML, JSON and CSV", \
       "1.0.25" =>    "VerifyPeerSSL is used by HTTP handlers\n\
           decODataClient support for DHUS / Sentinel-1",
       "1.0.24" =>    "Pull local dissemination chmod robustified for errors", \

@@ -140,7 +140,7 @@ namespace :dec do
    desc "build DEC gem [user, host, suffix = s2 | s2odata]"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg")
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg_odata")
       puts "building gem dec #{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
@@ -262,7 +262,7 @@ namespace :dec do
    desc "load DEC configuration package"
 
    task :load_config, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg")
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg_odata")
       puts "loading configuration for #{args[:user]}@#{args[:host]} for #{args[:suffix]}"      
       path     = "#{@rootConf}/#{args[:user]}@#{args[:host]}"
       
@@ -358,8 +358,8 @@ namespace :dec do
       puts "Most used recipes:" 
       puts
       puts "DEC Unit Tests"
-      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]"
       puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg_odata]"
+      puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]"
       puts
       puts "S2PDGSENG / Inputhub"
       puts "pull VPMC & VPMC_TCI or SVPMC & SVPMC_TCI"

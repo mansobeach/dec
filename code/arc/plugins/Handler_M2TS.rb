@@ -37,10 +37,11 @@ include CUC::Converters
 
 class Handler_M2TS
    
-   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename
+   attr_reader :archive_path, :size, :size_in_disk, :size_original, :type, :filename, :filename_original
    
    @type                = ""
    @filename            = ""
+   @filename_original   = nil      
    @validated           = false
    @start               = nil
    @stop                = nil
@@ -53,6 +54,7 @@ class Handler_M2TS
    def initialize (full_path_name, destination = nil, args = {})
       full_path   = File.dirname(full_path_name)
       @filename   = File.basename(full_path_name)
+      @filename_original   = File.basename(full_path_name)
       basename    = File.basename(full_path_name, ".*")
       extension   = File.extname(full_path_name).to_s.downcase
       rev         = nil

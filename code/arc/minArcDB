@@ -254,6 +254,17 @@ def main
       else
          puts "uuid, md5 columns already exists :-)"
       end
+
+      if ArchivedFile.columns_hash["filename_original"] == nil then
+         puts "Updating table archived_files to meet version 1.2"
+         migration6 = Add_version_1_2.new
+         migration6.change
+         puts
+         puts
+         puts ArchivedFile.columns_hash["filename_original"]
+      else
+         puts "filename_original exists :-)"
+      end
      
       exit(0)
       

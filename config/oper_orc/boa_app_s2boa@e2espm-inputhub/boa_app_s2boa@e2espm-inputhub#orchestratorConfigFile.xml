@@ -1,6 +1,8 @@
 <OrchestratorConfiguration>
 
 <!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-388 -->
+<!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-443 -->
+<!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-457 -->
 
    <List_of_DataProviders>
 
@@ -16,11 +18,6 @@
               <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
-      <DataProvider isTriggerType="yes">
-	      <DataType>OPDHUS</DataType>
-	      <FileType>*REP_OPDHUS*</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
 
       <DataProvider isTriggerType="yes">
 	      <DataType>DPC</DataType>
@@ -142,6 +139,12 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
+      <DataProvider isTriggerType="yes">
+	      <DataType>OPDHUS</DataType>
+	      <FileType>*DEC_OPER_AVDHUS*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
       <DataProvider isTriggerType="no">
 	      <DataType>S2_UNKNOWN</DataType>
 	      <FileType>S2*</FileType>
@@ -176,6 +179,7 @@
       <PriorityRule rank="19"    class="DataType" type="OPPRIP"      sort="DESC" />
       <PriorityRule rank="20"    class="DataType" type="WEPRIP"      sort="DESC" />
       <PriorityRule rank="21"    class="DataType" type="EDRSMOC"     sort="DESC" />
+      <PriorityRule rank="22"    class="DataType" type="FOSUNAV"     sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -307,6 +311,13 @@
          <List_of_Inputs>
          </List_of_Inputs>
       </ProcessingRule>
+
+      <ProcessingRule dataType='FOSUNAV' triggerType='FOSUNAV' coverage='SAME'>
+         <executable>eboa_triggering.py -r -f %F</executable>
+         <List_of_Inputs>
+         </List_of_Inputs>
+      </ProcessingRule>
+
 
    </List_of_ProcessingRules>
    

@@ -50,8 +50,32 @@ sudo dd if=~/Desktop/rasp_ivan_pisco_sour.dmg of=/dev/disk2s1 bs=4096
 
 # Create Valid Certificates
 
+## For a specific IP address
+
+> CRL => Certificate Revocation List
+https://jamielinux.com/docs/openssl-certificate-authority/certificate-revocation-lists.html
+
+
+
+https://medium.com/@antelle/how-to-generate-a-self-signed-ssl-certificate-for-an-ip-address-f0dd8dddf754
+
 https://www.freecodecamp.org/news/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec/
+
+
 https://geekflare.com/free-ssl-tls-certificate/
+
+https://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+
+https://www.phildev.net/ssl/opensslconf.html
+
+
+#> openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650
+
+#> openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout key.pem -out cert.pem -config auxip_ssl_san.cnf
+
+## Read certificate
+
+openssl x509 -in s2decservice\@cloudferro#cert.pem -text
 
 
 ## sqlite visual browser

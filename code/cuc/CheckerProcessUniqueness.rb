@@ -231,7 +231,7 @@ private
          return false
       end
       if @isDebugMode == true then
-        puts "PID get from #{@fileLock} is #{pid}"
+         puts "PID get from #{@fileLock} is #{pid}"
       end
       return pid.chop
    end

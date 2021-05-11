@@ -52,7 +52,7 @@ module WrapperCURL
          cmd = "curl"
       end
 
-      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -X MOVE --header \'Destination: #{newUrl}#{newName}\' #{currentUrl}#{currentName}"
             
       if isDebugMode == true then
          cmd = "#{cmd.dup} -v "
@@ -81,7 +81,7 @@ module WrapperCURL
          cmd = "curl"
       end
 
-      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X PROPFIND #{url}"
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -X PROPFIND #{url}"
             
       if isDebugMode == true then
          cmd = "#{cmd.dup} -v "
@@ -103,9 +103,9 @@ module WrapperCURL
       end
       
       if user != nil and user != "" then
-         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET #{url}"
       else
-         cmd = "#{cmd.dup} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -L -f -s -X GET #{url}"
+         cmd = "#{cmd.dup} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET #{url}"
       end      
 
       
@@ -147,7 +147,7 @@ module WrapperCURL
          cmd = "curl"
       end
 
-      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X DELETE #{url}#{file}"
+      cmd = "#{cmd.dup} -s -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -X DELETE #{url}#{file}"
             
       if isDebugMode == true then
          cmd = "#{cmd.dup} -v "
@@ -184,9 +184,9 @@ module WrapperCURL
       end
 
       if user != nil and user != "" then
-         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 #{url}"
       else
-         cmd = "#{cmd.dup} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "#{cmd.dup} -s --upload-file #{file} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 #{url}"
       end      
             
       if isDebugMode == true then
@@ -240,9 +240,9 @@ module WrapperCURL
       end
 
       if user != nil and user != "" then
-         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} -s --upload-file #{file} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 #{url}"
       else
-         cmd = "#{cmd.dup} --upload-file #{file} --max-time 12000 --connect-timeout 10 --keepalive-time 12000 #{url}"
+         cmd = "#{cmd.dup} --upload-file #{file} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 #{url}"
       end  
             
       if isDebugMode == true then
@@ -276,9 +276,9 @@ module WrapperCURL
       
       
       if user != nil and user != "" then
-         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -X POST -v"
       else
-         cmd = "#{cmd.dup} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -X POST -v"
+         cmd = "#{cmd.dup} --progress-bar -o upload.txt --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -X POST -v"
       end  
     
 #      if isDebugMode == true then
@@ -339,9 +339,9 @@ module WrapperCURL
       end
 
       if user != nil and user != "" then
-         cmd = "#{cmd.dup} --progress-bar -u #{user}:#{escapePassword(pass)} -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+         cmd = "#{cmd.dup} --progress-bar -u #{user}:#{escapePassword(pass)} -L --silent --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -f -OJ -X GET "
       else
-         cmd = "#{cmd.dup} --progress-bar -L --silent --max-time 12000 --connect-timeout 10 --keepalive-time 12000 -f -OJ -X GET "
+         cmd = "#{cmd.dup} --progress-bar -L --silent --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -f -OJ -X GET "
       end  
   
       if isDebugMode == true then
@@ -405,7 +405,7 @@ module WrapperCURL
 #      puts
       
       ## --silent mode removed
-      cmd = %Q{curl --progress-bar --max-time 900 --connect-timeout 10 --keepalive-time 12000 -o "#{filename.to_s.chop}" -L "#{url}" }
+      cmd = %Q{curl --progress-bar --max-time 900 --connect-timeout 60 --keepalive-time 12000 -o "#{filename.to_s.chop}" -L "#{url}" }
       
       if isDebugMode == true then
          puts

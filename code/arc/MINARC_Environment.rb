@@ -22,11 +22,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.1.5"
+   @@version = "1.2.0"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.2.0"  =>      "filename_original added to the model\n\
+          curl --connect-timeout raised to 60 to absorb low performance scenarii",\
       "1.1.5"  =>      "Handler_AUXIP created to support multi-mission", \
       "1.1.4"  =>      "Handler_S2PDGS updated to support OData JSON by DEC", \
       "1.1.3"  =>      "minArcStatus --filename supplies the URL\n\
