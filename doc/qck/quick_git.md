@@ -18,6 +18,8 @@ Configuration commands to log the user working in the repository
 
 - `git config --global core.editor vim`
 
+- `git config --global core.excludesfile ~/.gitignore`
+
 `git clone https://username:password@remote`
 
 ### Undo a commit
@@ -115,3 +117,16 @@ Configuration
 =============
 git config pull.rebase true
 git config branch.autosetuprebase always
+
+
+
+Steps Branching
+===============
+git support_dhus_gnss
+git checkout support_dhus_gnss
+
+git checkout -b support_dhus_gnss master
+
+
+
+

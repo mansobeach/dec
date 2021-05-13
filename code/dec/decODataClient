@@ -9,9 +9,12 @@
 # published Complete Single Tile products 
 #
 # --query dhus:s1:S1B
+# --query dhus:s2:S2A
+# --query dhus:gnss:S1B
 # --query dhus:s2:GS2B_20200903T104429_018252_N02.14
 # --query dhus:s1:S1A:S1A_EW_GRDM
 # --query dhus:s1:S1A:45C1F
+#
 #
 #
 # PRIP: queries:

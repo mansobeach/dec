@@ -39,7 +39,7 @@ class CheckerProcessUniqueness
 
    include CUC
    include DirUtils
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
    # Class constructor.
    # IN Parameters: 
@@ -55,9 +55,9 @@ class CheckerProcessUniqueness
       @tmpDir      = tmpDir
       checkModuleIntegrity
    end   
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
    
-   # Set the flag for debugging on.
+   ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "CheckerProcessUniqueness debug mode is on"
@@ -81,27 +81,24 @@ class CheckerProcessUniqueness
    end
    ## -----------------------------------------------------------
    
-   # It returns the running PID of the process if avalaible.
-   # Otherwise it returns false.
-   # * Returns PID number of the process if it is running.
-   # * Returns False if its not.
+   ## It returns the running PID of the process if avalaible.
+   ## Otherwise it returns false.
+   ## * Returns PID number of the process if it is running.
+   ## * Returns False if its not.
    def getRunningPID
 	
 	   # for getting the running PID, wait some seconds to give 
       # time the process to be registered
       sleep(2)
 
-      if FileTest.exist?(@fileLock) == false then
-	      if @isDebugMode == true then
-            puts "File Lock process #{@fileLock} does not exist"
-         end
-         return false
+      if FileTest.exist?(@fileLock) == false then	      
+         raise "CheckerProcessUniqueness::getRunningPID File Lock process #{@fileLock} does not exist"
       end
        
       pid = readPID
        
       if pid == false then
-         return false
+         raise "CheckerProcessUniqueness::getRunningPID File Lock process #{@fileLock} does not exist"
       end
        
       if checkProcess(pid) == true then
@@ -110,14 +107,14 @@ class CheckerProcessUniqueness
          return false
       end
    end
-   #-------------------------------------------------------------
+   ## -------------------------------------------------------------
 
-   # It registers current Process in the Lock File.
-   # It writes in the lock file the current PID.
+   ## It registers current Process in the Lock File.
+   ## It writes in the lock file the current PID.
    def setRunning
       writePID
    end
-   #-------------------------------------------------------------
+   ##------------------------------------------------------------- 
    
    ## Remove lock file.
    ## This method must be invoked from the process just before
@@ -146,7 +143,7 @@ class CheckerProcessUniqueness
    def setExternalProcessRunning(pid)
       writePID(pid)
    end
-   #-------------------------------------------------------------   
+   ## -----------------------------------------------------------
 	
    def getAllRunningProcesses(excludePattern = "")
       command  = ""
@@ -167,7 +164,7 @@ class CheckerProcessUniqueness
       }
       return arrPids.uniq
    end
-   #-------------------------------------------------------------
+   ## -----------------------------------------------------------
 
 
 private
@@ -202,6 +199,14 @@ private
             @tmpDir   = ENV['ORC_TMP']
          end
          
+         if ENV.include?('MINARC_TMP') then
+            @tmpDir   = ENV['MINARC_TMP']
+         end
+         
+         if @tmpDir == nil then
+            raise "CheckerProcessUniqueness::checkModuleIntegrity failed to obtain tmp dir"
+         end
+         
       end
             
       checkDirectory(@tmpDir)
@@ -228,6 +233,7 @@ private
       begin
          pid   = aFile.readline
       rescue Exception => e
+         puts e.to_s
          return false
       end
       if @isDebugMode == true then

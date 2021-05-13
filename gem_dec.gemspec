@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.27'
+  s.version     = '1.0.28'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"

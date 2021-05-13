@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.2.0'
+  s.version     = '1.2.1'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"

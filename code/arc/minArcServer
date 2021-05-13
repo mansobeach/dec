@@ -201,6 +201,7 @@ def startServer
    if @locker.isRunning == true then
       @logger.warn("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
       if @bHappy == true then
+         @logger.info("[ARC_XXX] minArcServer is still happy")
          exit(0)
       else
          exit(99)
@@ -235,10 +236,11 @@ end
 ## It stops the server for the given I/F
 def stopServer
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
-   pid     = checker.getRunningPID
+   pid = checker.isRunning
    if pid == false then
       @logger.warn("[ARC_312] minArcServer was not running")
    else
+      pid     = checker.getRunningPID
       if @isDebugMode == true then
          @logger.debug("Sending signal SIGKILL to Process #{pid} for killing minArcServer")
       end

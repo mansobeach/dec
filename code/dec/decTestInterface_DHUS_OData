@@ -34,14 +34,16 @@ require 'dec/ReadConfigDEC'
 ##  2  - test_class_delay_s2
 ##  3  - test_class_sensing_s1
 ##  4  - test_command_delay_s1a
-##  5  - test_command_creation_s1a
-##  6  - test_command_creation_s1a_long
-##  7  - test_command_creation_delay_s1a
-##  8  - test_s1a_validity
-##  9  - test_s1b_validity_json
-##  10 - test_s1a_string
-##  11 - test_s1b_creation
-##  12 - test_s2_datatake
+##  5.1  - test_command_creation_gnss_s1a
+##  5.2  - test_command_creation_gnss_s2a
+##  6  - test_command_creation_s1a
+##  7  - test_command_creation_s1a_long
+##  8  - test_command_creation_delay_s1a
+##  9  - test_s1a_validity
+##  10 - test_s1b_validity_json
+##  11 - test_s1a_string
+##  12 - test_s1b_creation
+##  13 - test_s2_datatake
 
 
 # Select a single test of the suite
@@ -194,7 +196,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, datetime, nil, "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -243,7 +245,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (1.5/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", nil, datetime, nil, "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -292,7 +294,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", nil, datetime, nil, "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -338,7 +340,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, "2021-03-17T23:59:00.000,2021-03-18T00:00:00.000", "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-03-17T23:59:00.000,2021-03-18T00:00:00.000", "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -384,7 +386,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, "2021-03-18T00:00:00.000,2021-03-18T00:05:00.000", "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, nil, "2021-03-18T00:00:00.000,2021-03-18T00:05:00.000", "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -572,8 +574,46 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       require 'Date'
 
       ## Query by CreationDate for Sentinel-1A
-      
+            
       cmd = "decODataClient -u borjalf -p perrillo.pwd -H 2 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_gnss_s1a
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S1A -L /Users/borja/Projects/dec/data/dhus"
+      puts cmd
+      assert(system(cmd), "#{cmd} Datatake query")
+      puts
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_gnss_s2a
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S2A -L /Users/borja/Projects/dec/data/dhus"
       puts cmd
       assert(system(cmd), "#{cmd} Datatake query")
       puts

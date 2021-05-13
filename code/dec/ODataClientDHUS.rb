@@ -75,10 +75,38 @@ class ODataClientDHUS
    ## https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=CreationDate gt datetime'2017-05-15T00:00:00.000'
 
    def exec_query
-      urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT
-      urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_S1
-      urlPaging   = nil
    
+      nParams     = @query.split(":").length
+      system      = @query.split(":")[0]
+      mission     = @query.split(":")[1]
+      datatake    = @query.split(":")[2]
+      param       = nil
+      begin
+         param       = @query.split(":")[3]
+      rescue Exception => e
+      end
+
+      condition   = "#{DHUS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{datatake}%27,Name)"
+
+      if @isDebugMode == true then
+         @logger.debug("exec_query => #{system} : #{mission} : #{datatake} ; #{param} ; #{condition}")
+      end
+   
+      urlCount    = nil
+      urlSelect   = nil
+      urlPaging   = nil
+
+      
+      if mission == "GNSS" then
+         urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT_GNSS
+         urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_GNSS
+         urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_GNSS
+      else
+         urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT
+         urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_S1
+         urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_S1
+      end
+      
       if @sensingtime != nil then
          urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING
          urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING
@@ -106,27 +134,11 @@ class ODataClientDHUS
          end
       end
    
-      nParams     = @query.split(":").length
-      system      = @query.split(":")[0]
-      mission     = @query.split(":")[1]
-      datatake    = @query.split(":")[2]
-      param       = nil
-      begin
-         param       = @query.split(":")[3]
-      rescue Exception => e
-      end
-
-      condition   = "#{DHUS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{datatake}%27,Name)"
-   
       if param != nil then
          condition   = "#{condition.dup} and substringof(%27#{param}%27,Name)"
          urlCount    = "#{urlCount.dup}#{condition}"
       end   
       ## --------------------------------------------
-   
-      if @isDebugMode == true then
-         @logger.debug("#{system} : #{mission} : #{datatake} ; #{param} ; #{condition}")
-      end
    
       ## --------------------------------------------
 
@@ -146,7 +158,7 @@ class ODataClientDHUS
       ##
       ## Product Select 
       
-      ret = querySelect(urlSelect, condition, datatake)
+      ret = querySelect(mission, urlSelect, urlPaging, condition, datatake)
             
       return ret
       
@@ -161,7 +173,7 @@ class ODataClientDHUS
    ##
    ## Product Select 
 
-   def querySelect(urlSelect, condition, mission)
+   def querySelect(dhus_instance, urlSelect, urlPage, condition, mission)
       
       uri  = URI.parse(urlSelect)  
       http = Net::HTTP.new(uri.host, uri.port)
@@ -251,7 +263,7 @@ class ODataClientDHUS
       ## ---------------------
       
       ## datatake is carrying the mission id    
-      createFileMetadata(mission, response.body, iSkip)
+      createFileMetadata(dhus_instance, mission, response.body, iSkip)
          
       iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
       iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
@@ -269,7 +281,7 @@ class ODataClientDHUS
 
       while iPending > 0 do
 
-         urlPaging   = "#{DHUS::API_URL_ODATA_PRODUCT_PAGING_S1}#{iSkip}#{condition}"
+         urlPaging   = "#{urlPage}#{iSkip}#{condition}"
 
          if @sensingtime != nil then
             urlPaging   = "#{DHUS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING}#{iSkip}#{condition}"
@@ -338,7 +350,7 @@ class ODataClientDHUS
          end
          
          ## datatake is carrying the mission id
-         createFileMetadata(mission, response.body, iSkip)
+         createFileMetadata(dhus_instance, mission, response.body, iSkip)
 
          iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
          iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
@@ -430,7 +442,7 @@ class ODataClientDHUS
    ## -------------------------------------------------------------
 
    ## create File with the query results
-   def createFileMetadata(mission, data, iSkip)
+   def createFileMetadata(dhus_instance, mission, data, iSkip)
       prevDir = Dir.pwd
       Dir.chdir(@full_path_dir)
       filename = ""
@@ -440,7 +452,11 @@ class ODataClientDHUS
       end
 
       if @creationtime != nil then
-         filename = "DEC_OPER_AVDHUS_#{mission}_AUIP_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         if dhus_instance == "GNSS" then
+            filename = "DEC_OPER_AGNSS_#{mission}_AUIP_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         else
+            filename = "DEC_OPER_AVDHUS_#{mission}_AUIP_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         end
       end
    
       if @sensingtime != nil then

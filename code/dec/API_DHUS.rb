@@ -31,10 +31,19 @@ module DHUS
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=xml&$select=Id,Online,ContentLength,CreationDate,IngestionDate,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
    API_URL_ODATA_PRODUCT_SELECT_ID  =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=xml&$select=Id,Online,ContentLength,CreationDate,IngestionDate,EvictionDate,ContentDate,ContentGeometry"
+    
    API_URL_ODATA_PRODUCT_PAGING_S1     =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+
+   API_URL_ODATA_PRODUCT_PAGING_GNSS   =\
+    "https://scihub.copernicus.eu/gnss/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
+    
    API_URL_ODATA_PRODUCT_SELECT_ID_S1  =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
+   API_URL_ODATA_PRODUCT_SELECT_ID_GNSS  =\
+    "https://scihub.copernicus.eu/gnss/odata/v1/Products?$orderby=CreationDate asc&$format=xml&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry"
+
 
    API_URL_ODATA_PRODUCT_PAGING_S1_CSV    =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=CreationDate asc&$format=text/csv&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
@@ -70,6 +79,8 @@ module DHUS
 
    # API_URL_ODATA_PRODUCT_SELECT_ID  = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$select=*"
    API_URL_ODATA_PRODUCT_COUNT      = "https://scihub.copernicus.eu/dhus/odata/v1/Products/$count?"
+
+   API_URL_ODATA_PRODUCT_COUNT_GNSS = "https://scihub.copernicus.eu/gnss/odata/v1/Products/$count?"
    
    API_ODATA_FILTER_SUBSTRINGOF     = "&$filter=substringof"
    

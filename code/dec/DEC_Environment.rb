@@ -24,11 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.27"
+   @@version = "1.0.28"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.28" =>    "CUC::CheckerProcessUniqueness rework\n\
+          decODataClient update to support DHUS/GNSS API", \
       "1.0.27" =>    "curl --connect-timeout raised to 60 to absorb high latencies\n\
           decODataClient updates:\n\
           > new AVDHUS generated for CreationDate intervals\n\

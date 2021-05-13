@@ -399,10 +399,11 @@ end
 ## It stops the listener for the given I/F
 def stopListener(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), mnemonic, true)
-   pid     = checker.getRunningPID
+   pid = checker.isRunning
    if pid == false then
       @logger.warn("[DEC_603] I/F #{mnemonic}: Listener was not running")
    else
+      pid     = checker.getRunningPID
       if @isDebugMode == true then
          @logger.debug("Sending signal SIGKILL to Process #{pid} for killing #{mnemonic} I/F")
       end
@@ -532,12 +533,13 @@ end
 ## It stops getFromInterface for a given I/F
 def stopGetFromEntity(mnemonic)
    checker = CUC::CheckerProcessUniqueness.new("decGetFromInterface", mnemonic, true)
-   pid     = checker.getRunningPID
+   pid     = checker.isRunning
    if pid == false then
       if @isDebugMode == true then
          @logger.debug("[DEC_XXX] I/F #{mnemonic}: decGetFromInterface was not pulling")
       end
    else
+      pid     = checker.getRunningPID
       if @isDebugMode == true then
          @logger.debug("Sending signal SIGKILL to Process #{pid} for killing decGetFromInterface -m #{mnemonic}")
       end
