@@ -22,11 +22,12 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.13"
+   @@version = "0.0.14"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.14"  =>   "TBW", \
       "0.0.13"  =>   "Robustification to handle miss-configuration of processing rules:\n\
          https://jira.elecnor-deimos.com/browse/S2MPASUP-449",\
       "0.0.12"  =>   "Logs updated to report new message ORC_230", \

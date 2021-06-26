@@ -68,7 +68,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       @my_argv = ARGV.dup
       puts
       puts "======================================"
-      puts "DEC Interface Test Cases #{self.class.name.split('::').last}"
+      puts "DEC ODATA Interface Test Cases #{self.class.name.split('::').last}"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -156,6 +156,9 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    def teardown
       puts "teardown"
    end
+
+   ## ------------------------------------------------------
+
 
    ## --------------------------------------------------------
    ## test class 1
@@ -340,11 +343,10 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-03-17T23:59:00.000,2021-03-18T00:00:00.000", "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-06-17T23:59:00.000,2021-06-18T00:00:00.000", "/tmp", @logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
-            
       
    end
    ## ------------------------------------------------------

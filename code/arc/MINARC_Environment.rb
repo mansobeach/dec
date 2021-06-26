@@ -22,11 +22,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.2.1"
+   @@version = "1.2.2"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.2.2"  =>      "CUC::CheckerProcessUniqueness rework for minArcServer", \
       "1.2.1"  =>      "CUC::CheckerProcessUniqueness rework for minArcServer", \
       "1.2.0"  =>      "filename_original added to the model\n\
           curl --connect-timeout raised to 60 to absorb low performance scenarii",\

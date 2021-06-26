@@ -843,10 +843,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       config = ReadMinarcConfig.instance   
       server = config.getArchiveServer
-      
-      
-      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
-   
+         
       ## -------------------------------
       
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
@@ -861,8 +858,10 @@ class TestCaseStore < Test::Unit::TestCase
       ## well-formed query request request
       
       ## https://<service-root-uri>/odata/v1/Products?$count=true
+
+      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
       
-      cmd = "curl -s -k -u test:test \'#{url}Products?$count=true' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}$count=true' | jq"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")

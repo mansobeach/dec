@@ -8,7 +8,7 @@
 ###
 ### === Mini Archive Component (MinArc)
 ### 
-### Git: $Id: SinatraControllerODataProductQuery,v 1.8 2008/11/26 12:40:47 bolf Exp $
+### Git: $Id: SinatraControllerODataProductQuery, bolf Exp $
 ###
 ### module ARC_ODATA
 ###
@@ -57,6 +57,25 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
         @logger.debug("url          :   #{URI.unescape(@request.url)}")
         @logger.debug("path         :   #{@request.path}")
      end
+     
+     @logger.debug("xxxxxxxxxxxxxxxxx")
+     @logger.debug(@request.query_string)
+     @logger.debug(@request.path)
+     @logger.debug("xxxxxxxxxxxxxxxxx")
+     
+     ## ----------------------------------------------------
+     ##
+     if @request.query_string == "" or @request.query_string == nil then
+        @logger.debug("No query")
+
+        if @request.path.include?("$count") == true then
+           val = ArchivedFile.count
+           @response.content_type         = "text/plain"
+           @response.headers['Message']   = "The Count von Count counted #{val.to_s}"
+           return val.to_s
+        end
+     end
+     ## ----------------------------------------------------
      
      begin
         ret = parseQuery(URI.unescape(@request.query_string))
@@ -262,6 +281,10 @@ private
       ## $count
       if query_string.include?("$count") == true then
          @option    = 'count'
+         
+         if @isDebugMode == true then
+            @logger.debug("$count => true")
+         end
       end
 
       ## -------------------------------
@@ -317,7 +340,7 @@ private
          return true
       end
       
-      if @filterParam.include?("contains") == true then
+      if @filterParam.include?("contains") == true or @filterParam.include?("substringof") == true then
          @function   = "contains"
          @queryValue = "%#{@queryValue.dup}%"
          return true

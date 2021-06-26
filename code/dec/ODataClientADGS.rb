@@ -8,7 +8,7 @@
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: ODataClientDHUS.rb,v 1.25 2014/10/14 08:49:08 bolf Exp $
+### Git: $Id: ODataClientADGS.rb,v 1.25 2014/10/14 08:49:08 bolf Exp $
 ###
 ### This class is an OData client adapted to the DHUS DIAS OpenHub
 ###
@@ -20,7 +20,10 @@ require 'dec/ODataClient'
 
 module DEC
 
-class ODataClientDHUS < ODataClient
+class ODataClientADGS < ODataClient
+
+   include CUC::DirUtils
+   include DEC
    
    ## -------------------------------------------------------------
    
@@ -28,49 +31,46 @@ class ODataClientDHUS < ODataClient
       
       super(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
       
-      if @mission == "GNSS" then
-         @urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT_GNSS
-         @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_GNSS
-         @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_GNSS
-      else
-         @urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT
-         @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_S1
-         @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_S1
-      end
+      ## Default URI
+      @urlCount    = ADGS::API_URL_ODATA_PRODUCT_COUNT
+      @urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_ID
+      @urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING
 
       if @sensingtime != nil then
-         @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING
-         @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING
+         @urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING
+         @urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING
       
          if @format == "json" then
-            @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_JSON
-            @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_JSON 
+            @urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_JSON
+            @urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_JSON 
          end
 
          if @format == "csv" then
-            @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_CSV
-            @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_CSV
+            @urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_BY_SENSING_CSV
+            @urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_CSV
          end
       end
       
       if @datetime != nil or @creationtime != nil then
          if @format == "json" then
-            urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_S1_JSON
-            urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_S1_JSON   
+            urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_ID_S1_JSON
+            urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING_S1_JSON   
          end
 
          if @format == "csv" then
-            @urlSelect   = DHUS::API_URL_ODATA_PRODUCT_SELECT_ID_S1_CSV
-            @urlPaging   = DHUS::API_URL_ODATA_PRODUCT_PAGING_S1_CSV  
+            @urlSelect   = ADGS::API_URL_ODATA_PRODUCT_SELECT_ID_S1_CSV
+            @urlPaging   = ADGS::API_URL_ODATA_PRODUCT_PAGING_S1_CSV  
          end
       end
 
-      @condition   = "#{DHUS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{@datatake}%27,Name)"
+      @condition   = "#{ADGS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{@datatake}%27,Name)"
 
       if @param != nil then
          @condition   = "#{@condition.dup} and substringof(%27#{@param}%27,Name)"
          @urlCount    = "#{@urlCount.dup}#{@condition}"
       end   
+       
+      @format      = "json" 
        
    end
    ## -----------------------------------------------------------
@@ -78,9 +78,12 @@ class ODataClientDHUS < ODataClient
    ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      @logger.debug("ODataClientDHUS debug mode is on")
+      @logger.debug("ODataClientADGS debug mode is on")
    end
    ## -----------------------------------------------------------
+
+   private   
+   ## -------------------------------------------------------------
 
 end # class
 

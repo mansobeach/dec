@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.28'
+  s.version     = '1.0.29'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -28,21 +28,25 @@ Gem::Specification.new do |s|
                   Dir['code/ctc/*.rb'] + \
                   Dir['code/dec/*.rb'] + \
                   Dir['schemas/*.xsd'] + \
+                  Dir['config/dec_interfaces.xml'] + \
+                  Dir['config/dec_incoming_files.xml'] + \
+                  Dir['config/dec_outgoing_files.xml'] + \
+                  Dir['config/ft_mail_config.xml'] + \
                   Dir['config/dec_log_config.xml'] + \
                   Dir['config/dec_config.xml']
 
-   ## --------------------------------------------
-   ##
-   ## Tailored installer to avoid shipping un-necessary only the OData client
-   if ENV.include?("DEC_ODATA") == false then
-      s.files = s.files + Dir['config/dec_incoming_files.xml']
-      s.files = s.files + Dir['config/dec_outgoing_files.xml']
-      s.files = s.files + Dir['config/dec_interfaces.xml']
-      s.files = s.files + Dir['config/ft_mail_config.xml']
-   end
-   ## --------------------------------------------
+#    ## --------------------------------------------
+#    ##
+#    ## Tailored installer to avoid shipping un-necessary only the OData client
+#    if ENV.include?("DEC_ODATA") == false then
+#       s.files = s.files + Dir['config/dec_incoming_files.xml']
+#       s.files = s.files + Dir['config/dec_outgoing_files.xml']
+#       s.files = s.files + Dir['config/dec_interfaces.xml']
+#       s.files = s.files + Dir['config/ft_mail_config.xml']
+#    end
+#    ## --------------------------------------------
 
-  s.require_paths = [ 'code', 'code/dcc', 'code/ddc', 'code/ctc', 'code/dec' ]
+  s.require_paths = [ 'code', 'code/ctc', 'code/dec' ]
 
   s.bindir        = [ 'code/dec' ]
 
@@ -67,7 +71,7 @@ Gem::Specification.new do |s|
    ##
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_ODATA") == true then
-      s.executables   = [ 'decODataClient' ]
+      s.executables   << 'decODataClient'
    end
    ## --------------------------------------------
 
@@ -95,7 +99,8 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_mail'
 
       if ENV.include?("DEC_ODATA") == true then
-         s.executables   << 'decTestInterface_DHUS_OData'
+         s.executables   << 'decTestInterface_OData_ADGS'
+         s.executables   << 'decTestInterface_OData_DHUS'
          s.executables   << 'decTestInterface_S2PRIP'
       end
    end

@@ -15,7 +15,7 @@
 # --query dhus:s1:S1A:S1A_EW_GRDM
 # --query dhus:s1:S1A:45C1F
 #
-#
+# --query adgs:s1:S1B
 #
 # PRIP: queries:
 #
@@ -74,6 +74,7 @@ require 'dec/DEC_Environment'
 require 'dec/API_DHUS'
 require 'dec/API_PRIP'
 require 'dec/ODataClientDHUS'
+require 'dec/ODataClientADGS'
 
 @isDebugMode = false
 
@@ -268,6 +269,18 @@ def main
 
    if @query.include?("DHUS") == true then
       client      = ODataClientDHUS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @logger)
+      
+      if @isDebugMode == true then
+         client.setDebugMode
+      end
+
+      ret = client.exec_query
+   end
+   
+   ## -------------------------------------------- 
+
+   if @query.include?("ADGS") == true then
+      client      = ODataClientADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @logger)
       
       if @isDebugMode == true then
          client.setDebugMode

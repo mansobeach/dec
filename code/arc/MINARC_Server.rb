@@ -175,6 +175,24 @@ class MINARC_Server < Sinatra::Base
    
    ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
    
+   get ARC_ODATA::API_URL_PRODUCT_QUERY_COUNT do
+      if settings.isDebugMode == true then
+         @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY_COUNT}")
+      end
+
+      ret = ARC_ODATA::ControllerODataProductQuery.new(self, \
+                        @@logger, \
+                        settings.isDebugMode).query
+      content_type :json 
+      body ret            
+   end
+
+   ## =================================================================
+
+   ## =================================================================
+   
+   ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
+   
    get ARC_ODATA::API_URL_PRODUCT_QUERY do
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY}")

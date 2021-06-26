@@ -8,7 +8,7 @@
 ###
 ### === Mini Archive Component (MinArc)
 ### 
-### Git: $Id: SinatraControllerODataProductDownload,v 1.8 2008/11/26 12:40:47 bolf Exp $
+### Git: $Id: SinatraControllerODataProductDownload,v bolf Exp $
 ###
 ### module ARC_ODATA
 ###
@@ -87,7 +87,7 @@ private
    ## -------------------------------------------------------
    
    def parseQuery(path_info)
-      @logger.debug("SinatraControllerOData::parseQuery => #{path_info}")
+      @logger.debug("SinatraControllerODataProductDownload::parseQuery => #{path_info}")
       @uuid       = path_info.split("(")[1].split(")")[0]
       @bValue     = path_info.split("$")[1].include?("value")
       @property   = "$#{path_info.split("$")[1]}"

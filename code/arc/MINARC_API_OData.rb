@@ -120,9 +120,12 @@ require 'json'
 
 module ARC_ODATA
 
-   API_URL_PRODUCT                     = '/odata/v1/Products'
-   API_URL_PRODUCT_QUERY               = '/odata/v1/Products?'
-   API_URL_PRODUCT_DOWNLOAD            = '/odata/v1/Products(*)'
+   API_ROOT                            = '/adgs'
+
+   API_URL_PRODUCT                     = "#{API_ROOT}/odata/v1/Products"
+   API_URL_PRODUCT_QUERY               = "#{API_ROOT}/odata/v1/Products?"
+   API_URL_PRODUCT_QUERY_COUNT         = "#{API_ROOT}/odata/v1/Products?/$count*"
+   API_URL_PRODUCT_DOWNLOAD            = "#{API_ROOT}/odata/v1/Products\(*)"
    API_RESOURCE_FOUND                  = 200
    API_BAD_REQUEST                     = 400
    API_RESOURCE_NOT_FOUND              = 404

@@ -79,7 +79,10 @@
     </TXRXParams>    
     <Server>
       <Protocol>FTP</Protocol>
+      <Hostname>90.84.245.174</Hostname>
+      <!--
       <Hostname>vpmcdag2.s2pdgs.com</Hostname>
+      -->
 	   <Port>21</Port>
       <User>esrin_e2espm</User>
       <Pass>vpmc4esrinS2*</Pass>
@@ -139,7 +142,10 @@
     </TXRXParams>    
     <Server>
       <Protocol>FTP</Protocol>
+      <Hostname>90.84.245.174</Hostname>
+      <!--
       <Hostname>vpmcdag2.s2pdgs.com</Hostname>
+      -->
 	   <Port>21</Port>
       <User>esrin_e2espm</User>
       <Pass>vpmc4esrinS2*</Pass>
