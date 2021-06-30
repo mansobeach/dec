@@ -21,23 +21,37 @@ require 'Date'
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 
+require 'ctc/API_ADGS'
+require 'ctc/API_MINARC_OData'
+
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 
 
-# Preconditions:
-# 1 - setup 
-
-# 2 - teardown
+##  1  - test_count
 
 
+
+##  2  - test_class_delay_s2
+##  3  - test_class_sensing_s1
+##  4  - test_command_delay_s1a
+##  5.1  - test_command_creation_gnss_s1a
+##  5.2  - test_command_creation_gnss_s2a
+##  6  - test_command_creation_s1a
+##  7  - test_command_creation_s1a_long
+##  8  - test_command_creation_delay_s1a
+##  9  - test_s1a_validity
+##  10 - test_s1b_validity_json
+##  11 - test_s1a_string
+##  12 - test_s1b_creation
+##  13 - test_s2_datatake
 
 # Select a single test of the suite
 
 # ruby decUnitTests_DHUS -n test_my_method 
 
 
-class DECTestInterfaceDHUS < Test::Unit::TestCase
+class DECTestInterface_OData_ADGS < Test::Unit::TestCase
 
    include CUC::DirUtils
    include DEC
@@ -49,8 +63,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
    ## ------------------------------------------------------
    
-   Test::Unit.at_start do      
-   #def setup
+   Test::Unit.at_start do
       @my_argv = ARGV.dup
       puts
       puts "======================================"
@@ -84,42 +97,12 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          end
       end   
       
-            @@arrDownloadFiles = [ \
-                           "finals.all", \
-                           "gpsrapid.out" \
-                           ]
-
-      
-=begin
-      puts
-      puts
-      puts "THINK IT TWICE  !!! "
-      puts
-      puts "do you want to continue Y/n" 
-      puts
-      puts
-      
-      c = STDIN.getc
-            
-      
-      if c != 'Y' then
-         exit(99)
-      end
-
-=end      
-      
       @@conf = DEC_Environment.new
-      
       @@conf.wrapper_load_config_development
-
-
       puts      
       @@conf.wrapper_print_environment
-      puts
-      
-      
+      puts    
       @@conf.createEnvironmentDirs
-
 
       if @@conf.wrapper_check_environment == false then
          puts "DEC environment not suited for unit tests"
@@ -127,12 +110,14 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          exit(99)
       end
       
+      @@server = ADGS::API_SERVER
+      
    end
    
    ## ------------------------------------------------------
 
    Test::Unit.at_exit do
-      puts "End of DEC tests 4 DHUS"
+      puts "End of DEC tests 4 ADGS"
    end
 
    def setup
@@ -143,6 +128,34 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       puts "teardown"
    end
 
+   ## -----------------------------------------------------------
+   ##
+   ## https://<service-root-uri>/odata/v1/Products?$count=true
+
+   def test_count
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+              
+      ## -------------------------------
+
+      ## -------------------------------
+      ## well-formed query request request
+      
+      ## https://<service-root-uri>/odata/v1/Products?$count=true
+
+      url = "#{@@server}#{ARC_ODATA::API_URL_PRODUCT}"
+      
+      cmd = "curl -s -k -u test:test \'#{url}/$count?'"
+      puts cmd
+      ret = system(cmd)      
+      assert(ret, "successful curl query")
+      
+      ## -------------------------------
+   end
+   ## -----------------------------------------------------------
+
    ## ------------------------------------------------------
    def test_adgs_s2
 
@@ -150,7 +163,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
       puts
       
-      cmd = "decODataClient -u test -p test -q adgs:s1:S2 -L /tmp"  # "-D"
+      cmd = "decODataClient -u test -p test -q adgs:s2:S2 --creation \"2021-03-16T00:00:00.000,2021-03-16T01:00:00.000\" -L /tmp"  # "-D"
       puts cmd
       assert(system(cmd), "#{cmd} query")
       puts
@@ -160,11 +173,6 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    end
 
    ## ------------------------------------------------------
-
-
-
-
-
 
 end
 

@@ -27,26 +27,28 @@ module ARC
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.2.2"  =>      "CUC::CheckerProcessUniqueness rework for minArcServer", \
+      "1.2.2"  =>      "OData fix for simple $count queries\n\
+         OData server refactoring for composed queries\n\
+         public API now kept under ctc module", \
       "1.2.1"  =>      "CUC::CheckerProcessUniqueness rework for minArcServer", \
       "1.2.0"  =>      "filename_original added to the model\n\
-          curl --connect-timeout raised to 60 to absorb low performance scenarii",\
+         curl --connect-timeout raised to 60 to absorb low performance scenarii",\
       "1.1.5"  =>      "Handler_AUXIP created to support multi-mission", \
       "1.1.4"  =>      "Handler_S2PDGS updated to support OData JSON by DEC", \
       "1.1.3"  =>      "minArcStatus --filename supplies the URL\n\
-          Fixed supply of correct JSON for minArcStatus --filename:\n\
-          https://jira.elecnor-deimos.com/browse/S2MPASUP-441",\
+         Fixed supply of correct JSON for minArcStatus --filename:\n\
+         https://jira.elecnor-deimos.com/browse/S2MPASUP-441",\
       "1.1.2"  =>      "minArcServer support of SSL over HTTP\n\
-          gems rack-ssl, rack-ssl-enforcer added as a dependency at installation time\n\
-          VerifyPeerSSL configuration item added to bypass self-signed certificates",\
+         gems rack-ssl, rack-ssl-enforcer added as a dependency at installation time\n\
+         VerifyPeerSSL configuration item added to bypass self-signed certificates",\
       "1.1.1"  =>      "OData fix ($count not limited to return results)", \
       "1.1.0"  =>      "uuid, md5 & Users has been added to the model for postgresql database\n\
-          Client credentials configuration items added into minarc_config.xml
-          Server API protected with HTTP Basic Authentication\n\
-          Basic OData support for AUXIP\n\
-          gems bcrypt, byebug added as a dependency at installation time\n\
-          FOSS tools: jq, md5sum added as a dependency at execution time\n\
-          minArcStatus CLI information supplied as JSON",\
+         Client credentials configuration items added into minarc_config.xml
+         Server API protected with HTTP Basic Authentication\n\
+         Basic OData support for AUXIP\n\
+         gems bcrypt, byebug added as a dependency at installation time\n\
+         FOSS tools: jq, md5sum added as a dependency at execution time\n\
+         minArcStatus CLI information supplied as JSON",\
       "1.0.38"  =>   "minArcServer robustification\n\
           Node identification configuration item added to minarc_config.xml\n\
           minArcReallocate support to change location of previously archived files",\

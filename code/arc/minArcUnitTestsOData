@@ -13,12 +13,12 @@
 #########################################################################
 
 
-require 'simplecov'
-
-
-SimpleCov.start do     # ommit test classes from the report
-  add_filter 'test'
-end
+# require 'simplecov'
+# 
+# 
+# SimpleCov.start do     # ommit test classes from the report
+#   add_filter 'test'
+# end
 
 #### ---------------------------
 #
@@ -30,7 +30,6 @@ end
 
 require 'rubygems'
 require 'test/unit'
-require 'simplecov'
 
 require 'fileutils'
 
@@ -42,11 +41,12 @@ require 'cuc/Log4rLoggerFactory'
 
 require 'ctc/WrapperCURL'
 
+require 'ctc/API_MINARC_OData'
+
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Client'
 require 'arc/MINARC_Status'
 require 'arc/ReadMinarcConfig'
-require 'arc/MINARC_API_OData'
       
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
@@ -69,7 +69,8 @@ require 'arc/MINARC_API_OData'
 ##  8  - test_odata_query_skip
 ##  9  - test_odata_query_top
 ## 10  - test_odata_query_expand
-## 10  - test_odata_bad_queries
+## 11  - test_odata_bad_queries
+## 12  - test_odata_command_delay / requires DEC update
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -127,7 +128,11 @@ class TestCaseStore < Test::Unit::TestCase
          exit(99)
       end
 
-      
+      config               = ReadMinarcConfig.instance
+      @@server             = config.getArchiveServer
+
+      puts "minARC Server => #{@@server}"
+
       @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
       @@testFile1          = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
       @@testFile2          = "S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
@@ -193,8 +198,8 @@ class TestCaseStore < Test::Unit::TestCase
 
       puts
 
-      #cmd = "minArcServer -s -D"
-      cmd = "minArcServer -s"
+      cmd = "minArcServer -s -D"
+      #cmd = "minArcServer -s"
       puts cmd
       spawn(cmd)
  
@@ -302,7 +307,7 @@ class TestCaseStore < Test::Unit::TestCase
       config = ReadMinarcConfig.instance   
       server = config.getArchiveServer
        
-      url = "https://localhost:4567/odata/v1/Products"
+      url = "https://localhost:4567/adgs/odata/v1/Products"
    
       ## -------------------------------
       
@@ -330,9 +335,10 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq .uuid"
       ret = `#{cmd}`
-      puts cmd
-      puts 
       uuid =  ret.chop.gsub("\"","")
+      puts cmd
+      puts ret
+      puts uuid
       assert($?.exitstatus, "Retrieving the uuid")
       ## -------------------------------
    
@@ -348,6 +354,7 @@ class TestCaseStore < Test::Unit::TestCase
       end
       
       theURL = "#{url}(#{uuid})/\$value"
+      puts theURL
       ret = getFile(theURL, false, "test", "test", "thefile", false)
       
       assert(ret, "File download with WrapperCURL.getFile")
@@ -859,21 +866,14 @@ class TestCaseStore < Test::Unit::TestCase
       
       ## https://<service-root-uri>/odata/v1/Products?$count=true
 
-      url = "#{server}#{ARC_ODATA::API_URL_PRODUCT_QUERY}"
+      url = "#{@@server}#{ARC_ODATA::API_URL_PRODUCT}"
       
-      cmd = "curl -s -k -u test:test \'#{url}$count=true' | jq"
+      cmd = "curl -s -k -u test:test \'#{url}/$count?'"
       puts cmd
       ret = system(cmd)      
       assert(ret, "successful curl query")
       
       ## -------------------------------
-
-
-#      arr = Dir["/tmp/minarc_log_file*.log"]
-#      
-#      cmd = "grep ARC_210 #{arr[0]}"
-#      puts cmd
-#      assert(system(cmd), "see query traces #{__method__.to_s}") 
 
    end
    ## -----------------------------------------------------------
@@ -1284,10 +1284,28 @@ class TestCaseStore < Test::Unit::TestCase
 
   
    end
+
+   ## -----------------------------------------------------------
+
+   def test_odata_command_delay
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+
+      ## Query by PublicationDate for Sentinel-2A
+            
+      cmd = "decODataClient -u test -p test -H 2 -q adgs:s2:S2A -L /tmp -D"
+      puts cmd
+      assert(system(cmd), "#{cmd} delay query")
+      puts
+      
+   end
+   
    ## -----------------------------------------------------------
 
 end
 
 
-# =====================================================================
+## ====================================================================
 

@@ -31,6 +31,8 @@ Gem::Specification.new do |s|
                   Dir['code/arc/SinatraController*.rb'] + \
                   Dir['code/arc/plugins/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
+                  Dir['code/ctc/API_ADGS.rb'] + \
+                  Dir['code/ctc/API_MINARC_OData.rb'] + \
                   Dir['code/ctc/WrapperCURL.rb'] + \
                   Dir['config/cert.pem'] + \
                   Dir['config/key.pem'] + \

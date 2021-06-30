@@ -14,13 +14,7 @@
 ###
 #########################################################################
 
-require 'sinatra'
-
-require 'cuc/Converters'
-
 require 'arc/SinatraControllerBase'
-require 'arc/MINARC_API_OData'
-require 'arc/MINARC_DatabaseModel'
 
 module ARC_ODATA
 

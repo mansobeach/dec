@@ -24,10 +24,11 @@ require 'json'
 
 require 'cuc/Log4rLoggerFactory'
 
+require 'ctc/API_DHUS'
+require 'ctc/API_PRIP'
+require 'ctc/API_ADGS'
+
 require 'dec/DEC_Environment'
-require 'dec/API_DHUS'
-require 'dec/API_PRIP'
-require 'dec/API_ADGS'
 
 module DEC
 
@@ -145,17 +146,28 @@ class ODataClient
       ## --------------------------------------------
 
       if @datetime != nil then
-         urlSelect = "#{urlSelect.dup}#{condition} and CreationDate ge datetime'#{@datetime}'"
+         if @bUseDateTime == true then
+            urlSelect = "#{urlSelect.dup}#{condition} and #{@attributeDateAvailable} ge datetime'#{@datetime}'"
+         else
+            urlSelect = "#{urlSelect.dup}#{condition} and #{@attributeDateAvailable} ge #{@datetime}"
+         end
       end
 
       if @sensingtime != nil then
-         urlSelect = "#{urlSelect.dup}#{condition} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+         if @bUseDateTime == true then
+            urlSelect = "#{urlSelect.dup}#{condition} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+         else
+            urlSelect = "#{urlSelect.dup}#{condition} and ContentDate/Start ge #{@sensingStart} and ContentDate/Start lt #{@sensingEnd}"
+         end
       end
 
       if @creationtime != nil then
-         urlSelect = "#{urlSelect.dup}#{condition} and CreationDate ge datetime'#{@creationStart}' and CreationDate lt datetime'#{@creationEnd}'"
+         if @bUseDateTime == true then
+            urlSelect = "#{urlSelect.dup}#{condition} and #{@attributeDateAvailable} ge datetime'#{@creationStart}' and #{@attributeDateAvailable} lt datetime'#{@creationEnd}'"
+         else
+            urlSelect = "#{urlSelect.dup}#{condition} and #{@attributeDateAvailable} ge #{@creationStart} and #{@attributeDateAvailable} lt #{@creationEnd}"
+         end
       end
-
 
       ## --------------------------------------------
    
@@ -253,15 +265,27 @@ class ODataClient
          ## -----------------------------------------
       
          if @datetime != nil then
-            urlPaging = "#{urlPaging.dup} and CreationDate ge datetime'#{@datetime}'"
+            if @bUseDateTime == true then
+               urlPaging = "#{urlPaging.dup} and #{@attributeDateAvailable} ge datetime'#{@datetime}'"
+            else
+               urlPaging = "#{urlPaging.dup} and #{@attributeDateAvailable} ge #{@datetime}"
+            end
          end
 
          if @sensingtime != nil then
-            urlPaging = "#{urlPaging.dup} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+            if @bUseDateTime == true then
+               urlPaging = "#{urlPaging.dup} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+            else
+               urlPaging = "#{urlPaging.dup} and ContentDate/Start ge #{@sensingStart} and ContentDate/Start lt #{@sensingEnd}"
+            end
          end
 
          if @creationtime != nil then
-            urlPaging = "#{urlPaging.dup} and CreationDate ge datetime'#{@creationStart}' and CreationDate lt datetime'#{@creationEnd}'"
+            if @bUseDateTime == true then
+               urlPaging = "#{urlPaging.dup} and #{@attributeDateAvailable} ge datetime'#{@creationStart}' and #{@attributeDateAvailable} lt datetime'#{@creationEnd}'"
+            else
+               urlPaging = "#{urlPaging.dup} and #{@attributeDateAvailable} ge #{@creationStart} and #{@attributeDateAvailable} lt #{@creationEnd}"
+            end
          end
 
          ## -----------------------------------------
@@ -323,15 +347,27 @@ class ODataClient
    def queryCount(urlCount, condition)
       
       if @datetime != nil then
-         urlCount = "#{urlCount}#{condition} and CreationDate ge datetime'#{@datetime}'"
+         if @bUseDateTime == true then
+            urlCount = "#{urlCount}#{condition} and #{@attributeDateAvailable} ge datetime'#{@datetime}'"
+         else
+            urlCount = "#{urlCount}#{condition} and #{@attributeDateAvailable} ge #{@datetime}"
+         end
       end
 
       if @sensingtime != nil then
-         urlCount = "#{urlCount}#{condition} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+         if @bUseDateTime == true then
+            urlCount = "#{urlCount}#{condition} and ContentDate/Start ge datetime'#{@sensingStart}' and ContentDate/Start lt datetime'#{@sensingEnd}'"
+         else
+            urlCount = "#{urlCount}#{condition} and ContentDate/Start ge #{@sensingStart} and ContentDate/Start lt #{@sensingEnd}"
+         end
       end
 
       if @creationtime != nil then
-         urlCount = "#{urlCount}#{condition} and CreationDate ge datetime'#{@creationStart}' and CreationDate lt datetime'#{@creationEnd}'"
+         if @bUseDateTime == true then
+            urlCount = "#{urlCount}#{condition} and #{@attributeDateAvailable} ge datetime'#{@creationStart}' and #{@attributeDateAvailable} lt datetime'#{@creationEnd}'"
+         else
+            urlCount = "#{urlCount}#{condition} and #{@attributeDateAvailable} ge #{@creationStart} and #{@attributeDateAvailable} lt #{@creationEnd}"
+         end
       end
 
       uri      = URI.parse(urlCount)
@@ -385,8 +421,9 @@ class ODataClient
             
       ## --------------------------------------------
 
-      iPending = response.body.to_i   
-      @iTotal  = iPending
+      ## DHUS Openhub replies directly without any JSON or formatting
+
+      @iTotal  = processCountReply(response.body)
       
       if @iTotal == -1 or response.code != DHUS::API_RESOURCE_FOUND then
          @logger.error("Error in request #{response.code} / #{response.message} / #{response.body}")
@@ -402,30 +439,30 @@ class ODataClient
    ## -------------------------------------------------------------
 
    ## create File with the query results
-   def createFileMetadata(dhus_instance, mission, data, iSkip)
+   def createFileMetadata(service_instance, mission, data, iSkip)
    
       prevDir = Dir.pwd
       Dir.chdir(@full_path_dir)
       filename = ""
    
       if @datetime != nil then
-         filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_V#{@datetime.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         filename = "DEC_OPER_OP#{@system.slice(0,4)}_#{mission.ljust(3,"_")}_ADGS_#{@currentDate}_V#{@datetime.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
       end
 
       if @creationtime != nil then
-         if dhus_instance == "GNSS" then
-            filename = "DEC_OPER_AGNSS_#{mission}_AUIP_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         if service_instance == "GNSS" then
+            filename = "DEC_OPER_AGNSS_#{mission.ljust(3,"_")}_ADGS_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
          else
-            filename = "DEC_OPER_AVDHUS_#{mission}_AUIP_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+            filename = "DEC_OPER_OP#{@system.slice(0,4)}_#{mission.ljust(3,"_")}_ADGS_#{@currentDate}_V#{@creationStart.gsub("-","").gsub(":","").split(".")[0]}_#{@creationEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
          end
       end
    
       if @sensingtime != nil then
-         filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_V#{@sensingStart.gsub("-","").gsub(":","").split(".")[0]}_#{@sensingEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         filename = "DEC_OPER_OP#{@system.slice(0,4)}_#{mission.ljust(3,"_")}_ADGS_#{@currentDate}_V#{@sensingStart.gsub("-","").gsub(":","").split(".")[0]}_#{@sensingEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
       end
    
       if @creationtime == nil and @sensingtime == nil and @datetime == nil then
-         filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
+         filename = "DEC_OPER_OP#{@system.slice(0,4)}_#{mission.ljust(3,"_")}_ADGS_#{@currentDate}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
       end
       
       filenameTemp = ".TEMP_#{filename}"
@@ -439,10 +476,22 @@ class ODataClient
          @logger.error("Could not rename #{filenameTemp} to #{filename}")
          @logger.error(e.to_s)
       end
-      @logger.info("DHUS created #{filename}")
+      @logger.info("created #{filename}")
       Dir.chdir(prevDir)
    end
    ## -------------------------------------------------------------
+
+   ## process count reply from the http body
+   def processCountReply(body)
+      if body.include?("odata") == true then
+         obj = JSON.parse(body)
+         return obj["count"].to_i
+      else
+         return body.to_i   
+      end      
+   end
+   ## -------------------------------------------------------------
+
 
 end # class
 

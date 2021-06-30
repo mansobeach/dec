@@ -16,8 +16,9 @@ require 'ftools'
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 
+require 'ctc/API_MINARC_OData'
+
 require 'arc/MINARC_API'
-require 'arc/MINARC_API_OData'
 
 require 'arc/MINARC_Environment'
 require 'arc/MINARC_Status'
@@ -680,10 +681,10 @@ class MINARC_Server < Sinatra::Base
    ## ================================================================
 
    not_found do
-      "MINARC_Server shit: page #{request.path_info} not found\n"
+      "MINARC_Server unexpected: page #{request.path_info} not found\n"
    end
 
-   # ----------------------------------------------------------
+   ## ----------------------------------------------------------
 
    get '/fake-error' do
       status 500

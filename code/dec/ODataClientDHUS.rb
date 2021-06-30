@@ -71,7 +71,9 @@ class ODataClientDHUS < ODataClient
          @condition   = "#{@condition.dup} and substringof(%27#{@param}%27,Name)"
          @urlCount    = "#{@urlCount.dup}#{@condition}"
       end   
-       
+      
+      @attributeDateAvailable = DHUS::API_ODATA_ATTRIBUTE_DATE_AVAILABILITY
+      @bUseDateTime           = true 
    end
    ## -----------------------------------------------------------
   

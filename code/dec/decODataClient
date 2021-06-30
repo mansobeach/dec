@@ -15,7 +15,7 @@
 # --query dhus:s1:S1A:S1A_EW_GRDM
 # --query dhus:s1:S1A:45C1F
 #
-# --query adgs:s1:S1B
+# --query adgs:s2:S2B
 #
 # PRIP: queries:
 #
@@ -71,8 +71,6 @@ require 'json'
 require 'cuc/Log4rLoggerFactory'
 
 require 'dec/DEC_Environment'
-require 'dec/API_DHUS'
-require 'dec/API_PRIP'
 require 'dec/ODataClientDHUS'
 require 'dec/ODataClientADGS'
 

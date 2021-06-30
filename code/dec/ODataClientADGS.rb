@@ -63,14 +63,16 @@ class ODataClientADGS < ODataClient
          end
       end
 
-      @condition   = "#{ADGS::API_ODATA_FILTER_SUBSTRINGOF}(%27#{@datatake}%27,Name)"
+      @condition   = "#{ADGS::API_ODATA_FILTER_SUBSTRINGOF}(Name,%27#{@datatake}%27)"
 
       if @param != nil then
          @condition   = "#{@condition.dup} and substringof(%27#{@param}%27,Name)"
          @urlCount    = "#{@urlCount.dup}#{@condition}"
       end   
        
-      @format      = "json" 
+      @format                 = "json" 
+      @attributeDateAvailable = ADGS::API_ODATA_ATTRIBUTE_DATE_AVAILABILITY
+      @bUseDateTime           = false
        
    end
    ## -----------------------------------------------------------

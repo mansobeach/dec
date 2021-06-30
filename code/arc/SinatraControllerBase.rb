@@ -18,7 +18,8 @@ require 'sinatra'
 
 require 'cuc/Converters'
 
-require 'arc/MINARC_API_OData'
+require 'ctc/API_MINARC_OData'
+
 require 'arc/MINARC_DatabaseModel'
 
 ## ===================================================================
@@ -54,6 +55,25 @@ class SinatraControllerBase
    end
    ## ------------------------------------------------------
 
+   def getQueryValueName(query)
+      return "#{query.dup.split(",")[1].split(")")[0].gsub!("'","")}%"
+   end
+   ## ------------------------------------------------------
+
+   def getQueryValueDate(query)
+      return query.dup.split(" ")[2]
+   end
+   ## ------------------------------------------------------
+
+   def getQueryOperator(query)
+      return query.dup.split(" ")[1]
+   end
+   ## ------------------------------------------------------
+
+   def getQueryProperty(query)
+      return query.dup.split(" ")[0]
+   end
+   ## ------------------------------------------------------
 
 end ## class
 

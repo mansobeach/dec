@@ -30,7 +30,8 @@ module Converters
    ## - 01-FEB-2016 02:20:40.5       => "%e-%b-%Y %H:%M:%S.%L"  / length 22
    ## - 22-FEB-2016 15:13:08         => "%e-%b-%Y %H:%M:%S"     / length 20
    ## - 2015-11-16T00:30:27          => "%Y-%m-%dT%H:%M:%S"
-   ## - 2020-05-15T00:00:00.000Z     => "%Y-%m-%dT%H:%M:%S"
+   ## - 2020-05-15T00:00:00.000Z     => "%Y-%m-%dT%H:%M:%S"     / length 24
+   ## - 2020-05-15T00:00:00.000      => "%Y-%m-%dT%H:%M:%S"     / length 23
    
    
    def str2date(str)
@@ -64,7 +65,7 @@ module Converters
       end
 
       begin
-         if str.length == 24 and str.include?("T") then
+         if (str.length == 24 or str.length == 23) and str.include?("T") then
             return DateTime.strptime(str,"%Y-%m-%dT%H:%M:%S")
          end
       rescue Exception => e

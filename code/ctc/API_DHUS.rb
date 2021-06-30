@@ -76,6 +76,8 @@ module DHUS
    API_URL_ODATA_PRODUCT_PAGING_BY_SENSING_JSON =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$orderby=ContentDate/Start asc&$format=json&$select=Name,Id,IngestionDate,CreationDate,Online,ContentLength,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
 
+   API_ODATA_ATTRIBUTE_DATE_AVAILABILITY = "CreationDate"
+
 
    # API_URL_ODATA_PRODUCT_SELECT_ID  = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$select=*"
    API_URL_ODATA_PRODUCT_COUNT      = "https://scihub.copernicus.eu/dhus/odata/v1/Products/$count?"
