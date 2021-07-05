@@ -27,9 +27,9 @@ class ODataClientADGS < ODataClient
    
    ## -------------------------------------------------------------
    
-   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
+   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       
-      super(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
+      super(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       
       ## Default URI
       @urlCount    = ADGS::API_URL_ODATA_PRODUCT_COUNT
@@ -69,7 +69,8 @@ class ODataClientADGS < ODataClient
          @condition   = "#{@condition.dup} and substringof(%27#{@param}%27,Name)"
          @urlCount    = "#{@urlCount.dup}#{@condition}"
       end   
-       
+      
+      @serviceRootUri         = ADGS::API_ROOT
       @format                 = "json" 
       @attributeDateAvailable = ADGS::API_ODATA_ATTRIBUTE_DATE_AVAILABILITY
       @bUseDateTime           = false

@@ -29,7 +29,9 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.29" =>    "OData client support for ADGS (AUXIP)\n\
+      "1.0.29" =>    "decODataClient updates:\n\
+          > ADGS support (AUXIP)\n\
+          > download products from DHUS/OpenHub\n\
           public API now kept under ctc module", \
       "1.0.28" =>    "CUC::CheckerProcessUniqueness rework\n\
           decODataClient update to support DHUS/GNSS API", \

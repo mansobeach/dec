@@ -24,9 +24,9 @@ class ODataClientDHUS < ODataClient
    
    ## -------------------------------------------------------------
    
-   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
+   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       
-      super(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
+      super(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       
       if @mission == "GNSS" then
          @urlCount    = DHUS::API_URL_ODATA_PRODUCT_COUNT_GNSS
@@ -72,6 +72,7 @@ class ODataClientDHUS < ODataClient
          @urlCount    = "#{@urlCount.dup}#{@condition}"
       end   
       
+      @serviceRootUri         = DHUS::API_ROOT
       @attributeDateAvailable = DHUS::API_ODATA_ATTRIBUTE_DATE_AVAILABILITY
       @bUseDateTime           = true 
    end

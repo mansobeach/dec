@@ -41,6 +41,9 @@ Configuration commands to log the user working in the repository
 
 - `git lgb`
 
+Remove a local branch
+- `git branch --delete support_dhus_gnss`
+
 ---
 
 ### Remote repositories

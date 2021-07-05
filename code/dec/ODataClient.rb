@@ -21,6 +21,7 @@ require 'net/http'
 require 'date'
 require 'nokogiri'
 require 'json'
+require 'filesize'
 
 require 'cuc/Log4rLoggerFactory'
 
@@ -39,7 +40,7 @@ class ODataClient
    
    ## -------------------------------------------------------------
    
-   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, logger)
+   def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       @user          = user
       @password      = password
       @query         = query
@@ -47,6 +48,7 @@ class ODataClient
       @datetime      = datetime
       @sensingtime   = sensingtime
       @full_path_dir = full_path_dir
+      @download      = download
       @logger        = logger
       @format        = "xml"
       @currentDate   = DateTime.now.strftime("%Y%m%dT%H%M%S")
@@ -69,6 +71,8 @@ class ODataClient
       begin
          @param       = @query.split(":")[3]
       rescue Exception => e
+         @logger.error(e.to_s)
+         raise e
       end
             
    end
@@ -230,6 +234,10 @@ class ODataClient
       
       ## datatake is carrying the mission id    
       createFileMetadata(dhus_instance, mission, response.body, iSkip)
+      
+      if @download == true then
+         downloadItems(response.body)
+      end
          
       iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
       iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
@@ -329,6 +337,10 @@ class ODataClient
          
          ## datatake is carrying the mission id
          createFileMetadata(dhus_instance, mission, response.body, iSkip)
+
+         if @download == true then
+            downloadItems(response.body)
+         end
 
          iPending = iPending - DHUS::API_TOP_LIMIT_ITEMS
          iSkip    = iSkip    + DHUS::API_TOP_LIMIT_ITEMS
@@ -492,6 +504,72 @@ class ODataClient
    end
    ## -------------------------------------------------------------
 
+   ## It gets the http body reply
+   def downloadItems(body)
+      if @isDebugMode == true then
+         @logger.debug("ODataClient::downloadItems")
+      end
+
+      if body.include?("@odata") == true then
+         obj = JSON.parse(body)
+                  
+         obj["value"].each{|item|
+            if @isDebugMode == true then
+               @logger.debug(item)
+            end
+            download(item["Id"], item["Name"], item["ContentLength"])
+         }
+         
+         return obj["count"].to_i
+      else
+         doc = Nokogiri::XML(body)
+         doc.css('m|properties').each{|item|
+            if @isDebugMode == true then
+               @logger.debug(item)
+            end
+
+            download(item.css('d|Id').text, item.css('d|Name').text, item.css('d|ContentLength').text.to_i)
+         }
+      end    
+   end
+   ## -------------------------------------------------------------
+
+   ## cmd = "curl -k -L -J -O -v -u #{@user}:#{@password} \"https://90.84.179.7/odata/v1/Products(#{uuid})/\\$value\" "
+
+   def download(uuid, name, size)
+      if @isDebugMode == true then
+         @logger.debug("ODataClient::download(#{uuid}, #{name}, #{size})")
+      end
+
+      @logger.info("downloading #{name} / #{Filesize.from("#{size/1000.0} KB").pretty}") #\""
+      
+      prevDir = Dir.pwd
+      
+      Dir.chdir(@full_path_dir)
+   
+      before = DateTime.now
+   
+      cmd = nil
+      if @serviceRootUri.include?("dhus") == true then
+         cmd = "curl --progress-bar -k -L -J -O -u #{@user}:#{@password} \"#{@serviceRootUri}/odata/v1/Products(\'#{uuid}\')/\\$value\""
+      else
+         cmd = "curl --progress-bar -k -L -J -O -u #{@user}:#{@password} \"#{@serviceRootUri}/odata/v1/Products(#{uuid})/\\$value\""
+      end
+   
+      if @isDebugMode == true then
+         @logger.debug(cmd)
+      end
+      ret      = system(cmd)   
+      after    = DateTime.now
+      elapsed  = ((after - before) * 24 * 60 * 60).to_f
+      rate     = ((size/1000000.0)/elapsed).to_f
+       
+      @logger.info("downloaded #{name} / #{Filesize.from("#{size/1000.0} KB").pretty} / #{rate.round(2)} MiB/s") #\""
+     
+      Dir.chdir(prevDir)
+      return ret
+   end
+   ## -------------------------------------------------------------
 
 end # class
 

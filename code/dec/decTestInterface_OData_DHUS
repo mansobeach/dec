@@ -30,6 +30,8 @@ require 'dec/ReadConfigDEC'
 
 # 2 - teardown
 
+##  0.1 - test_download_s2a
+
 ##  1  - test_class_delay_s1
 ##  2  - test_class_delay_s2
 ##  3  - test_class_sensing_s1
@@ -834,6 +836,28 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "#{cmd} Datatake & Datastrip query")
 
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   def test_download_s2a
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      cmd = "rm -f /tmp/S2A*"
+      puts cmd
+      system(cmd)
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -q dhus:s2:S2A --creation \"2021-07-01T00:00:00.000,2021-07-01T00:05:03.000\" -L /tmp -r"  # "-D"
+      puts cmd
+      assert(system(cmd), "#{cmd} query")
+      puts
+
+      sleep(5.0)
+   
    end
 
    ## ------------------------------------------------------

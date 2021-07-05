@@ -25,8 +25,9 @@
 ### %24 => $ This one must be escaped with curl
 
 module DHUS
-   # API_URL_ODATA_PRODUCT_PAGING     = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$skip=50&$top=50"
-   # API_URL_ODATA_PRODUCT_PAGING     = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$top=50&$skip="
+
+   API_ROOT = "https://scihub.copernicus.eu/dhus"
+
    API_URL_ODATA_PRODUCT_PAGING     =\
     "https://scihub.copernicus.eu/dhus/odata/v1/Products?$format=xml&$select=Id,Online,ContentLength,CreationDate,IngestionDate,EvictionDate,ContentDate,ContentGeometry&$top=50&$skip="
    API_URL_ODATA_PRODUCT_SELECT_ID  =\

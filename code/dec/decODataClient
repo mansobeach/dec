@@ -37,6 +37,7 @@
 #     --H         <hours delay> (decimal offset 0.5-0.25 is scaled to minutes)
 #     --Location  <full_path_dir>
 #     --format    json | xml | csv
+#     --retrieve  downloads every item matching the query
 #     --query     <dhus:l2a:GS2B_20200903T104429_018252_N02.14> | <prip>
 #     --Verbose   it shows OData metadata
 # 
@@ -266,7 +267,7 @@ def main
    ## -------------------------------------------- 
 
    if @query.include?("DHUS") == true then
-      client      = ODataClientDHUS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @logger)
+      client      = ODataClientDHUS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @bDownload, @logger)
       
       if @isDebugMode == true then
          client.setDebugMode
@@ -278,7 +279,7 @@ def main
    ## -------------------------------------------- 
 
    if @query.include?("ADGS") == true then
-      client      = ODataClientADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @logger)
+      client      = ODataClientADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @bDownload, @logger)
       
       if @isDebugMode == true then
          client.setDebugMode
@@ -476,38 +477,6 @@ def downloadPDI(uuid)
 end
 ## -------------------------------------------------------------
 
-## create File with the query results
-def createFileMetadata(mission, data, iSkip)
-   prevDir = Dir.pwd
-   Dir.chdir(@full_path_dir)
-   filename = ""
-   
-   if @datetime != nil then
-      filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_V#{@datetime.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
-   end
-   
-   if @sensingtime != nil then
-      filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_V#{@sensingStart.gsub("-","").gsub(":","").split(".")[0]}_#{@sensingEnd.gsub("-","").gsub(":","").split(".")[0]}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
-   end
-   
-   if @sensingtime == nil and @datetime == "" then
-      filename = "DEC_OPER_OPDHUS_#{mission}_AUIP_#{@currentDate}_#{@iTotal}_#{iSkip.to_s.rjust(@iTotal.to_s.length,'0')}.#{@format}"
-   end
-   
-   filenameTemp = ".TEMP_#{filename}"
-   aFile = File.new(filenameTemp, File::CREAT|File::WRONLY) 
-   aFile.write(data)   
-   aFile.flush
-   aFile.close
-   begin
-      File.rename(filenameTemp, filename)
-   rescue Exception => e
-      @logger.error("Could not rename #{filenameTemp} to #{filename}")
-      @logger.error(e.to_s)
-   end
-   @logger.info("DHUS S1 created #{filename}")
-   Dir.chdir(prevDir)
-end
 ## -------------------------------------------------------------
 
 ## -------------------------------------------------------------
