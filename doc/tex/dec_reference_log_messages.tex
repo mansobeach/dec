@@ -480,6 +480,20 @@ This message is logged when the command executed associated to some \hyperref[Ev
 \subsection{[DEC\_799] Integration Error}
 This message is logged when some unexpected error raised.
 
+\subsubsection{Zero length file download}
+If an interfaces publishes a Zero length file, this can be retrieved though no data content is really dumped into the file-system (e.g. FTP protocol replies successful 226). This is an anomaly of the source interface.
+
+\subsubsection{Compress method for push not supported}
+This is a configuration error regarding the definition of the compression mechanism prior push operations.
+\begin{verbatim}
+[DEC_799] Fatal Error : compress method #{compress} not supported / check dec_outgoing_files.xml
+\end{verbatim}
+
+\subsubsection{Unexpected error when launching the listener for pull}
+This is an unexpected error when launching the listener for pull operations.
+\begin{verbatim}
+[DEC_799] I/F #{entity}: Error when launching Listener
+\end{verbatim}
 % ------------------------------------------------------------------------------
 % Debug Messages
 

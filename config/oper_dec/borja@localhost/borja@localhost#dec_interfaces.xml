@@ -18,7 +18,7 @@
     <Server>
       <Protocol>LOCAL</Protocol>
       <Hostname>localhost</Hostname>
-	   <Port>22</Port>      
+	   <Port>0</Port>      
       <User>borja</User>
       <Pass>N/A</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
@@ -40,7 +40,7 @@
       </To>
     </Notify>
     <Events>    
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl localhost:4567/dec/arc/requestArchive/* &amp; "/>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k localhost:4567/dec/arc/requestArchive/* &amp; "/>
     <!--
     
              <Event Name="OnReceiveOK"              executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>

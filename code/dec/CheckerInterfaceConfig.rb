@@ -132,7 +132,7 @@ class CheckerInterfaceConfig
    ## It returns a boolean True whether checks are OK. False otherwise.
    def check
       retVal = true
-      if @isDebugMode == true then
+      if @isDebugMode == true and @protocol != "LOCAL" then
          @check4Send.setDebugMode
          @check4Recv.setDebugMode
       end

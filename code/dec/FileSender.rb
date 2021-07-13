@@ -347,6 +347,10 @@ class FileSender
                   FileUtils.mkdir_p(@uploadDir)
                   @dynamic=false
                end
+               if @isDebugMode == true then
+                  @logger.debug("Creating directory #{@uploadDir}")
+               end
+               FileUtils.mkdir_p(@uploadDir)
                ###
                retVal = @local.uploadFile(file, @targetFile, @targetTemp)
             rescue Exception => e

@@ -1155,10 +1155,22 @@ private
          
          size = nil
          if @port == 21 then
-            size = File.size("#{@localDir}/#{File.basename(filename)}")
+            begin
+               size = File.size("#{@localDir}/#{File.basename(filename)}")
+            rescue Exception => e
+               @logger.error("[DEC_799] Fatal Error cannot reach #{filename} to get the size")
+               @logger.error(e.to_s)
+               return false
+            end
 			   copyFileToInBox(File.basename(filename), size)
 			else
-            size = File.size("#{@finalDir}/#{File.basename(filename)}")
+            begin
+               size = File.size("#{@finalDir}/#{File.basename(filename)}")
+            rescue Exception => e
+               @logger.error("[DEC_799] Fatal Error cannot reach #{filename} to get the size")
+               @logger.error(e.to_s)
+               return false
+            end
          end
                  
 			# update DEC Inventory

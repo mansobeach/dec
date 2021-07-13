@@ -106,6 +106,12 @@ def main
    
    ## --------------------------------------------
    
+   self.load_config
+   
+   if @isDebugMode == true then
+      self.print_environment
+   end
+   
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
@@ -200,7 +206,7 @@ def main
       when "SFTP"  then handler = InterfaceHandlerSFTP.new(@entity, @logger, false, true, false, @isDebugMode)
    
       when "FTP"   then handler = InterfaceHandlerFTPS.new(@entity, @logger, false, true, false, @isDebugMode)
-   
+                        handler.setNonSecure
       when "FTPS"  then
          if @entConf[:port].to_i == 990 then
             handler = InterfaceHandlerFTPS_Implicit.new(@entity, @logger)
@@ -208,7 +214,7 @@ def main
             handler = InterfaceHandlerFTPS.new(@entity, @logger)
          end
 
-      when "LOCAL"  then handler = InterfaceHandlerLocal.new(@entity)
+      when "LOCAL"  then handler = InterfaceHandlerLocal.new(@entity, @logger, false, true, false, @isDebugMode)
       
 	   when "HTTP"   then handler = InterfaceHandlerHTTP.new(@entity, @logger, false, true, false, @isDebugMode)
       

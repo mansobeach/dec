@@ -15,6 +15,7 @@
 Gem::Specification.new do |s|
   s.name        = 'dec'
   s.version     = '1.0.29'
+  s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Data Exchange Component"
@@ -28,6 +29,10 @@ Gem::Specification.new do |s|
                   Dir['code/ctc/*.rb'] + \
                   Dir['code/dec/*.rb'] + \
                   Dir['schemas/*.xsd'] + \
+                  Dir['man/dec.1'] + \
+                  Dir['man/dec.1.html'] + \
+                  Dir['man/decODataClient.1'] + \
+                  Dir['man/decODataClient.1.html'] + \
                   Dir['config/dec_interfaces.xml'] + \
                   Dir['config/dec_incoming_files.xml'] + \
                   Dir['config/dec_outgoing_files.xml'] + \
@@ -118,11 +123,13 @@ Gem::Specification.new do |s|
   
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('bcrypt', '~> 3.1')
+  s.add_dependency('curb', '~> 0.9')
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('ftpfxp', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
+  s.add_dependency('manpages', '~> 0.6')
   s.add_dependency('net_dav', '~> 0.5')
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-ssh', '~> 6.1')

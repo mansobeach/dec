@@ -32,6 +32,8 @@ module DEC
       "1.0.29" =>    "decODataClient updates:\n\
           > ADGS support (AUXIP)\n\
           > download products from DHUS/OpenHub\n\
+          first version of man pages shipped\n\
+          zero length files unpresent now raises error [DEC_799]\n\
           public API now kept under ctc module", \
       "1.0.28" =>    "CUC::CheckerProcessUniqueness rework\n\
           decODataClient update to support DHUS/GNSS API", \

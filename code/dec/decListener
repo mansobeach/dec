@@ -506,7 +506,7 @@ def launchListener(entity)
       if retVal == true then
 			exit(0)
       else
-         @logger.info("[DEC_999] I/F #{entity}: Error when launching Listener")
+         @logger.info("[DEC_799] I/F #{entity}: Error when launching Listener")
          exit(99)
       end            
    }

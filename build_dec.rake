@@ -149,6 +149,10 @@ namespace :dec do
       end
    
       ## -------------------------------
+      
+      Rake::Task["dec:update_manpages"].invoke
+   
+      ## -------------------------------
       ##
       ## Build flags
       ##
@@ -201,6 +205,20 @@ namespace :dec do
    
    ## ----------------------------------------------------------------
    
+   desc "update man pages"
+
+   task :update_manpages do
+      cmd = "ronn man/dec.1.ronn"
+      puts cmd
+      system(cmd)
+
+      cmd = "ronn man/decODataClient.1.ronn"
+      puts cmd
+      system(cmd)
+      
+   end   
+   ## ----------------------------------------------------------------
+   
    desc "check DEC configuration package"
    
    task :check_config, [:user, :host] do |t, args|
@@ -224,7 +242,7 @@ namespace :dec do
       }
       
    end
-   # --------------------------------------------------------------------
+   ## ----------------------------------------------------------------
 
    desc "save DEC configuration package"
 

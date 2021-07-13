@@ -559,12 +559,20 @@ class ODataClient
       if @isDebugMode == true then
          @logger.debug(cmd)
       end
-      ret      = system(cmd)   
+      
+      ret      = system(cmd)
+      
       after    = DateTime.now
       elapsed  = ((after - before) * 24 * 60 * 60).to_f
       rate     = ((size/1000000.0)/elapsed).to_f
+
+      if ret == false then
+         @logger.error("failed download #{name} / #{rate.round(2)} MiB/s") #\""
+      else
+         @logger.info("downloaded #{name} / #{Filesize.from("#{size/1000.0} KB").pretty} / #{rate.round(2)} MiB/s") #\""
+      end
        
-      @logger.info("downloaded #{name} / #{Filesize.from("#{size/1000.0} KB").pretty} / #{rate.round(2)} MiB/s") #\""
+
      
       Dir.chdir(prevDir)
       return ret

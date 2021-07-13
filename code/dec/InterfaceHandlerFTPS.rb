@@ -49,7 +49,7 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       @inConfig         = ReadConfigIncoming.instance
       @ftpServer        = @entityConfig.getFTPServer4Receive(@entity)
       @ftps             = nil
-            
+      @bTLS             = true
    end   
    ## -----------------------------------------------------------
    ##
@@ -59,6 +59,11 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
       @logger.debug("InterfaceHandlerFTPS debug mode is on") 
    end
    ## -----------------------------------------------------------
+
+   def setNonSecure
+      @bTLS = false
+   end
+   ## -----------------------------------------------------------   
    
    def inspect
       puts "#{self.class} #{@entity} pull => #{@bPull} | push => #{@bPush}"
@@ -112,6 +117,7 @@ class InterfaceHandlerFTPS < InterfaceHandlerAbstract
          @ftps.chdir(dir)
       rescue Exception => e
          @logger.error("[DEC_712] I/F #{@entity}: Directory #{dir} is unreachable. Try with decCheckConfig -e")
+         @logger.error(e.to_s)
          return Array.new
       end
 
@@ -270,15 +276,17 @@ private
          if chkSSL == true then   
             hOptions[:ssl] = true
          else
-            hOptions[:ssl] = {:verify_mode => OpenSSL::SSL::VERIFY_NONE}
+            if @bTLS == true then
+               hOptions[:ssl] = {:verify_mode => OpenSSL::SSL::VERIFY_NONE}
+            end
          end
          
          if @isDebugMode == true
             hOptions[:debug_mode]   = true
          end
 
-         hOptions[:username]     = user
-         hOptions[:password]     = pass   
+#         hOptions[:username]     = user
+#         hOptions[:password]     = pass   
         
          @ftps = Net::FTP.new(host, hOptions)
 

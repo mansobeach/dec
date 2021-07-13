@@ -350,7 +350,7 @@ private
       bMethod = package.setCompressMethod(compress)
    
       if bMethod == false then
-         @logger.error("[DEC_999] Fatal Error : compress method #{compress} not supported / check dec_outgoing_files.xml")
+         @logger.error("[DEC_799] Fatal Error : compress method #{compress} not supported / check dec_outgoing_files.xml")
          raise
       end
 

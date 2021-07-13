@@ -250,7 +250,7 @@
 		      <Directory DepthSearch="0">/pub/igs/products/latest/final</Directory>
             
             <!-- GPS Messages -->
-            <Directory DepthSearch="0">/pub/gps/data/daily/2020/brdc</Directory>
+            <Directory DepthSearch="0">/pub/gps/data/daily/2021/brdc</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
