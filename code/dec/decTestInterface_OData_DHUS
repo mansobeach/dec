@@ -201,7 +201,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, datetime, nil, "/tmp", false, @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -250,7 +250,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (1.5/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", nil, datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", nil, datetime, nil, "/tmp", false, @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -299,7 +299,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", nil, datetime, nil, "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", nil, datetime, nil, "/tmp", false, @logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -345,7 +345,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-06-17T23:59:00.000,2021-06-18T00:00:00.000", "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-06-17T23:59:00.000,2021-06-18T00:00:00.000", "/tmp", false, @logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -390,7 +390,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, nil, "2021-03-18T00:00:00.000,2021-03-18T00:05:00.000", "/tmp", @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, nil, "2021-03-18T00:00:00.000,2021-03-18T00:05:00.000", "/tmp", false, @logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -402,75 +402,75 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def test_protocol
-   
-      ## References:
-      ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
-   
-      puts
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
-
-      require 'net/http'
-      require 'nokogiri'
-
-      level    = "L2A"
-      datatake = "GS2B_20200903T104429_018252_N02.14"
-      
-      puts
-      puts datatake.slice(28,3)
-      puts
-      
-      strEUP   = "#{datatake.slice(1,3)}_MSI#{level}_#{datatake.slice(5,15)}_#{datatake.slice(28,3)}#{datatake.slice(32,3)}"
-
-      puts
-      puts strEUP
-      puts
-
-
-      strURL = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$select=Id&$filter=substringof(%27S2B_MSIL2A_20200903T104429_N0214%27,Name)"
-   
-   
-      uri = URI.parse(strURL)
-      
-      http = Net::HTTP.new(uri.host, uri.port)
-
-      http.use_ssl = true
-
-      request = Net::HTTP::Get.new(uri.request_uri)
-      
-      puts strURL
-      puts uri.request_uri
-      
-      request.basic_auth("borjalf", "perrillo.pwd")
-      
-      response = nil
-      
-      while response == nil do
-         begin
-            response = http.request(request)
-         rescue Exception => e
-            puts e.to_s
-            response = nil
-            sleep(1.0)
-         end
-      end
-   
-      puts response.code
-      puts
-      puts response.message
-      puts
-      
-      doc = Nokogiri::XML(response.body)
-            
-      elements = doc.xpath("//xmlns:title")
-      
-      elements.each{|item|
-         puts item.text
-      }
-      
-   end
+#   def test_protocol
+#   
+#      ## References:
+#      ## https://nokogiri.org/tutorials/searching_a_xml_html_document.html
+#   
+#      puts
+#      puts "================================================"
+#      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+#      puts
+#
+#      require 'net/http'
+#      require 'nokogiri'
+#
+#      level    = "L2A"
+#      datatake = "GS2B_20200903T104429_018252_N02.14"
+#      
+#      puts
+#      puts datatake.slice(28,3)
+#      puts
+#      
+#      strEUP   = "#{datatake.slice(1,3)}_MSI#{level}_#{datatake.slice(5,15)}_#{datatake.slice(28,3)}#{datatake.slice(32,3)}"
+#
+#      puts
+#      puts strEUP
+#      puts
+#
+#
+#      strURL = "https://scihub.copernicus.eu/dhus/odata/v1/Products?$select=Id&$filter=substringof(%27S2B_MSIL2A_20200903T104429_N0214%27,Name)"
+#   
+#   
+#      uri = URI.parse(strURL)
+#      
+#      http = Net::HTTP.new(uri.host, uri.port)
+#
+#      http.use_ssl = true
+#
+#      request = Net::HTTP::Get.new(uri.request_uri)
+#      
+#      puts strURL
+#      puts uri.request_uri
+#      
+#      request.basic_auth("borjalf", "perrillo.pwd")
+#      
+#      response = nil
+#      
+#      while response == nil do
+#         begin
+#            response = http.request(request)
+#         rescue Exception => e
+#            puts e.to_s
+#            response = nil
+#            sleep(1.0)
+#         end
+#      end
+#   
+#      puts response.code
+#      puts
+#      puts response.message
+#      puts
+#      
+#      doc = Nokogiri::XML(response.body)
+#            
+#      elements = doc.xpath("//xmlns:title")
+#      
+#      elements.each{|item|
+#         puts item.text
+#      }
+#      
+#   end
 
    ## -------------------------------------------------------------
 

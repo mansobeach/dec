@@ -16,11 +16,11 @@
 #########################################################################
 
 require 'rubygems'
-require 'dec/ODataClient'
+require 'dec/ODataClientBase'
 
 module DEC
 
-class ODataClientDHUS < ODataClient
+class ODataClientDHUS < ODataClientBase
    
    ## -------------------------------------------------------------
    

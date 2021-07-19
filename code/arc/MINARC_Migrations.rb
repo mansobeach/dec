@@ -19,6 +19,8 @@ require 'rubygems'
 require 'active_record'
 
 @dbAdapter   = ENV['MINARC_DB_ADAPTER']
+@dbHost      = ENV['MINARC_DATABASE_HOST']
+@dbPort      = ENV['MINARC_DATABASE_PORT']
 @dbName      = ENV['MINARC_DATABASE_NAME']
 @dbUser      = ENV['MINARC_DATABASE_USER']
 @dbPass      = ENV['MINARC_DATABASE_PASSWORD']
@@ -26,8 +28,9 @@ require 'active_record'
 
 ActiveRecord::Base.establish_connection(  
                                           :adapter    => @dbAdapter, \
-                                          :host       => "localhost", \
+                                          :host       => @dbHost, \
                                           :database   => @dbName, \
+                                          :port       => @dbPort, \
                                           :username   => @dbUser, \
                                           :password   => @dbPass, \
                                           :timeout    => 100000, \
@@ -49,6 +52,30 @@ class CreateUsers < ActiveRecord::Migration[6.0]
 
    def self.down
       drop_table :users
+   end
+
+end
+
+## =====================================================================
+
+class CreateServedFiles < ActiveRecord::Migration[6.0]
+   def self.up
+   
+      create_table(:served_files) do |t|
+         t.column :username,            :string,  :limit => 255
+         t.index  :username
+         t.column :filename,            :string,  :limit => 255
+         t.column :file_id,             :uuid
+         t.column :size,                :bigint
+         t.column :ip,                  :string,  :limit => 64
+         t.column :download_elapsed,    :float
+         t.column :download_date,       :datetime
+         t.index  :download_date
+      end
+   end
+
+   def self.down
+      drop_table :served_files
    end
 
 end

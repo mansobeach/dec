@@ -6,7 +6,7 @@
 ##
 ## === Written by DEIMOS Space S.L. (bolf)
 ##
-## === Mini Archive Component (MinArc)
+## === Mini Archive Component (minARC)
 ## 
 ## Git: $Id: FileStatus.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
 ##
@@ -67,7 +67,7 @@ class FileStatus
       
       else
       
-         if @isDebugMode == true then
+         if @isDebugMode == true and @logger != nil then
             @logger.debug("Remote mode is true")
          end
       

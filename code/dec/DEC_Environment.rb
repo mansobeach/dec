@@ -32,6 +32,7 @@ module DEC
       "1.0.29" =>    "decODataClient updates:\n\
           > ADGS support (AUXIP)\n\
           > download products from DHUS/OpenHub\n\
+          > log messages 257, 259, 260 and 667
           first version of man pages shipped\n\
           zero length files unpresent now raises error [DEC_799]\n\
           public API now kept under ctc module", \

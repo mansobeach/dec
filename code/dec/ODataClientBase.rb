@@ -8,7 +8,7 @@
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: ODataClient.rb,v 1.25 bolf Exp $
+### Git: $Id: ODataClientBase.rb,v 1.25 bolf Exp $
 ###
 ### This class is an OData client
 ###
@@ -25,15 +25,14 @@ require 'filesize'
 
 require 'cuc/Log4rLoggerFactory'
 
+## Dirty thing regarding OpenHub download with uuid in single quote
 require 'ctc/API_DHUS'
-require 'ctc/API_PRIP'
-require 'ctc/API_ADGS'
 
 require 'dec/DEC_Environment'
 
 module DEC
 
-class ODataClient
+class ODataClientBase
 
    include CUC::DirUtils
    include DEC
@@ -42,8 +41,8 @@ class ODataClient
    
    def initialize(user, password, query, creationtime, datetime, sensingtime, full_path_dir, download, logger)
       @user          = user
-      @password      = password
-      @query         = query
+      @password      = password      
+      @query         = query.upcase
       @creationtime  = creationtime
       @datetime      = datetime
       @sensingtime   = sensingtime
@@ -131,7 +130,7 @@ class ODataClient
       http = Net::HTTP.new(uri.host, uri.port)
       http.open_timeout = 600
       http.read_timeout = 600
-      http.use_ssl = true
+      http.use_ssl      = true
       
       ###############################################
       ## THIS SHOULD BECOME A PARAMETER
@@ -488,7 +487,7 @@ class ODataClient
          @logger.error("Could not rename #{filenameTemp} to #{filename}")
          @logger.error(e.to_s)
       end
-      @logger.info("created #{filename}")
+      @logger.info("[DEC_257] I/F #{@system}: created #{filename}")
       Dir.chdir(prevDir)
    end
    ## -------------------------------------------------------------
@@ -541,7 +540,7 @@ class ODataClient
          @logger.debug("ODataClient::download(#{uuid}, #{name}, #{size})")
       end
 
-      @logger.info("downloading #{name} / #{Filesize.from("#{size/1000.0} KB").pretty}") #\""
+      @logger.info("[DEC_259] I/F #{@system}: downloading #{name} / #{Filesize.from("#{size/1000.0} KB").pretty}") #\""
       
       prevDir = Dir.pwd
       
@@ -567,9 +566,9 @@ class ODataClient
       rate     = ((size/1000000.0)/elapsed).to_f
 
       if ret == false then
-         @logger.error("failed download #{name} / #{rate.round(2)} MiB/s") #\""
+         @logger.error("[DEC_667] I/F #{@system}: failed download #{name} / #{rate.round(2)} MiB/s") #\""
       else
-         @logger.info("downloaded #{name} / #{Filesize.from("#{size/1000.0} KB").pretty} / #{rate.round(2)} MiB/s") #\""
+         @logger.info("[DEC_260] I/F #{@system}: downloaded #{name} / #{Filesize.from("#{size/1000.0} KB").pretty} / #{rate.round(2)} MiB/s") #\""
       end
        
 

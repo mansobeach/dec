@@ -47,15 +47,15 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
      if @logger != nil and @isDebugMode == true then
         @logger.debug("ControllerODataProductQuery::query")
         @logger.debug("path_info    :   #{@request.path_info}")
-        @logger.debug("query_string :   #{URI.unescape(@request.query_string)}")
-        @logger.debug("url          :   #{URI.unescape(@request.url)}")
+        @logger.debug("query_string :   #{Addressable::URI.unencode(@request.query_string)}")
+        @logger.debug("url          :   #{Addressable::URI.unencode(@request.url)}")
         @logger.debug("path         :   #{@request.path}")
      end
      
-     @logger.debug("xxxxxxxxxxxxxxxxx")
-     @logger.debug(@request.query_string)
-     @logger.debug(@request.path)
-     @logger.debug("xxxxxxxxxxxxxxxxx")
+#     @logger.debug("xxxxxxxxxxxxxxxxx")
+#     @logger.debug(@request.query_string)
+#     @logger.debug(@request.path)
+#     @logger.debug("xxxxxxxxxxxxxxxxx")
      
      ## ----------------------------------------------------
      ##
@@ -64,7 +64,7 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
      ##
      if (@request.query_string.include?("$filter") == false and @request.query_string.include?("$count") == true) or \
       (@request.query_string.include?("$filter") == false and @request.path.include?("$count") == true) then
-        @logger.info("[ARC_209] Processing query: #{@request.query_string}")
+        @logger.info("[ARC_209] User #{@user} [#{@request.ip}]: Processing query: #{@request.query_string}")
         val = ArchivedFile.count
         @response.content_type         = "text/plain"
         @response.headers['Message']   = "The Count von Count counted #{val.to_s}"
@@ -75,17 +75,17 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
      
      ## query is currently mainly understood as $filter
      begin
-        ret = parseQuery(URI.unescape(@request.query_string))
+        ret = parseQuery(Addressable::URI.unencode(@request.query_string))
      rescue Exception => e
         @logger.error(e.to_s)
-        @logger.error("[ARC_777] Query #{URI.unescape(@request.query_string)}: not valid / or badly managed")
+        @logger.error("[ARC_777] Query #{Addressable::URI.unencode(@request.query_string)}: not valid / or badly managed")
         @response.status = ARC_ODATA::API_BAD_REQUEST
         @response.headers['Message'] = e.to_s
         return  
      end
      
      if ret == false then
-        @logger.error("[ARC_777.7] Query #{URI.unescape(@request.query_string)}: not valid / or badly managed: #{@request.query_string}")
+        @logger.error("[ARC_777.7] Query #{Addressable::URI.unencode(@request.query_string)}: not valid / or badly managed: #{@request.query_string}")
         @response.status = ARC_ODATA::API_BAD_REQUEST
         
         if @filterParam != nil then
@@ -173,22 +173,22 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
 
      ## $filter with multiple attributes
      if @request.query_string.include?("$filter") == true and @request.query_string.include?("and") == true then
-        aFile = execQueryComplex(URI.unescape(@request.query_string))
+        aFile = execQueryComplex(Addressable::URI.unencode(@request.query_string))
      end
       
      ## -------------------------------
 
                   
      if aFile == nil then
-        @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@property} #{@function} #{@queryValue} / products not found") 
+        @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@property} #{@function} #{@queryValue} / products not found") 
         @response.status = ARC_ODATA::API_RESOURCE_NOT_FOUND
         @response.headers['Message']  = "#{@queryValue} / products not found"
      else
           
         if @property != nil then
-           @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@property} #{@function} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
+           @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@property} #{@function} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
         else
-           @logger.info("[ARC_210] Query #{URI.unescape(@request.query_string)}: #{@option} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
+           @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@option} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
         end 
         
         if @orderby != nil then
@@ -196,17 +196,19 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
               @logger.warn("$orderby #{@orderby} not supported")
               response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)
            else
-              @logger.info("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
+              # @logger.info("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
               if @isDebugMode == true then
                  @logger.debug("Sorting results by #{ARC_ODATA::oData2Model(@orderby)} #{@order}")
               end
               response = ARC_ODATA::oDataQueryResponse(aFile.order("#{ARC_ODATA::oData2Model(@orderby)} #{@order}").to_a, @option, @skip, @top)
            end
         else
-           @logger.debug("results   => #{aFile}")
-           @logger.debug("option    => #{@option}")
-           @logger.debug("skip      => #{@skip}")
-           @logger.debug("top       => #{@top}")
+           if @isDebugMode == true then
+              @logger.debug("results   => #{aFile}")
+              @logger.debug("option    => #{@option}")
+              @logger.debug("skip      => #{@skip}")
+              @logger.debug("top       => #{@top}")
+           end
            response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)  
         end
 
@@ -239,7 +241,7 @@ private
    ## $filter=contains(Name,'S2A') and PublicationDate ge 2021-06-29T15:00:00.000
    def parseQuery(query_string)
 
-      @logger.info("[ARC_209] Processing query: #{query_string}")
+      @logger.info("[ARC_209] User #{@user} [#{@request.ip}]: Processing query: #{query_string}")
 
       ## -------------------------------
       ##
@@ -441,7 +443,7 @@ private
            
       bRet = false
       
-      @filterParam   = "#{URI.unescape(query_string).split("$filter=")[1]}"
+      @filterParam   = "#{Addressable::URI.unencode(query_string).split("$filter=")[1]}"
       
       if @filterParam.include?("PublicationDate") == true then
          @property   = "PublicationDate"
@@ -504,7 +506,7 @@ private
       bRet = false
       
       @option        = 'count'
-      @queryValue    = "#{URI.unescape(query_string).split("$count")[1]}"
+      @queryValue    = "#{Addressable::URI.unencode(query_string).split("$count")[1]}"
       
       if @isDebugMode == true then
          @logger.debug("parseQueryCount #{@option} #{@queryValue}")

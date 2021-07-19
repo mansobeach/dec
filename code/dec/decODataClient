@@ -72,8 +72,7 @@ require 'json'
 require 'cuc/Log4rLoggerFactory'
 
 require 'dec/DEC_Environment'
-require 'dec/ODataClientDHUS'
-require 'dec/ODataClientADGS'
+require 'dec/ODataClientFactory'
 
 @isDebugMode = false
 
@@ -261,37 +260,22 @@ def main
       
    end
 
- 
    ret = true
- 
-   ## -------------------------------------------- 
-
-   if @query.include?("DHUS") == true then
-      client      = ODataClientDHUS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @bDownload, @logger)
-      
-      if @isDebugMode == true then
-         client.setDebugMode
-      end
-
-      ret = client.exec_query
-   end
-   
-   ## -------------------------------------------- 
-
-   if @query.include?("ADGS") == true then
-      client      = ODataClientADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @bDownload, @logger)
-      
-      if @isDebugMode == true then
-         client.setDebugMode
-      end
-
-      ret = client.exec_query
-   end
- 
+  
    ## -------------------------------------------- 
 
    if @query.include?("PRIP") == true then
       ret = queryPRIP(@user, @password, @query)
+   else
+      factory = ODataClientFactory.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @bDownload, @logger)
+      
+      client  = factory.get_instance   
+      
+      if @isDebugMode == true then
+         client.setDebugMode
+      end
+
+      ret = client.exec_query
    end
  
    ## --------------------------------------------

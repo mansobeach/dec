@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.2.2'
+  s.version     = '1.3.0'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -91,6 +91,7 @@ Gem::Specification.new do |s|
   
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('activerecord-import', '~> 1.0')
+  s.add_dependency('addressable', '~> 2.7')
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('byebug', '~> 11.1')
   s.add_dependency('dotenv', '~> 2.7')

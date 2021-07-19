@@ -8,13 +8,14 @@
 ###
 ### === Mini Archive Component (MinArc)
 ### 
-### Git: $Id: SinatraControllerOData,v 1.8 2008/11/26 12:40:47 bolf Exp $
+### Git: $Id: SinatraControllerOData,v  bolf Exp $
 ###
 ### module ARC_ODATA
 ###
 #########################################################################
 
 require 'sinatra'
+require 'addressable'
 
 require 'cuc/Converters'
 

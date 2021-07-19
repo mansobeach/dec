@@ -178,6 +178,7 @@ def main
          if File.exist?(@dbName) == true then
             File.delete(@dbName)
          end
+         CreateServedFiles.down
          exit(0)
       rescue Exception => e
          if @bIsDebugMode == true then
@@ -198,6 +199,7 @@ def main
       begin
          CreateArchivedFiles.up
          CreateUsers.up
+         CreateServedFiles.up
          puts "Right !"
          puts "Bye"
       rescue Exception => e

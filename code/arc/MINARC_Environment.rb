@@ -22,11 +22,14 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.2.2"
+   @@version = "1.3.0"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.3.0"  =>      "Model updated to record ServedFiles\n\
+         migration to ruby 2.7\n\
+         gems addressable added as a dependency ",\
       "1.2.2"  =>      "OData fix for simple $count queries\n\
          OData server refactoring for composed queries\n\
          public API now kept under ctc module", \

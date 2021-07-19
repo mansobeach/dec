@@ -39,7 +39,10 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_211]} File retrieved from SourceDir to the GlobalOutbox (prior its \textit{push} circulation) 
 	\item \textbf{[DEC\_212]} TBW
 	\item \textbf{[DEC\_213]} TBW
-	\item \textbf{[DEC\_214]} TBW	
+	\item \textbf{[DEC\_214]} TBW
+    \item \textbf{[DEC\_257]} Metadata OData file created	
+    \item \textbf{[DEC\_259]} Download request to an OData interface delivery point
+    \item \textbf{[DEC\_260]} Successful download from an OData interface delivery point  		
 \end{itemize}
 
 \label{DEC005}
@@ -183,6 +186,17 @@ The internal of the log message is a JSON string referring to:
 {"filename":"mario.jpg","size":32478,"interface":"LOCAL","protocol":"FTP;","date":"2020-04-15 17:03:19 UTC"}
 \end{verbnobox}
 
+\label{DEC257}
+\subsection{[DEC\_257] OData Metadata File  Created}
+Query reply from an OData service dumped to file.
+
+\label{DEC259}
+\subsection{[DEC\_259] OData Download Request}
+Request to download using HTTP a product from an OData service.
+
+\label{DEC260}
+\subsection{[DEC\_260] OData Download Successful}
+Product download successful from an OData service.
 
 % ------------------------------------------------------------------------------
 % Warning Messages
@@ -263,6 +277,7 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 "directory" using hard-links command
 	\item \textbf{[DEC\_628]} Failure when executing command
 	\item \textbf{[DEC\_666]} I/F "interface": Could not download "file"
+	\item \textbf{[DEC\_667]} OData I/F "interface": Could not download "file"
 	\item \textbf{[DEC\_705]} I/F "interface": Push miss-configuration
 	\item \textbf{[DEC\_711]} Could not reach directory from \textit{SourceDir} to fetch files for push
 	\item \textbf{[DEC\_713]} Could not place file in  \textit{LocalOutbox} to prepare files out-tray for push	
@@ -381,6 +396,10 @@ This error is raised when DEC tried to execute a command in sub-shell obtaining 
 \subsection{[DEC\_666] Download Failure}
 \label{DEC666}
 This error is raised when DEC could not download a file from a given interface.
+
+\subsection{[DEC\_667] OData Download Failure}
+\label{DEC666}
+This error is raised when DEC could not download a file from some given OData interface delivery point.
 
 \label{DEC670}
 \subsection{[DEC\_670] Deletion Failure}

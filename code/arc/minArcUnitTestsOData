@@ -50,6 +50,9 @@ require 'arc/ReadMinarcConfig'
       
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
+### decODataClient is required
+## rake -f build_dec.rake dec:install
+
 # Preconditions:
 # 1 - setup 
 # 1.1 - load_config_development
@@ -70,7 +73,8 @@ require 'arc/ReadMinarcConfig'
 ##  9  - test_odata_query_top
 ## 10  - test_odata_query_expand
 ## 11  - test_odata_bad_queries
-## 12  - test_odata_command_delay / requires DEC update
+## 12  - test_command_delay / requires DEC update
+## 12  - test_command_download / requires DEC update
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -198,8 +202,8 @@ class TestCaseStore < Test::Unit::TestCase
 
       puts
 
-      cmd = "minArcServer -s -D"
-      #cmd = "minArcServer -s"
+      # cmd = "minArcServer -s -D"
+      cmd = "minArcServer -s"
       puts cmd
       spawn(cmd)
  
@@ -1287,7 +1291,7 @@ class TestCaseStore < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
-   def test_odata_command_delay
+   def test_command_delay
 
       puts "================================================"
       puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
@@ -1295,7 +1299,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       ## Query by PublicationDate for Sentinel-2A
             
-      cmd = "decODataClient -u test -p test -H 2 -q adgs:s2:S2A -L /tmp -D"
+      cmd = "decODataClient -u test -p test -H 2 -q test_adgs:s2:S2A -L /tmp -D"
       puts cmd
       assert(system(cmd), "#{cmd} delay query")
       puts
@@ -1303,6 +1307,33 @@ class TestCaseStore < Test::Unit::TestCase
    end
    
    ## -----------------------------------------------------------
+
+   ## ------------------------------------------------------
+   def test_command_download
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      
+      cmd = "rm -f /tmp/S2*"
+      puts cmd
+      system(cmd)
+      
+      cmd = "decODataClient -u test -p test -q test_adgs:s2:S2 --creation \"2021-03-16T00:00:00.000,2022-03-16T00:05:00.000\" -L /tmp -r"  # "-D"
+      puts cmd
+      assert(system(cmd), "#{cmd} query")
+      puts
+
+      sleep(5.0)
+   
+   
+      cmd = "minArcStatus -f S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001 | jq"
+      puts cmd
+      assert(system(cmd), "#{cmd} query")
+   
+   end
+
+   ## ------------------------------------------------------
 
 end
 

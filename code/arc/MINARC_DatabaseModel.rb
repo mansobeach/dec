@@ -85,6 +85,18 @@ end
 
 ## =====================================================================
 
+class ServedFile < ActiveRecord::Base
+   
+  def validate
+    super
+    validates_presence([:filename])
+    validates_presence([:username])
+    validates_presence([:download_date])
+  end   
+end
+
+## =====================================================================
+
 class ArchivedFile < ActiveRecord::Base
 
    self.implicit_order_column = "id"
