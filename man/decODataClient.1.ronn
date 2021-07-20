@@ -1,0 +1,83 @@
+decODataClient(1) -- Data Exchange Component / decODataClient.
+==============================================================
+
+## DESCRIPTION
+
+decODataClient is a command line tool to exploit ESA CSC OData Interfaces.
+
+## SYNOPSIS
+
+`decODataClient <COMMAND> <OPTIONS>`
+
+## COMMANDS
+
+### --query [service]:[mission]:[item]
+
+--query dhus:s1:S1B
+
+--query dhus:s2:S2A
+
+--query dhus:s2:GS2B_20200903T104429_018252_N02.14
+
+--query dhus:s1:S1A:S1A_EW_GRDM
+
+--query dhus:s1:S1A:45C1F
+
+--query dhus:gnss:S1B
+
+--query adgs:s2:S2B
+
+--query prip:S2B_OPER_MSI_L0__DS_VGS2_20201028T163228_S20201028T144729_N02.09:MSI_L0__GR
+
+.
+
+The following options are available:
+
+`-c`, `--creation "2021-03-16T00:00:00.000,2021-03-20T00:00:00.000"`
+  It refers to the availability of the item at the service interface delivery point.
+  
+  - Attribute CreationDate at DHUS
+  - Attribute PublicationDate at ADGS
+
+
+`-D`, `--Debug`
+  Runs decODataClient in debug mode.
+
+
+### -r, --retrieve
+
+It downloads all the items reported as part of the query reply.
+
+
+## EXAMPLES
+
+To download from ADGS the Sentinel-2 items published between the 16th of March 2021 midnight to past 5 minutes:
+
+`decODataClient -u test -p test -q adgs:s2:S2 --creation "2021-03-16T00:00:00.000,2021-03-16T00:05:00.000" -L /tmp -r`
+
+
+## ENVIRONMENT
+
+The download of items is performed using [curl](https://curl.se) 
+
+
+## AUTHORS / CONTRIBUTORS
+
+European Space Agency (ESA)
+
+DEC / decODataClient is developed by Deimos Space.
+
+
+## CHANGELOG
+The changelog can be found with the DEC version by executing:
+
+`decODataClient -v`
+
+This manual has been written by Paperino.
+
+## WWW
+
+http://guardgem.org/
+
+## SEE ALSO
+dec(1), curl(1)
