@@ -13,21 +13,6 @@
 #########################################################################
 
 
-# require 'simplecov'
-# 
-# 
-# SimpleCov.start do     # ommit test classes from the report
-#   add_filter 'test'
-# end
-
-#### ---------------------------
-#
-#puts "SimpleCov.start"
-#
-#SimpleCov.command_name 'test:units'
-#SimpleCov.start
-#### ---------------------------
-
 require 'rubygems'
 require 'test/unit'
 
@@ -75,6 +60,7 @@ require 'arc/ReadMinarcConfig'
 ## 11  - test_odata_bad_queries
 ## 12  - test_command_delay / requires DEC update
 ## 12  - test_command_download / requires DEC update
+## 13  - test_command_auth_failure / requires DEC update
 
 class TestCaseStore < Test::Unit::TestCase
 
@@ -157,22 +143,6 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       puts @@arcConfigDir
       puts                   
-      ## ----------------------------------
-      ## initialize logger
-      
-      system("\\rm -rf /tmp/minarc_log_file*.log")
-      
-      loggerFactory = CUC::Log4rLoggerFactory.new("ARCTEST", "#{@@arcConfigDir}/minarc_log_config.xml")
-   
-      @@logger = loggerFactory.getLogger   
-      if @@logger == nil then
-         puts
-		   puts "Error in OrchestratorIngester::initialize"
-     	   puts "Could not initialize logging system !  :-("
-         puts "Check minARC logs configuration under \"#{@@arcConfigDir}/minarc_log_config.xml\"" 
- 	      puts
-   	   exit(99)
-      end
 
       Dir.chdir(@@testDataDir)
       system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
@@ -262,9 +232,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
       
+      ## -----------------------------------------
+      ## initialise the logger
       system("\\rm -rf /tmp/minarc_log_file*.log")
       
-      loggerFactory = CUC::Log4rLoggerFactory.new("ARCTEST", "#{@@arcConfigDir}/minarc_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("TEST", "#{@@arcConfigDir}/minarc_log_config.xml")
    
       @@logger = loggerFactory.getLogger   
       if @@logger == nil then
@@ -275,7 +247,8 @@ class TestCaseStore < Test::Unit::TestCase
  	      puts
    	   exit(99)
       end
-            
+      
+      ## -----------------------------------------      
       puts
       puts "END OF MINARC_UnitTests::#{__method__.to_s}"
       puts
@@ -1331,6 +1304,37 @@ class TestCaseStore < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), "#{cmd} query")
    
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+   def test_command_auth_failure
+
+      puts "================================================"
+      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
+      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "rm -f /tmp/S2*"
+      puts cmd
+      system(cmd)
+      
+      cmd = "decODataClient -u nonexiting -p test -q test_adgs:s2:S2 --creation \"2021-03-16T00:00:00.000,2022-03-16T00:05:00.000\" -L /tmp -r"  # "-D"
+      puts cmd
+      assert(!system(cmd), "#{cmd} query")
+      puts
+
+      cmd = "decODataClient -u test -p test3 -q test_adgs:s2:S2 --creation \"2021-03-16T00:00:00.000,2022-03-16T00:05:00.000\" -L /tmp -r"  # "-D"
+      puts cmd
+      assert(!system(cmd), "#{cmd} query")
+      puts
+
+      arr = Dir["/tmp/minarc_log_file*.log"] 
+      cmd = "grep ARC\_600 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "logged message")
+      
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
 
    ## ------------------------------------------------------

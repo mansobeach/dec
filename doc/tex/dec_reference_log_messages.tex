@@ -40,6 +40,7 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_212]} TBW
 	\item \textbf{[DEC\_213]} TBW
 	\item \textbf{[DEC\_214]} TBW
+    \item \textbf{[DEC\_255]} Retry Request of OData URL		
     \item \textbf{[DEC\_257]} Metadata OData file created	
     \item \textbf{[DEC\_259]} Download request to an OData interface delivery point
     \item \textbf{[DEC\_260]} Successful download from an OData interface delivery point  		
@@ -185,6 +186,10 @@ The internal of the log message is a JSON string referring to:
 {"filename":"tai-utc.dat","size":61,"interface":"LOCAL","protocol":"FTP;","date":"2020-04-15 17:03:19 UTC"}
 {"filename":"mario.jpg","size":32478,"interface":"LOCAL","protocol":"FTP;","date":"2020-04-15 17:03:19 UTC"}
 \end{verbnobox}
+
+\label{DEC255}
+\subsection{[DEC\_255] Retry Request OData URL}
+Retry to request OData URL.
 
 \label{DEC257}
 \subsection{[DEC\_257] OData Metadata File  Created}

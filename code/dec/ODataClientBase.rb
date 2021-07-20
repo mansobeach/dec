@@ -213,7 +213,7 @@ class ODataClientBase
 
          rescue Exception => e
             exception = e
-            @logger.error("Failed request #{uri.scheme}://#{uri.host}#{uri.request_uri}")
+            @logger.error("[DEC_614] I/F #{@system}: Failed request #{uri.scheme}://#{uri.host}#{uri.request_uri}")
             @logger.error(e.to_s)
             iRetry   = iRetry + 1
             response = nil
@@ -321,14 +321,14 @@ class ODataClientBase
                end            
             
             rescue Exception => e
-               @logger.error("Failed #{uri.scheme}://#{uri.host}#{uri.request_uri}")
+               @logger.error("[DEC_614] I/F #{@system}: Failed #{uri.scheme}://#{uri.host}#{uri.request_uri}")
                @logger.error(e.to_s)
                if @isDebugMode == true then
                   @logger.debug(e.backtrace)
                end               
                iRetry   = iRetry + 1
                response = nil
-               @logger.warn("Retry #{uri.scheme}://#{uri.host}#{uri.request_uri}")
+               @logger.warn("Retry [#{iRetry}] #{uri.scheme}://#{uri.host}#{uri.request_uri}")
                sleep(30.0)
             end
             
@@ -405,11 +405,16 @@ class ODataClientBase
       request.basic_auth(@user, @password)
       
       response = nil   
-      iRetry   = 1
+      iRetry   = 0
       
       while response == nil and iRetry <= 5 do
       
          begin
+            if iRetry != 0 then
+               sleep(10.0)
+               @logger.info("[DEC_255] I/F #{@system}: Retry [#{iRetry}] #{uri.scheme}://#{uri.host}#{uri.request_uri}")
+
+            end
             response = http.request(request)
  
             if @isDebugMode == true then
@@ -418,15 +423,13 @@ class ODataClientBase
                @logger.debug(response.body)
             end
          rescue Exception => e
-            @logger.error("Failed request #{urlCount}")
-            @logger.error(e.to_s)
+            @logger.error("[DEC_614] I/F #{@system}: Failed request #{urlCount}")
+            @logger.error("[DEC_614] I/F #{@system}: #{e.to_s}")
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
             iRetry   = iRetry + 1
             response = nil
-            @logger.warn("Retry #{uri.scheme}://#{uri.host}#{uri.request_uri}")
-            sleep(30.0)
          end
       end
             
@@ -434,10 +437,14 @@ class ODataClientBase
 
       ## DHUS Openhub replies directly without any JSON or formatting
 
+      if response == nil then 
+         return false
+      end
+      
       @iTotal  = processCountReply(response.body)
       
       if @iTotal == -1 or response.code != DHUS::API_RESOURCE_FOUND then
-         @logger.error("Error in request #{response.code} / #{response.message} / #{response.body}")
+         @logger.error("[DEC_614] I/F #{@system}: Error in request #{uri.request_uri} #{response.code} / #{response.message} / #{response.body}")
          return false
       end
                   

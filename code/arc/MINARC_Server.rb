@@ -25,6 +25,7 @@ require 'arc/MINARC_Status'
 require 'arc/MINARC_DatabaseModel'
 require 'arc/FileStatus'
 require 'arc/ReadMinarcConfig'
+require 'arc/SinatraHelperMINARC.rb'
 require 'arc/SinatraControllerODataProductDownload'
 require 'arc/SinatraControllerODataProductQuery'
 
@@ -43,6 +44,7 @@ include ARC_ODATA
 class MINARC_Server < Sinatra::Base
 
    helpers Sinatra::CustomLogger
+   helpers ARC::ApplicationHelper
 
    configure do
  
@@ -164,10 +166,13 @@ class MINARC_Server < Sinatra::Base
    ## =================================================================
 
    ## Enforce basic authentication for the complete API
+   ## 
+   ## Need to log the failures
    
-   use Rack::Auth::Basic, "Check your credentials" do |username, password|
-      User.find_by name: username and User.find_by(name: username).authenticate(password)
-   end
+#   use Rack::Auth::Basic, "Check User credentials" do |username, password|
+#      User.find_by name: username and User.find_by(name: username).authenticate(password)
+#   end
+
    ## =================================================================
 
    ### ODATA API START
@@ -177,6 +182,11 @@ class MINARC_Server < Sinatra::Base
    ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
    
    get ARC_ODATA::API_URL_PRODUCT_QUERY_COUNT do
+      if authenticate() == false then
+         @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
+         halt 401
+      end
+
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY_COUNT}")
       end
@@ -195,6 +205,11 @@ class MINARC_Server < Sinatra::Base
    ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
    
    get ARC_ODATA::API_URL_PRODUCT_QUERY do
+      if authenticate() == false then
+         @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
+         halt 401
+      end
+      
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY}")
       end
@@ -211,6 +226,11 @@ class MINARC_Server < Sinatra::Base
    ## https://<service-root-uri>/odata/v1/Products(Id)/$value
 
    get ARC_ODATA::API_URL_PRODUCT_DOWNLOAD do
+      if authenticate() == false then
+         @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
+         halt 401
+      end
+
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_DOWNLOAD}")
       end

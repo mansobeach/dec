@@ -29,7 +29,8 @@ module ARC
    @@change_record = { \
       "1.3.0"  =>      "Model updated to record ServedFiles\n\
          migration to ruby 2.7\n\
-         gems addressable added as a dependency ",\
+         gems addressable added as a dependency\n\
+         log message ARC_600 to trace authentication failures",\
       "1.2.2"  =>      "OData fix for simple $count queries\n\
          OData server refactoring for composed queries\n\
          public API now kept under ctc module", \

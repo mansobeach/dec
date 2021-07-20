@@ -20,8 +20,8 @@ ARC_100: Archived: $file
 ARC_105: Deleted : $file
 
 (server side)
-ARC_200: $user : Requested $file / $uuid ; [IP Address]
-ARC_201: $user : Served $file ; [IP Address]
+ARC_200: $user [IP Address]: Requested $file / $uuid ;
+ARC_201: $user [IP Address]: Served $file 
 ARC_202: Retrieved: $file
 ARC_203: Archived: $file
 ARC_204: Status: $file (request of status acknowledge by the server)
@@ -40,6 +40,7 @@ ARC_313: Stop => Ingester was not running
 ARC_340: unrecognized $file moved to error area
 
 ERROR:
+ARC_600: $user [IP Address]: Authentication failed
 ARC_601: Archive Root does not exist
 ARC_605: Could not archive $file
 ARC_610: $file not present in the archive
