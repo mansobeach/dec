@@ -437,11 +437,9 @@ def body
    if bRetrieveFiles == true or @listOnly == true then
       bNewFiles     = @receiver.check4NewFiles(@listOnly)
       if bNewFiles == false then
-         # puts "\nNo file(s) available from #{@entity} I/F for retrieving\n"
          @logger.info("[DEC_050] I/F #{@entity}: Polling Completed / No file(s) available for pull")
          event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
       else
-         # puts "\nNew file(s) available from #{@entity} I/F for retrieving\n"
          listOfFiles = @receiver.getAvailablesFiles
          listOfFiles.each{|fullpath|
             if @listOnly == true then
@@ -449,7 +447,7 @@ def body
             end
          }
 
-         @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) available for pull")
+         @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) #{listOfFiles.length} available for pull")
 
          
          if @listOnly == false and @createReceipt == false then

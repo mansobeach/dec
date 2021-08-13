@@ -696,7 +696,7 @@ private
          File.delete(targetFile)
          retVal = false
       else
-         msg = "[DEC_116] I/F #{@entity}: #{file} compressed in 7z at TempDir #{@tmpDir}/7z"
+         msg = "[DEC_116] I/F #{@entity}: #{file} compressed in 7z at with size #{File.size(targetFile)} bytes"
          @logger.info(msg)
       end
 
@@ -768,7 +768,7 @@ private
                File.delete(targetFile)
                retVal = false
             else
-               msg = "[DEC_116] Intray #{dim}: #{file} compressed in #{compress} at #{inTray}"
+               msg = "[DEC_116] Intray #{dim}: #{file} compressed with size #{File.size(targetFile)} bytes in #{compress} at #{inTray}"
                @logger.info(msg)
             end
          end

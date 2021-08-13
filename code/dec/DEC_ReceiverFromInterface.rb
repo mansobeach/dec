@@ -636,8 +636,111 @@ class DEC_ReceiverFromInterface
 
    end
    ## -----------------------------------------------------------
-
+   ##
+   ## parallel downloads for SLOTS
    def receiveAllFilesParallel
+      currentDir = Dir.pwd
+      checkDirectory(@localDir)
+      Dir.chdir(@localDir)
+      @retValFilesReceived    = true
+      @atLeast1FileReceived   = false
+      listFiles               = Array.new(@fileList)
+      
+      i = 0      
+      loop do
+         break if listFiles.empty?
+         
+         while !listFiles.empty? and i < @parallelDownload do
+         
+            file = listFiles.shift
+            i    = i + 1
+            
+            fork{
+               if @isDebugMode == true then
+                  @logger.debug("Child process #{Process.pid} => #{i}/#{@parallelDownload} created to download #{File.basename(file)}")
+            	end
+               ret = downloadFile(file)
+               if ret == false then
+                  if @isDebugMode == true then
+                     @logger.error("Child process #{Process.pid} => #{i}/#{@parallelDownload} failed to download #{File.basename(file)}")
+                  end
+                  @retValFilesReceived  = false
+                  exit(1)
+               else
+                  @atLeast1FileReceived = true
+                  exit(0)
+               end 
+            }
+         
+         end
+         
+         pid = Process.waitpid(-1, 0)
+
+         if $?.exitstatus == 0 then
+            if @isDebugMode == true then 
+               @logger.debug("Child process #{pid} successful")
+            end
+            @atLeast1FileReceived = true
+         else
+            if @isDebugMode == true then 
+               @logger.debug("Child process #{pid} ERROR")
+            end
+            @retValFilesReceived = false
+         end
+
+         i = i - 1
+         
+      end
+
+      ## -------------------------------
+      ## wait for the pending processes
+      begin
+  
+         arr = Process.waitall
+         arr.each{|child|
+            if child[1].exitstatus == 0 then
+               if @isDebugMode == true then 
+                  @logger.debug("Child process #{child[0]} successful")
+               end
+
+               @atLeast1FileReceived = true
+            else
+               if @isDebugMode == true then 
+                  @logger.debug("Child process #{child[0]} ERROR")
+               end
+
+               @retValFilesReceived = false
+            end
+         }    
+     rescue Exception => e
+         ## no pending children
+         @logger.debug(e.to_s)
+     end
+     ## -------------------------------
+            
+     ## -------------------------------
+      
+#		createContentFile(@finalDir)
+
+      # Create new files received lock file
+      if @bCreateNewFilesLock == true and @fileList.length >0 and @atLeast1FileReceived == true
+         notifyNewFilesReceived
+      end
+
+      Dir.chdir(currentDir)
+       
+      deleteTempDir
+
+      return @retValFilesReceived   
+   end
+   ## -----------------------------------------------------------
+
+
+   ## -----------------------------------------------------------
+   ##
+   ## parallelisation by bursts waiting for all children
+
+   def receiveAllFilesParallelBURST
       currentDir = Dir.pwd
       checkDirectory(@localDir)
       Dir.chdir(@localDir)
@@ -657,7 +760,9 @@ class DEC_ReceiverFromInterface
             	end
                ret = downloadFile(file)
                if ret == false then
-                  @logger.error("Child process #{i} failed to download #{File.basename(file)}")
+                  if @isDebugMode == true then
+                     @logger.error("Child process #{i} failed to download #{File.basename(file)}")
+                  end
                   @retValFilesReceived  = false
                   exit(1)
                else
@@ -1152,6 +1257,11 @@ private
 
       if @protocol == "FTPS" or @protocol == "FTPES" then
          retVal = @ftps.downloadFile(filename)
+
+         if retVal == false then
+            @logger.error("[DEC_666] I/F #{@entity}: Could not download #{File.basename(filename)}")
+            return false
+         end
          
          size = nil
          if @port == 21 then

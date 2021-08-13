@@ -16,6 +16,9 @@
 #########################################################################
 
 require 'rubygems'
+
+require 'ctc/API_DHUS'
+
 require 'dec/ODataClientBase'
 
 module DEC

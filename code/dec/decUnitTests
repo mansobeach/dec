@@ -1150,7 +1150,7 @@ class DECTestCase < Test::Unit::TestCase
          system("echo \'#{filename}\' > /tmp/dec_simul_if/localhost_notsecure/download/#{filename}")
       }
       
-      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --nodb --no-intray"
+      cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE --nodb --no-intray -D"
       puts cmd
       assert(system(cmd), cmd)
      

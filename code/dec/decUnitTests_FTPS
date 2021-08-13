@@ -27,7 +27,7 @@ require 'dec/ReadConfigDEC'
 
 ## rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]
 
-## sudo /usr/local/sbin/pure-ftpd /Users/borja/Projects/dec/config/ftp/pure-ftpd.conf
+### sudo /usr/local/sbin/pure-ftpd /Users/borja/Projects/dec/config/ftp/pure-ftpd.conf
 
 ## http://index-of.es/Varios-2/Everything%20Curl.pdf
 
@@ -208,9 +208,9 @@ class DECTestCase_FTPS < Test::Unit::TestCase
       ftpServer         = entityConfig.getFTPServer4Receive("LOCALHOST_FTPS")
       port              = ftpServer[:port].to_i
       
-      if port == 21 then
-         return
-      end
+#      if port == 21 then
+#         return
+#      end
 
       inConfig         = ReadConfigIncoming.instance
       inDirectory      = inConfig.getIncomingDir("LOCALHOST_FTPS")

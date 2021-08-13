@@ -24,17 +24,20 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.29"
+   @@version = "1.0.30"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.29" =>    "decODataClient updates:\n\
+      "1.0.30" =>    "TBW", \
+      "1.0.29" =>    "Enhancement to parallelise pull operations\n\
+          decODataClient updates:\n\
           > ADGS support (AUXIP)\n\
           > download products from DHUS/OpenHub\n\
           > log messages 257, 259, 260 and 667
           first version of man pages shipped\n\
           zero length files unpresent now raises error [DEC_799]\n\
+          InterfaceHandlerFTPS_Implicit now raises error when time-out \n\
           public API now kept under ctc module", \
       "1.0.28" =>    "CUC::CheckerProcessUniqueness rework\n\
           decODataClient update to support DHUS/GNSS API", \

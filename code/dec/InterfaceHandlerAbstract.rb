@@ -19,6 +19,8 @@
 
 module DEC
 
+require 'dec/ReadConfigDEC'
+
 class InterfaceHandlerAbstract
 
    ## -----------------------------------------------------------

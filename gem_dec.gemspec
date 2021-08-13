@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.29'
+  s.version     = '1.0.30'
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -136,13 +136,13 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')
   
-  ## --------------------------------------------
-  ##
-  ## Tailored installer to avoid some gems only for the OData client
-  if ENV.include?("DEC_ODATA") == false then
-     s.add_dependency('curb', '~> 0.9')
-  end
-  ## --------------------------------------------
+#  ## --------------------------------------------
+#  ##
+#  ## Tailored installer to avoid some gems only for the OData client
+#  if ENV.include?("DEC_ODATA") == false then
+#     s.add_dependency('curb', '~> 0.9')
+#  end
+#  ## --------------------------------------------
 
   ## --------------------------------------------
   ##

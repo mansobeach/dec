@@ -516,8 +516,7 @@ module WrapperCURL
 
       ## Delete Command
       cmd = "#{cmd} -Q \"DELE #{filename}\""
-               
-      
+                   
       if isDebugMode == true then
          if logger != nil then
             logger.debug(cmd)
@@ -591,7 +590,7 @@ module WrapperCURL
       output = `#{cmd}`
       
       if $? != 0 then
-         raise "Failed execution of #{cmd} / Exit code #{$?}"
+         raise "Failed execution of #{cmd} / #{$?} / #{Dir.pwd}"
       end
       
       return true

@@ -60,13 +60,13 @@ class InterfaceHandlerFTPS_Implicit < InterfaceHandlerAbstract
          @ftpServer        = @entityConfig.getFTPServer4Send(@entity)
       end
       
+      @tmpDir           = DEC::ReadConfigDEC.instance.getTempDir
       @ftps             = nil
        
       # ---------------------------------------
-      # this is  bad design
+      # this is bad design
       # self.checkConfig(entity, bPull, bPush)
       # ---------------------------------------
-      
       
    end   
    ## -----------------------------------------------------------
@@ -255,11 +255,40 @@ class InterfaceHandlerFTPS_Implicit < InterfaceHandlerAbstract
       passive  = @ftpServer[:isPassive]
       chkSSL   = @ftpServer[:verifyPeerSSL]
       
-      prevDir  = Dir.pwd
-      Dir.chdir(@inDirectory)
+      ## DO NOT MOVE INTO FINAL DIR
+      ##Dir.chdir(@inDirectory)
+      Dir.chdir(@tmpDir)
+      
       ## bDelete is actually forced to false to perform deletion in a second step if it applies
-      ret = ftpsGetFile(host, port, filename, false, user, pass, chkSSL, @logger, @isDebugMode)
-      Dir.chdir(prevDir)
+      ret = true
+      begin
+         ret = ftpsGetFile(host, port, filename, false, user, pass, chkSSL, @logger, @isDebugMode)
+      rescue Exception => e
+         @logger.error("[DEC_628] I/F #{@entity}: #{e.to_s}")
+         if File.exists?("#{Dir.pwd}/#{File.basename(filename)}") == true then
+            begin
+               size = File.size("#{Dir.pwd}/#{File.basename(filename)}")
+               # File.delete("#{Dir.pwd}/#{File.basename(filename)}")
+               @logger.warn("[DEC_XXX] I/F #{@entity}: #{File.basename(filename)} incomplete? file with size #{size} bytes")
+               # @logger.warn("[DEC_XXX] I/F #{@entity}: #{File.basename(filename)} deleted incomplete file with size #{size} bytes")
+            rescue Exception => e
+               @logger.error("[DEC_628] I/F #{@entity}: #{e.to_s}")
+            end
+         end
+         return false
+      end
+      
+      if ret == true then
+         cmd = "\\mv -f #{Dir.pwd}/#{File.basename(filename)} #{@inDirectory}"
+         if @isDebugMode == true then
+            @logger.debug(cmd)
+         end
+         ret = system(cmd)
+         if ret == false then
+            @logger.error("[DEC_628] I/F #{@entity}: Failed to move #{File.basename(filename)} into #{@inDirectory}")
+         end
+      end
+      
       return ret
    end	
 	## -----------------------------------------------------------

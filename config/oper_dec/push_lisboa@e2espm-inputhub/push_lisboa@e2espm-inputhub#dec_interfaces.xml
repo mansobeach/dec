@@ -206,8 +206,8 @@
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">10</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
-      <PollingSize>470</PollingSize>
-      <ParallelDownload>5</ParallelDownload>
+      <PollingSize>200</PollingSize>
+      <ParallelDownload>8</ParallelDownload>
     </TXRXParams>    
     <Server>
       <Protocol>FTPS</Protocol>
