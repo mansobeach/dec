@@ -46,6 +46,7 @@ require 'arc/ReadMinarcConfig'
 ##  1.0  - test_local_minArcStore
 ##  1.1  - test_local_minArcStore_Errors
 ##  1.2  - test_local_minArcStore_Bulk
+##  1.3  - test_local_minArcStore_AUXIP
 ##  2  - test_local_minArcRetrieve
 ##  3  - test_local_purge
 ##  4  - test_local_status_filename
@@ -132,15 +133,15 @@ class TestCaseStore < Test::Unit::TestCase
 
       begin
          cmd = "minArcDB -d"
-         puts cmd
+         @@logger.debug(cmd)
          ret = system(cmd)
 
          cmd = "minArcDB -c"
-         puts cmd
+         @@logger.debug(cmd)
          ret = system(cmd)
          
          cmd = "minArcDB -a test:test"
-         puts cmd
+         @@logger.debug(cmd)
          ret = system(cmd)
          
       rescue Exception => e
@@ -148,7 +149,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       begin
          cmd = "minArcPurge -Y"
-         puts cmd
+         @@logger.debug(cmd)
          # ret = system(cmd)
       rescue
       end
@@ -177,6 +178,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@testFile2          = "S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF"
       @@filename1_noext    = "S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
       @@filename2_noext    = "S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
+      @@faultyTestFile1    = "S2B_OPER_REP_PASS_E_VGS2_20210810T083015_V20210810T062447_20210810T62741.EOF"
       @@errorZone          = ENV['MINARC_ARCHIVE_ERROR']
 
       system("rm -f #{@@testDataDir}/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.7z")
@@ -203,6 +205,8 @@ class TestCaseStore < Test::Unit::TestCase
       sleep(2.0)
 
       @@arrInputFiles = [ \
+                           "EDR_OPER_SER_SR1_OA_PDMC_20210816T224004_V20210816T221504_20210816T223203", \
+                           "EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946",\
                            "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
                            "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
                            "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
@@ -277,15 +281,15 @@ class TestCaseStore < Test::Unit::TestCase
 
 
       cmd = "minArcDB -d"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "minArcDB -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcDB first time")
       
       cmd = "minArcDB -a test:test"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "created used test")
       
       
@@ -402,129 +406,129 @@ class TestCaseStore < Test::Unit::TestCase
       @@conf.wrapper_unset_config
 
       cmd = "minArcFile -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcDelete -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       cmd = "minArcStore -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStore -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStore -g"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcFile -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcRetrieve -u"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -u"
       assert(system(cmd), cmd)
 
       cmd = "minArcDelete -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcDelete -u"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcPurge -u"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcDB -u"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       # invoke command line parameters without parameters to do nothing
       # and return error in parameters
 
       cmd = "minArcDelete"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcRetrieve"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcDB"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcPurge"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcServer"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcStatus"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcStore"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcFile"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcReallocate -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       
@@ -540,44 +544,44 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
       cmd = "minArcDB -d"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "minArcDB -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcDB first time")
 
       cmd = "minArcDB -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "minArcDB second time / error raised")
 
       cmd = "minArcDB -c -H"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcDB second time / happy ending")
       
       ## -----------------------------------------
       ## Need to alter MINARC_Migrations::CreateArchivedFiles
       
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
 
       cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
       
       ## -----------------------------------------
       
       cmd = "minArcDB -U"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcDB Update")
 
       cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
 
 
@@ -605,7 +609,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       
       cmd = "minArcDB -a test:test -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "created used test")
       
       user = User.find_by name: "test"
@@ -628,27 +632,27 @@ class TestCaseStore < Test::Unit::TestCase
       system("mkdir -p /tmp/minarc/tmp/")
       
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
 
       cmd = "minArcStatus -f #{@@filename1_noext} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
  
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
 
       cmd = "minArcStatus -f #{@@filename2_noext} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
      
       system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
@@ -657,7 +661,7 @@ class TestCaseStore < Test::Unit::TestCase
       arr = Dir["/tmp/minarc_log_file*.log"]
       
       cmd = "grep ARC_100 #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "see successful operations #{__method__.to_s}") 
 
    end
@@ -677,19 +681,19 @@ class TestCaseStore < Test::Unit::TestCase
       system("mkdir -p /tmp/minarc/tmp/")
       
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
-      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      cmd = "minArcStore -t AUXIP -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
  
-      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
-      puts cmd
+      cmd = "minArcStore -t AUXIP -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
      
       system("\\rm -f /tmp/minarc/tmp/#{@@filename1_noext}.7z")
@@ -698,28 +702,48 @@ class TestCaseStore < Test::Unit::TestCase
       arr = Dir["/tmp/minarc_log_file*.log"]
       
       cmd = "grep ARC_100 #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "see successful operations #{__method__.to_s}") 
 
       ## archive repetition which shall fail due to missing file in input     
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "minArcStore")
 
 
       ## archive repetition which shall fail due to previously archived file     
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "minArcStore")
 
       cmd = "grep ARC_605 #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "see successful operations #{__method__.to_s}") 
       
+      cmd = "echo \'#{@@faultyTestFile1}\' > /tmp/minarc/tmp/#{@@faultyTestFile1}"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@faultyTestFile1} --noserver -d"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "minArcStore")
+
+      ## ---------------------
+      ## bulk mode with faulty files
+      
+      cmd = "echo \'#{@@faultyTestFile1}\' > /tmp/minarc/tmp/#{@@faultyTestFile1}"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/*\" --noserver -d"
+      @@logger.debug(cmd)
+      assert(system(cmd), "minArcStore")
+      ## ---------------------
+            
    end
    ## ------------------------------------------------------
 
@@ -744,40 +768,85 @@ class TestCaseStore < Test::Unit::TestCase
       sleep(3.0)
 
       cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(spawn(cmd), "minArcStore bulk mode")
       sleep(1.0)
 
       cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "minArcStore bulk mode should be blocked")
 
       cmd = "minArcRetrieve -T"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore Types")
 
 
       @@arrInputFiles.each{|filename|
          cmd = "minArcStatus -f #{File.basename(filename, ".*")}"
-         puts cmd
+         @@logger.debug(cmd)
          assert(system(cmd), "minArcStatus")
       }
 
       sleep(6.0)
 
       cmd = "minArcStore -t S2PDGS -f \"/tmp/minarc/tmp/S2*\" --noserver -m -M"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore bulk mode")
 
       ## minArcRetrieve remote mode
       
       cmd = "minArcRetrieve -f \"S2*\" --list"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "list files using remote mode")
       
 
    end
    ## ------------------------------------------------------
+
+   ## -----------------------------------------------------------
+   ##
+   ## 
+   def test_local_minArcStore_AUXIP
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "MINARC_UnitTests::#{__method__.to_s}"
+      puts
+      
+      @@logger.debug("MINARC_UnitTests::#{__method__.to_s}")
+      
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      system("echo \'EDR_OPER_SER_SR1_OA_PDMC_20210816T224004_V20210816T221504_20210816T223203\' > /tmp/minarc/tmp/EDR_OPER_SER_SR1_OA_PDMC_20210816T224004_V20210816T221504_20210816T223203")
+      
+      system("echo \'EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946\' > /tmp/minarc/tmp/EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946")
+            
+      cmd = "minArcStore -t AUXIP -f /tmp/minarc/tmp/EDR_OPER_SER_SR1_OA_PDMC_20210816T224004_V20210816T221504_20210816T223203 --noserver -d"
+      @@logger.debug(cmd)
+      assert(system(cmd), "minArcStore")
+
+      cmd = "minArcStatus -f EDR_OPER_SER_SR1_OA_PDMC_20210816T224004_V20210816T221504_20210816T223203 --noserver | jq"
+      @@logger.debug(cmd)
+      assert(system(cmd), "minArcStore")
+
+      cmd = "minArcStore -t AUXIP -f /tmp/minarc/tmp/EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946 --noserver -d"
+      @@logger.debug(cmd)
+      assert(system(cmd), "minArcStore")
+      
+      cmd = "minArcStatus -f EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946 --noserver | jq"
+      @@logger.debug(cmd)
+      assert(system(cmd), "minArcStore")
+
+      
+      arr = Dir["/tmp/minarc_log_file*.log"]
+      
+      cmd = "grep ARC_100 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "see successful operations #{__method__.to_s}") 
+
+   end
+   ## ------------------------------------------------------
+
    
    def test_local_minArcRetrieve
       puts __method__.to_s
@@ -789,11 +858,11 @@ class TestCaseStore < Test::Unit::TestCase
       test_local_minArcStore
       
       cmd = "minArcRetrieve -T --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcRetrieve -T --noserver")
       
       cmd = "minArcRetrieve -T"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcRetrieve -T")   
 
    end
@@ -837,7 +906,7 @@ class TestCaseStore < Test::Unit::TestCase
       test_local_minArcStore
    
       cmd = "minArcPurge -Y"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    end
 
@@ -857,13 +926,13 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), cmd)
       
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} --noserver | jq '.url'"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), cmd)      
     
@@ -883,19 +952,19 @@ class TestCaseStore < Test::Unit::TestCase
       
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} | jq"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), cmd) 
       
       cmd = "minArcStatus -f #{File.basename(@@testFile1, ".*")} | jq '.name'"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), cmd)
       
       cmd = "minArcStatus -t REP_OPDPC_ | jq"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), cmd)  
 
@@ -909,14 +978,20 @@ class TestCaseStore < Test::Unit::TestCase
       puts "MINARC_UnitTests::#{__method__.to_s}"
       puts
    
+      @@logger.debug("MINARC_UnitTests::#{__method__.to_s}")
+   
       test_local_minArcStore
-   
-      puts "Set environment variables to remote only"
-      @@conf.wrapper_setRemoteModeOnly
-      puts
-   
+
+#      cmd = "minArcServer -k"
+#      @@logger.debug(cmd)
+#      assert(system(cmd), cmd)
+#
+#      cmd = "minArcServer -s"
+#      @@logger.debug(cmd)
+#      assert(spawn(cmd), cmd)
+      
       cmd = "minArcDelete -f #{File.basename(@@testFile1, ".*")} -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcDelete")
       
    end
@@ -940,17 +1015,17 @@ class TestCaseStore < Test::Unit::TestCase
       puts
    
       cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       assert(File.exist?("#{File.basename(@@testFile1, ".*")}.7z"), "file retrieved")
                   
       cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.7z"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
   
       cmd = "minArcRetrieve -f #{File.basename(@@testFile1, ".*")} -D -U"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       assert(File.exist?("#{File.basename(@@testFile1, ".*")}.EOF"), "file retrieved")
@@ -958,7 +1033,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts Dir.pwd
       puts      
       cmd = "\\rm -f #{Dir.pwd}/#{@@filename1_noext}.EOF"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
   
       
@@ -974,13 +1049,13 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
 #      cmd = "minArcServer -k"
-#      puts cmd
+#      @@logger.debug(cmd)
 #      system(cmd)
 #
 #      sleep(2.0)
 #
 #      cmd = "minArcServer -s &"
-#      puts cmd
+#      @@logger.debug(cmd)
 #      spawn(cmd)
 
       @@conf = MINARC_Environment.new
@@ -1069,7 +1144,7 @@ class TestCaseStore < Test::Unit::TestCase
 
 
       cmd = "\\rm -f #{File.basename(@@testFile1, ".*")}*"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       puts Dir.pwd
 
@@ -1089,11 +1164,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts Dir.pwd
       
       cmd = "\\rm -rf #{dir1}/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "\\rm -f #{@@filename1_noext}.7z"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       puts
       puts Dir.pwd
@@ -1140,7 +1215,7 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcRetrieve -t REP_OPDPC_ -L #{Dir.pwd}"
       
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       
       assert(system(cmd), cmd)
@@ -1204,7 +1279,7 @@ class TestCaseStore < Test::Unit::TestCase
       @@arrInputFiles.each{|filename|
          puts "minArcUnitTests::#{__method__.to_s} #{filename}"
          cmd = "echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}"
-         puts cmd
+         @@logger.debug(cmd)
          system(cmd)
       }
 
@@ -1212,7 +1287,7 @@ class TestCaseStore < Test::Unit::TestCase
 
 
       cmd = "minArcServer -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
  
       config = ReadMinarcConfig.instance 
@@ -1225,7 +1300,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(server != nil, "get Archive Server")   
         
       cmd = "curl -k -s -u #{user}:#{pass} #{server}/dec/arc/requestArchive/*"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       sleep(10.0)
@@ -1235,17 +1310,17 @@ class TestCaseStore < Test::Unit::TestCase
       
       cmd = "minArcStatus -f S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00 | jq"
       puts 
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
 #      arr = Dir["/tmp/minarc_log_file*.log"]
 #      
 #      cmd = "cat #{arr[0]}"
-#      puts cmd
+#      @@logger.debug(cmd)
 #      assert(system(cmd), "see status request traces #{__method__.to_s}") 
       
       cmd = "cat /tmp/minarc_server.out"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "see status request traces #{__method__.to_s}") 
          
    end
@@ -1264,36 +1339,36 @@ class TestCaseStore < Test::Unit::TestCase
       system("mkdir -p /tmp/minarc/tmp/")
       
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "cp #{@@testDataDir}/#{@@testFile2} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
  
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile2} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
 
       cmd = "minArcStatus -g --noserver | jq"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       puts
       puts
 
       cmd = "minArcStatus -g | jq"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
 #      arr = Dir["/tmp/minarc_log_file*.log"]
 #      
 #      cmd = "grep ARC_230 #{arr[0]}"
-#      puts cmd
+#      @@logger.debug(cmd)
 #      assert(system(cmd), "see status request traces #{__method__.to_s}") 
             
    end
@@ -1314,19 +1389,19 @@ class TestCaseStore < Test::Unit::TestCase
       system("echo \'#{testFile1}\' > /tmp/#{testFile1}")
       
       cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile1} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts 
       puts ret
       assert($?.exitstatus, "Decoding of the file with handler")
 
       cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts 
       puts ret
       assert($?.exitstatus, "Decoding of the file with handler")
@@ -1335,12 +1410,12 @@ class TestCaseStore < Test::Unit::TestCase
       system("echo \'#{testFile2}\' > /tmp/#{testFile2}")
       
       cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile2} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1348,7 +1423,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcFile -T S2PDGS -f S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1359,7 +1434,7 @@ class TestCaseStore < Test::Unit::TestCase
       system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
       
       cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile4} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
       ## ---------------------------------------------------
 
@@ -1368,12 +1443,12 @@ class TestCaseStore < Test::Unit::TestCase
       system("echo \'#{testFile3}\' > /tmp/#{testFile3}")
       
       cmd = "minArcStore -t S2PDGS -f /tmp/#{testFile3} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcFile -T S2PDGS -f WrongFile_DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000 -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1381,7 +1456,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcFile -T S2PDGS -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1389,7 +1464,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStatus -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json --noserver | jq"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1411,43 +1486,43 @@ class TestCaseStore < Test::Unit::TestCase
       testFile4            = "DEC_OPER_OPDHUS_S1A_AUIP_20210412T182233_V20210318T000000_20210319T000000_2302_2300.xml"
       
       cmd = "cp -f #{testDataDir}/#{testFile1} /tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t AUXIP -f /tmp/#{testFile1} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcFile -T AUXIP -f #{testFile1} -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts 
       puts ret
       assert($?.exitstatus, "Decoding of the file with handler")
 
       cmd = "minArcStatus -f #{testFile1} --noserver | jq"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
       assert($?.exitstatus, "File Status")
 
       cmd = "minArcDelete -f S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006 --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "cp -f #{testDataDir}/#{testFile1} /tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t AUXIP -f /tmp/#{testFile1}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -f #{testFile1} | jq"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1456,12 +1531,12 @@ class TestCaseStore < Test::Unit::TestCase
       system("echo \'#{testFile3}\' > /tmp/#{testFile3}")
       
       cmd = "minArcStore -t AUXIP -f /tmp/#{testFile3} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcFile -T AUXIP -f WrongFile_DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000 -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1469,7 +1544,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcFile -T AUXIP -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1477,7 +1552,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStatus -f DEC_OPER_OPDHUS_S1A_AUIP_20210325T201708_V20210325T173000_112_000.json --noserver | jq"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1486,18 +1561,18 @@ class TestCaseStore < Test::Unit::TestCase
 
       system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
       cmd = "minArcStore -t AUXIP -f /tmp/#{testFile4} --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       system("echo \'#{testFile4}\' > /tmp/#{testFile4}")
       
 #      cmd = "minArcStore -t AUXIP -f /tmp/#{testFile4} --noserver"
-#      puts cmd
+#      @@logger.debug(cmd)
 #      assert(!system(cmd), cmd)
    
       cmd = "minArcFile -T AUXIP -f #{testFile4} -t"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1505,7 +1580,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStatus  -f #{testFile4} --noserver | jq"
       ret = `#{cmd}`
-      puts cmd
+      @@logger.debug(cmd)
       puts
       puts ret
       puts
@@ -1524,11 +1599,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       
       cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.m2ts -D --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcRetrieve -t m2ts -l --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       dir1 = "1.#{__method__.to_s}"
@@ -1544,7 +1619,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir(dir1)
       
       cmd = "minArcRetrieve -f 20110204T193316_000001 --noserver -L #{Dir.pwd}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       Dir.chdir(pwd)   
@@ -1563,11 +1638,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       
       cmd = "minArcStore -t m2ts -f #{@@testDataDir}/example_1.mp4 -D --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       cmd = "minArcRetrieve -t mp4 -l --noserver"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       dir1 = "1.#{__method__.to_s}"
@@ -1583,7 +1658,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir(dir1)
       
       cmd = "minArcRetrieve -f 20181029T114813_000002 --noserver -L #{Dir.pwd}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       Dir.chdir(pwd)   
@@ -1602,23 +1677,23 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
       cmd = "minArcFile -t S2PDGS"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcFile -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
 
       cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__20170214T113527_V20170214T080018_20170214T080336.EOF -t"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -s"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcFile -T S2PDGS -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF -e"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
 
@@ -1635,32 +1710,32 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       
       cmd = "minArcPurge -Y"
-      puts cmd
+      @@logger.debug(cmd)
       ret = system(cmd)
 
       cmd = "rm -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001*"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcServer -c -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       puts
 
       cmd = "minArcServer -k -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcServer -k -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       puts
 
       cmd = "minArcServer -s -D"
       cmd = "minArcServer -s"
-      puts cmd
+      @@logger.debug(cmd)
       assert(spawn(cmd), cmd)
 
       puts
@@ -1668,7 +1743,7 @@ class TestCaseStore < Test::Unit::TestCase
       sleep(5.0)
 
       cmd = "minArcServer -s -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(spawn(cmd), cmd)
 
       puts
@@ -1676,11 +1751,11 @@ class TestCaseStore < Test::Unit::TestCase
       sleep(5.0)
  
       cmd = "minArcServer -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "minArcStatus -V"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       ## ------------------------------------
@@ -1689,7 +1764,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## ------------------------------------
 
       cmd = "minArcStatus -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       config = ReadMinarcConfig.instance 
@@ -1701,11 +1776,11 @@ class TestCaseStore < Test::Unit::TestCase
       ## ------------------------------------
       ## request archive polling
       cmd = "curl -s -k -u #{user}:#{pass} #{server}/dec/arc/requestArchive/*"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       cmd = "curl -s -k -u #{user}:#{pass} #{server}/dec/arc/requestArchive/S2A_OPER_REP_OPDPC__SGS*"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       ## ------------------------------------
@@ -1717,7 +1792,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## ------------------------------------
       ## retrieve file
       cmd = "minArcRetrieve -f S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       ## ------------------------------------
@@ -1725,7 +1800,7 @@ class TestCaseStore < Test::Unit::TestCase
       return
 
       cmd = "minArcRetrieve -f NON_EXISTING_FILE"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
    end
@@ -1742,23 +1817,23 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       
       cmd = "minArcPurge -Y"
-      puts cmd
+      @@logger.debug(cmd)
       ret = system(cmd)
       
       cmd = "minArcServer -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       puts
 
       cmd = "minArcServer -k"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       puts
 
       cmd = "minArcServer -s"
-      puts cmd
+      @@logger.debug(cmd)
       assert(spawn(cmd), cmd)
 
       puts
@@ -1766,7 +1841,7 @@ class TestCaseStore < Test::Unit::TestCase
       sleep(5.0)
  
       cmd = "minArcServer -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       config = ReadMinarcConfig.instance 
@@ -1778,13 +1853,13 @@ class TestCaseStore < Test::Unit::TestCase
       ## request archive polling
       cmd = "curl -s -k -u #{user}:#{pass} \"#{server}/odata/v1/Products?\\$filter=startswith(Name,'S1A_AUX_')\" "
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       system(cmd)
             
       cmd = "curl -s -k -u #{user}:#{pass} \"#{server}/odata/v1/Products?\\$filter=contains(Name,'S2__OPER_AUX_UT1UTC')\" "
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       system(cmd)
             
@@ -1800,11 +1875,11 @@ class TestCaseStore < Test::Unit::TestCase
       puts
       
       cmd = "mkdir -p /tmp/minarc/tmp"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "rm -f /tmp/minarc_log_file*.log"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "cleaning logs")
       
       @@logger.info("#{__method__.to_s} START")
@@ -1829,7 +1904,7 @@ class TestCaseStore < Test::Unit::TestCase
          
          cmd = "ps -ef | grep ruby"
          puts
-         puts cmd
+         @@logger.debug(cmd)
          system(cmd)
          puts
          sleep(3.0)
@@ -1851,15 +1926,15 @@ class TestCaseStore < Test::Unit::TestCase
       system("mkdir -p /tmp/minarc/tmp/")
       
       cmd = "cp #{@@testDataDir}/#{@@testFile1} /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "minArcStore -t S2PDGS -f /tmp/minarc/tmp/#{@@testFile1} --noserver -d"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStore")
       
       cmd = "minArcStatus -f #{@@testFile1} | jq"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
 
       cmd = "minArcStatus --noserver -f #{@@testFile1} | jq .path"
@@ -1867,15 +1942,15 @@ class TestCaseStore < Test::Unit::TestCase
       path = path.dup.gsub!('"', '').chop
       
       cmd = "\\mv -f #{path}/#{@@filename1_noext}.7z /tmp/minarc/tmp/"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "move file")
 
       cmd = "minArcReallocate -f /tmp/minarc/tmp/#{@@filename1_noext}.7z"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcReallocate")
 
       cmd = "minArcStatus -f #{@@testFile1} | jq"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "minArcStatus")
 
    end
@@ -1897,7 +1972,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -m"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       assert(system(cmd), "minArcStore -t S2PDGS")
 
@@ -1906,7 +1981,7 @@ class TestCaseStore < Test::Unit::TestCase
       ## Remove the tables to induce errors 
 
       cmd = "minArcDB -d"
-      puts cmd
+      @@logger.debug(cmd)
       ret = system(cmd)
       
       ## -------------------------------------
@@ -1916,7 +1991,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver -m"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       system(cmd)
 
@@ -1938,7 +2013,7 @@ class TestCaseStore < Test::Unit::TestCase
 
       cmd = "minArcStore -t S2PDGS -f /tmp/#{@@testFile1} --noserver"
       puts
-      puts cmd
+      @@logger.debug(cmd)
       puts
       system(cmd)
 

@@ -22,12 +22,10 @@ Gem::Specification.new do |s|
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
  
-  s.files       = Dir['code/ddc/*.rb'] + \
-                  Dir['code/dcc/*.rb'] + \
+  s.files       = Dir['code/dec/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/dbm/*.rb'] + \
                   Dir['code/ctc/*.rb'] + \
-                  Dir['code/dec/*.rb'] + \
                   Dir['schemas/*.xsd'] + \
                   Dir['man/dec.1'] + \
                   Dir['man/dec.1.html'] + \
@@ -96,6 +94,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_FTP'
       s.executables   << 'decUnitTests_FTP_PASSIVE'
       s.executables   << 'decUnitTests_FTPS'
+      s.executables   << 'decUnitTests_FTPS_IMPLICIT'
       s.executables   << 'decUnitTests_LOCAL'
       s.executables   << 'decUnitTests_ncftpput'
       s.executables   << 'decUnitTests_SBOA'

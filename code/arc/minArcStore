@@ -514,7 +514,7 @@ def superBulk
 end
 
 
-#-------------------------------------------------------------
+## -------------------------------------------------------------
 
 def bulkArchive
    if @isDebugMode == true then
@@ -565,6 +565,13 @@ def bulkArchive
             puts e.backtrace
             puts
          end
+                  
+         if File.exist?(file) == true then
+            cmd      = "\\mv -f #{file} #{@archiveError}/"
+            retVal   = system(cmd)
+            @logger.warn("[ARC_340] Move to ArchiveError: #{cmd} | #{retVal}")
+         end
+
          next
       end
    }

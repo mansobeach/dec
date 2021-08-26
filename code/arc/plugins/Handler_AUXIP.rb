@@ -114,6 +114,21 @@ class Handler_AUXIP
       end
 
       ## ---------------------------------------------------
+      ##
+      ## Note the missing "_" within the validity data which should prepend the validity stop
+      ## EDR_OPER_SER_SR1_OA_PDMC_20210816T232004_V20210816T22553120210816T230946
+      
+      if @filename.slice(0,3) == "EDR" and @filename.length == 72 &&
+         @filename.slice(41,1) == "V" and !@validated then
+         @str_start        = @filename.slice(42, 15)
+         @str_stop         = @filename.slice(57, 15)    
+         @type             = @filename.slice(9,10)
+         @generation_date  = self.str2date(@filename.slice(25, 15))
+         @start            = self.str2date(@filename.slice(42, 15))
+         @stop             = self.str2date(@filename.slice(57, 15))         
+         @validated        = true
+      end
+      ## ---------------------------------------------------
       
       ##
       ## DEC_OPER_REPDHUS_S1_AUIP_20210325T201708_V20210325T173000_<variable>
@@ -121,7 +136,7 @@ class Handler_AUXIP
       if @filename.length > 57 and @filename.length < 73 and @filename.slice(0,3) == "DEC" &&
          @filename.slice(41,1) == "V" &&
          @filename.slice(3,1) == "_" &&
-         @filename.slice(8,1) == "_" then
+         @filename.slice(8,1) == "_" and !@validated then
          @str_start        = @filename.slice(42, 15)
          @str_stop         = @filename.slice(25, 15)    
          @type             = @filename.slice(9,10)
@@ -138,7 +153,7 @@ class Handler_AUXIP
       if @filename.length > 73 and @filename.slice(0,3) == "DEC" &&
          @filename.slice(41,1) == "V" &&
          @filename.slice(3,1) == "_" &&
-         @filename.slice(8,1) == "_" then
+         @filename.slice(8,1) == "_" and !@validated then
          @str_start        = @filename.slice(42, 15)
          @str_stop         = @filename.slice(58, 15)    
          @type             = @filename.slice(9,10)
@@ -149,8 +164,9 @@ class Handler_AUXIP
       end 
 
       ## ---------------------------------------------------
-      # E2ESPM Analytics Reports 
-      if @filename.length == 72 then
+      ## E2ESPM Analytics Reports 
+      
+      if @filename.length == 72 and !@validated then
          @str_start        = @filename.slice(41, 15)
          @str_stop         = @filename.slice(57, 15)
          @type             = @filename.slice(9,10)
@@ -173,7 +189,7 @@ class Handler_AUXIP
       # S2__OPER_REP_ARC____SGS__20170214T105715_V20170214T030309_20170214T031438_A008609_T50RKS.EOF
       # S2A_OPER_GIP_PROBAS_MPC__20170425T000205_V20150622T000000_20200101T000000_B00.TGZ
 
-      if @filename.length == 73 or @filename.length == 88 or @filename.length == 77 then
+      if @filename.length == 73 or @filename.length == 88 or @filename.length == 77 and !@validated then
          @str_start        = @filename.slice(42, 15)
          @str_stop         = @filename.slice(58, 15)      
          @type             = @filename.slice(9,10)
@@ -185,7 +201,7 @@ class Handler_AUXIP
      
       # ----------------------------------------------------     
          
-      if @filename.length == 56 then
+      if @filename.length == 56 and !@validated then
          @str_start        = @filename.slice(20, 15)
          @str_stop         = @filename.slice(36, 15)      
          @type             = @filename.slice(9,10)         
@@ -203,7 +219,7 @@ class Handler_AUXIP
       # ----------------------------------------------------
       
       # S2__OPER_REP_OPDHUS_DHUS_20180404T165255
-      if @filename.length == 40 then
+      if @filename.length == 40 and !@validated then
          @str_start        = @filename.slice(25, 15)
          @str_stop         = @filename.slice(25, 15)            
          @type             = @filename.slice(9,10)         
@@ -220,7 +236,7 @@ class Handler_AUXIP
       # S2__OPER_REP_ARC__A_UPA__20170505T190530_V20170505T000000_20180504T000000_6949.EOF
       # S2__OPER_REP_ARC__A_UPA__20170427T090404_V20170418T020822_99999999T999999_26864.EOF
       
-      if @filename.include?("REP_ARC__A") == true then
+      if @filename.include?("REP_ARC__A") == true and !@validated then
          @str_start        = @filename.slice(42, 15)
          @str_stop         = @filename.slice(58, 15)      
          @type             = @filename.slice(9,10)
@@ -237,7 +253,7 @@ class Handler_AUXIP
       
       if @filename.length > 73 and @filename.slice(3,1) == "_" and @filename.slice(8,1) == "_" &&
          @filename.slice(19,1) == "_" and @filename.slice(24,1) == "_" and @filename.slice(40,1) == "_" &&
-         @filename.slice(41,1) == "V" 
+         @filename.slice(41,1) == "V" and !@validated
       then
          @str_start        = @filename.slice(42, 15)
          @str_stop         = @filename.slice(58, 15)      

@@ -62,12 +62,7 @@ class InterfaceHandlerFTPS_Implicit < InterfaceHandlerAbstract
       
       @tmpDir           = DEC::ReadConfigDEC.instance.getTempDir
       @ftps             = nil
-       
-      # ---------------------------------------
-      # this is bad design
-      # self.checkConfig(entity, bPull, bPush)
-      # ---------------------------------------
-      
+             
    end   
    ## -----------------------------------------------------------
    ##
