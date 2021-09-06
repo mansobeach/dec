@@ -74,10 +74,10 @@ class DEC_FileSender
          require 'dec/DEC_DatabaseModel'
          
          # @interface   = Interface.where(name: @entity).to_a[0]
-         
          @interface        = Interface.find_by_name(@entity)
+         
          if @interface == nil then
-@logger.error("[DEC_705] #{@entity} I/F: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
+   @logger.error("[DEC_705] #{@entity} I/F: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
             exit(99)
          end
 

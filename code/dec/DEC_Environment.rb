@@ -24,12 +24,14 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.30"
+   @@version = "1.0.31"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.30" =>    "TBW", \
+      "1.0.31" =>    "TBW", \
+      "1.0.30" =>    "Generation of pull report files DEC_F_RECV when some file failed retrieval\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-484", \
       "1.0.29" =>    "Enhancement to parallelise pull operations\n\
           decODataClient updates:\n\
           > ADGS support (AUXIP)\n\

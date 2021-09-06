@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.30'
+  s.version     = '1.0.31'
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -23,6 +23,8 @@ Gem::Specification.new do |s|
   s.email       = 'borja.lopez@deimos-space.com'
  
   s.files       = Dir['code/dec/*.rb'] + \
+                  Dir['code/dcc/*.rb'] + \
+                  Dir['code/ddc/*.rb'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/dbm/*.rb'] + \
                   Dir['code/ctc/*.rb'] + \

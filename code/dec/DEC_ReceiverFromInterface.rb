@@ -645,6 +645,8 @@ class DEC_ReceiverFromInterface
       @retValFilesReceived    = true
       @atLeast1FileReceived   = false
       listFiles               = Array.new(@fileList)
+      hProcessFiles           = Hash.new
+      @arrFilesReceived       = Array.new
       
       i = 0      
       loop do
@@ -655,7 +657,7 @@ class DEC_ReceiverFromInterface
             file = listFiles.shift
             i    = i + 1
             
-            fork{
+            newpid = fork{
                if @isDebugMode == true then
                   @logger.debug("Child process #{Process.pid} => #{i}/#{@parallelDownload} created to download #{File.basename(file)}")
             	end
@@ -671,14 +673,19 @@ class DEC_ReceiverFromInterface
                   exit(0)
                end 
             }
-         
+            
+            hProcessFiles[":#{newpid}"] = File.basename(file)
+            if @isDebugMode == true then
+               @logger.debug("From parent #{newpid} => #{File.basename(file)}")
+            end
          end
          
          pid = Process.waitpid(-1, 0)
 
          if $?.exitstatus == 0 then
+            @arrFilesReceived << hProcessFiles[":#{pid}"]
             if @isDebugMode == true then 
-               @logger.debug("Child process #{pid} successful")
+               @logger.debug("Child process #{pid} successful downloaded #{hProcessFiles[":#{pid}"]}") #"
             end
             @atLeast1FileReceived = true
          else
@@ -695,12 +702,12 @@ class DEC_ReceiverFromInterface
       ## -------------------------------
       ## wait for the pending processes
       begin
-  
          arr = Process.waitall
          arr.each{|child|
             if child[1].exitstatus == 0 then
+               @arrFilesReceived << hProcessFiles[":#{child[0]}"]
                if @isDebugMode == true then 
-                  @logger.debug("Child process #{child[0]} successful")
+                  @logger.debug("Child process #{child[0]} successful downloaded #{hProcessFiles[":#{child[0]}"]}") #"
                end
 
                @atLeast1FileReceived = true
@@ -731,7 +738,12 @@ class DEC_ReceiverFromInterface
        
       deleteTempDir
 
-      return @retValFilesReceived   
+      if @isDebugMode == true then
+         @logger.debug("Files received: #{@arrFilesReceived}")
+      end
+
+      #return @retValFilesReceived
+      return @atLeast1FileReceived   
    end
    ## -----------------------------------------------------------
 
@@ -794,7 +806,8 @@ class DEC_ReceiverFromInterface
       end
 
       Dir.chdir(currentDir)
-      return @retValFilesReceived   
+      #return @retValFilesReceived
+      return @atLeast1FileReceived   
    end
    ## -----------------------------------------------------------
 
@@ -826,6 +839,7 @@ class DEC_ReceiverFromInterface
       @retValFilesReceived  = true
       @atLeast1FileReceived = false
 		
+      @arrFilesReceived     = Array.new
       
       @fileList.each{|file|
                       
@@ -834,9 +848,9 @@ class DEC_ReceiverFromInterface
                if ret == false then
                   @retValFilesReceived  = false
                else
+                  @arrFilesReceived << File.basename(file)
                   @atLeast1FileReceived = true
                end
-		
       
       }
       
@@ -850,7 +864,8 @@ class DEC_ReceiverFromInterface
       end
 
       Dir.chdir(currentDir)
-      return @retValFilesReceived
+      #return @retValFilesReceived
+      return @atLeast1FileReceived
    end
    ## -------------------------------------------------------------
    
@@ -876,7 +891,8 @@ class DEC_ReceiverFromInterface
       # -----------------------------------------------------
       # Create RetrievedFiles Report
 
-      if @fileList.length > 0 then
+      if @arrFilesReceived.length > 0 then
+      #if @fileList.length > 0 then
 
          arrReports.each{|aReport|
             if aReport[:name] == "RETRIEVEDFILES" then
@@ -905,9 +921,12 @@ class DEC_ReceiverFromInterface
             end
 
             writer.setup(@satPrefix, @prjName, @prjID, @mission)
-            writer.writeData(@entity, time, @fileList)
+            #writer.writeData(@entity, time, @fileList)
+            writer.writeData(@entity, time, @arrFilesReceived)
       
             filename = writer.getFilename
+         
+            @logger.info("[DEC_135] I/F #{@entity}: #{filename} pull report created")
          
             if @isDebugMode == true then
                @logger.debug("Created Report RETRIEVEDFILES named #{filename}")

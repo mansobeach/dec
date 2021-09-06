@@ -656,11 +656,12 @@ def deliverByFTP
       begin
          sender = DEC_FileSender.new(@entity, "FTP", @isDeliveredOnce, @isDebugMode, @isNoDB)
       rescue Exception => e
+         @logger.error("[DEC_799] Fatal Error: #{e.to_s} #{'1F480'.hex.chr('UTF-8')}")
+         
          if @isDebugMode == true then
-            puts e.backtrace
-            puts
+            @logger.error(e.backtrace)
          end
-         @logger.error(e.to_s)
+
          exit(1)
       end
       

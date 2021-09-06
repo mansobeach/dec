@@ -31,7 +31,7 @@ require 'dec/ReadConfigIncoming'
 
 ### rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]
 
-### Required for test of integration with minArc
+### Required for test of integration with minARC
 ### rake -f build_minarc.rake minarc:install[borja,localhost,s2_test_pg]
 
 ### Preconditions:
