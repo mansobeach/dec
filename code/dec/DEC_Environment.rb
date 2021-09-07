@@ -29,7 +29,7 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.31" =>    "TBW", \
+      "1.0.31" =>    "Update of the OData client for DHUS to support S5P (s5phub)", \
       "1.0.30" =>    "Generation of pull report files DEC_F_RECV when some file failed retrieval\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-484", \
       "1.0.29" =>    "Enhancement to parallelise pull operations\n\

@@ -17,6 +17,8 @@
 #
 # --query adgs:s2:S2B
 #
+# --query dhus_s5p:s5:S5
+#
 # PRIP: queries:
 #
 # Query is so far targetting S2PRIP specifically.
@@ -31,7 +33,7 @@
 #     --user      <username>
 #     --password  <password>
 #     --time       2021-03-24T00:00:00.000 (DHuS format applied to the IngestionDate)
-#     --delay     <hours delay> (decimal offset 0.5-0.25 is scaled to minutes)
+#     --delay     <hour delay> (decimal offset 0.5-0.25 is scaled to minutes)
 #     --sensing   "2021-03-16T00:00:00.000,2021-03-20T00:00:00.000"
 #     --creation  "2021-03-16T00:00:00.000,2021-03-20T00:00:00.000"
 #     --H         <hours delay> (decimal offset 0.5-0.25 is scaled to minutes)
@@ -165,14 +167,13 @@ def main
    ## --------------------------------------------
          
    if self.checkEnvironmentEssential == false then
-      puts
       self.printEnvironmentError
-      puts
       exit(99)
    end
 
    ## --------------------------------------------
    ## initialize logger
+   
    loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -256,6 +257,10 @@ def main
          @logger.debug("creation time interval#{@creationDelay} => #{@creationtime}")
       end
       
+      ## -----------------------------------------
+      
+      cmd = "[DEC_254] I/F #{@query.split(":")[0]}: decODataClient -u #{@user} -p #{@password} -q #{@query} -L #{@full_path_dir} --creation \"#{@creationtime}\""
+      @logger.info(cmd)
       ## -----------------------------------------
       
    end

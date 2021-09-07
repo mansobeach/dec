@@ -148,7 +148,8 @@ class DECTestCase < Test::Unit::TestCase
    self.test_order = :defined
    
    @my_argv = ARGV.dup
-   #--------------------------------------------------------
+   
+   ## ------------------------------------------------------
    
    Test::Unit.at_start do
       system("clear")

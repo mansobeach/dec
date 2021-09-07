@@ -40,7 +40,10 @@ require 'dec/ReadConfigDEC'
 ##  5.2  - test_command_creation_gnss_s2a
 ##  6  - test_command_creation_s1a
 ##  7  - test_command_creation_s1a_long
-##  8  - test_command_creation_delay_s1a
+##  8.1  - test_command_creation_delay_s1a
+##  8.2  - test_command_creation_delay_s2a
+##  8.3  - test_command_creation_delay_s3a
+##  8.4  - test_command_creation_delay_s5p
 ##  9  - test_s1a_validity
 ##  10 - test_s1b_validity_json
 ##  11 - test_s1a_string
@@ -126,13 +129,9 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       @@conf = DEC_Environment.new
       
-      @@conf.wrapper_load_config_development
-
-
-      puts      
+      @@conf.wrapper_load_config
+        
       @@conf.wrapper_print_environment
-      puts
-      
       
       @@conf.createEnvironmentDirs
 
@@ -142,6 +141,25 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          puts
          exit(99)
       end
+
+
+      # initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      @@logger = loggerFactory.getLogger
+      
+      if @@logger == nil then
+         puts
+		   puts "Error in decUnitTests::main"
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+
       
    end
    
@@ -166,36 +184,13 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## test class 1
 
    def test_class_delay_s1
-      puts
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
       if self.checkEnvironmentEssential == false then
-         puts
          self.printEnvironmentError
-         puts
          exit(99)
       end
-
-      ## --------------------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-   
-      if @logger == nil then
-         puts
-	      puts "Error in getFromInterface::main"
-		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		   puts
-		   puts
-		   exit(99)
-      end
-      ## --------------------------------------------
      
       require 'dec/ODataClientDHUS'
       
@@ -215,10 +210,8 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## 
 
    def test_class_delay_s2
-      puts
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
       if self.checkEnvironmentEssential == false then
          puts
@@ -227,23 +220,6 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          exit(99)
       end
 
-      ## --------------------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-   
-      if @logger == nil then
-         puts
-	      puts "Error in getFromInterface::main"
-		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		   puts
-		   puts
-		   exit(99)
-      end
       ## --------------------------------------------
      
       require 'dec/ODataClientDHUS'
@@ -677,25 +653,90 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    def test_command_creation_delay_s1a
 
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
 
       require 'Date'
 
       ## Query by CreationDate for Sentinel-1A
       
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -d 2 --query dhus:s1:S1A -D -L /tmp"
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -d 2 --query dhus:s1:S1A -L /tmp"
       
-      puts cmd
+      @@logger.debug(cmd)
+      
       assert(system(cmd), "#{cmd} Datatake query")
-      puts
 
       sleep(5.0)
    
    end
 
    ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_delay_s2a
+
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-2A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -d 2 --query dhus:s2:S2A -L /tmp"
+      
+      @@logger.debug(cmd)
+      
+      assert(system(cmd), "#{cmd} Datatake query")
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_delay_s3a
+
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+
+      ## Query by CreationDate for Sentinel-2A
+      
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -d 2 --query dhus:s3:S3A -L /tmp"
+      
+      @@logger.debug(cmd)
+      
+      assert(system(cmd), "#{cmd} Datatake query")
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def test_command_creation_delay_s5p
+
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+
+      ## Query by CreationDate for Sentinel-2A
+      
+      cmd = "decODataClient -u s5pguest -p s5pguest -d 2 --query dhus_s5p:s5:S5 -L /tmp"
+      
+      @@logger.debug(cmd)
+      
+      assert(system(cmd), "#{cmd} Datatake query")
+
+      sleep(5.0)
+   
+   end
+
+   ## ------------------------------------------------------
+
 
    ## ------------------------------------------------------
 
@@ -706,17 +747,16 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## DEC_OPER_OPDHUS_S1A_AUIP_20210422T110156_V20210317T235900_20210318T000050_9_0
 
    def test_s1a_validity
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
 
       ## Query by ContentDate/Start ContentDate/End for Sentinel-1A
    
       cmd = "decODataClient -u borjalf -p perrillo.pwd -s \"2021-07-17T23:00:00.000,2021-07-18T00:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
       
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "#{cmd} Datatake query")
-      puts
+
    end
    ## ------------------------------------------------------
 

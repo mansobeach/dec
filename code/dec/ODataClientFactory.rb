@@ -30,7 +30,7 @@ require 'dec/DEC_Environment'
 require 'dec/ODataClientADGS'
 require 'dec/ODataClientTEST_ADGS'
 require 'dec/ODataClientDHUS'
-
+require 'dec/ODataClientDHUS_S5P'
 
 
 module DEC
@@ -69,12 +69,16 @@ class ODataClientFactory
 
    def get_instance
    
-       if @query.include?("TEST_ADGS") == true then
+      if @query.include?("TEST_ADGS") == true then
          return ODataClientTEST_ADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @download, @logger)
       end
   
       if @query.include?("ADGS") == true then
          return ODataClientADGS.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @download, @logger)
+      end
+
+      if @query.include?("DHUS_S5P") == true then
+         return ODataClientDHUS_S5P.new(@user, @password, @query, @creationtime, @datetime, @sensingtime,  @full_path_dir, @download, @logger)
       end
 
       if @query.include?("DHUS") == true then
