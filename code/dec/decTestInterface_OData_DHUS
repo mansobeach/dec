@@ -196,7 +196,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, datetime, nil, "/tmp", false, @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, datetime, nil, "/tmp", false, @@logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -226,7 +226,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       
       currentTime = DateTime.now - (1.5/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", nil, datetime, nil, "/tmp", false, @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2B", nil, datetime, nil, "/tmp", false, @@logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -251,31 +251,12 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          puts
          exit(99)
       end
-
-      ## --------------------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-   
-      if @logger == nil then
-         puts
-	      puts "Error in getFromInterface::main"
-		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		   puts
-		   puts
-		   exit(99)
-      end
-      ## --------------------------------------------
      
       require 'dec/ODataClientDHUS'
       
       currentTime = DateTime.now - (5.0/24.0)
       datetime    = currentTime.strftime("%Y-%m-%dT%H:00:00.000")
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", nil, datetime, nil, "/tmp", false, @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s3:S3B", nil, datetime, nil, "/tmp", false, @@logger)
       client.setDebugMode
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
@@ -299,29 +280,10 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          puts
          exit(99)
       end
-
-      ## --------------------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-   
-      if @logger == nil then
-         puts
-	      puts "Error in getFromInterface::main"
-		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		   puts
-		   puts
-		   exit(99)
-      end
-      ## --------------------------------------------
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-06-17T23:59:00.000,2021-06-18T00:00:00.000", "/tmp", false, @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s1:S1B", nil, nil, "2021-06-17T23:59:00.000,2021-06-18T00:00:00.000", "/tmp", false, @@logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -344,29 +306,10 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
          puts
          exit(99)
       end
-
-      ## --------------------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("odata", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-   
-      if @logger == nil then
-         puts
-	      puts "Error in getFromInterface::main"
-		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
-		   puts
-		   puts
-		   exit(99)
-      end
-      ## --------------------------------------------
      
       require 'dec/ODataClientDHUS'
       
-      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, nil, "2021-07-18T00:00:00.000,2021-07-18T00:05:00.000", "/tmp", false, @logger)
+      client      = ODataClientDHUS.new("borjalf", "perrillo.pwd", "dhus:s2:S2A", nil, nil, "2021-07-18T00:00:00.000,2021-07-18T00:05:00.000", "/tmp", false, @@logger)
       client.setDebugMode
       assert(client.exec_query, "sensing range")
       ## --------------------------------------------
@@ -570,14 +513,12 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    def test_command_creation_gnss_s1a
 
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
       cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S1A -L /Users/borja/Projects/dec/data/dhus"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "#{cmd} Datatake query")
-      puts
 
       sleep(5.0)
    
@@ -589,15 +530,12 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    def test_command_creation_gnss_s2a
 
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("================================================")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
       cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S2A -L /Users/borja/Projects/dec/data/dhus"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "#{cmd} Datatake query")
-      puts
-
       sleep(5.0)
    
    end

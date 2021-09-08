@@ -217,7 +217,7 @@ class ODataClientBase
             @logger.error(e.to_s)
             iRetry   = iRetry + 1
             response = nil
-            sleep(30.0)
+            sleep(5.0)
          end
       end
       ## ---------------------
@@ -231,8 +231,12 @@ class ODataClientBase
       end
       ## ---------------------
       
-      ## datatake is carrying the mission id    
-      createFileMetadata(dhus_instance, mission, response.body, iSkip)
+      ## datatake is carrying the mission id
+      begin    
+         createFileMetadata(dhus_instance, mission, response.body, iSkip)
+      rescue Exception => e
+         return false
+      end
       
       if @download == true then
          downloadItems(response.body)
@@ -329,7 +333,7 @@ class ODataClientBase
                iRetry   = iRetry + 1
                response = nil
                @logger.warn("Retry [#{iRetry}] #{uri.scheme}://#{uri.host}#{uri.request_uri}")
-               sleep(30.0)
+               sleep(5.0)
             end
             
          end
@@ -411,7 +415,7 @@ class ODataClientBase
       
          begin
             if iRetry != 0 then
-               sleep(10.0)
+               sleep(5.0)
                @logger.info("[DEC_255] I/F #{@system}: Retry [#{iRetry}] #{uri.scheme}://#{uri.host}#{uri.request_uri}")
 
             end
@@ -460,7 +464,14 @@ class ODataClientBase
    def createFileMetadata(service_instance, mission, data, iSkip)
    
       prevDir = Dir.pwd
-      Dir.chdir(@full_path_dir)
+      
+      begin
+         Dir.chdir(@full_path_dir)
+      rescue Exception => e
+         @logger.error("[DEC_799] I/F #{@system}: #{e.to_s}")
+         raise e
+      end
+      
       filename = ""
    
       if @datetime != nil then

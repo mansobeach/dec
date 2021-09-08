@@ -35,12 +35,13 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_126]} I/F "interface": Deleted downloaded file "filename"
 	\item \textbf{[DEC\_130]} I/F "interface": event "name" triggered  	
 	\item \textbf{[DEC\_131]} I/F "interface": event NewFile2Intray triggered
-	\item \textbf{[DEC\_135]} I/F "interface": Created Pull report "filename"
+	\item \textbf{[DEC\_135]} I/F "interface": "filename" pull report created
 	\item \textbf{[DEC\_210]} I/F "interface": File "filename" sent using "protocol"
 	\item \textbf{[DEC\_211]} File retrieved from SourceDir to the GlobalOutbox (prior its \textit{push} circulation) 
 	\item \textbf{[DEC\_212]} TBW
 	\item \textbf{[DEC\_213]} TBW
 	\item \textbf{[DEC\_214]} TBW
+    \item \textbf{[DEC\_254]} Request of OData metadata to interface
     \item \textbf{[DEC\_255]} Retry Request of OData URL		
     \item \textbf{[DEC\_257]} Metadata OData file created	
     \item \textbf{[DEC\_259]} Download request to an OData interface delivery point
@@ -191,6 +192,10 @@ The internal of the log message is a JSON string referring to:
 {"filename":"tai-utc.dat","size":61,"interface":"LOCAL","protocol":"FTP;","date":"2020-04-15 17:03:19 UTC"}
 {"filename":"mario.jpg","size":32478,"interface":"LOCAL","protocol":"FTP;","date":"2020-04-15 17:03:19 UTC"}
 \end{verbnobox}
+
+\label{DEC254}
+\subsection{[DEC\_254] Request OData Metadata to Interface}
+Request of OData Metadata to an interface.
 
 \label{DEC255}
 \subsection{[DEC\_255] Retry Request OData URL}
@@ -407,9 +412,13 @@ This error is raised when DEC tried to execute a command in sub-shell obtaining 
 \label{DEC666}
 This error is raised when DEC could not download a file from a given interface.
 
-\subsection{[DEC\_667] OData Download Failure}
-\label{DEC666}
-This error is raised when DEC could not download a file from some given OData interface delivery point.
+\subsection{[DEC\_667] OData URI Download Failure}
+\label{DEC667}
+This error is raised when DEC could not download a URI file from some given OData interface delivery point.
+
+\subsection{[DEC\_668] OData Metadata Download Failure}
+\label{DEC668}
+This error is raised when DEC could not download the OData metadata from some given OData interface delivery point.
 
 \label{DEC670}
 \subsection{[DEC\_670] Deletion Failure}
@@ -522,6 +531,12 @@ This is a configuration error regarding the definition of the compression mechan
 This is an unexpected error when launching the listener for pull operations.
 \begin{verbatim}
 [DEC_799] I/F #{entity}: Error when launching Listener
+\end{verbatim}
+
+\subsubsection{File or Directory  not existing or reachable}
+This is an error when trying to reach one file or directory.
+\begin{verbatim}
+	[DEC_799] I/F #{entity}: No such file or directory @ dir_s_chdir - /volume1/dec/interfaces/dhus_odata/
 \end{verbatim}
 % ------------------------------------------------------------------------------
 % Debug Messages

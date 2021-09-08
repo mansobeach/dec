@@ -101,6 +101,7 @@ def main
    @currentDate   = DateTime.now.strftime("%Y%m%dT%H%M%S")
    @full_path_dir = ENV['HOME']   
    cmdParams      = ARGV.dup.to_s
+   cmdFinal       = ""
    
    opts = GetoptLong.new(
      ["--user", "-u",               GetoptLong::REQUIRED_ARGUMENT],
@@ -259,7 +260,9 @@ def main
       
       ## -----------------------------------------
       
-      cmd = "[DEC_254] I/F #{@query.split(":")[0]}: decODataClient -u #{@user} -p #{@password} -q #{@query} -L #{@full_path_dir} --creation \"#{@creationtime}\""
+      cmdFinal = "decODataClient -u #{@user} -p #{@password} -q #{@query} -L #{@full_path_dir} --creation \"#{@creationtime}\""
+      
+      cmd = "[DEC_254] I/F #{@query.split(":")[0]}: #{cmdFinal}"
       @logger.info(cmd)
       ## -----------------------------------------
       
@@ -288,6 +291,11 @@ def main
    if ret == true then
       exit(0)
    else
+      if cmdFinal == "" then
+         @logger.error("[DEC_668] I/F #{@query.split(":")[0]}: #{File.basename($0)} #{cmdParams}")
+      else
+         @logger.error("[DEC_668] I/F #{@query.split(":")[0]}: #{cmdFinal}")
+      end
       exit(1)
    end
 
