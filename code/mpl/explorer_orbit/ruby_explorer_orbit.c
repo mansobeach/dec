@@ -99,6 +99,10 @@ VALUE method_check_library_version()
 
 VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAngle) 
 {
+
+   printf("\n") ;
+   printf("DEBUG: entry ruby_explorer_orbit::method_PositionInOrbit\n") ;  
+   printf("\n") ;
    
    char path_orbit_file[XO_MAX_STR] ;   
    strcpy(path_orbit_file, StringValueCStr(strROEF) ) ;
@@ -379,6 +383,12 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
      xo_print_msg(&n, msg) ;
   }
 
+
+   printf("\n") ;
+   printf("DEBUG: exit ruby_explorer_orbit::method_PositionInOrbit\n") ;  
+   printf("\n") ;
+
+
   return rb_str_new2(ascii_out) ;
 }
 
@@ -394,6 +404,10 @@ VALUE method_PositionInOrbit(VALUE self, VALUE strROEF, VALUE lOrbit, VALUE dAng
 
 VALUE method_DateTime2OrbitAbsolute(VALUE self, VALUE strROEF, VALUE strUTC) 
 {
+
+   printf("\n") ;
+   printf("DEBUG: entry ruby_explorer_orbit::method_DateTime2OrbitAbsolute\n") ;  
+   printf("\n") ;
 
    char strUTCDate [30] ;
    strcpy(strUTCDate, StringValueCStr(strUTC) ) ; 
@@ -586,6 +600,10 @@ VALUE method_DateTime2OrbitAbsolute(VALUE self, VALUE strROEF, VALUE strUTC)
    xl_time_close(&time_id, ierr) ;
    
    xo_orbit_close (&orbit_id, ierr) ;
+
+   printf("\n") ;
+   printf("DEBUG: exit ruby_explorer_orbit::method_DateTime2OrbitAbsolute\n") ;  
+   printf("\n") ;
    
    return LONG2NUM(lOrbitNumber) ;
 
