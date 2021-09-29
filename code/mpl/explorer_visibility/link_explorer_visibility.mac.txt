@@ -1,2 +1,0 @@
-gcc -fPIC -g -O3 -shared -o libexplorer_visibility.so -Wl,-force_load libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a
-

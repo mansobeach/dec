@@ -16,7 +16,24 @@ INCLUDEDIR = RbConfig::CONFIG['includedir']
 
 # setup constant that is equal to that of the file path that holds that static libraries that will need to be compiled against
 
-LIB_DIRS = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "lib/MACIN64"))]
+
+prevDir = Dir.pwd
+
+Dir.chdir(File.join(File.dirname(__FILE__), 'lib/LINUX64/'))
+
+
+cmd = "gcc -Wl,--whole-archive libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a -shared -o libearth_explorer_cfi.so -Wl,-no-whole-archive"
+puts cmd
+system(cmd)
+
+cmd = "cp libearth_explorer_cfi.so ../../"
+puts cmd
+system(cmd)
+
+Dir.chdir(prevDir)
+
+# LIB_DIRS = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "lib/#{ENV['MPTOOLS_PLATFORM']}"))]  
+LIB_DIRS = [LIBDIR, File.dirname(__FILE__), File.expand_path(File.join(File.dirname(__FILE__), "lib/LINUX64"))]  
 
 HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), "include"))]
 
@@ -26,9 +43,7 @@ HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), "i
 # - libexplorer_orbit.a
 # - others 
 
-libs = ['-lxml2', '-lexplorer_lib', '-lexplorer_orbit', '-lexplorer_data_handling', '-lexplorer_file_handling', '-lexplorer_visibility']
-
-#libs = ['-lxml2', '-lexplorer_lib', '-lexplorer_orbit', '-lexplorer_data_handling', '-lexplorer_file_handling']
+libs = ['-learth_explorer_cfi']
 
 dir_config('mpl', HEADER_DIRS, LIB_DIRS)
 
