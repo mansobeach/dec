@@ -1,8 +1,8 @@
 /*!
     @file   explorer_file_handling.h
     @brief  Public header file for the explorer_file_handling library.
-    @version  4.13
-    @date   05/04/2017
+    @version  4.20
+    @date   30/11/2020
 
     <b>Copyright DEIMOS SPACE S.L.U</b>
 
@@ -19,59 +19,53 @@
 
     <center><b>Software User Manual
 
-    EE-MA-DMS-GS-008 Issue 4.13
+    EE-MA-DMS-GS-008 Issue 4.20
 
-    05/04/2017</b></center>
+    30/11/2020</b></center>
 
 
     @htmlinclude usage_guide.html
 
 */
 
-
-
 #ifndef _EXPLORER_FILE_HANDLING_H
 #define _EXPLORER_FILE_HANDLING_H
- 
+
 /* Constants */
 /* ========= */
 
 /*! @def XF_MAX_FILES_NUMBER
          Maximum number of open files allowed*/
-#define XF_MAX_FILES_NUMBER  10
+#define XF_MAX_FILES_NUMBER 10
 /*! @def XF_MAX_ERROR_MSG_LENGTH
          Maximum number of characters in error message*/
-#define XF_MAX_ERROR_MSG_LENGTH  512
+#define XF_MAX_ERROR_MSG_LENGTH 512
 /*! @def XF_MAX_XML_NODE_NAME_LENGTH
          Maximum number of characters in element or attribute name */
 #define XF_MAX_XML_NODE_NAME_LENGTH 64
 /*! @def XF_MAX_VALUE_LENGTH
          Maximum number of characters in content value of XML nodes */
-#define XF_MAX_VALUE_LENGTH  512
-/*! @def XF_MAX_ARRAY_SIZE
-         Maximum number of elements in an array of values */
-#define XF_MAX_ARRAY_SIZE  10000
+#define XF_MAX_VALUE_LENGTH 512
 /*! @def XF_MAX_ATTR_ARRAY_SIZE
          Maximum number of attributes */
-#define XF_MAX_ATTR_ARRAY_SIZE  10
+#define XF_MAX_ATTR_ARRAY_SIZE 10
 /*! @def XF_MAX_PATH_LENGTH
-         Maximum number of characters in a path */
-#define XF_MAX_PATH_LENGTH  256
+         Maximum number of characters in a XML path */
+#define XF_MAX_PATH_LENGTH 256
 /*! @def XF_MAX_FILENAME_LENGTH
          Maximum number of characters in a filename */
-#define XF_MAX_FILENAME_LENGTH  64
+#define XF_MAX_FILENAME_LENGTH 64
 
 /* Main CFI Functions - prototype declaration */
 /* ========================================== */
 #ifdef __cplusplus
-  extern "C"
-  {
+extern "C"
+{
 #endif
-/* Parser initialization and clean-up functions */
-/* ============================================ */
+  /* Parser initialization and clean-up functions */
+  /* ============================================ */
 
-
-/*! @fn long xf_tree_init_parser ( char *file,
+  /*! @fn long xf_tree_init_parser ( char *file,
                                    long *error );
 
     @brief Loads an XML file into memory
@@ -98,9 +92,9 @@
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-long xf_tree_init_parser ( char *file,
-                           long *error );
-/*!
+  long xf_tree_init_parser(char* file,
+                           long* error);
+  /*!
     @fn void xf_tree_cleanup_parser ( long *fd, long *error );
 
     @brief Releases parser resources
@@ -119,9 +113,9 @@ long xf_tree_init_parser ( char *file,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_cleanup_parser ( long *fd, long *error );
+  void xf_tree_cleanup_parser(long* fd, long* error);
 
-/*!
+  /*!
     @fn void xf_tree_cleanup_all_parser ( void );
 
     @brief Releases all parser resources
@@ -137,13 +131,12 @@ void xf_tree_cleanup_parser ( long *fd, long *error );
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_cleanup_all_parser ( void );
+  void xf_tree_cleanup_all_parser(void);
 
+  /* Reading functions */
+  /* ================= */
 
-/* Reading functions */
-/* ================= */
-
-/*! @fn void xf_tree_get_current_element_name ( long *fd,
+  /*! @fn void xf_tree_get_current_element_name ( long *fd,
                                                 char **name,
                                                 long *error );
 
@@ -171,11 +164,11 @@ void xf_tree_cleanup_all_parser ( void );
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *name. The user must free this memory after using it.
  */
-void xf_tree_get_current_element_name ( long *fd,
-                                        char **name,
-                                        long *error );
+  void xf_tree_get_current_element_name(long* fd,
+                                        char** name,
+                                        long* error);
 
-/*! @fn       void xf_tree_read_integer_element_value ( long *fd,
+  /*! @fn       void xf_tree_read_integer_element_value ( long *fd,
                                                         char *element,
                                                         long *value,
                                                         long *error );
@@ -210,14 +203,14 @@ void xf_tree_get_current_element_name ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_integer_element_value ( long *fd,
-                                          char *element,
-                                          long *value,
-                                          long *error );
+  void xf_tree_read_integer_element_value(long* fd,
+                                          char* element,
+                                          long* value,
+                                          long* error);
 
-/*! @fn  void xf_tree_read_integer_element_array ( long *fd,
+  /*! @fn  void xf_tree_read_integer_element_array ( long *fd,
                                                    char *element,
-                                                   long *array,
+                                                   long **array,
                                                    long *length,
                                                    long *error );
     @brief    Reads an array of integer number values
@@ -238,11 +231,9 @@ void xf_tree_read_integer_element_value ( long *fd,
     an array of integers. Please noticed that in case there are several
     conversion errors in the array elements, only the last one is
     published.
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
 
-    - Assumptions : 
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -257,16 +248,15 @@ void xf_tree_read_integer_element_value ( long *fd,
        - XF_CFI_VALUE_OUT_OF_RANGE
     - Warnings   :
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_integer_element_array ( long *fd,
-      char *element,
-      long *array,
-      long *length,
-      long *error );
+  void xf_tree_read_integer_element_array(long* fd,
+                                          char* element,
+                                          long** array, // AN-853
+                                          long* length,
+                                          long* error);
 
-/*! @fn void xf_tree_read_real_element_value ( long *fd,
+  /*! @fn void xf_tree_read_real_element_value ( long *fd,
                                                char *element,
                                                double *value,
                                                long *error );
@@ -302,14 +292,14 @@ void xf_tree_read_integer_element_array ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_real_element_value ( long *fd,
-                                       char *element,
-                                       double *value,
-                                       long *error );
+  void xf_tree_read_real_element_value(long* fd,
+                                       char* element,
+                                       double* value,
+                                       long* error);
 
-/*! @fn       void xf_tree_read_real_element_array ( long *fd,
+  /*! @fn       void xf_tree_read_real_element_array ( long *fd,
                                                      char *element,
-                                                     double *array,
+                                                     double **array,
                                                      long *length,
                                                      long *error );
     @brief    Reads an array of real number values
@@ -330,11 +320,9 @@ void xf_tree_read_real_element_value ( long *fd,
     an array of doubles. Please noticed that in case there are several
     conversion errors in the array elements, only the last one is
     published.
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
 
-    - Assumptions : 
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -349,17 +337,15 @@ void xf_tree_read_real_element_value ( long *fd,
        - XF_CFI_VALUE_OUT_OF_RANGE
     - Warnings   :
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_real_element_array ( long *fd,
-                                       char *element,
-                                       double *array,
-                                       long *length,
-                                       long *error );
+  void xf_tree_read_real_element_array(long* fd,
+                                       char* element,
+                                       double** array, // AN-853
+                                       long* length,
+                                       long* error);
 
-
-/*! @fn       void xf_tree_read_string_element_value ( long *fd,
+  /*! @fn       void xf_tree_read_string_element_value ( long *fd,
                                                        char *element,
                                                        char **value,
                                                        long *error );
@@ -394,12 +380,12 @@ void xf_tree_read_real_element_array ( long *fd,
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *value. The user must free this memory after using it.
  */
-void xf_tree_read_string_element_value ( long *fd,
-                                         char *element,
-                                         char **value,
-                                         long *error );
+  void xf_tree_read_string_element_value(long* fd,
+                                         char* element,
+                                         char** value,
+                                         long* error);
 
-/*! @fn void xf_tree_read_string_element_array ( long *fd,
+  /*! @fn void xf_tree_read_string_element_array ( long *fd,
                                           char *element,
                                           char ***array,
                                           long *length,
@@ -420,13 +406,9 @@ void xf_tree_read_string_element_value ( long *fd,
     This function reads the values of all elements in the file referred by
     the \a fd whose name match \a element and returns them as
     an array of characters strings.
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
 
-    - Assumptions :
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
-       - It is assumed that \a *array is an array of (char*) already reserved by the user:
-         i.e: array = calloc(XF_MAX_ARRAY_SIZE, sizeof(char *));
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -439,17 +421,16 @@ void xf_tree_read_string_element_value ( long *fd,
        - XF_CFI_NO_ELEMENT_FOUND
     - Warnings   :
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is allocated internally for each \a *array element . The user must free this memory after using it.
  */
-void xf_tree_read_string_element_array ( long *fd,
-                                         char *element,
-                                         char ***array,
-                                         long *length,
-                                         long *error );
+  void xf_tree_read_string_element_array(long* fd,
+                                         char* element,
+                                         char*** array,
+                                         long* length,
+                                         long* error);
 
-/*! @fn       void xf_tree_read_string_attribute ( long *fd,
+  /*! @fn       void xf_tree_read_string_attribute ( long *fd,
                                                    char *element,
                                                    char *attribute_name,
                                                    char **attribute_value,
@@ -491,13 +472,13 @@ void xf_tree_read_string_element_array ( long *fd,
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *attribute_value. The user must free this memory after using it.
  */
-void xf_tree_read_string_attribute ( long *fd,
-                                     char *element,
-                                     char *attribute_name,
-                                     char **attribute_value,
-                                     long *error );
+  void xf_tree_read_string_attribute(long* fd,
+                                     char* element,
+                                     char* attribute_name,
+                                     char** attribute_value,
+                                     long* error);
 
-/*! @fn       void xf_tree_read_integer_attribute ( long *fd,
+  /*! @fn       void xf_tree_read_integer_attribute ( long *fd,
                                                     char *element,
                                                     char *attribute_name,
                                                     long *attribute_value,
@@ -539,13 +520,13 @@ void xf_tree_read_string_attribute ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_integer_attribute ( long *fd,
-                                      char *element,
-                                      char *attribute_name,
-                                      long *attribute_value,
-                                      long *error );
+  void xf_tree_read_integer_attribute(long* fd,
+                                      char* element,
+                                      char* attribute_name,
+                                      long* attribute_value,
+                                      long* error);
 
-/*! @fn       void xf_tree_read_real_attribute ( long *fd,
+  /*! @fn       void xf_tree_read_real_attribute ( long *fd,
                                                  char *element,
                                                  char *attribute_name,
                                                  double *attribute_value,
@@ -587,13 +568,13 @@ void xf_tree_read_integer_attribute ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_read_real_attribute ( long *fd,
-                                   char *element,
-                                   char *attribute_name,
-                                   double *attribute_value,
-                                   long *error );
+  void xf_tree_read_real_attribute(long* fd,
+                                   char* element,
+                                   char* attribute_name,
+                                   double* attribute_value,
+                                   long* error);
 
-/*! @fn       void xf_tree_path_read_string_node_value ( long *fd,
+  /*! @fn       void xf_tree_path_read_string_node_value ( long *fd,
                                                          char *path,
                                                          char **value,
                                                          long *error );
@@ -631,13 +612,12 @@ void xf_tree_read_real_attribute ( long *fd,
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *value. The user must free this memory after using it.
  */
-void xf_tree_path_read_string_node_value ( long *fd,
-                                           char *path,
-                                           char **value,
-                                           long *error );
+  void xf_tree_path_read_string_node_value(long* fd,
+                                           char* path,
+                                           char** value,
+                                           long* error);
 
-
-/*! @fn       void xf_tree_path_read_integer_node_value ( long *fd,
+  /*! @fn       void xf_tree_path_read_integer_node_value ( long *fd,
                                                           char *path,
                                                           long *value,
                                                           long *error );
@@ -675,13 +655,12 @@ void xf_tree_path_read_string_node_value ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_path_read_integer_node_value ( long *fd,
-                                            char *path,
-                                            long *value,
-                                            long *error );
+  void xf_tree_path_read_integer_node_value(long* fd,
+                                            char* path,
+                                            long* value,
+                                            long* error);
 
-
-/*! @fn       void xf_tree_path_read_real_node_value ( long *fd,
+  /*! @fn       void xf_tree_path_read_real_node_value ( long *fd,
                                                        char *path,
                                                        double *value,
                                                        long *error );
@@ -719,13 +698,12 @@ void xf_tree_path_read_integer_node_value ( long *fd,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_path_read_real_node_value ( long *fd,
-                                         char *path,
-                                         double *value,
-                                         long *error );
+  void xf_tree_path_read_real_node_value(long* fd,
+                                         char* path,
+                                         double* value,
+                                         long* error);
 
-
-/*! @fn void xf_tree_path_read_string_node_array ( long *fd,
+  /*! @fn void xf_tree_path_read_string_node_array ( long *fd,
                                                    char *path,
                                                    char ***array,
                                                    long *length,
@@ -750,13 +728,9 @@ void xf_tree_path_read_real_node_value ( long *fd,
     an array of strings (character arrays). Please noticed that in case
     there are several conversion errors in the array elements, only the
     last one is published.
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
 
-    - Assumptions : 
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
-       - It is assumed that \a *array is an array of (char*) already reserved by the user:
-         i.e: array = calloc(XF_MAX_ARRAY_SIZE, sizeof(char *));
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -770,19 +744,18 @@ void xf_tree_path_read_real_node_value ( long *fd,
     - Warnings   :
        - XF_CFI_ROOT_ALREADY_REACHED
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is allocated internally for each \a *array element . The user must free this memory after using it.
  */
-void xf_tree_path_read_string_node_array ( long *fd,
-                                           char *path,
-                                           char ***array,
-                                           long *length,
-                                           long *error );
+  void xf_tree_path_read_string_node_array(long* fd,
+                                           char* path,
+                                           char*** array,
+                                           long* length,
+                                           long* error);
 
-/*! @fn void xf_tree_path_read_integer_node_array ( long *fd,
+  /*! @fn void xf_tree_path_read_integer_node_array ( long *fd,
                                                     char *path,
-                                                    long *array,
+                                                    long **array,
                                                     long *length,
                                                     long *error );
 
@@ -805,11 +778,9 @@ void xf_tree_path_read_string_node_array ( long *fd,
     an array of longs. Please noticed that in case there are several
     conversion errors in the array elements, only the last one is
     published.
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
 
-    - Assumptions :
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -825,16 +796,15 @@ void xf_tree_path_read_string_node_array ( long *fd,
     - Warnings   :
        - XF_CFI_ROOT_ALREADY_REACHED
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_path_read_integer_node_array ( long *fd,
-                                            char *path,
-                                            long *array,
-                                            long *length,
-                                            long *error );
+  void xf_tree_path_read_integer_node_array(long* fd,
+                                            char* path,
+                                            long** array, // AN-853
+                                            long* length,
+                                            long* error);
 
-/*! @fn       void xf_tree_path_read_real_node_array ( long *fd,
+  /*! @fn       void xf_tree_path_read_real_node_array ( long *fd,
                                                        char *path,
                                                        double *array,
                                                        long *length,
@@ -860,11 +830,9 @@ void xf_tree_path_read_integer_node_array ( long *fd,
     an array of doubles. Please noticed that in case there are several
     conversion errors in the array elements, only the last one is
     published.
-
-    - Assumptions : 
-       - It is assumed that the size of the array variable
-         which shall contain the elements is equal or greater
-         than \a XF_MAX_ARRAY_SIZE
+    The output array is allocated internally, so the associated memory
+    must be freed by the user.
+    
     - Errors   :
        - XF_CFI_WRONG_FILE_DESCRIPTOR
        - XF_CFI_DOC_NOT_PARSED_OR_CREATED
@@ -880,22 +848,20 @@ void xf_tree_path_read_integer_node_array ( long *fd,
     - Warnings   :
        - XF_CFI_ROOT_ALREADY_REACHED
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference   : See the \a libxml documentation
  */
 
+  void xf_tree_path_read_real_node_array(long* fd,
+                                         char* path,
+                                         double** array, // AN-853
+                                         long* length,
+                                         long* error);
 
-void xf_tree_path_read_real_node_array ( long *fd,
-                                         char *path,
-                                         double *array,
-                                         long *length,
-                                         long *error );
-
-/*! @fn void xf_tree_get_namespace(long  *fd,
+  /*! @fn void xf_tree_get_namespace(long  *fd,
                                    char  *node_name, 
                                    long  *num_ns,
-                                   char  *prefix[XF_MAX_ARRAY_SIZE], 
-                                   char  *url[XF_MAX_ARRAY_SIZE],
+                                   char  ***prefix, 
+                                   char  ***url,
                                    long  *error); 
 
     @brief     Reads all the namespace that applies to a given node
@@ -921,22 +887,21 @@ void xf_tree_path_read_real_node_array ( long *fd,
        - There are no more than 50 namespaces in that node
     - Errors   :
        - XF_CFI_VALUE_NOT_FOUND
-       - XF_CFI_ARRAY_EXCEEDED
     - Warnings   :
        - 
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_get_namespace(long  *fd,
-                           char  *node_name, 
-                           long  *num_ns,
-                           char  *prefix[XF_MAX_ARRAY_SIZE], 
-                           char  *url[XF_MAX_ARRAY_SIZE],
-                           long  *error);
+  void xf_tree_get_namespace(long* fd,
+                             char* node_name,
+                             long* num_ns,
+                             char*** prefix, // AN-853
+                             char*** url, // AN-853
+                             long* error);
 
-/* Navigation functions */
-/* ==================== */
+  /* Navigation functions */
+  /* ==================== */
 
-/*! @fn void xf_tree_rewind ( long *fd, long *error );
+  /*! @fn void xf_tree_rewind ( long *fd, long *error );
 
     @brief  Sets the read pointer to the beginning of the file
 
@@ -957,10 +922,9 @@ void xf_tree_get_namespace(long  *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_rewind ( long *fd, long *error );
+  void xf_tree_rewind(long* fd, long* error);
 
-
-/*! @fn void xf_tree_go_to_path_node ( long *fd,
+  /*! @fn void xf_tree_go_to_path_node ( long *fd,
                                        char *path,
                                        long *error );
 
@@ -993,11 +957,11 @@ void xf_tree_rewind ( long *fd, long *error );
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_go_to_path_node ( long *fd,
-                               char *path,
-                               long *error );
+  void xf_tree_go_to_path_node(long* fd,
+                               char* path,
+                               long* error);
 
-/*! @fn void xf_tree_go_to_element_node ( long *fd,
+  /*! @fn void xf_tree_go_to_element_node ( long *fd,
                                           char *element,
                                           long *error );
 
@@ -1025,12 +989,11 @@ void xf_tree_go_to_path_node ( long *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_go_to_element_node ( long *fd,
-                                  char *element,
-                                  long *error );
+  void xf_tree_go_to_element_node(long* fd,
+                                  char* element,
+                                  long* error);
 
-
-/*! @fn void xf_tree_go_to_next_element_node ( long *fd,
+  /*! @fn void xf_tree_go_to_next_element_node ( long *fd,
                                                long *error );
 
 
@@ -1053,11 +1016,10 @@ void xf_tree_go_to_element_node ( long *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_go_to_next_element_node ( long *fd,
-                                       long *error );
+  void xf_tree_go_to_next_element_node(long* fd,
+                                       long* error);
 
-
-/*! @fn void xf_tree_get_path ( long *fd,
+  /*! @fn void xf_tree_get_path ( long *fd,
                                 char *path,
                                 long *error );
 
@@ -1085,18 +1047,16 @@ void xf_tree_go_to_next_element_node ( long *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_get_path ( long *fd,
-                        char *path,
-                        long *error );
+  void xf_tree_get_path(long* fd,
+                        char* path,
+                        long* error);
 
+  /* Writing functions */
+  /* ================= */
 
-/* Writing functions */
-/* ================= */
+  /* XML document and node creation functions */
 
-/* XML document and node creation functions */
-
-
-/*! @fn     long xf_tree_create( long *error );
+  /*! @fn     long xf_tree_create( long *error );
 
     @brief  Create a memory representation of an empty XML document
 
@@ -1117,9 +1077,9 @@ void xf_tree_get_path ( long *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-long xf_tree_create ( long *error );
+  long xf_tree_create(long* error);
 
-/*! @fn     void xf_tree_create_root ( long *id,
+  /*! @fn     void xf_tree_create_root ( long *id,
                                        char *name,
                                        long *error );
 
@@ -1145,11 +1105,11 @@ long xf_tree_create ( long *error );
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_create_root ( long *id,
-                           char *name,
-                           long *error );
+  void xf_tree_create_root(long* id,
+                           char* name,
+                           long* error);
 
-/*! @fn     void xf_tree_add_child ( long *id,
+  /*! @fn     void xf_tree_add_child ( long *id,
                                      char *parent,
                                      char *name,
                                      long *error );
@@ -1183,12 +1143,12 @@ void xf_tree_create_root ( long *id,
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_add_child ( long *id,
-                         char *parent,
-                         char *name,
-                         long *error );
+  void xf_tree_add_child(long* id,
+                         char* parent,
+                         char* name,
+                         long* error);
 
-/*! @fn     void xf_tree_add_next_sibling ( long *id,
+  /*! @fn     void xf_tree_add_next_sibling ( long *id,
                                             char *current,
                                             char *name,
                                             long *error );
@@ -1223,12 +1183,12 @@ void xf_tree_add_child ( long *id,
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_add_next_sibling ( long *id,
-                                char *current,
-                                char *name,
-                                long *error );
+  void xf_tree_add_next_sibling(long* id,
+                                char* current,
+                                char* name,
+                                long* error);
 
-/*! @fn     void xf_tree_add_previous_sibling ( long *id,
+  /*! @fn     void xf_tree_add_previous_sibling ( long *id,
                                                 char *current,
                                                 char *name,
                                                 long *error );
@@ -1263,12 +1223,12 @@ void xf_tree_add_next_sibling ( long *id,
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_add_previous_sibling ( long *id,
-                                    char *current,
-                                    char *name,
-                                    long *error );
+  void xf_tree_add_previous_sibling(long* id,
+                                    char* current,
+                                    char* name,
+                                    long* error);
 
-/*! @fn     void xf_tree_add_attribute ( long *id,
+  /*! @fn     void xf_tree_add_attribute ( long *id,
                                          char *current,
                                          char *name,
                                          long *error );
@@ -1299,12 +1259,12 @@ void xf_tree_add_previous_sibling ( long *id,
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_add_attribute ( long *id,
-                             char *current,
-                             char *name,
-                             long *error );
+  void xf_tree_add_attribute(long* id,
+                             char* current,
+                             char* name,
+                             long* error);
 
-/*! @fn     void xf_tree_remove_node ( long *id,
+  /*! @fn     void xf_tree_remove_node ( long *id,
                                        char *name,
                                        long *error );
 
@@ -1334,11 +1294,11 @@ void xf_tree_add_attribute ( long *id,
        - XF_CFI_ROOT_ALREADY_REACHED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_remove_node ( long *id,
-                           char *name,
-                           long *error );
+  void xf_tree_remove_node(long* id,
+                           char* name,
+                           long* error);
 
-/*! @fn     void xf_tree_set_integer_node_value ( long *id,
+  /*! @fn     void xf_tree_set_integer_node_value ( long *id,
                                                   char *name,
                                                   long *value,
                                                   char *format,
@@ -1376,13 +1336,13 @@ void xf_tree_remove_node ( long *id,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_set_integer_node_value ( long *id,
-                                      char *name,
-                                      long *value,
-                                      char *format,
-                                      long *error );
+  void xf_tree_set_integer_node_value(long* id,
+                                      char* name,
+                                      long* value,
+                                      char* format,
+                                      long* error);
 
-/*! @fn     void xf_tree_set_real_node_value ( long *id,
+  /*! @fn     void xf_tree_set_real_node_value ( long *id,
                                                char *name,
                                                double *value,
                                                char *format,
@@ -1420,13 +1380,13 @@ void xf_tree_set_integer_node_value ( long *id,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_set_real_node_value ( long *id,
-                                   char *name,
-                                   double *value,
-                                   char *format,
-                                   long *error );
+  void xf_tree_set_real_node_value(long* id,
+                                   char* name,
+                                   double* value,
+                                   char* format,
+                                   long* error);
 
-/*! @fn     void xf_tree_set_string_node_value ( long *id,
+  /*! @fn     void xf_tree_set_string_node_value ( long *id,
                                                  char *name,
                                                  char *value,
                                                  char *format,
@@ -1464,13 +1424,13 @@ void xf_tree_set_real_node_value ( long *id,
        - XF_CFI_MAX_LENGTH_EXCEEDED
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_set_string_node_value ( long *id,
-                                     char *name,
-                                     char *value,
-                                     char *format,
-                                     long *error );
+  void xf_tree_set_string_node_value(long* id,
+                                     char* name,
+                                     char* value,
+                                     char* format,
+                                     long* error);
 
-/*! @fn     void xf_tree_write ( long *id,
+  /*! @fn     void xf_tree_write ( long *id,
                                  char *name,
                                  long *error );
 
@@ -1505,11 +1465,11 @@ void xf_tree_set_string_node_value ( long *id,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_write ( long *id,
-                     char *name,
-                     long *error );
+  void xf_tree_write(long* id,
+                     char* name,
+                     long* error);
 
-/*! @fn void xf_set_schema (char *filename,
+  /*! @fn void xf_set_schema (char *filename,
                             char *schema, 
                             long *action,
                             long *error);
@@ -1539,13 +1499,12 @@ void xf_tree_write ( long *id,
     - Reference   : See the \a libxml documentation
  */
 
-void xf_set_schema (char *filename, char *schema, long *action, long *error);
+  void xf_set_schema(char* filename, char* schema, long* action, long* error);
 
+  /* Search functions */
+  /* ================ */
 
-/* Search functions */
-/* ================ */
-
-/*! @fn     void xf_tree_find_string_value_element( long *fd,
+  /*! @fn     void xf_tree_find_string_value_element( long *fd,
                                                     char *element,
                                                     char *value,
                                                     char *found_path,
@@ -1592,13 +1551,13 @@ void xf_set_schema (char *filename, char *schema, long *action, long *error);
     - Reference : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *found_path. The user must free this memory after using it.
  */
-void xf_tree_find_string_value_element( long *fd,
-                                        char *element,
-                                        char *value,
-                                        char *found_path,
-                                        long *error );
+  void xf_tree_find_string_value_element(long* fd,
+                                         char* element,
+                                         char* value,
+                                         char* found_path,
+                                         long* error);
 
-/*! @fn     void xf_tree_find_string_value_path( long *fd,
+  /*! @fn     void xf_tree_find_string_value_path( long *fd,
                                                  char *path,
                                                  char *value,
                                                  char *found_path,
@@ -1650,20 +1609,19 @@ void xf_tree_find_string_value_element( long *fd,
     - Warnings   :
        - XF_CFI_ROOT_ALREADY_REACHED
        - XF_CFI_MAX_LENGTH_EXCEEDED
-       - XF_CFI_TOO_MANY_ELEMENTS
     - Reference : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *found_path. The user must free this memory after using it.
  */
-void xf_tree_find_string_value_path( long *fd,
-                                     char *path,
-                                     char *value,
-                                     char *found_path,
-                                     long *error);
+  void xf_tree_find_string_value_path(long* fd,
+                                      char* path,
+                                      char* value,
+                                      char* found_path,
+                                      long* error);
 
-/* Error functions */
-/* =============== */
+  /* Error functions */
+  /* =============== */
 
-/*! @fn  void xf_basic_error_msg ( long error_code, char *error_message );
+  /*! @fn  void xf_basic_error_msg ( long error_code, char *error_message );
 
     @brief  Gets default message corresponding to the input error code
 
@@ -1684,14 +1642,12 @@ void xf_tree_find_string_value_path( long *fd,
     - Warnings   : N/A
     - Reference   : N/A
  */
-void xf_basic_error_msg ( long error_code, char *error_message );
+  void xf_basic_error_msg(long error_code, char* error_message);
 
+  /* Error codes: The first element must be updated when adding new error codes    */
+  /* ============================================================================= */
 
-/* Error codes: The first element must be updated when adding new error codes    */
-/* ============================================================================= */
-
-
-/*! @enum  XF_CFI_General_err_enum
+  /*! @enum  XF_CFI_General_err_enum
 
     @brief List of error and warning codes
 
@@ -1701,8 +1657,8 @@ void xf_basic_error_msg ( long error_code, char *error_message );
 
  */
 
-void xf_verbose(); //AN-584
-/*! @fn  void xf_verbose ( );
+  void xf_verbose(); //AN-584
+  /*! @fn  void xf_verbose ( );
 
     @brief  Set verbosity flag
 
@@ -1711,8 +1667,8 @@ void xf_verbose(); //AN-584
     libxml are displayed to stdedd.
  */
 
-void xf_silent(); //AN-584
-/*! @fn  void xf_silent ( );
+  void xf_silent(); //AN-584
+  /*! @fn  void xf_silent ( );
 
     @brief  Unset verbosity flag
 
@@ -1721,81 +1677,78 @@ void xf_silent(); //AN-584
     libxml are NOT displayed to stdedd.
  */
 
+  typedef enum
+  {
+    XF_CFI_FIRST_ELEMENT = -39, /*!< First element. AN-853: removed one error code*/
 
-typedef enum {
-   XF_CFI_FIRST_ELEMENT = -40,      /*!< First element*/
-   
-   XF_CFI_ARRAY_EXCEEDED,           /*!< Maximum number of elements in array exceeded */
-   XF_CFI_LOCK_ERROR,               /*!< Could not lock other running threads */
-   XF_CFI_UNLOCK_ERROR,             /*!< Could not unlock other blocked threads */
+    XF_CFI_LOCK_ERROR, /*!< Could not lock other running threads */
+    XF_CFI_UNLOCK_ERROR, /*!< Could not unlock other blocked threads */
 
-   XF_CFI_VALUE_NOT_FOUND,          /*!< The requested value has not been found */
-   XF_CFI_FILENAME_TOO_LONG,        /*!< The filename is too long*/
-   XF_CFI_WRONG_HEADER_ELEMENT,     /*!< Element not allowed to be included in a header*/
-   XF_CFI_WRONG_HEADER_FILE_EXTENSION,    /*!< File can?t contain a header*/
-   XF_CFI_WRONG_HEADER_FILE_FORMAT,    /*!< The header file contains unwanted tags*/
+    XF_CFI_VALUE_NOT_FOUND, /*!< The requested value has not been found */
+    XF_CFI_FILENAME_TOO_LONG, /*!< The filename is too long*/
+    XF_CFI_WRONG_HEADER_ELEMENT, /*!< Element not allowed to be included in a header*/
+    XF_CFI_WRONG_HEADER_FILE_EXTENSION, /*!< File can?t contain a header*/
+    XF_CFI_WRONG_HEADER_FILE_FORMAT, /*!< The header file contains unwanted tags*/
 
-   XF_CFI_EMPTY_ELEMENT,            /*!< Element is empty*/
-   XF_CFI_NO_ARRAY_PATH,            /*!< The given path is not for an array*/
-   XF_CFI_SAVING_DOC_ERROR,         /*!< Unable to save the XML document into disk*/
-   XF_CFI_INVALID_FILE_FORMAT,      /*!< Unable to read an item. Invalid file format*/
+    XF_CFI_EMPTY_ELEMENT, /*!< Element is empty*/
+    XF_CFI_NO_ARRAY_PATH, /*!< The given path is not for an array*/
+    XF_CFI_SAVING_DOC_ERROR, /*!< Unable to save the XML document into disk*/
+    XF_CFI_INVALID_FILE_FORMAT, /*!< Unable to read an item. Invalid file format*/
 
-   XF_CFI_INVALID_FORMAT,           /*!< Printing format provided is not valid*/
-   XF_CFI_REMOVING_NODE_ERROR,      /*!< Unable to remove an element node*/
+    XF_CFI_INVALID_FORMAT, /*!< Printing format provided is not valid*/
+    XF_CFI_REMOVING_NODE_ERROR, /*!< Unable to remove an element node*/
 
-   XF_CFI_ADDING_SIBLING_ERROR,     /*!< Unable to add a sibling node*/
-   XF_CFI_CREATING_NODE_ERROR,      /*!< Unable to create an element node*/
-   XF_CFI_ROOT_ALREADY_EXISTS,      /*!< Root element already exists*/
-   XF_CFI_CREATING_DOC_ERROR,       /*!< Error when creating a new XML document*/
-   XF_CFI_WRONG_FILE_DESCRIPTOR,    /*!< File descriptor out of range*/
+    XF_CFI_ADDING_SIBLING_ERROR, /*!< Unable to add a sibling node*/
+    XF_CFI_CREATING_NODE_ERROR, /*!< Unable to create an element node*/
+    XF_CFI_ROOT_ALREADY_EXISTS, /*!< Root element already exists*/
+    XF_CFI_CREATING_DOC_ERROR, /*!< Error when creating a new XML document*/
+    XF_CFI_WRONG_FILE_DESCRIPTOR, /*!< File descriptor out of range*/
 
-   XF_CFI_CURRENT_NODE_IS_NULL,     /*!< Current node is NULL. Rewind is needed*/
-   XF_CFI_MAX_FILES_REACHED,        /*!< The max. number of open files has been
-                                                reached. No more files are allowed*/
-   XF_CFI_NODE_NAME_TOO_LONG,     /*!< Name of node exceeds the maximum allowed*/
-   XF_CFI_PATH_TOO_LONG,            /*!< Path length exceeds the maximum allowed*/
-   XF_CFI_NOT_A_TERMINAL_ELEMENT,   /*!< Current node has other xml
+    XF_CFI_CURRENT_NODE_IS_NULL, /*!< Current node is NULL. Rewind is needed*/
+    XF_CFI_MAX_FILES_REACHED, /*!< The max. number of open files has been
+                                              reached. No more files are allowed*/
+    XF_CFI_NODE_NAME_TOO_LONG, /*!< Name of node exceeds the maximum allowed*/
+    XF_CFI_PATH_TOO_LONG, /*!< Path length exceeds the maximum allowed*/
+    XF_CFI_NOT_A_TERMINAL_ELEMENT, /*!< Current node has other xml
                                                 elements as value*/
 
-   XF_CFI_NO_ATTRIBUTES,            /*!< Current node has no attributes*/
-   XF_CFI_VALUE_OUT_OF_RANGE,       /*!< Element value (integer or real)
+    XF_CFI_NO_ATTRIBUTES, /*!< Current node has no attributes*/
+    XF_CFI_VALUE_OUT_OF_RANGE, /*!< Element value (integer or real)
                                                 is out of range*/
-   XF_CFI_NOT_A_DOUBLE,             /*!< Value to be converted is not a double*/
-   XF_CFI_NOT_A_LONG,               /*!< Value to be converted is not an integer*/
-   XF_CFI_NO_ELEMENT_FOUND,         /*!< No element was found in the search*/
+    XF_CFI_NOT_A_DOUBLE, /*!< Value to be converted is not a double*/
+    XF_CFI_NOT_A_LONG, /*!< Value to be converted is not an integer*/
+    XF_CFI_NO_ELEMENT_FOUND, /*!< No element was found in the search*/
 
-   XF_CFI_ROOT_NODE_IS_NULL,        /*!< Root node is NULL. Initialization is needed*/
-   XF_CFI_NOT_AN_ELEMENT_NODE,      /*!< Current node is not an xml element node*/
-   XF_CFI_NO_ELEMENT_REQUESTED,     /*!< There is no element name set to be searched*/
-   XF_CFI_DOC_NOT_PARSED_OR_CREATED,/*!< No XML document has been parsed or created*/
-   XF_CFI_MEMORY_ERROR,             /*!< Unable to ask for memory*/
+    XF_CFI_ROOT_NODE_IS_NULL, /*!< Root node is NULL. Initialization is needed*/
+    XF_CFI_NOT_AN_ELEMENT_NODE, /*!< Current node is not an xml element node*/
+    XF_CFI_NO_ELEMENT_REQUESTED, /*!< There is no element name set to be searched*/
+    XF_CFI_DOC_NOT_PARSED_OR_CREATED, /*!< No XML document has been parsed or created*/
+    XF_CFI_MEMORY_ERROR, /*!< Unable to ask for memory*/
 
-   XF_CFI_GETTING_ROOT_ERROR,       /*!< Unable to get the root element
+    XF_CFI_GETTING_ROOT_ERROR, /*!< Unable to get the root element
                                                 during initialisation*/
-   XF_CFI_PARSING_FILE_ERROR,       /*!< Error during initialisation*/
-   XF_CFI_BAD_INPUT_ARGUMENT,       /*!< Bad input argument*/
-   XF_CFI_GENERIC_ERROR,            /*!< Generic error*/
-   XF_CFI_UNKNOWN_ERROR_CODE,       /*!< Error code for unknown error codes*/
+    XF_CFI_PARSING_FILE_ERROR, /*!< Error during initialisation*/
+    XF_CFI_BAD_INPUT_ARGUMENT, /*!< Bad input argument*/
+    XF_CFI_GENERIC_ERROR, /*!< Generic error*/
+    XF_CFI_UNKNOWN_ERROR_CODE, /*!< Error code for unknown error codes*/
 
-   XF_CFI_OK = 0,                   /*!< OK */
+    XF_CFI_OK = 0, /*!< OK */
 
-   XF_CFI_ROOT_ALREADY_REACHED,     /*!< Warning used when the path goes
+    XF_CFI_ROOT_ALREADY_REACHED, /*!< Warning used when the path goes
                                                 up too much*/
-   XF_CFI_TOO_MANY_ELEMENTS,        /*!< The number of elements in the file
+    XF_CFI_MAX_LENGTH_EXCEEDED, /*!< Length of element name or value
                                                 exceeds the size of the storage variable*/
-   XF_CFI_MAX_LENGTH_EXCEEDED,      /*!< Length of element name or value
-                                                exceeds the size of the storage variable*/
-   XF_CFI_GENERIC_WARNING,          /*!< Generic warning*/
-   XF_CFI_HEADER_ALREADY_EXISTS,    /*!< Header already exists*/
+    XF_CFI_GENERIC_WARNING, /*!< Generic warning*/
+    XF_CFI_HEADER_ALREADY_EXISTS, /*!< Header already exists*/
 
-   XF_CFI_LAST_ELEMENT              /*!< Last element*/
-} XF_CFI_General_err_enum;
+    XF_CFI_LAST_ELEMENT /*!< Last element*/
+  } XF_CFI_General_err_enum;
 
-/* ===================================================== */
-/* NEW FUNCTIONS FOR WRITING EARTH EXPLORER FILE HEADERS */
-/* ===================================================== */
-/*#ifdef XF_EARTH_EXPLORER_HEADER*/
-/*!
+  /* ===================================================== */
+  /* NEW FUNCTIONS FOR WRITING EARTH EXPLORER FILE HEADERS */
+  /* ===================================================== */
+  /*#ifdef XF_EARTH_EXPLORER_HEADER*/
+  /*!
     @fn void xf_tree_create_header (long *fd,
                                     long *file_extension_type,
                                     long *error)
@@ -1828,10 +1781,9 @@ typedef enum {
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_create_header (long *fd, long *file_extension_type, long *error);
+  void xf_tree_create_header(long* fd, long* file_extension_type, long* error);
 
-
-/*!
+  /*!
     @fn void xf_tree_set_fixed_header_item ( long *fd,
                                              char *item_id,
                                              char *item_value,
@@ -1861,13 +1813,12 @@ void xf_tree_create_header (long *fd, long *file_extension_type, long *error);
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_set_fixed_header_item ( long *fd,
-                                     char *item_id,
-                                     char *item_value,
-                                     long *error);
+  void xf_tree_set_fixed_header_item(long* fd,
+                                     char* item_id,
+                                     char* item_value,
+                                     long* error);
 
-
-/*!
+  /*!
     @fn void xf_tree_set_fixed_header_items ( long *fd,
                                      char *file_name,
                                      char *file_description,
@@ -1928,12 +1879,9 @@ void xf_tree_set_fixed_header_item ( long *fd,
     - Warnings   : N/A
     - Reference   : See the \a libxml documentation
  */
-void xf_tree_set_fixed_header_items ( long *fd, char *file_name, char *file_description, char *notes,
-                                      char *mission, char *file_class, char *file_type, char *validity_start,
-                                      char *validity_stop, long *file_version, char *system, char *creator,
-                                      char *creator_version, char *creation_date, long *error);
+  void xf_tree_set_fixed_header_items(long* fd, char* file_name, char* file_description, char* notes, char* mission, char* file_class, char* file_type, char* validity_start, char* validity_stop, long* file_version, char* system, char* creator, char* creator_version, char* creation_date, long* error);
 
-/*!
+  /*!
     @fn void xf_tree_get_fixed_header_item ( long *fd,
                                              char *item_id,
                                              char **item_value,
@@ -1966,14 +1914,12 @@ void xf_tree_set_fixed_header_items ( long *fd, char *file_name, char *file_desc
     - Reference   : See the \a libxml documentation
     - Memory allocation Note: Memory is dynamically allocated internally for \a *item_value. The user must free this memory after using it.
  */
-void xf_tree_get_fixed_header_item ( long *fd,
-                                     char *item_id,
-                                     char **item_value,
-                                     long *error);
+  void xf_tree_get_fixed_header_item(long* fd,
+                                     char* item_id,
+                                     char** item_value,
+                                     long* error);
 
-
-
-/*!
+  /*!
     @fn void xf_tree_get_fixed_header_items ( long *fd,
                                               char **file_name,
                                               char **file_description,
@@ -2039,24 +1985,23 @@ void xf_tree_get_fixed_header_item ( long *fd,
     - Memory allocation Note: Memory is dynamically allocated internally for each char* argument. The user must free this memory after using it.
 
  */
-void xf_tree_get_fixed_header_items ( long *fd,
-                                      char **file_name,
-                                      char **file_description,
-                                      char **notes,
-                                      char **mission,
-                                      char **file_class,
-                                      char **file_type,
-                                      char **validity_start,
-                                      char **validity_stop,
-                                      long *file_version,
-                                      char **system,
-                                      char **creator,
-                                      char **creator_version,
-                                      char **creation_date,
-                                      long *error);
+  void xf_tree_get_fixed_header_items(long* fd,
+                                      char** file_name,
+                                      char** file_description,
+                                      char** notes,
+                                      char** mission,
+                                      char** file_class,
+                                      char** file_type,
+                                      char** validity_start,
+                                      char** validity_stop,
+                                      long* file_version,
+                                      char** system,
+                                      char** creator,
+                                      char** creator_version,
+                                      char** creation_date,
+                                      long* error);
 
-
-/*!
+  /*!
     @fn void xf_create_filename ( long *mission_id,
                                   char *file_class,
                                   char *file_type,
@@ -2094,16 +2039,15 @@ void xf_tree_get_fixed_header_items ( long *fd,
     - Warnings   : N/A
     - Reference   : None
  */
-void xf_create_filename ( long *satellite_id,
-                          char *file_class,
-                          char *file_type,
-                          char *instance_id,
-                          long *file_extension_type,
-                          char *filename,
-                          long *error);
+  void xf_create_filename(long* satellite_id,
+                          char* file_class,
+                          char* file_type,
+                          char* instance_id,
+                          long* file_extension_type,
+                          char* filename,
+                          long* error);
 
-
-/*!
+  /*!
     @fn  void xf_read_filename_items ( char *filename,
                                        long *satellite_id,
                                        char *file_class,
@@ -2136,14 +2080,14 @@ void xf_create_filename ( long *satellite_id,
     - Warnings   : N/A
     - Reference   : None
  */
-void xf_read_filename_items ( char *filename,
-                              long *satellite_id,
-                              char *file_class,
-                              char *file_type,
-                              char *instance_id,
-                              long *error);
+  void xf_read_filename_items(char* filename,
+                              long* satellite_id,
+                              char* file_class,
+                              char* file_type,
+                              char* instance_id,
+                              long* error);
 
-/*!
+  /*!
     @fn  xf_copy_node(long *fd, 
 		  char *dest_node,
 		  char *src_file,
@@ -2173,13 +2117,13 @@ void xf_read_filename_items ( char *filename,
     - Warnings   : N/A
     - Reference   : None
  */
-void xf_copy_node(long *fd, 
-		  char *dest_node,
-		  char *src_file,
-		  char *source_node,
-		  long *error);
+  void xf_copy_node(long* fd,
+                    char* dest_node,
+                    char* src_file,
+                    char* source_node,
+                    long* error);
 
-/*!
+  /*!
     @fn  xf_check_library_version();
 
     @brief Get the library version
@@ -2191,125 +2135,130 @@ void xf_copy_node(long *fd,
     - Warnings    : N/A
     - Reference   : None
  */
-long xf_check_library_version();
-
+  long xf_check_library_version();
 
 #if defined(expcfi_check_libs)
 
-#if !defined(xd_check_library_version) && !defined(xl_check_library_version) && !defined(xo_check_library_version) && !defined(xp_check_library_version) && !defined(xv_check_library_version)
+  #if !defined(xd_check_library_version) && !defined(xl_check_library_version) && !defined(xo_check_library_version) && !defined(xp_check_library_version) && !defined(xv_check_library_version)
 
-#undef expcfi_check_libs
-#define expcfi_check_libs xf_check_library_version
+    #undef expcfi_check_libs
+    #define expcfi_check_libs xf_check_library_version
 
-#endif
-
+  #endif
 
 #else
 
-#define expcfi_check_libs xf_check_library_version
+  #define expcfi_check_libs xf_check_library_version
 
 #endif
 
-
-
-/*! @enum XF_File_extension_type_enum
+  /*! @enum XF_File_extension_type_enum
 
     @brief List of XML Header files allowed
 
  */
-typedef enum {
-   XF_HEADER_FORMAT_EEF,      /*!< XML file with Header and Datablock (Earth Explorer mission) */
-   XF_HEADER_FORMAT_HDR,      /*!< XML file with Header*/
-   XF_HEADER_FORMAT_DBL,      /*!< XML file with Datablock*/
-   XF_HEADER_FORMAT_NONE,     /*!< No extension when generating filename*/
-   XF_HEADER_FORMAT_EOF       /*!< XML file with Header and Datablock (Earth Observation mission) */
-} XF_File_extension_type_enum;
+  typedef enum
+  {
+    XF_HEADER_FORMAT_EEF, /*!< XML file with Header and Datablock (Earth Explorer mission) */
+    XF_HEADER_FORMAT_HDR, /*!< XML file with Header*/
+    XF_HEADER_FORMAT_DBL, /*!< XML file with Datablock*/
+    XF_HEADER_FORMAT_NONE, /*!< No extension when generating filename*/
+    XF_HEADER_FORMAT_EOF /*!< XML file with Header and Datablock (Earth Observation mission) */
+  } XF_File_extension_type_enum;
 
-/*! @enum XF_Set_schema_enum
+  /*! @enum XF_Set_schema_enum
 
     @brief List of actions to do when calling to xf_set_schema
 
  */
-typedef enum 
-{
-   XF_CHANGE_SCHEMA_AND_VERSION, /*!< Change schema and version */
-   XF_CHANGE_SCHEMA,             /*!< Change schema */
-   XF_DELETE_ALL,                /*!< Delete schema and version attributes */
-   XF_DELETE_SCHEMA              /*!< Delete schema attribute */
-} XF_Set_schema_enum;
+  typedef enum
+  {
+    XF_CHANGE_SCHEMA_AND_VERSION, /*!< Change schema and version */
+    XF_CHANGE_SCHEMA, /*!< Change schema */
+    XF_DELETE_ALL, /*!< Delete schema and version attributes */
+    XF_DELETE_SCHEMA /*!< Delete schema attribute */
+  } XF_Set_schema_enum;
 
-
-/*! @enum XF_Sat_id_enum
+  /*! @enum XF_Sat_id_enum
 
     @brief List of Satellite Ids allowed
 
  */
 
-typedef enum
-{
+  typedef enum
+  {
 
-   XF_SAT_DEFAULT = 0,      /*!< Default satellite Id */
-   XF_SAT_DEFAULT1 = 1,
-   XF_SAT_DEFAULT2 = 2,
-   XF_SAT_DEFAULT3 = 3,
-   XF_SAT_DEFAULT4 = 4,
-   XF_SAT_DEFAULT5 = 5,
-   XF_SAT_DEFAULT6 = 6,
-   XF_SAT_DEFAULT7 = 7,
-   XF_SAT_DEFAULT8 = 8,
-   XF_SAT_DEFAULT9 = 9,
-   XF_SAT_ERS1    = 11,     /*!< Satellite Id for ERS1*/
-   XF_SAT_ERS2    = 12,     /*!< Satellite Id for ERS2*/
-   XF_SAT_ENVISAT = 21,     /*!< Satellite Id for Envisat*/
-   XF_SAT_METOP1  = 31,     /*!< Satellite Id for MetOp1*/
-   XF_SAT_METOP2  = 32,     /*!< Satellite Id for MetOP2*/
-   XF_SAT_METOP3  = 33,     /*!< Satellite Id for MetOp3*/
-   XF_SAT_CRYOSAT = 41,     /*!< Satellite Id for Cryosat*/
-   XF_SAT_ADM     = 51,     /*!< Satellite Id for Aeolus*/
-   XF_SAT_GOCE    = 61,     /*!< Satellite Id for GOCE*/
-   XF_SAT_SMOS    = 71,     /*!< Satellite Id for SMOS*/
-   XF_SAT_TERRASAR  = 81,   /*!< Satellite Id for TERRASAR*/
-   XF_SAT_EARTHCARE = 91,   /*!< Satellite Id for EARTHCARE */
-   XF_SAT_SWARM_A   = 101,  /*!< Satellite Id for SWARM A */
-   XF_SAT_SWARM_B   = 102,  /*!< Satellite Id for SWARM B */
-   XF_SAT_SWARM_C   = 103,  /*!< Satellite Id for SWARM C */
-   XF_SAT_SENTINEL_1A = 110,
-   XF_SAT_SENTINEL_1B = 111,
-   XF_SAT_SENTINEL_2  = 112, /* deprecated */
-   XF_SAT_SENTINEL_3  = 113, /* deprecated */
-   XF_SAT_SEOSAT      = 120,
-   XF_SAT_SENTINEL_1C = 125,
-   XF_SAT_SENTINEL_2A = 126,
-   XF_SAT_SENTINEL_2B = 127,
-   XF_SAT_SENTINEL_2C = 128,
-   XF_SAT_SENTINEL_3A = 129,
-   XF_SAT_SENTINEL_3B = 130,
-   XF_SAT_SENTINEL_3C = 131,
-   XF_SAT_JASON_CSA	  = 132, // AN-531 
-   XF_SAT_JASON_CSB   = 133, // AN-531  
-   XF_SAT_METOP_SG_A1 = 134, // AN-530 
-   XF_SAT_METOP_SG_A2 = 135, // AN-530 
-   XF_SAT_METOP_SG_A3 = 136, // AN-530 
-   XF_SAT_METOP_SG_B1 = 137, // AN-530 
-   XF_SAT_METOP_SG_B2 = 138, // AN-530 
-   XF_SAT_METOP_SG_B3 = 139, // AN-530 
-   XF_SAT_SENTINEL_5P = 140, // AN-502    
-   XF_SAT_BIOMASS     = 141, // AN-601    
-   XF_SAT_SENTINEL_5  = 142, // AN-639    
-   XF_SAT_SAOCOM_CS   = 143, // AN-640    
-   XF_SAT_GENERIC     = 200,
-   XF_SAT_GENERIC_GEO = 300, /* ANR-353 */
-   XF_SAT_MTG         = 301, /* ANR-353 */
-   XF_SAT_GENERIC_MEO = 400  /* ANR-550 */
+    XF_SAT_DEFAULT = 0, /*!< Default satellite Id */
+    XF_SAT_DEFAULT1 = 1,
+    XF_SAT_DEFAULT2 = 2,
+    XF_SAT_DEFAULT3 = 3,
+    XF_SAT_DEFAULT4 = 4,
+    XF_SAT_DEFAULT5 = 5,
+    XF_SAT_DEFAULT6 = 6,
+    XF_SAT_DEFAULT7 = 7,
+    XF_SAT_DEFAULT8 = 8,
+    XF_SAT_DEFAULT9 = 9,
+    XF_SAT_ERS1 = 11, /*!< Satellite Id for ERS1*/
+    XF_SAT_ERS2 = 12, /*!< Satellite Id for ERS2*/
+    XF_SAT_ENVISAT = 21, /*!< Satellite Id for Envisat*/
+    XF_SAT_METOP1 = 31, /*!< Satellite Id for MetOp1*/
+    XF_SAT_METOP2 = 32, /*!< Satellite Id for MetOP2*/
+    XF_SAT_METOP3 = 33, /*!< Satellite Id for MetOp3*/
+    XF_SAT_CRYOSAT = 41, /*!< Satellite Id for Cryosat*/
+    XF_SAT_ADM = 51, /*!< Satellite Id for Aeolus*/
+    XF_SAT_GOCE = 61, /*!< Satellite Id for GOCE*/
+    XF_SAT_SMOS = 71, /*!< Satellite Id for SMOS*/
+    XF_SAT_TERRASAR = 81, /*!< Satellite Id for TERRASAR*/
+    XF_SAT_EARTHCARE = 91, /*!< Satellite Id for EARTHCARE */
+    XF_SAT_SWARM_A = 101, /*!< Satellite Id for SWARM A */
+    XF_SAT_SWARM_B = 102, /*!< Satellite Id for SWARM B */
+    XF_SAT_SWARM_C = 103, /*!< Satellite Id for SWARM C */
+    XF_SAT_SENTINEL_1A = 110,
+    XF_SAT_SENTINEL_1B = 111,
+    XF_SAT_SENTINEL_2 = 112, /* deprecated */
+    XF_SAT_SENTINEL_3 = 113, /* deprecated */
+    XF_SAT_SEOSAT = 120,
+    XF_SAT_SENTINEL_1C = 125,
+    XF_SAT_SENTINEL_2A = 126,
+    XF_SAT_SENTINEL_2B = 127,
+    XF_SAT_SENTINEL_2C = 128,
+    XF_SAT_SENTINEL_3A = 129,
+    XF_SAT_SENTINEL_3B = 130,
+    XF_SAT_SENTINEL_3C = 131,
+    XF_SAT_JASON_CSA = 132, // AN-531
+    XF_SAT_JASON_CSB = 133, // AN-531
+    XF_SAT_METOP_SG_A1 = 134, // AN-530
+    XF_SAT_METOP_SG_A2 = 135, // AN-530
+    XF_SAT_METOP_SG_A3 = 136, // AN-530
+    XF_SAT_METOP_SG_B1 = 137, // AN-530
+    XF_SAT_METOP_SG_B2 = 138, // AN-530
+    XF_SAT_METOP_SG_B3 = 139, // AN-530
+    XF_SAT_SENTINEL_5P = 140, // AN-502
+    XF_SAT_BIOMASS = 141, // AN-601
+    XF_SAT_SENTINEL_5 = 142, // AN-639
+    XF_SAT_SAOCOM_CS = 143, // AN-640
+    XF_SAT_FLEX = 144, /* AN-683 */
+    XF_SAT_SENTINEL_6A = 145, /* AN-809 */
+    XF_SAT_SENTINEL_6B = 146, /* AN-809 */
+    XF_SAT_CIMR = 147,
+    XF_SAT_ROSEL = 148,
+    XF_SAT_CHIME = 149,
+    XF_SAT_CRISTAL = 150,
+    XF_SAT_CO2M = 151,
+    XF_SAT_LSTM = 152,
+    XF_SAT_FORUM = 153,
+    XF_SAT_GENERIC = 200,
+    XF_SAT_GENERIC_GEO = 300, /* ANR-353 */
+    XF_SAT_MTG = 301, /* ANR-353 */
+    XF_SAT_GENERIC_MEO = 400 /* ANR-550 */
 
-} XF_Sat_id_enum;
+  } XF_Sat_id_enum;
 
-/*#endif*/
+  /*#endif*/
 
-/* ====================================================== */
-/* /NEW FUNCTIONS FOR WRITING EARTH EXPLORER FILE HEADERS */
-/* ====================================================== */
-
+  /* ====================================================== */
+  /* /NEW FUNCTIONS FOR WRITING EARTH EXPLORER FILE HEADERS */
+  /* ====================================================== */
 
 #ifdef __cplusplus
 }

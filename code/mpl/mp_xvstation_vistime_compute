@@ -24,7 +24,8 @@
 #
 #
 # == Usage
-# mp_xvstation_vistime_compute --orbit-abs-start <orbit_start> --orbit-abs-end <orbit_end>
+# mp_xvstation_vistime_compute --orbit-abs-start <orbit_start> --orbit-abs-end <orbit_end> -S <GFUCINBX>
+#     --list  it lists the ground stations
 #     --orbit-abs-start <orbit>     absolute start orbit
 #     --orbit-abs-end <orbit>       absolute end orbit
 #     --Debug     shows Debug info during the execution
@@ -59,9 +60,11 @@ def main
 
    @orbit_abs_start  = 0
    @orbit_abs_end    = 0
+   @station          = ""
    
    opts = GetoptLong.new(
      ["--orbit-abs-start",   "-s",     GetoptLong::REQUIRED_ARGUMENT],
+     ["--Station",   "-S",             GetoptLong::REQUIRED_ARGUMENT],
      ["--orbit-abs-end",   "-e",       GetoptLong::REQUIRED_ARGUMENT],
      ["--list", "-l",                  GetoptLong::NO_ARGUMENT],
      ["--version", "-v",               GetoptLong::NO_ARGUMENT],
@@ -76,7 +79,8 @@ def main
             when "--Debug"                then @isDebugMode             = true
             when "--list"                 then @bList                   = true    
             when "--version"              then @bShowVersion            = true 
-            when "--usage"                then @bShowUsage              = true   
+            when "--usage"                then @bShowUsage              = true
+            when "--Station"              then @station                 = arg.to_s
             when "--orbit-abs-start"      then @orbit_abs_start         = arg.to_i
             when "--orbit-abs-end"        then @orbit_abs_end           = arg.to_i
 			   when "--help"                 then usage
@@ -167,11 +171,14 @@ def main
    arrStationID   = cfi.xd_read_station_id(statDB, @isDebugMode)
 
    arrStationID.each{|station_id|
-      @logger.debug(station_id)
+      if @isDebugMode == true then
+         @logger.debug(station_id)
+      end
       outFile  = "S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
    
-      @logger.debug("Generating #{outFile}")
-      retVal   = cfi.xv_stationvistime_compute(
+      if @station == station_id then
+         @logger.debug("Generating #{outFile} #{@orbit_abs_start} - #{@orbit_abs_end}")
+         retVal   = cfi.xv_stationvistime_compute(
                                     roef, 
                                     swath, 
                                     statDB, 
@@ -181,6 +188,8 @@ def main
                                     outFile,
                                     @isDebugMode
                                     )
+         break
+      end
    }
 
    exit(0)

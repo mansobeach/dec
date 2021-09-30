@@ -16,24 +16,25 @@ INCLUDEDIR = RbConfig::CONFIG['includedir']
 
 # setup constant that is equal to that of the file path that holds that static libraries that will need to be compiled against
 
-
 prevDir = Dir.pwd
 
-Dir.chdir(File.join(File.dirname(__FILE__), 'lib/LINUX64/'))
+#Dir.chdir(File.join(File.dirname(__FILE__), 'lib/MACIN64/'))
 
+Dir.chdir(File.dirname(__FILE__))
 
-cmd = "gcc -Wl,--whole-archive libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a -shared -o libearth_explorer_cfi.so -Wl,-no-whole-archive"
+cmd = "mv lib/MACIN64/* ."
 puts cmd
 system(cmd)
 
-cmd = "cp libearth_explorer_cfi.so ../../"
+cmd = "gcc -fPIC -g -O3 -shared -o libearth_explorer_cfi.so -Wl,-force_load libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a"
 puts cmd
 system(cmd)
 
 Dir.chdir(prevDir)
 
 # LIB_DIRS = [LIBDIR, File.expand_path(File.join(File.dirname(__FILE__), "lib/#{ENV['MPTOOLS_PLATFORM']}"))]  
-LIB_DIRS = [LIBDIR, File.dirname(__FILE__), File.expand_path(File.join(File.dirname(__FILE__), "lib/LINUX64"))]  
+LIB_DIRS = [LIBDIR, ".", "/usr/lib/", "/usr/lib/system", File.dirname(__FILE__), File.expand_path(File.join(File.dirname(__FILE__), "lib/MACIN64"))]  
+
 
 HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), "include"))]
 
@@ -43,7 +44,7 @@ HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), "i
 # - libexplorer_orbit.a
 # - others 
 
-libs = ['-learth_explorer_cfi']
+libs = ['-lxml2', '-lexplorer_lib', '-lexplorer_orbit', '-lexplorer_pointing', '-lexplorer_data_handling', '-lexplorer_file_handling', '-lexplorer_visibility', '-learth_explorer_cfi']
 
 dir_config('mpl', HEADER_DIRS, LIB_DIRS)
 

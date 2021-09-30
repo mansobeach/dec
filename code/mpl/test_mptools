@@ -131,6 +131,10 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), "mp_xvstation_vistime_compute list stations")
 
+      cmd = "mp_xvstation_vistime_compute -S GKIRUNBX -s 9572 -e 9575"
+      @@logger.debug(cmd)
+      assert(system(cmd), "mp_xvstation_vistime_compute for Kiruna")
+
    end
    ## ------------------------------------------------------
    
