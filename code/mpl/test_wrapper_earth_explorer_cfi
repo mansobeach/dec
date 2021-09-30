@@ -14,8 +14,7 @@ require 'test/unit'
 require 'cuc/Converters'
 require 'cuc/Log4rLoggerFactory'
 require 'mpl/MPL_Environment'
-
-#require_relative 'ruby_earth_explorer_cfi'
+require 'mpl/MPL_Loader_Wrapper_Earth_Explorer'
 
 ## 1 - test_xo_check_library_version
 ## 2 - test_xo_time_to_orbit
@@ -23,9 +22,7 @@ require 'mpl/MPL_Environment'
 ## 4 - test_xd_read_station_id
 ## 5 - test_xv_stationvistime_compute
 
-########## 5 - test_xv_stationvistime_compute
-
-class TestCase_ExplorerOrbit < Test::Unit::TestCase
+class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
 
    include CUC::Converters
 
@@ -128,12 +125,9 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
    ## Test to print out the library version
 
-   def test_xo_check_library_version
-   
-      require_relative 'ruby_earth_explorer_cfi'
-   
+   def test_xo_check_library_version   
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")
-      isDebugMode = true
+      isDebugMode = false
       test0       = MPL::Earth_Explorer_CFI.new
       val         = test0.xo_check_library_version(isDebugMode)
       @@logger.debug(val)
@@ -144,11 +138,11 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
    def test_xo_time_to_orbit
    
-      require_relative 'ruby_earth_explorer_cfi'
+      # require_relative 'ruby_earth_explorer_cfi'
 
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")
       
-      isDebugMode = true
+      isDebugMode = false
       strDate     = "20170422T120000"
       test        = MPL::Earth_Explorer_CFI.new
    
@@ -179,7 +173,7 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
    def test_xd_read_station_id
    
-      require_relative 'ruby_earth_explorer_cfi'
+      # require_relative 'ruby_earth_explorer_cfi'
       
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
 
@@ -204,7 +198,7 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
   def test_xv_stationvistime_compute
   
-     require_relative 'ruby_earth_explorer_cfi'
+     # require_relative 'ruby_earth_explorer_cfi'
   
      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
 
@@ -220,7 +214,7 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
      arrStationID.each{|station_id|
        
-        outFile  = "/Users/borja/S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
+        outFile  = "/tmp/S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
         
         @@logger.debug("Generating #{outFile} with cfi.xv_stationvistime_compute")
      
@@ -245,7 +239,7 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
 
     def test_xo_position_on_orbit_to_time
     
-       require_relative 'ruby_earth_explorer_cfi'
+       # require_relative 'ruby_earth_explorer_cfi'
  
        @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
        
@@ -254,7 +248,7 @@ class TestCase_ExplorerOrbit < Test::Unit::TestCase
        lOrbit      = 9572
        fAngleAnx   = 78.1299
        strROF      = "Predicted"
-       isDebugMode = true
+       isDebugMode = false
  
        val = test.xo_position_on_orbit_to_time("#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBPRE_20170420T072457_20170430T072457_0001.EOF", lOrbit, fAngleAnx, isDebugMode)
  

@@ -25,7 +25,7 @@
 /*============================================================================*/
 
 
-VALUE method_xo_check_library_version(VALUE isDebugMode) 
+VALUE method_xo_check_library_version(VALUE self, VALUE isDebugMode) 
 {
    int iDebug = RTEST(isDebugMode) ;
    
