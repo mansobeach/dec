@@ -20,7 +20,8 @@ require 'mpl/MPL_Loader_Wrapper_Earth_Explorer'
 ## 2 - test_xo_time_to_orbit
 ## 3 - test_xo_position_on_orbit_to_time
 ## 4 - test_xd_read_station_id
-## 5 - test_xv_stationvistime_compute
+## 5 - test_xd_read_station
+## 6 - test_xv_stationvistime_compute
 
 class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
 
@@ -175,7 +176,7 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
    
       # require_relative 'ruby_earth_explorer_cfi'
       
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")   
 
       statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
       roef           = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT"
@@ -186,9 +187,36 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
       arrStationID.each{|stationCode|
          @@logger.debug(stationCode)
       }
-      
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
    end
    ## ------------------------------------------------------
+
+   ## Read Station File
+
+   def test_xd_read_station
+         
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")   
+
+      statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
+
+      test1          = MPL::Earth_Explorer_CFI.new
+      stationInfo    = test1.xd_read_station(statDB, "GMASPABX", true)
+      
+      @@logger.debug(stationInfo.antenna)
+      
+      @@logger.debug(stationInfo.purpose)
+      
+      @@logger.debug(stationInfo.type)
+      
+      @@logger.debug(stationInfo.station_alt)
+      
+      @@logger.debug(stationInfo.station_lat)
+      
+      @@logger.debug(stationInfo.station_long)
+      
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+      
+   end
 
    ## ------------------------------------------------------
 

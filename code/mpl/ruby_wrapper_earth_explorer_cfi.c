@@ -45,7 +45,15 @@ VALUE method_xo_check_library_version() ;
 VALUE method_xo_time_to_orbit() ;
 VALUE method_xo_position_on_orbit_to_time() ;
 VALUE method_xd_read_station_id() ;
+VALUE method_xd_read_station() ;
+   VALUE method_xd_read_station_antenna() ;
+   VALUE method_xd_read_station_purpose() ;
+   VALUE method_xd_read_station_type() ;
+   VALUE method_xd_read_station_station_alt() ;
+   VALUE method_xd_read_station_station_lat() ;
+   VALUE method_xd_read_station_station_long() ;
 VALUE method_xv_stationvistime_compute() ;
+
 
 /* ========================================================= */
 
@@ -60,9 +68,17 @@ void Init_ruby_earth_explorer_cfi()
    rb_define_method(ruby_earth_explorer_cfi, "xo_time_to_orbit", method_xo_time_to_orbit, 3) ; 
    rb_define_method(ruby_earth_explorer_cfi, "xo_position_on_orbit_to_time", method_xo_position_on_orbit_to_time, 4) ;
    rb_define_method(ruby_earth_explorer_cfi, "xd_read_station_id", method_xd_read_station_id, 2) ;
+
+   rb_define_method(ruby_earth_explorer_cfi, "xd_read_station", method_xd_read_station, 3) ;
+   rb_define_method(ruby_earth_explorer_cfi, "antenna", method_xd_read_station_antenna, 0) ;
+   rb_define_method(ruby_earth_explorer_cfi, "purpose", method_xd_read_station_purpose, 0) ;
+   rb_define_method(ruby_earth_explorer_cfi, "type", method_xd_read_station_type, 0) ;
+   rb_define_method(ruby_earth_explorer_cfi, "station_alt", method_xd_read_station_station_alt, 0) ;
+   rb_define_method(ruby_earth_explorer_cfi, "station_lat", method_xd_read_station_station_lat, 0) ;
+   rb_define_method(ruby_earth_explorer_cfi, "station_long", method_xd_read_station_station_long, 0) ;
+
    rb_define_method(ruby_earth_explorer_cfi, "xv_stationvistime_compute", method_xv_stationvistime_compute, 8) ;
 
 }
-
 
 /* -------------------------------------------------------------------------- */

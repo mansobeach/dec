@@ -30,6 +30,7 @@ module MPL
    
    @@change_record = { \
       "0.0.1"  =>    "list of functions:\n\
+         xd_read_station\n\
          xd_read_station_id\n\
          xo_check_library_version\n\
          xo_position_on_orbit_to_time\n\
