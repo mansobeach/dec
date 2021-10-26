@@ -1,0 +1,57 @@
+<!--
+http://log4r.sourceforge.net/rdoc/files/log4r/configurator_rb.html
+-->
+
+<!--
+
+http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
+
+-->
+
+<log4r_config>
+ 
+ <pre_config>
+  <parameter name="mainLoggerName" value="mptools"/>
+ </pre_config>
+
+<!-- ============================================= -->
+
+<outputter name="console"  level="DEBUG" >
+   <type>StdoutOutputter</type>
+	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+	</formatter>
+</outputter>
+
+<!-- ============================================= -->
+ 
+ <outputter name="mp_log" level="DEBUG">
+  
+  <type>RollingFileOutputter</type>
+
+  <filename>/tmp/mptools.log</filename>
+
+  <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
+      <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+  </formatter>
+
+  <trunc>false</trunc>
+
+  <maxsize>10000000</maxsize>
+
+  <max_backups>4</max_backups>
+
+  <maxtime>2592000</maxtime>
+
+ </outputter>
+
+<!-- ============================================= -->
+
+ <logger name="mptools" level="DEBUG" trace="false">
+   <outputter>console</outputter>
+   <outputter>mp_log</outputter>
+ </logger>
+ 
+<!-- ============================================= --> 
+ 
+</log4r_config>
