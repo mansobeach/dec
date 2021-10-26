@@ -45,6 +45,9 @@ echo "rdr pass inet proto tcp from any to any port 4567 -> 127.0.0.1 port 4567" 
 diskutil unmount /Volumes/RECOVERY/
 sudo dd if=~/Desktop/rasp_ivan_pisco_sour.dmg of=/dev/disk2s1 bs=4096
 
+## check host conectivity
+
+nc -vz 172.22.1.156 27000
 
 ### ==========================================================================================
 

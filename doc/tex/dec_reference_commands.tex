@@ -240,6 +240,52 @@ DEIMOS-Space S.L. (bolf)
 
 \end{verbatim}
 
+
+\section{decODataClient}
+\label{decODataClient}
+
+\begin{verbatim}
+The decODataClient is a simple OData client to hit Copernicus Sentinel
+servers to extract metadata and download the associated products.
+
+DHUS queries:
+
+Query by Sentinel-2 Datatake Identifier: which looks for the associated
+published Complete Single Tile products 
+
+--query dhus:s1:S1B
+--query dhus:s2:S2A
+--query dhus:gnss:S1B
+--query dhus:s2:GS2B_20200903T104429_018252_N02.14
+--query dhus:s1:S1A:S1A_EW_GRDM
+--query dhus:s1:S1A:45C1F
+
+--query adgs:s2:S2B
+
+--query dhus_s5p:s5:S5
+
+PRIP: queries:
+
+Query is so far targetting S2PRIP specifically.
+
+--query prip:S2B_OPER_MSI_L0__DS_VGS2_20201028T163228_S20201028T144729_N02.09:MSI_L0__GR
+
+The queries can be done also specifically by PDI:
+decODataClient -u <user> -p <pass> -q prip:S2B_OPER_MSI_L0__DS_VGS1_20210126T095435_S20210126T080454_N02.09 -V
+
+== Usage
+decODataClient 
+--user      <username>
+--password  <password>
+--time       2021-03-24T00:00:00.000 (DHuS format applied to the IngestionDate)
+--delay     <hour delay> (decimal offset 0.5-0.25 is scaled to minutes)
+--sensing   "2021-03-16T00:00:00.000,2021-03-20T00:00:00.000"
+--creation  "2021-03-16T00:00:00.000,2021-03-20T00:00:00.000"
+--H         <hours delay> (decimal offset 0.5-0.25 is scaled to minutes)
+--Location  <full_path_dir>
+--format    json | xml | csv
+\end{verbatim}	
+	
 \section{decListener}
 
 \begin{verbatim}

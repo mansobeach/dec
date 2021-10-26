@@ -63,7 +63,7 @@
 #     -D    it performs the execution in Debug mode     
 # 
 # == Author
-# DEIMOS-Space S.L. (bolf)
+# DEIMOS-Space S.L.
 #
 # == Copyright
 # Copyright (c) 2005 ESA - DEIMOS Space S.L.
@@ -198,8 +198,6 @@ def main
       exit(99)
    end
     
-   checkModuleIntegrity
-
    ## ------------------------------------------------------
 
    # initialize logger
@@ -217,6 +215,10 @@ def main
 		puts
 		exit(99)
    end
+
+   ## ------------------------------------------------------
+   
+   checkModuleIntegrity
 
    ## ------------------------------------------------------
    ##
@@ -239,27 +241,38 @@ def main
    ftConfig = ReadInterfaceConfig.instance
    arrEnts  = ftConfig.getAllMnemonics
 
-   puts "\nChecking #{@projectName} interface \n\n"
+   if @isDebugMode == true then
+      @logger.debug("Checking #{@projectName} Node")
+   end
 
    # Check of the Entities Configuration
    
    if @bEntities == true or @bAll == true then
-      puts "================================================"
-      puts "Checking dec_interfaces.xml Configuration ..."
+      if @isDebugMode == true then
+         @logger.debug("Checking dec_interfaces.xml configuration ...")
+      end
       arrEnts.each{|x|         
          if @interface != "" and @interface != x then
             next
          end
-         puts "Verification of interface #{x}"
+         
+         if @isDebugMode == true then
+            @logger.debug("Verification of interface #{x}")
+         end
+
          bEnabled4Send = ftConfig.isEnabled4Sending?(x)
          bEnabled4Recv = ftConfig.isEnabled4Receiving?(x)
 
          if bEnabled4Recv == false then
-            puts "#{x} is disabled for receiving files"
+            if @isDebugMode == true or @isVerboseMode == true then
+               @logger.debug("#{x} is disabled for pull circulations")
+            end
          end
 
          if bEnabled4Send == false then
-            puts "#{x} is disabled for sending files"
+            if @isDebugMode == true or @isVerboseMode == true then
+               @logger.debug("#{x} is disabled for push circulations")
+            end
          end
 
 		   checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send, @logger)
@@ -276,23 +289,24 @@ def main
          end
 
          if retVal == true then
-            puts "#{'1F44D'.hex.chr('UTF-8')} #{x} I/F is configured correctly"
+            @logger.info("[DEC_004] I/F #{x}: exchange point is reachable #{'1F44D'.hex.chr('UTF-8')}")
          else
-            puts "#{'1F4A9'.hex.chr('UTF-8')} #{x} I/F is not configured correctly\n"
+            @logger.error("[DEC_604] I/F #{x}: exchange point is not reachable #{'1F4A9'.hex.chr('UTF-8')}")
             @retVal = retVal
          end
       }      
-      puts "================================================"
 
       if @isNoDB == false then
          
          require 'dec/CheckerInventoryConfig'
       
          # Perform the check against the Inventory
-         puts "Checking DEC/Inventory entries ..."
+         
+         @logger.debug("Checking DEC/Inventory entries ...")
+         
          checkerInventory = CheckerInventoryConfig.new
          ret = checkerInventory.check(@interface)
-         puts "================================================"
+
          if ret == false then
             puts "\ntry registering them with decConfigInterface2DB tool !  ;-) \n\n"
             @retVal = ret
@@ -541,6 +555,9 @@ end
    
 ## Check that everything needed by the class is present.
 def checkModuleIntegrity
+   if self.checkToolDependencies(@logger) == false then
+      exit(99)
+   end
    return
 end 
 

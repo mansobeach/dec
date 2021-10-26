@@ -28,8 +28,8 @@ require 'ctc/CheckerFTPSConfig'
 
 require 'dec/CheckerHTTPConfig'
 require 'dec/CheckerWebDAVConfig'
+require 'dec/CheckerLocalConfig'
 
-require 'ctc/CheckerLocalConfig'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
 require 'dec/ReadConfigOutgoing'
@@ -113,8 +113,8 @@ class CheckerInterfaceConfig
       end
       ## -----------------------------------------      
       
-      @checkLocal4Send                 = CheckerLocalConfig.new(@ftpSend, @entity)  
-      @checkLocal4Recv                 = CheckerLocalConfig.new(@ftpRecv, @entity)    
+      @checkLocal4Send                 = CheckerLocalConfig.new(@ftpSend, @entity, @logger)  
+      @checkLocal4Recv                 = CheckerLocalConfig.new(@ftpRecv, @entity, @logger)    
       @protocol                        = @ftReadConf.getProtocol(@entity)
             
       if @check4Recv == nil and @protocol != "LOCAL" then

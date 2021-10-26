@@ -112,7 +112,7 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
    ## --------------------------------------------------------
    
    Test::Unit.at_exit do
-      puts "End of DEC tests WrbDAV"
+      @@logger.debug("End of DEC tests WebDAV")
    end
    ## --------------------------------------------------------   
    
@@ -143,11 +143,7 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
    
    ## PULL Circulations
    def test_pull
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
 
       checkDirectory("/tmp/dec/in_basket_if_localhost_ftp")
       
@@ -158,12 +154,15 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       system(cmd)
 
       cmd = "decManageDB -d"
+      @@logger.debug(cmd)
       ret = system(cmd)
 
       cmd = "decManageDB -c"
+      @@logger.debug(cmd)
       ret = system(cmd)
 
       cmd = "decConfigInterface2DB -p EXTERNAL"
+      @@logger.debug(cmd)
       ret = system(cmd)
 
       cmd = "decValidateConfig -a"
@@ -185,17 +184,19 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/webdav_finals.all")
       FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
 
+      checkDirectory("/Users/borja/Downloads/tmp/")
+
       @@arrDownloadFiles.each{|filename|
-         puts filename
+         @@logger.debug(filename)
          system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
       }
             
       cmd = "decGetFromInterface -m WEBDAV -l"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m WEBDAV"
-      puts cmd
+      cmd = "decGetFromInterface -m WEBDAV --no-intray"
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
@@ -213,12 +214,12 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
 
       @@arrDownloadFiles.each{|filename|
-         puts filename
+         @@logger.debug(filename)
          system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
       }      
             
-      cmd = "decGetFromInterface -m WEBDAV --nodb"
-      puts cmd
+      cmd = "decGetFromInterface -m WEBDAV --nodb --no-intray"
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
  
       arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
@@ -230,7 +231,7 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       system("\\rm -rf /tmp/dec/in_basket_if_webdav/*")
       
       cmd = "decGetFromInterface -m WEBDAV"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
             
       arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
@@ -239,7 +240,7 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       ## -----------------------------------------
 
       cmd = "decStats -H 1"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       ## -----------------------------------------
@@ -254,22 +255,23 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
       FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
 
       @@arrDownloadFiles.each{|filename|
-         puts filename
+         @@logger.debug(filename)
          system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
       }      
       
             
       cmd = "decGetFromInterface -m WEBDAV"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
  
       arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
       assert(arrFiles.length == 0, "Duplicated files should not be pulled")
                       
       cmd = "grep DEC_125 #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
 
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
       ## -----------------------------------------
       
    end
@@ -279,14 +281,9 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
    
    ## PUSH Circulations
    def test_push
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      puts
-      puts "WebDAV protocol push is the HTTP put test"
-      puts
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+      @@logger.debug("WebDAV protocol push is the HTTP put test")
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
    end
    ## ------------------------------------------------------
 

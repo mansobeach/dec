@@ -197,7 +197,12 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       if @isDebugMode == true then
          @logger.debug("HTTP HEAD #{url} => #{response.code}")
       end
-                  
+         
+      if @isDebugMode == true and response.code.to_i == 200 then 
+         puts response.body
+      end
+      
+              
       if response.code.to_i == 404 or response.code.to_i == 400 then
          if shortCircuit == true then 
             raise "I/F #{@entity}: #{response.code} / #{url}"
@@ -207,12 +212,22 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       end
       ## ------------------
       
+      ## https://stackoverflow.com/questions/39653384/how-to-extract-html-links-and-text-using-nokogiri-and-xpath-and-css
+      
       arr = Array.new
 
       doc   = Nokogiri::HTML.parse(response.body)
-      tags  = doc.xpath("//a")
-   
+      
+      # Get all anchors via xpath
+      
+      # tags  = doc.xpath("//a")
+      
+      tags  = doc.xpath('//a/@href')
+      
       tags.each do |tag|
+         if @isDebugMode == true then
+            @logger.debug(tag)
+         end
          arr << "#{url}#{tag.text}"
       end
    

@@ -147,13 +147,13 @@ class DECTestCase_Interface_SCIHUB < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)   
    
-      cmd = "decCheckConfig -e SCIHUB"
+      cmd = "decCheckConfig -e SCIHUB -D"
       puts cmd
       system(cmd)
       
       sleep(60.0)
       
-      cmd = "decGetFromInterface --mnemonic SCIHUB -l"
+      cmd = "decGetFromInterface --mnemonic SCIHUB -l -D"
       puts cmd
       assert(system(cmd), cmd)
 

@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.31"
+   @@version = "1.0.32"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.32" =>    "HTTP handler updated to get only href anchors for SCIHUB", \
       "1.0.31" =>    "Update of the OData client for DHUS to support S5P (s5phub)", \
       "1.0.30" =>    "Generation of pull report files DEC_F_RECV when some file failed retrieval\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-484", \
@@ -476,17 +477,18 @@ module DEC
    ##
    ## check command line tool dependencies
    ##
-   def checkToolDependencies
+   def checkToolDependencies(logger = nil)
 
       bDefined = true
       bCheckOK = true
       
       arrTools = [ \
                   "7za", \
+                  "jq", \
                   "xmllint", \
                   "sqlite3", \
                   "curl", \
-                  "ncftp", \
+                  "ncftpget", \
                   "ncftpput", \
                   "sftp" \
                   ]
@@ -495,16 +497,19 @@ module DEC
          isToolPresent = `which #{tool}`
                
          if isToolPresent[0,1] != '/' then
-            puts "\n\nDEC_Environment::checkToolDependencies\n"
-            puts "Fatal Error: #{tool} not present in PATH   :-(\n\n\n"
+            if logger != nil then
+               logger.error("[DEC_799] Fatal Error:  #{tool} not present in $PATH")
+            else
+               puts "Fatal Error: #{tool} not present in PATH   :-(\n\n\n"
+            end
             bCheckOK = false
          end
 
       }
                          
-      if bCheckOK == false then
-         puts "\nDEC_Environment::checkToolDependencies FAILED !\n\n"
-      end      
+#      if bCheckOK == false then
+#         puts "\nDEC_Environment::checkToolDependencies FAILED !\n\n"
+#      end      
    
       return bCheckOK
    end

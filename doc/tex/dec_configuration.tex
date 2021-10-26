@@ -162,14 +162,14 @@ The \textit{TXRXParams} configuration item defines the parameters which rule the
 	\item \textit{ParallelDownload} : number of simultaneous file downloads for pull circulations
 \end{itemize}
 
+\label{Config_Server}
 \subsection{Server}
 The \textit{Server} configuration item defines the parameters which rule the network protocol of choice selected to rule the file circulations either in \textit{pull} and \textit{push} mode.
 \par
 \noindent
-\label{Config_Server}
 \begin{itemize}
 	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"FTPS"}, \textit{"SFTP"}, \textit{"WEBDAV"} - http and http(s) -, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
-	\item \textit{Hostname} : hostname of the interface
+	\label{Hostname}\item \textit{Hostname} : hostname of the interface
 	\item \textit{Port} : TCP port
 	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server
 	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true, the SSH keys associated to the system user are used instead

@@ -1,0 +1,51 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Reference Protocols
+%
+%
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+\begin{document}
+	\begin{description}[style=nextline]
+
+		\item[How many DEC nodes can be configured in the same host ?] Answer: Nominally one single DEC node is recommended for every host. It is recalled that one single node is able to handle independently as many interfaces as needed.
+		\newline
+				
+		\item[How many DEC nodes can be configured in the same host ?] Answer: Nominally one single DEC node is recommended for every host. It is recalled that one single node is able to handle as many interfaces as needed.
+		\newline
+		
+		\item[Are the DEC SW dependencies somehow redundant or overalapping (e.g. curl vs. ncftp)] Answer: All DEC SW dependencies rely on maintained SW. The implementation of the different protocol handlers is independent, and therefore can rely on different SW dependencies. The handler of the plain FTP protocols is based on some initial legacy SW which has been updated to deal with obsolescence so the ncftp SW has been maintained for the time being despite the extensive usage of curl in other different protocol handlers.
+		\newline
+		
+		\item[How can I get the inbound throughput associated to pull circulations?] Answer: log message \hyperref[DEC110]{DEC\_110} carries the size of every file pulled. 
+		\begin{scriptsize}
+		\begin{verbatim}
+[ INFO] 2021-10-08 15:55:39 SBOA.pull - [DEC_110] I/F HUB: foo downloaded with size 107295 bytes
+[ INFO] 2021-10-08 15:58:02 SBOA.pull - [DEC_110] I/F HUB: boo downloaded with size 1245 bytes
+[ INFO] 2021-10-08 15:58:02 SBOA.pull - [DEC_110] I/F HUB: moo downloaded with size 17106 bytes
+		\end{verbatim}
+		\end{scriptsize}
+		
+		\item[How can I get the outbound throughput associated to push circulations?] Answer: log message \hyperref[DEC210]{DEC\_210} carries the size of every file pulled. 
+		\begin{scriptsize}
+			\begin{verbatim}
+				[ INFO] 2021-10-08 15:55:39 SBOA.push - [DEC_210] I/F NAV: finals.all UPLOADED / size 11 bytes
+				[ INFO] 2021-10-08 15:58:02 SBOA.push - [DEC_210] I/F NAV: tai-utc.dat UPLOADED / size 12 bytes
+			\end{verbatim}
+		\end{scriptsize}
+	\end{description}
+\end{document}
+
+
+
+\end{document}
+

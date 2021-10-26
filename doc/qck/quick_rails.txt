@@ -1,0 +1,22 @@
+
+## Model management
+rake db:drop
+rake db:create
+rake db:migrate
+rake db:rollback
+
+
+rails generate controller StaticPages home help
+rails destroy controller StaticPages home help
+
+
+
+## Testing
+## https://guides.rubyonrails.org/testing.html
+rails test
+rails test -b test/controllers/static_pages_controller_test.rb
+rails test controllers/static_pages_controller_test.rb 
+
+
+gem install minitest
+gem install minitest-reporters

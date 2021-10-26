@@ -1,0 +1,82 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Reference Protocols
+%
+%
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+
+\section{Network Protocols for Pull}
+
+\subsection{Introduction}
+This section refers to the different protocols \& associated verbs which are supported for pull circulations:
+
+\begin{itemize}
+	\item \textbf{Local}
+	\item \textbf{SFTP}
+	\item \textbf{FTP}
+	\item \textbf{FTPS}
+	\item \textbf{HTTP}
+	\item \textbf{WebDAV}
+	\item \textbf{OData}
+\end{itemize}
+
+\subsection{Local}
+The files from the \hyperref[DownloadDirs]{\textit{DownloadDirs}} are 
+pulled using the OS file management operations. 
+The files \textit{"downloaded"} into the \hyperref[LocalInbox]{\textit{LocalInbox}} is perfomed using the \hyperlink{https://en.wikipedia.org/wiki/POSIX}{POSIX} \hyperlink{https://en.wikipedia.org/wiki/Hard_link}{hard-link} operation whenever both configuration items point to the same file-system, otherwise a copy is perfomed.
+
+
+\subsection{SFTP}
+Secure File Transfer Protocol over SSH is supported.
+
+\subsection{FTP}
+Plain FTP.
+
+\subsection{FTPS}
+Plain FTP and TLS / SSL Actually for FTPS the DEC SW implements two different handlers
+
+\subsection{HTTP(S)}
+The protocol HTTP(S) is not strictly a file based one, however files can be published using it and DEC SW is able to pull them. The handler works in two different modes driven by the \hyperref[DownloadDirs]{\textit{DownloadDirs}} configuration, either by retrieval of a fixed URL, either using the URL to search for files for retrieval.
+
+\subsubsection{Fixed URL}
+The handler retrieves with HTTP GET the URL, which is defined by the \hyperref[DownloadDirs]{\textit{DownloadDirs}} in the "Directory" item prepended by the \hyperref[Config_Server]{\textit{Server}} Server \hyperref[Hostname]{\textit{Hostname}} configuration item; some data providers use this strategy to publish up-to-date data at a fixed location (e.g. below):
+
+\begin{Verbatim}
+	<Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
+\end{Verbatim}
+
+\subsubsection{Directory Emulation}
+The protocol handler detects the trailing symbol slash in the Directory configuration item defined as part of the \hyperref[DownloadDirs]{\textit{DownloadDirs}}. Then it processes the HTML received ; the logic of processing is arbitrary which is to retrieve all HTML \textit{'href'} anchors which are then nominally filtered according to the DEC configuration for such interface (cf. \hyperref[DownloadRules]{\textit{DownloadRules}}).
+This handler depends on the interface implementation since this is \textit{not} protocol independent as the WebDAV extensions. Hence this handler needs to be verified case by case. In general this is a dirty solution when WebDAV cannot be available on top of HTTP.
+
+\subsection{WebDAV}
+The protocol WebDAV is built on top of HTTP with some specific extensions which allows to search and find items meeting some criteria. The WebDAV protocol handler uses the verb PROPFIND to obtain the items published for every Directory in \hyperref[DownloadDirs]{\textit{DownloadDirs}} and then those are filtered according to the \hyperref[DownloadRules]{\textit{DownloadRules}}.
+The final retrieval of the selected items according to configuration is performed by the HTTP handler using the verb GET.
+
+\subsection{OData}
+The protocol \href{https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html}{OData} is supported ; in particular for DIAS interfaces, which make available an \href{https://scihub.copernicus.eu/userguide/ODataAPI}{API} to query and obtain metadata or / and finally download the selected items driven by the previous queries.
+A dedicated client The protocol handler detects the trailing symbol slash in the Directory configuration item defined as part of the \hyperref[decODataClient]{\textit{decODataClient}} is devoted for this kind of interfaces to perform selection by sensing time or availability time of the data.
+
+\section{Network Protocols for Push}
+
+\subsection{HTTP}
+PUT
+
+\subsection{WebDAV}
+The WebDAV extension of \href{https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html}{HTTP}, which is defined in \href{https://tools.ietf.org/html/rfc4918}{RFC4918} allows to rename files so that DEC can make them visible just upon complete upload.
+
+\par
+\noindent
+Initially the file is uploaded into the \hyperref[UploadTemp]{\textit{UploadTemp}} using the HTTP verb PUT. Upon its successful upload the file is \textit{moved} into the final \hyperref[UploadDir]{\textit{UploadDir}} using the verb MOVE of the WebDAV extension.
+
+\end{document}
+
