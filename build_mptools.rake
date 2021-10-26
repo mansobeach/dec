@@ -219,7 +219,7 @@ namespace :mptools do
 #      puts cmd
 #      system(cmd)
       
-      cmd = "gem install #{@filename}"
+      cmd = "gem install #{@filename} -- --with-cflags=-Wno-implicit-function-declaration"
       puts cmd
       system(cmd)
       rm @filename
