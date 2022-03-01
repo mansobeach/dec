@@ -17,7 +17,7 @@
 \section{Network Protocols for Pull}
 
 \subsection{Introduction}
-This section refers to the different protocols \& associated verbs which are supported for pull circulations:
+This section introduces to the different network protocols \& associated verbs which are supported for pull circulations:
 
 \begin{itemize}
 	\item \textbf{Local}
@@ -34,12 +34,12 @@ The files from the \hyperref[DownloadDirs]{\textit{DownloadDirs}} are
 pulled using the OS file management operations. 
 The files \textit{"downloaded"} into the \hyperref[LocalInbox]{\textit{LocalInbox}} is perfomed using the \hyperlink{https://en.wikipedia.org/wiki/POSIX}{POSIX} \hyperlink{https://en.wikipedia.org/wiki/Hard_link}{hard-link} operation whenever both configuration items point to the same file-system, otherwise a copy is perfomed.
 
-
 \subsection{SFTP}
-Secure File Transfer Protocol over SSH is supported.
+Secure File Transfer Protocol over SSH is supported. The interface handler relies on the identity management SSH keys configuration to perform password-less authentication before triggering batch / non-interactive pull requests to the interface.
 
 \subsection{FTP}
-Plain FTP.
+The files from the \hyperref[DownloadDirs]{\textit{DownloadDirs}} are 
+pulled using the File Transfer Protocol. It supports both PORT and PASV connections for the TCP data stream which carries the files pulled. Transfers are enforced in BINARY mode (i.e. ASCII transfer mode is not used). The FTP commands RETR and optionally DELE are used respectively to perform the file retrieval and its deletion in the server.
 
 \subsection{FTPS}
 Plain FTP and TLS / SSL Actually for FTPS the DEC SW implements two different handlers

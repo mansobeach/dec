@@ -18,6 +18,8 @@
 
 require 'singleton'
 require 'rexml/document'
+
+require 'cuc/CryptHelper'
 require 'cuc/DirUtils'
 
 module DEC
@@ -27,6 +29,7 @@ class ReadInterfaceConfig
    include Singleton
    include REXML
    
+   include CUC::CryptHelper
    include CUC::DirUtils
    ## -------------------------------------------------------------   
    
@@ -603,14 +606,26 @@ private
       ## Esr!@$Pm
       if !xmlstruct.elements["User"].nil? then
          if !xmlstruct.elements["User"].text.nil? then
-            user    = xmlstruct.elements["User"].text
+            if xmlstruct.elements["User"].attributes["encrypted"] \
+               and xmlstruct.elements["User"].attributes["encrypted"].to_s.downcase == 'true' then
+               
+               user = cmdDecrypt(xmlstruct.elements["User"].text, getMagikGuord('DEC'))
+            else
+               user  = xmlstruct.elements["User"].text
+            end
          end
       end
 
       ## Esr!@$Pm
       if !xmlstruct.elements["Pass"].nil? then
          if !xmlstruct.elements["Pass"].text.nil? then
-            pass    = xmlstruct.elements["Pass"].text
+            if xmlstruct.elements["Pass"].attributes["encrypted"] \
+               and xmlstruct.elements["Pass"].attributes["encrypted"].to_s.downcase == 'true' then
+               
+               pass = cmdDecrypt(xmlstruct.elements["Pass"].text, getMagikGuord('DEC'))
+            else
+               pass    = xmlstruct.elements["Pass"].text
+            end
          end
       end
 

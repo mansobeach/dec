@@ -23,8 +23,10 @@
 require 'ctc/FTPClientCommands'
 require 'ctc/SFTPBatchClient'
 
-require 'ctc/CheckerFTPConfig'
+
 require 'ctc/CheckerFTPSConfig'
+
+require 'dec/CheckerFTPConfig'
 
 require 'dec/CheckerHTTPConfig'
 require 'dec/CheckerWebDAVConfig'

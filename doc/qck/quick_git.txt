@@ -5,6 +5,9 @@ git config filter.dater.clean 'perl -pe "s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/"'
 # ------------------------------------------------
 # Login
 
+## to store locally the crendentials ** IN PLAIN TEXT **
+git config --global credential.helper store
+
 git config --global user.name "Your Name"
 git config --global user.email you@example.com
 
@@ -64,5 +67,13 @@ git reset --hard origin/master
 # Recover last version of a file
 
 git checkout origin/master -- FTPClientCommands.rb
+
+
+# ----------------------------------------------------------
+# Remote repositories
+
+git fetch
+git checkout PGF3MIMAP-442-3mi-map-co-location-on-3mi
+
 
 

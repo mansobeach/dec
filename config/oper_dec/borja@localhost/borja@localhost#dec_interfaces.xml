@@ -135,7 +135,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>      
       <User>borja</User>
-      <Pass>perrillo</Pass>
+      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -470,7 +470,10 @@
     </TXRXParams>    
     <Server>
       <Protocol>FTP</Protocol>
+      <Hostname>edc.dgfi.tum.de</Hostname>
+      <!--
       <Hostname>cddis.gsfc.nasa.gov</Hostname>
+      -->
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>
@@ -537,7 +540,7 @@
       ftp://cddis.gsfc.nasa.gov/gnss/products/
       
       -->
-      <Hostname>igs.ensg.ign.fr</Hostname>
+      <Hostname>gssc.esa.int</Hostname>
 	   <Port>21</Port>
       <User>anonymous</User>
       <Pass>guest</Pass>
@@ -627,10 +630,12 @@
     </Notify>
     <Events>
     
-         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F -d /tmp/aux_tmp" />
+         
              
          <!--
          
+         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F -d /tmp/aux_tmp" />
+
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
          
          <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
@@ -885,10 +890,8 @@
 
    <!-- ================================================================ -->
 
-  <!-- ================================================================ -->
-
-  <Interface Name="SCIHUB">
-    <Desc>https://scihub.copernicus.eu/catalogueview/S2A/2020/03/</Desc>
+   <Interface Name="SCIHUB">
+    <Desc>Copernicus Catalogue</Desc>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -903,8 +906,8 @@
       <Protocol>HTTP</Protocol>
       <Hostname>scihub.copernicus.eu</Hostname>
       <Port>443</Port>      
-      <User></User>
-      <Pass></Pass>
+      <User encrypted='true' >otIeMrbVGnA=</User>
+      <Pass encrypted='false' >sNgeKr7VEBVe</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -931,8 +934,64 @@
     -->
     </Events>
     <ContactInfo>
-      <Name>Mr Satan</Name>
-      <EMail>borja.esa@gmail.com</EMail>
+      <Name>Mr 007</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="SPCS">
+    <Desc>https://www.space-track.org/#/Landing</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>https://www.space-track.org</Hostname>
+      <Port>443</Port>      
+      <User encrypted='true' >otIeMraXEBUkxlJnW5PpjDDM0+/mvC81XGcTX4g=</User>
+      <Pass encrypted='true' >sNgeKr7VEBV6019DEZrvjzi1</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr 007</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
       <Tel>0039-800 454 432</Tel>
       <Fax>0039-800 454 433</Fax>
       <Address>Citta Uova</Address>
@@ -958,7 +1017,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>
       <User>borja</User>
-      <Pass>perrillo</Pass>
+      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -1013,7 +1072,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>
       <User>borja</User>
-      <Pass>perrillo</Pass>
+      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -1073,7 +1132,7 @@
       <User>dec</User> 
        -->    
       <User>borja</User>
-      <Pass>perrillo</Pass>
+      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
       <!--
        <Pass>Esr!@$Pm</Pass>
       <Pass>dec</Pass>

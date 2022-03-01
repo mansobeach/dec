@@ -304,11 +304,11 @@ def main
          
          @logger.debug("Checking DEC/Inventory entries ...")
          
-         checkerInventory = CheckerInventoryConfig.new
+         checkerInventory = CheckerInventoryConfig.new(@logger)
          ret = checkerInventory.check(@interface)
 
          if ret == false then
-            puts "\ntry registering them with decConfigInterface2DB tool !  ;-) \n\n"
+            @logger.warn("[DEC_XXX] I/F #{@interface}: try registering it with decConfigInterface2DB tool")
             @retVal = ret
          end
       end

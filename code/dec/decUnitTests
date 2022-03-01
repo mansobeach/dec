@@ -18,6 +18,7 @@ require 'fileutils'
 
 require 'sys/filesystem'
 
+require 'cuc/CryptHelper'
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
 
@@ -43,7 +44,8 @@ require 'dec/ReadConfigIncoming'
 ### 2.1 - purge archive
 ### 2.2 - inventory database is destroyed
 ##
-###  0  - test_parsers
+###  0.1 - test_parsers
+###  0.2 - test_crypt
 ###  1  - test_dec_config
 ###  2  - test_commandline_helpers
 ###  3.1   - test_decValidateConfig
@@ -70,6 +72,8 @@ require 'dec/ReadConfigIncoming'
 ###  7.6  - test_decSend2Interface_contingency
 ###  8  - test_decNotify2Interface
 ###  9  - test_decDeliverFiles
+###  10 - test_decClientSPCS
+
 
 # Select a single test of the suite
 
@@ -139,8 +143,10 @@ require 'dec/ReadConfigIncoming'
 
 class DECTestCase < Test::Unit::TestCase
 
+   include CUC::CryptHelper
    include CUC::DirUtils
    include CTC::FTPClientCommands
+   
    include DEC
    include Sys
 
@@ -447,33 +453,39 @@ class DECTestCase < Test::Unit::TestCase
    end
    ## -------------------------------------------------------------
 
-   def test_1
-            
-      checkDirectory("/tmp/dec_local_dissemination/S2A")
-      checkDirectory("/tmp/dec_local_dissemination/GPS")
+   def test_crypt
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      require 'base64'
+      # Key must be 16 bytes
       
-      path1 = Filesystem.stat('/tmp/dec_local_dissemination/S2A')      
-      puts path1.filesystem_id
-      
-      path2 = Filesystem.stat('/tmp/dec_local_dissemination/GPS')      
-      puts path2.filesystem_id
-      
+      key         = getChi('DEC')
+      pass        = getMagikGuord('DEC')
+      plaintext   = "borja.lopez@deimos-space.com"
+ 
+      # cryptedtext = encrypt(plaintext, key)
+      # puts
+      # puts cryptedtext
+      # puts
+
+      # str = decrypt(cryptedtext, key)
+      # puts
+      # puts str
+      # puts
+
+      cryptedtext = cmdEncrypt(plaintext, pass, true)
+
+      puts "Crypted text:"
+      puts cryptedtext
       puts
-      puts path2.filesystem_id.class
+
+      plaintext = cmdDecrypt(cryptedtext, pass, true)
+
+      puts "Decrypted text:"
+      puts plaintext
       puts
-      
-      cmd = "decCheckConfig -i"
-      puts cmd
-      puts
-      
-      retVal = system(cmd)
-      puts retVal
-      
-      puts $?
-      puts
-      
-      # assert(system(cmd), cmd)
-      
+
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")               
    end
    ## -------------------------------------------------------------
 
@@ -915,38 +927,46 @@ class DECTestCase < Test::Unit::TestCase
    ## -----------------------------------------------------------
 
    def test_decCheckConfig
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
       
-      @@logger.info("START => DEC_UnitTests::#{__method__.to_s}")
-      
-      cmd = "decManageDB -c"
-      puts cmd
-      ret = system(cmd)
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      puts cmd
-      ret = system(cmd)      
-
       checkDirectory("/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_")
       checkDirectory("/tmp/dec_simul_if/localhost_notsecure/download")
-      
-      cmd = "decCheckConfig -a -e LOCALHOST_NOT_SECURE"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
 
       checkDirectory("/tmp/dec_simul_if/localhost_secure/upload/_TEMP_")
       checkDirectory("/tmp/dec_simul_if/localhost_secure/download")
+
+      checkDirectory("/tmp/dec_simul_if/filesystem/upload/_TEMP_")
+      checkDirectory("/tmp/dec_simul_if/filesystem/download")
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      @@logger.info("Test interface not declared yet in the Inventory")
+      cmd = "decCheckConfig -e LOCALHOST_NOT_SECURE"
+      @@logger.debug(cmd)
+      assert(!system(cmd), cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      @@logger.debug(cmd)
+      ret = system(cmd) 
+
+      @@logger.info("Test interface not defined in the xml configuration")
+      cmd = "decCheckConfig -e foo"
+      @@logger.debug(cmd)
+      assert(!system(cmd), cmd)
+     
+      
+      cmd = "decCheckConfig -a -e LOCALHOST_NOT_SECURE"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
 
       cmd = "decCheckConfig -a -e LOCALHOST_SECURE"
       puts cmd
       puts
       assert(system(cmd), cmd)
 
-      checkDirectory("/tmp/dec_simul_if/filesystem/upload/_TEMP_")
-      checkDirectory("/tmp/dec_simul_if/filesystem/download")
+
 
       cmd = "decCheckConfig -a -e FILESYSTEM"
       puts cmd
@@ -1066,7 +1086,7 @@ class DECTestCase < Test::Unit::TestCase
 #      cmd = "decCheckConfig -t"
 #      assert(system(cmd), cmd)
 
-       @@logger.info("END => DEC_UnitTests::#{__method__.to_s}")
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
    end
    ## -------------------------------------------------------------
 
@@ -1444,7 +1464,6 @@ class DECTestCase < Test::Unit::TestCase
    ##
 
    def test_decGetFromInterface_LOCAL
-      puts __method__.to_s
       puts
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s}"
@@ -1521,11 +1540,7 @@ class DECTestCase < Test::Unit::TestCase
    ## verification of the protocol WEBDAV over HTTP using interface "WEBDAV"
    
    def test_decGetFromInterface_WEBDAV
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       cmd = "\\rm -rf /tmp/DEC*.log"
       ret = system(cmd)
@@ -1556,13 +1571,14 @@ class DECTestCase < Test::Unit::TestCase
       @finalDir         = inConfig.getIncomingDir("WEBDAV")
             
       checkDirectory(@finalDir)
+      @@logger.debug("creating dir #{@finalDir}")
 
       FileUtils.rm_f("#{@finalDir}/finals.all")
       FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
 
       @@arrDownloadFiles.each{|filename|
          puts filename
-         system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
+         system("echo \'#{filename}\' > /tmp/#{filename}")
       }
 
       cmd = "\\rm -rf /tmp/DEC*.log"
@@ -1642,8 +1658,7 @@ class DECTestCase < Test::Unit::TestCase
       puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
-      @@logger.info("END => DEC_UnitTests::#{__method__.to_s}")
-
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
 
    end   
    
@@ -1916,12 +1931,10 @@ class DECTestCase < Test::Unit::TestCase
    ### TEST DEVELOPMENT IS MOT COMPLETED
 
    def test_decGetFromInterface_contingency_2
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
+      checkDirectory("/tmp/dec_simul_if/localhost_notsecure/download")
+
       cmd = "decManageDB -d"
       ret = system(cmd)
 
@@ -1954,10 +1967,12 @@ class DECTestCase < Test::Unit::TestCase
       puts
       
       FileUtils.chmod("a-w", dirDissemination)
+      system("rm -rf /tmp/dec_simul_if/localhost_notsecure/*")
+
 
       cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
       puts cmd
-      assert(system(cmd), cmd)
+      assert(!system(cmd), cmd)
 
       arr = Dir["/tmp/DEC*.log"]
       
@@ -1979,21 +1994,24 @@ class DECTestCase < Test::Unit::TestCase
       puts "Restoring file permissions to #{dirS2A}"
       puts
       FileUtils.chmod("u+w", dirS2A)
-      
+      checkDirectory("/tmp/dec_simul_if/localhost_notsecure/download")
+
       ## remove write permisions into dissemination directory to force errors   
       puts
       puts "Restoring file permissions to #{dirGPS}"
       puts
       FileUtils.chmod("u+w", dirGPS)
+      FileUtils.chmod("u+w", "/tmp/dec_simul_if/localhost_notsecure/download")
+
 
       system("\\rm -rf /tmp/DEC*.log")
 
       cmd = "decGetFromInterface -m LOCALHOST_NOT_SECURE"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "grep ERROR #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
 #      assert(!system(cmd), "no ERROR should be logged in #{__method__.to_s}") 
 #
 #      assert(!File.exist?("#{@finalDir}/finals.all"), "finals.all removed from #{@finalDir}")
@@ -2005,6 +2023,8 @@ class DECTestCase < Test::Unit::TestCase
 #            
 #      assert(File.exist?("#{dirS2A}/finals.7z"), "finals.all disseminated to #{dirS2A}")
 #      assert(File.exist?("#{dirS2A}/tai-utc.7z"), "tai-utc.dat disseminated to #{dirS2A}")
+
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
 
    end
    ## --------------------------------------------------------
@@ -2633,7 +2653,7 @@ class DECTestCase < Test::Unit::TestCase
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - START")
       puts
 
       cmd = "decManageDB -d"
@@ -2646,25 +2666,26 @@ class DECTestCase < Test::Unit::TestCase
       ret = system(cmd)
 
       cmd = "decValidateConfig -e"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -o"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decCheckConfig -e WEBDAV2"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decCheckConfig -o"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
       checkDirectory("/tmp/http_put/tmp")
       checkDirectory("~/tmp/http_put")
       system("\\rm -rf ~/tmp/http_put/*")
+      system("\\rm -rf /tmp/http_put/*")
       system("\\rm -rf /Users/borja/tmp/http_put/*")
       
       sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
@@ -2680,25 +2701,27 @@ class DECTestCase < Test::Unit::TestCase
       }
 
       cmd = "decGetFiles4Transfer"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface --mnemonic WEBDAV2 -D"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decStats"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      assert(File.exist?("/Users/borja/tmp/http_put/tai-utc.dat"), "tai-utc.dat pushed with HTTP")
-      assert(File.exist?("/Users/borja/tmp/http_put/finals.7z"), "finals.7z pushed with HTTP")
+      assert(File.exist?("/tmp/http_put/tai-utc.dat"), "tai-utc.dat pushed with HTTP")
+      assert(File.exist?("/tmp/http_put/finals.7z"), "finals.7z pushed with HTTP")
 
       arr = Dir["/tmp/DEC*.log"]
       
       cmd = "grep ERROR #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - END")
 
    end
 
@@ -2745,6 +2768,17 @@ class DECTestCase < Test::Unit::TestCase
 
    end
    ## -------------------------------------------------------------
+   ## -------------------------------------------------------------
+
+   def test_decClientSPCS
+      require 'InterfaceClientSPCS'
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - START")
+      handler = DEC::InterfaceClientSPCS.new
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - END")
+   end
+   ## -------------------------------------------------------------
+
+
 
 end
 

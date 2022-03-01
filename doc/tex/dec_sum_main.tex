@@ -5,7 +5,7 @@
 %
 % Borja Lopez Fernandez (BOLF)
 %
-% SUM Main file
+% Reference Manual Main file
 %
 \documentclass[
 	oneside,
@@ -28,11 +28,15 @@
 \usepackage{titlepic}
 \usepackage{titlesec, blindtext, color}
 \usepackage{titling}
-\usepackage{verbatim}
+%\usepackage{verbatim}
 \usepackage{fancyvrb}
 \usepackage{verbatimbox}
 \usepackage{dashrule}
 \usepackage{fancyhdr}
+\usepackage{pdflscape}
+\usepackage{wasysym}
+%\usepackage{xltxtra}
+%\usepackage{xunicode}
 \definecolor{lightgray}{gray}{0.9}
 \graphicspath{{res/}{../res/}}
  
@@ -57,7 +61,7 @@
 \pagestyle{fancy} 
 \fancyhf{}
 \lhead{\includegraphics[width=2cm]{logo_elecnor_deimos.png}
-Software User Manual}
+Software Reference Manual}
 \rhead{Data Exchange Component
 \includegraphics[width=1cm]{DEC_Logo_White.png}
 \renewcommand{\headrulewidth}{2pt}
@@ -80,9 +84,9 @@ Software User Manual}
  
  \usepackage{hyperref}
  \hypersetup{
- 	pdftitle={Data Exchange Component System User Manual},
+ 	pdftitle={Data Exchange Component System Reference Manual},
  	pdfsubject={System Components},
- 	pdfauthor={blimey},
+ 	pdfauthor={GS Business Unit},
  	pdfkeywords={DEC, SUM, DEC-TEC-SUM2020-1023-E}
  }
  
@@ -102,9 +106,9 @@ Software User Manual}
 		
 		\vspace*{1cm}
 		\Large
-		\textbf{Data Exchange Component (DEC - 2020)}
+		\textbf{Data Exchange Component (DEC - 2022)}
 		
-		\textbf{Software User Manual}
+		\textbf{Software Reference Manual}
 		
 		\vspace*{1cm}
 		
@@ -149,17 +153,26 @@ Software User Manual}
 
 \appendix
 
-\chapter{General Configuration}
+\chapter{Configuration General}
 \subfile{dec_config_general} 
 
-\chapter{Interfaces Configuration}
+\chapter{Configuration Interfaces}
 \subfile{dec_config_interfaces} 
 
-\chapter{Pull Circulations Configuration}
+\chapter{Configuration Pull Circulations}
 \subfile{dec_config_pull} 
 
-\chapter{Log Configuration}
+\chapter{Configuration Push Circulations}
+\subfile{dec_config_push} 
+
+\chapter{Configuration Log}
 \subfile{dec_config_log}
+ 
+\chapter{Public Data Providers}
+\subfile{dec_supported_adp}
+
+\chapter{Version History}
+\subfile{dec_version_history}
  
 \chapter{Frequently Asked Questions}
 \subfile{dec_faq}

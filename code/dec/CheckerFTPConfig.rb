@@ -329,7 +329,7 @@ private
             @ftp = Net::FTP.new(host)
             @ftp.login(user, pass)
             @ftp.passive = true
-            @ftp.chdir(dir)
+            @ftp.chdir(dir.chomp)
          rescue Exception => e
             @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")
             if @isDebugMode == true then

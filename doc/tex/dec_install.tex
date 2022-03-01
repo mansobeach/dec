@@ -37,23 +37,48 @@ Alternatively to the latest ruby stable installation, the following command inst
 \noindent
 Different versions can be locally installed and select the one of choice at any time. However the following ruby version is recommended:
 
-\inlinecode{bash}{ \$> rvm install ruby-2.7.2} \newline
+\inlinecode{bash}{ \$> rvm install ruby-3.0} \newline
 
-\inlinecode{bash}{ \$> rvm --default use 2.7.2} \newline
+\inlinecode{bash}{ \$> rvm --default use 3.0} \newline
 
 
 \section{Install DEC}
 
 In order to install DEC SW and the gems required, execute the following command in the shell at the directory in which the DEC gem file is placed:
 \par
-\inlinecode{bash}{ \$> gem install dec_stable.gem }
+\inlinecode{bash}{ \$> gem install dec_stable.gem } \newline
 \par
+
+\par
+\par
+\noindent
+It is usually recommended to perform the installation of every DEC node with a dedicated installer, which already carries the desired configuration according to the defined interfaces and the desired behaviour ; this approach makes installations and configuration into the target environment almost instantaneously (e.g. maintenance in Operations). Every DEC node configuration can be kept under configuration control in order to build the dedicated installers.\newline
+
+\noindent
+The DEC installer naming file is generated to avoid ambiguity and bring information regarding the node they apply to. Below there are some few examples to illustrate the naming conventions to easily identify the installation kit for a given DEC node configuration.\newline
+\par
+
+\inlinecode{bash}{ \$> gem install dec-1.0.32_s2_dec@s2boa-cloudferro.gem } \newline
+
+\inlinecode{bash}{ \$> gem install dec-1.0.33_s2_push_lisboa@e2espm-inputhub.gem } \newline
+
+\inlinecode{bash}{ \$> gem install dec-1.0.33_unit_tests@localhost.gem } \newline
+
+\noindent
+Also the DEC installer can be customised to carry or avoid specific SW items, such as the testing tools (i.e. unit tests, interface tests, etc). The installation kit referred below as example has been customised for some Sentinel-2 project to carry the test tools, the OData tools and make usage of postgresql to persist the operations performed \newline
+
+\inlinecode{bash}{ \$> gem install dec-1.0.33_s2_test_pg_odata@localhost.gem } \newline
+
+\noindent
+As a very quick summary, users of the SW are encouraged to delegate the creation of the configuration by providing the requirements / interface documents to build dedicated installation packages for every node. 
+\par
+
 
 \section{Uninstall DEC}
 
 In order to uninstall DEC SW, execute the following command in the shell:
 \par 
-\inlinecode{bash}{ \$> gem uninstall dec.gem }
+\inlinecode{bash}{ \$> gem uninstall dec }
 \par 
 
 \begin{verbatim}

@@ -16,6 +16,14 @@
     </xs:restriction>
   </xs:simpleType> 
 
+  <xs:complexType name="TypeCredential">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="encrypted" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
  <xs:complexType name="TimeTagType">
    <xs:simpleContent>
      <xs:extension base="posIntType">
@@ -94,8 +102,10 @@
    <xs:element ref="Protocol"/>
    <xs:element ref="Hostname"/>
    <xs:element ref="Port" minOccurs="0"/>
-   <xs:element ref="User" minOccurs="0"/>
-   <xs:element ref="Pass" minOccurs="0"/>
+   
+   <xs:element name="User" type="TypeCredential" minOccurs="0"/>
+   <xs:element name="Pass" type="TypeCredential" minOccurs="0"/>
+   
    <xs:element name="FTPServer_Mirror" minOccurs="0">
       <xs:complexType>
          <xs:sequence>

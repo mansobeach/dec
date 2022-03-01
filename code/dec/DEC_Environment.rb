@@ -24,11 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.32"
+   @@version = "1.0.33"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.33" =>    "Update to use ruby 3.x series as interpreter\n\
+          User & Pass configuration items now can be kept encrypted",
       "1.0.32" =>    "HTTP handler updated to get only href anchors for SCIHUB", \
       "1.0.31" =>    "Update of the OData client for DHUS to support S5P (s5phub)", \
       "1.0.30" =>    "Generation of pull report files DEC_F_RECV when some file failed retrieval\n\
@@ -276,7 +278,8 @@ module DEC
       retVal = checkEnvironmentEssential
       if retVal == true then
          check_environment_dirs
-         return checkToolDependencies
+         return true
+         # return checkToolDependencies
       else
          return false
       end
@@ -500,7 +503,7 @@ module DEC
             if logger != nil then
                logger.error("[DEC_799] Fatal Error:  #{tool} not present in $PATH")
             else
-               puts "Fatal Error: #{tool} not present in PATH   :-(\n\n\n"
+               puts "Fatal Error: #{tool} not present in PATH   :-(\n"
             end
             bCheckOK = false
          end

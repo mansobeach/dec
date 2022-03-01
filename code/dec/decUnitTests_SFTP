@@ -2,13 +2,13 @@
 
 #########################################################################
 ###
-### === Ruby source for #decUnitTests_FTP class
+### === Ruby source for #decUnitTests_SFTP class
 ###
 ### === Written by DEIMOS Space S.L.
 ###
 ### === Data Exchange Component
 ###
-### # git: decUnitTests_FTP,v $Id$: 
+### # git: decUnitTests_SFTP,v $Id$: 
 ### 
 ### module DEC
 ###
@@ -26,23 +26,8 @@ require 'dec/ReadConfigDEC'
 
 ## rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]
 
-### ------------------------------------
-### MacOS Catalina
-## cd $HOME (non root $PWD)
-## sudo /usr/local/sbin/pure-ftpd
-## PAMAuthentication            yes
 
-### ------------------------------------
-### MacOS Mojave
-## sudo /usr/local/sbin/pure-ftpd -lpam
-## sudo /usr/local/sbin/pure-ftpd /Users/borja/Projects/dec/config/ftp/pure-ftpd.conf
-### ------------------------------------
-
-## https://bobcares.com/blog/proftpd-create-user/
-
-## https://support.hostway.com/hc/en-us/articles/360000563730-How-to-enable-passive-FTP-connections-in-ProFTPD
-
-class DECTestCase_FTP < Test::Unit::TestCase
+class DECTestCase_SFTP < Test::Unit::TestCase
 
    include Test::Unit::Data
    
@@ -60,7 +45,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
       system("clear")
       puts
       puts "======================================"
-      puts "DEC FTP Unit Test Cases"
+      puts "DEC #{File.basename(__FILE__)} Unit Test Cases"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -109,7 +94,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
       @@logger = loggerFactory.getLogger   
       if @@logger == nil then
          puts
-		   puts "Error in decUnitTests_FTP"
+		   puts "Error in #{File.basename(__FILE__)}"
      	   puts "Could not initialize logging system !  :-("
          puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
  	      puts
@@ -124,22 +109,22 @@ class DECTestCase_FTP < Test::Unit::TestCase
    ## --------------------------------------------------------
    
    Test::Unit.at_exit do
-      puts "End of DEC tests FTP"
+      @@logger.info("End of DEC tests #{File.basename(__FILE__)}")
    end
    ## --------------------------------------------------------   
    
    # Setup before every test-case
    #
    def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
       cmd = "mkdir -p /tmp/tmp/dir1"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "mkdir -p /tmp/tmp/dir2"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
-      
-      return
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
    end
    ## ------------------------------------------------------
    ## After every test case
@@ -155,10 +140,15 @@ class DECTestCase_FTP < Test::Unit::TestCase
    
    ## PULL Circulations
    def test_pull
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")
-      checkDirectory("/tmp/dec/in_basket_if_localhost_ftp")
-      
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+
+      checkDirectory("/tmp/dec/in_basket_if_localhost_secure")
+      checkDirectory("/tmp/dec_simul_if/localhost_secure/download")
+      checkDirectory("/tmp/dec_simul_if/localhost_secure/upload/_TEMP_")
+
+      cmd = "\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*"
+      @@logger.debug(cmd)
+      system(cmd)
 
       cmd = "rm -f /tmp/DEC*.log"
       @@logger.debug(cmd)
@@ -180,27 +170,27 @@ class DECTestCase_FTP < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), cmd)   
    
-      cmd = "decCheckConfig -e LOCALHOST_FTP"
+      cmd = "decCheckConfig -e LOCALHOST_SECURE"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       ## -----------------------------------------
       ## list mode and subsequent download
       
-      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
+      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
             
-      cmd = "decGetFromInterface -m LOCALHOST_FTP -l -D"
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE -l -D"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m LOCALHOST_FTP -D"
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE -D"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftp/touch*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_secure/touch*"]      
       assert(arrFiles.length == 4, "Number of files pulled")
       
       ## -----------------------------------------
@@ -209,30 +199,31 @@ class DECTestCase_FTP < Test::Unit::TestCase
       ## -----------------------------------------
       ## Download again since --nodb is used to avoid filtering by previous download
           
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      system("\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*")
       
-      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
+      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
+   
             
-      cmd = "decGetFromInterface -m LOCALHOST_FTP --nodb"
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE --nodb"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
  
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftp/touch*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_secure/touch*"] 
       assert(arrFiles.length == 4, "Number of files pulled")
 
       ## -----------------------------------------
       ## Now no files should be present for download
 
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      system("\\rm -rf /tmp/dec/in_basket_if_LOCALHOST_SECURE/*")
       
-      cmd = "decGetFromInterface -m LOCALHOST_FTP"
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
             
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftp/touch*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_LOCALHOST_SECURE/touch*"]      
       assert(arrFiles.length == 0, "Number of files pulled")
 
       ## -----------------------------------------
@@ -246,18 +237,26 @@ class DECTestCase_FTP < Test::Unit::TestCase
       
       arr = Dir["/tmp/DEC*.log"]
 
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      ## Management of duplicated files from the interface
+
+      @@logger.info("TEST: Management of duplicated files from the interface")
+
+      cmd = "\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      system("\\rm -rf /tmp/dec_simul_if/localhost_secure/download/*")
       
-      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
-            
-      cmd = "decGetFromInterface -m LOCALHOST_FTP"
+      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
+      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
+           
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE -D"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
  
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_ftp/touch*"]      
+      arrFiles = Dir["/tmp/dec/in_basket_if_LOCALHOST_SECURE/touch*"]      
       assert(arrFiles.length == 0, "Duplicated files should not be pulled")
                       
       cmd = "grep DEC_125 #{arr[0]}"
@@ -265,7 +264,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
       assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
 
       ## -----------------------------------------
-      
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
    end
    ## ------------------------------------------------------
 
@@ -283,9 +282,9 @@ class DECTestCase_FTP < Test::Unit::TestCase
       puts cmd
       system(cmd)
 
-      checkDirectory("/tmp/dec/in_basket_if_localhost_ftp")
+      checkDirectory("/tmp/dec/in_basket_if_LOCALHOST_SECURE")
       
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      system("\\rm -rf /tmp/dec/in_basket_if_LOCALHOST_SECURE/*")
 
       cmd = "rm -f /tmp/tmp/dir1/finals.all"
       puts cmd
@@ -309,7 +308,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)   
    
-      cmd = "decCheckConfig -e LOCALHOST_FTP"
+      cmd = "decCheckConfig -e LOCALHOST_SECURE"
       puts cmd
       assert(system(cmd), cmd)
       
@@ -331,7 +330,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface --mnemonic LOCALHOST_FTP -O"
+      cmd = "decSend2Interface --mnemonic LOCALHOST_SECURE -O"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -339,7 +338,7 @@ class DECTestCase_FTP < Test::Unit::TestCase
 #      puts cmd
 #      assert(system(cmd), cmd)
 
-      cmd = "decListDirUpload -m LOCALHOST_FTP -t"
+      cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
       puts cmd
       assert(system(cmd), cmd)
       puts      

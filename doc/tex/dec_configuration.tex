@@ -171,8 +171,14 @@ The \textit{Server} configuration item defines the parameters which rule the net
 	\item \textit{Protocol} : unit tests are covering today \textit{"FTP"}, \textit{"FTPS"}, \textit{"SFTP"}, \textit{"WEBDAV"} - http and http(s) -, and\textit{ "LOCAL"} ; if configuration item is set to \textit{"LOCAL"} then network configuration items such as \textit{Hostname}, \textit{Port}, \textit{User} and \textit{Pass} are not used   
 	\label{Hostname}\item \textit{Hostname} : hostname of the interface
 	\item \textit{Port} : TCP port
-	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server
-	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true, the SSH keys associated to the system user are used instead
+	\item \textit{User} : registered user for the server at the \textit{Hostname} \& \textit{Protocol} server ; ; the value can optionally be kept encrypted:
+	\begin{Verbatim}
+		<User encrypted='true'>uiutw90k</User>
+	\end{Verbatim}
+	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true, the SSH keys associated to the system user are used instead ; the value can optionally be kept encrypted:
+	\begin{Verbatim}
+		<Pass encrypted='true'>uiutw90OFb+JMH9Lk5OogQ==</Pass>
+	\end{Verbatim}
 	\item \textit{RegisterContentFlag} : \textit{boolean} flag to activate tracking of the files available for \textit{pulling} without effective download
 	\item \textit{RetrieveContentFlag} :\textit{boolean} flag to activate the download of the files available for \textit{pull circulation} 
 	\item \textit{SecureFlag} : \textit{boolean} flag to activate \textit{encrypted} SSH communications

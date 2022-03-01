@@ -25,7 +25,7 @@
          <Name>WEBDAV</Name>
          <LocalInbox>/tmp/dec/in_basket_if_webdav</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">tmp/</Directory>
+            <Directory DepthSearch="0">/tmp/</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
@@ -74,7 +74,7 @@
          <Name>PARALLEL_HTTP</Name>
          <LocalInbox>/tmp/if_dec/in_basket_if_http</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">tmp</Directory>
+            <Directory DepthSearch="0">/tmp</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
@@ -199,8 +199,8 @@
          <Name>ILRS</Name>
          <LocalInbox>/tmp/dec/if_islr_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3a/2020</Directory>
-            <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3b/2020</Directory>
+		      <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3a/2022</Directory>
+            <Directory DepthSearch="0">/pub/slr/data/npt_crd/sentinel3b/2022</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -215,7 +215,7 @@
          <Name>NOAA</Name>
          <LocalInbox>/tmp/dec/if_noaa_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">/pub/warehouse/2021/RSGA</Directory>
+		      <Directory DepthSearch="0">/pub/warehouse/2022/RSGA</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -247,10 +247,13 @@
          <LocalInbox>/tmp/dec/if_igs_in_basket</LocalInbox>
          <DownloadDirs>
             
+            <!--
 		      <Directory DepthSearch="0">/pub/igs/products/latest/final</Directory>
-            
+            -->
             <!-- GPS Messages -->
-            <Directory DepthSearch="0">/pub/gps/data/daily/2021/brdc</Directory>
+            
+            <Directory DepthSearch="0">/gnss/data/daily/2022/brdc</Directory>
+
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -319,6 +322,7 @@
             <Interface>LOCALHOST_FTP_PASSIVE</Interface>
             <Interface>LOCALHOST_FTP</Interface>
             <Interface>LOCALHOST_FTPS</Interface>
+            <Interface>LOCALHOST_SECURE</Interface>
          </FromList>
       </File>
 
@@ -328,6 +332,7 @@
             <Interface>LOCALHOST_FTP_PASSIVE</Interface>
             <Interface>LOCALHOST_FTP</Interface>
             <Interface>LOCALHOST_FTPS</Interface>
+            <Interface>LOCALHOST_SECURE</Interface>
          </FromList>
       </File>
 
@@ -347,6 +352,7 @@
             <Interface>PARALLEL_HTTP</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
+            <Interface>LOCALHOST_SECURE</Interface>
             <Interface>FILESYSTEM</Interface>
          </FromList>
       </File>
@@ -395,6 +401,7 @@
             <Interface>WEBDAV_SECURE</Interface>
             <Interface>IERS</Interface>
             <Interface>LOCALHOST_NOT_SECURE</Interface>
+            <Interface>LOCALHOST_SECURE</Interface>
             <Interface>PARALLEL_HTTP</Interface>
             <Interface>FILESYSTEM</Interface>
          </FromList>
@@ -440,7 +447,7 @@ WWWW/igsWWWWD.clk.Z
          </FromList>
       </File>
 
-      <File Type="brdc????.??n.Z">
+      <File Type="brdc????.??n.*">
          <Description>International GPS Service / GPS navigation message brdcdddf.yyn.Z</Description>
          <FromList>
             <Interface>IGS</Interface>
@@ -787,4 +794,3 @@ WWWW/igsWWWWD.clk.Z
 
 
 </Config>
-

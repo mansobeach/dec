@@ -30,7 +30,8 @@ require 'dec/ReadConfigDEC'
 
 # 2 - teardown
 
-##  0.1 - test_download_s2a
+##  0.1 - test_download_s2a_updates (catalogue time)
+##  0.2 - test_download_s1a_updates
 
 ##  1  - test_class_delay_s1
 ##  2  - test_class_delay_s2
@@ -184,7 +185,6 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## test class 1
 
    def test_class_delay_s1
-      @@logger.debug("================================================")
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
       if self.checkEnvironmentEssential == false then
@@ -201,7 +201,6 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       assert(client.exec_query, "hour delay")
       ## --------------------------------------------
          
-        
    end
    ## ------------------------------------------------------
 
@@ -685,28 +684,21 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## DEC_OPER_OPDHUS_S1A_AUIP_20210422T110156_V20210317T235900_20210318T000050_9_0
 
    def test_s1a_validity
-      @@logger.debug("================================================")
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
 
       ## Query by ContentDate/Start ContentDate/End for Sentinel-1A
-   
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -s \"2021-07-17T23:00:00.000,2021-07-18T00:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
-      
-      @@logger.debug(cmd)
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -s \"2022-01-17T23:00:00.000,2022-01-18T00:00:00.000\" --query dhus:s1:S1A -D -L /tmp"
+      @@logger.debug(cmd.gsub("-u borjalf -p perrillo.pwd", "-u ******** -p ********"))
       assert(system(cmd), "#{cmd} Datatake query")
 
    end
    ## ------------------------------------------------------
 
    def test_s1b_validity_json
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
-
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -s 2021-03-17T00:00:00.000,2021-03-17T00:20:00.000 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus -f json -D"
-      puts cmd
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -s 2022-01-17T00:00:00.000,2022-01-17T00:20:00.000 -q dhus:s1:S1A -L /Users/borja/Projects/dec/data/dhus -f json -D"
+      @@logger.debug(cmd.gsub("-u borjalf -p perrillo.pwd", "-u ******** -p ********"))
       assert(system(cmd), "#{cmd} Datatake query")
-      puts
    end
    ## ------------------------------------------------------
 
@@ -774,22 +766,29 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def test_s1_2
+   def test_download_s1a_updates
 
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      cmd = "rm -f /tmp/S1A*"
+      @@logger.debug(cmd)
+      system(cmd)
 
       require 'Date'
 
       ## Query by CreationDate for Sentinel-1A
       
       currentTime = DateTime.now - (2/24.0)
+      endTime     = currentTime + (2/1440.0)
+
+      cmd = "decODataClient -u borjalf -p perrillo.pwd -c \"#{currentTime.strftime("%Y-%m-%dT%H:%M:00.000")},#{endTime.strftime("%Y-%m-%dT%H:%M:00.000")}\" -q dhus:s1:S1A -L /tmp -r"
+      @@logger.debug(cmd.gsub("-u borjalf -p perrillo.pwd", "-u ******** -p ********"))
+      assert(system(cmd), "Sentinel-1 product(s) download")
       
-      cmd = "decODataClient -u borjalf -p perrillo.pwd -t #{currentTime.strftime("%Y-%m-%dT%H:00:00.000")} -q dhus:s1:S1A"
-      puts cmd
-      assert(system(cmd), "#{cmd} Datatake query")
-      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+
+      sleep(5.0)
+  
    
    end
 
@@ -819,20 +818,19 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    ## ------------------------------------------------------
 
    ## ------------------------------------------------------
-   def test_download_s2a
+   def test_download_s2a_updates
 
-      puts "================================================"
-      puts "#{self.class.name.split('::').last}::#{__method__.to_s}"
-      puts
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
       cmd = "rm -f /tmp/S2A*"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
       
       cmd = "decODataClient -u borjalf -p perrillo.pwd -q dhus:s2:S2A --creation \"2021-07-01T00:00:00.000,2021-07-01T00:05:03.000\" -L /tmp -r"  # "-D"
-      puts cmd
-      assert(system(cmd), "#{cmd} query")
-      puts
+      @@logger.debug(cmd.gsub("-u borjalf -p perrillo.pwd", "-u ******** -p ********"))
+      assert(system(cmd), "Sentinel-2 product download")
+      
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
 
       sleep(5.0)
    

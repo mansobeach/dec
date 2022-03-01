@@ -31,7 +31,8 @@ tcp        0      0 0.0.0.0:990                 0.0.0.0:*                   LIST
 tcp        0      0 0.0.0.0:21                  0.0.0.0:*                   LISTEN      11417/vsftpd    <- This is another server FTP but it is not our target
 [...]
 
-
+## Display network devices and status
+sudo nmcli -p dev
 
 ### ==========================================================================================
 

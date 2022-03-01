@@ -1,0 +1,131 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC version history configuration
+%
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+ 
+\par
+\noindent
+This section includes the version history, which is used for reference of the SW this document applies to. The history brings the main updates associated to every version ; it is not meant to be exhaustive but to make every version recognisable.\newline
+
+\par
+\noindent
+The history does not include all the long heritage associated to this SW ; the starting point is the capacity to install / uninstall different versions seamlessly with the gem installer and therefore the need to quickly identify what is shipped within each version. \newline
+
+\par
+\noindent 
+In order to check the version which is currently installed the gem command can be used or alternatively execute any DEC command line with the "-v" flag to obtain the information shown below. \newline
+
+\inlinecode{bash}{ \$> gem list | grep dec  }
+
+\begin{Verbatim}[tabsize=4]
+    dec (1.0.18)
+\end{Verbatim}
+
+\inlinecode{bash}{ \$> decValidateConfig -v  }
+
+\begin{Verbatim}[tabsize=4]
+1.0.33 => Update to use ruby 3.x series as interpreter
+          User & Pass configuration items now can be kept encrypted
+1.0.32 => HTTP handler updated to get only href anchors for SCIHUB
+1.0.31 => Update of the OData client for DHUS to support S5P (s5phub)
+1.0.30 => Generation of pull report files DEC_F_RECV when some file failed retrieval
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-484
+1.0.29 => Enhancement to parallelise pull operations
+          decODataClient updates:
+          > ADGS support (AUXIP)
+          > download products from DHUS/OpenHub
+          > log messages 257, 259, 260 and 667
+          first version of man pages shipped
+          zero length files unpresent now raises error [DEC_799]
+          InterfaceHandlerFTPS_Implicit now raises error when time-out 
+          public API now kept under ctc module
+1.0.28 => CUC::CheckerProcessUniqueness rework
+          decODataClient update to support DHUS/GNSS API
+1.0.27 => curl --connect-timeout raised to 60 to absorb high latencies
+          decODataClient updates:
+          > new AVDHUS generated for CreationDate intervals
+          > request retries implemented for DHUS
+1.0.26 => Patch to delete sucessful download files in FTPS protocol:
+          Update of the OData client for DHUS:
+          > to query by sensing dates referred to ContentDate/Start
+          > to define a configurable delay wrt the catalogue CreationDate
+          > to request XML, JSON and CSV
+1.0.25 => VerifyPeerSSL is used by HTTP handlers
+          decODataClient support for DHUS / Sentinel-1
+1.0.24 => Pull local dissemination chmod robustified for errors
+1.0.23 => Local dissemination upon pull is safely compressed:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-414
+          Update of the OData client for S2PRIP to support download of PDI
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-418
+1.0.22 => WebDAV verb MOVE for push does not carry time-out parameters:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-418
+1.0.21 => Pull local dissemination chmod robustified for errors
+1.0.20 => Support of WebDAV protocol verbs PUT + MOVE for push circulations
+1.0.19 => FTPS Implicit mode (port 990) support for pull & push mode
+          Pull local dissemination Compress 7z-x mode to decompress 7z files
+          Escape special characters for user / password credentials
+1.0.18 => Update of the OData client for DHUS & S2PRIP to support pagination
+          OData client for DHUS to stream to the console the received XML
+1.0.17 => Support to push parallelisation driven by ParallelDownload config
+          OData client for DHUS supports pagination:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-376
+1.0.16 => First version of the OData client for DHUS / PRIP for Sentinel-2
+1.0.15 => Support to remote inventory / db different than localhost
+          dec_config.xml Inventory config now includes Database_Host & Database_Port items
+1.0.14 => New gems sys-filesystem and nokogiri are required
+          Support of HTTP(S) protocol verb PUT for push circulations
+          Support of HTTP(S) protocol verb GET for pull directories
+          Support of HTTP(S) protocol verb HEAD for checking interface URL
+          Migration of FTPS (explicit mode) protocol for pull circulations
+          Migration of FTPS (explicit mode) protocol for push circulations
+          dec_config.xml Inventory item added for database configuration
+          dec_config.xml reshuffle of some configuration items
+          dec_interfaces.xml configuration item DeleteFlag removed
+          dec_incoming_files.xml config item Switches to handle duplication, unknowns, for each I/F
+          dec_incoming_files.xml config item FileList replaced by DownloadRules
+          dec_incoming_files.xml config item Execute command for each Intray available in DisseminationRules
+1.0.13 => Support of Pull circulations using HTTP protocol for known URLs
+          Support of authentication for HTTP(S) GET and DELETE verbs
+          dec_interfaces.xml defines <VerifyPeerSSL> to validate the certificate
+          log messages rationalisation and clean-up
+          gem now includes the gemfile dependencies for their resolution at installation time
+1.0.12 => Support of WebDAV / HTTP(S) protocol using verbs PROPFIND,GET & DELETE
+          for pull mode (dec_incoming_files.xml)
+          DEC RetrievedFiles report updated to Sentinels naming convention:
+          Report collision:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-308
+          Robustification for contingencies:
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-278
+          dec_interfaces.xml replaces "FTPServer" with "Server" configuration item
+1.0.11 => Migration to ActiveRecord 6
+1.0.10 => new dec_config.xml deprecates dcc_config.xml & ddc_config.xml
+          new dec_incoming_files.xml deprecates files2Intrays.xml & ft_incoming_files.xml
+          new dec_outgoing_files.xml deprecates ft_outgoing_files.xml
+          Earth Explorer / Earth Observation file-types are deprecated
+          support to multiple log4r outputters
+          unit tests updated to verify the PUSH mode to send files
+1.0.9 => decUnitTests support batchmode to avoid prompting for confirmation
+1.0.8 => decListener command line flags fixed
+1.0.7 => decManageDB creates an index by filename for all tables
+1.0.6 => decCheckConfig write checks for UploadDir/UploadDir for non secure FTP
+1.0.5 => notify2Interface.rb fix sending mail to first address only 
+         decCheckConfig shipped in the gem
+1.0.4 => decValidateConfig shipped with the required xsd schemas
+1.0.3 => upgrade of rpf module to support ruby 2.x series
+1.0.2 => commands triggered by reception events are now logged
+1.0.1 => decStats -H <hours> has been integrated
+1.0.0 => first version of the dec installer created
+\end{Verbatim}
+
+\end{document}
+

@@ -191,7 +191,7 @@ def main
    end
    ## --------------------------------------------
 
-   @logger.info("#{File.basename($0)} #{cmdParams}")
+   # @logger.info("#{File.basename($0)} #{cmdParams}")
  
    ## -------------------------------------------- 
    

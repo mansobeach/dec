@@ -18,9 +18,6 @@
 
 require 'open3'
 
-require 'ctc/FTPClientCommands'
-require 'ctc/SFTPBatchClient'
-require 'ctc/CheckerFTPConfig'
 require 'dec/ReadInterfaceConfig'
 
 module DEC
@@ -144,11 +141,16 @@ class EventManager
             
             exit_status = nil
             
-            Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-               while line = stdout.gets
-                  puts line
+            begin
+               Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+                  while line = stdout.gets
+                     puts line
+                  end
+                  exit_status = wait_thr.value
                end
-               exit_status = wait_thr.value
+            rescue Exception => e
+               log.error("[DEC_750] I/F #{interface}: EventManager failed execution of #{cmd} / #{e.to_s}")
+               next
             end           
             
 #            output = `#{cmd}`

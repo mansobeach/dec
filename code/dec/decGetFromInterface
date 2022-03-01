@@ -435,7 +435,13 @@ def body
    bNewFiles = false
 
    if bRetrieveFiles == true or @listOnly == true then
-      bNewFiles     = @receiver.check4NewFiles(@listOnly)
+      begin
+         bNewFiles     = @receiver.check4NewFiles(@listOnly)
+      rescue Exception => e
+         @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
+         exit(1)
+      end
+
       if bNewFiles == false then
          @logger.info("[DEC_050] I/F #{@entity}: Polling Completed / No file(s) available for pull")
          event.trigger(@entity, "ONRECEIVEOK", nil, @logger)

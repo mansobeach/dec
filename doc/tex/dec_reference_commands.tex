@@ -16,6 +16,74 @@
  
 \begin{document}
 
+\label{decValidateConfig}
+\section{decValidateConfig}
+
+\begin{verbatim}
+
+== Synopsis
+	
+This is a DEC command line tool that checks the validity of DEC configuration
+files according to DEC's XSD schemas. This tool should be run everytime a 
+configuration change is performed.
+
+-e flag:
+
+With this option the Interfaces (Entities) configuration file (dec_interfaces.xml)
+is validated using the schema interfaces.xsd
+
+-g flag:
+
+With the main DEC configuration file (dec_config.xml)
+is validated using the schema dec_config.xsd
+
+-i flag:
+
+With this option the Incoming file-types configuration file (dec_incoming_files.xml)
+is validated using the schema dec_incoming_files.xsd
+
+-o flag:
+
+With this option the Outgoing file-types configuration file (dec_outgoing_files.xml)
+is validated using the schema dec_outgoing_files.xsd
+
+-m flag:
+
+With this option the DEC Mail configuration file (ft_mail_config.xml) is
+validated using the schema ft_mail_config.xsd
+
+-l flag:
+
+With this option the DEC Logs configuration file (dec_log_config.xml) is
+validated using the schema dec_log_config.xsd
+
+-a flag:
+
+This is the all flag, which performs all the checks described before.
+
+
+== Usage
+-a          Check all DEC configuration files
+-g          Check DEC's general configuration file dec_config.xml
+-e          Check the Entities Configuration file dec_interfaces.xml
+-m          Check the mail configuration file ft_mail_config.xml
+-i          Check the incoming file-types configuration file dec_incoming_files.xml
+-i          Check the outgoing file-types configuration file dec_outgoing_files.xml
+-X <dir>    eXtract the configuration into the specified directory
+-N <label>  label of the node to be appended into the configuration
+-h          shows this help
+-v          shows version number
+
+
+== Author
+DEIMOS-Space S.L.
+
+== Copyright
+Copyright (c) 2007 ESA - DEIMOS Space S.L
+	
+\end{verbatim}
+
+
 \label{decCheckConfig}
 \section{decCheckConfig}
  
@@ -83,7 +151,7 @@ decCheckConfig [--nodb]
 -D    it performs the execution in Debug mode     
 
 == Author
-DEIMOS-Space S.L. (bolf)
+DEIMOS-Space S.L.
 
 == Copyright
 Copyright (c) 2005 ESA - DEIMOS Space S.L.
@@ -110,7 +178,7 @@ decCheckSent -m <Interface_Name> [-t]
 --version   shows version number
 
 == Author
-Deimos-Space S.L. (bolf)
+Deimos-Space S.L.
 
 == Copyright
 Copyright (c) 2006 ESA - Deimos Space S.L.
@@ -139,7 +207,7 @@ decConfigInterfaceDB --add <MNEMONIC> | --process EXTERNAL
 --usage     shows the usage
 
 == Author
-Deimos-Space S.L. (bolf)
+Deimos-Space S.L.
 
 == Copyright
 Copyright (c) 2006 ESA - Deimos Space S.L.
@@ -236,7 +304,7 @@ decGetFromInterface -m <MNEMONIC>  [-l] [--nodb]
 --version   shows version number
 
 == Author
-DEIMOS-Space S.L. (bolf)
+DEIMOS-Space S.L.
 
 \end{verbatim}
 
@@ -319,7 +387,7 @@ decListener  --all [-R]| --mnemonic <MNEMONIC> --interval <seconds>
 --version             shows version number      
 
 == Author
-DEIMOS-Space S.L. (bolf)
+DEIMOS-Space S.L.
 
 == Copyright
 Copyright (c) 2005 ESA - DEIMOS Space S.L.
@@ -398,7 +466,7 @@ decSend2Interface -m <MNEMONIC> [-O] [--nodb]
 --version   shows version number
 
 == Author
-Deimos-Space S.L. (bolf)
+Deimos-Space S.L.
 
 == Copyright
 Copyright (c) 2006 ESA - Deimos Space S.L.
@@ -496,7 +564,7 @@ This is the all flag, which performs all the checks described before.
 
 
 == Author
-DEIMOS-Space S.L. (rell)
+DEIMOS-Space S.L.
 
 == Copyright
 Copyright (c) 2007 ESA - DEIMOS Space S.L.

@@ -27,7 +27,8 @@ class CheckerInventoryConfig
    ## -----------------------------------------------------------
 
    ## Class constructor.
-   def initialize
+   def initialize(logger = nil)
+      @logger = logger
       checkModuleIntegrity
       @decReadConf    = ReadInterfaceConfig.instance
    end
@@ -46,10 +47,10 @@ class CheckerInventoryConfig
          # Interface.where(["name = ?", x]).first
       
          if Interface.find_by_name(x) != nil then
-            puts "#{'1F44D'.hex.chr('UTF-8')} #{x} I/F is declared in DEC/Inventory"
+            @logger.info("[DEC_003] I/F #{x}: interface is correctly declared in DEC/Inventory #{'1F44D'.hex.chr('UTF-8')}")
             retVal = true
          else
-            puts "#{'1F480'.hex.chr('UTF-8')} #{x} I/F is NOT declared in DEC/Inventory"
+            @logger.error("[DEC_605] I/F #{x}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
             retVal = false
          end
       }
@@ -60,7 +61,7 @@ class CheckerInventoryConfig
    ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "CheckerInventoryConfig debug mode is on"
+      @logger.debug("CheckerInventoryConfig debug mode is on")
    end
    ## -----------------------------------------------------------
 
@@ -74,11 +75,10 @@ private
    def checkModuleIntegrity
 
       if !ENV['DEC_DATABASE_NAME'] then
-         puts "DEC_DATABASE_NAME environment variable not defined !  #{'1F480'.hex.chr('UTF-8')}\n\n"
+         @logger.error("DEC_DATABASE_NAME environment variable not defined !  #{'1F480'.hex.chr('UTF-8')}")
          bCheckOK = false
          bDefined = false
-         puts "Error in CheckerInventoryConfig::checkModuleIntegrity !"
-         puts
+         @logger.error("Error in CheckerInventoryConfig::checkModuleIntegrity !")
          exit(99)
       end
       

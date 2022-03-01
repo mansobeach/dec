@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.32'
+  s.version     = '1.0.33'
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -88,6 +88,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decTestInterface_CloudFerro'
       s.executables   << 'decTestInterface_ECDC'
       s.executables   << 'decTestInterface_IERS'
+      s.executables   << 'decTestInterface_ILRS'
       s.executables   << 'decTestInterface_GNSS'
       s.executables   << 'decTestInterface_NOAA'
       s.executables   << 'decTestInterface_SCIHUB'
@@ -100,6 +101,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_LOCAL'
       s.executables   << 'decUnitTests_ncftpput'
       s.executables   << 'decUnitTests_SBOA'
+      s.executables   << 'decUnitTests_SFTP'
       s.executables   << 'decUnitTests_WebDAV'
       s.executables   << 'decUnitTests_WebDAV_Secure'
       s.executables   << 'decUnitTests_mail'
@@ -118,7 +120,7 @@ Gem::Specification.new do |s|
     
   ## ----------------------------------------------
   
-  s.required_ruby_version = '> 2.6.0.preview2'
+  s.required_ruby_version = '> 3.0'
   
   ## ----------------------------------------------
   
@@ -126,6 +128,7 @@ Gem::Specification.new do |s|
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('curb', '~> 0.9')
   s.add_dependency('dotenv', '~> 2')
+  s.add_dependency('ffi', '~> 1.15')
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('ftpfxp', '~> 0.0')

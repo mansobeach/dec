@@ -377,6 +377,14 @@ class ODataClientBase
          end
       end
 
+      ## https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=year(ContentDate/End)%20le%202015%20and%20month(IngestionDate)%20eq%2012
+
+      ## curl -k -u borjalf:perrillo.pwd "https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=year(ContentDate/End)%20le%202015"
+
+      ## https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=year(ContentDate/End)%20lt%202014%20and%20month(IngestionDate)%20eq%2012
+
+      ## curl -k -u borjalf:perrillo.pwd 'https://scihub.copernicus.eu/dhus/odata/v1/Products?$filter=year(ContentDate/End)%20lt%202015%20and%20month(IngestionDate)%20eq%2012'
+
       if @creationtime != nil then
          if @bUseDateTime == true then
             urlCount = "#{urlCount}#{condition} and #{@attributeDateAvailable} ge datetime'#{@creationStart}' and #{@attributeDateAvailable} lt datetime'#{@creationEnd}'"

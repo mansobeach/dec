@@ -1,0 +1,24 @@
+mvn help:effective-pom
+
+mvn help:effective-settings
+
+mvn help:describe -Dplugin=help -Dfull
+
+mvn archetype:generate -DgroupId=home.mansobeach.test \
+                        -DartifactId=simple \
+                        -DpackageName=home.mansobeach.test
+
+mvn install
+
+java -cp target/simple-1.0-SNAPSHOT.jar home.mansobeach.test.App
+
+## usage of the local repository without downloading dependencies
+
+## off-line mode
+mvn clean install -o 
+
+## skip tests
+mvn install -DskipTests
+
+## execute specific unit test
+mvn test -Dtest=ComputeAnglesCoregTest#testComputeAngles test

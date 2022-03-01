@@ -17,7 +17,7 @@
 \begin{document}
 	\begin{description}[style=nextline]
 
-		\item[How many DEC nodes can be configured in the same host ?] Answer: Nominally one single DEC node is recommended for every host. It is recalled that one single node is able to handle independently as many interfaces as needed.
+		\item[How many Interfaces can be configured in every node ?] Answer: There is no restriction in the number of Interfaces configured in a given node.
 		\newline
 				
 		\item[How many DEC nodes can be configured in the same host ?] Answer: Nominally one single DEC node is recommended for every host. It is recalled that one single node is able to handle as many interfaces as needed.
@@ -42,6 +42,28 @@
 				[ INFO] 2021-10-08 15:58:02 SBOA.push - [DEC_210] I/F NAV: tai-utc.dat UPLOADED / size 12 bytes
 			\end{verbatim}
 		\end{scriptsize}
+	
+		\item[Can DEC support non file-based \textit{pull} circulations ?] Answer: There is no restriction in the protocols supported, which can be enlarged by the implementation of dedicated protocol handlers. Standard protocols such as HTTP can publish data by URLs which are not necessarily liaised to files. Also there are other protocols specialising HTTP with dedicated API / end-points, which are not file-based (e.g. OASIS Open Data Protocol / OData). Upon performing the pull request and obtaining the data, then DEC flushes the retrieved data into files to feed the consumers.  
+		\newline
+	
+		\item[Can DEC support non file-based \textit{push} circulations ?] Answer: There is no restriction in the protocols supported, which can be enlarged by the implementation of dedicated protocol handlers. Standard protocols such as HTTP can receive data at URLs, which are not necessarily liaised to files by usage of POST requests ; these are tailored for the interface end-point definition (i.e. parameters part of the request).
+		
+		\item[This document does not include information about the resources comssumption or requirements needs by DEC SW ; is there any constraint ? \textit{push} circulations ?] Answer: Such lack of information is a gap of this document which needs to be addressed. A quick reply is that the DEC SW needs for resources is really negligible. As example it is mentioned one use-case in the IoT domain using a low power ARM platform with 512MB RAM (cf. \textit{raspberry pi}) to gather \href{http://meteoleoncarmenes.altervista.org}{local meteorological data} and systematically push it for consumption.
+
+		\item[Where can the configuration files be found?] Answer: The location of the configuration files can be obtained using the following command using the Debug flag: \newline
+        \inlinecode{bash}{ \$> decValidateConfig -e -D}  
+\begin{Verbatim}
+ [DEBUG] xmllint --schema
+ /home/s2ops/.frum/ruby/gems/dec-1.0.24/code/dec/../../schemas/dec_interfaces.xsd
+ /home/s2ops/.frum/ruby/gems/dec-1.0.24/code/dec/../../config/dec_interfaces.xml --noout
+\end{Verbatim}
+        
+		\item[I do not find the interface tests tools referenced in the Annex - Public Data Providers.] Answer: If you are interested in the interface tests or / and the DEC SW associated configuration for their exploitation, please ensure that installation package carries them (i.e. in general the installation file carries the "test" name) to ensure both test tools and configuration are included. Just ask for them $\ddot\smile$ \smiley \blacksmiley.
+		\newline	
+	
+		\item[How come this document is so ugly?] Answer: Documentation is handled as code in the repository. The document is compiled so far with no frills or appealing style templates but the essential in order to keep compatibility when converting to some content managers such as wiki or confluence. 
+		\newline	    
+    
 	\end{description}
 \end{document}
 

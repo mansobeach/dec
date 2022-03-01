@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 #########################################################################
-##
-## === Ruby source for #DEC_TestCases class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Data Exchange Component
-## 
-## module DEC
-##
+#
+# === Ruby source for #DEC_TestCases class
+#
+# === Written by DEIMOS Space S.L. (bolf)
+#
+# === Data Exchange Component
+# 
+# module DEC
+#
 #########################################################################
 
 require 'rubygems'
@@ -18,16 +18,39 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
-
 require 'ctc/FTPClientCommands'
+
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
+# Preconditions:
+# 1 - setup 
+# 1.1 - load_config_development
+# 1.2 - inventory database is created
 
-class DECTestCaseGNSS < Test::Unit::TestCase
+# 2 - teardown
+# 2.1 - purge archive
+# 2.2 - inventory database is destroyed
+
+#  1  - test_decConfigInterface2DB
+#  2  - test_decGetFromInterface
+#  3  - test_decListener
+
+
+# Select a single test of the suite
+
+# ruby decUnitTests -n test_my_method 
+
+# Start FTP Server in MacOS Sierra
+# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+
+# Stop FTP Server
+# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+
+class DECTestCaseILRS < Test::Unit::TestCase
 
    include CUC::DirUtils
    include CTC::FTPClientCommands
@@ -44,7 +67,7 @@ class DECTestCaseGNSS < Test::Unit::TestCase
    Test::Unit.at_start do      
       puts
       puts "======================================"
-      puts "DEC Interface Test Cases for GNSS ADPs"
+      puts "DEC Interface Test Cases for ILRS"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -79,31 +102,47 @@ class DECTestCaseGNSS < Test::Unit::TestCase
                            "gpsrapid.out" \
                            ]
 
+      
+=begin
+      puts
+      puts
+      puts "THINK IT TWICE  !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      c = STDIN.getc
+            
+      
+      if c != 'Y' then
+         exit(99)
+      end
+
+=end      
+      
       @@conf = DEC_Environment.new
       
       @@conf.wrapper_load_config
-                             
+  
       @@conf.wrapper_print_environment
-                           
+
       @@conf.createEnvironmentDirs
-                                    
+
+
       if @@conf.wrapper_check_environment == false then
          puts "DEC environment not suited for unit tests"
          puts
          exit(99)
       end
-                     
-                     
+
       # initialize logger
-                           
       loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-                           
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
-      
       @@logger = loggerFactory.getLogger
-                           
+
       if @@logger == nil then
          puts
          puts "Error in decUnitTests::main"
@@ -120,7 +159,7 @@ class DECTestCaseGNSS < Test::Unit::TestCase
    ## ------------------------------------------------------
    
    Test::Unit.at_exit do
-      @@logger.info("End of DEC test for GNSS ADP interface")
+      puts "End of DEC test for IERS interface"
    end
    
    ## ------------------------------------------------------
@@ -128,8 +167,14 @@ class DECTestCaseGNSS < Test::Unit::TestCase
    ## Setup before every test-case
    ##
    def setup
-      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
-                  
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
+      puts
+      
+      @@conf.wrapper_load_config_development
+            
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
@@ -137,90 +182,87 @@ class DECTestCaseGNSS < Test::Unit::TestCase
       system("\\rm -rf /tmp/dec*")
       system("\\rm -rf /tmp/DEC*.log")
 
+      ftConfig    = ReadInterfaceConfig.instance
+      configOut   = ReadConfigOutgoing.instance
+      configIn    = ReadConfigIncoming.instance
+      arrEnts     = ftConfig.getAllMnemonics
+
+      @entityConfig     = ReadInterfaceConfig.instance
+      conf              = ReadConfigIncoming.instance
+      @finalDir         = conf.getIncomingDir("ILRS")
+      checkDirectory(@finalDir)
+      
       cmd = "decManageDB -c"
       ret = system(cmd)
       
       if ret == false then
-         @@logger.error("Error when creating the DEC inventory ! :-(")
+         puts
+         puts "Error when creating the DEC inventory ! :-("
+         puts
+         # exit(99)
+      end
+      
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      
+      ret = system(cmd)
+      
+      if ret == false then
+         puts
+         puts "Error when adding interface configuration to the database ! :-("
+         puts
+         # exit(99)
+      end
+
+      if self.checkEnvironmentEssential == false then
+         self.printEnvironmentError
          exit(99)
       end
-            
+      
    end
    ## --------------------------------------------------------
    ## After every test case
 
    def teardown
-      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+      puts
+      puts "================================================"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
+      puts
+
+      @@conf.wrapper_load_config_development
+
+      cmd = "decManageDB -d"
+      puts cmd
+      ret = system(cmd)
+       
+      if ret == false then
+         puts "Error when dropping the dec inventory ! :-("
+         puts
+         exit(99)
+      end
    end
    ## ------------------------------------------------------
 
    ## ------------------------------------------------------
 
-#   data("2",     ["NOAA",  false])
-#   data("3",     ["IERS",  false])
-   data("4",     ["IGS",   false])
-#   data("5",     ["LEAP",  true])
-
-   def test_pull(params)
-
-      interface, noDB = params
-
+   def test_ILRS_S3
       
-      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} => #{interface} noDB #{noDB}")
- 
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      @entityConfig     = ReadInterfaceConfig.instance
-      conf              = ReadConfigIncoming.instance
-      
-      @finalDir         = conf.getIncomingDir(interface)
-            
-      checkDirectory(@finalDir)
-      
-      cmd = "decGetFromInterface -m #{interface} -l"
+      cmd = "decGetFromInterface -m ILRS -l"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      sleep(5.0)
+      sleep(2.0)
 
-      cmd = "decGetFromInterface -m #{interface}"
-      if noDB == true then
-         cmd = "#{cmd} --nodb"
-      end      
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)      
-
-      sleep(5.0)
-
-      # cmd = "decGetFromInterface -m PUBLISH_S3"
-      # puts cmd
-      # assert(system(cmd), cmd)      
-
-      cmd = "decStats -H 1"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
-      
-      cmd = "decGetFromInterface -m #{interface} -l"
+      cmd = "decGetFromInterface -m ILRS"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arr = Dir["/tmp/DEC*.log"]
-            
-      cmd = "grep ERROR #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
-
-      
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## ------------------------------------------------------
-
-
-   ## ------------------------------------------------------
-
 
 end
-
 
 ## ===================================================================
 

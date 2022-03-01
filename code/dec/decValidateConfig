@@ -71,6 +71,8 @@
 
 require 'getoptlong'
 
+require 'cuc/Log4rLoggerFactory'
+
 require 'dec/DEC_Environment'
 
 
@@ -156,10 +158,30 @@ def main
       puts
       exit(66)
    end
+   
+   # ------------------------
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("checker", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+      puts "Error in getFromInterface::main"
+      puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+      puts
+      puts
+      exit(99)
+   end
+   # ------------------------
 
-   if self.checkToolDependencies == false then
+   if self.checkToolDependencies(@logger) == false then
       exit(66)
    end
+
+
 
    ## --------------------------------------------
    ##
@@ -175,8 +197,6 @@ def main
    # Check DEC's general configuration files dec_config.xml
    
    if @bGeneral == true or @bAll == true then
-      puts "================================================"
-      puts "Checking dec_config.xml..."
       
       ret = validate("dec_config")
 
@@ -184,14 +204,11 @@ def main
          bReturn = false
       end
 
-      puts "================================================"
    end
 
    # Check the Entities Configuration file interfaces.xml
    
    if @bEntities == true or @bAll == true then
-      puts "================================================"
-      puts "Checking dec_interfaces.xml..."
       
       ret = validate("dec_interfaces")
 
@@ -199,16 +216,11 @@ def main
          bReturn = false
       end
 
-      puts "================================================"
    end
 
    # Check the incoming file-types configuration file dec_incoming_files.xml
    
    if @bIncoming == true or @bAll == true then
-      puts
-      puts "================================================"
-      puts "Checking dec_incoming_files.xml..."
-      puts
       
       ret = validate("dec_incoming_files")
 
@@ -216,17 +228,11 @@ def main
          bReturn = false
       end
 
-
-      puts "================================================"
    end
 
    # Check the incoming file-types configuration file dec_outgoing_files.xml
    
    if @bOutgoing == true or @bAll == true then
-      puts
-      puts "================================================"
-      puts "Checking dec_outgoing_files.xml..."
-      puts
       
       ret = validate("dec_outgoing_files")
 
@@ -234,16 +240,11 @@ def main
          bReturn = false
       end
 
-
-      puts "================================================"
    end
 
    # Check the mail configuration file ft_mail_config.xml
 
    if @bAll == true or @bMail == true then
-      puts "================================================"
-      puts "Checking ft_mail_config.xml..."
-      puts
  
       ret = validate("ft_mail_config")
 
@@ -251,15 +252,11 @@ def main
          bReturn = false
       end
 
-      puts "================================================"         
    end
 
    # Check the mail configuration file ft_mail_config.xml
 
    if @bAll == true or @bLog == true then
-      puts "================================================"
-      puts "Checking dec_log_config.xml..."
-      puts
  
       ret = validate("dec_log_config")
 
@@ -267,7 +264,6 @@ def main
          bReturn = false
       end
 
-      puts "================================================"         
    end
 
 
@@ -286,16 +282,28 @@ def validate (fileName)
 
    cmd = "xmllint --schema #{rootPath}/#{fileName}.xsd #{ENV['DEC_CONFIG']}/#{fileName}.xml --noout"
 
-   if @isDebugMode == true then
-      puts cmd
+   if @isDebugMode == false then
+      cmd = "#{cmd.dup} 2>/dev/null"
+   end
+
+   if @isDebugMode == true and @logger != nil then
+      @logger.debug(cmd)
    end
 
    ret = system(cmd)
    
    if ret == false then
-      puts "Fail schema check for #{fileName} #{'1F480'.hex.chr('UTF-8')}"
+      if @logger != nil then
+         @logger.error("[DEC_798] Fail schema check for #{fileName} #{'1F480'.hex.chr('UTF-8')}")
+      else
+         puts "Fail schema check for #{fileName} #{'1F480'.hex.chr('UTF-8')}"
+      end
    else
-      puts "Valid schema check for #{fileName} #{'1F4AA'.hex.chr('UTF-8')}"
+      if @logger != nil then
+         @logger.info("[DEC_002] Valid schema check for #{fileName} #{'1F4AA'.hex.chr('UTF-8')}")
+      else
+         puts "Valid schema check for #{fileName} #{'1F4AA'.hex.chr('UTF-8')}"
+      end
    end
    
    return ret   

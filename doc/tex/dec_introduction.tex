@@ -45,11 +45,12 @@ This section enumerates a high level overview for the main features that allows 
 \begin{itemize}
 	\item \textit{Automation} : the ability to perform unattended autonomous circulation operations
 	\item \textit{Flexibility} : the ability to \textit{pull} \& \textit{push} files from configurable interfaces and configurable circulation rules
+	\item \textit{Interface-Isolation} : every Interface is handled by separated isolated process avoiding any error propagation.
 	\item \textit{Robustness} : this is to perform “atomic” operations during file circulation ; the state for each operation is always known being network errors tolerant
-	\item \textit{Performance} : parallelisation of the circulation to fruit the available network bandwidth, support of file compression mechanisms to reduce the footprint of transfers and local disseminations for which duplication of files by \textit{cp} or \textit{mv} can be avoided by usage of \textit{hardlinks}
+	\item \textit{Performance} : parallelism of the circulation to fruit the available network bandwidth, support of file compression mechanisms to reduce the footprint of transfers and local dissemination for which duplication of files by \textit{cp} or \textit{mv} can be avoided by usage of \textit{hardlinks}
 	\item \textit{Resiliency} : to \textit{autonomously} recover from network errors, downtime and eventual glitches and resume operations during every iteration.
 	\item \textit{Zero-copy} : to avoid new copies in the file system during \textit{dissemination} circulations.	
-	\item \textit{Comprehensive Traceability} : complete deterministic and unambiguous traceability using codes within the log file of every operation.	
+	\item \textit{Comprehensive Traceability} : complete deterministic and unambiguous traceability along the entire workflow using codes within the log file of every operation.	
 \end{itemize}
 
 \section{Download DEC SW}

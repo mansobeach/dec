@@ -131,11 +131,11 @@ class InterfaceHandlerLocal
             @logger.debug("[DEC_XXX] I/F #{@entity}: Polling #{path}")
          end
          
-         formerDir= Dir.pwd #shuold not be necessary; safety reasons
+         formerDir= Dir.pwd #should not be necessary; safety reasons
          begin
             Dir.chdir(path)
          rescue Exception => e
-            @logger.error("[DEC_002] Directory #{path} is unreachable. Check with CheckconfigDCC.rb -e")
+            @logger.error("[DEC_612] I/F #{@entity}: Directory #{path} is unreachable. decCheckConfig -e #{@entity}")
          end
 
          entries  = Dir["*"].sort_by{|time| File.stat(time).mtime}

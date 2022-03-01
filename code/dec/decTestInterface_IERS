@@ -155,7 +155,7 @@ class DECTestCase < Test::Unit::TestCase
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
       
       @@conf.wrapper_load_config_development
@@ -260,10 +260,9 @@ class DECTestCase < Test::Unit::TestCase
    ## After every test case
 
    def teardown
-      puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
 
       @@conf.wrapper_load_config_development
@@ -286,7 +285,7 @@ class DECTestCase < Test::Unit::TestCase
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
 
       @@conf.wrapper_load_config_development
@@ -436,7 +435,7 @@ class DECTestCase < Test::Unit::TestCase
       puts
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
 
       cmd = "decValidateConfig -a"
@@ -475,7 +474,7 @@ class DECTestCase < Test::Unit::TestCase
 
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
 
       checkDirectory(ReadConfigIncoming.instance.getIncomingDir("LEAP"))

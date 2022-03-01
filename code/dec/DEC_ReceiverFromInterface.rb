@@ -432,10 +432,13 @@ class DEC_ReceiverFromInterface
          rescue Exception => e
             @ftp.chdir("/")
             @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@remotePath} directory")
-            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s}")               
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s.chop}")               
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
+            # Short-circuit if some directory cannot be reached
+            # either it is a network glitch, either it is most probably miss-configuration
+            raise e
             next
          end
 

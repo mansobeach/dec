@@ -25,7 +25,7 @@ require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
 
-class DECTestCase < Test::Unit::TestCase
+class DECTestCaseNOAA < Test::Unit::TestCase
 
    include CUC::DirUtils
    include CTC::FTPClientCommands
@@ -96,9 +96,13 @@ class DECTestCase < Test::Unit::TestCase
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
-                  
+                
+      cmd = "mkdir -p /tmp/aux_tmp"
+      puts cmd
+      system(cmd)
+
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
@@ -124,7 +128,7 @@ class DECTestCase < Test::Unit::TestCase
       puts __method__.to_s
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
       puts
 
    end
@@ -143,7 +147,7 @@ class DECTestCase < Test::Unit::TestCase
    
       puts
       puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s} => #{interface} noDB #{noDB}"
+      puts "#{File.basename(__FILE__)}::#{__method__.to_s} => #{interface} noDB #{noDB}"
       puts
 
 
@@ -157,7 +161,7 @@ class DECTestCase < Test::Unit::TestCase
             
       checkDirectory(@finalDir)
       
-      cmd = "decGetFromInterface -D -m #{interface} -l"
+      cmd = "decGetFromInterface -m #{interface} -l"
       puts cmd
       assert(system(cmd), cmd)
 
