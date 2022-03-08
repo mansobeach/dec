@@ -12,6 +12,7 @@
       <xs:enumeration value="FTPES"/>
       <xs:enumeration value="LOCAL"/>
       <xs:enumeration value="HTTP"/>
+      <xs:enumeration value="HTTP_SPCS"/>
       <xs:enumeration value="WEBDAV"/>
     </xs:restriction>
   </xs:simpleType> 

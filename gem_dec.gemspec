@@ -84,7 +84,7 @@ Gem::Specification.new do |s|
    ##
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_TEST") == true then
-
+      s.executables   << 'decTestInterface_CelesTrak'
       s.executables   << 'decTestInterface_CloudFerro'
       s.executables   << 'decTestInterface_ECDC'
       s.executables   << 'decTestInterface_IERS'
@@ -92,6 +92,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decTestInterface_GNSS'
       s.executables   << 'decTestInterface_NOAA'
       s.executables   << 'decTestInterface_SCIHUB'
+      s.executables   << 'decTestInterface_SPCS'
       s.executables   << 'decUnitTests'
       s.executables   << 'decUnitTests_ADP'
       s.executables   << 'decUnitTests_FTP'
@@ -116,7 +117,7 @@ Gem::Specification.new do |s|
 
 
   s.homepage    = 'http://www.deimos-space.com'
-  s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
+  s.metadata    = { "source_code_uri" => "https://confluence.elecnor-deimos.com/display/DEC" }
     
   ## ----------------------------------------------
   

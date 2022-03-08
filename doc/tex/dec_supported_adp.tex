@@ -5,7 +5,7 @@
 %
 % Borja Lopez Fernandez (BOLF)
 %
-% DEC ADP Supported
+% DEC Public Data Providers supported out-of-the box
 %
 %
 
@@ -17,7 +17,7 @@
 
 \section{Introduction}
  
-This section includes some few open public data providers of auxiliary data used in different domains (earth observation, navigation, geodesy, space weather, public health, etc), for which there is already a DEC configuration available to exploit them. Any ADP can be supported by DEC, but the ones described here have been selected to demonstrate the DEC SW capabilities considering that such interfaces have been used by several projects. As such, every ADP is subject of a dedicated test interface which does not simulate the provider but it exploits the real interface. Also the selection of interfaces is driven by the nature of the different protocols used in order to have some variety.\newline
+This section includes some few open public data providers of auxiliary data used in different domains (earth observation, navigation, geodesy, space weather, public health, etc), for which there is already a DEC configuration available to exploit them. Any \textit{public data provider} can be supported by DEC, but the ones described here have been selected to demonstrate the DEC SW capabilities considering that such interfaces have been used by several projects. As such, every provider is subject of a dedicated test interface which does not simulate the provider but it exploits the real interface. Also the selection of interfaces is driven by the nature of the different protocols used in order to have some variety.\newline
 
 \par
 \noindent
@@ -29,9 +29,85 @@ The information included in the following sections do not represent the full int
 
 \pagebreak
 
+\section{CelesTrak }
+Celestrak publishes the NORAD satellite catalogue of TLE with a convenient public anonymous API.\newline  
+
+\subsection{Deimos-1 \& Deimos-2 TLE }
+DEC SW queries the CelesTrak API to check its availability and request the spacecraft according to its SATCAT identifier (i.e. NORAD identifier). Two different workflows CELES\_D1 and CELES\_D2 are defined to retrieve the TLE of DE1 and DE2 spacecrafts, which are subsequently dumped into files and renamed accordingly for their unambiguous identification.\newline
+	
+\inlinecode{bash}{ \$> decTestInterface_CelesTrak} \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-03-02 10:32:22 NODE_1.test - DECTestCaseCelesTrak::test_pull => START
+[DEBUG] 2022-03-02 10:32:23 NODE_1.test - rm -f /tmp/dec/in_basket_if_celes/*
+[DEBUG] 2022-03-02 10:32:23 NODE_1.test - decGetFromInterface -m CELES_D1 -l --nodb
+[ INFO] 2022-03-02 10:32:25 NODE_1.pull - [DEC_005] I/F CELES_D1: Polling Started - List mode is true
+[ INFO] 2022-03-02 10:32:26 NODE_1.pull - [DEC_105] I/F CELES_D1: File gp.php?CATNR=35681 is available
+[ INFO] 2022-03-02 10:32:26 NODE_1.pull - [DEC_060] I/F CELES_D1: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-02 10:32:26 NODE_1.pull - [DEC_100] I/F CELES_D1: Pull iteration completed successfully 🕺
+[DEBUG] 2022-03-02 10:32:28 NODE_1.test - decGetFromInterface -m CELES_D1 --nodb
+[ INFO] 2022-03-02 10:32:30 NODE_1.pull - [DEC_005] I/F CELES_D1: Polling Started - List mode is false
+[ INFO] 2022-03-02 10:32:31 NODE_1.pull - [DEC_060] I/F CELES_D1: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_110] I/F CELES_D1: gp.php?CATNR=35681 downloaded with size 168 bytes
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_130] I/F CELES_D1: event triggered onreceivenewfilesok => 
+mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=35681 /tmp/dec/in_basket_if_celes/"$(date +"%Y%m%d%H%M%S_DEIMOS-1.tle")"
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_130] I/F CELES_D1: event completed onreceivenewfilesok => 
+mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=35681 /tmp/dec/in_basket_if_celes/"$(date +"%Y%m%d%H%M%S_DEIMOS-1.tle")"
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_135] I/F CELES_D1: S2__OPER_DEC_F_RECV_2BOA_20220302T103232_V20220302T103232_20220302T103232_CELES_D1.xml pull report created
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_115] Intray TLE: 20220302103232_DEIMOS-1.tle disseminated into /tmp/dec_local_dissemination/TLE
+[ INFO] 2022-03-02 10:32:32 NODE_1.pull - [DEC_100] I/F CELES_D1: Pull iteration completed successfully 🕺
+[DEBUG] 2022-03-02 10:32:37 NODE_1.test - decGetFromInterface -m CELES_D2 -l --nodb
+[ INFO] 2022-03-02 10:32:39 NODE_1.pull - [DEC_005] I/F CELES_D2: Polling Started - List mode is true
+[ INFO] 2022-03-02 10:32:40 NODE_1.pull - [DEC_105] I/F CELES_D2: File gp.php?CATNR=40013 is available
+[ INFO] 2022-03-02 10:32:40 NODE_1.pull - [DEC_060] I/F CELES_D2: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-02 10:32:40 NODE_1.pull - [DEC_100] I/F CELES_D2: Pull iteration completed successfully
+[DEBUG] 2022-03-02 10:32:42 NODE_1.test - decGetFromInterface -m CELES_D2 --nodb
+[ INFO] 2022-03-02 10:32:43 NODE_1.pull - [DEC_005] I/F CELES_D2: Polling Started - List mode is false
+[ INFO] 2022-03-02 10:32:44 NODE_1.pull - [DEC_060] I/F CELES_D2: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_110] I/F CELES_D2: gp.php?CATNR=40013 downloaded with size 168 bytes
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_130] I/F CELES_D2: event triggered onreceivenewfilesok => 
+mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=40013 /tmp/dec/in_basket_if_celes/"$(date +"%Y%m%d%H%M%S_DEIMOS-2.tle")"
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_130] I/F CELES_D2: event completed onreceivenewfilesok => 
+mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=40013 /tmp/dec/in_basket_if_celes/"$(date +"%Y%m%d%H%M%S_DEIMOS-2.tle")"
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_135] I/F CELES_D2: S2__OPER_DEC_F_RECV_2BOA_20220302T103245_V20220302T103245_20220302T103245_CELES_D2.xml pull report created
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_115] Intray TLE: 20220302103245_DEIMOS-2.tle disseminated into /tmp/dec_local_dissemination/TLE
+[ INFO] 2022-03-02 10:32:45 NODE_1.pull - [DEC_100] I/F CELES_D2: Pull iteration completed successfully
+[DEBUG] 2022-03-02 10:32:50 NODE_1.test - grep ERROR /tmp/DEC000001.log
+[ INFO] 2022-03-02 10:32:50 NODE_1.test - DECTestCaseCelesTrak::test_pull => END
+\end{Verbatim}
+
+
+\pagebreak
+
+
 \section{Copernicus Open Hub}
 
-The Copernicus Open Access Hub for EO Products of the Sentinels missions / TBW.  fresh Copernicus Sentinel-2 products 
+The Copernicus Open Access Hub for EO Products of the Sentinels missions with  fresh production. 
+
+\subsection{Copernicus Precise Orbit Determination}
+The COAH publishes GNSS products belonging to the Sentinels.
+
+\begin{Verbatim}[fontsize=\tiny]
+ decODataClient -u ******** -p ******** -c "2022-03-07T00:00:00.000,2022-03-08T00:00:00.000" -q dhus:gnss:S1A -L /tmp -r
+[ INFO] 2022-03-08 15:52:09 NODE_1.odata - [DEC_257] I/F DHUS: created DEC_OPER_AGNSS_S1A_ADGS_20220308T155208_V20220307T000000_20220308T000000_18_00.xml
+[ INFO] 2022-03-08 15:52:09 NODE_1.odata - [DEC_259] I/F DHUS: downloading S1A_OPER_AUX_RESORB_OPOD_20220307T005502_V20220306T205322_20220307T001052 / 559.71 kB
+########################################################################################################################################################################################################## 100.0%
+[ INFO] 2022-03-08 15:52:11 NODE_1.odata - [DEC_260] I/F DHUS: downloaded S1A_OPER_AUX_RESORB_OPOD_20220307T005502_V20220306T205322_20220307T001052 / 559.71 kB / 0.39 MiB/s
+[ INFO] 2022-03-08 15:52:11 NODE_1.odata - [DEC_259] I/F DHUS: downloading S1A_OPER_AUX_PROQUA_POD__20220307T021956_V20220304T235942_20220305T235941 / 1.57 MB
+########################################################################################################################################################################################################## 100.0%
+[ INFO] 2022-03-08 15:52:11 NODE_1.odata - [DEC_260] I/F DHUS: downloaded S1A_OPER_AUX_PROQUA_POD__20220307T021956_V20220304T235942_20220305T235941 / 1.57 MB / 5.49 MiB/s
+[ INFO] 2022-03-08 15:52:11 NODE_1.odata - [DEC_259] I/F DHUS: downloading S1A_OPER_AUX_GNSSRD_POD__20220307T020223_V20220227T235946_20220228T235936 / 2.65 MB
+########################################################################################################################################################################################################## 100.0%
+
+(...)
+
+[ INFO] 2022-03-08 15:52:27 NODE_1.odata - [DEC_259] I/F DHUS: downloading S1A_OPER_AUX_RESORB_OPOD_20220307T200933_V20220307T163817_20220307T195547 / 559.57 kB
+########################################################################################################################################################################################################## 100.0%
+[ INFO] 2022-03-08 15:52:28 NODE_1.odata - [DEC_260] I/F DHUS: downloaded S1A_OPER_AUX_RESORB_OPOD_20220307T200933_V20220307T163817_20220307T195547 / 559.57 kB / 0.47 MiB/s
+[ INFO] 2022-03-08 15:52:28 NODE_1.odata - [DEC_259] I/F DHUS: downloading S1A_OPER_AUX_RESORB_OPOD_20220307T221710_V20220307T181701_20220307T213431 / 559.91 kB
+########################################################################################################################################################################################################## 100.0%
+[ INFO] 2022-03-08 15:52:29 NODE_1.odata - [DEC_260] I/F DHUS: downloaded S1A_OPER_AUX_RESORB_OPOD_20220307T221710_V20220307T181701_20220307T213431 / 559.91 kB / 0.47 MiB/s
+\end{Verbatim}
 
 \subsection{Sentinel-1}
 
@@ -93,6 +169,72 @@ Finished in 121.409788 seconds.
 100% passed
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 0.01 tests/s, 0.01 assertions/s
+End of DEC tests 4 DHUS
+\end{Verbatim}
+
+\subsection{Sentinel-5P}
+
+
+\subsubsection{Selection by Catalogue Time}
+This test is demonstrating the selection and retrieval (i.e. pull circulation) of Sentinel-5P NetCDF level-2 products (cf. S5P-PA) which have been published by the COAH during a certain time period. \newline
+
+\inlinecode{bash}{ \$> decTestInterface_OData_DHUS -n test_download_s5p_updates} \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[DEBUG] 2022-03-08 15:36:51 NODE_1.test - DECTestInterfaceDHUS::test_download_s5p_updates START
+[DEBUG] 2022-03-08 15:36:51 NODE_1.test - rm -f /tmp/S5*
+[DEBUG] 2022-03-08 15:36:51 NODE_1.test - decODataClient -u ******** -p ******** -c "2022-03-08T13:36:00.000,2022-03-08T13:56:00.000" -q dhus_s5p:s5:S5P_NRTI_L2 -L /tmp
+[ INFO] 2022-03-08 15:36:52 NODE_1.odata - [DEC_257] I/F DHUS_S5P: created DEC_OPER_OPDHUS_S5P_NRTI_L2_ADGS_20220308T153651_V20220308T133600_20220308T135600_13_00.xml
+[DEBUG] 2022-03-08 15:36:57 NODE_1.test - decODataClient -u ******** -p ******** -c "2022-03-08T13:36:00.000,2022-03-08T13:56:00.000" -q dhus_s5p:s5:S5P_NRTI_L2 -L /tmp -r
+[ INFO] 2022-03-08 15:36:59 NODE_1.odata - [DEC_257] I/F DHUS_S5P: created DEC_OPER_OPDHUS_S5P_NRTI_L2_ADGS_20220308T153658_V20220308T133600_20220308T135600_13_00.xml
+[ INFO] 2022-03-08 15:36:59 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T122157_20220308T122657_22801_02_020301_20220308T132819 / 1.18 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T122157_20220308T122657_22801_02_020301_20220308T132819.nc'
+
+[ INFO] 2022-03-08 15:37:03 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T122157_20220308T122657_22801_02_020301_20220308T132819 / 1.18 MB / 0.3 MiB/s
+[ INFO] 2022-03-08 15:37:03 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T114157_20220308T114657_22800_02_020301_20220308T132516 / 1.68 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T114157_20220308T114657_22800_02_020301_20220308T132516.nc'
+
+[ INFO] 2022-03-08 15:37:10 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T114157_20220308T114657_22800_02_020301_20220308T132516 / 1.68 MB / 0.23 MiB/s
+[ INFO] 2022-03-08 15:37:10 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T123157_20220308T123657_22801_02_020301_20220308T133043 / 17.73 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T123157_20220308T123657_22801_02_020301_20220308T133043.nc'
+
+[ INFO] 2022-03-08 15:37:45 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T123157_20220308T123657_22801_02_020301_20220308T133043 / 17.73 MB / 0.51 MiB/s
+[ INFO] 2022-03-08 15:38:26 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T124657_20220308T125157_22801_02_020301_20220308T133531 / 18.46 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T124657_20220308T125157_22801_02_020301_20220308T133531.nc'
+
+[ INFO] 2022-03-08 15:39:06 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T124657_20220308T125157_22801_02_020301_20220308T133531 / 18.46 MB / 0.45 MiB/s
+[ INFO] 2022-03-08 15:39:06 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T123657_20220308T124157_22801_02_020301_20220308T133503 / 17.58 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T123657_20220308T124157_22801_02_020301_20220308T133503.nc'
+
+[ INFO] 2022-03-08 15:39:46 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T123657_20220308T124157_22801_02_020301_20220308T133503 / 17.58 MB / 0.44 MiB/s
+[ INFO] 2022-03-08 15:39:46 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T125657_20220308T130157_22801_02_020301_20220308T133755 / 18.30 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T125657_20220308T130157_22801_02_020301_20220308T133755.nc'
+
+(...)
+
+[ INFO] 2022-03-08 15:41:35 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T125157_20220308T125657_22801_02_020301_20220308T133654 / 18.36 MB / 0.37 MiB/s
+[ INFO] 2022-03-08 15:41:35 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_LH_20220308T113657_20220308T114157_22800_02_020301_20220308T132756 / 4.90 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_LH_20220308T113657_20220308T114157_22800_02_020301_20220308T132756.nc'
+
+[ INFO] 2022-03-08 15:41:53 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_LH_20220308T113657_20220308T114157_22800_02_020301_20220308T132756 / 4.90 MB / 0.28 MiB/s
+[ INFO] 2022-03-08 15:41:53 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_AI_20220308T124157_20220308T124657_22801_02_020301_20220308T133432 / 17.80 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_AI_20220308T124157_20220308T124657_22801_02_020301_20220308T133432.nc'
+
+[ INFO] 2022-03-08 15:42:42 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_AI_20220308T124157_20220308T124657_22801_02_020301_20220308T133432 / 17.80 MB / 0.36 MiB/s
+[ INFO] 2022-03-08 15:42:42 NODE_1.odata - [DEC_259] I/F DHUS_S5P: downloading S5P_NRTI_L2__AER_LH_20220308T114157_20220308T114657_22800_02_020301_20220308T132624 / 1.68 MB
+################################################################################################################################################################################## 100.0%curl: Saved to filename 'S5P_NRTI_L2__AER_LH_20220308T114157_20220308T114657_22800_02_020301_20220308T132624.nc'
+
+[ INFO] 2022-03-08 15:42:49 NODE_1.odata - [DEC_260] I/F DHUS_S5P: downloaded S5P_NRTI_L2__AER_LH_20220308T114157_20220308T114657_22800_02_020301_20220308T132624 / 1.68 MB / 0.22 MiB/s
+S5P_NRTI_L2__AER_LH_20220308T122157_20220308T122657_22801_02_020301_20220308T132926 / 1.19 MB / 0.26 MiB/s
+[DEBUG] 2022-03-08 15:42:54 NODE_1.test - DECTestInterfaceDHUS::test_download_s5p_updates END
+teardown
+.
+Finished in 368.136018 seconds.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1 tests, 2 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+0.00 tests/s, 0.01 assertions/s
 End of DEC tests 4 DHUS
 \end{Verbatim}
 
@@ -468,7 +610,7 @@ The Copernicus Sentinel-3 constellation are equipped with a laser retro reflecto
 
 \section{NOAA}
 
-\subsubsection{Report Solar Geophysical Activity}
+\subsection{Report Solar Geophysical Activity}
 NOAA publishes solar and geophysical activity reports is a brief list of solar and geophysical events and indices including energetic solar flares, proton events, geomagnetic activity, and stratospheric warming alerts (cf. RSGA). \newline
 
 %\begin{landscape}
@@ -544,6 +686,139 @@ End of DEC test for NOAA interface
 	\end{Verbatim}
 
 %\end{landscape}
+
+\pagebreak
+
+\section{SPCS / CSpOC}
+The SPCS publishes space situational awareness data in space-track.org using some RESTful API.
+
+\subsection{Conjunction Data Messages}
+The public conjunction data messages published by SPCS / CSpOC are retrieved in JSON using the available API and then dumped into a file for subsequent consumption. 
+
+\begin{Verbatim}[fontsize=\tiny]
+
+[ INFO] 2022-03-08 12:47:17 NODE_1.test - DECTestCaseSPCS::test_pull => START
+ /tmp/dec_local_dissemination/CDM/cdm_public.json
+[DEBUG] 2022-03-08 12:47:18 NODE_1.test - decGetFromInterface -m SPCS -l --nodb
+[ INFO] 2022-03-08 12:47:20 NODE_1.pull - [DEC_005] I/F SPCS: Polling Started - List mode is true
+[ INFO] 2022-03-08 12:47:22 NODE_1.pull - [DEC_105] I/F SPCS: File cdm_public is available
+[ INFO] 2022-03-08 12:47:22 NODE_1.pull - [DEC_060] I/F SPCS: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-08 12:47:22 NODE_1.pull - [DEC_100] I/F SPCS: Pull iteration completed successfully
+[DEBUG] 2022-03-08 12:47:24 NODE_1.test - decGetFromInterface -m SPCS --nodb
+[ INFO] 2022-03-08 12:47:26 NODE_1.pull - [DEC_005] I/F SPCS: Polling Started - List mode is false
+[ INFO] 2022-03-08 12:47:28 NODE_1.pull - [DEC_060] I/F SPCS: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-03-08 12:48:44 NODE_1.pull - [DEC_110] I/F SPCS: cdm_public.json downloaded with size 9747797 bytes
+[ INFO] 2022-03-08 12:48:44 NODE_1.pull - [DEC_115] Intray CDM: cdm_public.json disseminated into /tmp/dec_local_dissemination/CDM
+[ INFO] 2022-03-08 12:48:44 NODE_1.pull - [DEC_135] I/F SPCS: S2__OPER_DEC_F_RECV_2BOA_20220308T124844_V20220308T124844_20220308T124844_SPCS.xml pull report created
+[ INFO] 2022-03-08 12:48:44 NODE_1.pull - [DEC_100] I/F SPCS: Pull iteration completed successfully
+[DEBUG] 2022-03-08 12:48:46 NODE_1.test - cat /tmp/dec_local_dissemination/CDM/cdm_public.json
+[
+  {
+    "CDM_ID": "225135432",
+    "CREATED": "2022-02-06 08:54:39.000000",
+    "EMERGENCY_REPORTABLE": "Y",
+    "TCA": "2022-02-06T11:10:31.625000",
+    "MIN_RNG": "568",
+    "PC": "0.0003684127",
+    "SAT_1_ID": "177",
+    "SAT_1_NAME": "THOR ABLESTAR DEB",
+    "SAT1_OBJECT_TYPE": "DEBRIS",
+    "SAT1_RCS": "SMALL",
+    "SAT_1_EXCL_VOL": "5.00",
+    "SAT_2_ID": "45128",
+    "SAT_2_NAME": "COSMOS 2491 DEB *",
+    "SAT2_OBJECT_TYPE": "DEBRIS",
+    "SAT2_RCS": null,
+    "SAT_2_EXCL_VOL": "5.00"
+  },
+  {
+    "CDM_ID": "225135604",
+    "CREATED": "2022-02-06 08:54:40.000000",
+    "EMERGENCY_REPORTABLE": "Y",
+    "TCA": "2022-02-08T15:19:39.697000",
+    "MIN_RNG": "114",
+    "PC": "0.0006129776",
+    "SAT_1_ID": "426",
+    "SAT_1_NAME": "THOR AGENA B R/B",
+    "SAT1_OBJECT_TYPE": "ROCKET BODY",
+    "SAT1_RCS": "LARGE",
+    "SAT_1_EXCL_VOL": "5.00",
+    "SAT_2_ID": "38716",
+    "SAT_2_NAME": "FENGYUN 1C DEB",
+    "SAT2_OBJECT_TYPE": "DEBRIS",
+    "SAT2_RCS": "SMALL",
+    "SAT_2_EXCL_VOL": "5.00"
+  },
+  {
+    "CDM_ID": "225135691",
+    "CREATED": "2022-02-06 08:54:40.000000",
+    "EMERGENCY_REPORTABLE": "Y",
+    "TCA": "2022-02-07T10:56:31.671000",
+    "MIN_RNG": "87",
+    "PC": "0.001533235",
+    "SAT_1_ID": "560",
+    "SAT_1_NAME": "THOR ABLESTAR DEB",
+    "SAT1_OBJECT_TYPE": "DEBRIS",
+    "SAT1_RCS": "SMALL",
+    "SAT_1_EXCL_VOL": "5.00",
+    "SAT_2_ID": "41827",
+    "SAT_2_NAME": "FENGYUN 1C DEB",
+    "SAT2_OBJECT_TYPE": "DEBRIS",
+    "SAT2_RCS": "SMALL",
+    "SAT_2_EXCL_VOL": "5.00"
+  },
+
+(...)
+
+  {
+    "CDM_ID": "249238682",
+    "CREATED": "2022-03-08 01:31:15.000000",
+    "EMERGENCY_REPORTABLE": "Y",
+    "TCA": "2022-03-10T03:32:24.824000",
+    "MIN_RNG": "424",
+    "PC": "0.0001140841",
+    "SAT_1_ID": "49691",
+    "SAT_1_NAME": "COSMOS 1408 DEB",
+    "SAT1_OBJECT_TYPE": "DEBRIS",
+    "SAT1_RCS": "SMALL",
+    "SAT_1_EXCL_VOL": "5.00",
+    "SAT_2_ID": "32430",
+    "SAT_2_NAME": "FENGYUN 1C DEB",
+    "SAT2_OBJECT_TYPE": "DEBRIS",
+    "SAT2_RCS": "SMALL",
+    "SAT_2_EXCL_VOL": "5.00"
+  },
+  {
+    "CDM_ID": "249238918",
+    "CREATED": "2022-03-08 01:31:16.000000",
+    "EMERGENCY_REPORTABLE": "Y",
+    "TCA": "2022-03-09T20:46:07.657000",
+    "MIN_RNG": "476",
+    "PC": "0.000365506",
+    "SAT_1_ID": "49710",
+    "SAT_1_NAME": "COSMOS 1408 DEB",
+    "SAT1_OBJECT_TYPE": "DEBRIS",
+    "SAT1_RCS": "SMALL",
+    "SAT_1_EXCL_VOL": "5.00",
+    "SAT_2_ID": "43112",
+    "SAT_2_NAME": "PSLV DEB",
+    "SAT2_OBJECT_TYPE": "DEBRIS",
+    "SAT2_RCS": "LARGE",
+    "SAT_2_EXCL_VOL": "5.00"
+  }
+]
+[ INFO] 2022-03-08 12:34:13 NODE_1.test - DECTestCaseSPCS::test_pull => END
+.
+Finished in 89.55922 seconds.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1 tests, 4 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+0.01 tests/s, 0.04 assertions/s
+[ INFO] 2022-03-08 12:34:13 NODE_1.test - End of DEC test for SPCS
+
+\end{Verbatim}
+
 
 \end{document}
 

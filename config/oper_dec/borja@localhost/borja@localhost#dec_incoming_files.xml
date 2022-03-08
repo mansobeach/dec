@@ -20,7 +20,52 @@
             <LogUnknown>false</LogUnknown>
          </Switches>
       </Interface>
-            
+
+      <Interface>
+         <Name>SPCS</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_spcs</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/basicspacedata/query/class/cdm_public</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>CELES_D1</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_celes</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=35681</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>      
+
+      <Interface>
+         <Name>CELES_D2</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_celes</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40013</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
       <Interface>
          <Name>WEBDAV</Name>
          <LocalInbox>/tmp/dec/in_basket_if_webdav</LocalInbox>
@@ -40,11 +85,11 @@
          <Name>SCIHUB</Name>
          <LocalInbox>/tmp/dec/in_basket_if_scihub</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/08/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/09/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/10/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/11/</Directory>
-            <Directory DepthSearch="0">catalogueview/S2B/2020/12/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2021/08/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2021/09/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2021/10/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2021/11/</Directory>
+            <Directory DepthSearch="0">catalogueview/S2B/2021/12/</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -371,6 +416,20 @@
          </FromList>
       </File>
 
+      <File Type="*cdm*">
+         <Description>conjunction data message</Description>
+         <FromList>
+            <Interface>SPCS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*CATNR*">
+         <Description>NORAD SAT CAT TLE</Description>
+         <FromList>
+            <Interface>CELES_D1</Interface>
+            <Interface>CELES_D2</Interface>
+         </FromList>
+      </File>
 
       <File Type="finals2000A.daily">
          <Description>EOP parameters</Description>
@@ -614,7 +673,16 @@ WWWW/igsWWWWD.clk.Z
             -->
          </Intray>
 
+         <Intray>
+            <Name>TLE</Name>
+            <Directory>/tmp/dec_local_dissemination/TLE</Directory>
+         </Intray>
       
+         <Intray>
+            <Name>CDM</Name>
+            <Directory>/tmp/dec_local_dissemination/CDM</Directory>
+         </Intray>
+
                 
       </ListIntrays>
 
@@ -634,6 +702,19 @@ WWWW/igsWWWWD.clk.Z
             </ToList>
          </File>
 
+         <File Type="*.tle">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>TLE</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*cdm*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>CDM</Intray>
+            </ToList>
+         </File>
 
          <File Type="igs?????.*">
             <HardLink>false</HardLink>

@@ -32,6 +32,7 @@ require 'dec/ReadConfigDEC'
 
 ##  0.1 - test_download_s2a_updates (catalogue time)
 ##  0.2 - test_download_s1a_updates
+##  0.3 - test_download_s5p_updates
 
 ##  1  - test_class_delay_s1
 ##  2  - test_class_delay_s2
@@ -515,7 +516,7 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       @@logger.debug("================================================")
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
       
-      cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S1A -L /Users/borja/Projects/dec/data/dhus"
+      cmd = "decODataClient -u gnssguest -p gnssguest -c \"2021-01-01T00:00:00.000,2021-05-13T00:00:00.000\" -q dhus:gnss:S1A -L /tmp"
       @@logger.debug(cmd)
       assert(system(cmd), "#{cmd} Datatake query")
 
@@ -660,16 +661,17 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
       @@logger.debug("================================================")
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
 
-      ## Query by CreationDate for Sentinel-2A
+      ## Query by CreationDate for Sentinel-5P
       
       cmd = "decODataClient -u s5pguest -p s5pguest -d 2 --query dhus_s5p:s5:S5 -L /tmp"
-      
-      @@logger.debug(cmd)
-      
+      @@logger.debug(cmd.gsub("-u s5pguest -p s5pguest", "-u ******** -p ********"))
       assert(system(cmd), "#{cmd} Datatake query")
-
       sleep(5.0)
    
+      cmd = "decODataClient -u s5pguest -p s5pguest -d 2 --query dhus_s5p:s5:S5 -L /tmp -r"
+      @@logger.debug(cmd.gsub("-u s5pguest -p s5pguest", "-u ******** -p ********"))
+      assert(system(cmd), "#{cmd} Datatake query")
+
    end
 
    ## ------------------------------------------------------
@@ -793,6 +795,39 @@ class DECTestInterfaceDHUS < Test::Unit::TestCase
    end
 
    ## ------------------------------------------------------
+   def test_download_s5p_updates
+
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      cmd = "rm -f /tmp/S5*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      require 'Date'
+
+      ## Query by CreationDate for Sentinel-1A
+      
+      currentTime = DateTime.now - (2/24.0)
+      endTime     = currentTime + (18/1440.0)
+
+      cmd = "decODataClient -u s5pguest -p s5pguest -c \"#{currentTime.strftime("%Y-%m-%dT%H:%M:00.000")},#{endTime.strftime("%Y-%m-%dT%H:%M:00.000")}\" -q dhus_s5p:s5:S5P_NRTI_L2 -L /tmp"
+      @@logger.debug(cmd.gsub("-u s5pguest -p s5pguest", "-u ******** -p ********"))
+      assert(system(cmd), "Sentinel-5P product(s) download")
+      sleep(5.0)
+
+      cmd = "decODataClient -u s5pguest -p s5pguest -c \"#{currentTime.strftime("%Y-%m-%dT%H:%M:00.000")},#{endTime.strftime("%Y-%m-%dT%H:%M:00.000")}\" -q dhus_s5p:s5:S5P_NRTI_L2 -L /tmp -r"
+      @@logger.debug(cmd.gsub("-u s5pguest -p s5pguest", "-u ******** -p ********"))
+      assert(system(cmd), "Sentinel-5P product(s) download")
+      
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+
+      sleep(5.0)
+  
+   
+   end
+
+   ## ------------------------------------------------------
+
 
 #   def test_s2_2
 #   

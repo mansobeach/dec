@@ -88,7 +88,7 @@ class CheckerInterfaceConfig
          @check4Recv                      = CheckerFTPConfig.new(@ftpRecv, @entity, @logger)
       end
 
-      if @ftpRecv[:protocol].upcase == "HTTP" then
+      if @ftpRecv[:protocol].upcase == "HTTP" or  @ftpRecv[:protocol].upcase.include?('HTTP') then
          @check4Recv                      = CheckerHTTPConfig.new(@ftpRecv, @entity, @logger)
       end
 
@@ -103,7 +103,7 @@ class CheckerInterfaceConfig
          @check4Send                      = CheckerWebDAVConfig.new(@ftpSend, @entity, @logger)
       end
       
-      if @ftpSend[:protocol].upcase == "HTTP" then
+      if @ftpSend[:protocol].upcase == "HTTP" or @ftpRecv[:protocol].upcase.include?('HTTP') then
          @check4Send                      = CheckerHTTPConfig.new(@ftpSend, @entity, @logger)
          if @isDebugMode == true then
             @check4Send.setDebugMode

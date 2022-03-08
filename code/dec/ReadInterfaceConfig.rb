@@ -38,7 +38,13 @@ class ReadInterfaceConfig
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @protocolArray      = ["FTP","SFTP","FTPS","FTPES","LOCAL", "HTTP", "WEBDAV"]
+      @protocolArray      = [ "FTP",   \
+                              "SFTP",  \
+                              "FTPS",  \
+                              "FTPES", \
+                              "LOCAL", \
+                              "HTTP",  \
+                              "HTTP_SPCS", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs
       loadData
@@ -490,7 +496,7 @@ private
           }
           XPath.each(entity, "Server"){
              |remoteserver|
-             remote = fillFTPServerStruct(entity.attributes["Name"], remoteserver)
+             remote = fillServerStruct(entity.attributes["Name"], remoteserver)
           }
           XPath.each(entity, "DeliverByMailTo"){
              |nmail|
@@ -564,7 +570,7 @@ private
    end
    ## -----------------------------------------------------------
    
-   # Fill an FTPServer Struct
+   # Fill an Server Struct
    # - mnemonic (IN):
    # - hostname (IN):
    # - port (IN):
@@ -579,7 +585,7 @@ private
    # - downloadTemp (IN):
    # There is only one point in the class where all Dynamic structs 
    # are filled so that it is easier to update/modify the I/Fs.
-   def fillFTPServerStruct(mnemonic, xmlstruct)
+   def fillServerStruct(mnemonic, xmlstruct)
       bTracked       = false
 		bRetrieved     = false
       bSecure        = false
@@ -679,7 +685,7 @@ private
                (@protocolArray.include?(xmlstruct.elements["Protocol"].text.upcase)) then
               protocol = xmlstruct.elements["Protocol"].text.upcase    
            else
-              puts "Error in ReadInterfaceConfig::fillFTPServerStruct"
+              puts "Error in ReadInterfaceConfig::fillServerStruct"
               puts "Protocol #{xmlstruct.elements["Protocol"].text.upcase} is not valid"
               exit(99)
            end
@@ -745,7 +751,7 @@ private
 
       if bErrorValue == true then
          puts
-         puts "Error in ReadInterfaceConfig::fillFTPServerStruct ! :-("
+         puts "Error in ReadInterfaceConfig::fillServerStruct ! :-("
          puts
          exit(99)
       end

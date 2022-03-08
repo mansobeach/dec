@@ -293,13 +293,10 @@ def main
    begin
    	@receiver = DEC_ReceiverFromInterface.new(@entity, true, @isNoDB, @isNoIntray, @isDelUnknown, @isDebugMode)
    rescue Exception => e
+      @logger.error("[DEC_999] I/F #{@entity}: #{e.to_s}")
+      @logger.error("FATAL ERROR in DEC_ReceiverFromInterface.new(#{@entity})")
       if @isDebugMode == true then
-         puts "ERROR in DEC_ReceiverFromInterface.new(#{@entity})"
-         puts
-   	   puts e.to_s
-         puts
-         puts e.backtrace
-         puts
+         @logger.debug(e.backtrace)
       end
       exit(99)
    end
@@ -439,6 +436,10 @@ def body
          bNewFiles     = @receiver.check4NewFiles(@listOnly)
       rescue Exception => e
          @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
+         if @isDebugMode == true then
+            @logger.error("I/F #{@entity}: #{e.to_s}")
+            @logger.debug(e.backtrace)
+         end
          exit(1)
       end
 

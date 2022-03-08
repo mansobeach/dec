@@ -381,12 +381,12 @@ This error code can bring different messages associated to the connection failur
 
 \subsubsection{Hostname is unknown}
 \begin{verbatim}
-[DEC_611] LOCALHOST_NOT_SECURE I/F: getaddrinfo: nodename nor servname provided, or not known
+[DEC_611] I/F LOCALHOST_NOT_SECURE: getaddrinfo: nodename nor servname provided, or not known
 \end{verbatim}
 
 \subsubsection{Service not enabled by host}
 \begin{verbatim}
-[DEC_611] LOCALHOST_NOT_SECURE I/F: Connection refused - connect(2) for 127.0.0.1:21
+[DEC_611] I/F LOCALHOST_NOT_SECURE: Connection refused - connect(2) for 127.0.0.1:21
 \end{verbatim}
 
 \subsubsection{SSL/TLS not configured by server}
@@ -397,7 +397,7 @@ This error code can bring different messages associated to the connection failur
 \subsubsection{Failed authentication}
 The authentication failure message differs depending on the network protocol used for pull.
 \begin{verbatim}
-[DEC_611] LOCALHOST_NOT_SECURE I/F: 530 Login authentication failed
+[DEC_611] I/F LOCALHOST_NOT_SECURE: 530 Login authentication failed
 \end{verbatim}
 
 \subsection{[DEC\_612] Cannot Reach Interface Download Directory}

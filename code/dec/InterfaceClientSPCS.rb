@@ -8,12 +8,27 @@
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: InterfaceClientSPCS.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
+### Git: $Id: InterfaceClientSPCS.rb,v  $
 ###
 ###
 #########################################################################
 
 module DEC
+
+## curl -c cookies.txt -b cookies.txt https://www.space-track.org/ajaxauth/login -d 'identity=borja.lopez@deimos-space.com&password=perrillo.pwd.long'
+## curl --cookie cookies.txt --limit-rate 100K 'https://www.space-track.org/basicspacedata/query/class/cdm_public/' | jq
+## curl --cookie cookies.txt --limit-rate 100K 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/40013/predicates/EPOCH,TLE_LINE1,TLE_LINE2/format/json'
+
+## https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE,EPOCH,TLE_LINE1,TLE_LINE2/format/html
+## https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE/orderby/FILE%20desc/limit/1
+## https://www.space-track.org/basicspacedata/query/class/tle/format/html/NORAD_CAT_ID/25544,36411,26871,27422/predicates/FILE,TLE_LINE1,TLE_LINE2/FILE/>3315483
+
+## https://www.space-track.org/basicspacedata/query/class/satcat/NORAD_CAT_ID/39634/format/html/emptyresult/show
+## https://www.space-track.org/basicspacedata/query/class/satcat/NORAD_CAT_ID/40697/format/html/emptyresult/show
+## https://www.space-track.org/basicspacedata/query/class/satcat/NORAD_CAT_ID/42063/format/html/emptyresult/show
+## https://www.space-track.org/basicspacedata/query/class/satcat/NORAD_CAT_ID/35681/format/html/emptyresult/show
+## https://www.space-track.org/basicspacedata/query/class/satcat/NORAD_CAT_ID/40013/format/html/emptyresult/show
+
 
 require 'dec/ReadConfigDEC'
 
@@ -22,8 +37,15 @@ class InterfaceClientSPCS
    ## -----------------------------------------------------------
    ##
    ## Class constructor.
-   def initialize
-      @entity        = "SPCS"
+   def initialize(entity, log, pull=true, push=false, manageDirs=false, isDebug=false)
+      @entity        = entity
+      @logger        =  log
+      @manageDirs    =  manageDirs
+      
+      if isDebug == true then
+         self.setDebugMode
+      end
+
       @ifConfig      = ReadInterfaceConfig.instance
       @protocol      = @ifConfig.getProtocol(@entity)
       @server        = @ifConfig.getServer(@entity)
@@ -36,7 +58,7 @@ class InterfaceClientSPCS
    ##
    ## Set the flag for debugging on
    def setDebugMode
-      raise NotImplementedError.new("#{self.class}::#{__method__.to_s} needs to be implemented")
+      @logger.debug("#{self.class}::#{__method__.to_s}")
    end
    ## -----------------------------------------------------------
 

@@ -72,7 +72,6 @@ require 'dec/ReadConfigIncoming'
 ###  7.6  - test_decSend2Interface_contingency
 ###  8  - test_decNotify2Interface
 ###  9  - test_decDeliverFiles
-###  10 - test_decClientSPCS
 
 
 # Select a single test of the suite
@@ -2770,13 +2769,6 @@ class DECTestCase < Test::Unit::TestCase
    ## -------------------------------------------------------------
    ## -------------------------------------------------------------
 
-   def test_decClientSPCS
-      require 'InterfaceClientSPCS'
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - START")
-      handler = DEC::InterfaceClientSPCS.new
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - END")
-   end
-   ## -------------------------------------------------------------
 
 
 

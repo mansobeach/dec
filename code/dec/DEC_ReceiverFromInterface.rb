@@ -48,6 +48,7 @@ require 'ctc/SFTPBatchClient'
 require 'dec/InterfaceHandlerLocal'
 require 'dec/InterfaceHandlerFTPS'
 require 'dec/InterfaceHandlerHTTP'
+require 'dec/InterfaceHandlerHTTP_SPCS'
 require 'dec/InterfaceHandlerWebDAV'
 require 'dec/FileDeliverer2InTrays'
 require 'dec/ReadConfigDEC'
@@ -200,10 +201,10 @@ class DEC_ReceiverFromInterface
       list  = nil
       
       if @isDebugMode == true then
+         @logger.debug("I/F #{@entity}: DEC_ReceiverFromInterface::check4NewFiles")
          @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
       end
-
-            
+   
       case @protocol
          
          # ---------------------------------------
@@ -262,7 +263,6 @@ class DEC_ReceiverFromInterface
             
          when "LOCAL"
          
-          
             begin
                
                @local = DEC::InterfaceHandlerLocal.new(@entity, @logger, true, false, false, @isDebugMode)
@@ -316,9 +316,30 @@ class DEC_ReceiverFromInterface
                end
             }                     
          # ---------------------------------------
+
+         when "HTTP_SPCS"
             
+         @handler = DEC::InterfaceHandlerHTTP_SPCS.new(@entity, @logger, true, false, false)
+            
+         if @isDebugMode == true then 
+            @handler.setDebugMode
+         end
+
+         perf = measure {
+            list = @handler.getPullList
+
+            if @isDebugMode == true then
+               @logger.debug("Found #{list.length} files")
+            end
+         }                     
+         # ---------------------------------------         
+
+         else
+            raise "DEC_ReceiverFromInterface::check4NewFiles #{@protocol} protocol not supported"
+         
       end
-           
+      
+
       if @isBenchmarkMode == true then
          @logger.info("File-Tree from #{@entity}: #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
          @logger.debug("Retrieved from #{@entity} #{list.length} files to be filtered")
@@ -1270,11 +1291,39 @@ private
    ##
    ## It also deletes the file downloaded from the server 
    ##
+   ## This method requires heavy refactoring to really delegate to the protocol handlers
+   ## whislt nowadays the file download is performed within in most of the cases
+   ## It is really crappy and it stinks
    def downloadFile(filename)
             
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 
+      ## --------------------------------------------------------
+      #
+      # Below this workflow should be standarised for each protocol handler
+      if @protocol == "HTTP_SPCS" then
+         ret = @handler.downloadFile(filename)
+
+         arr  = Dir["#{@localDir}/#{File.basename(filename)}*"]
+
+         full_path = arr[0]
+
+         size = File.size("#{@localDir}/#{File.basename(full_path)}")
+         
+         @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(full_path, "*")} downloaded with size #{size} bytes")
+		
+         # File is made available at the interface inbox	
+         copyFileToInBox(File.basename(full_path), size)
+
+         setReceivedFromEntity(File.basename(full_path), size)
+
+         if @isNoInTray == false then
+            disseminateFile(File.basename(full_path))
+         end 
+
+         return ret
+      end
       ## --------------------------------------------------------
 
       if @protocol == "FTPS" or @protocol == "FTPES" then
@@ -2195,8 +2244,6 @@ private
       
       end
       
-      
-      
       cmd = "mv -f #{@localDir}/#{filename} #{@finalDir}"
 
       if @isDebugMode == true then
@@ -2343,7 +2390,7 @@ private
       end
       
       retVal = execute(cmd, "DEC_Puller")
-      
+
       if retVal == false then
          @logger.error("#{cmd} Failed !")
          @logger.error("Error in DEC_ReceiverFromInterface::deleteTempDir :-(")

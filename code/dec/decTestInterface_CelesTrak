@@ -1,0 +1,210 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## module DEC
+##
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'ctc/FTPClientCommands'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
+
+
+class DECTestCaseCelesTrak < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Interface Test Cases for CelesTrak"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config
+                             
+      @@conf.wrapper_print_environment
+                           
+      @@conf.createEnvironmentDirs
+                                    
+      if @@conf.wrapper_check_environment == false then
+         puts "DEC environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+                     
+                     
+      # initialize logger
+                           
+      loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+                           
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      
+      @@logger = loggerFactory.getLogger
+                           
+      if @@logger == nil then
+         puts
+         puts "Error in decUnitTests::main"
+         puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+         puts
+         puts
+         exit(99)
+      end
+      
+      
+   end
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      @@logger.info("End of DEC test for Celestrak")
+   end
+   
+   ## ------------------------------------------------------
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+                  
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+           
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+   end
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+
+   def test_pull
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} => START")
+ 
+      @entityConfig     = ReadInterfaceConfig.instance
+      conf              = ReadConfigIncoming.instance
+      
+      @finalDir         = conf.getIncomingDir("CELES_D1")
+      checkDirectory(@finalDir)
+      cmd = "rm -f #{@finalDir}/*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      interface = "CELES_D1"
+
+      cmd = "decGetFromInterface -m #{interface} -l --nodb"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      sleep(2.0)
+
+      cmd = "decGetFromInterface -m #{interface} --nodb"     
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)      
+
+      sleep(5.0)
+
+      interface = "CELES_D2"
+
+      cmd = "decGetFromInterface -m #{interface} -l --nodb"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      sleep(2.0)
+
+      cmd = "decGetFromInterface -m #{interface} --nodb"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)      
+
+      sleep(5.0)
+
+      arr = Dir["/tmp/DEC*.log"]
+            
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} => END")      
+      
+   end
+   ## ------------------------------------------------------
+
+
+   ## ------------------------------------------------------
+
+
+end
+
+
+## ===================================================================
+
+
+
+
