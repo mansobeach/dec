@@ -1,0 +1,175 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a command line tool that connects to Internet to obtain
+# the public IP address of the host it is running
+# 
+#
+# == Usage
+# getPublicIP.rb
+
+#########################################################################
+#
+# ===       
+#
+# === Written by Borja Lopez Fernandez
+#
+# === Casale & Beach
+# 
+#
+#
+#########################################################################
+
+require 'rubygems'
+require 'optparse'
+require 'gmail'
+
+require 'nats/client'
+
+# MAIN script function
+def main
+   cmdParser      = nil
+   @filename      = ""
+   @isDebugMode   = false
+   @urlService2   = "ifconfig.me"
+   @urlService1   = "icanhazip.com"
+
+   tmpDir         = ENV['DCC_TMP']
+
+   cmdOptions = {}
+
+   begin
+      cmdParser = OptionParser.new do |opts|
+
+         opts.banner = "getPublicIP.rb"
+
+         opts.on("-D", "--Debug", "Run in debug mode") do
+            cmdOptions[:debug] = true
+            @isDebugMode = true
+         end
+         
+         opts.on("-r", "--record", "records the IP address") do
+            cmdOptions[:record] = true
+         end
+
+         opts.on("-g", "--gmail", "notify any ip change by gmail") do
+            cmdOptions[:gmail] = true
+         end
+
+         opts.on_tail("-h", "--help", "Show this message") do
+            puts opts
+            puts
+            return
+         end
+
+         opts.on_tail("-H", "--Help", "Shows program description") do
+            puts "This is a command line tool that connects to Internet to obtain the public IP address of the host it is running"
+            return
+         end
+
+      end.parse!
+   
+   rescue Exception => e
+      puts e.to_s
+      exit(99)
+   end
+
+   if @isDebugMode == true then
+      p cmdOptions
+      p ARGV
+   end
+
+   # ---------------------------------------------
+   # check that external commands needed are available
+   
+   cmd = "curl -s #{@urlService1}"
+
+   if @isDebugMode == true then
+      puts cmd
+   end
+
+   publicIP = `#{cmd}`
+   puts publicIP
+
+   if cmdOptions[:record] == true then
+      time     = Time.new   
+      strTime  = time.to_i.to_s
+      ipFile   = %Q{#{tmpDir}/.my_public_ip_#{strTime}.txt}
+      
+      cmd = "rm -f #{tmpDir}/.my_public_ip_*.txt"
+      system(cmd)
+
+      if @isDebugMode == true then
+         puts "writting ip address in:"
+         puts ipFile
+      end
+
+      aFile    = File.new(ipFile, File::CREAT|File::WRONLY)
+      aFile.write(publicIP)
+      aFile.flush
+      aFile.close
+
+      if File.exists?(%Q{#{tmpDir}/.my_public_ip.txt}) == true then
+         cmd = "diff #{tmpDir}/.my_public_ip.txt #{ipFile}"
+         ret = system(cmd)
+         
+         if ret == false then
+            puts "ip address has changed !"
+
+            if cmdOptions[:gmail] == true then
+               notify_by_gmail(publicIP)
+            end
+
+         end
+      end
+      # Update .my_public_ip.txt
+      cmd = "mv #{ipFile} #{tmpDir}/.my_public_ip.txt"
+      system(cmd)
+
+   end
+
+   # ---------------------------------------------
+
+
+   # ---------------------------------------------
+
+
+   exit(0)
+end
+#-------------------------------------------------------------
+
+def notify_by_gmail(publicIP)
+
+   sourceHostname = `hostname`
+
+   email_to_address = "borja.lopez.fernandez@gmail.com"
+
+   gmail = Gmail.connect!("borja.esa@gmail.com", "perrillo.pwd")
+
+#   puts gmail.logged_in?
+
+   if @isDebugMode == true then
+      puts "notify by gmail to #{email_to_address}"
+   end
+
+   gmail.deliver do
+      to email_to_address
+      subject "Casale & Beach - #{sourceHostname} ip address"
+      text_part do
+         body "#{publicIP}"
+      end
+      html_part do
+         body "<p>casale & beach #{sourceHostname} ip address is now #{publicIP}</p>"
+      end
+      # add_file "/path/to/some_image.jpg"
+   end
+
+end
+#-------------------------------------------------------------
+
+#===============================================================================
+# Start of the main body
+main
+# End of the main body
+#===============================================================================

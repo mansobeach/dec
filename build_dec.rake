@@ -16,6 +16,8 @@
 
 require 'rake'
 
+require 'Date'
+
 ### ============================================================================
 ###
 ### Task associated to DEC component
@@ -41,6 +43,22 @@ namespace :dec do
    ### DEC Containerised tasks
    
    ## ----------------------------------------------------------------
+
+   desc "generate PDF documentation"
+
+   task :gendoc do
+      prevDir = Dir.pwd
+      Dir.chdir("doc/tex")
+      cmd = "xelatex -synctex=1 -interaction=nonstopmode \"dec_sum_main\".tex"
+      puts cmd
+      system(cmd)
+      date     = DateTime.now
+      filename = "DEC-DMS-TEC-SUM2020-1023-E_#{date.strftime("%Y%m%d")}.pdf"
+      cmd      = "mv dec_sum_main.pdf #{filename}"
+      system(cmd)
+      puts "Generared #{filename}"    
+      Dir.chdir(prevDir)
+   end
 
    ## ----------------------------------------------------------------
 
@@ -324,7 +342,7 @@ namespace :dec do
 #      puts cmd
 #      system(cmd)
       
-      cmd = "gem install #{@filename}"
+      cmd = "gem install #{@filename} --no-document"
       puts cmd
       system(cmd)
       rm @filename
@@ -388,7 +406,12 @@ namespace :dec do
       puts "pull LISBOA"
       puts "pull LOCALFERRO"
       puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"      
-      puts      
+      puts
+      puts "NAOS / NAOS-MCS-IVV"
+      puts "pull NAOS_MCS_SFTP"
+      puts "push NAOS_MCS_SFTP"
+      puts "rake -f build_dec.rake dec:build[aiv,naos-aiv,naos]"      
+      puts                  
       puts "Obsolete:"
       puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"
       puts "Pending ftp port management within containers:"

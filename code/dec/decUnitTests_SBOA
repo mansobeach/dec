@@ -136,7 +136,10 @@ class DECTestCase < Test::Unit::TestCase
       puts "================================================"
       puts "DEC_UnitTests::#{__method__.to_s}"
       puts
-            
+      
+      
+      #@@logger.debug("Defining environment variable used in configuration: DEC_TMP")
+      ENV['DEC_TMP'] = '/tmp'      
 #      system("\\rm -rf #{reportDir}")
 #      system("\\rm -rf /tmp/dec*")
       # system("\\rm -f /tmp/DEC*.log")

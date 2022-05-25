@@ -1,0 +1,88 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC dockerfile example
+%
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+ 
+\begin{document}
+ 
+\par
+\noindent
+This section includes an example of a Dockerfile for a DEC node deployed as a standalone app. The definition carries the network authentication artefacts (e.g. SSH keys), which are not included as part of the DEC SW installer (cf. gem file).\newline
+
+\begin{Verbatim}[tabsize=4]
+#########################################################################
+#
+# Git:
+#     Dockerfile.dec.s2.inputhub  
+#                          $Author: bolf$
+#                          $Date: 2018-11-13T11:54:43+01:00$ 
+#                          $Committer: bolf$
+#                          $Hash: f3afa7c$
+#
+#########################################################################
+#
+# Dockerfile for DEC S2 INPUTHUB
+# 
+# (Debian 10 Buster)
+#
+FROM ruby:2.6
+# ================================================
+RUN apt-get update && \
+    apt-get install -y apt-utils && \
+    apt-get install -y --no-install-recommends \
+    net-tools \
+    ftp \
+    jq \
+    libxml2 \
+    libxml2-utils \
+    xml-twig-tools \
+    p7zip-full \
+    sqlite3 \
+    libsqlite3-dev \
+    ncftp \
+    curl \
+    vim
+# ------------------------------------------------
+RUN apt-get install -y postgresql-client
+# ------------------------------------------------
+# ------------------------------------------------
+RUN groupadd -g 10001 e2edc && \
+    useradd -u 10001 -ms /bin/bash -g e2edc -d /home/e2edc e2edc
+# ------------------------------------------------
+COPY ./install/scripts/entrypoint_dec_s2_e2espm-inputhub_e2edc.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_dec_s2_e2espm-inputhub_e2edc.sh /    
+# ------------------------------------------------
+RUN gem update
+# ------------------------------------------------
+COPY ./install/gems/dec_s2.gem .
+RUN gem install dec_s2.gem
+# ------------------------------------------------
+# ------------------------------------------------
+# Patch log4r
+COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10/lib/log4r/outputter/
+# ------------------------------------------------
+# MKDIR p /volumes/dec
+RUN mkdir -p /volumes/dec/log && \
+    chown -R 10001:10001 /volumes/dec
+# ------------------------------------------------
+USER e2edc
+RUN   mkdir -p /home/e2edc/.ssh
+COPY --chown=10001:10001 ./config/ssh/* /home/e2edc/.ssh/
+COPY --chown=10001:10001 ./config/ssh/e2espm.e2espm-esrin.private /home/e2edc/.ssh/id_rsa
+COPY --chown=10001:10001 ./config/ssh/known_hosts_pdmcdag1.sentinel2.eo.esa.int /home/e2edc/.ssh/known_hosts
+ENV   HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
+# "------------------------------------------------
+ENTRYPOINT ["/usr/bin/entrypoint_dec_s2_e2espm-inputhub_e2edc.sh"]
+\end{Verbatim}
+
+
+\end{document}
+

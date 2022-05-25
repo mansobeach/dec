@@ -1,0 +1,71 @@
+%
+% Elecnor Deimos
+%
+% Data Exchange Component
+%
+% Borja Lopez Fernandez (BOLF)
+%
+% DEC Reference workflows
+%
+
+\documentclass[dec_sum_main.tex]{subfiles}
+
+% \newcommand{\sectionbreak}{\clearpage}
+ 
+
+ 
+\begin{document}
+
+
+\section{Description}
+TBW
+
+\section{Configuration workflow}
+This section comprises the typical actions to configure every DEC SW node. It assumes a correct installation of the DEC SW include the dependencies referred in this document. Configuration wise it is recommended to get an installation which already carries the definition of the workflows; however configuration can be changed in hot at any point following the information of this manual. 
+
+\subsection{Validate XML Configuration}
+The DEC SW configuration items are spread out in different XML files. This steps aims to verify the syntax and semantic correctness of the such configuration as prerequisite of successful operations. This step is performed by \hyperref[decValidateConfig]{decValidateConfig}. This step is to be performed manually from the command line interface whenever is needed (e.g. new SW update carrying modified configuration).\newline
+
+\par \noindent
+Every command verifies the execution environment to check whether the FOSS SW dependencies are available for usage, in case of missing any of them, the error message \hyperref[DEC799]{DEC\_799} is raised. This explanation applies to every command and it is not duplicated in the document.\newline
+
+
+\subsubsection{Trace Messages}
+
+\begin{itemize}
+    \item \hyperref[DEC002]{DEC\_002} : the configuration file verifies the settled XML schema
+	\item \hyperref[DEC798]{DEC\_798} : the configuration is not according to the settled XML schema
+    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available 
+\end{itemize}
+
+\subsection{Create DEC Inventory}
+This step is required to persist and record the circulation operations in a database ; note that it is still possible to perform circulations without persistence of the operations by usage of the "--nodb flag" by the different commands. Skip this step if the DEC SW was already previously installed and it is a SW update.\newline
+
+\par 
+\noindent
+Firstly the database tables are created using \hyperref[decManageDB]{decManageDB} ; then the interfaces defined in the XML configuration files are populated into the database using \hyperref[decConfigInterface2DB]{decConfigInterface2DB}.
+
+\subsubsection{Trace Messages}
+
+\begin{itemize}
+    \item \hyperref[DEC000]{DEC\_000} : creation of the DEC DB / Inventory
+    \item \hyperref[DEC001]{DEC\_001} : Interface added into the DEC DB / Inventory
+    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available
+\end{itemize}
+
+\subsection{Check Interface Configuration}
+This step exploits the interface according to the configuration to check the availability of defined end-points (e.g. directories for file based protocols).
+
+\subsubsection{Trace Messages}
+
+\begin{itemize}
+    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available 
+\end{itemize}
+
+\section{Pull workflow}
+TBW
+
+\section{Push workflow}
+TBW
+
+\end{document}

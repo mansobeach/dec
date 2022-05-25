@@ -223,7 +223,12 @@ end
 
 def stopIngestor
    checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
-   pid     = checker.getRunningPID
+   pid     = false
+   begin
+      pid     = checker.getRunningPID
+   rescue Exception => e
+      pid = false
+   end
 
    if pid == false then
       @logger.warn("[ORC_314] There was no #{File.basename(File.expand_path(__FILE__))} daemon running")

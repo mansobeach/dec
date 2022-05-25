@@ -118,7 +118,7 @@ class DEC_Notifier2Interface
       begin
          retVal = @mailer.sendMail
       rescue Exception => e
-         @logger.error("[DEC_742] #{@entity} I/F: #{e.to_s}")
+         @logger.error("[DEC_742] I/F #{@entity}: #{e.to_s}")
          retVal = false
       end
       

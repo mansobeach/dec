@@ -12,20 +12,83 @@
  
 \begin{document}
 
-\section{Install Environment}
+\section{Install Ruby}
+ This section covers the install of \textit{Ruby} interpreter and the \textit{gem} dependencies needed by DEC SW. It is recommended that the \textit{Ruby} interpreter is done locally for the Linux user who shall execute the DEC SW.\newline
 
-This section covers the install of \textit{Ruby} interpreter and the \textit{gem} dependencies needed by DEC SW. It is recommended that the \textit{Ruby} interpreter is done locally for the Linux user who shall execute the DEC SW.
+\par
+\noindent 
+The \textit{Ruby} interpreter can be obtained and installed in many different ways ; this manual describes how to install it local to the OS user which shall execute the DEC SW. Different runtime managers are addressed in the following sections to ease the installation and eventual futures updates in a seamless manner.
+
+\subsection{asdf}
+\par
+\noindent
+This section addresses how to install ruby based on \href{https://asdf-vm.com/guide/getting-started.html#_1-install-dependencies}{asdf}, which is a command-line tool run-time manager for different languages and development stacks, including ruby.\newline
 
 \par
 \noindent
+Download the tool:
 
-\subsection{Install Ruby}
- 
-The \textit{Ruby} interpreter can be obtained and installed in many different ways ; this manual describes how to install it local to the user which shall execute the DEC SW.
+\inlinecode{bash}{ \$> git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0}  \newline
+
+Add the following entry to \$HOME/.bash\_profile 
+
+\inlinecode{bash}{. \$HOME/.asdf/asdf.sh}  \newline
+
 
 \par
 \noindent
-The install is based on \href{https://rvm.io/}{RVM}, which is a command-line tool which allows you to easily install, manage, and work with multiple ruby environments from interpreters to sets of gems. \newline
+Then install the asdf ruby plug-in:
+
+\inlinecode{bash}{ \$> asdf plugin add ruby} \newline
+
+\par
+\noindent
+Now it is possible to select the ruby run-time version and easily install it for usage:\newline
+
+\inlinecode{bash}{ \$> asdf list all ruby}
+
+\begin{Verbatim}
+1.8.5-p52
+1.8.5-p113
+1.8.5-p114
+1.8.5-p115
+1.8.5-p231
+1.8.6
+(...)
+3.0.0-dev
+3.0.0-preview1
+3.0.0-preview2
+3.0.0-rc1
+3.0.0
+3.0.1
+3.0.2
+3.0.3
+3.1.0-dev
+3.1.0-preview1
+3.1.0
+3.1.1
+3.2.0-dev
+(...)
+\end{Verbatim}
+
+
+\par
+\noindent
+Install the ruby run times specifying the version of choice, first to be downloaded and then to select it for local execution:\newline
+
+\inlinecode{bash}{ \$> asdf install ruby 3.1.1} \newline
+
+\par
+\inlinecode{bash}{ \$> asdf local ruby 3.1.1\; asdf reshim ruby}\newline
+
+\par
+\noindent
+Now it is usually required to restart the shell upon  installation to point the new ruby interpreter run-time.
+
+\subsection{RVM}
+\par
+\noindent
+This section addresses how to install ruby based on \href{https://rvm.io/}{RVM}, which is a command-line tool which allows you to easily install, manage, and work with multiple ruby environments from interpreters to sets of gems. \newline
 
 \par
 \inlinecode{bash}{ \$> \\curl -sSL https://get.rvm.io | bash -s stable --ruby} \newline
@@ -42,7 +105,11 @@ Different versions can be locally installed and select the one of choice at any 
 \inlinecode{bash}{ \$> rvm --default use 3.0} \newline
 
 
-\section{Install DEC}
+
+\section{Download DEC SW}
+This section contains the link to download the DEC SW installer \textit{gemfile} \href{https://drive.google.com/uc?export=download&id=1gieDRpDEBzKv5Xr0qwPvBz34RHphTnQq}{\textit{dec-stable.gem}} with the unit tests configuration. It is necessary to be logged-in with your DEIMOS \textit{gmail} account to \textit{authorise} the download. Do not hesitate in requesting tailored installation packages according to your needs.
+
+\section{Install DEC SW}
 
 In order to install DEC SW and the gems required, execute the following command in the shell at the directory in which the DEC gem file is placed:
 \par
@@ -74,7 +141,7 @@ As a very quick summary, users of the SW are encouraged to delegate the creation
 \par
 
 
-\section{Uninstall DEC}
+\section{Uninstall DEC SW}
 
 In order to uninstall DEC SW, execute the following command in the shell:
 \par 
@@ -91,9 +158,10 @@ in addition to the gem? [Yn]
 Press 'Y' key to remove the executables as well
 
 \label{COTS}
-\section{COTS Required}
+\label{FOSS}
+\section{FOSS Required}
 
-This section enumerates the COTS which are used by DEC SW for exchange of file by some network protocol implementation, or file transformations associated to those exchanges. \par\noindent
+This section enumerates the FOSS which are used by DEC SW for exchange of file by some network protocol implementation, or file transformations associated to those exchanges. \par\noindent
 
 
 \par
@@ -192,6 +260,10 @@ Finished in 54.38868 seconds.
 <@\textcolor{green}{-----------------------------------------------------------------------------------------------------------------------------------------------------------}@>
 0.02 tests/s, 0.23 assertions/s
 \end{lstlisting}
+
+\section{DEC App Container}
+It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production).
+
 
 \end{document}
 

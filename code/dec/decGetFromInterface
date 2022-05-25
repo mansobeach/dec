@@ -515,7 +515,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -45 #{fullpathFile}"}`
+   value = `#{"head -48 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

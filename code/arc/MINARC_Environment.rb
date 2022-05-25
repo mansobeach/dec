@@ -28,7 +28,7 @@ module ARC
    
    @@change_record = { \
       "1.3.0"  =>      "Model updated to record ServedFiles\n\
-         migration to ruby 2.7\n\
+         migration to ruby 2.7 for activesupport\n\
          gems addressable added as a dependency\n\
          log message ARC_600 to trace authentication failures\n\
          Handler_AUXIP handles EDR_OPER_SER_SR1_OA with validity dates not separated:\n\

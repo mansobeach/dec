@@ -1,5 +1,9 @@
 <OrchestratorConfiguration>
 
+<!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-388 -->
+<!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-443 -->
+<!-- https://jira.elecnor-deimos.com/browse/S2MPASUP-457 -->
+
    <List_of_DataProviders>
 
       <DataProvider isTriggerType="no">
@@ -15,17 +19,11 @@
       </DataProvider>
 
       <DataProvider isTriggerType="yes">
-	      <DataType>OPDHUS</DataType>
-	      <FileType>*REP_OPDHUS*</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType="yes">
 	      <DataType>DPC</DataType>
 	      <FileType>*REP_OPDPC_*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
-
+   
       <DataProvider isTriggerType="yes">
 	      <DataType>OPHKTM</DataType>
 	      <FileType>*REP_OPHKTM*</FileType>
@@ -135,20 +133,14 @@
       </DataProvider>
 
       <DataProvider isTriggerType="yes">
-	      <DataType>EDRSFAILURE</DataType>
-	      <FileType>EDR*</FileType>
-	      <Directory>[update]/data/l0-in/</Directory>
-      </DataProvider>
-
-      <DataProvider isTriggerType="yes">
 	      <DataType>EDRSMOC</DataType>
 	      <FileType>EDR*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
       <DataProvider isTriggerType="yes">
-	      <DataType>FOSUNAV</DataType>
-	      <FileType>*OPER_REP__SUP__*</FileType>
+	      <DataType>OPDHUS</DataType>
+	      <FileType>*DEC_OPER_AVDHUS*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
@@ -158,6 +150,17 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
  
+      <DataProvider isTriggerType="yes">
+	      <DataType>FOSUNAV</DataType>
+	      <FileType>*OPER_REP__SUP__*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType="yes">
+	      <DataType>EDRSFAILURE</DataType>
+	      <FileType>EDR*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
       
    </List_of_DataProviders>
 
@@ -185,7 +188,6 @@
       <PriorityRule rank="18"    class="DataType" type="TLM__REQ_B"  sort="DESC" />
       <PriorityRule rank="19"    class="DataType" type="OPPRIP"      sort="DESC" />
       <PriorityRule rank="20"    class="DataType" type="WEPRIP"      sort="DESC" />
-      <PriorityRule rank="21"    class="DataType" type="EDRSFAILURE" sort="DESC" />
       <PriorityRule rank="21"    class="DataType" type="EDRSMOC"     sort="DESC" />
       <PriorityRule rank="22"    class="DataType" type="FOSUNAV"     sort="DESC" />
    </List_of_PriorityRules>
@@ -194,85 +196,109 @@
   
    <List_of_ProcessingRules>
    
-      <ProcessingRule dataType='ORBPRE' triggerType='ORBPRE' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="ORBPRE" triggerType="ORBPRE" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='NPPF' triggerType='NPPF' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="NPPF" triggerType="NPPF" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='DFEPREP' triggerType='DFEPREP' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="DFEPREP" triggerType="DFEPREP" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='REPACQ' triggerType='REPACQ' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="REPACQ" triggerType="REPACQ" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='PLANDFEP' triggerType='PLANDFEP' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="PLANDFEP" triggerType="PLANDFEP" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='PLANANTENNA' triggerType='PLANANTENNA' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="PLANANTENNA" triggerType="PLANANTENNA" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='SRAEDRS' triggerType='SRAEDRS' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="SRAEDRS" triggerType="SRAEDRS" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='DPC' triggerType='DPC' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="DPC" triggerType="DPC" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='REPARC' triggerType='REPARC' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="OPHKTM" triggerType="OPHKTM" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType="REPARC" triggerType="REPARC" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='OPAI' triggerType='OPAI' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="OPAI" triggerType="OPAI" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='OPLTA' triggerType='OPLTA' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="OPLTA" triggerType="OPLTA" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='OPLTAS' triggerType='OPLTAS' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="OPLTAS" triggerType="OPLTAS" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='OPDAM' triggerType='OPDAM' coverage='SAME'>
-	      <executable>orc_eboa_triggering -f %F</executable>
+      <ProcessingRule dataType="OPDAM" triggerType="OPDAM" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
 
-      <ProcessingRule dataType='TLM__REQ_B' triggerType='TLM__REQ_B' coverage='SAME'>
+      <ProcessingRule dataType="OPDHUS" triggerType="OPDHUS" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="OPDC" triggerType="OPDC" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="DEC_F_RECV" triggerType="DEC_F_RECV" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="TLM__REQ_B" triggerType="TLM__REQ_B" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
@@ -325,18 +351,15 @@
       <BreakPointDir>/tmp/breakpoints</BreakPointDir>
       <TmpDir>/tmp/tmp</TmpDir>
    </Miscelanea>
-   
-   
+
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
-      <!--
       <Database_Host>localhost</Database_Host>
-      -->
-      <Database_Host></Database_Host>
       <Database_Port>5432</Database_Port>      
       <Database_Name>postgres</Database_Name>
       <Database_User>e2edc</Database_User>
       <Database_Password>e2edc</Database_Password>
    </Inventory>
+
    
 </OrchestratorConfiguration>

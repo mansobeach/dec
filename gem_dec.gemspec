@@ -14,7 +14,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.33'
+  s.version     = '1.0.34'
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -55,7 +55,8 @@ Gem::Specification.new do |s|
 
   s.bindir        = [ 'code/dec' ]
 
-  s.executables   = [ 
+  s.executables   = [
+                     'decNATS', \
                      'decValidateConfig', \
                      'decCheckConfig', \
                      'decListDirUpload', \
@@ -99,6 +100,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_FTP_PASSIVE'
       s.executables   << 'decUnitTests_FTPS'
       s.executables   << 'decUnitTests_FTPS_IMPLICIT'
+      s.executables   << 'decUnitTests_HTTP'
       s.executables   << 'decUnitTests_LOCAL'
       s.executables   << 'decUnitTests_ncftpput'
       s.executables   << 'decUnitTests_SBOA'
@@ -135,8 +137,13 @@ Gem::Specification.new do |s|
   s.add_dependency('ftpfxp', '~> 0.0')
   s.add_dependency('log4r', '~> 1.0')
   s.add_dependency('manpages', '~> 0.6')
+  s.add_dependency('nats', '~> 0.11')
+  s.add_dependency('nats-pure', '~> 2.0')
   s.add_dependency('net_dav', '~> 0.5')
+  s.add_dependency('net-ftp', '~> 0.1')
+  s.add_dependency('net-pop', '~> 0.1')
   s.add_dependency('net-sftp', '~> 2.1')
+  s.add_dependency('net-smtp', '~> 0.3')
   s.add_dependency('net-ssh', '~> 6.1')
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')
@@ -153,7 +160,7 @@ Gem::Specification.new do |s|
   ##
   ## Tailored installer to include Postgresql
   if ENV.include?("DEC_PG") == true then
-     s.add_dependency('pg', '~> 1')
+     s.add_dependency('pg', '~> 1.2.3')
   end
   ## --------------------------------------------
 

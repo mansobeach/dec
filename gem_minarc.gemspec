@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
   
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 2.7'
   
   s.files       = Dir['code/arc/File*.rb'] + \
                   Dir['code/arc/Inventory2Excel*.rb'] + \
@@ -103,6 +103,7 @@ Gem::Specification.new do |s|
   s.add_dependency('mini_exiftool', '~> 2.0')
   s.add_dependency('rack-ssl', '~> 1.4')
   s.add_dependency('rack-ssl-enforcer', '~> 0.2')
+  s.add_dependency('shell', '~> 0.8')
   s.add_dependency('sinatra', '~> 2.0')
   s.add_dependency('sinatra-reloader', '~> 1.0')
   s.add_dependency('thin', '~> 1.7')
@@ -112,7 +113,7 @@ Gem::Specification.new do |s|
   ##
   ## Tailored installer to include Postgresql
   if ENV.include?("MINARC_PG") == true then
-     s.add_dependency('pg', '~> 1')
+     s.add_dependency('pg', '~> 1.2.3')
   end
   ## --------------------------------------------
 

@@ -16,6 +16,19 @@
  
 \begin{document}
 
+\label{CLI}
+\section{Command Line Interface}
+This section provides a brief description of the command line interface which is common to every DEC SW executable.\newline
+
+\par \noindent
+The command exit codes have been defined in order to chain them at will so it is possible to understand their execution correctness. In this respect the following exit codes are available:
+
+\begin{itemize}
+	\item \textit{exit 0} : the command was successfully executed .
+	\item \textit{exit 66} : the command was invoked with wrong parameters and it did not perform its workflow.
+	\item \textit{exit 99} : this command was executed and raised any problem when performing its workflow.
+\end{itemize}
+
 \label{decValidateConfig}
 \section{decValidateConfig}
 
@@ -184,6 +197,7 @@ Deimos-Space S.L.
 Copyright (c) 2006 ESA - Deimos Space S.L.
 \end{verbatim}
 
+\label{decConfigInterface2DB}
 \section{decConfigInterface2DB}
 
 \begin{verbatim}
@@ -248,7 +262,7 @@ decGetFiles4Transfer [-O] [-l]
 --version   shows version number
 
 == Author
-Deimos-Space S.L. (bolf)
+Deimos-Space S.L.
 
 == Copyright
 Copyright (c) 2006 ESA - Deimos Space S.L.
@@ -394,6 +408,8 @@ Copyright (c) 2005 ESA - DEIMOS Space S.L.
 
 \end{verbatim}
 
+\label{decManageDB}
+
 \section{decManageDB}
 
 \begin{verbatim}
@@ -483,15 +499,15 @@ Copyright (c) 2006 ESA - Deimos Space S.L.
 
 == Synopsis
 
-This is a DEC/DCC command line tool that shows file reception statistics  
+This is a DEC command line tool that shows file reception statistics  
 
 == Usage
 decStats
 --Hours <hours>            status of last n hours
 --file <filename>          status of a given filename
---help                     shows this help
+--help                     	 shows this help
 --usage                    shows the usage
---Debug                    shows Debug info during the execution
+--Debug                   shows Debug info during the execution
 --version                  shows version number
 
 

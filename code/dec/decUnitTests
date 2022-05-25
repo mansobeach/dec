@@ -2727,43 +2727,41 @@ class DECTestCase < Test::Unit::TestCase
    ## -------------------------------------------------------------
 
    def test_decNotify2Interface
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - START")
    
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-   
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
       checkDirectory("/tmp/dec_tmp")
    
       cmd = "decNotify2Interface -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decNotify2Interface -h"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       @@arrPushFiles.each{|filename|
          system("echo \'#{filename}\' >> /tmp/dec_tmp/list_files")
       }
-      
-      
+            
       cmd = "decNotify2Interface -m LOCALHOST_NOT_SECURE -O -f /tmp/dec_tmp/list_files"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
-
       
       cmd = "decNotify2Interface -m LOCALHOST_NOT_SECURE -K -f /tmp/dec_tmp/list_files"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       arr = Dir["/tmp/DEC*.log"]
       
       cmd = "grep ERROR #{arr[0]}"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} - END")
 
    end
    ## -------------------------------------------------------------

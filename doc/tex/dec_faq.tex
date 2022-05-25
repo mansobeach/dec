@@ -17,10 +17,13 @@
 \begin{document}
 	\begin{description}[style=nextline]
 
-		\item[How many Interfaces can be configured in every node ?] Answer: There is no restriction in the number of Interfaces configured in a given node.
+        \item[I do not find any document change record, or document version, is this really a document ?] Answer: DEC documentation \textit{is} code and it is treated accordingly ; as such, SW updates are never committed in the development repository without their documentation updates ensuring a proper alignment. The pdf document is generated with a rake task, and thus it propagates a generation time (i.e. daily basis). For document management purposes, the SW version it applies plus the document generation date is the general key.
+		\newline
+
+		\item[How many Interfaces can be configured in every DEC node ?] Answer: There is no restriction in the number of Interfaces configured in a given node.
 		\newline
 				
-		\item[How many DEC nodes can be configured in the same host ?] Answer: Nominally one single DEC node is recommended for every host. It is recalled that one single node is able to handle as many interfaces as needed.
+		\item[How many DEC nodes can be configured in the same host ?] Answer: Using the DEC gem, the restriction is associated to the ruby run-time environment; in the installation information it is strongly recommended to include the ruby run-time environment associated to each OS user who will execute the SW in opposition to the usage of the OS common run-times (e.g. /usr/local/lib /opt/lib, etc). In this respect the run-time execution isolation principle is met and different OS user with their app / services can execute different DEC nodes for their specific purposes.
 		\newline
 		
 		\item[Are the DEC SW dependencies somehow redundant or overalapping (e.g. curl vs. ncftp)] Answer: All DEC SW dependencies rely on maintained SW. The implementation of the different protocol handlers is independent, and therefore can rely on different SW dependencies. The handler of the plain FTP protocols is based on some initial legacy SW which has been updated to deal with obsolescence so the ncftp SW has been maintained for the time being despite the extensive usage of curl in other different protocol handlers.
@@ -58,13 +61,16 @@
  /home/s2ops/.frum/ruby/gems/dec-1.0.24/code/dec/../../config/dec_interfaces.xml --noout
 \end{Verbatim}
         
+		\item[Are SMTP - email notifications supported for pull circulations?] Answer: No, this functionality was historically implemented to alert the outgoing files towards external whereas pull is already under the control of the SW workflow (e.g. availability of a report file with the files pulled). If there is a use-case, it is fairly straight-forward to expand the functionality to support also email notifications for pull operations.
+		\newline	        
+        
 		\item[I do not find the interface tests tools referenced in the Annex - Public Data Providers.] Answer: If you are interested in the interface tests or / and the DEC SW associated configuration for their exploitation, please ensure that installation package carries them (i.e. in general the installation file carries the "test" name) to ensure both test tools and configuration are included. Just ask for them $\ddot\smile$ \smiley \blacksmiley.
-		\newline	
+		\newline
 
-		\item[Pull data from SPCS / CSpOC seems slow?] Answer: space-track.org asks for a fair usage of interface to control their bandwidth costs and the pull operations using cURL are limited by using '--limit-rate 100K' according to their API.
+		\item[Pull data from SPCS / CSpOC seems slow?] Answer: space-track.org asks for a fair usage of their interface to control the bandwidth costs and the pull operations using cURL are limited by using '--limit-rate 100K' according to their API recommendation.
 		\newline
 	
-		\item[How come this document is so ugly?] Answer: Documentation is handled as code in the repository. The document is compiled so far with no frills or appealing style templates but the essential in order to keep compatibility when converting to some content managers such as wiki or confluence. 
+		\item[How come this document is so ugly?] Answer: Documentation is handled as code in the repository. The document is compiled so far with no frills or appealing style templates but the essential in order to keep compatibility when converting to some content managers such as Wiki or Atlassian Confluence as example. 
 		\newline	    
     
 	\end{description}

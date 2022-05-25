@@ -111,15 +111,37 @@ class DECTestCase_LOCAL < Test::Unit::TestCase
    ## --------------------------------------------------------
    
    Test::Unit.at_exit do
-      puts "End of DEC tests LOCAL"
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s}")
    end
    ## --------------------------------------------------------   
    
    ## Setup before every test-case
    ##
    def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
       checkDirectory("/tmp/dec_simul_if/filesystem/upload")
       checkDirectory("/tmp/dec_simul_if/filesystem/upload/_TEMP_")
+      checkDirectory("/tmp/dec_simul_if/filesystem/download")
+      checkDirectory("/tmp/dec/if_local_filesystem")
+      checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
+      
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+      
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -a FILESYSTEM"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   
+      cmd = "rm -f /tmp/DEC*.log"
+      @@logger.debug(cmd)
+      system(cmd)      
    end
    ## ------------------------------------------------------
    ## After every test case
@@ -132,161 +154,107 @@ class DECTestCase_LOCAL < Test::Unit::TestCase
    ## ------------------------------------------------------
    
    ##
-   
+    # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   # data("0",     ["1_files_1GB_1Slots",      1,   1024000,   1,     false])
+   # data("1",     ["3_files_1GB_1Slots",      3,   1024000,   1,     false])
+   # data("2",     ["3_files_1GB_3Slots",      3,   1024000,   3,     false])
+   # data("3",     ["7_files_1GB_5Slots",      7,   1024000,   5,     false])
+   data("4",     ["10_files_1GB_5Slots",     10,  1024000,   5,     false])
    ## PULL Circulations
-   def test_pull
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+   def test_pull(params)
 
-      ## -------------------------------
-      ## start the minArcServer
-      cmd = "minArcServer -s"
-      puts cmd
-      spawn(cmd)
-      sleep(2.0)
-      ## -------------------------------
-      
-      checkDirectory("/tmp/dec/if_local_filesystem")
-      
-      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+      label, numFiles, numBlocks, numSlots, noDB = params
 
-      cmd = "rm -f /tmp/DEC*.log"
-      puts cmd
-      system(cmd)
-
-      cmd = "decManageDB -d"
-      ret = system(cmd)
-
-      cmd = "decManageDB -c"
-      ret = system(cmd)
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      ret = system(cmd)
-
-      cmd = "decValidateConfig -a"
-      puts cmd
-      assert(system(cmd), cmd)   
-   
-      cmd = "decCheckConfig -e FILESYSTEM -i"
-      puts cmd
-      assert(system(cmd), cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
       
       ## -----------------------------------------
       ## list mode and subsequent download
-      
-      inConfig          = ReadConfigIncoming.instance
-      @finalDir         = inConfig.getIncomingDir("FILESYSTEM")
-            
-      checkDirectory(@finalDir)
 
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+      conf = ReadConfigIncoming.instance
+      arr = conf.getDownloadDirs("FILESYSTEM")
+      downloadDir = arr[0][:directory]
 
-      @@arrDownloadFiles.each{|filename|
-         puts filename
-         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
-      }
-            
+      1.upto(numFiles) do |i|
+         filename = "test_local_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{downloadDir}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
+           
       cmd = "decGetFromInterface -m FILESYSTEM -l"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m FILESYSTEM --no-intray"
-      puts cmd
+      cmd = "decGetFromInterface -m FILESYSTEM -P #{numSlots}"
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
-      assert(arrFiles.length == 2, "Number of files pulled")
+      dir = conf.getIncomingDir("FILESYSTEM")
+      @@logger.debug("incoming dir #{dir}")
+      arrFiles = Dir["#{dir}/test_local*"]      
+      assert(arrFiles.length == numFiles, "Number of files pulled")
       
-      ## -----------------------------------------
-
-      
-      ## -----------------------------------------
-      ## Download again since --nodb is used to avoid filtering by previous download
-          
-      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
-
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
-
-      @@arrDownloadFiles.each{|filename|
-         puts filename
-         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
-      }      
-            
-      cmd = "decGetFromInterface -m FILESYSTEM --nodb --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
-      assert(arrFiles.length == 2, "Number of files pulled")
-
-      ## -----------------------------------------
-      ## Now no files should be present for download
-
-      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
-      
-      cmd = "decGetFromInterface -m FILESYSTEM --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
-            
-      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
-      assert(arrFiles.length == 0, "Number of files pulled")
-
-      ## -----------------------------------------
-
       cmd = "decStats -H 1"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
-      
+
+      cmd = "rm -f #{dir}/test_local*"
+      @@logger.debug(cmd)
+      system(cmd)
+
       ## -----------------------------------------
-      
-      ## Detection of duplications
       
       arr = Dir["/tmp/DEC*.log"]
 
-      system("\\rm -rf /tmp/dec/if_local_filesystem/*")
+      cmd = "cp #{arr[0]} /tmp/test_pull_local_#{label}.log"
+      @@logger.debug(cmd)
+      system(cmd)
 
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/tai-utc.dat")
+      cmd = "grep stats /tmp/test_pull_local*.log"
+      @@logger.debug(cmd)
+      system(cmd)
 
-      @@arrDownloadFiles.each{|filename|
-         puts filename
-         system("echo \'#{filename}\' > /tmp/dec_simul_if/filesystem/download/#{filename}")
-      }      
-      
-            
-      cmd = "decGetFromInterface -m FILESYSTEM"
-      puts cmd
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/if_local_filesystem/*"]      
-      assert(arrFiles.length == 0, "Duplicated files should not be pulled")
-                      
-      cmd = "grep DEC_125 #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
+      cmd = "grep DEC\_110 /tmp/test_pull_local*.log"
+      @@logger.debug(cmd)
+      system(cmd)
 
-      ## -----------------------------------------
-      
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
    end
    ## ------------------------------------------------------
 
    ## ------------------------------------------------------
    
+   # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   # data("0",     ["1_files_10GB_1Slots_NoDB",      1,   1024000,   1,     true])
+   # data("1",     ["3_files_10GB_1Slots_NoDB",      3,   1024000,   1,     true])
+   data("2",     ["7_files_10GB_1Slots_NoDB",      7,   1024000,   1,     true])
+
    ## PUSH Circulations
-   def test_push
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      puts
-      puts "LOCAL protocol push test not implemented yet"
-      puts
+   def test_push(params)
+      label, numFiles, numBlocks, numSlots, noDB = params
+      
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
+
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
+      checkDirectory(sourceDir)
+      @@logger.debug("SOURCE DIR => #{sourceDir}")
+
+      1.upto(numFiles) do |i|
+         filename = "test_local_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{sourceDir}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
+
+      cmd = "decGetFiles4Transfer"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic FILESYSTEM -O"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
    end
    ## ------------------------------------------------------
 

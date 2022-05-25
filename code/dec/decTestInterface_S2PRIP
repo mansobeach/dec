@@ -17,9 +17,10 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'ctc/API_PRIP'
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
-require 'dec/API_PRIP'
+
 
 
 # Preconditions:

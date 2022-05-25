@@ -201,7 +201,7 @@ def main
    ## ------------------------------------------------------
 
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("chck", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("checker", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end

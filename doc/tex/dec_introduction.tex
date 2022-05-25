@@ -30,6 +30,7 @@ The DEC SW offers a command line interface to \textit{pull} and \textit{push} fi
 This section addresses a high level overview for the main design drivers that allows DEC to interface efficiently for the configured exchanges:
 
 \begin{itemize}
+	\item \textit{Interface} : this term beyond the general meaning is usually used to refer to a SW configuration item with such name which includes all the information to perform the circulations (e.g. hostname, credentials, protocol, etc).
 	\item \textit{Circulation} : this term generally refers to any exchange of files either for retrieval upon \textit{pull} from or for distribution upon \textit{push} to any configured interface.
 	\item \textit{Dissemination} : this term refers to the file-system local distribution into the Intray(s) of the files previously downloaded from a given interface as part of a \textit{pull} circulation.
 	\item \textit{Download} : this term is used to refer to the actual retrieval of file from a given interface during a \textit{pull} iteration.
@@ -43,21 +44,17 @@ This section addresses a high level overview for the main design drivers that al
 This section enumerates a high level overview for the main features that allows DEC to interface efficiently for the configured exchanges:
 
 \begin{itemize}
-	\item \textit{Automation} : the ability to perform unattended autonomous circulation operations
+	\item \textit{Automation} : the ability to perform unattended autonomous circulation operations.
 	\item \textit{Flexibility} : the ability to \textit{pull} \& \textit{push} files from configurable interfaces and configurable circulation rules
 	\item \textit{Interface-Isolation} : every Interface is handled by separated isolated process avoiding any error propagation.
-	\item \textit{Robustness} : this is to perform “atomic” operations during file circulation ; the state for each operation is always known being network errors tolerant
+	\item \textit{Robustness} : this is to perform “atomic” operations during file circulation ; the state for each operation is always known being network errors tolerant.
 	\item \textit{Performance} : parallelism of the circulation to fruit the available network bandwidth, support of file compression mechanisms to reduce the footprint of transfers and local dissemination for which duplication of files by \textit{cp} or \textit{mv} can be avoided by usage of \textit{hardlinks}
 	\item \textit{Resiliency} : to \textit{autonomously} recover from network errors, downtime and eventual glitches and resume operations during every iteration.
-	\item \textit{Zero-copy} : to avoid new copies in the file system during \textit{dissemination} circulations.	
-	\item \textit{Comprehensive Traceability} : complete deterministic and unambiguous traceability along the entire workflow using codes within the log file of every operation.	
+	\item \textit{Zero-copy} : to avoid new copies in the file system during \textit{dissemination} circulations.
+    \item \textit{Interfaces configuration management} : flexible CI/CD chain to create dedicated SW installation kit to carry specific desired interfaces configuration ready for operation.	
+	\item \textit{Comprehensive traceability} : complete deterministic and unambiguous traceability along the entire workflow using codes within the log file of every operation.	
 \end{itemize}
 
-\section{Download DEC SW}
-This section contains the link to download the DEC SW installer \textit{gemfile} \href{https://drive.google.com/uc?export=download&id=1gieDRpDEBzKv5Xr0qwPvBz34RHphTnQq}{\textit{dec-stable.gem}} with the unit tests configuration. It is necessary to be logged-in with your DEIMOS \textit{gmail} account to \textit{authorise} the download. Do not hesitate in requesting tailored installation packages according to your needs.
-
-\par
-\noindent
 
 
 \end{document}

@@ -429,9 +429,17 @@ private
 	##
    def defineStructs
       @@deliveryMethods = ["ftp", "ftps", "ftpes", "sftp", "email", "mailbody", "http", "https", "local"]
-      Struct.new("OutgoingInterface", :mnemonic, :localOutbox, :uploadDir, :uploadTemp)
-      Struct.new("OutgoingFile", :fileType, :description, :toList)
-      Struct.new("DeliveryInterface", :mnemonic, :compressMethod, :deliveryMethods, :cleanUpAge)      
+      if !Struct::const_defined? "OutgoingInterface" then
+         Struct.new("OutgoingInterface", :mnemonic, :localOutbox, :uploadDir, :uploadTemp)
+      end
+      
+      if !Struct::const_defined? "OutgoingFile" then
+         Struct.new("OutgoingFile", :fileType, :description, :toList)
+      end
+
+      if !Struct::const_defined? "DeliveryInterface" then
+         Struct.new("DeliveryInterface", :mnemonic, :compressMethod, :deliveryMethods, :cleanUpAge)
+      end      
 	end
 	## -------------------------------------------------------------
 

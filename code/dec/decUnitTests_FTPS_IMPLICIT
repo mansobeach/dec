@@ -244,6 +244,52 @@ class DECTestCase_FTPS_IMPLICIT < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
    
+   def test_implicit
+      puts __method__.to_s
+      puts
+      puts "================================================"
+      puts "DEC_UnitTests::#{__method__.to_s}"
+      puts
+
+      entityConfig      = ReadInterfaceConfig.instance
+      ftpServer         = entityConfig.getFTPServer4Receive("LOCALHOST_FTPS")
+      port              = ftpServer[:port].to_i
+      
+#      if port == 21 then
+#         return
+#      end
+
+      inConfig         = ReadConfigIncoming.instance
+      inDirectory      = inConfig.getIncomingDir("LOCALHOST_FTPS")
+           
+      cmd = "rm -f #{inDirectory}/*"
+      puts cmd
+      system(cmd)
+      
+      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
+      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
+      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
+      
+      handler = InterfaceHandlerFTPS_Implicit.new("LOCALHOST_FTPS", @@logger, true, false, false)
+      
+      # handler.setDebugMode
+      
+      arr = handler.getList
+      
+      arr.each{|file|
+         puts file
+         puts "------"
+         assert(handler.downloadFile(file), "File download #{file}")
+      }
+      
+      
+      arr = Dir["#{inDirectory}/*"]
+      puts arr
+      
+   end
+   ## ------------------------------------------------------
+
+
    ##
    
    ## PULL Circulations

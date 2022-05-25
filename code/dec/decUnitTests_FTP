@@ -271,30 +271,27 @@ class DECTestCase_FTP < Test::Unit::TestCase
 
    ## ------------------------------------------------------
    
+   # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   data("0",     ["1_files_10GB_1Slots_NoDB",      1,   1024000,   1,     true])
+   data("1",     ["3_files_10GB_1Slots_NoDB",      3,   1024000,   1,     true])
+   data("2",     ["7_files_10GB_1Slots_NoDB",      7,   1024000,   1,     true])
+
    ## PUSH Circulations
-   def test_push
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+   def test_push(params)
+
+      label, numFiles, numBlocks, numSlots, noDB = params
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
 
       cmd = "rm -f /tmp/DEC*.log"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
-      checkDirectory("/tmp/dec/in_basket_if_localhost_ftp")
-      
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      checkDirectory("/tmp/dec_simul_if/localhost_notsecure/upload")
+      system("\\rm -rf /tmp/dec_simul_if/localhost_notsecure/upload/*")
 
-      cmd = "rm -f /tmp/tmp/dir1/finals.all"
-      puts cmd
-      system(cmd)
-
-      cmd = "rm -f /tmp/tmp/dir1/tai-utc.dat"
-      puts cmd
-      system(cmd)
-
+      checkDirectory("/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_")
+      system("\\rm -rf /tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_/*")
 
       cmd = "decManageDB -d"
       ret = system(cmd)
@@ -306,11 +303,11 @@ class DECTestCase_FTP < Test::Unit::TestCase
       ret = system(cmd)
 
       cmd = "decValidateConfig -a"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)   
    
       cmd = "decCheckConfig -e LOCALHOST_FTP"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
@@ -320,33 +317,45 @@ class DECTestCase_FTP < Test::Unit::TestCase
       checkDirectory(sourceDir)
       puts "SOURCE DIR => #{sourceDir}"
 
-      ## for FTP protocol the same files for download are used
-      
-      @@arrDownloadFiles.each{|filename|
-         puts filename
-         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
-      }
+      outTray     = "/tmp/dec_delivery_root"
+      checkDirectory(outTray)
+
+      1.upto(numFiles) do |i|
+         filename = "test_ftp_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{outTray}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
 
       cmd = "decGetFiles4Transfer"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface --mnemonic LOCALHOST_FTP -O"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-#      cmd = "decDeliverFiles -D"
-#      puts cmd
-#      assert(system(cmd), cmd)
-
       cmd = "decListDirUpload -m LOCALHOST_FTP -t"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       puts      
 
       cmd = "decStats"
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
+      arr = Dir["/tmp/DEC*.log"]
+     
+      cmd = "cp #{arr[0]} /tmp/test_push_ftp_#{label}.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "rm -f /tmp/dec_simul_if/localhost_notsecure/upload/test_ftp_*.bin"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
+
    end
    ## ------------------------------------------------------
 

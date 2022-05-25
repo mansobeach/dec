@@ -175,15 +175,27 @@ private
          arrCandidates = Array.new
          currentRule   = aRule
          
-#         if @isDebugMode == true then
-#            print "Rule[", aRule.rank, "] - ", aRule.fileType, " - ", aRule.sort, "\n"
-#         end
+         if @isDebugMode == true then
+            @logger.debug("Rule[ #{aRule.rank} ] - #{aRule.fileType} - #{aRule.sort}")
+         end
       
+         if aRule.fileType == nil then
+            @logger.error("No DataProvider configuration item for Rule##{aRule.rank} with Type #{aRule.dataType}")
+         end
+
          @queuedFiles.each{|queuedFile|
-            if queuedFile.filetype == aRule.fileType or \
+
+            # puts "PriorityRulesSolver::sortQueue => #{queuedFile.filename}"
+
+            begin
+               if queuedFile.filetype == aRule.fileType or \
                   File.fnmatch(aRule.fileType, queuedFile.filename) == true then
-               arrCandidates << queuedFile
+                  arrCandidates << queuedFile
+               end
+            rescue Exception => e
+               raise e
             end
+
          }
       
          # Sort the file-types for such rule

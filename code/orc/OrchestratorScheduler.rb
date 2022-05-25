@@ -231,9 +231,18 @@ class OrchestratorScheduler
          resolver.setDebugMode
       end
       
-      @arrQueuedFiles = Array.new 
-      @arrQueuedFiles = resolver.getSortedQueue
-       
+      @arrQueuedFiles = Array.new
+      
+      begin
+         @arrQueuedFiles = resolver.getSortedQueue
+      rescue Exception => e
+         @logger.error("[ORC_999] FATAL ERROR: #{e.to_s}")
+         if @isDebugMode == true then
+            @logger.debug(e.backtrace)
+         end
+         exit(127)
+      end
+         
       i = 1
       
       @arrQueuedFiles.each{|queuedFile|

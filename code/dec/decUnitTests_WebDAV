@@ -29,6 +29,7 @@ require 'cuc/Log4rLoggerFactory'
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadConfigIncoming'
+require 'dec/ReadConfigOutgoing'
 
 class DECTestCase_WebDAV < Test::Unit::TestCase
 
@@ -119,15 +120,68 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
    # Setup before every test-case
    #
    def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
       cmd = "mkdir -p /tmp/tmp/dir1"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
 
       cmd = "mkdir -p /tmp/tmp/dir2"
-      puts cmd
+      @@logger.debug(cmd)
       system(cmd)
-      
-      return
+
+      @@logger.debug("Defining environment variable used in configuration: DEC_TMP")
+      ENV['DEC_TMP'] = '/tmp'
+
+      conf = ReadConfigOutgoing.instance
+
+      dir = conf.getOutgoingDir("WEBDAV2")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadDir("WEBDAV2")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadTemp("WEBDAV2")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      ## PARALLEL_HTTP is used for pull operations
+      conf = ReadConfigIncoming.instance
+
+      dir = conf.getIncomingDir("PARALLEL_HTTP")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      arr = conf.getDownloadDirs("PARALLEL_HTTP")
+
+      arr.each{|inconfig|
+         @@logger.debug("checking #{inconfig[:directory]}")
+         checkDirectory(inconfig[:directory])
+      }
+
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -a PARALLEL_HTTP"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -a WEBDAV2"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   
+      cmd = "rm -f /tmp/DEC*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
    end
    ## ------------------------------------------------------
    ## After every test case
@@ -141,152 +195,109 @@ class DECTestCase_WebDAV < Test::Unit::TestCase
    
    ##
    
+    # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   # data("0",     ["1_files_1GB_1Slots",      1,   1024000,   1,     false])
+   # data("1",     ["3_files_1GB_1Slots",      3,   1024000,   1,     false])
+   # data("2",     ["3_files_1GB_3Slots",      3,   1024000,   3,     false])
+   # data("3",     ["7_files_1GB_5Slots",      7,   1024000,   5,     false])
+   data("4",     ["10_files_1GB_5Slots",     10,  1024000,   5,     false])
+
    ## PULL Circulations
-   def test_pull
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+   def test_pull(params)
 
-      checkDirectory("/tmp/dec/in_basket_if_localhost_ftp")
-      
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_ftp/*")
+      label, numFiles, numBlocks, numSlots, noDB = params
 
-      cmd = "rm -f /tmp/DEC*.log"
-      puts cmd
-      system(cmd)
-
-      cmd = "decManageDB -d"
-      @@logger.debug(cmd)
-      ret = system(cmd)
-
-      cmd = "decManageDB -c"
-      @@logger.debug(cmd)
-      ret = system(cmd)
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      @@logger.debug(cmd)
-      ret = system(cmd)
-
-      cmd = "decValidateConfig -a"
-      puts cmd
-      assert(system(cmd), cmd)   
-   
-      cmd = "decCheckConfig -e WEBDAV -i"
-      puts cmd
-      assert(system(cmd), cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
       
       ## -----------------------------------------
       ## list mode and subsequent download
-      
-      inConfig          = ReadConfigIncoming.instance
-      @finalDir         = inConfig.getIncomingDir("WEBDAV")
-            
-      checkDirectory(@finalDir)
 
-      FileUtils.rm_f("#{@finalDir}/webdav_finals.all")
-      FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
+      conf = ReadConfigIncoming.instance
+      arr = conf.getDownloadDirs("PARALLEL_HTTP")
+      downloadDir = arr[0][:directory]
 
-      checkDirectory("/Users/borja/Downloads/tmp/")
-
-      @@arrDownloadFiles.each{|filename|
-         @@logger.debug(filename)
-         system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
-      }
-            
-      cmd = "decGetFromInterface -m WEBDAV -l"
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{downloadDir}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
+           
+      cmd = "decGetFromInterface -m PARALLEL_HTTP -l"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m WEBDAV --no-intray"
+      cmd = "decGetFromInterface -m PARALLEL_HTTP -P #{numSlots}"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
-      assert(arrFiles.length == 2, "Number of files pulled")
+      dir = conf.getIncomingDir("PARALLEL_HTTP")
+
+      arrFiles = Dir["#{dir}/test_http*"]      
+      assert(arrFiles.length == numFiles, "Number of files pulled")
       
-      ## -----------------------------------------
-
-      
-      ## -----------------------------------------
-      ## Download again since --nodb is used to avoid filtering by previous download
-          
-      system("\\rm -rf /tmp/dec/in_basket_if_webdav/*")
-
-      FileUtils.rm_f("#{@finalDir}/webdav_finals.all")
-      FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
-
-      @@arrDownloadFiles.each{|filename|
-         @@logger.debug(filename)
-         system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
-      }      
-            
-      cmd = "decGetFromInterface -m WEBDAV --nodb --no-intray"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
-      assert(arrFiles.length == 2, "Number of files pulled")
-
-      ## -----------------------------------------
-      ## Now no files should be present for download
-
-      system("\\rm -rf /tmp/dec/in_basket_if_webdav/*")
-      
-      cmd = "decGetFromInterface -m WEBDAV"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
-            
-      arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
-      assert(arrFiles.length == 0, "Number of files pulled")
-
-      ## -----------------------------------------
-
       cmd = "decStats -H 1"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
-      
+
+      cmd = "rm -f #{dir}/test_http*"
+      @@logger.debug(cmd)
+      system(cmd)
+
       ## -----------------------------------------
-      
-      ## Detection of duplications
       
       arr = Dir["/tmp/DEC*.log"]
 
-      system("\\rm -rf /tmp/dec/in_basket_if_webdav/*")
-
-      FileUtils.rm_f("#{@finalDir}/webdav_finals.all")
-      FileUtils.rm_f("#{@finalDir}/webdav_tai-utc.dat")
-
-      @@arrDownloadFiles.each{|filename|
-         @@logger.debug(filename)
-         system("echo \'#{filename}\' > /Users/borja/Downloads/tmp/#{filename}")
-      }      
-      
-            
-      cmd = "decGetFromInterface -m WEBDAV"
+      cmd = "cp #{arr[0]} /tmp/test_pull_http_#{label}.log"
       @@logger.debug(cmd)
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/in_basket_if_webdav/*"]      
-      assert(arrFiles.length == 0, "Duplicated files should not be pulled")
-                      
-      cmd = "grep DEC_125 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
+      system(cmd)
 
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
-      ## -----------------------------------------
-      
+      cmd = "grep stats /tmp/test_pull_http*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "grep DEC\_110 /tmp/test_pull_http*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
    end
    ## ------------------------------------------------------
-
    ## ------------------------------------------------------
    
+  # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   # data("0",     ["1_files_10GB_1Slots_NoDB",      1,   1024000,   1,     true])
+   # data("1",     ["3_files_10GB_1Slots_NoDB",      3,   1024000,   1,     true])
+   data("2",     ["7_files_10GB_1Slots_NoDB",      7,   1024000,   1,     true])
+
    ## PUSH Circulations
-   def test_push
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
-      @@logger.debug("WebDAV protocol push is the HTTP put test")
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   def test_push(params)
+      label, numFiles, numBlocks, numSlots, noDB = params
+      
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
+
+      sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
+      checkDirectory(sourceDir)
+      @@logger.debug("SOURCE DIR => #{sourceDir}")
+
+      1.upto(numFiles) do |i|
+         filename = "test_http_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{sourceDir}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
+
+      cmd = "decGetFiles4Transfer"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "decSend2Interface --mnemonic WEBDAV2 -O"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
    end
    ## ------------------------------------------------------
-
 
 
 end

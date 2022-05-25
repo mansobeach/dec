@@ -188,11 +188,11 @@ class DECTestCase_FTP_Passive < Test::Unit::TestCase
       system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
       system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile4.txt")
             
-      cmd = "decGetFromInterface -m LOCALHOST_FTP_PASSIVE -l -D"
+      cmd = "decGetFromInterface -m LOCALHOST_FTP_PASSIVE -l"
       puts cmd
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m LOCALHOST_FTP_PASSIVE -D"
+      cmd = "decGetFromInterface -m LOCALHOST_FTP_PASSIVE"
       puts cmd
       assert(system(cmd), cmd)
 
@@ -327,7 +327,7 @@ class DECTestCase_FTP_Passive < Test::Unit::TestCase
       puts cmd
       assert(system(cmd), cmd)
 
-      cmd = "decSend2Interface --mnemonic LOCALHOST_FTP_PASSIVE -O -D"
+      cmd = "decSend2Interface --mnemonic LOCALHOST_FTP_PASSIVE -O"
       puts cmd
       assert(system(cmd), cmd)
 

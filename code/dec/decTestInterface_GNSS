@@ -175,7 +175,7 @@ class DECTestCaseGNSS < Test::Unit::TestCase
       conf              = ReadConfigIncoming.instance
       
       @finalDir         = conf.getIncomingDir(interface)
-            
+      @@logger.debug(@finalDir)      
       checkDirectory(@finalDir)
       
       cmd = "decGetFromInterface -m #{interface} -l"

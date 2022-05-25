@@ -16,7 +16,7 @@
 #   --version   shows version number
 # 
 # == Author
-# Deimos-Space S.L. (bolf)
+# Deimos-Space S.L.
 #
 # == Copyright
 # Copyright (c) 2006 ESA - Deimos Space S.L.
@@ -196,9 +196,7 @@ def main
    @bNotify  = ftReadConf.isNotificationSent?(@mnemonic)
 
    if @bNotify == false then
-      puts
-      puts "E-mail Delivery Notification is disabled for #{@mnemonic}"
-      puts
+      @logger.warn("[DEC_340] I/F #{@mnemonic}: email delivery notification is disabled")
       @locker.release
       exit(0)
    end

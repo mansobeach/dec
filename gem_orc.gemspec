@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.13'
+  s.version     = '0.0.14'
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
   
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 2.7'
   
   s.files       = Dir['code/orc/*.rb'] + \
                   Dir['code/orc/orcIngester'] + \
@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('log4r', '~> 1.0')  
-  s.add_dependency('pg', '~> 1')
+  s.add_dependency('pg', '~> 1.2.3')
   ## ----------------------------------------------
   
   s.add_development_dependency('sqlite3', '~> 1.4')

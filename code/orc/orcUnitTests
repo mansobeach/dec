@@ -36,7 +36,7 @@ require 'arc/MINARC_Environment'
 # 2.1 - purge archive
 # 2.2 - inventory database is destroyed
 
-
+##  0  - test_orcValidateConfig
 ##  1  - test_commandline_helpers
 ##  2  - test_parsers
 ##  3  - test_states
@@ -385,6 +385,9 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       puts
    end
+   ## ------------------------------------------------------
+
+
    ## ------------------------------------------------------
 
    def test_commandline_helpers
@@ -1106,7 +1109,7 @@ class ORCTestCase < Test::Unit::TestCase
       cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
 
-      sleep(120)
+      sleep(50)
    
       cmd = "orcBolg -c stop"
       @@logger.debug(cmd)
@@ -1380,6 +1383,14 @@ class ORCTestCase < Test::Unit::TestCase
 
       assert(File.exist?("/tmp/orc_config/orchestratorConfigFile.xml"),    "Extracted orchestratorConfigFile.xml")
       assert(File.exist?("/tmp/orc_config/orchestrator_log_config.xml"),   "Extracted orchestrator_log_config.xml")
+
+      cmd = "orcValidateConfig -a"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+   
+      cmd = "orcValidateConfig -a -D"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
 
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
       arr = Dir["/tmp/dec_orchestrator*.log"]

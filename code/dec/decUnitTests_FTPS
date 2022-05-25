@@ -179,66 +179,63 @@ class DECTestCase_FTPS < Test::Unit::TestCase
    # Setup before every test-case
    #
    def setup
-      cmd = "mkdir -p /tmp/tmp/dir1"
-      puts cmd
-      system(cmd)
-
-      cmd = "mkdir -p /tmp/tmp/dir2"
-      puts cmd
-      system(cmd)
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
       
-      return
+      @@logger.debug("Defining environment variable used in configuration: DEC_TMP")
+      ENV['DEC_TMP'] = '/tmp'
+
+      conf = ReadConfigOutgoing.instance
+
+      dir = conf.getOutgoingDir("LOCALHOST_FTPS")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadDir("LOCALHOST_FTPS")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadTemp("LOCALHOST_FTPS")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      ## PARALLEL_HTTP is used for pull operations
+      conf = ReadConfigIncoming.instance
+
+      dir = conf.getIncomingDir("LOCALHOST_FTPS")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      arr = conf.getDownloadDirs("LOCALHOST_FTPS")
+
+      arr.each{|inconfig|
+         @@logger.debug("checking #{inconfig[:directory]}")
+         checkDirectory(inconfig[:directory])
+      }
+
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -a LOCALHOST_FTPS"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   
+      cmd = "rm -f /tmp/DEC*.log"
+      @@logger.debug(cmd)
+      system(cmd)
    end
    ## ------------------------------------------------------
    ## After every test case
 
    def teardown
       return
-   end
-   ## ------------------------------------------------------
-   
-   def test_implicit
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-
-      entityConfig      = ReadInterfaceConfig.instance
-      ftpServer         = entityConfig.getFTPServer4Receive("LOCALHOST_FTPS")
-      port              = ftpServer[:port].to_i
-      
-#      if port == 21 then
-#         return
-#      end
-
-      inConfig         = ReadConfigIncoming.instance
-      inDirectory      = inConfig.getIncomingDir("LOCALHOST_FTPS")
-           
-      cmd = "rm -f #{inDirectory}/*"
-      puts cmd
-      system(cmd)
-      
-      system("echo \'my touch file\' > /tmp/tmp/dir1/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/tmp/dir1/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/tmp/dir2/touchfile3.txt")
-      
-      handler = InterfaceHandlerFTPS_Implicit.new("LOCALHOST_FTPS", @@logger, true, false, false)
-      
-      # handler.setDebugMode
-      
-      arr = handler.getList
-      
-      arr.each{|file|
-         puts file
-         puts "------"
-         assert(handler.downloadFile(file), "File download #{file}")
-      }
-      
-      
-      arr = Dir["#{inDirectory}/*"]
-      puts arr
-      
    end
    ## ------------------------------------------------------
    

@@ -23,6 +23,8 @@ require 'cuc/Log4rLoggerFactory'
 
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
 
 ## rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]
 
@@ -75,12 +77,6 @@ class DECTestCase_SFTP < Test::Unit::TestCase
          end
       end   
    
-   
-      @@arrDownloadFiles = [ \
-                           "finals.all", \
-                           "tai-utc.dat" \
-                           ]
-
       @@conf = DEC_Environment.new
 
       @@conf.wrapper_load_config
@@ -104,6 +100,17 @@ class DECTestCase_SFTP < Test::Unit::TestCase
       ## ----------------------------------
       @@conf.wrapper_unset_config
    
+      # ---------------------
+      # delete all log files
+      cmd = "rm -f /tmp/test_pull_sftp*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "rm -f /tmp/test_push_sftp*.log"
+      @@logger.debug(cmd)
+      system(cmd)      
+      # ---------------------
+
    end
    
    ## --------------------------------------------------------
@@ -124,7 +131,55 @@ class DECTestCase_SFTP < Test::Unit::TestCase
       cmd = "mkdir -p /tmp/tmp/dir2"
       @@logger.debug(cmd)
       system(cmd)
-      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+
+      @@logger.debug("Defining environment variable used in configuration: DEC_TMP")
+      ENV['DEC_TMP'] = '/tmp'
+
+      conf = ReadConfigOutgoing.instance
+
+      dir = conf.getOutgoingDir("LOCALHOST_SECURE")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadDir("LOCALHOST_SECURE")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      dir = conf.getUploadTemp("LOCALHOST_SECURE")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      conf = ReadConfigIncoming.instance
+
+      dir = conf.getIncomingDir("LOCALHOST_SECURE")
+      @@logger.debug("checking #{dir}")
+      checkDirectory(dir)
+
+      arr = conf.getDownloadDirs("LOCALHOST_SECURE")
+
+      arr.each{|inconfig|
+         @@logger.debug("checking #{inconfig[:directory]}")
+         checkDirectory(inconfig[:directory])
+      }
+
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   
+      cmd = "rm -f /tmp/DEC*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
    end
    ## ------------------------------------------------------
    ## After every test case
@@ -138,19 +193,25 @@ class DECTestCase_SFTP < Test::Unit::TestCase
    
    ##
    
-   ## PULL Circulations
-   def test_pull
-      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+   # data("SEPARATOR",     ["TEST LABEL",     0,   0,   0,    false])
+   # data("0",     ["1_files_1GB_1Slots",      1,   1024000,   1,     false])
+   # data("1",     ["3_files_1GB_1Slots",      3,   1024000,   1,     false])
+   # data("2",     ["3_files_1GB_3Slots",      3,   1024000,   3,     false])
+   # data("3",     ["7_files_1GB_5Slots",      7,   1024000,   5,     false])
+   data("4",     ["10_files_1GB_5Slots",     10,  1024000,   5,     false])
 
+   ## PULL Circulations
+   def test_pull(params)
+
+      label, numFiles, numBlocks, numSlots, noDB = params
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
+ 
       checkDirectory("/tmp/dec/in_basket_if_localhost_secure")
       checkDirectory("/tmp/dec_simul_if/localhost_secure/download")
       checkDirectory("/tmp/dec_simul_if/localhost_secure/upload/_TEMP_")
 
       cmd = "\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*"
-      @@logger.debug(cmd)
-      system(cmd)
-
-      cmd = "rm -f /tmp/DEC*.log"
       @@logger.debug(cmd)
       system(cmd)
 
@@ -177,139 +238,84 @@ class DECTestCase_SFTP < Test::Unit::TestCase
       ## -----------------------------------------
       ## list mode and subsequent download
       
-      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
-            
-      cmd = "decGetFromInterface -m LOCALHOST_SECURE -l -D"
+      downloadDir = "/tmp/dec_simul_if/localhost_secure/download"
+
+      1.upto(numFiles) do |i|
+         filename = "test_sftp_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{downloadDir}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
+           
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE -l"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
-      cmd = "decGetFromInterface -m LOCALHOST_SECURE -D"
+      cmd = "decGetFromInterface -m LOCALHOST_SECURE -P #{numSlots}"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_secure/touch*"]      
-      assert(arrFiles.length == 4, "Number of files pulled")
+      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_secure/test_sftp*"]      
+      assert(arrFiles.length == numFiles, "Number of files pulled")
       
-      ## -----------------------------------------
-
-      
-      ## -----------------------------------------
-      ## Download again since --nodb is used to avoid filtering by previous download
-          
-      system("\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*")
-      
-      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
-   
-            
-      cmd = "decGetFromInterface -m LOCALHOST_SECURE --nodb"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/in_basket_if_localhost_secure/touch*"] 
-      assert(arrFiles.length == 4, "Number of files pulled")
-
-      ## -----------------------------------------
-      ## Now no files should be present for download
-
-      system("\\rm -rf /tmp/dec/in_basket_if_LOCALHOST_SECURE/*")
-      
-      cmd = "decGetFromInterface -m LOCALHOST_SECURE"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
-            
-      arrFiles = Dir["/tmp/dec/in_basket_if_LOCALHOST_SECURE/touch*"]      
-      assert(arrFiles.length == 0, "Number of files pulled")
-
-      ## -----------------------------------------
-
       cmd = "decStats -H 1"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
-      
-      
+
       ## -----------------------------------------
       
       arr = Dir["/tmp/DEC*.log"]
 
-      ## Management of duplicated files from the interface
-
-      @@logger.info("TEST: Management of duplicated files from the interface")
-
-      cmd = "\\rm -rf /tmp/dec/in_basket_if_localhost_secure/*"
+      cmd = "cp #{arr[0]} /tmp/test_pull_sftp_#{label}.log"
       @@logger.debug(cmd)
       system(cmd)
 
-      system("\\rm -rf /tmp/dec_simul_if/localhost_secure/download/*")
-      
-      system("echo \'my touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile1.txt")
-      system("echo \'another touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile2.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile3.txt")
-      system("echo \'another brick in the touch file\' > /tmp/dec_simul_if/localhost_secure/download/touchfile4.txt")
-           
-      cmd = "decGetFromInterface -m LOCALHOST_SECURE -D"
+      cmd = "grep stats /tmp/test_pull_sftp*.log"
       @@logger.debug(cmd)
-      assert(system(cmd), cmd)
- 
-      arrFiles = Dir["/tmp/dec/in_basket_if_LOCALHOST_SECURE/touch*"]      
-      assert(arrFiles.length == 0, "Duplicated files should not be pulled")
-                      
-      cmd = "grep DEC_125 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Duplications logged in #{__method__.to_s}") 
+      system(cmd)
 
-      ## -----------------------------------------
-      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+      cmd = "grep DEC\_110 /tmp/test_pull_sftp*.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END #{label}")
    end
    ## ------------------------------------------------------
 
    ## ------------------------------------------------------
    
+   # data("SEPARATOR",     ["Start of the Test",     0,   0,   0,    false])
+   # data("0",     ["1_files_1GB_1Slots_NoDB",      1,   1024000,   1,     true])
+   # data("1",     ["3_files_1GB_1Slots_NoDB",      3,   1024000,   1,     true])
+   data("2",     ["7_files_1GB_1Slots_NoDB",      7,   1024000,   1,     true])
+
    ## PUSH Circulations
-   def test_push
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+   def test_push(params)
 
-      cmd = "rm -f /tmp/DEC*.log"
-      puts cmd
-      system(cmd)
+      label, numFiles, numBlocks, numSlots, noDB = params
 
-      checkDirectory("/tmp/dec/in_basket_if_LOCALHOST_SECURE")
-      
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START #{label}")
+
+      checkDirectory("/tmp/dec/in_basket_if_LOCALHOST_SECURE/")
       system("\\rm -rf /tmp/dec/in_basket_if_LOCALHOST_SECURE/*")
 
-      cmd = "rm -f /tmp/tmp/dir1/finals.all"
-      puts cmd
-      system(cmd)
+      outTray     = "/tmp/dec_delivery_root"
+      checkDirectory(outTray)
 
-      cmd = "rm -f /tmp/tmp/dir1/tai-utc.dat"
-      puts cmd
-      system(cmd)
+      1.upto(numFiles) do |i|
+         filename = "test_sftp_#{i}.bin"
+         cmd = "dd if=/dev/urandom of=#{outTray}/#{filename} bs=1024 count=#{numBlocks}"
+         @@logger.debug(cmd)
+         system(cmd)
+      end
 
-
-      cmd = "decManageDB -d"
-      ret = system(cmd)
-
-      cmd = "decManageDB -c"
-      ret = system(cmd)
-
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      ret = system(cmd)
 
       cmd = "decValidateConfig -a"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)   
    
       cmd = "decCheckConfig -e LOCALHOST_SECURE"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       checkDirectory("/tmp/dec_delivery_root/GIP_PROBA2")
@@ -317,21 +323,14 @@ class DECTestCase_SFTP < Test::Unit::TestCase
       sourceDir = DEC::ReadConfigDEC.instance.getSourceDir
       
       checkDirectory(sourceDir)
-      puts "SOURCE DIR => #{sourceDir}"
-
-      ## for FTP protocol the same files for download are used
-      
-      @@arrDownloadFiles.each{|filename|
-         puts filename
-         system("echo \'#{filename}\' > #{sourceDir}/#{filename}")
-      }
+      @@logger.debug("SOURCE DIR => #{sourceDir}")
 
       cmd = "decGetFiles4Transfer"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decSend2Interface --mnemonic LOCALHOST_SECURE -O"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
 #      cmd = "decDeliverFiles -D"
@@ -339,13 +338,25 @@ class DECTestCase_SFTP < Test::Unit::TestCase
 #      assert(system(cmd), cmd)
 
       cmd = "decListDirUpload -m LOCALHOST_SECURE -t"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
-      puts      
-
+    
       cmd = "decStats"
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
-      
+
+      arr = Dir["/tmp/DEC*.log"]
+     
+      cmd = "cp #{arr[0]} /tmp/test_push_sftp_#{label}.log"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "rm -f /tmp/dec_simul_if/localhost_secure/upload/test_sftp_*.bin"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+
    end
    ## ------------------------------------------------------
 

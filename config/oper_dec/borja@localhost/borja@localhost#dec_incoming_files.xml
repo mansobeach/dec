@@ -119,7 +119,7 @@
          <Name>PARALLEL_HTTP</Name>
          <LocalInbox>/tmp/if_dec/in_basket_if_http</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/tmp</Directory>
+            <Directory DepthSearch="0">/tmp/dec_simul_if/parallel_http</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>true</DeleteDownloaded>
@@ -381,14 +381,34 @@
          </FromList>
       </File>
 
-  
       <File Type="test_http*.bin*">
          <Description>test file</Description>
          <FromList>
             <Interface>PARALLEL_HTTP</Interface>
          </FromList>
       </File>
+
+      <File Type="test_local*.bin*">
+         <Description>test file</Description>
+         <FromList>
+            <Interface>FILESYSTEM</Interface>
+         </FromList>
+      </File>
  
+      <File Type="test_ftp_*.bin">
+         <Description></Description>
+         <FromList>
+            <Interface>LOCALHOST_FTP</Interface>
+         </FromList>
+      </File>
+
+      <File Type="test_sftp_*.bin">
+         <Description></Description>
+         <FromList>
+            <Interface>LOCALHOST_SECURE</Interface>
+         </FromList>
+      </File>
+
       <File Type="*tai-utc*">
          <Description>TAI UTC correlation</Description>
          <FromList>

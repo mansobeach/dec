@@ -13,11 +13,12 @@
 # decConfigInterfaceDB --add <MNEMONIC> | --process EXTERNAL
 #   --add <MNEMONIC>     (mnemonic is case sensitive) add the specified Entity  
 #   --process EXTERNAL   process $DEC_CONFIG/dec_interfaces.xml
-#   --Show               it shows all I/Fs already loaded in the DCC Inventory
+#   --Show               it shows all I/Fs already loaded in the DEC Inventory
 #   --Verbose            execution in verbose mode
 #   --version            shows version number
 #   --help      shows this help
 #   --usage     shows the usage
+#   --Debug     it performs the execution in Debug mode     
 # 
 # == Author
 # Deimos-Space S.L. (bolf)
@@ -28,7 +29,7 @@
 
 #########################################################################
 #
-# === Data Exchange Component -> Common Transfer Component
+# === Data Exchange Component
 # 
 # Git: $Id: decConfigInterface2DB 1.5 2007/02/06 13:38:56 decdev Exp $
 #
@@ -38,9 +39,10 @@ require 'rubygems'
 require 'getoptlong'
 require 'rdoc'
 
+require 'cuc/Log4rLoggerFactory'
+
 require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
-
 
 
 # MAIN script function
@@ -53,6 +55,7 @@ def main
    @bShowMnemonics   = false
    @bShowVersion     = false
    @bShowUsage       = false
+   @isDebugMode      = false
    add               = 0
    process           = 0
    
@@ -63,12 +66,14 @@ def main
      ["--version", "-v",        GetoptLong::NO_ARGUMENT],
      ["--help", "-h",           GetoptLong::NO_ARGUMENT],
      ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",          GetoptLong::NO_ARGUMENT],
      ["--process", "-p",        GetoptLong::REQUIRED_ARGUMENT]
      )
     
    begin
       opts.each do |opt, arg|
-         case opt      
+         case opt
+            when "--Debug"         then @isDebugMode   = true    
             when "--Verbose"       then @verboseMode  = 1
             when "--version"       then @bShowVersion = true
             when "--add" then
@@ -97,6 +102,34 @@ def main
       exit(0)
    end
 
+   ## ------------------------------------------------------
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+   ## ------------------------------------------------------
+
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("dbconfig", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+	   puts "Error in getFromInterface::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
 
    if @bShowUsage == true then
       usage
@@ -127,8 +160,11 @@ def main
 
    begin
       require 'dec/DEC_DatabaseModel'
-    rescue Exception => e
-      puts e.to_s
+   rescue Exception => e
+      @logger.error(e.to_s)
+      if @isDebugMode == true then
+         @logger.debug(e.backtrace)
+      end
       exit(99)
    end
   
@@ -136,38 +172,36 @@ def main
       arrInterfaces = Interface.all
    rescue ActiveRecord::RecordNotFound => e
       arrInterfaces = Array.new
-      puts e.to_s
+      @logger.error(e.to_s)
+      if @isDebugMode == true then
+         @logger.debug(e.backtrace)
+      end
+      exit(99)
    end
  
    if @bShowMnemonics == true then
-      puts
-      puts "=== DEC Inventory Registered I/Fs ==="
-      
       if arrInterfaces.empty? == true then
-         puts "no interfaces declared in the database"
+         @logger.info("no interfaces declared in the database")
       end
       
       arrInterfaces.each{|interface|
-         puts interface.name
+         @logger.info(interface.name)
       }
-      puts
       exit(0)
    end
    
    
    # add command line mnemonic to the database
    if add==1 and @mnemonic != "" then
-      print "\nAdding ", @mnemonic, " to the DEC Inventory/Interfaces ...\n"
-      
       anInterface = Interface.new
       anInterface.name = @mnemonic
       res = anInterface.save
 
       if res == true then
-         print "\n", @mnemonic, " added succesfully !\n\n"
+         @logger.info("[DEC_001] I/F #{@mnemonic}: added to the DEC Inventory/Interface db")
          exit(0) 
       else
-         print "\n", @mnemonic, " was already present in the DEC Inventory/Interfaces !\n\n"
+         @logger.warn("[DEC_501] I/F #{@mnemonic}: it is already present in DEC Inventory/Interface db")
          exit(99)
       end
    end
@@ -183,18 +217,19 @@ def main
       end     
       
 		arrEnt.each{|entity|
-		   print "\nAdding ", entity, " to the DEC Inventory/Interfaces ..."
+         if @isDebugMode == true then
+            @logger.debug("Adding #{entity} to the DEC Inventory/Interfaces")
+         end
          anInterface = Interface.new
          anInterface.name = entity
          anInterface.description = cnf.getDescription(entity)
          res = anInterface.save
          if res == true then
-            print "\n", entity, " added succesfully !\n"
+            @logger.info("[DEC_001] I/F #{entity}: added to the DEC Inventory/Interface db")
          else
-            print "\n", entity, " was already present in the DEC Inventory/Entities !\n"
+            @logger.warn("[DEC_501] I/F #{entity}: it is already present in DEC Inventory/Interface db")
          end
 		}
-		puts
    end
    
 end
@@ -205,7 +240,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)   
    
-   value = `#{"head -27 #{fullpathFile}"}`
+   value = `#{"head -28 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

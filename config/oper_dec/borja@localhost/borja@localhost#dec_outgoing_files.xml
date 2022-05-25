@@ -9,15 +9,15 @@
       <Interface>
          <Name>LOCALHOST_FTP_PASSIVE</Name>
          <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftp_passive</LocalOutbox>
-         <UploadDir>/tmp/tmp/dir1/</UploadDir>
-         <UploadTemp>/tmp/tmp/dir2/</UploadTemp>
+         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
       </Interface>
 
       <Interface>
          <Name>LOCALHOST_FTP</Name>
          <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftp</LocalOutbox>
-         <UploadDir>/tmp/tmp/dir1/</UploadDir>
-         <UploadTemp>/tmp/tmp/dir2/</UploadTemp>
+         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
       </Interface>
             
       <Interface>
@@ -75,6 +75,37 @@
    <!-- =========================================================== -->
 
    <ListFiles>
+
+      <File Type="test_local_*.bin">
+         <Description></Description>
+         <ToList>
+            <Interface Name="FILESYSTEM"  Compress="NONE" DeliveryMethods="LOCAL" />
+         </ToList>
+      </File>
+
+      <File Type="test_ftp_*.bin">
+         <Description></Description>
+         <ToList>
+            <Interface Name="LOCALHOST_FTP"  Compress="NONE" DeliveryMethods="FTP" />
+         </ToList>
+      </File>
+
+      <File Type="test_http_*.bin">
+         <Description></Description>
+         <ToList>
+            <Interface Name="WEBDAV2"  Compress="NONE" DeliveryMethods="HTTP" />
+         </ToList>
+      </File>
+
+      <File Type="test_sftp_*.bin">
+         <Description></Description>
+         <ToList>
+            <Interface Name="LOCALHOST_SECURE"  Compress="NONE" DeliveryMethods="SFTP" />
+            <!--
+            <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="SFTP" />
+            -->
+         </ToList>
+      </File>
 
       <File Type="finals.all"> 
          <Description></Description>

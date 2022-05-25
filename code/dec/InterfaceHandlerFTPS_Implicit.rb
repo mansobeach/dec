@@ -260,7 +260,7 @@ class InterfaceHandlerFTPS_Implicit < InterfaceHandlerAbstract
          ret = ftpsGetFile(host, port, filename, false, user, pass, chkSSL, @logger, @isDebugMode)
       rescue Exception => e
          @logger.error("[DEC_628] I/F #{@entity}: #{e.to_s}")
-         if File.exists?("#{Dir.pwd}/#{File.basename(filename)}") == true then
+         if File.exist?("#{Dir.pwd}/#{File.basename(filename)}") == true then
             begin
                size = File.size("#{Dir.pwd}/#{File.basename(filename)}")
                # File.delete("#{Dir.pwd}/#{File.basename(filename)}")

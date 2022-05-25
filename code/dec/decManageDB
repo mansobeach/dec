@@ -12,9 +12,8 @@
 
 #########################################################################
 #
-# Ruby source for #ROPSender class
 #
-# Written by DEIMOS Space S.L. (bolf)
+# Written by DEIMOS Space S.L.
 #
 # Data Exchange Component -> 
 # 
@@ -26,6 +25,8 @@
 require 'rubygems'
 require 'getoptlong'
 require 'active_record'
+
+require 'cuc/Log4rLoggerFactory'
 
 require 'dec/DEC_Migrations'
 require 'dec/DEC_Environment'
@@ -135,6 +136,27 @@ def main
       exit(99)
    end
 
+   ## ------------------------------------------------------
+
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("dbconfig", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+	   puts "Error in getFromInterface::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+
+   ## ------------------------------------------------------
+
+
    require 'dec/DEC_DatabaseModel'
 
    dbAdapter   = ENV['DEC_DB_ADAPTER']
@@ -243,18 +265,22 @@ def main
    if @bUp then
       if Interface.table_exists?() == false then
          CreateInterfaces.up
+         @logger.info("[DEC_000] DEC Database / Inventory table interfaces created")
       end
       
       if TrackedFile.table_exists?() == false then
          CreateTrackedFiles.up
+         @logger.info("[DEC_000] DEC Database / Inventory table tracked_files created")
       end
       
       if ReceivedFile.table_exists?() == false then
          CreateReceivedFiles.up
+         @logger.info("[DEC_000] DEC Database / Inventory table received_files created")
       end
       
       if SentFile.table_exists?() == false then
          CreateSentFiles.up
+         @logger.info("[DEC_000] DEC Database / Inventory table sent_files created")
       end
       
       if @bRPF == true
@@ -263,27 +289,31 @@ def main
       
          if InventoryFile.table_exists?() == false then
             CreateInventoryFile.up
+            @logger.info("[DEC_000] DEC RPF Database / Inventory table inventory_file created")
          end
 
          if InventoryROP.table_exists?() == false then
             CreateInventoryROP.up
+            @logger.info("[DEC_000] DEC RPF Database / Inventory table inventory_rop created")
          end
 
          if InventoryROPFile.table_exists?() == false then
             CreateInventoryROPFile.up
+            @logger.info("[DEC_000] DEC RPF Database / Inventory table inventory_rop_file created")
          end
 
          if InventoryParams.table_exists?() == false then
             CreateInventoryParams.up
+            @logger.info("[DEC_000] DEC RPF Database / Inventory table inventory_params created")
          end
 
          if InventoryROPFileView.table_exists?() == false then
             CreateInventoryROPFileView.up
+            @logger.info("[DEC_000] DEC RPF Database / Inventory table inventory_rop_fileview created")
          end
          
          migration = Add_ROP_ID_ToSentFiles.new
          migration.change
-
 
       end      
       

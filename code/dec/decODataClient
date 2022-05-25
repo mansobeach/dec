@@ -73,6 +73,8 @@ require 'json'
 
 require 'cuc/Log4rLoggerFactory'
 
+require 'ctc/API_PRIP'
+
 require 'dec/DEC_Environment'
 require 'dec/ODataClientFactory'
 
@@ -83,6 +85,7 @@ require 'dec/ODataClientFactory'
 def main
 
    include DEC
+   include PRIP
 
    @user          = ""
    @password      = ""

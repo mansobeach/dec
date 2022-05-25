@@ -23,6 +23,25 @@ require 'cuc/Log4rLoggerFactory'
 # Module Common Utils Component
 # This module provides helpers to encrypt / decrypt strings
 
+## echo "Welcome to LinuxCareer.com" | openssl enc -base64
+## echo "V2VsY29tZSB0byBMaW51eENhcmVlci5jb20K" | openssl enc -base64 -d
+
+## use pass
+## echo "U2FsdGVkX181xscMhkpIA6J0qd76N/nSjjTc9NrDUC0CBSLpZQxQ2Db7ipd7kexj" | openssl enc -aes-256-cbc -d -a
+
+## use DEC
+## echo "leiden1" | openssl enc -aes-256-cbc -a
+## echo "leiden1" | openssl enc -rc4 -base64 -nosalt -a
+# echo "sJhRW5wlxFs=" | openssl enc -rc4 -nosalt -d -a
+# echo "U2FsdGVkX18ytn0VrDclhmrdQHhdlXAZ"  | openssl enc -rc4 -d -a
+
+
+## echo "OpenSSL" | openssl enc -aes-256-cbc > openssl.dat
+## openssl enc -aes-256-cbc -d -in openssl.dat
+
+## echo "OpenSSL" | openssl enc -rc4 > openssl.dat
+## openssl enc -rc4 -d -in openssl.dat
+
 module CUC
 
 module CryptHelper

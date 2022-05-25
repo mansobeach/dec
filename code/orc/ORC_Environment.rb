@@ -27,18 +27,18 @@ module ORC
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.14"  =>   "TBW", \
+      "0.0.14"  =>   "orcValidateConfig checks the integrity of all rules beyond the xsd schema", \
       "0.0.13"  =>   "Robustification to handle miss-configuration of processing rules:\n\
-         https://jira.elecnor-deimos.com/browse/S2MPASUP-449",\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-449",\
       "0.0.12"  =>   "Logs updated to report new message ORC_230", \
       "0.0.11"  =>   "fixed https://jira.elecnor-deimos.com/browse/S2MPASUP-409 / S2 hardcoded filtering", \
       "0.0.10"  =>   "orchestratorConfigFile.xml Inventory item added for database configuration\n\
-         Support to remote inventory / db different than localhost\n\
-         Inventory config now includes Database_Host & Database_Port items:\n\
-         https://jira.elecnor-deimos.com/browse/S2MPASUP-384\n\
-         Datamodel & Index updated to deal with previously queued items:\n\
-         https://jira.elecnor-deimos.com/browse/S2MPASUP-402\n\
-         log messages rationalisation and clean-up",\
+          Support to remote inventory / db different than localhost\n\
+          Inventory config now includes Database_Host & Database_Port items:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-384\n\
+          Datamodel & Index updated to deal with previously queued items:\n\
+          https://jira.elecnor-deimos.com/browse/S2MPASUP-402\n\
+          log messages rationalisation and clean-up",\
       "0.0.9"  =>    "unit tests execution environment can be parametrised with env file\n\
          orcQueueUpdate removes from the queue a previously failed product\n\
          orcValidateConfig has been created:\n\

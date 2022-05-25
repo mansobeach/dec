@@ -35,7 +35,7 @@ pulled using the OS file management operations.
 The files \textit{"downloaded"} into the \hyperref[LocalInbox]{\textit{LocalInbox}} is perfomed using the \hyperlink{https://en.wikipedia.org/wiki/POSIX}{POSIX} \hyperlink{https://en.wikipedia.org/wiki/Hard_link}{hard-link} operation whenever both configuration items point to the same file-system, otherwise a copy is perfomed.
 
 \subsection{SFTP}
-Secure File Transfer Protocol over SSH is supported. The interface handler relies on the identity management SSH keys configuration to perform password-less authentication before triggering batch / non-interactive pull requests to the interface.
+Secure File Transfer Protocol over SSH is supported. The interface handler relies on the identity management SSH keys configuration to perform password-less authentication before triggering batch / non-interactive pull requests to the interface. In this respect configuration-wise, the SSH keys are not included in the SW installation package and need to be set.
 
 \subsection{FTP}
 The files from the \hyperref[DownloadDirs]{\textit{DownloadDirs}} are 

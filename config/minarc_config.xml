@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+  <Node>minARC unit tests node</Node>
+
   <CleanUp Frequency="10" Unit="s">
   
     <List_of_CleanUpRules>
@@ -16,10 +18,11 @@
    </Archive>
 
    <Workflow>
-      <ArchiveServer></ArchiveServer>
+      <ArchiveServer>https://localhost:4567</ArchiveServer>
       <ArchiveRoot>/tmp/minarc</ArchiveRoot>
       <ArchiveError>/tmp/minarc_error2</ArchiveError>
-      <TempDir>/tmp/minarc</TempDir>
+      <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
+      <TempDir>/tmp</TempDir>
    </Workflow>
 
    <Inventory>
@@ -31,5 +34,10 @@
       <Database_Password>e2edc</Database_Password>
    </Inventory>
 
+   <Client>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <User>test</User>
+      <Password>test</Password>
+   </Client>
 
 </Configuration>

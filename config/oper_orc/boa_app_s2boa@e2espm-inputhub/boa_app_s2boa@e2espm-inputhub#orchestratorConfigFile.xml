@@ -151,6 +151,12 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
  
+      <DataProvider isTriggerType="yes">
+	      <DataType>FOSUNAV</DataType>
+	      <FileType>*OPER_REP__SUP__*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
       
    </List_of_DataProviders>
 

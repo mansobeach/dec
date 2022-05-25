@@ -148,7 +148,7 @@
        <Address>borja.lopez@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
-      <SendNotification>false</SendNotification>
+      <SendNotification>true</SendNotification>
       <To>
        <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>

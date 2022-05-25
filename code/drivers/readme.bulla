@@ -1,0 +1,21 @@
+The contents of IERS Bulletin A are...
+
+1.  General information including key definitions and the most 
+recently adopted values of DUT1 and TAI-UTC.
+
+2.  Quick-look daily estimates of the EOPs determined by smoothing 
+the observed data.  This involves the application of systematic 
+corrections and statistical weighting.  The results are published 
+with a delay of about one to three days between the date of publication 
+and the last available date with estimated EOP.  Also, the IERS 
+Central Bureau (CB) EOP values are published monthly when available.
+
+3.  Predictions of x, y, and UT1-UTC, up to 365 days following the 
+last day of data.  The predictions use similar algorithms based on 
+seasonal filtering and autoregressive processing for x, y, and UT1.
+
+4.  The combination series for the offsets.
+
+The NEOS Bulletin is distributed by 0h UTC of Wednesday and Friday 
+of each week by electronic mail. Questions may be directed to:
+dmc@maia.usno.navy.mil or phone (202)653-0590
