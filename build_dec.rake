@@ -44,6 +44,30 @@ namespace :dec do
    
    ## ----------------------------------------------------------------
 
+   desc "encrypt string"
+
+   # echo "leiden1" | openssl enc -rc4 -base64 -nosalt -a
+
+   task :encryptstring, [:string] do |t, args|
+      puts "encrypt string: #{args[:string]}"
+      cmd = "echo #{args[:string]} | openssl enc -rc4 -base64 -nosalt -a"
+      puts cmd
+      system(cmd)
+   end
+
+   ## ----------------------------------------------------------------
+
+   # echo "sJhRW5wlxFs=" | openssl enc -rc4 -nosalt -d -a
+
+   task :decryptstring, [:string] do |t, args|
+      puts "decrypt string: #{args[:string]}"
+      cmd = "echo #{args[:string]} | openssl enc -rc4 -nosalt -d -a"
+      puts cmd
+      system(cmd)
+   end
+
+   ## ----------------------------------------------------------------
+
    desc "generate PDF documentation"
 
    task :gendoc do
@@ -185,6 +209,7 @@ namespace :dec do
          puts "building gem dec #{args[:suffix]} with flag DEC_TEST"
          ENV['DEC_TEST'] = "true"
       else
+         puts "building gem dec #{args[:suffix]}  ** without ** unit tests"
          ENV.delete('DEC_TEST')
       end
       

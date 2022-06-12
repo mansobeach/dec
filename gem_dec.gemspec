@@ -85,12 +85,14 @@ Gem::Specification.new do |s|
    ##
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_TEST") == true then
+      puts "Adding unit tests"
       s.executables   << 'decTestInterface_CelesTrak'
       s.executables   << 'decTestInterface_CloudFerro'
       s.executables   << 'decTestInterface_ECDC'
       s.executables   << 'decTestInterface_IERS'
       s.executables   << 'decTestInterface_ILRS'
       s.executables   << 'decTestInterface_GNSS'
+      s.executables   << 'decTestInterface_NATS_CCS5'
       s.executables   << 'decTestInterface_NOAA'
       s.executables   << 'decTestInterface_SCIHUB'
       s.executables   << 'decTestInterface_SPCS'
@@ -129,6 +131,7 @@ Gem::Specification.new do |s|
   
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('bcrypt', '~> 3.1')
+  s.add_dependency('bcrypt_pbkdf', '~> 1.1')
   s.add_dependency('curb', '~> 0.9')
   s.add_dependency('dotenv', '~> 2')
   s.add_dependency('ffi', '~> 1.15')
@@ -145,6 +148,7 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-smtp', '~> 0.3')
   s.add_dependency('net-ssh', '~> 6.1')
+  s.add_dependency('ed25519', '~> 1.3')
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')
   

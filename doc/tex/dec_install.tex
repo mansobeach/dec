@@ -12,6 +12,25 @@
  
 \begin{document}
 
+\section{Install OS Dependencies}
+ DEC SW is compatible with any POSIX OS. The information contained in this section aims to ensure that the ruby interpreter can be built at the target platform ; this approach aims for active obsolescence management allowing to make usage of recent stable versions avoiding lock-down by the OS distribution packages, which are usually very constraining in this respect. The SW packages are the very few which are requiring an OS administrator profile (i.e. root user) whilst DEC SW is recommended to live in the OS user environment which will execute it.\newline
+ 
+ \par
+ \noindent
+ \inlinecode{bash}{ \$> apt-get install curl}  \newline 
+ \inlinecode{bash}{ \$> apt-get install git}  \newline
+ \inlinecode{bash}{ \$> apt-get install jq}  \newline
+ \inlinecode{bash}{ \$> apt-get install libssl-dev}  \newline
+ \inlinecode{bash}{ \$> apt-get install libsqlite3-dev}  \newline
+ \inlinecode{bash}{ \$> apt-get install sqlite3}  \newline
+ \inlinecode{bash}{ \$> apt-get install libpq-dev}  \newline
+ \inlinecode{bash}{ \$> apt-get install libxml2-utils}  \newline
+ \inlinecode{bash}{ \$> apt-get install ncftp}  \newline
+ \inlinecode{bash}{ \$> apt-get install p7zip-full}  \newline
+
+If you are \(unlucky\) using RHEL, some of the above packages might not be directly available in the OS distribution repository.
+
+
 \section{Install Ruby}
  This section covers the install of \textit{Ruby} interpreter and the \textit{gem} dependencies needed by DEC SW. It is recommended that the \textit{Ruby} interpreter is done locally for the Linux user who shall execute the DEC SW.\newline
 
@@ -262,7 +281,7 @@ Finished in 54.38868 seconds.
 \end{lstlisting}
 
 \section{DEC App Container}
-It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production).
+It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production). This approach avoids the eventual pains suffered throughout the previous sections by entirely defining an execution environment fitting the needs. 
 
 
 \end{document}

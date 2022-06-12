@@ -31,6 +31,7 @@ require 'dec/CheckerFTPConfig'
 require 'dec/CheckerHTTPConfig'
 require 'dec/CheckerWebDAVConfig'
 require 'dec/CheckerLocalConfig'
+require 'dec/CheckerNATSConfig'
 
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
@@ -90,6 +91,10 @@ class CheckerInterfaceConfig
 
       if @ftpRecv[:protocol].upcase == "HTTP" or  @ftpRecv[:protocol].upcase.include?('HTTP') then
          @check4Recv                      = CheckerHTTPConfig.new(@ftpRecv, @entity, @logger)
+      end
+
+      if @ftpRecv[:protocol].upcase == "NATS" or @ftpRecv[:protocol].upcase == "NATS" then
+         @check4Recv                      = CheckerNATSConfig.new(@ftpRecv, @entity, @logger)
       end
 
       ## -----------------------------------------

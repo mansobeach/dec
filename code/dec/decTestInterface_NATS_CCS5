@@ -1,0 +1,155 @@
+#!/usr/bin/env ruby
+
+#########################################################################
+###
+### === Ruby source for #DEC_TestCases class
+###
+### === Written by DEIMOS Space S.L. (bolf)
+###
+### === Data Exchange Component
+### 
+### module DEC
+###
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'Date'
+
+require 'cuc/Log4rLoggerFactory'
+require 'cuc/DirUtils'
+
+require 'ctc/API_ADGS'
+require 'ctc/API_MINARC_OData'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+
+
+##  1  - test_count
+##  2  - test_query_s2
+##  3  - test_download_s2
+
+
+
+class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   #self.test_order = :defined
+   
+      
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do
+      @my_argv = ARGV.dup
+      puts
+      puts "======================================"
+      puts "DEC NAOS NATS CCS5 Interface Test Cases #{self.class.name.split('::').last}"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("DECTEST", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in #{File.basename(__FILE__)}"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
+      
+   end
+   
+   ## ------------------------------------------------------
+
+   Test::Unit.at_exit do
+      @@logger.info("End of DEC tests #{File.basename(__FILE__)}")
+   end
+
+   def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+   def teardown
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+   ## -----------------------------------------------------------
+   ##
+
+   def testF2
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F2"
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      @@logger.debug("Waiting 30s to chain next test")
+      sleep(30.0)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
+   def testF3
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F3 -P \"{\\\"filename\\\" :\\\"/tmp/2022-05-25T15:36:59.288624_PLA_SBA\\\", \\\"target\\\" :\\\"/tmp/2022-06-01T18:00:00.449688_PLA_OSC_eng_uplink\\\"}\"   "
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## ------------------------------------------------------
+
+end
+
+
+## ===================================================================
+
+
+
+

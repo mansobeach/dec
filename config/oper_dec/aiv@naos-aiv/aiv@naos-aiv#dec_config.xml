@@ -50,7 +50,7 @@
        <!-- DEC push / delivery reports / push (decSend2Interface) -->      
             
       <Report Name="DeliveredFiles">
-         <Enabled>true</Enabled>
+         <Enabled>false</Enabled>
          <Desc>List of Files Delivered</Desc>
          <FileClass>OPER</FileClass>
          <FileType>DEC_F_SENT</FileType>
@@ -66,7 +66,7 @@
       <!-- DEC pull / retrieval reports (decGetFromInterface) -->
 
       <Report Name="RetrievedFiles">
-         <Enabled>true</Enabled>
+         <Enabled>false</Enabled>
          <Desc>List of Files Retrieved</Desc>
          <FileClass>OPER</FileClass>
          <FileType>DEC_F_RECV</FileType>
@@ -103,9 +103,9 @@
       <Database_Adapter>sqlite3</Database_Adapter>
       <Database_Host>localhost</Database_Host>
       <Database_Port></Database_Port>
-      <Database_Name>/tmp/dec_inventory</Database_Name>
-      <Database_User>root</Database_User>
-      <Database_Password>2mysql</Database_Password>
+      <Database_Name>/tmp/dec_naos_aiv_inventory</Database_Name>
+      <Database_User>naos</Database_User>
+      <Database_Password>naos</Database_Password>
    </Inventory>
 
 

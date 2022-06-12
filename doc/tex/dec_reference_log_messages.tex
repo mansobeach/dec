@@ -571,14 +571,15 @@ This message is logged when the command executed associated to some \hyperref[Ev
 \label{DEC798}
 \subsection{[DEC\_798] Configuration Error}
 This message is logged when the XML schema validation corresponding to a given configuration file is failing. 
-
-\label{DEC799}
-\subsection{[DEC\_799] Integration Error}
-This message is logged when some unexpected error raised. 
 \begin{verbatim}
 	[DEBUG] NODE_1.checker - xmllint --schema /Users/mario/.frum/versions/3.1.0/lib/ruby/gems/3.1.0/gems/dec-1.0.33/code/dec/../../schemas/dec_log_config.xsd /Users/mario/.frum/versions/3.1.0/lib/ruby/gems/3.1.0/gems/dec-1.0.33/code/dec/../../config/dec_log_config.xml --noout
 	[DEC_798] Fail schema check for dec_interfaces
 \end{verbatim}
+
+
+\label{DEC799}
+\subsection{[DEC\_799] Integration Error}
+This message is logged when some unexpected error raised. 
 
 \subsubsection{Missing SW Dependency}
 Some SW dependency required by DEC was not found in \$PATH. Refer to \hyperref[FOSS]{\textit{section FOSS}} to check the SW dependencies which DEC needs for its correct execution.
@@ -591,6 +592,12 @@ Some SW dependency required by DEC was not found in \$PATH. Refer to \hyperref[F
 	[DEC_799] Fatal Error : ncftpget not present in $PATH
 	[DEC_799] Fatal Error : ncftpput not present in $PATH
 	[DEC_799] Fatal Error : sftp not present in $PATH
+\end{verbatim}
+
+\subsubsection{Database table not existing or reachable}
+This is an error when not finding the some DEC/Inventory table ; likely because it has not been created yet.
+\begin{verbatim}
+	[DEC_799] Fatal Error : DEC/Inventory Could not find table 'interfaces'
 \end{verbatim}
 
 \subsubsection{Zero length file download}
@@ -613,6 +620,8 @@ This is an error when trying to reach one file or directory.
 \begin{verbatim}
 	[DEC_799] I/F #{entity}: No such file or directory @ dir_s_chdir - /volume1/dec/interfaces/dhus_odata/
 \end{verbatim}
+
+
 % ------------------------------------------------------------------------------
 % Debug Messages
 

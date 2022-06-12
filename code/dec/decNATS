@@ -2,7 +2,7 @@
 
 # == Synopsis
 #
-# This is a command line tool that connects to NAOS MCS using NATS
+# This is a command line tool that connects to NAOS MCS using NATS & SFTP.
 # 
 # F1. Manage G/S connections
 #
@@ -18,10 +18,15 @@
 # Note that if the destination path ends with / (slash), it is treated as a directory, and the ingested file will keep its name. Otherwise it is a full path, including a file name.
 # Note that when using a relative path, the destination path will be relative to a root folder preconfigured in the MCS for all ingested files (settings: NAOS/IngestDir).
 #
+# decNATS -n NAOS_IVV_MCS_NATS -F3 -P "{\"filename\" :\"/tmp/2022-05-25T15:36:59.288624_PLA_SBA\", \"target\" :\"/tmp/2022-06-01T18:00:00.449688_PLA_OSC_eng_uplink\"}"
+#
 # F4. Trigger processing of MPS/FDS activities file
 # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.call
 # NATS body: ProcessActivityFile <PATH>
 # <PATH>: Path to the MPS/FDS activities XML file (corresponds to <target path> used in the ingest function (F3). The file is written according to the XML schema mtl.xsd (see Appendix 1 – Spacecraft activities file).
+#
+# decNATS -n NAOS_IVV_MCS_NATS -F4 -P "{\"path\" :\"/CCS/VARIABLE/INPUTS/2022-05-25T15:36:59.288624_PLA_SBA\"}"
+# decNATS -n NAOS_IVV_MCS_NATS -F4 -P "{\"path\" :\"/CCS/VARIABLE/INPUTS/2022-05-27T09:14:38.449688_PLA_OSC\"}"
 #
 # F5. Start dispatching a sequence of TCs created from an activities file
 # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.call
@@ -32,6 +37,8 @@
 # If COP1 is not active, the relevant stage for considering the TC uplinked is UV_GS_UPLINK (corresponds to the ground station reporting TC being uplinked).
 # After a successful uplink, the stack file is deleted, and the NATS reply message is simply “OK”. If uplinking failed at a certain stage, the file will stay on disk, so it does not need to be regenerated again. However, it makes no provisions to avoid sending the same TCs again
 #
+# decNATS -n NAOS_IVV_MCS_NATS -F5 -P "{\"filename\" :\"2022-06-25T15:36:59\"}"
+#
 # F6. Generate TM report (for FDS)
 # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.call
 # NATS body: HistoryReport <Report Type> <start time> <end time> <outputURL>
@@ -39,7 +46,7 @@
 # <start time> <endtime>: time range for the retrieval (e.g. last orbit), ISO format e.g. 2020-04-20T15:18:49
 # <outputURL>: destination of the final report.
 #
-# decNATS -F6 -P "{\"type\" :\"GPS\", \"start\" : \"2015-04-20T15:18:49\" , \"end\" : \"2025-04-20T15:18:49\", \"url\" : \"/tmp/GPS-TM-data-Pass-551.xml\" }"
+# decNATS -n NAOS_IVV_MCS_NATS -F6 -P "{\"type\" :\"GPS\", \"start\" : \"2015-04-20T15:18:49\" , \"end\" : \"2025-04-20T15:18:49\", \"url\" : \"/tmp/GPS-TM-data-Pass-551.xml\" }"
 #
 #
 # F7. Process Playback TM frames
@@ -52,8 +59,27 @@
 # The process ends when all frames have been replayed, the caller (AUTO) is eventually notified with a response that includes the number of replayed frames.
 #
 #
+# MessageBroker::subscribe -subject CCS5.AutoPilot.NAOS.call.ack referby ackMessage
+# trace add variable ackMessage write [lambda {var idx op} {
+#  syslog -ok "$tcl_name -> Received ACK message: [MessageBroker::getMessageBody $::ackMessage]"
+# }]
+#
+#
 # == Usage
+# decNATS -m <I/F SFTP> -n <I/F NATS> -F<function> -P {JSON parameters}
+#        --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
+#        --Show      it shows all available I/Fs registered in the Inventory
+#        --nodb      no usage of the Inventory for recording operations
+#        --help      shows this help
+#        --usage     shows the usage
+#        --Debug     shows Debug info during the execution
+#        --version   shows version number
 # 
+# == Author
+# Deimos-Space S.L.
+#
+# == Copyright
+# Copyright (c) 2024 Deimos Space S.L.
 #
 
 #########################################################################
@@ -70,6 +96,28 @@
 
 ## nats sub -s nats://172.23.253.28:4222 "CCS5.SESS.STATUS.NAOS.*"
 
+# "CCS5.AutoPilot.NAOS.call.ack"
+# CCS5.AutoPilot.NAOS.call.*
+
+
+# [#69] Received on "CCS5.GSFE.settings.NAOS"
+# MCS/GSFE/NisDriver/TestUnis1/autoConnectTC 0 MCS/GSFE/NisDriver/TestUnis1/autoConnectTM 0 MCS/GSFE/NisDriver/defaultDriver/autoConnectTC 0 MCS/GSFE/NisDriver/defaultDriver/autoConnectTM 0 MCS/GSFE/NisDriver/TestUnis1/autoActivate 0 MCS/GSFE/NisDriver/defaultDriver/autoConnectMON 0 MCS/GSFE/NisDriver/DEDANAOSSIM02_SV/autoConnectTC 0 MCS/GSFE/NisDriver/DEDANAOSSIM02_SV/autoConnectTM 0 MCS/GSFE/NisDriver/DEDANAOSSIM02_SV/autoConnectMON 0 MCS/GSFE/NisDriver/DEDANAOSSIM02_SV/autoActivate 0 MCS/GSFE/NisDriver/TestUnis1/autoConnectMON 0 MCS/GSFE/NisDriver/defaultDriver/autoActivate 0
+
+#201] Received on "CCS5.GSFE.status.NAOS"
+# {"DEDANAOSSIM02_SV":{"active":0,"monConnected":0,"tcConnected":0,"tmConnected":0},"TestUnis1":{"active":0,"monConnected":0,"tcConnected":0,"tmConnected":0},"defaultDriver":{"active":0,"monConnected":0,"tcConnected":0,"tmConnected":0}}
+
+
+# [#82] Received on "CCS5.AutoPilot.status.NAOS"
+# {"alertCount":0,"connected":1,"epoch":315964800,"lastCompletedTask":-1,"lastCompletionTime":0,"lastErrorTask":-1,"lastStartedSeq":null,"lastStartedStk":null,"lastTaskErrorMsg":null,"model":"SAT","name":"NAOS","nextScheduleEntry":0,"nextScheduleMethod":null,"nextScheduleSeconds":-1654083668,"nextScheduleTask":null,"nextScheduleTime":0,"obt":699.33,"refresh":1654083668,"session":"2022_06_01T11_29_15_ccsexec_nl2-s-mcs-srv-01_RT","tcPktCount":0,"tmLevel":1,"tmPktCount":0,"visible":0}
+
+#[#7288] Received on "CCS5.AutoPilot.event.NAOS"
+#{"logTime":"2022-06-01T11:50:09.990Z","severity":"OK","source":"AP(8)","text":"Service 'ingest /CCS/VARIABLE/INPUTS/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink /tmp/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink' returned 'Progress: 100% (791 of 791 bytes...'"}
+
+# [#7283] Received on "CCS5.AutoPilot.NAOS.ingest" with reply "_INBOX.Rb1TdwVc7jMwiP3FwIesEH.Rb1TdwVc7jMwiP3FwIeu3W"
+# /CCS/VARIABLE/INPUTS/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink /tmp/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink
+
+
+
 require 'rubygems'
 require 'getoptlong'
 require 'json'
@@ -80,20 +128,27 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/Converters'
 
 require 'dec/DEC_Environment'
+require 'dec/ReadInterfaceConfig'
+require 'dec/NATSClientCCS5'
 
 # MAIN script function
 def main
 
   include CUC::Converters
+  
   include DEC
 
   strFunction = ""
   hParams     = nil
   jParams     = nil
 
+  @ifNATS     = ""
+
   opts = GetoptLong.new(
     ["--Function", "-F",            GetoptLong::REQUIRED_ARGUMENT],
     ["--Params", "-P",              GetoptLong::REQUIRED_ARGUMENT],
+    ["--mnemonic", "-m",            GetoptLong::REQUIRED_ARGUMENT],
+    ["--servernats", "-n",          GetoptLong::REQUIRED_ARGUMENT],
     ["--Debug", "-D",               GetoptLong::NO_ARGUMENT],
     ["--version", "-v",             GetoptLong::NO_ARGUMENT],
     ["--help", "-h",                GetoptLong::NO_ARGUMENT]
@@ -106,6 +161,8 @@ def main
           when "--Function"          then strFunction     = "F#{arg.to_s}"
           when "--Params"            then hParams         = arg
           when "--version"           then @bShowVersion   = true
+          when "--mnemonic"          then @entity         = arg
+          when "--servernats"        then @ifNATS         = arg      
           when "--update-tables"     then @bUpdate        = true
           when "--help"              then @bUsage         = true
         end
@@ -129,7 +186,7 @@ def main
     exit(0)
   end
 
-  if strFunction == "" then
+  if strFunction == "" or @ifNATS == "" then
     usage
     exit(66)
   end
@@ -146,8 +203,6 @@ def main
   if ret == false then
      exit(99)
   end
-
-  jParams = JSON.parse(hParams)
 
   ## ------------------------------------------------------
 
@@ -170,215 +225,48 @@ def main
 
   ## ------------------------------------------------------
 
-  if strFunction == "F0" then
-    @logger.debug("F0")
-    requestF0
-    exit(0)
-  end
-
-  if strFunction == "F2" then
-    @logger.debug("F2")
-    requestF2
-    exit(0)
-  end
-
-  if strFunction == "F6" then
-    ret = requestF6(hParams)
-    if ret == true then
-      exit(0)
-    else
-      exit(99)
-    end
-  end
-
   ## ------------------------------------------------------
 
-  begin
-   
-    NATS.start(:servers => ['nats://172.23.253.28:4222', 'nats://172.23.253.28:4223']) do |nc|
-      
-      puts "NATS is connected to #{nc.connected_server}"
-      puts "hey"
+  ccs5 = NATSClientCCS5.new(@ifNATS, @logger, @isDebugMode)
 
-      NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg| 
-        puts "Msg received : '#{msg}'" 
-        # sleep(5.0)
-        NATS.drain
-      }
-
-      Fiber.new do
-          response = NATS.request("CCS5.AutoPilot.NAOS.call", \
-                                  "HistoryReport GPS 2015-04-20T15:18:49 2029-04-20T15:18:49 /tmp/GPS-TM-data-Pass-550.xml", \
-                                  timeout: 2)
-
-=begin 
-#          response = NATS.request("CCS5.AutoPilot.NAOS.call", \
-#                                    "HistoryReport MSC 2015-04-20T15:18:49 2029-04-20T15:18:49 /tmp/MSC-TM-data-Pass-550.xml", \
- #                                   timeout: 2)
-
- 
-          response = NATS.request("CCS5.AutoPilot.NAOS.call", \
-                                      "HistoryReport blah blah blah", \
-                                      timeout: 2)                          
-
-=end                                      
-
-          puts response
-
-          puts "[Response]: ->> '#{response}'"
-      end.resume
-
-      #NATS.subscribe('R.*') { |msg| 
-      #  puts "Msg received : '#{msg}'" 
-        # sleep(5.0)
-      #  NATS.drain
-      #}
-
-      puts "before publish CCS5.AutoPilot.NAOS.call"
-
-     # NATS.publish('CCS5.AutoPilot.NAOS.call', 'UplinkActivityFile 2022-05-19T12:12:12.666666_PLA_
-     #   SBA')
-
-      puts "after publish CCS5.AutoPilot.NAOS.call"
-
-      NATS.request('help') { |response| puts "Got a response: '#{response}'" }
-
- 
-      puts "other"
-
-      # NATS.stop
-   
-   end
-
-rescue Exception => e
-    puts e.to_s
-    exit(99)
-end
-
-   exit(0)
-end
-#-------------------------------------------------------------
-
-# F0 (not documented in the ICD)
-def requestF0
-    begin
-      NATS.start(:servers => ['nats://172.23.253.28:4222', 'nats://172.23.253.28:4223']) do |nc|
-        @logger.info("NATS.subscribe CCS5.SESS.STATUS.NAOS.*")
-        NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg| 
-          doc = JSON.parse(msg)
-          msg = "Session : #{doc["NAME"]} ; State : #{doc["STATE"]}"
-          @logger.info(msg)
-          if @isDebugMode == true then
-            @logger.debug(doc)
-          end
-          NATS.drain
-        }
-      end
-    end
-end
-
-#-------------------------------------------------------------
-
-# F6
-def requestF6(jParams)
-
-  type    = JSON.parse(jParams)['type'].to_s.upcase
-  url     = JSON.parse(jParams)['url']
-  start   = JSON.parse(jParams)['start']
-  stop    = JSON.parse(jParams)['end']
-
-  case type
-    when "GPS" then 
-    when "MSC" then
-    when "THR" then
+  case strFunction
+    when "F0" then 
+        ccs5.requestF0
+        exit(0)
+    when "F2" then 
+        ccs5.requestF2
+        exit(0)
+    when "F3" then 
+        ccs5.requestF3(hParams)
+        exit(0)
+    when "F4" then 
+        ccs5.requestF4(hParams)
+        exit(0)
+    when "F5" then 
+        ccs5.requestF5(hParams)
+        exit(0)    
+    when "F6" then 
+        ccs5.requestF6(hParams)
+        exit(0)
+    when "F7" then 
+        ccs5.requestF7(hParams)
+        exit(0)
+    when "F99" then 
+        ccs5.requestF99(hParams)
+        exit(0)                
     else
-      @logger.error("Param type : #{type} is not supported for F6")
-      return false
+      @logger.error("Function #{strFunction} is not supported")
+      exit(99)
   end
   
-  begin
-    dateStart = str2date(start) 
-  rescue Exception => e
-    @logger.error("Param start : #{start} is not a valid date")
-    if @isDebugMode == true then
-      @logger.error(e.to_s)
-    end
-    return false
-  end
-
-  begin
-    dateStart = str2date(stop) 
-  rescue Exception => e
-    @logger.error("Param end : #{stop} is not a valid date")
-    if @isDebugMode == true then
-      @logger.error(e.to_s)
-    end
-    return false
-  end
-
-  if url.include?(".xml") == false then
-    @logger.error("Param url : #{url} does not seem to include a xml filename")
-    return false
-  end
-
-
-  begin
-    if @isDebugMode == true then
-      @logger.debug("NATS.start")
-    end
-    
-    NATS.start(:servers => ['nats://172.23.253.28:4222', 'nats://172.23.253.28:4223']) do |nc|
-      
-      if @isDebugMode == true then
-        @logger.debug("NATS is connected to #{nc.connected_server}")
-      end
-      
-      NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg|
-        NATS.drain
-      }
-
-      Fiber.new do
-        reqSubject  = "CCS5.AutoPilot.NAOS.call"
-        reqBody     = "HistoryReport #{type} #{start} #{stop} #{url}"
-        @logger.info("#{reqSubject} #{reqBody}")
-        response    = NATS.request(reqSubject, \
-                                reqBody, \
-                                timeout: 2)
-      end.resume
-    end
-  end
 end
-#-------------------------------------------------------------
-
-#-------------------------------------------------------------
-
-# F2
-def requestF2
-  begin
-    NATS.start(:servers => ['nats://172.23.253.28:4222', 'nats://172.23.253.28:4223']) do |nc|
-      
-      NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg|
-        NATS.drain
-      }
-      
-      Fiber.new do
-        @logger.info("CCS5.AutoPilot.NAOS.switch")
-        
-        response = NATS.request("CCS5.AutoPilot.NAOS.switch", \
-                                "", \
-                                timeout: 2)
-      end.resume
-    end
-  end
-end
-
 #-------------------------------------------------------------
 
 ## Print command line help
 def usage
   fullpathFile = File.expand_path(__FILE__)    
   
-  value = `#{"head -50 #{fullpathFile}"}`
+  value = `#{"head -78 #{fullpathFile}"}`
      
   value.lines.drop(1).each{
      |line|

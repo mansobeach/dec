@@ -76,7 +76,7 @@ class CheckerFTPConfig
    # Set debug mode on
    def setDebugMode
       @isDebugMode = true
-      puts "CheckerFTPConfig debug mode is on"
+      @logger.debug("CheckerFTPConfig debug mode is on")
    end
    # -------------------------------------------------------------
 
@@ -203,10 +203,15 @@ private
 #         end
 
    #dynamic directories
-         dir=@ftpElement[:uploadDir]
-         if dir.include?('[') then #it has dynamic uploadDirs
-            puts "\nWarning: #{@entity} is using dynamic directories. Only checking directory before the expression !"
-            dir= dir.slice(0,dir.index('['))
+         begin
+            dir=@ftpElement[:uploadDir]
+            if dir.include?('[') then #it has dynamic uploadDirs
+               puts "\nWarning: #{@entity} is using dynamic directories. Only checking directory before the expression !"
+               dir= dir.slice(0,dir.index('['))
+            end
+         rescue Exception => e
+            @logger.error("[DEC_705] I/F #{@entity}: no entry found in dec_outgoing_file.xml")
+            return false
          end
    ###  
          retVal = checkRemoteDirectory(dir, false)

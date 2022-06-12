@@ -7,7 +7,7 @@
    <ListInterfaces>
 
       <Interface>
-         <Name>NAOS_MCS_SFTP</Name>
+         <Name>NAOS_IVV_MCS_SFTP</Name>
          <LocalOutbox>/tmp/dec/mcsoutbox</LocalOutbox>
          <UploadDir>/tmp</UploadDir>
          <UploadTemp>/tmp</UploadTemp>
@@ -22,7 +22,7 @@
       <File Type="NS1_OPER*">
          <Description></Description>
          <ToList>
-            <Interface Name="NAOS_MCS_SFTP"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="NAOS_IVV_MCS_SFTP"  Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 

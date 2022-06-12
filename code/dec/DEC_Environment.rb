@@ -29,7 +29,7 @@ module DEC
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.34" =>    "NATS protocol support for NAOS MCS", \
+      "1.0.34" =>    "NATS protocol support for NAOS MCS CCS5", \
       "1.0.33" =>    "Update to use ruby 3.x series as interpreter\n\
           User & Pass configuration items now can be kept encrypted",
       "1.0.32" =>    "HTTP handler updated to get only href anchors for SCIHUB", \

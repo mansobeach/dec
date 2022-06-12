@@ -54,18 +54,29 @@ Firstly the database tables are created using \hyperref[decManageDB]{decManageDB
 \end{itemize}
 
 \subsection{Check Interface Configuration}
-This step exploits the interface according to the configuration to check the availability of defined end-points (e.g. directories for file based protocols).
+This step exploits the interface according to the configuration to check the availability of defined end-points (e.g. directories for file based protocols). It also covers the verification of the DEC/Inventory availability if used.
 
 \subsubsection{Trace Messages}
 
 \begin{itemize}
+    \item \hyperref[DEC003]{DEC\_003} : Interface is correctly declared in DEC/Inventory
+    \item \hyperref[DEC004]{DEC\_004} : Interface exchange point is reachable
+    \item \hyperref[DEC705]{DEC\_705} : Interface push miss-configuration 
     \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available 
+    \item \hyperref[DEC799]{DEC\_799} : DEC/Inventory Could not find table
 \end{itemize}
 
 \section{Pull workflow}
-TBW
+
+\subsection{Autonomous Pull Workflow}
+This section describes the autonomous workflow.
+
+\subsection{Pull Circulations}
+This section describes the actual pull retrieval, which can be governed by the listener addressed in the previous section or by external elements as part of other workflows by other SW components.
 
 \section{Push workflow}
-TBW
+
+\subsection{Retrieve from archive}
+This step gathers every file which will be subject of circulation from an archive or a single directory source.
 
 \end{document}

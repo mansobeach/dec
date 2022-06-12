@@ -44,6 +44,7 @@ class ReadInterfaceConfig
                               "FTPES", \
                               "LOCAL", \
                               "HTTP",  \
+                              "NATS",  \
                               "HTTP_SPCS", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs

@@ -275,8 +275,16 @@ def main
             end
          end
 
-		   checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send, @logger)
-                 
+         begin
+		      checker = CheckerInterfaceConfig.new(x, bEnabled4Recv, bEnabled4Send, @logger)
+         rescue Exception => e
+            @logger.error("[DEC_799] #{e.to_s}")
+            if @isDebugMode == true then
+               @logger.debug(e.backtrace)
+            end
+            exit(99)
+         end     
+            
          if @isDebugMode == true or @isVerboseMode then
             checker.setDebugMode
          end
@@ -302,13 +310,15 @@ def main
       
          # Perform the check against the Inventory
          
-         @logger.debug("Checking DEC/Inventory entries ...")
-         
+         if @isDebugMode == true then
+            @logger.debug("Checking DEC/Inventory entries ...")
+         end
+
          checkerInventory = CheckerInventoryConfig.new(@logger)
          ret = checkerInventory.check(@interface)
 
          if ret == false then
-            @logger.warn("[DEC_XXX] I/F #{@interface}: try registering it with decConfigInterface2DB tool")
+            @logger.info("[DEC_XXX] I/F #{@interface}: try registering it with decConfigInterface2DB tool")
             @retVal = ret
          end
       end

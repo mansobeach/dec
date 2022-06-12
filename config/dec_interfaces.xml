@@ -6,8 +6,8 @@
 
   <!-- ================================================================ -->
  
-  <Interface Name="NAOS_MCS_SFTP">
-    <Desc>Localhost Interface</Desc>
+  <Interface Name="NAOS_IVV_MCS_SFTP">
+    <Desc>NAOS Mission Control System SFTP</Desc>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
@@ -60,6 +60,58 @@
 
   <!-- ================================================================ --> 
  
+  <Interface Name="NAOS_IVV_MCS_NATS">
+    <Desc>NAOS MCS NATS</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>1</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">5</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>NATS</Protocol>
+      <Hostname>172.23.253.28</Hostname>
+      <Port>4222</Port>      
+      <User>N/A</User>
+      <Pass encrypted='false'>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>HEY</Name>
+      <EMail>borja.lopez@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
 
    <!-- ================================================================ -->
 

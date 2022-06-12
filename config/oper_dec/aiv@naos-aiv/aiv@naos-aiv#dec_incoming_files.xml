@@ -7,7 +7,7 @@
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
       <Interface>
-         <Name>NAOS_MCS_SFTP</Name>
+         <Name>NAOS_IVV_MCS_SFTP</Name>
          <LocalInbox>/tmp/naos/mcs</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/tmp</Directory>
@@ -31,10 +31,17 @@
        <File Type="*TM*.xml">
          <Description>TM decoded from MCS</Description>
          <FromList>
-            <Interface>NAOS_MCS_SFTP</Interface>
+            <Interface>NAOS_IVV_MCS_SFTP</Interface>
          </FromList>
       </File>
      
+      <File Type="????-??-??T??:??:??*PLA_SBA*">
+         <Description>PLA SBA @ MCS</Description>
+         <FromList>
+            <Interface>NAOS_IVV_MCS_SFTP</Interface>
+         </FromList>
+      </File>
+
    </DownloadRules>
 
    <!-- =========================================================== -->
@@ -58,6 +65,13 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+
+         <File Type="????-??-??T??:??:??*TO_BE_DEFINED*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>MCS_DATA</Intray>
+            </ToList>
+         </File>
 
 
       </ListFilesDisseminated>

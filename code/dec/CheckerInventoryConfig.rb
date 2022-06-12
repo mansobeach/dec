@@ -46,12 +46,17 @@ class CheckerInventoryConfig
          end
          # Interface.where(["name = ?", x]).first
       
-         if Interface.find_by_name(x) != nil then
-            @logger.info("[DEC_003] I/F #{x}: interface is correctly declared in DEC/Inventory #{'1F44D'.hex.chr('UTF-8')}")
-            retVal = true
-         else
-            @logger.error("[DEC_605] I/F #{x}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
-            retVal = false
+         begin
+            if Interface.find_by_name(x) != nil then
+               @logger.info("[DEC_003] I/F #{x}: interface is correctly declared in DEC/Inventory #{'1F44D'.hex.chr('UTF-8')}")
+               retVal = true
+            else
+               @logger.error("[DEC_605] I/F #{x}: such is not a registered I/F in db #{'1F480'.hex.chr('UTF-8')}")
+               retVal = false
+            end
+         rescue Exception => e
+            @logger.error("[DEC_798] Fatal Error : DEC/Inventory #{e.to_s}")
+            return false
          end
       }
       return retVal
