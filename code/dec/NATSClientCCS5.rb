@@ -225,13 +225,13 @@ class NATSClientCCS5
                                      body, \
                                      timeout: 3)
                if response != nil then
-                  if response.include?("0") then
+                  if response.split("{")[0].include?("0") then
                      @logger.info(response)
                   else
                      @logger.error(response)
                   end
                else
-                  @logger.info("no reply")
+                  @logger.error("no reply from server")
                end
                NATS.drain
             end.resume

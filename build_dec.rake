@@ -40,8 +40,29 @@ namespace :dec do
    
    ### ====================================================================
    ###
-   ### DEC Containerised tasks
    
+   ## ----------------------------------------------------------------
+
+   desc "fetch gem dependencies"
+
+   task :fetchgems do
+      prevDir  = Dir.pwd
+      file     = File.open("gem_dec.gemspec")
+      Dir.chdir("foss/gems")
+      arrLines = file.readlines
+      arrLines.each{|line|
+         # gem fetch activerecord --version "=6.0" 
+         if line.include?('dependency') then
+            item     = line.split("\'")[1]
+            version  = line.split("\'")[3]
+            cmd = "gem fetch #{item} -v \"#{version}\""
+            puts cmd
+            system(cmd)
+         end
+      }
+      Dir.chdir(prevDir)
+   end
+
    ## ----------------------------------------------------------------
 
    desc "encrypt string"
@@ -85,7 +106,8 @@ namespace :dec do
    end
 
    ## ----------------------------------------------------------------
-
+   ### DEC Containerised tasks
+   
    desc "build docker DEC image [user , host , prefix]"
 
    task :image_build, [:user, :host, :suffix] do |t, args|
