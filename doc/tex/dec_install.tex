@@ -223,6 +223,9 @@ This section enumerates the file transformation tools which can be used by DEC S
     \item \href{https://stedolan.github.io/jq/}{\textit{jq}} : jq is a lightweight and flexible command-line JSON processor.	
 \end{itemize}
 
+\subsection{Encryption Tools}
+DEC SW makes usage of \href{https://www.openssl.org/}{\textit{openssl}} toolkit to support the encryption of sensible configuration items. The version installed of openssl needs to support the algorithm PBKDF2.
+
 \section{Installation Verification}
 \subsection{Verification with Unit Tests}
 This section describes how to execute the \textit{unit tests}, which have been designed to be transparent and harmless in front of the potential different execution environments (i.e. development, integration, production), being their execution a simple and effective manner to verify the correct installation of the DEC SW. \newline

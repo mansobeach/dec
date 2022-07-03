@@ -207,26 +207,27 @@ def main
       
       arrInterfaces = Interface.all
       if arrInterfaces == nil then
-         puts
-         puts "Sorry, there are no configured I/Fs :-|"
-         puts
+         @logger.warn("Sorry, there are no configured I/Fs")
       else
-         if arrInterfaces.length == 0 then
-            puts
-            puts "Sorry, there are no configured I/Fs :-|"
-            puts
-         else
-            puts "=== Data Collector Component Registered I/Fs ==="
-            arrInterfaces.each{|interface|
-               print interface.id.to_s.rjust(2)
-               print " "
-               print interface.name
-               1.upto(25 - interface.name.length) do
+         begin
+            if arrInterfaces.length == 0 then
+               @logger.warn("Sorry, there are no configured I/Fs")
+            else
+               puts "=== Data Collector Component Registered I/Fs ==="
+               arrInterfaces.each{|interface|
+                  print interface.id.to_s.rjust(2)
                   print " "
-               end
-               print interface.description
-               puts
-            }         
+                  print interface.name
+                  1.upto(25 - interface.name.length) do
+                     print " "
+                  end
+                  print interface.description
+                  puts
+               }         
+            end
+         rescue Exception => e
+            @logger.error("[DEC_799] Fatal Error: #{e.to_s} #{'1F480'.hex.chr('UTF-8')}")
+            exit(99)
          end
       end
       exit(0)

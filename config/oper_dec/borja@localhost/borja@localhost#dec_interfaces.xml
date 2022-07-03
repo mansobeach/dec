@@ -135,7 +135,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>      
       <User>borja</User>
-      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -1119,7 +1119,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>
       <User>borja</User>
-      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -1174,7 +1174,7 @@
       <Hostname>localhost</Hostname>
       <Port>21</Port>
       <User>borja</User>
-      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>false</SecureFlag>
@@ -1234,7 +1234,7 @@
       <User>dec</User> 
        -->    
       <User>borja</User>
-      <Pass encrypted='true'>sNgeKr7VEBVe</Pass>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
       <!--
        <Pass>Esr!@$Pm</Pass>
       <Pass>dec</Pass>

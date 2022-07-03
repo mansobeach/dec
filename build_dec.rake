@@ -15,9 +15,9 @@
 #########################################################################
 
 require 'rake'
+require 'date'
 
-require 'Date'
-
+require 'cuc/CryptHelper'
 ### ============================================================================
 ###
 ### Task associated to DEC component
@@ -67,24 +67,22 @@ namespace :dec do
 
    desc "encrypt string"
 
-   # echo "leiden1" | openssl enc -rc4 -base64 -nosalt -a
-
    task :encryptstring, [:string] do |t, args|
-      puts "encrypt string: #{args[:string]}"
-      cmd = "echo #{args[:string]} | openssl enc -rc4 -base64 -nosalt -a"
-      puts cmd
-      system(cmd)
+      include CUC::CryptHelper
+      plaintext = args[:string]
+      puts "encrypt string: #{plaintext}"
+      puts cmdEncryptStr(plaintext)
    end
 
    ## ----------------------------------------------------------------
 
-   # echo "sJhRW5wlxFs=" | openssl enc -rc4 -nosalt -d -a
+   desc "decrypt string"
 
    task :decryptstring, [:string] do |t, args|
-      puts "decrypt string: #{args[:string]}"
-      cmd = "echo #{args[:string]} | openssl enc -rc4 -nosalt -d -a"
-      puts cmd
-      system(cmd)
+      include CUC::CryptHelper
+      cryptedtext = args[:string]
+      puts "decrypt string: #{cryptedtext}"
+      puts cmdDecryptStr(cryptedtext)
    end
 
    ## ----------------------------------------------------------------

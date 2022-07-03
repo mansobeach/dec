@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -W0
 
 #########################################################################
 ###
@@ -28,9 +28,6 @@ require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 
 
-##  1  - test_count
-##  2  - test_query_s2
-##  3  - test_download_s2
 
 
 
@@ -118,6 +115,25 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
    def teardown
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
    end
+
+   ## -----------------------------------------------------------
+   ##
+
+   def testF1
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -S \"CCS5.AutoPilot.NAOS.call\" -B \"SleGroundStationMgm SVALS0 CONNECT\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      sleep(10.0)
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -S \"CCS5.AutoPilot.NAOS.call\" -B \"SleGroundStationMgm SVALS0 DISCONNECT\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
 
    ## -----------------------------------------------------------
    ##

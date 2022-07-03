@@ -12,9 +12,13 @@
 ###
 #########################################################################
 
+require 'dec/DEC_Environment'
+
+include DEC
+
 Gem::Specification.new do |s|
   s.name        = 'dec'
-  s.version     = '1.0.34'
+  s.version     = "#{DEC.class_variable_get(:@@version)}"
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"

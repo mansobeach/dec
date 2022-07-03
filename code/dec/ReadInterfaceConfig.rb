@@ -10,7 +10,6 @@
 ## 
 ## Git: $Id: ReadInterfaceConfig.rb,v 1.7 2008/03/27 15:52:13 decdev Exp $
 ##
-## == Module Common Transfer Component
 ## This class reads and decodes the interfaces configuration file 
 ## dec_interfaces.xml.
 ##
@@ -616,7 +615,8 @@ private
             if xmlstruct.elements["User"].attributes["encrypted"] \
                and xmlstruct.elements["User"].attributes["encrypted"].to_s.downcase == 'true' then
                
-               user = cmdDecrypt(xmlstruct.elements["User"].text, getMagikGuord('DEC'))
+               # user = cmdDecrypt(xmlstruct.elements["User"].text, getMagikGuord('DEC'))
+               user = cmdDecryptStr(xmlstruct.elements["User"].text)
             else
                user  = xmlstruct.elements["User"].text
             end
@@ -629,7 +629,8 @@ private
             if xmlstruct.elements["Pass"].attributes["encrypted"] \
                and xmlstruct.elements["Pass"].attributes["encrypted"].to_s.downcase == 'true' then
                
-               pass = cmdDecrypt(xmlstruct.elements["Pass"].text, getMagikGuord('DEC'))
+               # pass = cmdDecrypt(xmlstruct.elements["Pass"].text, getMagikGuord('DEC'))
+               pass = cmdDecryptStr(xmlstruct.elements["Pass"].text)
             else
                pass    = xmlstruct.elements["Pass"].text
             end

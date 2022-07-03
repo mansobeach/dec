@@ -24,7 +24,7 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.34c"
+   @@version = "1.0.34e"
    
    ## -----------------------------------------------------------------
    
@@ -494,6 +494,7 @@ module DEC
                   "curl", \
                   "ncftpget", \
                   "ncftpput", \
+                  "openssl", \
                   "sftp" \
                   ]
       

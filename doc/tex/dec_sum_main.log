@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.12.2)  6 JUN 2022 11:59
+This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.12.2)  26 JUN 2022 13:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -889,12 +889,7 @@ File: ../res/logo_elecnor_deimos.png Graphic file (type bmp)
 File: ../res/DEC_Logo_White.png Graphic file (type bmp)
 <../res/DEC_Logo_White.png>
 [17]
-Underfull \hbox (badness 10000) in paragraph at lines 228--229
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 234--235
+Underfull \hbox (badness 10000) in paragraph at lines 231--232
 
  []
 
@@ -903,23 +898,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 237--238
 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 240--241
+
+ []
+
 File: ../res/logo_elecnor_deimos.png Graphic file (type bmp)
 <../res/logo_elecnor_deimos.png>
 File: ../res/DEC_Logo_White.png Graphic file (type bmp)
 <../res/DEC_Logo_White.png>
 [18]
-Overfull \hbox (395.49632pt too wide) in paragraph at lines 245--246
-[][][][]\TU/lmtt/m/n/10 -------------------------------------------------------
--------------------------------------------------------------------------------
----------------------[] 
- []
-
-
-Overfull \hbox (109.7517pt too wide) in paragraph at lines 246--247
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
 Overfull \hbox (395.49632pt too wide) in paragraph at lines 248--249
 [][][][]\TU/lmtt/m/n/10 -------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -927,25 +915,25 @@ Overfull \hbox (395.49632pt too wide) in paragraph at lines 248--249
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 253--254
-
+Overfull \hbox (109.7517pt too wide) in paragraph at lines 249--250
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 255--256
-
- []
-
-
-Overfull \hbox (395.49632pt too wide) in paragraph at lines 260--261
+Overfull \hbox (395.49632pt too wide) in paragraph at lines 251--252
 [][][][]\TU/lmtt/m/n/10 -------------------------------------------------------
 -------------------------------------------------------------------------------
 ---------------------[] 
  []
 
 
-Overfull \hbox (97.75157pt too wide) in paragraph at lines 261--262
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 256--257
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
+
  []
 
 
@@ -956,20 +944,20 @@ Overfull \hbox (395.49632pt too wide) in paragraph at lines 263--264
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 271--272
-
+Overfull \hbox (97.75157pt too wide) in paragraph at lines 264--265
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (395.49632pt too wide) in paragraph at lines 276--277
+Overfull \hbox (395.49632pt too wide) in paragraph at lines 266--267
 [][][][]\TU/lmtt/m/n/10 -------------------------------------------------------
 -------------------------------------------------------------------------------
 ---------------------[] 
  []
 
 
-Overfull \hbox (97.75157pt too wide) in paragraph at lines 277--278
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 274--275
+
  []
 
 
@@ -979,12 +967,23 @@ Overfull \hbox (395.49632pt too wide) in paragraph at lines 279--280
 ---------------------[] 
  []
 
-)
+
+Overfull \hbox (97.75157pt too wide) in paragraph at lines 280--281
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (395.49632pt too wide) in paragraph at lines 282--283
+[][][][]\TU/lmtt/m/n/10 -------------------------------------------------------
+-------------------------------------------------------------------------------
+---------------------[] 
+ []
+
 File: ../res/logo_elecnor_deimos.png Graphic file (type bmp)
 <../res/logo_elecnor_deimos.png>
 File: ../res/DEC_Logo_White.png Graphic file (type bmp)
 <../res/DEC_Logo_White.png>
- [19]
+[19])
 File: ../res/logo_elecnor_deimos.png Graphic file (type bmp)
 <../res/logo_elecnor_deimos.png>
 File: ../res/DEC_Logo_White.png Graphic file (type bmp)
@@ -2177,7 +2176,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 189.
 Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 189.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 189.
 Package rerunfilecheck Info: File `dec_sum_main.out' has not changed.
-(rerunfilecheck)             Checksum: 48DF1CC31E9D2EF1A88798D2F8BBA9FE.
+(rerunfilecheck)             Checksum: 4BFBF45F24392CF3FB0C6AABBFEBCC8F.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 189.
  ) 
 Here is how much of TeX's memory you used:
@@ -2187,6 +2186,6 @@ Here is how much of TeX's memory you used:
  17283 multiletter control sequences out of 15000+600000
  4769 words of font info for 34 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 37i,13n,54p,794b,1809s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,13n,54p,794b,1806s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on dec_sum_main.pdf (114 pages).

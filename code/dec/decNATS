@@ -5,6 +5,7 @@
 # This is a command line tool that connects to NAOS MCS using NATS & SFTP.
 # 
 # F1. Manage G/S connections
+# CCS5.AutoPilot.NAOS.call, message: SleGroundStationMgm SVALS0 CONNECT
 #
 # F2. Session Switch
 # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.switch
@@ -68,7 +69,8 @@
 # == Usage
 # decNATS -m <I/F SFTP> -n <I/F NATS> -F<function> -P {JSON parameters}
 #        --mnemonic  <MNEMONIC> (mnemonic is case sensitive)
-#        --Show      it shows all available I/Fs registered in the Inventory
+#        --Subject   <subject>
+#        --Body      <body>
 #        --nodb      no usage of the Inventory for recording operations
 #        --help      shows this help
 #        --usage     shows the usage
@@ -116,8 +118,6 @@
 # [#7283] Received on "CCS5.AutoPilot.NAOS.ingest" with reply "_INBOX.Rb1TdwVc7jMwiP3FwIesEH.Rb1TdwVc7jMwiP3FwIeu3W"
 # /CCS/VARIABLE/INPUTS/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink /tmp/2022-06-01T09:14:38.449688_PLA_OSC_eng_uplink
 
-
-
 require 'rubygems'
 require 'getoptlong'
 require 'json'
@@ -130,6 +130,7 @@ require 'cuc/Converters'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
 require 'dec/NATSClientCCS5'
+require 'dec/NATSClient'
 
 # MAIN script function
 def main
@@ -138,6 +139,8 @@ def main
   
   include DEC
 
+  strBody     = ""
+  strSubject  = ""
   strFunction = ""
   hParams     = nil
   jParams     = nil
@@ -147,6 +150,8 @@ def main
   opts = GetoptLong.new(
     ["--Function", "-F",            GetoptLong::REQUIRED_ARGUMENT],
     ["--Params", "-P",              GetoptLong::REQUIRED_ARGUMENT],
+    ["--Subject", "-S",             GetoptLong::REQUIRED_ARGUMENT],
+    ["--Body", "-B",                GetoptLong::REQUIRED_ARGUMENT],
     ["--mnemonic", "-m",            GetoptLong::REQUIRED_ARGUMENT],
     ["--servernats", "-n",          GetoptLong::REQUIRED_ARGUMENT],
     ["--Debug", "-D",               GetoptLong::NO_ARGUMENT],
@@ -159,6 +164,8 @@ def main
         case opt
           when "--Debug"             then @isDebugMode    = true
           when "--Function"          then strFunction     = "F#{arg.to_s}"
+          when "--Body"              then strBody         = arg.to_s
+          when "--Subject"           then strSubject      = arg.to_s
           when "--Params"            then hParams         = arg
           when "--version"           then @bShowVersion   = true
           when "--mnemonic"          then @entity         = arg
@@ -186,7 +193,8 @@ def main
     exit(0)
   end
 
-  if strFunction == "" or @ifNATS == "" then
+  if strFunction == "" or @ifNATS == "" \
+    and (strBody == "" and strSubject == "") then
     usage
     exit(66)
   end
@@ -224,6 +232,17 @@ def main
   end
 
   ## ------------------------------------------------------
+
+  if strSubject != "" then
+    client = NATSClient.new(@ifNATS, @logger, @isDebugMode)
+    begin
+      client.natsRequest(strSubject, strBody)
+    rescue Exception => e
+      @logger.error("[DEC_XXX] I/F #{@ifNATS}: #{e.to_s}")
+      exit(99)
+    end
+    exit(0)
+  end
 
   ## ------------------------------------------------------
 

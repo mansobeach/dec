@@ -35,6 +35,8 @@ require 'cuc/Log4rLoggerFactory'
 # echo "sJhRW5wlxFs=" | openssl enc -rc4 -nosalt -d -a
 # echo "U2FsdGVkX18ytn0VrDclhmrdQHhdlXAZ"  | openssl enc -rc4 -d -a
 
+## echo "leiden1" | openssl enc -pbkdf2 -base64 -nosalt -a
+## echo "bGVpZGVuMQo=" | openssl enc -pbkdf2 -nosalt -d -a
 
 ## echo "OpenSSL" | openssl enc -aes-256-cbc > openssl.dat
 ## openssl enc -aes-256-cbc -d -in openssl.dat
@@ -46,6 +48,37 @@ module CUC
 
 module CryptHelper
 
+   ## -------------------------------------------------------------  
+
+   ## echo "leiden1" | openssl enc -pbkdf2 -base64 -nosalt -a
+   ## echo "bGVpZGVuMQo=" | openssl enc -pbkdf2 -nosalt -d -a
+
+   def cmdEncryptStr(plaintext, bIsDebug = false)
+      cmd = "echo \"#{plaintext}\" | openssl enc -pbkdf2 -base64 -nosalt -a"
+      
+      if bIsDebug == true then
+         puts cmd
+      end
+
+      str, status = Open3.capture2e(cmd)
+      return str.chop      
+   end
+
+   ## -------------------------------------------------------------
+
+   ## echo "leiden1" | openssl enc -pbkdf2 -base64 -nosalt -a
+   ## echo "bGVpZGVuMQo=" | openssl enc -pbkdf2 -nosalt -d -a
+   
+   def cmdDecryptStr(cryptedtext, bIsDebug = false)
+      cmd = "echo \"#{cryptedtext}\" | openssl enc -pbkdf2 -nosalt -d -a"
+      
+      if bIsDebug == true then
+         puts cmd
+      end
+
+      str, status = Open3.capture2e(cmd)
+      return str.chop            
+   end
    ## -------------------------------------------------------------
 
    # echo -n "hola" | openssl enc -e -base64 -rc4 -nosalt -pass pass:secretkey -p
