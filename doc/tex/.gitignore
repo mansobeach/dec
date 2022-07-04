@@ -1,4 +1,7 @@
-*.pdf
-*.out
 *.aux
+*.gz
+*.html
 *.log
+*.md
+*.out
+*.pdf

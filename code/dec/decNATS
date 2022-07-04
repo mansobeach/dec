@@ -238,7 +238,7 @@ def main
     begin
       client.natsRequest(strSubject, strBody)
     rescue Exception => e
-      @logger.error("[DEC_XXX] I/F #{@ifNATS}: #{e.to_s}")
+      @logger.error("[DEC_610] I/F #{@ifNATS}: #{e.to_s}")
       exit(99)
     end
     exit(0)
@@ -248,36 +248,44 @@ def main
 
   ccs5 = NATSClientCCS5.new(@ifNATS, @logger, @isDebugMode)
 
-  case strFunction
-    when "F0" then 
+  begin
+    case strFunction
+      when "F0" then 
         ccs5.requestF0
         exit(0)
-    when "F2" then 
+      when "F2" then 
         ccs5.requestF2
         exit(0)
-    when "F3" then 
+      when "F3" then 
         ccs5.requestF3(hParams)
         exit(0)
-    when "F4" then 
+      when "F4" then 
         ccs5.requestF4(hParams)
         exit(0)
-    when "F5" then 
+      when "F5" then 
         ccs5.requestF5(hParams)
         exit(0)    
-    when "F6" then 
+      when "F6" then 
         ccs5.requestF6(hParams)
         exit(0)
-    when "F7" then 
+      when "F7" then 
         ccs5.requestF7(hParams)
         exit(0)
-    when "F99" then 
+      when "F99" then 
         ccs5.requestF99(hParams)
         exit(0)                
-    else
-      @logger.error("Function #{strFunction} is not supported")
-      exit(99)
+      else
+        @logger.error("[DEC_799] Function #{strFunction} is not supported")
+        exit(99)
+    end
+  rescue Exception => e
+    @logger.error("[DEC_610] I/F #{@ifNATS}: #{e.to_s}")
+    if @isDebugMode == true then
+      @logger.debug(e.backtrace)
+    end
+    exit(99)
   end
-  
+
 end
 #-------------------------------------------------------------
 
