@@ -1,4 +1,5 @@
 *.aux
+*.fls
 *.gz
 *.html
 *.log

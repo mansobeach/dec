@@ -13,7 +13,7 @@
             <Directory DepthSearch="0">/tmp</Directory>
          </DownloadDirs>
          <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LogDuplicated>false</LogDuplicated>
@@ -28,7 +28,7 @@
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
-       <File Type="*TM*.xml">
+       <File Type="IVV_DEC_TM*.xml">
          <Description>TM decoded from MCS</Description>
          <FromList>
             <Interface>NAOS_IVV_MCS_SFTP</Interface>

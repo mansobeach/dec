@@ -15,8 +15,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
-
-require 'Date'
+require 'date'
 
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
@@ -26,9 +25,6 @@ require 'ctc/API_MINARC_OData'
 
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
-
-
-
 
 
 class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
@@ -119,6 +115,19 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
    ## -----------------------------------------------------------
    ##
 
+   def testF0
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F0"
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+   ##
+
    def testF1
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       cmd = "decNATS -n NAOS_IVV_MCS_NATS -S \"CCS5.AutoPilot.NAOS.call\" -B \"SleGroundStationMgm SVALS0 CONNECT\""
@@ -144,6 +153,10 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
       @@logger.info(cmd)
       ret = system(cmd)
       assert(ret, cmd)
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F0"
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
       @@logger.debug("Waiting 30s to chain next test")
       sleep(30.0)
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
@@ -152,7 +165,7 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
 
    def testF3
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F3 -P \"{\\\"filename\\\" :\\\"/tmp/2022-05-25T15:36:59.288624_PLA_SBA\\\", \\\"target\\\" :\\\"/tmp/2022-06-01T18:00:00.449688_PLA_OSC_eng_uplink\\\"}\"   "
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F3 -P \"{\\\"filename\\\" :\\\"/CCS/VARIABLE/INPUTS/tds/2022-09-10T00:00:00.058206_PLA_OSC\\\", \\\"target\\\" :\\\"/CCS/VARIABLE/INPUTS/NATS_TEST_2022-09-10T18:00:00.449688_PLA_OSC_eng_uplink\\\"}\"   "
       @@logger.info(cmd)
       ret = system(cmd)
       assert(ret, cmd)
@@ -160,6 +173,47 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
    end
 
    ## ------------------------------------------------------
+
+   def testF6
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+=begin      
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20160601T000000_20230601T010000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+=end
+
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20160601T000000_20230601T010000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"MSC\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-MSC_20160601T000000_20230601T010000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"THR\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-THR_20160601T000000_20230601T010000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+   ##
+
+   def testF99
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F99"
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
 
 end
 

@@ -13,7 +13,13 @@
 ###
 #########################################################################
 
+## https://github.com/nats-io/nats.rb/issues/102
+## https://www.rubydoc.info/gems/nats/0.10.0
+
 require 'json'
+require 'nats/client'
+require 'fiber'
+
 require 'cuc/Converters'
 require 'dec/ReadConfigDEC'
 
@@ -42,6 +48,12 @@ class NATSClient
   
       @natsServer = @ifConfig.getServer(@entity)
       @natsURL    = "nats://#{@natsServer[:hostname]}:#{@natsServer[:port]}"
+      @natsOPT    = {
+                     :reconnect_time_wait    => 80000,
+                     :max_reconnect_attempts => 1200,
+                     :servers                => [@natsURL]
+                  }
+      @natsTimeOut = 60
    end   
    ## -----------------------------------------------------------
    ##
@@ -56,8 +68,8 @@ class NATSClient
    ##
    def natsSubscribe(subject)
       begin
-         NATS.start(:servers => [@natsURL]) do |nc|
-           @logger.info("NATS.subscribe #{@natsURL} #{subject}")
+         NATS.start(@natsOPT) do |nc|
+           @logger.info("[DEC_XXX] I/F #{@entity}: NATS.subscribe #{@natsURL} #{subject}")
            NATS.subscribe(subject) { |msg| 
              doc = JSON.parse(msg)
              msg = "Session : #{doc["NAME"]} ; State : #{doc["STATE"]}"
@@ -75,11 +87,11 @@ class NATSClient
    def natsRequest(subject, body)
 
       if @isDebugMode == true then
-         @logger.debug("natsRequest #{@natsURL} #{subject} #{body}")
+         @logger.debug("[DEC_XXX] I/F #{@entity}: natsRequest #{@natsURL} #{subject} #{body}")
       end
 
       begin
-         NATS.start(:servers => [@natsURL]) do |nc|
+         NATS.start(@natsOPT) do |nc|
 =begin
            NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg|
              if @isDebugMode == true then
@@ -89,18 +101,18 @@ class NATSClient
            }
 =end           
             Fiber.new do
-               @logger.info("NATS.request #{@natsURL} #{subject} #{body}")
+               @logger.info("[NATS001] I/F #{@entity}: NATS.request #{@natsURL} #{subject} #{body}")
                response = NATS.request(subject, \
                                      body, \
-                                     timeout: 3)
+                                     timeout: @natsTimeOut)
                if response != nil then
                   if response.split("{")[0].include?("0") then
-                     @logger.info(response)
+                     @logger.info("[NATS002] I/F #{@entity}: #{response}")
                   else
-                     @logger.error(response)
+                     @logger.error("[DEC_XXX] I/F #{@entity}: #{response}")
                   end
                else
-                  @logger.error("no reply from server")
+                  @logger.error("[DEC_XXX] I/F #{@entity}: no reply from server")
                end
                NATS.drain
             end.resume
@@ -116,6 +128,12 @@ class NATSClient
          end
       end      
    end
+   ## -------------------------------------------------------------
+
+   def blockRequest(subject, body)
+
+   end
+
    ## -------------------------------------------------------------
 
 end # class

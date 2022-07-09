@@ -17,6 +17,7 @@ require 'json'
 require 'cuc/Converters'
 require 'ctc/API_NATS_NAOS_CCS5'
 require 'dec/ReadConfigDEC'
+require 'dec/NATSClient'
 
 module DEC
 
@@ -28,22 +29,22 @@ class NATSClientCCS5
    ## -----------------------------------------------------------
    ##
    ## Class constructor.
-   def initialize(entity, log, isDebug=false)
-      @entity        = entity
-      @logger        = log
+   def initialize(entity, ifSFTP, log, isDebug=false)
+      @entityNATS       = entity
+      @entitySFTP       = ifSFTP 
+      @logger           = log
       
       if isDebug == true then
          self.setDebugMode
       end
 
       @ifConfig   = ReadInterfaceConfig.instance
-      if @ifConfig.exists?(@entity) == false
-         @logger.error("[DEC_605] I/F #{@entity}: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
+      if @ifConfig.exists?(@entityNATS) == false
+         @logger.error("[DEC_605] I/F #{@entityNATS}: such is not a configured interface #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
   
-      @natsServer = @ifConfig.getServer(@entity)
-      @natsURL    = "nats://#{@natsServer[:hostname]}:#{@natsServer[:port]}"
+      @client = NATSClient.new(@entityNATS, @logger, @isDebugMode)
    end   
    ## -----------------------------------------------------------
    ##
@@ -58,7 +59,7 @@ class NATSClientCCS5
    ##
 
    def requestF0
-      natsSubscribe(@natsURL, API_NATS_F0_SUBJECT) 
+      @client.natsSubscribe(API_NATS_F0_SUBJECT) 
    end
 
    ## -----------------------------------------------------------
@@ -67,7 +68,7 @@ class NATSClientCCS5
    # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.switch
    # NATS body: none.
    def requestF2
-      natsRequest(@natsURL, API_NATS_F2_SUBJECT, "")
+      @client.natsRequest(API_NATS_F2_SUBJECT, "")
    end
 
    ## -----------------------------------------------------------
@@ -80,7 +81,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "#{API_NATS_F3_BODY}#{JSON.parse(params)['filename']} #{JSON.parse(params)['target']}"
-      natsRequest(@natsURL, API_NATS_F3_SUBJECT, body)
+      @client.natsRequest(API_NATS_F3_SUBJECT, body)
    end
    ## -----------------------------------------------------------
 
@@ -92,7 +93,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "ProcessActivityFile #{JSON.parse(params)['path']}"
-      natsRequest(@natsURL, API_NATS_F4_SUBJECT, body)
+      @client.natsRequest(API_NATS_F4_SUBJECT, body)
    end
 
    ## -----------------------------------------------------------
@@ -105,7 +106,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "UplinkActivityFile #{JSON.parse(params)['filename']}"
-      natsRequest(@natsURL, API_NATS_F5_SUBJECT, body)   
+      @client.natsRequest(API_NATS_F5_SUBJECT, body)   
    end
 
    ## -----------------------------------------------------------
@@ -152,8 +153,23 @@ class NATSClientCCS5
          @logger.error("Param url : #{urlFile} does not seem to include a xml filename")
          return false
       end
+
       body     = "HistoryReport #{type} #{start} #{stop} #{urlFile}"
-      natsRequest(@natsURL, API_NATS_F4_SUBJECT, body)
+      @client.natsRequest(API_NATS_F6_SUBJECT, body)
+
+      if @entitySFTP != nil then
+         cmd = "decGetFromInterface -m #{@entitySFTP} --nodb"
+         if @isDebugMode == true then
+            @logger.info(cmd)
+         end
+         ret = system(cmd)
+         if ret == false then
+            msg = "[DEC_600] I/F #{@entity}: Could not perform polling"
+            @logger.error(msg)
+            raise msg
+         end
+      end
+
    end
 
    ## -----------------------------------------------------------
@@ -181,74 +197,9 @@ class NATSClientCCS5
       # body     = "::CCSSEQ::startSession LOCAL REALTIME"
       # body     = "::CCSSEQ::stopSession LOCAL"
       body     = "::CCSSEQ::getServerStatus LOCAL"
-      natsRequest(@natsURL, API_NATS_F99_SUBJECT, body)
+      @client.natsRequest(API_NATS_F99_SUBJECT, body)
    end
    ## -----------------------------------------------------------   
-   ##
-   def natsSubscribe(url, subject)
-      begin
-         NATS.start(:servers => [url]) do |nc|
-           @logger.info("NATS.subscribe #{url} #{subject}")
-           NATS.subscribe(subject) { |msg| 
-             doc = JSON.parse(msg)
-             msg = "Session : #{doc["NAME"]} ; State : #{doc["STATE"]}"
-             @logger.info(msg)
-             if @isDebugMode == true then
-               @logger.debug(doc)
-             end
-             NATS.drain
-           }
-         end
-       end      
-   end
-   ## -------------------------------------------------------------
-
-   def natsRequest(url, subject, body)
-
-      if @isDebugMode == true then
-         @logger.debug("natsRequest #{url} #{subject} #{body}")
-      end
-
-      begin
-         NATS.start(:servers => [url]) do |nc|
-=begin
-           NATS.subscribe('CCS5.SESS.STATUS.NAOS.*') { |msg|
-             if @isDebugMode == true then
-               @logger.debug(msg)
-             end
-             NATS.drain
-           }
-=end           
-            Fiber.new do
-               @logger.info("NATS.request #{url} #{subject} #{body}")
-               response = NATS.request(subject, \
-                                     body, \
-                                     timeout: 3)
-               if response != nil then
-                  if response.split("{")[0].include?("0") then
-                     @logger.info(response)
-                  else
-                     @logger.error(response)
-                  end
-               else
-                  @logger.error("no reply from server")
-               end
-               NATS.drain
-            end.resume
-     
-           nc.on_disconnect do |reason|
-             # puts "Disconnected: #{reason}"
-           end
-       
-           nc.on_close do |reason|
-             #puts "Closed: #{reason}"
-           end
-
-         end
-        
-       end      
-   end
-   ## -------------------------------------------------------------
 
 end # class
 

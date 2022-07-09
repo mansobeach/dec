@@ -3,7 +3,9 @@
 # == Synopsis
 #
 # This is a command line tool that connects to NAOS MCS using NATS & SFTP.
-# 
+#
+# F0. Get Session 
+#
 # F1. Manage G/S connections
 # CCS5.AutoPilot.NAOS.call, message: SleGroundStationMgm SVALS0 CONNECT
 #
@@ -81,7 +83,7 @@
 # Deimos-Space S.L.
 #
 # == Copyright
-# Copyright (c) 2024 Deimos Space S.L.
+# Copyright (c) 2022 Deimos Space S.L.
 #
 
 #########################################################################
@@ -122,8 +124,6 @@ require 'rubygems'
 require 'getoptlong'
 require 'json'
 
-require 'nats/client'
-
 require 'cuc/Log4rLoggerFactory'
 require 'cuc/Converters'
 
@@ -146,6 +146,7 @@ def main
   jParams     = nil
 
   @ifNATS     = ""
+  @ifSFTP     = nil
 
   opts = GetoptLong.new(
     ["--Function", "-F",            GetoptLong::REQUIRED_ARGUMENT],
@@ -168,7 +169,7 @@ def main
           when "--Subject"           then strSubject      = arg.to_s
           when "--Params"            then hParams         = arg
           when "--version"           then @bShowVersion   = true
-          when "--mnemonic"          then @entity         = arg
+          when "--mnemonic"          then @ifSFTP         = arg
           when "--servernats"        then @ifNATS         = arg      
           when "--update-tables"     then @bUpdate        = true
           when "--help"              then @bUsage         = true
@@ -215,7 +216,7 @@ def main
   ## ------------------------------------------------------
 
   # initialize logger
-  loggerFactory = CUC::Log4rLoggerFactory.new("decNATS", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+  loggerFactory = CUC::Log4rLoggerFactory.new("nats", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
   if @isDebugMode then
      loggerFactory.setDebugMode
   end
@@ -233,6 +234,8 @@ def main
 
   ## ------------------------------------------------------
 
+  @logger.info("[DEC_005] I/F #{@ifNATS}: Polling Started")
+
   if strSubject != "" then
     client = NATSClient.new(@ifNATS, @logger, @isDebugMode)
     begin
@@ -246,34 +249,26 @@ def main
 
   ## ------------------------------------------------------
 
-  ccs5 = NATSClientCCS5.new(@ifNATS, @logger, @isDebugMode)
+  ccs5 = NATSClientCCS5.new(@ifNATS, @ifSFTP, @logger, @isDebugMode)
 
   begin
     case strFunction
       when "F0" then 
         ccs5.requestF0
-        exit(0)
       when "F2" then 
         ccs5.requestF2
-        exit(0)
       when "F3" then 
         ccs5.requestF3(hParams)
-        exit(0)
       when "F4" then 
         ccs5.requestF4(hParams)
-        exit(0)
       when "F5" then 
-        ccs5.requestF5(hParams)
-        exit(0)    
+        ccs5.requestF5(hParams)   
       when "F6" then 
         ccs5.requestF6(hParams)
-        exit(0)
       when "F7" then 
         ccs5.requestF7(hParams)
-        exit(0)
       when "F99" then 
-        ccs5.requestF99(hParams)
-        exit(0)                
+        ccs5.requestF99(hParams)               
       else
         @logger.error("[DEC_799] Function #{strFunction} is not supported")
         exit(99)
@@ -286,6 +281,7 @@ def main
     exit(99)
   end
 
+  exit(0)
 end
 #-------------------------------------------------------------
 
@@ -293,7 +289,7 @@ end
 def usage
   fullpathFile = File.expand_path(__FILE__)    
   
-  value = `#{"head -78 #{fullpathFile}"}`
+  value = `#{"head -86 #{fullpathFile}"}`
      
   value.lines.drop(1).each{
      |line|

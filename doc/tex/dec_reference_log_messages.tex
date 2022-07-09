@@ -51,7 +51,9 @@ The information messages by DEC SW are meant in general for tracing the nominal 
     \item \textbf{[DEC\_255]} Retry Request of OData URL		
     \item \textbf{[DEC\_257]} Metadata OData file created	
     \item \textbf{[DEC\_259]} Download request to an OData interface delivery point
-    \item \textbf{[DEC\_260]} Successful download from an OData interface delivery point  		
+    \item \textbf{[DEC\_260]} Successful download from an OData interface delivery point
+    \item \textbf{[NATS001]} I/F "interface": NATS Request performed
+	\item \textbf{[NATS002]} I/F "interface": NATS Request is successful	
 \end{itemize}
 
 \label{DEC000}
@@ -253,6 +255,13 @@ Request to download using HTTP a product from an OData service.
 \subsection{[DEC\_260] OData Download Successful}
 Product download successful from an OData service.
 
+\label{NATS001}
+\subsection{[NATS001] NATS Request Perfomed}
+This message contains trace information regarding the NATS request performed to an interface: server, subject and body.
+
+\label{NATS002}
+\subsection{[NATS002] NATS Request Successful}
+This message contains trace information regarding the NATS request reply.
 % ------------------------------------------------------------------------------
 % Warning Messages
 

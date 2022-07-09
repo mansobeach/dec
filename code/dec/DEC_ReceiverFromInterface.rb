@@ -1865,7 +1865,9 @@ private
             # [ INFO] deleting .S2A_OPER_REP_METARC_PDMC_20160922T140422_V20160922T085940_20160922T091131.xml
             
             if File.basename(aFile).to_s.slice(0,1) == "." then
-               @logger.warn("detected temporal file #{File.basename(aFile)} ?!")
+               if @isDebugMode == true then
+                  @logger.warn("detected temporal file #{File.basename(aFile)} ?!")
+               end
                next
             end
          

@@ -12,7 +12,7 @@
 ###
 #########################################################################
 
-require 'dec/DEC_Environment'
+require_relative 'code/dec/DEC_Environment'
 
 include DEC
 
