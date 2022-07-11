@@ -17,6 +17,8 @@
 ##
 #########################################################################
 
+## http://www.mukeshkumar.net/articles/curl/how-to-use-curl-command-line-tool-with-ftp-and-sftp
+
 module CTC
 
 module FTPClientCommands
@@ -312,9 +314,9 @@ module FTPClientCommands
    ## - compress (IN): optional argument for compressing SSH communication. 
    def createSftpCommand(host, port, user, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
-         command = %Q{sftp -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+         command = %Q{sftp -oBatchMode=no -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
       else
-         command = %Q{sftp -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
+         command = %Q{sftp -oBatchMode=no -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
       end
       addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
       return command      

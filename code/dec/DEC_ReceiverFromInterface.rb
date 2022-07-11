@@ -560,6 +560,7 @@ class DEC_ReceiverFromInterface
       host        = @ftpserver[:hostname]
       port        = @ftpserver[:port].to_i
       user        = @ftpserver[:user]
+      pass        = @ftpserver[:password]
       @depthLevel = 0
 
       begin
@@ -567,7 +568,11 @@ class DEC_ReceiverFromInterface
             if @isDebugMode == true then
                @logger.debug("[DEC_XXX] I/F #{@entity}: Connecting to #{host} with #{@protocol}")
             end
-            @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 5)
+            if pass != "N/A" and pass != "" and pass != nil then
+               @ftp     = Net::SFTP.start(host, user, :password => pass, :port => port, :timeout => 5)
+            else
+               @ftp     = Net::SFTP.start(host, user, :port => port, :timeout => 5)
+            end
             @session = @ftp.connect!
          end
       rescue Exception => e
