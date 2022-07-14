@@ -13,6 +13,7 @@
 ###
 #########################################################################
 
+## https://github.com/nats-io/nats.rb
 ## https://github.com/nats-io/nats.rb/issues/102
 ## https://www.rubydoc.info/gems/nats/0.10.0
 
@@ -53,7 +54,8 @@ class NATSClient
                      :max_reconnect_attempts => 1200,
                      :servers                => [@natsURL]
                   }
-      @natsTimeOut = 60
+      # @natsTimeOut = 7200
+      @natsTimeOut = 600
    end   
    ## -----------------------------------------------------------
    ##
@@ -66,28 +68,26 @@ class NATSClient
 
    ## -----------------------------------------------------------   
    ##
-   def natsSubscribe(subject)
+   def natsSubscribe(subject, timeout = @natsTimeOut)
+      strReply = ""
       begin
          NATS.start(@natsOPT) do |nc|
-           @logger.info("[DEC_XXX] I/F #{@entity}: NATS.subscribe #{@natsURL} #{subject}")
-           NATS.subscribe(subject) { |msg| 
-             doc = JSON.parse(msg)
-             msg = "Session : #{doc["NAME"]} ; State : #{doc["STATE"]}"
-             @logger.info(msg)
-             if @isDebugMode == true then
-               @logger.debug(doc)
-             end
-             NATS.drain
-           }
+            @logger.info("[NATS003] I/F #{@entity}: NATS.subscribe #{@natsURL} #{subject}")
+            sid = NATS.subscribe(subject) { |msg|
+               strReply = msg.dup
+               NATS.drain
+            }
+            NATS.timeout(sid, timeout) { return "" }
          end
-       end      
+       end
+       return strReply   
    end
    ## -------------------------------------------------------------
 
-   def natsRequest(subject, body)
+   def natsRequest(subject, body, timeout = @natsTimeOut)
 
       if @isDebugMode == true then
-         @logger.debug("[DEC_XXX] I/F #{@entity}: natsRequest #{@natsURL} #{subject} #{body}")
+         @logger.debug("[NATSXXX] I/F #{@entity}: natsRequest #{@natsURL} #{subject} #{body} #{timeout}")
       end
 
       begin
@@ -112,7 +112,7 @@ class NATSClient
                      @logger.error("[DEC_XXX] I/F #{@entity}: #{response}")
                   end
                else
-                  @logger.error("[DEC_XXX] I/F #{@entity}: no reply from server")
+                  @logger.error("[NATS101] I/F #{@entity}: no reply from server")
                end
                NATS.drain
             end.resume

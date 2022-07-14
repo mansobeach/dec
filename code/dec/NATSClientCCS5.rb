@@ -45,6 +45,10 @@ class NATSClientCCS5
       end
   
       @client = NATSClient.new(@entityNATS, @logger, @isDebugMode)
+
+      # Register a handler for SIGTERM
+      trap 15,proc{ self.SIGTERMHandler }
+
    end   
    ## -----------------------------------------------------------
    ##
@@ -55,11 +59,21 @@ class NATSClientCCS5
    end
    ## -----------------------------------------------------------
 
+   def SIGTERMHandler
+      raise "time-out for NATS request"
+   end
+
    ## -----------------------------------------------------------
    ##
 
    def requestF0
-      @client.natsSubscribe(API_NATS_F0_SUBJECT) 
+      reply = @client.natsSubscribe(API_NATS_F0_SUBJECT)
+      doc   = JSON.parse(reply)
+      msg = "[CCS5_OK] I/F @entityNATS: Session = #{doc["NAME"]} ; State = #{doc["STATE"]}"
+      @logger.info(msg)
+      if @isDebugMode == true then
+         @logger.debug(doc)
+      end 
    end
 
    ## -----------------------------------------------------------
@@ -68,7 +82,7 @@ class NATSClientCCS5
    # NATS subject used by AUTO to issue the request: CCS5.AutoPilot.NAOS.switch
    # NATS body: none.
    def requestF2
-      @client.natsRequest(API_NATS_F2_SUBJECT, "")
+      @client.natsRequest(API_NATS_F2_SUBJECT, "", API_NATS_F2_TIMEOUT)
    end
 
    ## -----------------------------------------------------------
@@ -81,7 +95,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "#{API_NATS_F3_BODY}#{JSON.parse(params)['filename']} #{JSON.parse(params)['target']}"
-      @client.natsRequest(API_NATS_F3_SUBJECT, body)
+      @client.natsRequest(API_NATS_F3_SUBJECT, body, API_NATS_F3_TIMEOUT)
    end
    ## -----------------------------------------------------------
 
@@ -93,7 +107,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "ProcessActivityFile #{JSON.parse(params)['path']}"
-      @client.natsRequest(API_NATS_F4_SUBJECT, body)
+      @client.natsRequest(API_NATS_F4_SUBJECT, body, API_NATS_F4_TIMEOUT)
    end
 
    ## -----------------------------------------------------------
@@ -106,7 +120,7 @@ class NATSClientCCS5
          @logger.debug(params)
       end
       body = "UplinkActivityFile #{JSON.parse(params)['filename']}"
-      @client.natsRequest(API_NATS_F5_SUBJECT, body)   
+      @client.natsRequest(API_NATS_F5_SUBJECT, body, API_NATS_F5_TIMEOUT)   
    end
 
    ## -----------------------------------------------------------
@@ -154,9 +168,33 @@ class NATSClientCCS5
          return false
       end
 
-      body     = "HistoryReport #{type} #{start} #{stop} #{urlFile}"
-      @client.natsRequest(API_NATS_F6_SUBJECT, body)
+     
+     pidChild = fork{
+         ppid     = Process.ppid
+         @client2 = NATSClient.new(@entityNATS, @logger, @isDebugMode)
+         reply    = @client2.natsSubscribe(API_NATS_R1_SUBJECT, API_NATS_R1_TIMEOUT)
 
+         if reply == "" or reply == nil then
+            msg   = "[CCS5ERR] I/F #{@entityNATS}: time-out for #{API_NATS_R1_SUBJECT}"
+            @logger.error(msg)
+            Process.kill(15, ppid.to_i)
+            exit(99)
+         end
+         
+         msg   = "[CCS5ACK] I/F #{@entityNATS}: #{reply}"
+         @logger.info(msg)
+         exit(0)
+      }
+      
+      # to simulate time-out
+      # sleep(0.9)
+
+      body     = "HistoryReport #{type} #{start} #{stop} #{urlFile}"
+      @client.natsRequest(API_NATS_F6_SUBJECT, body, API_NATS_F6_TIMEOUT)
+      
+      pid, status = Process.wait2
+      #pid = Process.waitpid(pidChild, 0)
+    
       if @entitySFTP != nil then
          cmd = "decGetFromInterface -m #{@entitySFTP} --nodb"
          if @isDebugMode == true then
@@ -197,7 +235,7 @@ class NATSClientCCS5
       # body     = "::CCSSEQ::startSession LOCAL REALTIME"
       # body     = "::CCSSEQ::stopSession LOCAL"
       body     = "::CCSSEQ::getServerStatus LOCAL"
-      @client.natsRequest(API_NATS_F99_SUBJECT, body)
+      @client.natsRequest(API_NATS_F99_SUBJECT, body, API_NATS_F99_TIMEOUT)
    end
    ## -----------------------------------------------------------   
 
