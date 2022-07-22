@@ -69,7 +69,7 @@ class NATSClientCCS5
    def requestF0
       reply = @client.natsSubscribe(API_NATS_F0_SUBJECT)
       doc   = JSON.parse(reply)
-      msg = "[CCS5_OK] I/F @entityNATS: Session = #{doc["NAME"]} ; State = #{doc["STATE"]}"
+      msg = "[CCS5_OK] I/F #{@entityNATS}: Session = #{doc["NAME"]} ; State = #{doc["STATE"]}"
       @logger.info(msg)
       if @isDebugMode == true then
          @logger.debug(doc)
@@ -84,7 +84,6 @@ class NATSClientCCS5
    def requestF2
       @client.natsRequest(API_NATS_F2_SUBJECT, "", API_NATS_F2_TIMEOUT)
    end
-
    ## -----------------------------------------------------------
 
    # F3. Ingest MPS activities file
@@ -109,7 +108,6 @@ class NATSClientCCS5
       body = "ProcessActivityFile #{JSON.parse(params)['path']}"
       @client.natsRequest(API_NATS_F4_SUBJECT, body, API_NATS_F4_TIMEOUT)
    end
-
    ## -----------------------------------------------------------
 
    # F5. Start dispatching a sequence of TCs created from an activities file
@@ -122,7 +120,6 @@ class NATSClientCCS5
       body = "UplinkActivityFile #{JSON.parse(params)['filename']}"
       @client.natsRequest(API_NATS_F5_SUBJECT, body, API_NATS_F5_TIMEOUT)   
    end
-
    ## -----------------------------------------------------------
 
    def requestF6(params)

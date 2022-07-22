@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>NAOS IVV Data Exchange Component</Name>
+      <Id>DEC</Id>
+      <Mission>NAOS</Mission>
+      <SatPrefix>NA1</SatPrefix>
+   </Project>
+   <Filters>
+         <IncomingFilters>
+            <Filter>*</Filter>
+            <!--
+            <Filter>SM_MREP_*.zip</Filter>
+            <Filter>GO_*EEF</Filter>
+            <Filter>GO_*HDR</Filter>
+            <Filter>GO_*TGZ</Filter>
+            <Filter>CORG*Z</Filter>
+            <Filter>SM_*EEF</Filter>
+            <Filter>SM_*TGZ</Filter>
+            <Filter>*sp3*</Filterftproot/remote/RPF_R/fromRPF_R/>
+            <Filter>*clk*</Filter>
+            <Filter>igrg*.Z</Filter>
+            -->
+         </IncomingFilters>
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+   </Filters>
+   <Options>
+      <Upload>
+         <DeleteSourceFiles>true</DeleteSourceFiles>
+         <UploadFilePrefix>false</UploadFilePrefix>
+         <UploadDirs>false</UploadDirs>
+      </Upload>
+      <Download>
+         <DownloadDirs>false</DownloadDirs>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <!-- DeleteDuplicatedFiles item should be deprecated -->
+         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <!--
+         <LogUnknownFiles>false</LogUnknownFiles>
+         <LogDuplicatedFiles>false</LogDuplicatedFiles>     
+         -->    
+      </Download>
+   </Options>
+   
+   
+   <Reports>
+            
+       <!-- DEC push / delivery reports / push (decSend2Interface) -->      
+            
+      <Report Name="DeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_SENT</FileType>
+      </Report>
+
+      <Report Name="EmergencyDeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered in Emergency Mode</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEMERGENCY</FileType>
+      </Report>
+
+      <!-- DEC pull / retrieval reports (decGetFromInterface) -->
+
+      <Report Name="RetrievedFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_RECV</FileType>
+      </Report>
+
+      <Report Name="UnknownFiles">
+         <Enabled>true</Enabled>
+         <Desc>List of unknown Files present</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DECUNKNOWN</FileType>
+      </Report>
+
+   </Reports>
+
+   <Workflow>
+      <SourceDir>/tmp/dec_delivery_root</SourceDir>
+      <GlobalOutbox>/tmp/dec/outbox</GlobalOutbox>
+      <ReportDir>/tmp/dec/in_basket_if_localhost_notsecure</ReportDir>
+      <TempDir>/tmp/dec/tmp</TempDir>
+   </Workflow>
+
+<!--
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>dec_db_s2</Database_Host>
+      <Database_Port>54320</Database_Port>
+      <Database_Name>dec_db_s2</Database_Name>
+      <Database_User>postgres</Database_User>
+      <Database_Password>postgres</Database_Password>
+   </Inventory>
+-->
+
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>
+      <Database_Name>/tmp/dec_naos_aiv_inventory</Database_Name>
+      <Database_User>naos</Database_User>
+      <Database_Password>naos</Database_Password>
+   </Inventory>
+
+
+</Configuration>

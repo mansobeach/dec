@@ -35,12 +35,15 @@
          </FromList>
       </File>
      
+      <!--
       <File Type="????-??-??T??:??:??*PLA_SBA*">
          <Description>PLA SBA @ MCS</Description>
          <FromList>
             <Interface>NAOS_IVV_MCS_SFTP</Interface>
          </FromList>
       </File>
+   -->
+
 
    </DownloadRules>
 

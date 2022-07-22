@@ -149,6 +149,10 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
 
    def testF2
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F0"
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
       cmd = "decNATS -n NAOS_IVV_MCS_NATS -F2"
       @@logger.info(cmd)
       ret = system(cmd)
@@ -177,22 +181,8 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
    def testF6
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-=begin      
-      cmd = "decNATS -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20160601T000000_20230601T010000.xml\\\"}\""
-      @@logger.info(cmd)
-      ret = system(cmd)
-      assert(ret, cmd)
-=end
-
-=begin 
-      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-09T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220607T000000_20220609T000000.xml\\\"}\""
-      @@logger.info(cmd)
-      ret = system(cmd)
-      assert(ret, cmd)
-=end
-
       @@logger.info("GPS 10 min")
-      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-06T00:10:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220706T000000_20220706T010000.xml\\\"}\""
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-06T00:10:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220706T000000_20220706T001000.xml\\\"}\""
       @@logger.info(cmd)
       ret = system(cmd)
       assert(ret, cmd)
@@ -232,6 +222,37 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
       @@logger.info(cmd)
       ret = system(cmd)
       assert(ret, cmd)
+
+      @@logger.info("GPS 36H")
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T12:00:00\\\" , \\\"end\\\" : \\\"2022-07-08T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220706T120000_20220708T000000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      @@logger.info("GPS 48H")
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-08T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220706T000000_20220708T000000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      @@logger.info("GPS 72H")
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"GPS\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-09T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-GPS_20220706T000000_20220709T000000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      @@logger.info("MSC 72H")
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"MSC\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-09T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-MSC_20220706T000000_20220709T000000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
+      @@logger.info("THR 72H")
+      cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"THR\\\", \\\"start\\\" : \\\"2022-07-06T00:00:00\\\" , \\\"end\\\" : \\\"2022-07-09T00:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-THR_20220706T000000_20220709T000000.xml\\\"}\""
+      @@logger.info(cmd)
+      ret = system(cmd)
+      assert(ret, cmd)
+
 
 =begin
       cmd = "decNATS -m NAOS_IVV_MCS_SFTP -n NAOS_IVV_MCS_NATS -F6 -P \"{\\\"type\\\" :\\\"MSC\\\", \\\"start\\\" : \\\"2016-06-01T00:00:00\\\" , \\\"end\\\" : \\\"2023-06-01T01:00:00\\\", \\\"url\\\" : \\\"/tmp/IVV_DEC_TM-MSC_20160601T000000_20230601T010000.xml\\\"}\""

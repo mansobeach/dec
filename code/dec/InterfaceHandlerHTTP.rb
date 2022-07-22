@@ -267,7 +267,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          ## -----------------------------------
          ## Permanent re-direction
          if ret.status.include?("301") == true then               
-            new_url = ret.header_str.split("Location:")[1].split("\n")[0].gsub(/\s+/, "")
+            new_url = ret.header_str.split("location:")[1].split("\n")[0].gsub(/\s+/, "")
             url = new_url
             bFound = true
             if @isDebugMode == true then

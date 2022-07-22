@@ -3,27 +3,84 @@
 
   <!-- ================================================================ -->
 
-
-  <!-- ================================================================ -->
- 
-  <Interface Name="NAOS_IVV_MCS_SFTP">
-    <Desc>NAOS Mission Control System SFTP</Desc>
+  <Interface Name="FILESYSTEM">
+    <Desc>Local file-system Interface</Desc>
     <TXRXParams>
       <Enabled4Sending>true</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
+      <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
-      <LoopDelay unit="s">5</LoopDelay>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>0</Port>      
+      <User>borja</User>
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>    
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k localhost:4567/dec/arc/requestArchive/* &amp; "/>
+    <!--
+    
+             <Event Name="OnReceiveOK"              executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>
+         <Event Name="OnReceiveNewFilesOK"      executeCmd="decSend2Interface -m HTTP_FERRO -n &amp; "/>
+
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+ 
+ 
+  <!-- ================================================================ -->
+ 
+  <Interface Name="LOCALHOST_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">10</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>172.23.253.28</Hostname>
-      <Port>22</Port>      
-      <User>ccsexec</User>
-      <Pass encrypted='true'>bGVpZGVuMQo=</Pass>
+      <Hostname>localhost</Hostname>
+	   <Port>22</Port>      
+      <User>borja</User>
+      <Pass>N/A</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -36,8 +93,64 @@
        <Address>borja.lopez@deimos-space.com</Address>
     </DeliverByMailTo>
     <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ --> 
+
+  <!-- ================================================================ -->
+ 
+  <Interface Name="LOCALHOST_NOT_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>1</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">5</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>5</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>21</Port>      
+      <User>borja</User>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
       <SendNotification>true</SendNotification>
       <To>
+       <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>
       </To>
     </Notify>
@@ -50,8 +163,8 @@
     -->
     </Events>
     <ContactInfo>
-      <Name>HEY</Name>
-      <EMail>borja.lopez@deimos-space.com</EMail>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
       <Tel>0039-800 454 432</Tel>
       <Fax>0039-800 454 433</Fax>
       <Address>Citta Uova</Address>
@@ -60,24 +173,194 @@
 
   <!-- ================================================================ --> 
  
-  <Interface Name="NAOS_IVV_MCS_NATS">
-    <Desc>NAOS MCS NATS</Desc>
+  <Interface Name="IERS">
+    <Desc>IERS Interface</Desc>
     <TXRXParams>
-      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Sending>false</Enabled4Sending>
       <Enabled4Receiving>true</Enabled4Receiving>
-      <ImmediateRetries>1</ImmediateRetries>
+      <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
-      <LoopDelay unit="s">5</LoopDelay>
+      <LoopDelay unit="s">300</LoopDelay>
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <Server>
-      <Protocol>NATS</Protocol>
-      <Hostname>172.23.253.28</Hostname>
-      <Port>4222</Port>      
-      <User>N/A</User>
-      <Pass encrypted='false'>N/A</Pass>
+      <Protocol>FTP</Protocol>
+      <!-- ftp.cddis.eosdis.nasa.gov /products/iers-->
+      <Hostname>ftp.iers.org</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <Interface Name="WEBDAV2">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+  <Interface Name="WEBDAV">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>WEBDAV</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="WEBDAV_SECURE">
+    <Desc>Localhost Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>WEBDAV</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>
@@ -92,26 +375,905 @@
     <Notify>
       <SendNotification>true</SendNotification>
       <To>
+       <Address>borja.esa@gmail.com</Address>
        <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
       </To>
     </Notify>
     <Events>
-    <!--
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
-         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-     
-         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
-    -->
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>    
+         <Event Name="NewFile2Intray"          executeCmd="echo %F" />
     </Events>
     <ContactInfo>
-      <Name>HEY</Name>
-      <EMail>borja.lopez@deimos-space.com</EMail>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
       <Tel>0039-800 454 432</Tel>
       <Fax>0039-800 454 433</Fax>
       <Address>Citta Uova</Address>
     </ContactInfo>
   </Interface>
 
+
+  <!-- ================================================================ -->
+
+  <Interface Name="PARALLEL_HTTP">
+    <Desc>WebDAV PARALLEL HTTP</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>WEBDAV</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User>dec</User>
+      <Pass>$d3c@"</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>true</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+       <Address>borja.lopez.fernandez@esa.int</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+    <!--     
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="ILRS">
+    <Desc>ILRS Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>2</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>edc.dgfi.tum.de</Hostname>
+      <!--
+      <Hostname>cddis.gsfc.nasa.gov</Hostname>
+      -->
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>
+         <Event Name="NewFile2InTray"          executeCmd="echo NEW FILE TO INTRAY" />
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="IGS">
+    <Desc>IGS Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>2</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <!--
+      
+      ftp://igs.ensg.ign.fr/pub/igs/products/
+      ftp://garner.ucsd.edu/pub/products/
+      ftp://cddis.gsfc.nasa.gov/gnss/products/
+      
+      -->
+      <Hostname>gssc.esa.int</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         
+         
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="decSend2Interface -m POD_PUSH"/>
+         
+         <Event Name="OnReceiveNewFile"        executeCmd="uncompress -f %F" /> 
+         <Event Name="OnReceiveNewFile"        executeCmd="uncompress %F" />    
+         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" /> 
+         
+         -->
+                 
+         <!--
+         
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <!-- ================================================================ --> 
+ 
+  <Interface Name="NOAA">
+    <Desc>NOAA Interface</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>ftp.swpc.noaa.gov</Hostname>
+	   <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>borja.esa@gmail.com</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    
+         
+             
+         <!--
+         
+         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F -d /tmp/aux_tmp" />
+
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo \':-\)\'"/>
+         <Event Name="OnTrackOK"               executeCmd="echo OnTrackOK \':-\)\'"/>         
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
+
+         
+         
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+  <Interface Name="ECDC">
+    <Desc>European Centre for Disease Prevention and Control</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>opendata.ecdc.europa.eu</Hostname>
+	   <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="mv /tmp/dec/in_basket_if_ecdc/csv /tmp/dec/in_basket_if_ecdc/&quot;$(date +&quot;%Y%m%d_covid-19.csv&quot;)&quot;" />
+         
+         <!--
+         
+                  <Event Name="OnReceiveNewFile"        executeCmd="mv -f %F &quot;$(date +&quot;%y%m%d_covid-19.csv&quot;)&quot;" />
+
+         <Event Name="NewFile2InTray"          executeCmd="mv -f %F -d /tmp/dec/publish/covid-19/" />
+
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+   <Interface Name="CELES_D2">
+    <Desc>Celestrak</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>celestrak.com</Hostname>
+	   <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <!-- DEIMOS-1 -->
+         <Event Name="OnReceiveNewFilesOK" executeCmd="mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=40013 /tmp/dec/in_basket_if_celes/&quot;$(date +&quot;%Y%m%d%H%M%S_DEIMOS-2.tle&quot;)&quot;" />
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+ <!-- ================================================================ -->
+
+ <Interface Name="CELES_D1">
+  <Desc>Celestrak</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>celestrak.com</Hostname>
+   <Port>443</Port>
+    <User></User>
+    <Pass></Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+       <!-- DEIMOS-1 -->
+       <Event Name="OnReceiveNewFilesOK" executeCmd="mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=35681 /tmp/dec/in_basket_if_celes/&quot;$(date +&quot;%Y%m%d%H%M%S_DEIMOS-1.tle&quot;)&quot;" />
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Citta Uova</Address>
+  </ContactInfo>
+</Interface>
+
+ <!-- ================================================================ -->
+
+   <!-- ================================================================ -->
+
+  <Interface Name="LEAP">
+    <Desc>IERS Mirror hpiers.obspm.fr</Desc>
+    <TXRXParams>
+    <!-- MISS-CONFIGURATION FOR TESTING PURPOSES
+      <Enabled4Sending>true</Enabled4Sending> -->
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>hpiers.obspm.fr</Hostname>
+	   <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         
+         <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F -d /tmp/dec/publish/s3/" />
+         
+         <!--
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+  <!-- ================================================================ -->
+
+  <Interface Name="PUBLISH_S3">
+    <Desc>Auxiliary Data Gathering Service 4 Sentinel-3</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>0</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+         <!--
+                  <Event Name="OnReceiveNewFile"        executeCmd="auxConverter -f %F" />
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>         
+
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+<!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="POD_PUSH">
+    <Desc>POD PUSH</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <!-- Miss configuration to raise DEC_605 -->
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+   <Interface Name="SCIHUB">
+    <Desc>Copernicus Catalogue</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>scihub.copernicus.eu</Hostname>
+      <Port>443</Port>      
+      <User encrypted='true' >otIeMrbVGnA=</User>
+      <Pass encrypted='false' >sNgeKr7VEBVe</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr 007</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="SPCS">
+    <Desc>https://www.space-track.org/#/Landing</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP_SPCS</Protocol>
+      <Hostname>https://www.space-track.org</Hostname>
+      <Port>443</Port>      
+      <User encrypted='true' >otIeMraXEBUkxlJnW5PpjDDM0+/mvC81XGcTX4g=</User>
+      <Pass encrypted='true' >sNgeKr7VEBV6019DEZrvjzi1</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr 007</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+  <Interface Name="LOCALHOST_FTP_PASSIVE">
+    <Desc>Unit tests for FTP</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>21</Port>
+      <User>borja</User>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+
+  <!-- ================================================================ -->
+
+  <Interface Name="LOCALHOST_FTP">
+    <Desc>Unit tests for FTP</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>21</Port>
+      <User>borja</User>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+     <!-- <PassiveFlag>true</PassiveFlag> -->
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+
+   <!-- ================================================================ -->
+
+  <Interface Name="LOCALHOST_FTPS">
+    <Desc>Unit tests for FTPS</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTPS</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>21</Port>
+      <!--
+      <Port>990</Port> 
+      <User>dec</User> 
+       -->    
+      <User>borja</User>
+      <Pass encrypted='true'>cGVycmlsbG8K</Pass>
+      <!--
+       <Pass>Esr!@$Pm</Pass>
+      <Pass>dec</Pass>
+      -->
+     
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+     <!-- <PassiveFlag>true</PassiveFlag> -->
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>borja.lopez@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>borja.esa@gmail.com</Address>
+       <Address>borja.lopez@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+    <ContactInfo>
+      <Name>Mr Satan</Name>
+      <EMail>borja.esa@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
 
    <!-- ================================================================ -->
 

@@ -104,7 +104,7 @@ class NATSClient
                @logger.info("[NATS001] I/F #{@entity}: NATS.request #{@natsURL} #{subject} #{body}")
                response = NATS.request(subject, \
                                      body, \
-                                     timeout: @natsTimeOut)
+                                     timeout: timeout)
                if response != nil then
                   if response.split("{")[0].include?("0") then
                      @logger.info("[NATS002] I/F #{@entity}: #{response}")
