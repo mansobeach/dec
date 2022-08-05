@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -W0
 
 #########################################################################
 ##
@@ -19,6 +19,9 @@ require 'test/unit'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'dec/DEC_Environment'
 
 require 'aux/AUX_Environment'
 require 'aux/AUX_Handler_IERS_Leap_Second'
@@ -30,12 +33,16 @@ require 'aux/AUX_Handler_IERS_EOP_Daily'
 
 # ruby auxUnitTests -n test_my_method 
 
+# > NAOS
+# test_NAOS_NASA_BULA
+# test_NAOS_NASA_BULC
+
 class AUXTestCase < Test::Unit::TestCase
 
    include CUC::DirUtils
    include Test::Unit::Data
    include AUX
-   
+   include DEC
       
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
@@ -44,36 +51,136 @@ class AUXTestCase < Test::Unit::TestCase
    
    Test::Unit.at_start do
    
-      @@conf = AUX_Environment.new
-      
-      @@testDir = "/tmp/aux"
+      @@conf      = AUX_Environment.new
+      @@testDir   = "/tmp/aux"
+
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("AUXTEST", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in #{File.basename(__FILE__)}"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/dec_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
             
    end
    
    ## --------------------------------------------------------
    
    Test::Unit.at_exit do
-      puts "End of DEC tests mail"
+      @@logger.info("End of AUX tests #{File.basename(__FILE__)}")
    end
    ## --------------------------------------------------------   
    
    ## Setup before every test-case
    ##
    def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
       checkDirectory(@@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
+      #FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
+
+     
+      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
+      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
+      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
+      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
+
+      
    end
    ## --------------------------------------------------------
    ## After every test case
 
    def teardown
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
    end
    ## --------------------------------------------------------
 
+   def test_NAOS_NASA_BULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data #{@@testDir}")
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_nasa_bula = "#{@@testDir}/finals2000A.data"
+      cmd = "auxConverter -m NAOS -f #{file_nasa_bula} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS BULA to NAOS mission")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_NBULA*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_NASA_BULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat #{@@testDir}")
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_nasa_bulc = "#{@@testDir}/tai-utc.dat"
+      cmd = "auxConverter -m NAOS -f #{file_nasa_bulc} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS BULC to NAOS mission")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_NBULC*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_CELESTRAK_SFS
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt #{@@testDir}")
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_sfs = "#{@@testDir}/SW-Last5Years.txt"
+      cmd      = "auxConverter -m NAOS -f #{file_sfs} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert Celestrak Space Weather SFS to NAOS mission")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_SFS___*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
+   end
+   ## --------------------------------------------------------
+
+=begin
    def test_auxConverter
       puts
       puts "================================================"
@@ -226,6 +333,7 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
+=end
 
 end
 

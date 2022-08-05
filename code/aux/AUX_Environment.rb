@@ -2,9 +2,9 @@
 
 #########################################################################
 #
-# === Ruby source for #DEC_Environment class
+# === Ruby source for AUX_Environment class
 #
-# === Written by DEIMOS Space S.L. (bolf)
+# === Written by DEIMOS Space S.L.
 #
 # === Data Exchange Component (DEC)
 # 
@@ -23,22 +23,22 @@ module AUX
    
    include CUC::DirUtils
    
-   @@version = "0.0.3"
+   @@version = "0.0.5d"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\
+         NASA CDDIS Bulletin A / Earth Orientation Parameters has been integrated\n\
+         NASA CDDIS Bulletin C / TAI-UTC has been integrated",
       "0.0.4"  =>    "NOAA Report Solar Geophysical Activity has been integrated", \
-      "0.0.3"  =>    "IERS Earth Orientation Parameters has been integrated", \
+      "0.0.3"  =>    "IERS Bulletin A / Earth Orientation Parameters has been integrated", \
       "0.0.2"  =>    "IGS Broadcast Ephemeris Daily has been integrated", \
-      "0.0.1"  =>    "IERS Leap Second has been integrated", \
+      "0.0.1"  =>    "IERS Bulletin C / TAI-UTC has been integrated", \
       "0.0.0"  =>    "first version of the aux installer created" \
    }
    ## -----------------------------------------------------------------
    
-
-   ## -----------------------------------------------------------------
-
    ## -----------------------------------------------------------------
    
    def print_environment
@@ -46,15 +46,12 @@ module AUX
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
-   
 
    ## -----------------------------------------------------------------
 
    def printEnvironmentError
       puts "Execution environment not suited for AUX"
    end
-   ## -----------------------------------------------------------------
-   
    ## -----------------------------------------------------------------
    
 end # module

@@ -68,6 +68,9 @@ class StatisticDCC
          hFile[:date]      = item.reception_date
          hFile[:protocol]  = item.protocol
          hFile[:size]      = item.size
+         if item.md5 != "" and item.md5 != nil then
+            hFile[:md5]      = item.md5
+         end
          arrFiles << hFile
          @sumSize          = @sumSize + item.size
          @numFiles         = @numFiles + 1

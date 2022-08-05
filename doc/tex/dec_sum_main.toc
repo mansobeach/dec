@@ -103,39 +103,40 @@
 \contentsline {subsection}{\numberline {8.1.11}[DEC\_100] Interface Pull Iteration Completed}{43}{subsection.8.1.11}% 
 \contentsline {subsection}{\numberline {8.1.12}[DEC\_105] File Available}{43}{subsection.8.1.12}% 
 \contentsline {subsection}{\numberline {8.1.13}[DEC\_110] File Downloaded}{43}{subsection.8.1.13}% 
-\contentsline {subsection}{\numberline {8.1.14}[DEC\_115] File Disseminated}{43}{subsection.8.1.14}% 
-\contentsline {subsection}{\numberline {8.1.15}[DEC\_116] File Compressed}{44}{subsection.8.1.15}% 
-\contentsline {subsection}{\numberline {8.1.16}[DEC\_117] File Uncompressed}{44}{subsection.8.1.16}% 
-\contentsline {subsection}{\numberline {8.1.17}[DEC\_120] Unknown File Deleted}{44}{subsection.8.1.17}% 
-\contentsline {subsection}{\numberline {8.1.18}[DEC\_125] Duplicated File Deleted}{44}{subsection.8.1.18}% 
-\contentsline {subsection}{\numberline {8.1.19}[DEC\_126] File Deleted}{44}{subsection.8.1.19}% 
-\contentsline {subsection}{\numberline {8.1.20}[DEC\_130] Event Triggered}{44}{subsection.8.1.20}% 
-\contentsline {subsubsection}{\numberline {8.1.20.1}Event newfile2intray}{44}{subsubsection.8.1.20.1}% 
-\contentsline {subsubsection}{\numberline {8.1.20.2}Event onreceivenewfilesok}{44}{subsubsection.8.1.20.2}% 
-\contentsline {subsection}{\numberline {8.1.21}[DEC\_131] Dissemination Command Execution }{45}{subsection.8.1.21}% 
-\contentsline {subsection}{\numberline {8.1.22}[DEC\_135] Report Generation of Files Pulled}{45}{subsection.8.1.22}% 
-\contentsline {subsection}{\numberline {8.1.23}[DEC\_144] Pull Statistics}{45}{subsection.8.1.23}% 
-\contentsline {subsection}{\numberline {8.1.24}[DEC\_200] Push iteration to Interface completed successfully}{45}{subsection.8.1.24}% 
-\contentsline {subsection}{\numberline {8.1.25}[DEC\_203] Request to Push File to Interface started}{45}{subsection.8.1.25}% 
-\contentsline {subsection}{\numberline {8.1.26}[DEC\_205] Push Retry to Interface waiting LoopDelay}{45}{subsection.8.1.26}% 
-\contentsline {subsection}{\numberline {8.1.27}[DEC\_206] Push Immediate Retry to Re-sending File to Interface waiting LoopDelay}{45}{subsection.8.1.27}% 
-\contentsline {subsection}{\numberline {8.1.28}[DEC\_210] File Pushed to Interface}{45}{subsection.8.1.28}% 
-\contentsline {subsection}{\numberline {8.1.29}[DEC\_211] Push Setup / File at GlobalOutbox}{45}{subsection.8.1.29}% 
-\contentsline {subsection}{\numberline {8.1.30}[DEC\_212] Push Setup / File at Removed from SourceDir}{45}{subsection.8.1.30}% 
-\contentsline {subsection}{\numberline {8.1.31}[DEC\_213] Push Setup / File at Interface LocalOutbox}{46}{subsection.8.1.31}% 
-\contentsline {subsection}{\numberline {8.1.32}[DEC\_214] Push Setup / File Compressed at Interface LocalOutbox}{46}{subsection.8.1.32}% 
-\contentsline {subsection}{\numberline {8.1.33}[DEC\_235] Report Generation DeliveredFiles to Interface}{46}{subsection.8.1.33}% 
-\contentsline {subsection}{\numberline {8.1.34}[DEC\_240] Push Email Notification to Interface}{46}{subsection.8.1.34}% 
-\contentsline {subsection}{\numberline {8.1.35}[DEC\_241] Push Error Email Notification to Interface}{46}{subsection.8.1.35}% 
-\contentsline {subsection}{\numberline {8.1.36}[DEC\_244] Push Statistics}{46}{subsection.8.1.36}% 
-\contentsline {subsection}{\numberline {8.1.37}[DEC\_254] Request OData Metadata to Interface}{46}{subsection.8.1.37}% 
-\contentsline {subsection}{\numberline {8.1.38}[DEC\_255] Retry Request OData URL}{46}{subsection.8.1.38}% 
-\contentsline {subsection}{\numberline {8.1.39}[DEC\_257] OData Metadata File Created}{46}{subsection.8.1.39}% 
-\contentsline {subsection}{\numberline {8.1.40}[DEC\_259] OData Download Request}{46}{subsection.8.1.40}% 
-\contentsline {subsection}{\numberline {8.1.41}[DEC\_260] OData Download Successful}{47}{subsection.8.1.41}% 
-\contentsline {subsection}{\numberline {8.1.42}[NATS001] NATS Request Perfomed}{47}{subsection.8.1.42}% 
-\contentsline {subsection}{\numberline {8.1.43}[NATS002] NATS Request Successful}{47}{subsection.8.1.43}% 
-\contentsline {subsection}{\numberline {8.1.44}[NATS003] NATS Subscribe Performed}{47}{subsection.8.1.44}% 
+\contentsline {subsection}{\numberline {8.1.14}[DEC\_111] File Downloaded with same MD5}{43}{subsection.8.1.14}% 
+\contentsline {subsection}{\numberline {8.1.15}[DEC\_115] File Disseminated}{44}{subsection.8.1.15}% 
+\contentsline {subsection}{\numberline {8.1.16}[DEC\_116] File Compressed}{44}{subsection.8.1.16}% 
+\contentsline {subsection}{\numberline {8.1.17}[DEC\_117] File Uncompressed}{44}{subsection.8.1.17}% 
+\contentsline {subsection}{\numberline {8.1.18}[DEC\_120] Unknown File Deleted}{44}{subsection.8.1.18}% 
+\contentsline {subsection}{\numberline {8.1.19}[DEC\_125] Duplicated File Deleted}{44}{subsection.8.1.19}% 
+\contentsline {subsection}{\numberline {8.1.20}[DEC\_126] File Deleted}{44}{subsection.8.1.20}% 
+\contentsline {subsection}{\numberline {8.1.21}[DEC\_130] Event Triggered}{44}{subsection.8.1.21}% 
+\contentsline {subsubsection}{\numberline {8.1.21.1}Event newfile2intray}{44}{subsubsection.8.1.21.1}% 
+\contentsline {subsubsection}{\numberline {8.1.21.2}Event onreceivenewfilesok}{44}{subsubsection.8.1.21.2}% 
+\contentsline {subsection}{\numberline {8.1.22}[DEC\_131] Dissemination Command Execution }{45}{subsection.8.1.22}% 
+\contentsline {subsection}{\numberline {8.1.23}[DEC\_135] Report Generation of Files Pulled}{45}{subsection.8.1.23}% 
+\contentsline {subsection}{\numberline {8.1.24}[DEC\_144] Pull Statistics}{45}{subsection.8.1.24}% 
+\contentsline {subsection}{\numberline {8.1.25}[DEC\_200] Push iteration to Interface completed successfully}{45}{subsection.8.1.25}% 
+\contentsline {subsection}{\numberline {8.1.26}[DEC\_203] Request to Push File to Interface started}{45}{subsection.8.1.26}% 
+\contentsline {subsection}{\numberline {8.1.27}[DEC\_205] Push Retry to Interface waiting LoopDelay}{45}{subsection.8.1.27}% 
+\contentsline {subsection}{\numberline {8.1.28}[DEC\_206] Push Immediate Retry to Re-sending File to Interface waiting LoopDelay}{45}{subsection.8.1.28}% 
+\contentsline {subsection}{\numberline {8.1.29}[DEC\_210] File Pushed to Interface}{45}{subsection.8.1.29}% 
+\contentsline {subsection}{\numberline {8.1.30}[DEC\_211] Push Setup / File at GlobalOutbox}{45}{subsection.8.1.30}% 
+\contentsline {subsection}{\numberline {8.1.31}[DEC\_212] Push Setup / File at Removed from SourceDir}{45}{subsection.8.1.31}% 
+\contentsline {subsection}{\numberline {8.1.32}[DEC\_213] Push Setup / File at Interface LocalOutbox}{46}{subsection.8.1.32}% 
+\contentsline {subsection}{\numberline {8.1.33}[DEC\_214] Push Setup / File Compressed at Interface LocalOutbox}{46}{subsection.8.1.33}% 
+\contentsline {subsection}{\numberline {8.1.34}[DEC\_235] Report Generation DeliveredFiles to Interface}{46}{subsection.8.1.34}% 
+\contentsline {subsection}{\numberline {8.1.35}[DEC\_240] Push Email Notification to Interface}{46}{subsection.8.1.35}% 
+\contentsline {subsection}{\numberline {8.1.36}[DEC\_241] Push Error Email Notification to Interface}{46}{subsection.8.1.36}% 
+\contentsline {subsection}{\numberline {8.1.37}[DEC\_244] Push Statistics}{46}{subsection.8.1.37}% 
+\contentsline {subsection}{\numberline {8.1.38}[DEC\_254] Request OData Metadata to Interface}{46}{subsection.8.1.38}% 
+\contentsline {subsection}{\numberline {8.1.39}[DEC\_255] Retry Request OData URL}{46}{subsection.8.1.39}% 
+\contentsline {subsection}{\numberline {8.1.40}[DEC\_257] OData Metadata File Created}{46}{subsection.8.1.40}% 
+\contentsline {subsection}{\numberline {8.1.41}[DEC\_259] OData Download Request}{46}{subsection.8.1.41}% 
+\contentsline {subsection}{\numberline {8.1.42}[DEC\_260] OData Download Successful}{47}{subsection.8.1.42}% 
+\contentsline {subsection}{\numberline {8.1.43}[NATS001] NATS Request Perfomed}{47}{subsection.8.1.43}% 
+\contentsline {subsection}{\numberline {8.1.44}[NATS002] NATS Request Successful}{47}{subsection.8.1.44}% 
+\contentsline {subsection}{\numberline {8.1.45}[NATS003] NATS Subscribe Performed}{47}{subsection.8.1.45}% 
 \contentsline {section}{\numberline {8.2}Warning Messages}{48}{section.8.2}% 
 \contentsline {subsection}{\numberline {8.2.1}Scope}{48}{subsection.8.2.1}% 
 \contentsline {subsection}{\numberline {8.2.2}Index of Messages}{48}{subsection.8.2.2}% 

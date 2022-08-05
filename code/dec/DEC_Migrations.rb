@@ -43,6 +43,7 @@ class CreateReceivedFiles < ActiveRecord::Migration[6.0]
          t.column :interface_id,        :integer
          t.column :reception_date,      :datetime
          t.column :protocol,            :string,  :limit => 64
+         t.column :md5,                 :string,  :limit => 32
       end
    end
 

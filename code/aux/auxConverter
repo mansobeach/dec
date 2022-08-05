@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 #
 # == Usage
-# auxConverter -f <full_path_file> -d <dir>
+# auxConverter -m S3 -f <full_path_file> -d <dir>
+#     --mission <id>    mission identifier
 #     --version         shows the version number
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
@@ -24,6 +25,10 @@
 require 'rubygems'
 require 'getoptlong'
 
+require 'cuc/Log4rLoggerFactory'
+
+require 'dec/DEC_Environment'
+
 require 'aux/AUX_Environment'
 require 'aux/AUX_Handler'
 
@@ -32,16 +37,19 @@ require 'aux/AUX_Handler'
 def main
 
    include AUX
+   include DEC
 
    @bUsage           = false
    @isDebugMode      = false
    @bShowVersion     = false
    @full_path_file   = ""
    @targetDir        = ""
+   @mission          = ""
       
    opts = GetoptLong.new(
      ["--file", "-f",               GetoptLong::REQUIRED_ARGUMENT],
      ["--dir", "-d",                GetoptLong::REQUIRED_ARGUMENT],
+     ["--mission", "-m",            GetoptLong::REQUIRED_ARGUMENT],
      ["--Debug", "-D",              GetoptLong::NO_ARGUMENT],
      ["--version", "-v",            GetoptLong::NO_ARGUMENT],
      ["--help", "-h",               GetoptLong::NO_ARGUMENT]
@@ -53,6 +61,7 @@ def main
             when "--file"              then @full_path_file = arg.to_s
             when "--dir"               then @targetDir      = arg.to_s
             when "--Debug"             then @isDebugMode    = true
+            when "--mission"           then @mission        = arg.to_s
             when "--version"           then @bShowVersion   = true
 			   when "--help"              then @bUsage         = true
          end
@@ -76,17 +85,55 @@ def main
       exit(0)
    end
    
-   if @full_path_file == "" then
+   if @mission == "" then
       usage
-      exit(99)
+      exit(66)
    end
 
-   handler = AUX_Handler.new(@full_path_file, "S3", @targetDir, @isDebugMode)
+   if @full_path_file == "" then
+      usage
+      exit(66)
+   end
+
+   ## ----------------------------------
+
+   self.load_config
    
-   newName = handler.convert
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(66)
+   end   
+
+   ## ----------------------------------
+   ## initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("auxc", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    
-   puts File.basename(newName)
-   
+   @logger = loggerFactory.getLogger   
+   if @logger == nil then
+      puts
+		puts "Error in #{File.basename(__FILE__)}"
+     	puts "Could not initialize logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+ 	   puts
+   	exit(99)
+   end
+   ## ----------------------------------
+
+   if File.exist?(@full_path_file) == false then
+      @logger.error("[AUX_600] cannot access to #{@full_path_file}")
+      exit(99)
+   end
+   ## ----------------------------------
+
+   begin
+      handler = AUX_Handler.new(@full_path_file, @mission, @targetDir, @logger, @isDebugMode)   
+      newName = handler.convert
+   rescue Exception => e
+      @logger.error("[AUX_666] SW Problem #{e.to_s}")
+      exit(99)
+   end
    exit(0)
 
 end

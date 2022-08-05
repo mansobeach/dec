@@ -41,6 +41,7 @@ require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
 require 'cuc/CommandLauncher'
 require 'cuc/EE_ReadFileName'
+require 'cuc/Wrapper_md5sum'
 require 'ctc/ListWriterUnknown'
 require 'ctc/ListWriterDelivery'
 require 'ctc/FTPClientCommands'
@@ -1389,7 +1390,7 @@ private
          return downloadFileLocal(filename)
       end      
       # ------------------------------------------
-      if @protocol == "WEBDAV" or @protocol == "HTTP" then
+      if @protocol == "WEBDAV" then
          downloadFile_WebDAV(filename)
          
          if @isNoInTray == false then
@@ -1400,6 +1401,37 @@ private
       end
       # ------------------------------------------
       
+      ## HTTP PROTOCOL HANDLER
+
+      if @protocol == "HTTP" then
+         retVal = @handler.downloadFile(filename)
+
+         if retVal == false then
+            @logger.error("[DEC_666] I/F #{@entity}: Could not download #{File.basename(filename)}")
+            return false
+         end
+
+         # File is made available at the interface inbox
+         md5 = CUC::WrapperMD5SUM.new(File.basename(filename)).md5
+
+         if hasBeenAlreadyReceived(File.basename(filename), md5) == true then
+            @logger.info("[DEC_111] I/F #{@entity}: #{File.basename(filename)} downloaded is duplicated / same md5")
+            return true
+         end
+
+         size = File.size("#{File.basename(filename)}")
+         copyFileToInBox(File.basename(filename), size)
+         @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
+
+         setReceivedFromEntity(File.basename(filename), size, md5)
+
+         if @isNoInTray == false then
+            disseminateFile(getFilenameFromFullPath(filename))
+         end
+         
+         return true
+
+      end
       
       # ------------------------------------------
       
@@ -2113,12 +2145,13 @@ private
    end
    ## -------------------------------------------------------------
    
-	## It invokes the method DCC_InventoryInfo::isFileReceived? 
-   def hasBeenAlreadyReceived(filename)
+	##  
+   def hasBeenAlreadyReceived(filename, md5 = nil)
       if @isDebugMode == true then
          @logger.debug("checking previous reception of #{filename} from #{@interface.name} => #{@interface.id}")
       end
       arrFiles = ReceivedFile.where(filename: filename)
+
       if arrFiles == nil then
          #@logger.info("not prev received #{filename}")
          @logger.debug("not prev received #{filename}")
@@ -2128,12 +2161,33 @@ private
      # 20170822 temporal fix / if received by any interface is OK since S2PDGS is the entry point
 
      arrFiles.to_a.each{|file|
-          
+
+         if @isDebugMode == true then
+            @logger.debug("#{filename} #{file.md5}")
+         end
+
          if file.interface_id == @interface.id then
-            if @isDebugMode == true then
-               @logger.debug("[DEC_914] I/F #{@entity}: #{filename} found in database / it was previously received ")
+            
+            if file.md5 != nil and file.md5 != "" and md5 == nil then
+               if @isDebugMode == true then
+                  @logger.debug("#{filename} with md5 #{file.md5} / download is required")
+               end
+               next
+            end 
+
+            if md5 != nil then
+               if file.md5 == md5 then
+                  if @isDebugMode == true then
+                     @logger.debug("[DEC_914] I/F #{@entity}: #{filename} found in database / same md5 was previously received ")
+                  end
+                  return true
+               end
+            else
+               if @isDebugMode == true then
+                  @logger.debug("[DEC_914] I/F #{@entity}: #{filename} found in database / it was previously received ")
+               end
+               return true
             end
-            return true
          end
       }
       return false
@@ -2143,32 +2197,6 @@ private
    
    #-------------------------------------------------------------
    
-	# It invokes the method DCC_InventoryInfo::isFileReceived? 
-   def hasBeenAlreadyReceived_NOT_WORKING(filename)
-      if @isDebugMode == true then
-         @logger.debug("checking previous reception of #{filename}")
-      end
-      arrFiles = ReceivedFile.where(filename: filename).to_a
-      
-      ## 20170917 PROBABLY RETURN IS NEVER NIL NOW !!! 
-            
-      if arrFiles == nil then
-         @logger.debug("never received #{filename} by anyone")
-         return false
-      end
-
-      return true
-      
-      arrFiles.each{|file|
-         if file.interface_id == @interface.id then
-            #@logger.info("hasBeenAlreadyReceived: #{filename}")
-            @logger.debug("hasBeenAlreadyReceived: #{filename}")
-            return true
-         end
-      }
-      @logger.info("#{filename} received for other interface than #{@interface.name} / #{@interface.id}")
-      return false
-   end
    #-------------------------------------------------------------
 
 	# It invokes the method DCC_InventoryInfo::isFileChecked? 
@@ -2187,7 +2215,7 @@ private
    end
    #-------------------------------------------------------------
 
-   def setReceivedFromEntity(filename, size = nil)
+   def setReceivedFromEntity(filename, size = nil, md5 = nil)
       if @isNoDB == true then
          return
       end
@@ -2202,13 +2230,16 @@ private
       # ------------------------------------------
             
       receivedFile                = ReceivedFile.new
-      
       receivedFile.filename       = filename
       receivedFile.size           = size
       receivedFile.interface      = @interface
       receivedFile.protocol       = @protocol
       receivedFile.reception_date = Time.now
-            
+      
+      if md5 != nil then
+         receivedFile.md5 = md5
+      end
+
       begin
          receivedFile.save!
       rescue Exception => e
@@ -2226,6 +2257,8 @@ private
 	# It copies the downloaded file into the Entity Local InBox
 	def copyFileToInBox(filename, size)
 	   
+      # -------------------------------
+      # If File retrieved is null size
       if size.to_i == 0 then
          cmd = %Q{\\rm -f \"#{@localDir}/#{filename}"}
 
@@ -2246,15 +2279,14 @@ private
          else
             @logger.error("Removing #{filename} empty with size 0 received from #{@entity}")
          end
-
          return
-      
       end
-      
+      # -------------------------------
+
       cmd = "mv -f #{@localDir}/#{filename} #{@finalDir}"
 
       if @isDebugMode == true then
-         @logger.debug("\nCopying #{filename} received from #{@entity} to #{@finalDir}")
+         @logger.debug("MOVING #{filename} received from #{@entity} to #{@finalDir}")
          @logger.debug(cmd)
       end
       

@@ -2,7 +2,7 @@
 
 #########################################################################
 ##
-## === Ruby source for #InterfaceHandlerHTTP class
+## === Ruby source for #InterfaceHandlerHTTP_CELES class
 ##
 ## === Written by DEIMOS Space S.L. (bolf)
 ##
@@ -35,7 +35,7 @@ require 'fileutils'
 module DEC
 
 
-class InterfaceHandlerHTTP < InterfaceHandlerAbstract
+class InterfaceHandlerHTTP_CELES < InterfaceHandlerAbstract
 
    include CTC::WrapperCURL
 
@@ -336,10 +336,6 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
    ## download file using HTTP protocol verb GET 
    ##
    def downloadFile(url)
-      if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerHTTP::downloadFile => #{url}")
-      end
-
       filename = File.basename(url)
 
       if filename.include?("?") == true then
@@ -375,27 +371,59 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
       if http.response_code == 302 then
          return getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
+      else
+         puts ret
+         puts http.body_str
+         puts http.response_code
+         return ret
       end
-
-      if http.response_code == 200 then
-         if @isDebugMode == true then
-            @logger.debug("Generating file #{Dir.pwd}/#{filename}")
-         end
-         aFile = File.new(filename, "wb")
-         # aFile.write(http.body)
-         aFile.write(http.body_str)
-         aFile.flush
-         aFile.close
-         return true
-      end
-
       
-      puts ret
-      puts http.body_str
-      puts http.response_code
   
-      raise "Problems come to me"
-          
+      return true
+
+
+
+      ## https://github.com/taf2/curb
+
+      ## REDIRECT
+      ## https://ruby-doc.org/stdlib-2.4.2/libdoc/net/http/rdoc/Net/HTTP.html
+
+
+#      uri = URI.parse(url)
+#      http = Net::HTTP.get_response(uri)
+
+      ## TO DO : replace in memory file with 
+      ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
+
+      # @logger.debug(http.code)
+
+      # puts url
+      # filename = getFilenameFromFullPath(url)
+      
+      
+      
+      aFile = File.new(filename, "wb")
+      # aFile.write(http.body)
+      aFile.write(http.body_str)
+      aFile.flush
+      aFile.close
+ 
+      size = File.size("#{File.basename(filename)}")
+         
+      @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
+		
+      # File is made available at the interface inbox	
+      copyFileToInBox(File.basename(filename), size)
+			         
+		# Update DEC Inventory
+	   setReceivedFromEntity(File.basename(filename), size)
+	
+      # if deleteFlag is enable delete it from remote directory
+      ret = deleteFromEntity(url)
+
+      return true
+      
+      
    end
       
    ## -------------------------------------------------------------
@@ -409,8 +437,6 @@ private
    def httpGetAPI(url)
       return true
    end
-   ## -------------------------------------------------------------
-
 
 
 end # class

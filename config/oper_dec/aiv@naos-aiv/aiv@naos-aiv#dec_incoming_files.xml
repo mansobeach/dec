@@ -20,8 +20,38 @@
             <LogUnknown>false</LogUnknown>
          </Switches>
       </Interface>
+
+      <Interface>
+         <Name>NASA_CDDIS</Name>
+         <LocalInbox>/tmp/dec/ext/nasa_cddis</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
+            <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
       
-      
+      <Interface>
+         <Name>CELESTRAK</Name>
+         <LocalInbox>/tmp/dec/ext/celestrak</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">SpaceData/SW-Last5Years.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
    </ListInterfaces>
 
    <!-- =========================================================== -->
@@ -44,6 +74,27 @@
       </File>
    -->
 
+      <File Type="finals2000A.data">
+         <Description>AUX_NBULA_</Description>
+         <FromList>
+            <Interface>NASA_CDDIS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="tai-utc.dat">
+         <Description>AUX_NBULC_</Description>
+         <FromList>
+            <Interface>NASA_CDDIS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*Last5Years*">
+         <Description>AUX_SFS___</Description>
+         <FromList>
+            <Interface>CELESTRAK</Interface>
+         </FromList>
+      </File>   
+
 
    </DownloadRules>
 
@@ -57,7 +108,12 @@
             <Name>MCS_DATA</Name>
             <Directory>/tmp/naos/mcs/tm</Directory>
          </Intray>
-                
+         
+         <Intray>
+            <Name>NAOS_IN</Name>
+            <Directory>/tmp/dec/int/tmp/</Directory>
+         </Intray>         
+
       </ListIntrays>
 
       <!-- =============================================== -->
@@ -76,6 +132,26 @@
             </ToList>
          </File>
 
+         <File Type="finals2000A.data">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>   
+   
+         <File Type="tai-utc.dat">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*Last5Years*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>           
 
       </ListFilesDisseminated>
    </DisseminationRules>

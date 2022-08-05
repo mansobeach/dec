@@ -2,13 +2,13 @@
 
 #########################################################################
 #
-# === Ruby source for #AUX_Parser_IGS_Broadcast_Ephemeris class
+# === Ruby source for #AUX_Handler_Generic class
 #
 # === Written by DEIMOS Space S.L. (bolf)
 #
 # === Data Exchange Component
 # 
-# Git: $Id: AUX_Parser_Generic.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+# Git: $Id: AUX_Handler_Generic $
 #
 # Module AUX management
 # 
@@ -32,14 +32,16 @@ class AUX_Handler_Generic
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, dir, isDebug = false)
-   
-      # puts "AUX_Handler_Generic::initialize"   
-   
+   def initialize(full_path, dir, logger = nil, isDebug = false)
+      @logger = logger
+      
       if isDebug == true then
          setDebugMode
       end
 
+      # This needs to become a configuration item
+      @fileClass           = "OPER"
+      @fileVersion         = "0001"
       @full_path           = full_path
       @targetDir           = dir
       @filename            = File.basename(full_path)
@@ -58,27 +60,39 @@ class AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+      @logger.debug("AUX_Handler_Generic debug mode is on")
    end
    ## -------------------------------------------------------------
    
    ## rename the file
    def rename(newName)
+      if @isDebugMode == true then
+         @logger.debug("AUX_Handler_Generic::rename(#{newName})")
+      end
+      
       prevDir = Dir.pwd
       Dir.chdir(@workingDir)
       
       if File.exist?(newName) == true then
+         if @isDebugMode == true then
+            @logger.debug("Deleting a previously existing file #{newName}")
+         end
          FileUtils.rm(newName)
       end
       
       if @targetDir != "" and @targetDir != nil then
          @full_path_new = "#{@targetDir}/#{newName}"
          FileUtils.move(@filename, @full_path_new, force:true)
-         
       else
          FileUtils.move(@filename, newName, force:true)
          @full_path_new = "#{@workingDir}/#{newName}"
       end
       
+      if @isDebugMode == true then
+         @logger.debug("#{@full_path_new} generated")
+      end
+      @logger.info("[AUX_001] #{newName} generated from #{@filename}")
+
       Dir.chdir(prevDir)
       
       @filename_new  = newName
@@ -94,8 +108,6 @@ private
    
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
-      
-      # puts "AUX_Handler_Generic::checkModuleIntegrity"  
       
       if @targetDir != "" and @targetDir != nil then
          checkDirectory(@targetDir)

@@ -45,10 +45,8 @@ class FileDeliverer2InTrays
       @@isModuleChecked    = false
       @isDebugMode         = debugMode
       checkModuleIntegrity
-	   @entConfig           = ReadInterfaceConfig.instance
-		@dimConfig           = ReadConfigIncoming.instance
-      @entity              = "not initialised"
-                  
+      
+      # -------------------------------
       # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("pull", "#{@@configDirectory}/dec_log_config.xml")
       if @isDebugMode then
@@ -64,6 +62,14 @@ class FileDeliverer2InTrays
 			puts
 			exit(99)
       end
+      # -------------------------------
+      @entConfig           = ReadInterfaceConfig.instance
+      ReadConfigIncoming.logger = @logger
+		@dimConfig           = ReadConfigIncoming.instance
+      if @isDebugMode == true then
+         @dimConfig.setDebugMode
+      end
+      @entity              = "not initialised"
 
       # Not used by this class at the time being
       # @satPrefix = DEC::ReadConfigDEC.instance.getSatPrefix

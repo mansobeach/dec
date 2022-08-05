@@ -21,9 +21,11 @@ module Converters
 
    ## -----------------------------------------------------------
    
-   ## String formats supported: 
-   ## - 20120325                     => "%Y%m%d"
-   ## - 20120325T154814              => "%Y%m%dT%H%M%S"                        => XL_ASCII_CCSDSA_COMPACT
+   ## String formats supported:
+   ## - 22 731                       => "%y%m%d" / Length 6
+   ## - 20120325                     => "%Y%m%d" / Length 8
+   ## - 2017 JAN  1                  => "%Y %b %d" / Length 11
+   ## - 20120325T154814              => "%Y%m%dT%H%M%S" / Length 17            => XL_ASCII_CCSDSA_COMPACT
    ## - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
    ## - 21-MAY-2015 14:00:01.516     => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
    ## - 01-FEB-2016 02:20:40.59      => "%e-%b-%Y %H:%M:%S.%L"  / length 23
@@ -32,7 +34,6 @@ module Converters
    ## - 2015-11-16T00:30:27          => "%Y-%m-%dT%H:%M:%S"
    ## - 2020-05-15T00:00:00.000Z     => "%Y-%m-%dT%H:%M:%S"     / length 24
    ## - 2020-05-15T00:00:00.000      => "%Y-%m-%dT%H:%M:%S"     / length 23
-   
    
    def str2date(str)
    
@@ -87,15 +88,26 @@ module Converters
          puts
          exit(99)
       end
-       
+     
+      if str.length == 11 then
+         return DateTime.strptime(str,"%Y %b %d")
+      end
+      
       if str.length == 8 then
          return DateTime.strptime(str,"%Y%m%d")
       end
      
       if str.length == 6 then
-         return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i)
+         return DateTime.strptime(str,"%y%m%d")
       end
 
+      ## ---------------------------------------- 
+      ## This is going to cause problems
+      if str.length == 6 then
+         return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i)
+      end
+      ## ---------------------------------------- 
+      
       puts
       puts "FATAL ERROR in CUC::Converters str2date(#{str}) / length #{str.length}"
       puts
@@ -179,7 +191,7 @@ module Converters
       end
       
       puts
-      puts "FATAL ERROR in CUC::Converters str2strexceldate(#{str} / length #{str.length}  )"
+      puts "FATAL ERROR in CUC::Converters str2strexceldate( #{str} / length #{str.length}  )"
       puts
       puts
       exit(99)

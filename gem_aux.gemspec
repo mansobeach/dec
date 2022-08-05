@@ -1,6 +1,9 @@
+require_relative 'code/aux/AUX_Environment'
+include AUX
+
 Gem::Specification.new do |s|
   s.name        = 'aux'
-  s.version     = '0.0.3'
+  s.version     = "#{AUX.class_variable_get(:@@version)}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/AUX component"
   s.description = "Auxiliary Data Gathering"
@@ -11,8 +14,8 @@ Gem::Specification.new do |s|
   
   s.files       = Dir['code/aux/*.rb'] + \
                   Dir['code/cuc/DirUtils.rb'] + \
-                  Dir['code/cuc/Converters.rb']
-
+                  Dir['code/cuc/Converters.rb'] + \
+                  Dir['config/dec_log_config.xml']
 
   s.require_paths = ['code', 'code/aux']
 
@@ -28,6 +31,7 @@ Gem::Specification.new do |s|
   
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
   
+  # s.add_dependency('dec', '> 1.0.30')
 
   ## ----------------------------------------------
   

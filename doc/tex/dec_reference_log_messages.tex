@@ -34,6 +34,7 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_100]} I/F "interface": Pull iteration completed for such interface
 	\item \textbf{[DEC\_105]} I/F "interface": "filename" is available
 	\item \textbf{[DEC\_110]} I/F "interface": Downloaded "filename" with size "num\_bytes" bytes
+    \item \textbf{[DEC\_111]} I/F "interface": Downloaded "filename" with same md5 / duplication
 	\item \textbf{[DEC\_115]} Disseminated "filename" into "directory" Intray
 	\item \textbf{[DEC\_116]} Compressed "filename" in "method" at "directory" Intray
 	\item \textbf{[DEC\_120]} I/F "interface": Deleting unknown file "filename" available
@@ -113,6 +114,10 @@ The file referenced in the message met any of the filtering rules defined in the
 \label{DEC110}
 \subsection{[DEC\_110] File Downloaded}
 The file referenced in the message has been downloaded from the interface and placed into the \hyperref[LocalInbox]{\textit{LocalInbox}} associated to such interface. If the same file is available again at the same interface, the DEC will detect a file duplication condition.
+
+\label{DEC111}
+\subsection{[DEC\_111] File Downloaded with same MD5}
+The downloaded file from the interface referenced in the message has the same md5 with respect to the previous retrieval and it is handled as a file duplication condition.
 
 \label{DEC115}
 \subsection{[DEC\_115] File Disseminated}

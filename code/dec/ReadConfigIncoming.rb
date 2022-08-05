@@ -31,13 +31,14 @@ class ReadConfigIncoming
    include CUC::DirUtils
    
    ## -----------------------------------------------------------
-  
+   @@logger = nil
+   def self.logger= fn
+      @@logger = fn
+   end
+   ## -----------------------------------------------------------
+
    # Class constructor
-   def initialize(isDebugMode = false)
-      @@isModuleOK        = false
-      @@isModuleChecked   = false
-      @isDebugMode        = isDebugMode
-      @@handlerXmlFile    = nil      
+   def initialize
       checkModuleIntegrity
 		defineStructs
       loadData
@@ -47,7 +48,11 @@ class ReadConfigIncoming
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      puts "ReadConfigIncoming debug mode is on"
+      if @@logger != nil then
+         @@logger.debug("ReadConfigIncoming debug mode is on")
+      else
+         puts "ReadConfigIncoming debug mode is on"
+      end
    end
    ## -----------------------------------------------------------
 
@@ -294,7 +299,11 @@ class ReadConfigIncoming
       arrDims = getInTrays4Filetype(filetype)
       if arrDims == false then
 		   if @isDebugMode == true then
-			   puts "No target In-Tray(s) for #{filetype} filetype in dec_incoming_files.xml" 
+            if @@logger != nil then
+               @@logger.debug("No target In-Tray(s) for #{filetype} filetype in dec_incoming_files.xml")
+            else
+			      puts "No target In-Tray(s) for #{filetype} filetype in dec_incoming_files.xml" 
+            end
 			end
          return arrDirs
       end
@@ -321,7 +330,11 @@ class ReadConfigIncoming
       arrDims = getDIMs4Filename(filename)
       if arrDims == false then
 		   if @isDebugMode == true then
-			   puts "No target In-Tray(s) for #{filename} filename in dec_incoming_files.xml" 
+            if @@logger != nil then
+               @@logger.debug("No target In-Tray(s) for #{filename} filename in dec_incoming_files.xml")
+            else
+			      puts "No target In-Tray(s) for #{filename} filename in dec_incoming_files.xml" 
+            end
 			end
          return arrDirs
       end
@@ -520,8 +533,6 @@ class ReadConfigIncoming
 
 private
 
-   @@isModuleOK        = false
-   @@isModuleChecked   = false
    @isDebugMode        = false
    
    @@arrOutgoingFiles  = nil

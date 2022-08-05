@@ -1,0 +1,183 @@
+#!/usr/bin/env ruby -W0
+
+#########################################################################
+###
+### === Ruby source for #DEC_TestCases NASA CDDIS class
+###
+### === Written by DEIMOS Space S.L.
+###
+### === Data Exchange Component
+### 
+### module DEC
+###
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+require 'date'
+
+require 'cuc/Log4rLoggerFactory'
+require 'cuc/DirUtils'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+
+# The following configurations support this test interface:
+# > rake -f build_dec.rake dec:install   / unit-tests
+# > rake -f build_dec.rake dec:install[aiv,naos-aiv,naos_test] / NAOS AIV
+
+class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   #self.test_order = :defined
+      
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do
+      @my_argv = ARGV.dup
+      puts
+      puts "======================================"
+      puts "DEC NASA CDDIS Interface Test Cases #{self.class.name.split('::').last}"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+      @@conf = DEC_Environment.new
+
+      @@conf.wrapper_load_config
+
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
+         puts
+		   puts "Error in #{File.basename(__FILE__)}"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
+      end
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
+
+      @@logger.info("NASA Crustal Dynamics Data Information System (NASA_CDDIS)")
+      
+   end
+   
+   ## ------------------------------------------------------
+
+   Test::Unit.at_exit do
+      @@logger.info("End of DEC tests #{File.basename(__FILE__)}")
+   end
+
+   ## ------------------------------------------------------
+
+   def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+      
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+
+      cmd = "mkdir -p /tmp/dec/int/"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+      
+      cmd = "decConfigInterface2DB -a NASA_CDDIS"
+      @@logger.debug(cmd)
+      ret = system(cmd)      
+   end
+
+   ## -----------------------------------------------------------
+
+   def teardown      
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+   ## -----------------------------------------------------------
+   def testBULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decGetFromInterface -m NASA_CDDIS -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_CDDIS")
+
+      cmd = "decGetFromInterface -m NASA_CDDIS"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_CDDIS")
+  
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      # different files can be received with the same filename
+      cmd = "decGetFromInterface -m NASA_CDDIS"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_CDDIS")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/tmp/DEC*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
+ 
+end
+
+## ===================================================================
+
+
+
+

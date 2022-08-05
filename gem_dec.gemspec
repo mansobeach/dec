@@ -13,12 +13,12 @@
 #########################################################################
 
 require_relative 'code/dec/DEC_Environment'
-
 include DEC
 
 Gem::Specification.new do |s|
   s.name        = 'dec'
   s.version     = "#{DEC.class_variable_get(:@@version)}"
+  # s.version     = "1.0.34m"
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -89,13 +89,18 @@ Gem::Specification.new do |s|
    ##
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_TEST") == true then
+      
+      puts
       puts "Adding unit tests"
+      puts
+
       s.executables   << 'decTestInterface_CelesTrak'
       s.executables   << 'decTestInterface_CloudFerro'
       s.executables   << 'decTestInterface_ECDC'
       s.executables   << 'decTestInterface_IERS'
       s.executables   << 'decTestInterface_ILRS'
       s.executables   << 'decTestInterface_GNSS'
+      s.executables   << 'decTestInterface_NASA_CDDIS'
       s.executables   << 'decTestInterface_NATS_CCS5'
       s.executables   << 'decTestInterface_NOAA'
       s.executables   << 'decTestInterface_SCIHUB'

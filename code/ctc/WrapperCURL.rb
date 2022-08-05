@@ -380,6 +380,39 @@ module WrapperCURL
    end
    ## -------------------------------------------------------------
 
+   # Redirect host needs to become part of the function signature
+   # It should have been obtained as part of the 302 reply
+   def getFileWithRedirection(url, \
+                              filename, \
+                              user, \
+                              password, \
+                              logger, \
+                              isDebugMode = false \
+                              )
+      str      = "machine urs.earthdata.nasa.gov login #{user} password #{password}"
+      tmpNetRC = "/tmp/.netrc_#{rand}"
+
+      aFile    = File.new(tmpNetRC, "w")
+      aFile.write(str)
+      aFile.flush
+      aFile.close
+      
+      # puts
+      # puts Dir.pwd
+      # puts
+
+      cmd = "curl --silent -b ~/.cookies -c ~/.cookies -L --netrc-file #{tmpNetRC} #{url} > #{filename}"
+      if isDebugMode == true then
+         @logger.debug(cmd)
+      end
+      ret = system(cmd)
+
+      File.delete(tmpNetRC)
+
+      return ret
+   end
+   ## -------------------------------------------------------------
+
    ## Implementation for curl for versions older than 7.21.2 
 
    def getDirtyFile_obsoleteCurl(url, filename, isDebugMode = false)

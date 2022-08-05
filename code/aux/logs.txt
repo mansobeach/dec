@@ -1,0 +1,5 @@
+INFO:
+AUX_001 $newfile converted from $previousfile
+
+ERROR:
+AUX_600 $previousfile cannot be reached

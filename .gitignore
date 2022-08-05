@@ -2,7 +2,6 @@
 **/gem
 *.gem
 gem
-code/aux/examples/
 code/mpl/include/bckp
 code/mpl/lib/MACIN64
 cots/

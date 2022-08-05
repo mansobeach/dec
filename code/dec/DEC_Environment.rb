@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.34l"
+   @@version = "1.0.35c"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.35" =>    "Management of duplications with MD5 for HTTP protocol", \
       "1.0.34" =>    "NATS protocol support for NAOS MCS CCS5", \
       "1.0.33" =>    "Update to use ruby 3.x series as interpreter\n\
           User & Pass configuration items now can be kept encrypted",
@@ -293,13 +294,13 @@ module DEC
    
       bCheck = true
       
-#      # --------------------------------
-#      # DEC_CONFIG can be defined by the customer to override 
-#      # the configuration shipped with the gem
-#      if !ENV['DEC_CONFIG'] then
-#         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-#      end
-#      # --------------------------------
+      # --------------------------------
+      # DEC_CONFIG can be defined by the customer to override 
+      # the configuration shipped with the gem
+      if !ENV['DEC_CONFIG'] then
+         ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
       
       if !ENV['DEC_TMP'] then
          bCheck = false

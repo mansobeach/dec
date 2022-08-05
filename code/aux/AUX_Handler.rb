@@ -17,9 +17,12 @@
 
 require 'cuc/Converters'
 
+require 'aux/AUX_Handler_Celestrak_SFS'
 require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
+require 'aux/AUX_Handler_NASA_CDDIS_BULA'
+require 'aux/AUX_Handler_NASA_CDDIS_BULC'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
 module AUX
@@ -32,12 +35,13 @@ class AUX_Handler
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, target = "S3", targetDir = "", isDebug = false)
+   def initialize(full_path, target = "S3", targetDir = "", logger = nil, isDebug = false)
       @full_path  = full_path
       @filename   = File.basename(full_path)
       @path       = File.dirname(full_path)
       @targetDir  = targetDir
-      @target     = "S3"
+      @target     = target
+      @logger     = logger
       @handler    = nil
 
       if isDebug == true then
@@ -56,6 +60,7 @@ class AUX_Handler
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+      @logger.debug("AUX_Handler debug mode is on")
    end
    ## -------------------------------------------------------------
    
@@ -86,7 +91,22 @@ private
    def loadHandler
       
       filename = File.basename(@full_path)
-            
+
+      if File.fnmatch(AUX_Pattern_Celestrak_SFS, filename) == true then
+         @handler = AUX_Handler_Celestrak_SFS.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end      
+
+      if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULA, filename) == true then
+         @handler = AUX_Handler_NASA_CDDIS_BULA.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULC, filename) == true then
+         @handler = AUX_Handler_NASA_CDDIS_BULC.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
       if File.fnmatch(AUX_Pattern_IERS_Leap_Second, filename.downcase) == true then
          @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target, @targetDir)
          return

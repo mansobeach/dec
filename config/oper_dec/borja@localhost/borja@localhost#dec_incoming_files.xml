@@ -67,6 +67,21 @@
       </Interface>  
 
       <Interface>
+         <Name>CELESTRAK</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_celes</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">SpaceData/SW-Last5Years.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
+      <Interface>
          <Name>WEBDAV</Name>
          <LocalInbox>/tmp/dec/in_basket_if_webdav</LocalInbox>
          <DownloadDirs>
@@ -353,7 +368,24 @@
             <LogUnknown>true</LogUnknown>
          </Switches>
       </Interface>
-       
+
+      
+      <Interface>
+         <Name>NASA_CDDIS</Name>
+         <LocalInbox>/tmp/dec/ext/nasa_cddis</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
+            <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
+
       
    </ListInterfaces>
 
@@ -408,6 +440,28 @@
             <Interface>LOCALHOST_SECURE</Interface>
          </FromList>
       </File>
+
+      <File Type="*Last5Years*">
+         <Description>AUX_SFS___</Description>
+         <FromList>
+            <Interface>CELESTRAK</Interface>
+         </FromList>
+      </File>
+
+      <File Type="finals2000A.data">
+         <Description>AUX_NBULA_</Description>
+         <FromList>
+            <Interface>NASA_CDDIS</Interface>
+         </FromList>
+      </File>
+   
+      <File Type="tai-utc.dat">
+         <Description>AUX_NBULC_</Description>
+         <FromList>
+            <Interface>NASA_CDDIS</Interface>
+         </FromList>
+      </File>
+
 
       <File Type="*tai-utc*">
          <Description>TAI UTC correlation</Description>
@@ -594,9 +648,13 @@ WWWW/igsWWWWD.clk.Z
       <ListIntrays>
 
          <Intray>
+            <Name>NAOS_IN</Name>
+            <Directory>/tmp/dec/int/tmp/</Directory>
+         </Intray>
+
+         <Intray>
             <Name>DIAS</Name>
             <Directory>/tmp/dec_final_dissemination/DIAS/</Directory>
-            
          </Intray>
 
 
@@ -715,6 +773,28 @@ WWWW/igsWWWWD.clk.Z
             Only the first rule matching the file pattern is applied     
       -->
 
+         <File Type="finals2000A.data">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>   
+
+         <File Type="tai-utc.dat">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>  
+
+         <File Type="*Last5Years*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>  
+
+
          <File Type="S2?_*OPENHUB*.csv">
             <HardLink>false</HardLink>
             <ToList>
@@ -788,20 +868,6 @@ WWWW/igsWWWWD.clk.Z
                <Intray>DEC_REPORTS</Intray>
             </ToList>
          </File>
-
-         <File Type="finals2000A.daily">
-            <HardLink>false</HardLink>
-            <ToList>
-               <Intray>S3_IN</Intray>
-            </ToList>
-         </File>   
- 
-         <File Type="Leap_Second*">
-            <HardLink>false</HardLink>
-            <ToList>
-               <Intray>S3_IN</Intray>
-            </ToList>
-         </File>   
 
          <File Type="brdc0???.??n.Z">
             <HardLink>false</HardLink>
