@@ -91,13 +91,13 @@ class AUXTestCase < Test::Unit::TestCase
    def setup
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
       checkDirectory(@@testDir)
-      #FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
+      #FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
 
      
-      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
-      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
-      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
-      # FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
+      # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
+      # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
+      # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
+      # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
 
       
    end
@@ -112,8 +112,8 @@ class AUXTestCase < Test::Unit::TestCase
    def test_NAOS_NASA_BULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
-      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data #{@@testDir}")
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data",     @@testDir)
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data",     @@testDir)
 
       cmd = "rm -f /tmp/aux_out2/NS1*"
       @@logger.debug(cmd)
@@ -136,8 +136,8 @@ class AUXTestCase < Test::Unit::TestCase
    def test_NAOS_NASA_BULC
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
-      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat #{@@testDir}")
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat",     @@testDir)
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat",     @@testDir)
 
       cmd = "rm -f /tmp/aux_out2/NS1*"
       @@logger.debug(cmd)
@@ -160,8 +160,8 @@ class AUXTestCase < Test::Unit::TestCase
    def test_NAOS_CELESTRAK_SFS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
-      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt #{@@testDir}")
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt",     @@testDir)
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/SW-Last5Years.txt",     @@testDir)
 
       cmd = "rm -f /tmp/aux_out2/NS1*"
       @@logger.debug(cmd)
@@ -185,8 +185,8 @@ class AUXTestCase < Test::Unit::TestCase
    def test_NAOS_NASA_SFL
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
-      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt #{@@testDir}")
-      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt",     @@testDir)
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt",     @@testDir)
 
       cmd = "rm -f /tmp/aux_out2/NS1*"
       @@logger.debug(cmd)
