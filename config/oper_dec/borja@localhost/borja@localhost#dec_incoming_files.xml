@@ -386,8 +386,32 @@
          </Switches>         
       </Interface>
 
+      <Interface>
+         <Name>NASA</Name>
+         <LocalInbox>/tmp/dec/ext/nasa_msfc</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
       
    </ListInterfaces>
+<!-- 
+
+https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
+
+   Time.now.to_date << 1
+
+   <Directory DepthSearch="0">sites/default/files/atoms/files/#{}f10_prd.txt</Directory>
+
+-->
+
 
    <!-- =========================================================== -->
 
@@ -445,6 +469,13 @@
          <Description>AUX_SFS___</Description>
          <FromList>
             <Interface>CELESTRAK</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*f10_prd.txt">
+         <Description>AUX_SFL___</Description>
+         <FromList>
+            <Interface>NASA</Interface>
          </FromList>
       </File>
 
@@ -794,6 +825,12 @@ WWWW/igsWWWWD.clk.Z
             </ToList>
          </File>  
 
+         <File Type="*f10_prd.txt">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>  
 
          <File Type="S2?_*OPENHUB*.csv">
             <HardLink>false</HardLink>

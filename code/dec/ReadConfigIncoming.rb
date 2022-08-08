@@ -16,6 +16,7 @@
 ###
 #########################################################################
 
+require 'date'
 require 'singleton'
 require 'rexml/document'
 
@@ -671,6 +672,7 @@ private
              |directory|
              depth = directory.attributes["DepthSearch"].to_i
              dir   = expandPathValue(directory.text)
+             dir   = generatePathValue(dir)
              arrDownloadDirs << Struct::DownloadDir.new(if_name, dir, depth)
          }
          

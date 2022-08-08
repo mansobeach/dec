@@ -48,6 +48,7 @@ class AUX_Handler_NASA_CDDIS_BULA < AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+      @logger.debug("AUX_Handler_NASA_CDDIS_BULA debug mode is on")
    end
    ## -------------------------------------------------------------
    
@@ -76,7 +77,6 @@ private
       @mission    = "NS1"
       @fileType   = "AUX_NBULA_"
       @extension  = "TXT"
-      parse
    end
    ## -----------------------------------------------------------
 
@@ -91,6 +91,9 @@ private
    ## -------------------------------------------------------------
 
    def parse
+      if @isDebugMode == true then
+         @logger.debug("AUX_Handler_NASA_CDDIS_BULA::parse")
+      end
       bFirstPrediction = false
       File.readlines(@full_path).each do |line|
 

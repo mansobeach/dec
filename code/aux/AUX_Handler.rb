@@ -23,6 +23,7 @@ require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NASA_CDDIS_BULA'
 require 'aux/AUX_Handler_NASA_CDDIS_BULC'
+require 'aux/AUX_Handler_NASA_MSFC_ForecastSolarFlux'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
 module AUX
@@ -91,6 +92,11 @@ private
    def loadHandler
       
       filename = File.basename(@full_path)
+
+      if File.fnmatch(AUX_Pattern_NASA_MSFC_ForecastSolarFlux, filename) == true then
+         @handler = AUX_Handler_NASA_MSFC_ForecastSolarFlux.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
 
       if File.fnmatch(AUX_Pattern_Celestrak_SFS, filename) == true then
          @handler = AUX_Handler_Celestrak_SFS.new(@full_path, @target, @targetDir, @logger, @isDebugMode)

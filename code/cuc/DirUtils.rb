@@ -159,6 +159,21 @@ module DirUtils
 	end
 	## -------------------------------------------------------------
 
+   ## Expand environment variable values in a path expresion
+   ## - str (IN): string with a path that might contain some code
+   def generatePathValue(str)
+      if str.include?("\#{") == true then
+         idxStart = str.index("\#{")
+         idxStop  = str.index("}")
+         vble = str.split("\#{")[1]
+         vble = vble.split("}")[0]
+         return "#{str.slice(0,idxStart)}#{eval(vble)}#{str.slice(idxStop+1,str.length)}"
+      else
+         return str
+      end
+   end
+   ## -------------------------------------------------------------
+
 end # module
 
 end # module

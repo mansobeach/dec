@@ -377,6 +377,10 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          return getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
       end
 
+      if http.response_code == 301 then
+         return getURLFile(url, filename, false, nil, nil, @logger, @isDebugMode)
+      end
+
       if http.response_code == 200 then
          if @isDebugMode == true then
             @logger.debug("Generating file #{Dir.pwd}/#{filename}")

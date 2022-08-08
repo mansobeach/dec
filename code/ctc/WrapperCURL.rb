@@ -129,6 +129,47 @@ module WrapperCURL
    end
    
    ## -------------------------------------------------------------
+
+   def getURLFile(url, filename, verifySSL = false, user = nil, pass = nil, logger, isDebugMode)
+      cmd = ""
+      
+      if verifySSL == false then
+         cmd = "curl -s -k -L"
+      else
+         cmd = "curl -s -L"
+      end
+      
+      if user != nil and user != "" then
+         cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} #{url}"
+      else
+         cmd = "#{cmd.dup} #{url}"
+      end      
+
+      if isDebugMode == true then
+         logger.debug(cmd)
+      end
+      
+      output = `#{cmd}`
+      
+      if $? != 0 then
+         if isDebugMode == true then
+            puts
+            puts "Failed execution of #{cmd} ! :-("
+            puts "Exit code #{$?}"
+            puts output
+            puts 
+         end
+         return false
+      end
+
+      aFile = File.new(filename, "wb")
+      aFile.write(output)
+      aFile.flush
+      aFile.close
+
+      return true
+   end
+   ## -------------------------------------------------------------
    
    ## Remove file with DELETE
    

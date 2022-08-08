@@ -140,6 +140,43 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
    end
 
+
+   ## -----------------------------------------------------------
+
+   def testNASA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decConfigInterface2DB -a NASA"
+      @@logger.debug(cmd)
+      ret = system(cmd)    
+
+      cmd = "decGetFromInterface -m NASA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA")
+
+      cmd = "decGetFromInterface -m NASA"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA")
+  
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      # different files can be received with the same filename
+      cmd = "decGetFromInterface -m NASA"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/tmp/DEC*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
    ## -----------------------------------------------------------
    def testBULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")

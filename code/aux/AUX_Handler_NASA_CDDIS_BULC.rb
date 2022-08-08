@@ -50,6 +50,7 @@ class AUX_Handler_NASA_CDDIS_BULC < AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
+      @logger.debug("AUX_Handler_NASA_CDDIS_BULC debug mode is on")
    end
    ## -------------------------------------------------------------
    
@@ -78,7 +79,6 @@ private
       @mission    = "NS1"
       @fileType   = "AUX_NBULC_"
       @extension  = "TXT"
-      parse
    end
    ## -----------------------------------------------------------
 
@@ -93,6 +93,9 @@ private
    ## -------------------------------------------------------------
 
    def parse
+      if @isDebugMode == true then
+         @logger.debug("AUX_Handler_NASA_CDDIS_BULC::parse")
+      end
       File.readlines(@full_path).each do |line|
          strDate           = line.slice(1,11)
          dateStart         = str2date(strDate)

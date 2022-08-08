@@ -2,29 +2,30 @@
 
 #########################################################################
 ###
-### === Ruby source for #AUX_Handler_Celestrak_SFS class
+### === Ruby source for #AUX_Handler_NASA_MSFC_ForecastSolarFlux class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: AUX_Handler_Celestrak_SFS.rb,v 
+### Git: $Id: AUX_Handler_NASA_MSFC_ForecastSolarFlux.rb Exp $
 ###
 ### Module AUX management
 ### 
 ###
 #########################################################################
 
-### Celestrak Space Weather SFS
-### https://celestrak.org/SpaceData/SW-Last5Years.txt
+### NASA Earth Science Forecast Solar Flux
+### https://www.nasa.gov/msfcsolar
+### https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
 require 'aux/AUX_Handler_Generic'
 
 module AUX
 
-AUX_Pattern_Celestrak_SFS = "SW-Last5Years.txt"
+AUX_Pattern_NASA_MSFC_ForecastSolarFlux = "*f10_prd.txt"
 
-class AUX_Handler_Celestrak_SFS < AUX_Handler_Generic
+class AUX_Handler_NASA_MSFC_ForecastSolarFlux < AUX_Handler_Generic
    
    ## -------------------------------------------------------------
       
@@ -35,8 +36,10 @@ class AUX_Handler_Celestrak_SFS < AUX_Handler_Generic
       
       super(full_path, dir, logger, isDebug)
       
-      # This needs to become a configuration item
-      
+#      if isDebug == true then
+#         setDebugMode
+#      end
+
       case @target.upcase
          when "NAOS" then convert_NAOS
          when "S3"   then convert_S3
@@ -50,11 +53,10 @@ class AUX_Handler_Celestrak_SFS < AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      @logger.debug("AUX_Handler_Celestrak_SFS debug mode is on")
+      @logger.debug("AUX_Handler_NASA_MSFC_ForecastSolarFlux debug mode is on")
    end
    ## -------------------------------------------------------------
    
-   # NS1_TEST_AUX_NBULC__20220707T000000_21000101T000000_0001.EOF
    def rename
       @newName          = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
       super(@newName)
@@ -77,7 +79,7 @@ private
    
    def convert_NAOS
       @mission    = "NS1"
-      @fileType   = "AUX_SFS___"
+      @fileType   = "AUX_SFL___"
       @extension  = "TXT"
    end
    ## -----------------------------------------------------------
@@ -94,33 +96,31 @@ private
 
    def parse
       if @isDebugMode == true then
-         @logger.debug("AUX_Handler_Celestrak_SFS::parse")
+         @logger.debug("AUX_Handler_NASA_MSFC_ForecastSolarFlux::parse")
       end
-      bStart         = false
-      strStartDate   = ""
-      strStopDate    = ""
+      bFirst      = true
+      dateStart   = nil
+      dateStop    = nil
       File.readlines(@full_path).each do |line|
-         if line.include?("BEGIN DAILY_PREDICTED") == true then
-            # @logger.debug("start daily predicition")
-            bStart = true
+         if line.slice(0,2) != ' 2' then
             next
          end
+         
+         strYear  = line.slice(1,4)
+         strMonth = line.slice(13,3)
 
-         if bStart == true then
-            strStartDate = line.slice(0,10)
-            # @logger.debug(strStartDate)
-            bStart = false
+         if bFirst == true then
+            dateStart   = str2date("#{strYear}#{strMonth}")
+            dateStop    = dateStart
+            bFirst      = false
+            next
          end
-
-         if line.include?("END DAILY_PREDICTED") == true then
-            # @logger.debug("end daily predicition")
-            # @logger.debug(strStopDate)
-            break
-         end
-         strStopDate = line.slice(0,10)
+         dateStop  = str2date("#{strYear}#{strMonth}")
       end
-      @strValidityStart = %Q{#{strStartDate.gsub(" ", "")}T000000}
-      @strValidityStop  = %Q{#{strStopDate.gsub(" ", "")}T000000}
+
+      @strValidityStart = "#{dateStart.year}#{dateStart.month.to_s.rjust(2, "0")}01T000000"
+      @strValidityStop  = "#{dateStop.year}#{dateStop.month.to_s.rjust(2, "0")}01T000000"
+
    end
    ## -------------------------------------------------------------
       

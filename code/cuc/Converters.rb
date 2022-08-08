@@ -22,8 +22,9 @@ module Converters
    ## -----------------------------------------------------------
    
    ## String formats supported:
-   ## - 22 731                       => "%y%m%d" / Length 6
-   ## - 20120325                     => "%Y%m%d" / Length 8
+   ## - 22 731                       => "%y%m%d"   / Length 6
+   ## - 2017JAN                      => "%Y%b"     / Length 7
+   ## - 20120325                     => "%Y%m%d"   / Length 8
    ## - 2017 JAN  1                  => "%Y %b %d" / Length 11
    ## - 20120325T154814              => "%Y%m%dT%H%M%S" / Length 17            => XL_ASCII_CCSDSA_COMPACT
    ## - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
@@ -97,6 +98,10 @@ module Converters
          return DateTime.strptime(str,"%Y%m%d")
       end
      
+      if str.length == 7 then
+         return DateTime.strptime(str,"%Y%b")
+      end
+
       if str.length == 6 then
          return DateTime.strptime(str,"%y%m%d")
       end

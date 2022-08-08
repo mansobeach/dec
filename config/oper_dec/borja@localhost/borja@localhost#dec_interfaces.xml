@@ -985,6 +985,60 @@
 
 <!-- ================================================================ -->
 
+<Interface Name="NASA">
+  <Desc>NASA MSFC</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>nasa.gov</Hostname>
+    <Port>443</Port>
+    <User></User>
+    <Pass></Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+      <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+
+       
+       <!--
+       <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+        <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+       <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+       -->
+  
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
 
   <!-- ================================================================ -->
 

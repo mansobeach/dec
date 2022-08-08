@@ -804,6 +804,9 @@ class DECTestCase < Test::Unit::TestCase
       puts ftReadConf.isVerifyPeerSSL?("WEBDAV")
 
       inConfig       = ReadConfigIncoming.instance
+
+      puts inConfig.getDownloadDirs("NASA")
+
       puts inConfig.getEntitiesSendingIncomingFileName("brdc0770.20n.Z")
 
       puts inConfig.getInTrayCompress("S3_IN")

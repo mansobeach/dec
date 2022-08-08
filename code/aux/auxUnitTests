@@ -180,6 +180,31 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   ## --------------------------------------------------------
+
+   def test_NAOS_NASA_SFL
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp /Users/borja/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt #{@@testDir}")
+      FileUtils.cp("/Users/borja/Projects/dec/code/aux/examples/nasa_msfc/jul2022f10_prd.txt",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_sfs = "#{@@testDir}/jul2022f10_prd.txt"
+      cmd      = "auxConverter -m NAOS -f #{file_sfs} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA Marshall Solar Cycle Forecast to NAOS mission AUX SFL")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_SFL___*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
+   end
+   ## --------------------------------------------------------
+
 =begin
    def test_auxConverter
       puts
