@@ -117,7 +117,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_SBOA'
       s.executables   << 'decUnitTests_SFTP'
       s.executables   << 'decUnitTests_WebDAV'
-      s.executables   << 'decUnitTests_WebDAV_Secure'
+      s.executables   << 'decUnitTests_WebDAV_SECURE'
       s.executables   << 'decUnitTests_mail'
 
       if ENV.include?("DEC_ODATA") == true then

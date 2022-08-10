@@ -123,8 +123,8 @@ def main
             when "--outgoing" then @bOutgoing         = true
             when "--entities" then @bEntities         = true
             when "--log"      then @bLog              = true
-	         when "--mail"     then @bMail             = true
-	         when "--general"  then @bGeneral          = true
+	    when "--mail"     then @bMail             = true
+	    when "--general"  then @bGeneral          = true
             when "--all"      then @bAll              = true
             when "--usage"    then @bShowUsage        = true
          end
@@ -161,7 +161,7 @@ def main
    
    # ------------------------
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("checker", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("chck", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end

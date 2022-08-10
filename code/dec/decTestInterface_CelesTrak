@@ -140,6 +140,10 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
       @@logger.debug(cmd)
       ret = system(cmd)
       
+      cmd = "decValidateConfig -a"
+      @@logger.debug(cmd)
+      ret = system(cmd)      
+      
       cmd = "decConfigInterface2DB -a CELES_D1"
       @@logger.debug(cmd)
       ret = system(cmd)
@@ -164,6 +168,10 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
    ## -----------------------------------------------------------
    def testSFS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e CELESTRAK"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELETRAK")
    
       cmd = "decGetFromInterface -m CELESTRAK -l"
       @@logger.info(cmd)

@@ -148,7 +148,11 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
 
       cmd = "decConfigInterface2DB -a NASA"
       @@logger.debug(cmd)
-      ret = system(cmd)    
+      ret = system(cmd)
+      
+      cmd = "decCheckConfig -e NASA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA MSFC")  
 
       cmd = "decGetFromInterface -m NASA -l"
       @@logger.info(cmd)
@@ -178,8 +182,12 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## -----------------------------------------------------------
-   def testBULA
+   def testBULAC
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_CDDIS"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_CDDIS")
 
       cmd = "decGetFromInterface -m NASA_CDDIS -l"
       @@logger.info(cmd)
