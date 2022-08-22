@@ -782,7 +782,7 @@
     <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
   <Server>
-    <Protocol>HTTP_SPCS</Protocol>
+    <Protocol>HTTP</Protocol>
     <Hostname>celestrak.org</Hostname>
    <Port>443</Port>
     <User></User>
@@ -1221,13 +1221,13 @@
       <PollingInterval unit="s">20</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>1</ParallelDownload>
-    </TXRXParams>    
+    </TXRXParams>
     <Server>
       <Protocol>HTTP_SPCS</Protocol>
       <Hostname>https://www.space-track.org</Hostname>
       <Port>443</Port>      
-      <User encrypted='true' >otIeMraXEBUkxlJnW5PpjDDM0+/mvC81XGcTX4g=</User>
-      <Pass encrypted='true' >sNgeKr7VEBV6019DEZrvjzi1</Pass>
+      <User encrypted='true' >Ym9yamEubG9wZXpAZGVpbW9zLXNwYWNlLmNvbQo=</User>
+      <Pass encrypted='true' >cGVycmlsbG8ucHdkLmxvbmcK</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
       <SecureFlag>true</SecureFlag>

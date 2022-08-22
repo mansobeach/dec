@@ -342,10 +342,6 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
       filename = File.basename(url)
 
-      if filename.include?("?") == true then
-         return httpGetAPI(url)
-      end
-
       if @isDebugMode == true then
          @logger.debug("InterfaceHandlerHTTP::downloadFile => #{url} url treated as a file / #{filename}")
       end
@@ -407,13 +403,6 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
 private
 
-   ## -------------------------------------------------------------
-   ##
-   ## -------------------------------------------------------------
-   def httpGetAPI(url)
-      return true
-   end
-   ## -------------------------------------------------------------
 
 
 
