@@ -25,6 +25,9 @@ require 'dec/ReadConfigDEC'
 
 # The following configurations support this test interface:
 # > rake -f build_dec.rake dec:install   / unit-tests
+# > rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos_test]
+
+# This one below needs update
 # > rake -f build_dec.rake dec:install[aiv,naos-aiv,naos_test] / NAOS AIV
 
 class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
@@ -42,7 +45,7 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @my_argv = ARGV.dup
       puts
       puts "======================================"
-      puts "DEC NASA CDDIS Interface Test Cases #{self.class.name.split('::').last}"
+      puts "DEC NASA Interface Test Cases #{self.class.name.split('::').last}"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -95,7 +98,7 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       ## ----------------------------------
       @@conf.wrapper_unset_config
 
-      @@logger.info("NASA Crustal Dynamics Data Information System (NASA_CDDIS)")
+      @@logger.info("NASA interface tests")
       
    end
    
@@ -114,8 +117,9 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       reportDir   = decConfig.getReportDir
 
       system("\\rm -rf #{reportDir}")
-      system("\\rm -rf /tmp/dec*")
+      # system("\\rm -rf /tmp/dec*")
       system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /data/mocExternalInterfaces/log/DEC*.log")
 
       cmd = "mkdir -p /tmp/dec/int/"
       @@logger.debug(cmd)
@@ -129,9 +133,6 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @@logger.debug(cmd)
       ret = system(cmd)
       
-      cmd = "decConfigInterface2DB -a NASA_CDDIS"
-      @@logger.debug(cmd)
-      ret = system(cmd)      
    end
 
    ## -----------------------------------------------------------
@@ -143,74 +144,80 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
-   def testNASA
+   def testSFL
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decConfigInterface2DB -a NASA"
+      cmd = "decConfigInterface2DB -a NASA_SFL"
       @@logger.debug(cmd)
       ret = system(cmd)
       
-      cmd = "decCheckConfig -e NASA"
+      cmd = "decCheckConfig -e NASA_SFL"
       @@logger.info(cmd)
       assert(system(cmd), "list from NASA MSFC")  
 
-      cmd = "decGetFromInterface -m NASA -l"
+      cmd = "decGetFromInterface -m NASA_SFL -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA")
+      assert(system(cmd), "list from NASA_SFL")
 
-      cmd = "decGetFromInterface -m NASA"
+      cmd = "decGetFromInterface -m NASA_SFL"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA")
+      assert(system(cmd), "pull from NASA_SFL")
   
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       # different files can be received with the same filename
-      cmd = "decGetFromInterface -m NASA"
+      cmd = "decGetFromInterface -m NASA_SFL"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA")
+      assert(system(cmd), "pull from NASA_SFL")
 
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## -----------------------------------------------------------
-   def testBULAC
+   def testNBULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e NASA_CDDIS"
-      @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_CDDIS")
+      cmd = "decConfigInterface2DB -a NASA_NBULA"
+      @@logger.debug(cmd)
+      ret = system(cmd)
 
-      cmd = "decGetFromInterface -m NASA_CDDIS -l"
+      cmd = "decCheckConfig -e NASA_NBULA"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_CDDIS")
+      assert(system(cmd), "list from NASA_NBULA")
 
-      cmd = "decGetFromInterface -m NASA_CDDIS"
+      cmd = "decGetFromInterface -m NASA_NBULA -l"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_CDDIS")
+      assert(system(cmd), "list from NASA_NBULA")
+
+      cmd = "decGetFromInterface -m NASA_NBULA"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULA")
   
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       # different files can be received with the same filename
-      cmd = "decGetFromInterface -m NASA_CDDIS"
+      cmd = "decGetFromInterface -m NASA_NBULA"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_CDDIS")
+      assert(system(cmd), "pull from NASA_NBULA")
 
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
@@ -218,7 +225,48 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
    end
    ## -----------------------------------------------------------
 
- 
+   def testNBULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decConfigInterface2DB -a NASA_NBULC"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decCheckConfig -e NASA_NBULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULC")
+
+      cmd = "decGetFromInterface -m NASA_NBULC -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULC")
+
+      cmd = "decGetFromInterface -m NASA_NBULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULC")
+  
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      # different files can be received with the same filename
+      cmd = "decGetFromInterface -m NASA_NBULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULC")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
+
 end
 
 ## ===================================================================

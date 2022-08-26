@@ -819,8 +819,8 @@
 
  <!-- ================================================================ -->
 
- <Interface Name="CELESTRAK">
-  <Desc>Celestrak</Desc>
+ <Interface Name="CELESTRAK_SFS">
+  <Desc>Celestrak Spaceweather Forecast Short term</Desc>
   <TXRXParams>
     <Enabled4Sending>false</Enabled4Sending>
     <Enabled4Receiving>true</Enabled4Receiving>
@@ -867,6 +867,107 @@
 </Interface>
 
    <!-- ================================================================ -->
+
+   <Interface Name="CELESTRAK_TLE">
+    <Desc>Celestrak TLE</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>celestrak.org</Hostname>
+     <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+      <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+  
+     <!-- ================================================================ -->
+
+     <Interface Name="CELESTRAK_TCA">
+      <Desc>Celestrak TCA</Desc>
+      <TXRXParams>
+        <Enabled4Sending>false</Enabled4Sending>
+        <Enabled4Receiving>true</Enabled4Receiving>
+        <ImmediateRetries>3</ImmediateRetries>
+        <LoopRetries>2</LoopRetries>
+        <LoopDelay unit="s">300</LoopDelay>
+        <PollingInterval unit="s">20</PollingInterval>
+        <PollingSize>470</PollingSize>
+        <ParallelDownload>3</ParallelDownload>
+      </TXRXParams>    
+      <Server>
+        <Protocol>HTTP</Protocol>
+        <Hostname>celestrak.org</Hostname>
+       <Port>443</Port>
+        <User></User>
+        <Pass></Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>true</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>false</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+      </Server>
+      <DeliverByMailTo>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+      </DeliverByMailTo>
+      <Notify>
+        <SendNotification>false</SendNotification>
+        <To>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+        </To>
+      </Notify>
+      <Events>
+        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+        <!--
+        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /tmp/dec/int/" />
+        -->
+      </Events>
+      <ContactInfo>
+        <Name>Mr Brosnan</Name>
+        <EMail>daniel.brosnan@deimos-space.com</EMail>
+        <Tel>0039-800 454 432</Tel>
+        <Fax>0039-800 454 433</Fax>
+        <Address>Citta Uova</Address>
+      </ContactInfo>
+    </Interface>
+    
+  <!-- ================================================================ -->
 
   <Interface Name="LEAP">
     <Desc>IERS Mirror hpiers.obspm.fr</Desc>
@@ -927,65 +1028,129 @@
 
    <!-- ================================================================ -->
 
-   <Interface Name="NASA_CDDIS">
-    <Desc>NASA Crustal Dynamics Data Information System (CDDIS)</Desc>
-    <TXRXParams>
-      <Enabled4Sending>false</Enabled4Sending>
-      <Enabled4Receiving>true</Enabled4Receiving>
-      <ImmediateRetries>3</ImmediateRetries>
-      <LoopRetries>2</LoopRetries>
-      <LoopDelay unit="s">300</LoopDelay>
-      <PollingInterval unit="s">20</PollingInterval>
-      <PollingSize>470</PollingSize>
-      <ParallelDownload>3</ParallelDownload>
-    </TXRXParams>    
-    <Server>
-      <Protocol>HTTP</Protocol>
-      <Hostname>cddis.nasa.gov</Hostname>
-	    <Port>443</Port>
-      <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
-      <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
-      <RegisterContentFlag>false</RegisterContentFlag>
-      <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>true</SecureFlag>
-      <VerifyPeerSSL>false</VerifyPeerSSL>
-      <CompressFlag>false</CompressFlag>
-      <PassiveFlag>false</PassiveFlag>
-      <CleanUpFreq Unit="s">5</CleanUpFreq>
-    </Server>
-    <DeliverByMailTo>
-       <Address>daniel.brosnan@deimos-space.com</Address>
-    </DeliverByMailTo>
-    <Notify>
-      <SendNotification>false</SendNotification>
-      <To>
-       <Address>daniel.brosnan@deimos-space.com</Address>
-      </To>
-    </Notify>
-    <Events>
-        
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+    <!-- ================================================================ -->
 
-         
-         <!--
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
-          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
-         -->
-    
-    </Events>
-    <ContactInfo>
-      <Name>Mr Brosnan</Name>
-      <EMail>daniel.brosnan@deimos-space.com</EMail>
-      <Tel>0039-800 454 432</Tel>
-      <Fax>0039-800 454 433</Fax>
-      <Address>Ronda de Poniente</Address>
-    </ContactInfo>
-  </Interface>
+    <Interface Name="NASA_NBULA">
+      <Desc>NASA Crustal Dynamics Data Information System (CDDIS)</Desc>
+      <TXRXParams>
+        <Enabled4Sending>false</Enabled4Sending>
+        <Enabled4Receiving>true</Enabled4Receiving>
+        <ImmediateRetries>3</ImmediateRetries>
+        <LoopRetries>2</LoopRetries>
+        <LoopDelay unit="s">300</LoopDelay>
+        <PollingInterval unit="s">20</PollingInterval>
+        <PollingSize>470</PollingSize>
+        <ParallelDownload>3</ParallelDownload>
+      </TXRXParams>    
+      <Server>
+        <Protocol>HTTP</Protocol>
+        <Hostname>cddis.nasa.gov</Hostname>
+        <Port>443</Port>
+        <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
+        <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>true</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>false</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+      </Server>
+      <DeliverByMailTo>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+      </DeliverByMailTo>
+      <Notify>
+        <SendNotification>false</SendNotification>
+        <To>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+        </To>
+      </Notify>
+      <Events>
+          
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+  
+           
+           <!--
+           <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+            <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+           <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+           -->
+      
+      </Events>
+      <ContactInfo>
+        <Name>Mr Brosnan</Name>
+        <EMail>daniel.brosnan@deimos-space.com</EMail>
+        <Tel>0039-800 454 432</Tel>
+        <Fax>0039-800 454 433</Fax>
+        <Address>Ronda de Poniente</Address>
+      </ContactInfo>
+    </Interface>
+  
+  
+  <!-- ================================================================ -->
+  
+    <Interface Name="NASA_NBULC">
+      <Desc>NASA Crustal Dynamics Data Information System (CDDIS)</Desc>
+      <TXRXParams>
+        <Enabled4Sending>false</Enabled4Sending>
+        <Enabled4Receiving>true</Enabled4Receiving>
+        <ImmediateRetries>3</ImmediateRetries>
+        <LoopRetries>2</LoopRetries>
+        <LoopDelay unit="s">300</LoopDelay>
+        <PollingInterval unit="s">20</PollingInterval>
+        <PollingSize>470</PollingSize>
+        <ParallelDownload>3</ParallelDownload>
+      </TXRXParams>    
+      <Server>
+        <Protocol>HTTP</Protocol>
+        <Hostname>cddis.nasa.gov</Hostname>
+        <Port>443</Port>
+        <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
+        <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>true</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>false</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+      </Server>
+      <DeliverByMailTo>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+      </DeliverByMailTo>
+      <Notify>
+        <SendNotification>false</SendNotification>
+        <To>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+        </To>
+      </Notify>
+      <Events>
+          
+          <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /tmp/dec/int/" />
+  
+           
+           <!--
+           <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
+            <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
+           <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+           -->
+      
+      </Events>
+      <ContactInfo>
+        <Name>Mr Brosnan</Name>
+        <EMail>daniel.brosnan@deimos-space.com</EMail>
+        <Tel>0039-800 454 432</Tel>
+        <Fax>0039-800 454 433</Fax>
+        <Address>Ronda de Poniente</Address>
+      </ContactInfo>
+    </Interface>
+  
+  
+  <!-- ================================================================ -->
 
 <!-- ================================================================ -->
 
-<Interface Name="NASA">
+<Interface Name="NASA_SFL">
   <Desc>NASA MSFC</Desc>
   <TXRXParams>
     <Enabled4Sending>false</Enabled4Sending>

@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+      <Interface>
+         <Name>SPCS</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/basicspacedata/query/class/cdm_public</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>CELES_D1</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/d1</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=35681</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>      
+
+      <Interface>
+         <Name>CELES_D2</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/d2</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40013</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
+      <Interface>
+         <Name>CELESTRAK_SFS</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/sfs</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">SpaceData/SW-Last5Years.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
+      <Interface>
+         <Name>CELESTRAK_TLE</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/tle</LocalInbox>
+         <DownloadDirs>
+            <!-- Sentinel-2B -->
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=42063</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
+      <Interface>
+         <Name>CELESTRAK_TCA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/tca</LocalInbox>
+         <DownloadDirs>
+            <!-- Sentinel-2B -->
+            <Directory DepthSearch="0">NORAD/elements/gp.php?GROUP=active&#038;FORMAT=2le</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>  
+
+      <Interface>
+         <Name>NASA_NBULA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
+
+      <Interface>
+         <Name>NASA_NBULC</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>      
+
+      <Interface>
+         <Name>NASA_SFL</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/sfl</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
+      
+   </ListInterfaces>
+<!-- 
+
+https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
+
+   Time.now.to_date << 1
+
+   <Directory DepthSearch="0">sites/default/files/atoms/files/#{}f10_prd.txt</Directory>
+
+-->
+
+
+   <!-- =========================================================== -->
+
+   <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+      <File Type="*CATNR=?????">
+         <Description>AUX_TLE___</Description>
+         <FromList>
+            <Interface>CELESTRAK_TLE</Interface>
+            <Interface>CELES_D1</Interface>
+            <Interface>CELES_D2</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*GROUP=active*FORMAT=2le">
+         <Description>AUX_TCA___</Description>
+         <FromList>
+            <Interface>CELESTRAK_TCA</Interface>
+         </FromList>
+      </File>
+      
+      <File Type="*Last5Years*">
+         <Description>AUX_SFS___</Description>
+         <FromList>
+            <Interface>CELESTRAK_SFS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*f10_prd.txt">
+         <Description>AUX_SFL___</Description>
+         <FromList>
+            <Interface>NASA_SFL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="finals2000A.data">
+         <Description>AUX_NBULA_</Description>
+         <FromList>
+            <Interface>NASA_NBULA</Interface>
+         </FromList>
+      </File>
+   
+      <File Type="tai-utc.dat">
+         <Description>AUX_NBULC_</Description>
+         <FromList>
+            <Interface>NASA_NBULC</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*cdm*">
+         <Description>conjunction data message</Description>
+         <FromList>
+            <Interface>SPCS</Interface>
+         </FromList>
+      </File>
+
+
+<!--
+
+igswwwwd.sp3
+
+https://cddis.nasa.gov/Data_and_Derived_Products/GNSS/gnss_igsclk5.html
+
+WWWW/igsWWWWD.clk.Z
+
+> WWWW   GPS week
+> D      day of week (0-6, 7 indicates weekly)
+
+
+-->
+
+
+      <File Type="????????RSGA.txt">
+         <Description>Report Solar Geophysical Activity flux and Geomagnetic activity</Description>
+         <FromList>
+            <Interface>NOAA</Interface>
+         </FromList>
+      </File>
+         
+   </DownloadRules>
+
+   <!-- =========================================================== -->
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+
+         <Intray>
+            <Name>NAOS_IN</Name>
+            <Directory>/data/mocExternalInterfaces/tmp/naos/</Directory>
+         </Intray>
+
+         <Intray>
+            <Name>DEC_REPORTS_GRAVEYARD</Name>
+            <Directory>/tmp/dec_local_dissemination/DEC_Reports_Graveyard/</Directory>
+         </Intray>
+ 
+                
+      </ListIntrays>
+
+      <!-- =============================================== -->
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+
+         <File Type="finals2000A.data">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>   
+
+         <File Type="tai-utc.dat">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>  
+
+         <File Type="*Last5Years*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>
+         
+         <File Type="*GROUP=active*FORMAT=2le">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*CATNR=?????">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*f10_prd.txt">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>NAOS_IN</Intray>
+            </ToList>
+         </File>  
+
+         <File Type="S2?_*OPENHUB*.csv">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>DIAS</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*.tle">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>TLE</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*cdm*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>CDM</Intray>
+            </ToList>
+         </File>
+
+         <File Type="igs?????.*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>POD_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S3__GN_1_LSC_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S3__GN_1_NAV_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S3__GN_1_EOP_AX*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>FINAL_S3</Intray>
+               <Intray>ARCHIVE</Intray>
+            </ToList>
+         </File>
+
+
+         <File Type="*DECUNKNOWN*LOCALHOST_NOT_SECURE*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS_GRAVEYARD</Intray>
+            </ToList>
+         </File>
+
+         <File Type="*DEC_F_RECV*LOCALHOST_NOT_SECURE*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS_GRAVEYARD</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="*DEC_F_RECV*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>DEC_REPORTS</Intray>
+            </ToList>
+         </File>
+
+         <File Type="brdc0???.??n.Z">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="????????RSGA.txt">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="gpsrapid.*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+            </ToList>
+         </File>   
+   
+         <File Type="tai-utc.dat">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+               <Intray>S2A</Intray>
+            </ToList>
+         </File>
+
+         <File Type="tai-utc.7z">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+               <Intray>S2_7Z-X_1</Intray>
+               <Intray>S2_7Z-X_2</Intray>
+               <Intray>S2_7Z-X_3</Intray>
+            </ToList>
+         </File>
+
+         <File Type="finals.7z">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>GPS</Intray>
+               <Intray>S2_7Z-X_1</Intray>
+               <Intray>S2_7Z-X_2</Intray>
+               <Intray>S2_7Z-X_3</Intray>
+            </ToList>
+         </File>
+
+   
+         <File Type="finals.all">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>S2A</Intray>
+               <Intray>GPS</Intray>
+               <Intray>S2B</Intray>
+               <Intray>S2_7Z</Intray>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="S2A_*.*">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>S2A</Intray>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+
+         <File Type="S2B_*.*">
+            <HardLink>true</HardLink>
+            <ToList>
+               <Intray>S2B</Intray>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+   
+         <File Type="S2__*">
+            <HardLink>False</HardLink>
+            <ToList>
+               <Intray>S2ALL</Intray>
+            </ToList>
+         </File>
+
+
+      </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+</Config>

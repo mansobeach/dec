@@ -100,7 +100,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decTestInterface_IERS'
       s.executables   << 'decTestInterface_ILRS'
       s.executables   << 'decTestInterface_GNSS'
-      s.executables   << 'decTestInterface_NASA_CDDIS'
+      s.executables   << 'decTestInterface_NASA'
       s.executables   << 'decTestInterface_NATS_CCS5'
       s.executables   << 'decTestInterface_NOAA'
       s.executables   << 'decTestInterface_SCIHUB'

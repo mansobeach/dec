@@ -229,13 +229,12 @@ class FileDeliverer2InTrays
    
    ## It delivers a given file
    def deliverFile(entity, directory, afile)
-      @entity = entity
-      file = File.basename(afile)                        
+      @entity  = entity
+      file     = File.basename(afile)                        
                               
 #      @logger.info("deliverFile directory => #{directory}")
 #      @logger.info("deliverFile file => #{file}") 
-                              
-                                    
+                                                                 
       bByType  = false
       dimsDirs = @dimConfig.getTargetDirs4Filename(file)
       dimsName = @dimConfig.getDIMs4Filename(file)
@@ -274,7 +273,18 @@ class FileDeliverer2InTrays
  
  		   # ret = disseminate(entity, file, directory, dimsDirs, hdlinked)
 
+         # @logger.debug("BEFORE DISSEMINATE #{file}")
+
+         if file.include?("&") == true and file.include?("\"") == false then
+            file = %Q{\"#{file.dup}\"}
+            if @isDebugMode == true then
+               @logger.debug("filename is double quoted into #{file}")
+            end
+         end
+
          ret = disseminate(entity, file, directory, dimsName, hdlinked)
+
+         # @logger.debug("AFTER DISSEMINATE #{ret}")
 
 #         # ---------------------------------
 #         # 20170601 - Patch to compress locally disseminated files               
@@ -294,7 +304,17 @@ class FileDeliverer2InTrays
                if @isDebugMode == true then
                   @logger.debug("[DEC_951_1] I/F #{entity}: Removing #{directory}/#{file}")
                end
-               FileUtils.rm_f("#{directory}/#{file}")
+               cmd = "rm -f #{directory}/#{file}"
+               if @isDebugMode == true then
+                  @logger.debug(cmd)
+               end
+               ret = system(cmd)
+               # FileUtils.rm_f("#{directory}/#{file}")
+
+               if ret == false then
+                  @logger.error("FAILED #{cmd}")
+               end
+
                if @isDebugMode == true then
                   @logger.debug("File #{file} has been disseminated locally according to rules")
                end
@@ -372,6 +392,13 @@ private
 		bFirst         = true
       cmd            = ""
       
+      if file.include?("&") == true and file.include?("\"") == false then
+         file = %Q{\"#{file.dup}\"}
+         if @isDebugMode == true then
+            @logger.debug("file has been double quoted: #{file}")
+         end
+      end
+
 		Dir.chdir(fromDir)
       
       if @dimConfig.isCompressed?(arrToIntray) == true then
@@ -402,7 +429,8 @@ private
            
             ## -----------------------------------
             ## Place the file in the @tmpDir
-            
+
+=begin            
             cmd  = "\\ln -f #{file} #{@tmpDir}/#{file}"         
             bRet = execute(cmd, "pull")
 
@@ -417,7 +445,7 @@ private
             else
                @logger.error("[DEC_941.0] Failed #{cmd}")
             end
-            
+=end    
             ## -----------------------------------
             ## file is compressed at the @tmpDir directory
             if bCompressAny == true then
@@ -471,8 +499,13 @@ private
             end
             # --------------------------
 
-            cmd  = "\\ln -f #{file} #{targetDir}/#{file}"
-                       
+            # cmd  = "\\ln -f \"#{file}\" \"#{targetDir}/#{file}\""
+            cmd  = "\\ln -f #{file} #{targetDir}/#{file}"   
+            
+            if @isDebugMode == true then
+               @logger.debug(cmd)
+            end
+
             if @isDebugMode == true then
 	   		   @logger.debug("[DEC_942.0] Intray #{intray}: Disseminate command (I) : #{cmd}")
 		   	end
@@ -493,13 +526,25 @@ private
                   @logger.debug("chmod a=r #{targetDir}/#{file}")
                end
                
+               cmd = "chmod a=r #{targetDir}#{file}"
+               if @isDebugMode == true then
+                  @logger.debug(cmd)
+               end
+               ret = system(cmd)
+
+               if ret == false then
+                  @logger.error("FAILED #{cmd}")
+               end
+
+=begin
                begin
-                  FileUtils.chmod "a=r", "#{targetDir}/#{file}" #, :verbose => true
+                  FileUtils.chmod "a=r", "\"#{targetDir}/#{file}\"" #, :verbose => true
                rescue Exception => e
-                  @logger.error("Failed chmod a=r #{targetDir}/#{file}")
+                  @logger.error("Failed chmod a=r \"#{targetDir}#{file}\"")
                   @logger.error(e.to_s)
                end
-            
+=end
+               
                @logger.info("[DEC_115] Intray #{intray}: #{file} disseminated into #{targetDir}")
                                                          
                event  = EventManager.new
@@ -585,11 +630,11 @@ private
                               
          begin
             if @isDebugMode == true then
-               @logger.debug("chmod a=r #{targetDir}/#{targetFile}")
+               @logger.debug("chmod a=r \"#{targetDir}/#{targetFile}\"")
             end
-            FileUtils.chmod "a=r", "#{targetDir}/#{targetFile}" #, :verbose => true
+            FileUtils.chmod "a=r", "\"#{targetDir}/#{targetFile}\"" #, :verbose => true
          rescue Exception => e
-            @logger.error("Failed chmod a=r #{targetDir}/#{targetFile}")
+            @logger.error("Failed chmod a=r \"#{targetDir}/#{targetFile}\"")
             @logger.error(e.to_s)
          end
          

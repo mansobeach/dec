@@ -2283,7 +2283,7 @@ private
       end
       # -------------------------------
 
-      cmd = "mv -f #{@localDir}/#{filename} #{@finalDir}"
+      cmd = "mv -f \"#{@localDir}/#{filename}\" #{@finalDir}"
 
       if @isDebugMode == true then
          @logger.debug("MOVING #{filename} received from #{@entity} to #{@finalDir}")
@@ -2420,7 +2420,8 @@ private
    ## -----------------------------------------------------------
    
    ## It removes temp directory created with the files. 
-   def deleteTempDir      
+   def deleteTempDir
+      return
       Dir.chdir("..")
       cmd = %Q{\\rm -rf #{@localDir} }
       

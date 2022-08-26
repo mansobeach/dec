@@ -27,6 +27,8 @@ require 'dec/ReadConfigOutgoing'
 require 'dec/ReadConfigIncoming'
 
 
+# rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos_test]
+
 class DECTestCaseCelesTrak < Test::Unit::TestCase
 
    include CUC::DirUtils
@@ -129,8 +131,9 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
       reportDir   = decConfig.getReportDir
 
       system("\\rm -rf #{reportDir}")
-      system("\\rm -rf /tmp/dec*")
+      # system("\\rm -rf /tmp/dec*")
       system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /data/mocExternalInterfaces/log/DEC*.log")
 
       cmd = "decManageDB -d"
       @@logger.debug(cmd)
@@ -143,19 +146,7 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
       cmd = "decValidateConfig -a"
       @@logger.debug(cmd)
       ret = system(cmd)      
-      
-      cmd = "decConfigInterface2DB -a CELES_D1"
-      @@logger.debug(cmd)
-      ret = system(cmd)
-      
-      cmd = "decConfigInterface2DB -a CELES_D2"
-      @@logger.debug(cmd)
-      ret = system(cmd)         
-      
-      cmd = "decConfigInterface2DB -a CELESTRAK"
-      @@logger.debug(cmd)
-      ret = system(cmd)
-
+            
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -169,36 +160,43 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
    def testSFS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e CELESTRAK"
+      cmd = "decConfigInterface2DB -a CELESTRAK_SFS"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decCheckConfig -e CELESTRAK_SFS"
       @@logger.info(cmd)
-      assert(system(cmd), "list from CELETRAK")
+      assert(system(cmd), "list from CELETRAK_SFS")
    
-      cmd = "decGetFromInterface -m CELESTRAK -l"
+      cmd = "decGetFromInterface -m CELESTRAK_SFS -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from CELETRAK")
+      assert(system(cmd), "list from CELESTRAK_SFS")
    
-      cmd = "decGetFromInterface -m CELESTRAK"
+      cmd = "decGetFromInterface -m CELESTRAK_SFS"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from CELESTRAK")
+      assert(system(cmd), "pull from CELESTRAK_SFS")
      
       # New iteration should not drive to a new file
       # A duplication should be detected.
-      cmd = "decGetFromInterface -m CELESTRAK"
+      cmd = "decGetFromInterface -m CELESTRAK_SFS"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from CELESTRAK")
+      assert(system(cmd), "pull from CELESTRAK_SFS")
 
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
    
       arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
       @@logger.debug("Verification of log trace: SFS conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
       assert(system(cmd), "SFS conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
       @@logger.debug("Verification of log trace: Duplication of short-term weather forecast")
       cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
       assert(system(cmd), "SFS duplication traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
@@ -207,13 +205,130 @@ class DECTestCaseCelesTrak < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## -----------------------------------------------------------
+
+   def testTLE
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decConfigInterface2DB -a CELESTRAK_TLE"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decCheckConfig -e CELESTRAK_TLE"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TLE")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TLE -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TLE")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TLE"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TLE")
+     
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m CELESTRAK_TLE"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TLE")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: TLE conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of TLE")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+
    ## ------------------------------------------------------
 
+     ## -----------------------------------------------------------
+
+     def testTCA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "rm -f /tmp/dec/int/NS1_OPER_AUX_TCA____*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "rm -f /tmp/dec/in_basket_if_celes/tca/*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "decConfigInterface2DB -a CELESTRAK_TCA"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decCheckConfig -e CELESTRAK_TCA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TCA")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TCA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TCA")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TCA"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TCA")
+     
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m CELESTRAK_TCA"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TCA")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: TCA conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TCA conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of TCA")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TCA duplication traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      #@@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+
+   ## ------------------------------------------------------
 
    def test_pull
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} => START")
  
+      cmd = "decConfigInterface2DB -a CELES_D1"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+      
+      cmd = "decConfigInterface2DB -a CELES_D2"
+      @@logger.debug(cmd)
+      ret = system(cmd)         
+
       @entityConfig     = ReadInterfaceConfig.instance
       conf              = ReadConfigIncoming.instance
       

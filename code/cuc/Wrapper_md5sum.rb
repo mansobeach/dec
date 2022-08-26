@@ -32,7 +32,7 @@ class WrapperMD5SUM
       @fullpathfile        = fullpathfile
       @isDebugMode         = debugMode
       checkModuleIntegrity
-      @cmd                 = "md5sum #{@fullpathfile}"
+      @cmd                 = "md5sum \"#{@fullpathfile}\""
       @result              = `#{@cmd}`
       if @isDebugMode == true then
          puts @cmd

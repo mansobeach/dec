@@ -18,6 +18,8 @@
 require 'cuc/Converters'
 
 require 'aux/AUX_Handler_Celestrak_SFS'
+require 'aux/AUX_Handler_Celestrak_TCA'
+require 'aux/AUX_Handler_Celestrak_TLE'
 require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
@@ -101,7 +103,17 @@ private
       if File.fnmatch(AUX_Pattern_Celestrak_SFS, filename) == true then
          @handler = AUX_Handler_Celestrak_SFS.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
-      end      
+      end
+
+      if File.fnmatch(AUX_Pattern_Celestrak_TCA, filename) == true then
+         @handler = AUX_Handler_Celestrak_TCA.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end   
+
+      if File.fnmatch(AUX_Pattern_Celestrak_TLE, filename) == true then
+         @handler = AUX_Handler_Celestrak_TLE.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end   
 
       if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULA, filename) == true then
          @handler = AUX_Handler_NASA_CDDIS_BULA.new(@full_path, @target, @targetDir, @logger, @isDebugMode)

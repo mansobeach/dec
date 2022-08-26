@@ -67,23 +67,38 @@ class AUX_Handler_Generic
    ## rename the file
    def rename(newName)
       if @isDebugMode == true then
-         @logger.debug("AUX_Handler_Generic::rename(#{newName})")
+         @logger.debug("AUX_Handler_Generic::rename(#{@filename} / #{newName} -> #{@full_path_new})")
       end
       
       prevDir = Dir.pwd
       Dir.chdir(@workingDir)
       
-      if File.exist?(newName) == true then
-         if @isDebugMode == true then
-            @logger.debug("Deleting a previously existing file #{newName}")
-         end
-         FileUtils.rm(newName)
+      if @isDebugMode == true then
+         @logger.debug("current directory #{@workingDir}")
       end
-      
+    
       if @targetDir != "" and @targetDir != nil then
          @full_path_new = "#{@targetDir}/#{newName}"
+
+         if File.exist?(@full_path_new) == true then
+            if @isDebugMode == true then
+               @logger.debug("Deleting a previously existing file #{@full_path_new}")
+            end
+            FileUtils.rm(@full_path_new)
+         end
+
          FileUtils.move(@filename, @full_path_new, force:true)
       else
+         if File.exist?(newName) == true then
+            if @isDebugMode == true then
+               @logger.debug("Deleting a previously existing file #{newName}")
+            end
+            FileUtils.rm(newName)
+         end
+
+         if @isDebugMode == true then
+            @logger.debug(Dir.pwd)
+         end
          FileUtils.move(@filename, newName, force:true)
          @full_path_new = "#{@workingDir}/#{newName}"
       end

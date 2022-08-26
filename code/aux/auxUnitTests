@@ -34,8 +34,8 @@ require 'aux/AUX_Handler_IERS_EOP_Daily'
 # ruby auxUnitTests -n test_my_method 
 
 # > NAOS
-# test_NAOS_NASA_BULA
-# test_NAOS_NASA_BULC
+# test_NAOS_NASA_NBULA
+# test_NAOS_NASA_NBULC
 
 class AUXTestCase < Test::Unit::TestCase
 
@@ -109,7 +109,7 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
-   def test_NAOS_NASA_BULA
+   def test_NAOS_NASA_NBULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
       @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/finals2000A.data #{@@testDir}")
@@ -119,8 +119,8 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.debug(cmd)
       system(cmd)
 
-      file_nasa_bula = "#{@@testDir}/finals2000A.data"
-      cmd = "auxConverter -m NAOS -f #{file_nasa_bula} -d /tmp/aux_out2"
+      file_NASA_NBULA = "#{@@testDir}/finals2000A.data"
+      cmd = "auxConverter -m NAOS -f #{file_NASA_NBULA} -d /tmp/aux_out2"
       @@logger.info(cmd)
       assert(system(cmd), "convert NASA CDDIS BULA to NAOS mission")
 
@@ -133,7 +133,7 @@ class AUXTestCase < Test::Unit::TestCase
 
    ## --------------------------------------------------------
 
-   def test_NAOS_NASA_BULC
+   def test_NAOS_NASA_NBULC
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
       @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat #{@@testDir}")
@@ -143,8 +143,8 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.debug(cmd)
       system(cmd)
 
-      file_nasa_bulc = "#{@@testDir}/tai-utc.dat"
-      cmd = "auxConverter -m NAOS -f #{file_nasa_bulc} -d /tmp/aux_out2"
+      file_NASA_NBULC = "#{@@testDir}/tai-utc.dat"
+      cmd = "auxConverter -m NAOS -f #{file_NASA_NBULC} -d /tmp/aux_out2"
       @@logger.info(cmd)
       assert(system(cmd), "convert NASA CDDIS BULC to NAOS mission")
 
@@ -204,6 +204,61 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
    end
    ## --------------------------------------------------------
+
+   ## --------------------------------------------------------
+
+   def test_Celestrak_TLE
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+         
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=42063 #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=42063",     @@testDir)
+   
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+   
+      file_tle = "#{@@testDir}/gp.php?CATNR=42063"
+      cmd      = "auxConverter -m NAOS -f #{file_tle} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert Celestrak TLE to NAOS mission AUX_TLE___")
+   
+      arr = Dir["/tmp/aux_out2/NS1*AUX_TLE___*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
+   end
+   ## --------------------------------------------------------
+
+   ## --------------------------------------------------------
+
+   def test_Celestrak_TCA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "cp -f \"#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?GROUP=active&FORMAT=2le\" #{@@testDir}"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+        
+      file_tca = "\"#{@@testDir}/gp.php?GROUP=active&FORMAT=2le\""
+      cmd      = "auxConverter -m NAOS -f #{file_tca} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert Celestrak TCA to NAOS mission AUX_TCA___")
+   
+      arr = Dir["/tmp/aux_out2/NS1*AUX_TCA___*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      
+      @@logger.info("#{@@testDir}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
+   end
+   ## --------------------------------------------------------
+
 
 =begin
    def test_auxConverter

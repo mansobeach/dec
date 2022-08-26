@@ -23,12 +23,14 @@ module AUX
    
    include CUC::DirUtils
    
-   @@version = "0.0.5e"
+   @@version = "0.0.5h"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
       "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\
+         Celestrak TCA (TLE catalogue)  has been integrated\n\
+         Celestrak TLE (TLE prediction) has been integrated\n\
          NASA MSFC Solar Flux (F10.7) / Geomagnetic disturbance (Ap) has been integrated\n\
          NASA CDDIS Bulletin A / Earth Orientation Parameters has been integrated\n\
          NASA CDDIS Bulletin C / TAI-UTC has been integrated",

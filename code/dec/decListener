@@ -235,9 +235,9 @@ def main
       end
 		   
       # start server
-      @logger.info("[DEC_001] I/F #{@mnemonic}: Listener has been switched-on")
+      @logger.info("[DEC_006] I/F #{@mnemonic}: Listener has been switched-on")
       listener.run
-      # @logger.info("[DEC_001] I/F #{@mnemonic}: Listener has been switched-on")
+      # @logger.info("[DEC_006] I/F #{@mnemonic}: Listener has been switched-on")
    end
 end
 ## -------------------------------------------------------------
@@ -438,11 +438,11 @@ def checkListeners
        ret     = checker.isRunning
        if ret == false then
           if ftReadConf.isEnabled4Receiving?(x) == true then
-             @logger.info("[DEC_003] I/F #{x}: Listener is switched-off")
+             @logger.info("[DEC_007] I/F #{x}: Listener is switched-off")
              bAll = false
           end  
        else
-          @logger.info("[DEC_003] I/F #{x}: Listener is switched-on")
+          @logger.info("[DEC_007] I/F #{x}: Listener is switched-on")
           bNone = false
        end
    }
@@ -491,10 +491,10 @@ def launchListener(entity)
    end
 
    if @isDebugMode == true then
-      @logger.debug(cmd)
+      @logger.debug(command)
    end
    
-   @logger.info("[DEC_001] I/F #{entity}: Starting Listener")
+   @logger.info("[DEC_006] I/F #{entity}: Starting Listener")
    # ---------------------------------------------
    # Create a new process for each Entity
    pid = fork {

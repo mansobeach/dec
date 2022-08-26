@@ -3,9 +3,9 @@
 # == Usage
 # auxConverter -m S3 -f <full_path_file> -d <dir>
 #     --mission <id>    mission identifier
-#       POD    - Sentinel-3 Precise Orbit Determination
-#       S2 	   - Sentinel-2
-#       S3     - Sentinel-3
+#       POD    - Copernicus Sentinel-3 Precise Orbit Determination
+#       S2     - Copernicus Sentinel-2
+#       S3     - Copernicus Sentinel-3
 #       NAOS   - NAOS mission
 #     --version         shows the version number
 #     --Debug           shows Debug info during the execution

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MailParams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+  <SendMailParams>
+    <SMTPServer>smtp.gmail.com</SMTPServer>
+    <Port>587</Port>
+    <User>borja.esa@gmail.com</User>
+    <Pass>perrillo.pwd</Pass>
+    <isSecure>true</isSecure>
+  </SendMailParams>
+ 
+  <ReceiveMailParams>
+    <POPServer>pop3.deimos-space.com</POPServer>
+    <Port>110</Port>
+    <User>goce_dcc.deimos-space.com</User>
+    <Pass>1goce_dcc</Pass>
+    <isSecure>true</isSecure>
+  </ReceiveMailParams>  
+  
+</MailParams>
