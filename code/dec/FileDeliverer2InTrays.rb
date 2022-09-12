@@ -265,6 +265,13 @@ class FileDeliverer2InTrays
 			   @logger.debug("#{file} is disseminated in: #{dimsDirs}")
 		   end
          
+         dimsDirs.each{|dir|
+            if @isDebugMode == true then
+               @logger.debug("checkDirectory => #{dir}")
+            end
+            checkDirectory(dir)
+         }
+
 #         disseminate(file, directory, dimsDirs, hdlinked)
 #         File.delete("#{directory}/#{file}")
  
@@ -275,11 +282,17 @@ class FileDeliverer2InTrays
 
          # @logger.debug("BEFORE DISSEMINATE #{file}")
 
+
          if file.include?("&") == true and file.include?("\"") == false then
             file = %Q{\"#{file.dup}\"}
             if @isDebugMode == true then
                @logger.debug("filename is double quoted into #{file}")
             end
+         end
+
+
+         if @isDebugMode == true then
+            @logger.debug("disseminate(#{file})")
          end
 
          ret = disseminate(entity, file, directory, dimsName, hdlinked)
@@ -391,13 +404,15 @@ private
       file           = File.basename(afile)
 		bFirst         = true
       cmd            = ""
-      
+   
+=begin
       if file.include?("&") == true and file.include?("\"") == false then
          file = %Q{\"#{file.dup}\"}
          if @isDebugMode == true then
             @logger.debug("file has been double quoted: #{file}")
          end
       end
+=end
 
 		Dir.chdir(fromDir)
       
@@ -430,8 +445,19 @@ private
             ## -----------------------------------
             ## Place the file in the @tmpDir
 
-=begin            
-            cmd  = "\\ln -f #{file} #{@tmpDir}/#{file}"         
+=begin
+            if file.include?("?") == true then
+               cmd  = "\\ln -f \"#{file}\" \"#{@tmpDir}/#{file}\""
+            else
+               cmd  = "\\ln -f #{file} #{@tmpDir}/#{file}"         
+            end
+=end
+            cmd  = "\\ln -f #{file} #{@tmpDir}/#{file}"
+
+            if @isDebugMode == true then
+               @logger.debug
+            end
+
             bRet = execute(cmd, "pull")
 
             if @isDebugMode == true then
@@ -445,7 +471,7 @@ private
             else
                @logger.error("[DEC_941.0] Failed #{cmd}")
             end
-=end    
+    
             ## -----------------------------------
             ## file is compressed at the @tmpDir directory
             if bCompressAny == true then
@@ -466,7 +492,7 @@ private
                if bRet == true then
                   @logger.info("[DEC_115] Intray #{intray}: #{targetFile} disseminated into #{targetDir}")
                else
-                  @logger.error("[DEC_626] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
+                  @logger.error("[DEC_626.1] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
                end
                next
             end
@@ -512,7 +538,7 @@ private
             bRet = execute(cmd, "pull")
             
             if bRet == false then
-               @logger.error("[DEC_626] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
+               @logger.error("[DEC_626.2] Intray #{intray}: #{file} failed dissemination into #{targetDir}")
                Dir.chdir(prevDir)
                bReturn = false
                return false
@@ -597,6 +623,9 @@ private
          else
             targetFile = file
             fullTarget = "#{targetDir}/#{file}"
+            if fullTarget.include?("?") == true then
+               fullTarget = "\"#{fullTarget}\""
+            end
             thecmd = "\\ln -f #{@tmpDir}/#{file} #{fullTarget}"
          end
 
@@ -619,7 +648,7 @@ private
          bRet = execute(thecmd, "pull")
 
          if bRet == false then
-            @logger.error("[DEC_626] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
+            @logger.error("[DEC_626.3] Intray #{intray}: #{targetFile} failed dissemination into #{targetDir}")
             bReturn = false
             next
          else
@@ -632,7 +661,12 @@ private
             if @isDebugMode == true then
                @logger.debug("chmod a=r \"#{targetDir}/#{targetFile}\"")
             end
-            FileUtils.chmod "a=r", "\"#{targetDir}/#{targetFile}\"" #, :verbose => true
+            cmd = "chmod a=r \"#{targetDir}/#{targetFile}\""
+            ret = system(cmd)
+            if ret == false then
+               @logger.error(cmd)
+            end
+            # FileUtils.chmod "a=r", "\"#{targetDir}/#{targetFile}\"" #, :verbose => true
          rescue Exception => e
             @logger.error("Failed chmod a=r \"#{targetDir}/#{targetFile}\"")
             @logger.error(e.to_s)

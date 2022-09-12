@@ -61,6 +61,7 @@
      <xs:element name="DeleteDownloaded"     type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="DeleteDuplicated"     type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="DeleteUnknown"        type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="LocalDissemination"   type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="LogDuplicated"        type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="LogUnknown"           type="BooleanType"   minOccurs="0" maxOccurs="1" />
   </xs:sequence>
@@ -102,7 +103,7 @@
 
   <xs:complexType name="ListFilesDisseminatedType">
    <xs:sequence>
-    <xs:element name="File" type="FileDisseminationType" maxOccurs="unbounded"/>
+    <xs:element name="File" type="FileDisseminationType" minOccurs="0" maxOccurs="unbounded"/>
    </xs:sequence>
   </xs:complexType>
 
@@ -120,7 +121,7 @@
 
   <xs:complexType name="ListIntrayType">
    <xs:sequence>
-    <xs:element name="Intray" type="IntrayType" maxOccurs="unbounded"/>
+    <xs:element name="Intray" type="IntrayType" minOccurs="0" maxOccurs="unbounded"/>
    </xs:sequence>
   </xs:complexType>
 
@@ -140,8 +141,8 @@
 
   <xs:complexType name="DisseminationRulesType">
    <xs:sequence>
-    <xs:element name="ListIntrays"           type="ListIntrayType"                     maxOccurs="unbounded"/>
-    <xs:element name="ListFilesDisseminated" type="ListFilesDisseminatedType"          maxOccurs="unbounded"/>
+    <xs:element name="ListIntrays"           type="ListIntrayType"                           maxOccurs="unbounded"/>
+    <xs:element name="ListFilesDisseminated" type="ListFilesDisseminatedType"                maxOccurs="unbounded"/>
    </xs:sequence>
   </xs:complexType>
 

@@ -1,0 +1,627 @@
+#!/usr/bin/env ruby -W0
+
+#########################################################################
+##
+## === Ruby source for #DEC_TestCases class
+##
+## === Written by DEIMOS Space S.L. (bolf)
+##
+## === Data Exchange Component
+## 
+## module DEC
+##
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'ctc/FTPClientCommands'
+require 'dec/DEC_Environment'
+require 'dec/ReadConfigDEC'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigOutgoing'
+require 'dec/ReadConfigIncoming'
+
+
+# rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos_test]
+
+class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include CTC::FTPClientCommands
+   include DEC
+
+   
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   @my_argv = ARGV.dup
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do      
+      puts
+      puts "======================================"
+      puts "DEC Interface Test Cases for NAOS [NAOS-GS_-TS-IVV-0500] External Data Retrieval"
+      puts
+      puts
+      puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
+      puts
+      puts "or with operational data in the archive"
+      puts
+      puts "THINK CAREFULLY !!! "
+      puts
+      puts "do you want to continue Y/n" 
+      puts
+      puts
+      
+      bBatchmode = false
+            
+      @my_argv.each{|arg|
+         if arg == "batchmode" then
+            puts "batch mode execution on"
+            bBatchmode = true
+            break
+         end
+      }
+       
+      if bBatchmode == false then
+         c = STDIN.getc
+         if c != 'Y' then
+            exit(99)
+         end
+      end   
+      
+      @@conf = DEC_Environment.new
+      
+      @@conf.wrapper_load_config
+                             
+      @@conf.wrapper_print_environment
+                           
+      @@conf.createEnvironmentDirs
+                                    
+      if @@conf.wrapper_check_environment == false then
+         puts "DEC environment not suited for unit tests"
+         puts
+         exit(99)
+      end
+                     
+                     
+      # initialize logger
+                           
+      loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+                           
+      if @isDebugMode then
+         loggerFactory.setDebugMode
+      end
+      
+      @@logger = loggerFactory.getLogger
+                           
+      if @@logger == nil then
+         puts
+         puts "Error in decUnitTests::main"
+         puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+         puts
+         puts
+         exit(99)
+      end
+      
+   end
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      @@logger.info("End of DEC test for Celestrak")
+   end
+   
+   ## ------------------------------------------------------
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+                  
+      decConfig   = DEC::ReadConfigDEC.instance
+      reportDir   = decConfig.getReportDir
+
+      system("\\rm -rf #{reportDir}")
+      # system("\\rm -rf /tmp/dec*")
+      system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /data/mocExternalInterfaces/log/DEC*.log")
+      system("\\rm -rf /data/mocExternalInterfaces/tmp/mocIN/tmp/*")
+      system("\\rm -rf /data/mocExternalInterfaces/tmp/mocIN/*")
+      system("\\rm -rf /data/mocExternalInterfaces/tmp/mocOUT/*")
+      system("\\rm -rf /data/mocExternalInterfaces/tmp/mocOUT/tmp/*")
+      system("\\rm -rf /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TLE/NS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA/NS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/KSA/inTray/CEL/AUX_TLE/NAOS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/DDC/inTray/CEL/AUX_TLE/NAOS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/delivery_root/NS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/delivery_root/NAOS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/outbox/ddc/sftp/*")
+      system("\\rm -rf /data/mocExternalInterfaces/outbox/aut/sftp/*")
+      system("\\rm -rf /data/mocExternalInterfaces/outbox/ksa/sftp/*")
+      system("mkdir -p /data/mocExternalInterfaces/tmp/mocIN/tmp/")
+      system("mkdir -p /data/mocExternalInterfaces/tmp/mocOUT/tmp/")
+
+      cmd = "decManageDB -d"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+      
+      cmd = "decValidateConfig -a"
+      @@logger.debug(cmd)
+      ret = system(cmd)      
+      
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
+   end
+   ## ------------------------------------------------------
+
+ 
+   ## -----------------------------------------------------------
+
+   def testTCA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e CELESTRAK_TCA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TCA")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TCA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TCA")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TCA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TCA")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m CELESTRAK_TCA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TCA")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of TCA")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: TCA conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TCA conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards TCA consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards TCA consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def testSFS
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e CELESTRAK_SFS"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_SFS")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_SFS -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_SFS")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_SFS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_SFS")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m CELESTRAK_SFS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_SFS")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of SFS")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: SFS conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "SFS conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards SFS consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards SFS consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+
+   def testSFL
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_SFL"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_SFL")
+   
+      cmd = "decGetFromInterface -m NASA_SFL -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_SFL")
+   
+      cmd = "decGetFromInterface -m NASA_SFL --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_SFL")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m NASA_SFL --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_SFL")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of SFL")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "SFL duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: SFL conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "SFL conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards SFL consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards SFL consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+
+   def testNBULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_NBULA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULA")
+   
+      cmd = "decGetFromInterface -m NASA_NBULA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULA")
+   
+      cmd = "decGetFromInterface -m NASA_NBULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULA")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m NASA_NBULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULA")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of NBULA")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NBULA duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: NBULA conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NBULA conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards NBULA consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards NBULA consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+
+   ## ------------------------------------------------------
+
+   def testNBULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_NBULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULC")
+   
+      cmd = "decGetFromInterface -m NASA_NBULC -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_NBULC")
+   
+      cmd = "decGetFromInterface -m NASA_NBULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULC")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m NASA_NBULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_NBULC")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of NBULC")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NBULA duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: NBULC conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NBULC conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards NBULC consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards NBULC consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def testTLE
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e CELESTRAK_TLE"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TLE")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TLE -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from CELESTRAK_TLE")
+   
+      cmd = "decGetFromInterface -m CELESTRAK_TLE --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TLE")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m CELESTRAK_TLE --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from CELESTRAK_TLE")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: Duplication of TLE")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: TLE conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "TLE conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards TLE consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards TLE consumers traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   
+   ## ------------------------------------------------------
+   
+   def testAUTO
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      cmd = "decListener -m NASA_NBULA -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(10)
+
+      cmd = "decListener -m NASA_NBULC -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(10)
+
+      cmd = "decListener -m NASA_SFL -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(10)
+
+      cmd = "decListener -m CELESTRAK_SFS -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(10)
+
+      cmd = "decListener -m CELESTRAK_TCA -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(20)
+
+      cmd = "decListener -m CELESTRAK_TLE -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -S"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+ 
+      @@logger.debug("Verification of log trace: conversion to NAOS & KSAT formats")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NAOS & KSAT formats conversion traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards consumers traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of no errors in the log trace")
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## ------------------------------------------------------
+
+   def testAUTO2
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+
+      cmd = "decListener -m NASA_NBULA -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m NASA_NBULC -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m NASA_SFL -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m CELESTRAK_SFS -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m CELESTRAK_TCA -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m CELESTRAK_TLE -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: conversion to NAOS & KSAT formats")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "NAOS formats conversion traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards consumers:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Verification of push towards consumers traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of no errors in the log trace")
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      cmd = "decListener -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+end
+
+
+
+
+## ===================================================================
+

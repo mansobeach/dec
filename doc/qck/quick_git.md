@@ -121,6 +121,9 @@ Configuration
 git config pull.rebase true
 git config branch.autosetuprebase always
 
+Resolve conflicts from remote repository
+========================================
+git pull --rebase
 
 
 Steps Branching

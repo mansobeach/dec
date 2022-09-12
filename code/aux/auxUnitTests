@@ -210,14 +210,14 @@ class AUXTestCase < Test::Unit::TestCase
    def test_Celestrak_TLE
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
          
-      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=42063 #{@@testDir}")
-      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=42063",     @@testDir)
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=35681 #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=35681",     @@testDir)
    
       cmd = "rm -f /tmp/aux_out2/NS1*"
       @@logger.debug(cmd)
       system(cmd)
    
-      file_tle = "#{@@testDir}/gp.php?CATNR=42063"
+      file_tle = "#{@@testDir}/gp.php?CATNR=35681"
       cmd      = "auxConverter -m NAOS -f #{file_tle} -d /tmp/aux_out2"
       @@logger.info(cmd)
       assert(system(cmd), "convert Celestrak TLE to NAOS mission AUX_TLE___")
@@ -229,6 +229,33 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
    end
    ## --------------------------------------------------------
+
+   ## --------------------------------------------------------
+
+   def test_Celestrak_TLE_KSAT
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=35681 #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/celestrak/gp.php?CATNR=35681",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NAOS1*.tle"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_tle = "#{@@testDir}/gp.php?CATNR=35681"
+      cmd      = "auxConverter -m KSAT -f #{file_tle} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert Celestrak TLE to KSAT standard")
+
+      arr = Dir["/tmp/aux_out2/NAOS1*.tle"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")      
+   end
+   ## --------------------------------------------------------
+
+
 
    ## --------------------------------------------------------
 

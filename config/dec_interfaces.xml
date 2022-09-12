@@ -3,6 +3,56 @@
 
   <!-- ================================================================ -->
 
+  <!-- ================================================================ -->
+
+ <Interface Name="TEST_CELESTRAK_SFS">
+  <Desc>Celestrak Spaceweather Forecast Short term</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">120</LoopDelay>
+    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>celestrak.org</Hostname>
+   <Port>443</Port>
+    <User></User>
+    <Pass></Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Citta Uova</Address>
+  </ContactInfo>
+</Interface>
+
+   <!-- ================================================================ -->
 
  <!-- ================================================================ -->
 
@@ -42,7 +92,8 @@
     </To>
   </Notify>
   <Events>
-    <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_SFS" />
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+    <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
   </Events>
   <ContactInfo>
     <Name>Mr Brosnan</Name>
@@ -91,7 +142,8 @@
       </To>
     </Notify>
     <Events>
-      <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TLE" />
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
     </Events>
     <ContactInfo>
       <Name>Mr Brosnan</Name>
@@ -102,6 +154,108 @@
     </ContactInfo>
   </Interface>
   
+     <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="TEST_CELESTRAK_TLE">
+    <Desc>Celestrak TLE</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">120</LoopDelay>
+      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>celestrak.org</Hostname>
+     <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+       <!-- ================================================================ -->
+
+       <Interface Name="TEST_CELESTRAK_TCA">
+        <Desc>Celestrak TCA</Desc>
+        <TXRXParams>
+          <Enabled4Sending>false</Enabled4Sending>
+          <Enabled4Receiving>true</Enabled4Receiving>
+          <ImmediateRetries>3</ImmediateRetries>
+          <LoopRetries>2</LoopRetries>
+          <LoopDelay unit="s">120</LoopDelay>
+          <PollingInterval unit="s">86400</PollingInterval>
+          <PollingSize>470</PollingSize>
+          <ParallelDownload>3</ParallelDownload>
+        </TXRXParams>    
+        <Server>
+          <Protocol>HTTP</Protocol>
+          <Hostname>celestrak.org</Hostname>
+         <Port>443</Port>
+          <User></User>
+          <Pass></Pass>
+          <RegisterContentFlag>false</RegisterContentFlag>
+          <RetrieveContentFlag>true</RetrieveContentFlag>
+          <SecureFlag>true</SecureFlag>
+          <VerifyPeerSSL>false</VerifyPeerSSL>
+          <CompressFlag>false</CompressFlag>
+          <PassiveFlag>false</PassiveFlag>
+          <CleanUpFreq Unit="s">5</CleanUpFreq>
+        </Server>
+        <DeliverByMailTo>
+           <Address>daniel.brosnan@deimos-space.com</Address>
+        </DeliverByMailTo>
+        <Notify>
+          <SendNotification>false</SendNotification>
+          <To>
+           <Address>daniel.brosnan@deimos-space.com</Address>
+          </To>
+        </Notify>
+        <Events>
+          <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+        </Events>
+        <ContactInfo>
+          <Name>Mr Brosnan</Name>
+          <EMail>daniel.brosnan@deimos-space.com</EMail>
+          <Tel>0039-800 454 432</Tel>
+          <Fax>0039-800 454 433</Fax>
+          <Address>Citta Uova</Address>
+        </ContactInfo>
+      </Interface>
+      
+    <!-- ================================================================ -->
+
      <!-- ================================================================ -->
 
      <Interface Name="CELESTRAK_TCA">
@@ -140,10 +294,8 @@
         </To>
       </Notify>
       <Events>
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA" />
-        <!--
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /tmp/dec/int/" />
-        -->
+        <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+        <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
       </Events>
       <ContactInfo>
         <Name>Mr Brosnan</Name>
@@ -194,16 +346,8 @@
       </To>
     </Notify>
     <Events>
-        
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULA" />
-
-         
-         <!--
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
-          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
-         -->
-    
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
     </Events>
     <ContactInfo>
       <Name>Mr Brosnan</Name>
@@ -213,6 +357,56 @@
       <Address>Ronda de Poniente</Address>
     </ContactInfo>
   </Interface>
+
+
+<!-- ================================================================ -->
+
+<Interface Name="TEST_NASA_NBULA">
+  <Desc>NASA Crustal Dynamics Data Information System (CDDIS)</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">120</LoopDelay>
+    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>cddis.nasa.gov</Hostname>
+    <Port>443</Port>
+    <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
+    <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
 
 
 <!-- ================================================================ -->
@@ -253,16 +447,8 @@
       </To>
     </Notify>
     <Events>
-        
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULC" />
-
-         
-         <!--
-         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
-          <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
-         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
-         -->
-    
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
     </Events>
     <ContactInfo>
       <Name>Mr Brosnan</Name>
@@ -272,6 +458,55 @@
       <Address>Ronda de Poniente</Address>
     </ContactInfo>
   </Interface>
+
+
+<!-- ================================================================ -->
+<Interface Name="TEST_NASA_NBULC">
+  <Desc>NASA Crustal Dynamics Data Information System (CDDIS)</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">120</LoopDelay>
+    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>cddis.nasa.gov</Hostname>
+    <Port>443</Port>
+    <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
+    <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
 
 
 <!-- ================================================================ -->
@@ -312,15 +547,8 @@
     </To>
   </Notify>
   <Events>
-      <Event Name="NewFile2InTray"          executeCmd="auxConverter -m NAOS -f %F -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_SFL" />
-
-       
-       <!--
-       <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>
-        <Event Name="NewFile2InTray"          executeCmd="auxConverter -f %F" />
-       <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
-       -->
-  
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+    <Event Name="OnReceiveNewFilesOK" executeCmd="decDeliverFiles"/>
   </Events>
   <ContactInfo>
     <Name>Mr Brosnan</Name>
@@ -333,11 +561,489 @@
 
   <!-- ================================================================ -->
 
- 
+  <!-- ================================================================ -->
+
+<Interface Name="TEST_NASA_SFL">
+  <Desc>NASA MSFC Spaceweather Forecast Long-term</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>nasa.gov</Hostname>
+    <Port>443</Port>
+    <User></User>
+    <Pass></Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
+
+  <!-- ================================================================ -->
+
+
 
    <!-- ================================================================ -->
 
+   <Interface Name="SFTP_TLE_AUTO">
+    <Desc>SFTP AUTO4EO</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>nl2-s-aut-srv-01</Hostname>
+	    <Port>22</Port>      
+      <User>$USER</User>
+      <!--
+      <User>gsc4eo</User>
+      -->
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+   </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Ronda de Poniente</Address>
+    </ContactInfo>
+  </Interface>
+
+
+
    <!-- ================================================================ -->
 
+  <!-- ================================================================ -->
+
+  <Interface Name="SFTP_TLE_DDC">
+    <Desc>SFTP AUTO4EO</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>nl2-s-aut-srv-01</Hostname>
+	    <Port>22</Port>      
+      <User>$USER</User>
+      <!--
+      <User>gsc4eo</User>
+      -->
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+   </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Ronda de Poniente</Address>
+    </ContactInfo>
+  </Interface>
+
+
+
+   <!-- ================================================================ -->
+
+ <!-- ================================================================ -->
+
+ <Interface Name="SFTP_TLE_KSAT">
+  <Desc>SFTP AUTO4EO</Desc>
+  <TXRXParams>
+    <Enabled4Sending>true</Enabled4Sending>
+    <Enabled4Receiving>false</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>1</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>SFTP</Protocol>
+    <Hostname>nl2-s-aut-srv-01</Hostname>
+    <Port>22</Port>      
+    <User>$USER</User>
+    <!--
+    <User>gsc4eo</User>
+    -->
+    <Pass>N/A</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>      
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+    <Address>daniel.brosnan@deimos-space.com</Address>
+ </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
+
+  <!-- ================================================================ -->
+
+  <Interface Name="SFTP_TCA_AUTO">
+    <Desc>SFTP AUTO4EO</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>nl2-s-aut-srv-01</Hostname>
+	    <Port>22</Port>      
+      <User>$USER</User>
+      <!--
+      <User>gsc4eo</User>
+      -->
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+   </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Ronda de Poniente</Address>
+    </ContactInfo>
+  </Interface>
+
+
+
+   <!-- ================================================================ -->
+
+   <Interface Name="SFTP_SFS_AUTO">
+    <Desc>SFTP AUTO4EO</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>nl2-s-aut-srv-01</Hostname>
+	    <Port>22</Port>      
+      <User>$USER</User>
+      <!--
+      <User>gsc4eo</User>
+      -->
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+   </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Ronda de Poniente</Address>
+    </ContactInfo>
+  </Interface>
+
+
+
+   <!-- ================================================================ -->
+
+   <Interface Name="SFTP_SFL_AUTO">
+    <Desc>SFTP AUTO4EO</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>SFTP</Protocol>
+      <Hostname>nl2-s-aut-srv-01</Hostname>
+	    <Port>22</Port>      
+      <User>$USER</User>
+      <!--
+      <User>gsc4eo</User>
+      -->
+      <Pass>N/A</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>true</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>      
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address>daniel.brosnan@deimos-space.com</Address>
+   </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address>daniel.brosnan@deimos-space.com</Address>
+      </To>
+    </Notify>
+    <Events>
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Ronda de Poniente</Address>
+    </ContactInfo>
+  </Interface>
+
+
+
+   <!-- ================================================================ -->
+
+     <!-- ================================================================ -->
+
+     <Interface Name="SFTP_NBULA_AUTO">
+      <Desc>SFTP AUTO4EO</Desc>
+      <TXRXParams>
+        <Enabled4Sending>true</Enabled4Sending>
+        <Enabled4Receiving>false</Enabled4Receiving>
+        <ImmediateRetries>3</ImmediateRetries>
+        <LoopRetries>2</LoopRetries>
+        <LoopDelay unit="s">300</LoopDelay>
+        <PollingInterval unit="s">20</PollingInterval>
+        <PollingSize>470</PollingSize>
+        <ParallelDownload>1</ParallelDownload>
+      </TXRXParams>    
+      <Server>
+        <Protocol>SFTP</Protocol>
+        <Hostname>nl2-s-aut-srv-01</Hostname>
+        <Port>22</Port>      
+        <User>$USER</User>
+        <!--
+        <User>gsc4eo</User>
+        -->
+        <Pass>N/A</Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>true</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>      
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>true</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+      </Server>
+      <DeliverByMailTo>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+     </DeliverByMailTo>
+      <Notify>
+        <SendNotification>false</SendNotification>
+        <To>
+         <Address>daniel.brosnan@deimos-space.com</Address>
+        </To>
+      </Notify>
+      <Events>
+      </Events>
+      <ContactInfo>
+        <Name>Mr Brosnan</Name>
+        <EMail>daniel.brosnan@deimos-space.com</EMail>
+        <Tel>0039-800 454 432</Tel>
+        <Fax>0039-800 454 433</Fax>
+        <Address>Ronda de Poniente</Address>
+      </ContactInfo>
+    </Interface>
+  
+  
+  
+     <!-- ================================================================ -->
+  
+    <!-- ================================================================ -->
+
+    <Interface Name="SFTP_NBULC_AUTO">
+      <Desc>SFTP AUTO4EO</Desc>
+      <TXRXParams>
+        <Enabled4Sending>true</Enabled4Sending>
+        <Enabled4Receiving>false</Enabled4Receiving>
+        <ImmediateRetries>3</ImmediateRetries>
+        <LoopRetries>2</LoopRetries>
+        <LoopDelay unit="s">300</LoopDelay>
+        <PollingInterval unit="s">20</PollingInterval>
+        <PollingSize>470</PollingSize>
+        <ParallelDownload>1</ParallelDownload>
+      </TXRXParams>    
+      <Server>
+        <Protocol>SFTP</Protocol>
+        <Hostname>nl2-s-aut-srv-01</Hostname>
+        <Port>22</Port>      
+        <User>$USER</User>
+        <!--
+        <User>gsc4eo</User>
+        -->
+        <Pass>N/A</Pass>
+        <RegisterContentFlag>false</RegisterContentFlag>
+        <RetrieveContentFlag>true</RetrieveContentFlag>
+        <SecureFlag>true</SecureFlag>
+        <VerifyPeerSSL>false</VerifyPeerSSL>      
+        <CompressFlag>false</CompressFlag>
+        <PassiveFlag>true</PassiveFlag>
+        <CleanUpFreq Unit="s">5</CleanUpFreq>
+      </Server>
+      <DeliverByMailTo>
+        <Address>daniel.brosnan@deimos-space.com</Address>
+      </DeliverByMailTo>
+      <Notify>
+        <SendNotification>false</SendNotification>
+        <To>
+          <Address>daniel.brosnan@deimos-space.com</Address>
+        </To>
+      </Notify>
+      <Events>
+      </Events>
+      <ContactInfo>
+        <Name>Mr Brosnan</Name>
+        <EMail>daniel.brosnan@deimos-space.com</EMail>
+        <Tel>0039-800 454 432</Tel>
+        <Fax>0039-800 454 433</Fax>
+        <Address>Ronda de Poniente</Address>
+      </ContactInfo>
+    </Interface>
+  
+  
+  
+      <!-- ================================================================ -->
 
 </Interfaces>

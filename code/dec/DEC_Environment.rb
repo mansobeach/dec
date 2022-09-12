@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.35e"
+   @@version = "1.0.36g"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.36" =>    "LocalDissemination config items required to drive automation decListener", \
       "1.0.35" =>    "Management of duplications with MD5 for HTTP protocol", \
       "1.0.34" =>    "NATS protocol support for NAOS MCS CCS5", \
       "1.0.33" =>    "Update to use ruby 3.x series as interpreter\n\

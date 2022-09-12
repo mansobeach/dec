@@ -35,7 +35,7 @@ Events = [
             "NEWFILE2INTRAY" 
             ]
 
-class EventManager
+class EventManagerDEPRECATED
    
    include CTC
    include FTPClientCommands
@@ -52,14 +52,22 @@ class EventManager
    #-------------------------------------------------------------
    
    def trigger(interface, eventName, params = nil, log = nil)
+      
+      puts "EventManager::trigger #{eventName} - #{interface} - #{params}"
+      
       eventMgr  = @ftReadConf.getEvents(interface)
       if eventMgr == nil then
+         if @isDebugMode == true and log != nil then
+            log.info("I/F #{interface}: EventManager::trigger => no events")
+         end
          return
       end
       
-      if @isDebugMode == true and log != nil then
+      # if @isDebugMode == true and log != nil then
+         log.debug("====================================")
          log.debug("EventManager::trigger #{eventName} - #{interface} - #{params}")
-      end
+         log.debug("====================================")
+      # end
       
       events = eventMgr[:arrEvents]
             
@@ -78,11 +86,11 @@ class EventManager
             end
             retVal = system(cmd)
             if @isDebugMode == true then
-               puts "Event #{eventName} Triggered for #{interface}"
-               puts "Executing command #{cmd}" 
+               log.debug("I/F #{interface}: Event #{eventName} Triggered for #{params}")
+               log.debug("Executing command #{cmd}") 
             end
             if retVal == false then
-               puts "Error when executing #{cmd}"
+               log.error("Error when executing #{cmd}")
             end
          end
       }

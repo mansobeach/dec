@@ -65,6 +65,7 @@
  <xs:simpleType name="EventNameType">
    <xs:restriction base="xs:string">
      <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Nn][Ee][Ww][Ff][Ii][Ll][Ee][Ss][Oo][Kk]"/>
+     <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Nn][Ee][Ww][Ff][Ii][Ll][Ee]"/>
      <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Oo][Kk]"/>
      <xs:pattern value="[Oo][Nn][Rr][Ee][Cc][Ee][Ii][Vv][Ee][Ee][Rr][Rr][Oo][Rr]"/>
      <xs:pattern value="[Oo][Nn][Ss][Ee][Nn][Dd][Oo][Kk]"/>

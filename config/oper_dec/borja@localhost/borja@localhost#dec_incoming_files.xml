@@ -16,6 +16,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -31,6 +32,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -46,6 +48,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -61,6 +64,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -76,6 +80,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -92,6 +97,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -108,6 +114,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -123,6 +130,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -142,6 +150,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>         
@@ -157,6 +166,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -172,6 +182,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -193,6 +204,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -214,6 +226,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -236,6 +249,7 @@
             <!-- Delete Duplicated for FTPS not working -->
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -252,6 +266,7 @@
             <!-- Delete Duplicated must be false for the tests -->
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -267,6 +282,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>         
@@ -282,6 +298,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -298,6 +315,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -313,6 +331,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -329,6 +348,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -351,6 +371,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>
@@ -366,6 +387,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>         
@@ -381,6 +403,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>true</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>         
@@ -396,6 +419,7 @@
             <DeleteDownloaded>true</DeleteDownloaded>
             <DeleteDuplicated>true</DeleteDuplicated>
             <DeleteUnknown>true</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>
@@ -412,6 +436,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>         
@@ -427,6 +452,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>         
@@ -442,6 +468,7 @@
             <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
          </Switches>         

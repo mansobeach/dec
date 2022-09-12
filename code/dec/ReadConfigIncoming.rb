@@ -607,6 +607,7 @@ private
                   :deleteDownloaded, \
                   :deleteDuplicated, \
                   :deleteUnknown, \
+                  :localDissemination, \
                   :logDuplicated, \
                   :logUnknown \
                   )
@@ -653,6 +654,7 @@ private
          bDeleteDownloaded       = nil
          bDeleteDuplicated       = nil
          bDeleteUnknown          = nil
+         bLocalDissemination     = nil
          bLogDuplicated          = nil
          bLogUnknown             = nil
 
@@ -706,6 +708,15 @@ private
                 end
              }
   
+             XPath.each(switch, "LocalDissemination"){
+               |name|
+               if name.text.upcase == "TRUE" then
+                  bLocalDissemination = true
+               else
+                  bLocalDissemination = false
+               end
+            }
+
              XPath.each(switch, "LogDuplicated"){
                 |name|
                 if name.text.upcase == "TRUE" then
@@ -729,6 +740,7 @@ private
                                     bDeleteDownloaded, \
                                     bDeleteDuplicated, \
                                     bDeleteUnknown, \
+                                    bLocalDissemination, \
                                     bLogDuplicated, \
                                     bLogUnknown )
             

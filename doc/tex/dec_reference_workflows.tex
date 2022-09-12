@@ -18,25 +18,24 @@
 
 
 \section{Description}
-TBW
+This section brings some typical workflow reference common to most use cases of the software.
 
 \section{Configuration workflow}
 This section comprises the typical actions to configure every DEC SW node. It assumes a correct installation of the DEC SW include the dependencies referred in this document. Configuration wise it is recommended to get an installation which already carries the definition of the workflows; however configuration can be changed in hot at any point following the information of this manual. 
-
-\subsection{Validate XML Configuration}
-The DEC SW configuration items are spread out in different XML files. This steps aims to verify the syntax and semantic correctness of the such configuration as prerequisite of successful operations. This step is performed by \hyperref[decValidateConfig]{decValidateConfig}. This step is to be performed manually from the command line interface whenever is needed (e.g. new SW update carrying modified configuration).\newline
-
 \par \noindent
 Every command verifies the execution environment to check whether the FOSS SW dependencies are available for usage, in case of missing any of them, the error message \hyperref[DEC799]{DEC\_799} is raised. This explanation applies to every command and it is not duplicated in the document.\newline
 
 
-\subsubsection{Trace Messages}
+\subsection{Validate Configuration}
+The DEC SW configuration items are spread out in different XML files. This steps aims to verify the syntax and semantic correctness of the such configuration as prerequisite of successful operations. This step is performed by \hyperref[decValidateConfig]{decValidateConfig}. This step is to be performed manually from the command line interface whenever is needed (e.g. new SW update carrying modified configuration).\newline
 
+\subsubsection{Check XML Configuration}
+\inlinecode{bash}{ \$>  decValidateConfig -a}
 \begin{itemize}
     \item \hyperref[DEC002]{DEC\_002} : the configuration file verifies the settled XML schema
 	\item \hyperref[DEC798]{DEC\_798} : the configuration is not according to the settled XML schema
-    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available 
 \end{itemize}
+
 
 \subsection{Create DEC Inventory}
 This step is required to persist and record the circulation operations in a database ; note that it is still possible to perform circulations without persistence of the operations by usage of the "--nodb flag" by the different commands. Skip this step if the DEC SW was already previously installed and it is a SW update.\newline
@@ -45,38 +44,91 @@ This step is required to persist and record the circulation operations in a data
 \noindent
 Firstly the database tables are created using \hyperref[decManageDB]{decManageDB} ; then the interfaces defined in the XML configuration files are populated into the database using \hyperref[decConfigInterface2DB]{decConfigInterface2DB}.
 
-\subsubsection{Trace Messages}
+\subsubsection{Drop DEC Inventory}
+\inlinecode{bash}{ \$>  decManageDB -d} \newline
 
-\begin{itemize}
-    \item \hyperref[DEC000]{DEC\_000} : creation of the DEC DB / Inventory
-    \item \hyperref[DEC001]{DEC\_001} : Interface added into the DEC DB / Inventory
-    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available
-\end{itemize}
+\subsubsection{Create DEC Inventory}
+\inlinecode{bash}{ \$>  decManageDB -c} \newline
+
+\noindent
+\hyperref[DEC000]{DEC\_000} : creation of the DEC DB / Inventory
+
+\subsubsection{Populate Interfaces into DEC Inventory}
+\inlinecode{bash}{ \$>  decConfigInterface2DB -p EXTERNAL} \newline
+
+\noindent
+\hyperref[DEC001]{DEC\_001} : Interface added into the DEC DB / Inventory
 
 \subsection{Check Interface Configuration}
 This step exploits the interface according to the configuration to check the availability of defined end-points (e.g. directories for file based protocols). It also covers the verification of the DEC/Inventory availability if used.
 
-\subsubsection{Trace Messages}
-
+\subsubsection{Check Interface Connectivity}
+\inlinecode{bash}{ \$>  decCheckConfig -e NASA_SFL}
+\noindent
 \begin{itemize}
     \item \hyperref[DEC003]{DEC\_003} : Interface is correctly declared in DEC/Inventory
     \item \hyperref[DEC004]{DEC\_004} : Interface exchange point is reachable
-    \item \hyperref[DEC705]{DEC\_705} : Interface push miss-configuration 
-    \item \hyperref[DEC799]{DEC\_799} : <FOSS> tool is not available 
-    \item \hyperref[DEC799]{DEC\_799} : DEC/Inventory Could not find table
 \end{itemize}
 
 \section{Pull workflow}
 
-\subsection{Autonomous Pull Workflow}
-This section describes the autonomous workflow.
+\subsection{Manual Pull Workflow}
+This section covers the manual workflow by explicit CLI invoke to execute the pull workflow for a given interface.
 
-\subsection{Pull Circulations}
-This section describes the actual pull retrieval, which can be governed by the listener addressed in the previous section or by external elements as part of other workflows by other SW components.
+\subsubsection{List available data}
+\inlinecode{bash}{ \$>  decGetFromInterface -m CELESTRAK_SFS -l}
+\begin{itemize}
+    \item \hyperref[DEC005]{DEC\_005} : Interface polling is started
+    \item \hyperref[DEC105]{DEC\_105} : File is available
+    \item \hyperref[DEC060]{DEC\_060} : Number of files available
+    \item \hyperref[DEC100]{DEC\_100} : Interface pull iteration completed
+\end{itemize}
+
+\subsubsection{Pull available data}
+\inlinecode{bash}{ \$>  decGetFromInterface -m CELESTRAK_SFS} \newline
+\begin{itemize}
+    \item \hyperref[DEC005]{DEC\_005} : Interface polling is started
+    \item \hyperref[DEC060]{DEC\_060} : Number of files available
+     \item \hyperref[DEC110]{DEC\_110} : File is downloaded
+    \item \hyperref[DEC100]{DEC\_100} : Interface pull iteration completed
+\end{itemize}
+
+\subsection{Automation Pull Workflow}
+This section cover the automation workflow to pull data from an interface. It leverages the mechanisms described in previous section regarding manual pull workflow.
+
+\subsubsection{Automation Listeners Start}
+\inlinecode{bash}{ \$> decListener -a} \newline
+\noindent
+
+\hyperref[DEC006]{DEC\_006} : Starting automation listener for some interface
+
+\subsubsection{Automation Listeners Status}
+\inlinecode{bash}{ \$> decListener -c} \newline
+
+\hyperref[DEC003]{DEC\_003} : Status of the automation listener for some interface
+
+
+\subsubsection{Automation Listeners Stop}
+\inlinecode{bash}{ \$> decListener -S}
+
+\begin{itemize}
+    \item \hyperref[DEC002]{DEC\_002} : Automation listener for some Interface is stopped
+    \item \hyperref[DEC603]{DEC\_603} : Automation listener for some Interface was not running
+\end{itemize}
 
 \section{Push workflow}
 
-\subsection{Retrieve from archive}
-This step gathers every file which will be subject of circulation from an archive or a single directory source.
+\subsection{Retrieve from an archive}
+This step performed by command using \hyperref[decGetFiles4Transfer]{decGetFiles4Transfer} gathers every file which will be subject of circulation from \hyperref[SourceDir]{SourceDir} or a single directory source and places it into every interface \hyperref[LocalOutbox]{LocalOutbox} appending the sub-directory name according to the delivery protocol (i.e. "sftp", "ftp", etc).
+
+\subsubsection{Fetch Outgoing Files}
+\inlinecode{bash}{ \$> decGetFiles4Transfer}
+
+\begin{itemize}
+    \item \hyperref[DEC212]{DEC\_211} : File has been placed at the GlobalOutbox from the \hyperref[SourceDir]{SourceDir}
+    \item \hyperref[DEC212]{DEC\_212} : Fetched file has been removed in the \hyperref[SourceDir]{SourceDir}
+    \item \hyperref[DEC213]{DEC\_213} : File has been placed into the \hyperref[LocalOutbox]{LocalOutbox} out-tray.
+\end{itemize}
+
 
 \end{document}

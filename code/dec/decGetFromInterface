@@ -464,11 +464,15 @@ def body
 #             # Create Report File
 #             @receiver.createReportFile(@incomingDir, true, @createReport)
 
+
+
             if ret == true then
-               if @isDebugMode == true then
+#               if @isDebugMode == true then
                   @logger.debug("Event OnReceiveNewFilesOK triggered")
-               end
+#               end
+               
                event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
+
                @receiver.createReportFile(ReadConfigDEC.instance.getReportDir, \
                                     true, \
                                     @createReport \

@@ -2,11 +2,12 @@
 
 # == Synopsis
 #
-# This is a DDC command line tool that delivers all files from a given repository.
-# The file repository is pointed by the DDC_ARCHIVE_ROOT environment variable.
+# This is a DEC command line tool that delivers all files from a given repository.
+# It invokes decGetFiles4Transfer to fetch the files to be pushed towards the 
+# configured interfaces and file rules.
 # 
 # This command can be used in order to send a given file just once 
-# (for each delivery method: ftp, email) for a given Interface. 
+# (for each delivery method: sftp, ftp, email) for a given Interface. 
 # Use "-O" flag to enable this behaviour.
 #
 # -O flag:
@@ -64,13 +65,14 @@
 #
 # === Data Exchange Component
 # 
-# CVS: $Id: decDeliverFiles,v 1.8 2008/06/09 12:55:34 decdev Exp $
+# $Id: decDeliverFiles,v 1.8 2008/06/09 12:55:34 decdev Exp $
 #
 #########################################################################
 
 require 'getoptlong'
 
 require 'cuc/CheckerProcessUniqueness'
+require 'cuc/Log4rLoggerFactory'
 require 'dec/ReadInterfaceConfig'
 require 'dec/DEC_Environment'
 
@@ -98,8 +100,7 @@ def main
       arrInterfaces = ddcIntConfig.getAllMnemonics
    
       arrInterfaces.each{|x|
-         puts
-         puts "Stopping delivery to #{x}"
+         @logger.info("Stopping delivery to #{x}")
          checker = CUC::CheckerProcessUniqueness.new("decSend2Interface", x, true)
          if @isDebugMode == true then
             checker.setDebugMode
@@ -107,11 +108,11 @@ def main
          pid = checker.getRunningPID
          if pid == false then
             if @isDebugMode == true then
-               puts "send2Interface for #{x} I/F was not running \n"
+               @logger.debug("send2Interface for #{x} I/F was not running")
             end
          else
             if @isDebugMode == true then
-               puts "Sending signal SIGTERM to Process #{pid} for killing decSend2Interface #{x}"
+               @logger.debug("Sending signal SIGTERM to Process #{pid} for killing decSend2Interface #{x}")
             end
             Process.kill(15, pid.to_i)
          end         
@@ -183,11 +184,42 @@ def main
       puts
       exit(99)
    end
+   
+   # ---------------------------------------------
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+		puts "Error in decDeliverFiles::main"
+		puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+   # ---------------------------------------------
 
    if @strParams != "" and @isDeliveredOnce == false then
-      puts "params argument -p requires -O option enabled ! :-p"
+      @logger.error("#{File.basename($0)} params argument -p requires -O option enabled ! :-p")
       exit(99)
    end
+
+   # This assures there is only one decDeliverFiles running 
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), nil, true)
+
+   if @locker.isRunning == true then
+      @logger.warn("#{File.basename($0)} is already running !")
+      exit(0)
+   else
+      @logger.info("#{File.basename($0)} is started")
+   end
+
+   # Register in lock file the process
+   @locker.setRunning
 
    if bKill == true then
       killInProgressDelivery
@@ -199,17 +231,6 @@ def main
    # Register a handler for SIGINT
    trap 2,proc{ self.SIGTERMHandler }
 
-
-   # This assures there is only one send2Interface running for a given I/F. 
-   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), nil, true)
-
-   if @locker.isRunning == true then
-      puts "\n#{File.basename($0)} is already running !\n\n"
-      exit(99)
-   end
-
-   # Register in lock file the process
-   @locker.setRunning
 
    # ---------------------------------------------
 
@@ -252,11 +273,8 @@ def main
       ## -------------------------------
       
       if ret == false then
-         puts
-         puts "Error executing #{cmd}"
-         puts
-         puts "Could not retrieve files to be sent from Archive ! :-("
-         puts 
+         @logger.error("Error executing #{cmd}")
+         @logger.error("Could not retrieve files to be sent from Archive ! :-(")
          exit(99)
       end
    end
@@ -309,7 +327,7 @@ def deliver2Interfaces
       pid = fork { 
          Process.setpriority(Process::PRIO_PROCESS, 0, 1)
 #         if @isDebugMode == true then
-            puts command
+            @logger.info(command)
 #         end
          exec(command)
       }
@@ -332,7 +350,7 @@ def deliver2Interfaces
       resCode = $?.exitstatus >> 8         
       
       if resCode != 0 then
-         print("\nFAILED to Send the files to ", processInfo[pid], " I/F !\n\n")
+         @logger.error("FAILED to Send the files to ", processInfo[pid], " I/F")
          bSuccess = false
       end
    
@@ -350,11 +368,11 @@ def killInProgressDelivery
       checker.setDebugMode
    end
    if checker.getRunningPID == false then
-      puts "#{File.basename($0)} was not running !\n"
+      @logger.error("#{File.basename($0)} was not running !")
       exit(99)
    else
       pid = checker.getRunningPID
-      puts "Sending signal SIGTERM to Process #{pid} for killing #{File.basename($0)} "
+      @logger.info("Sending signal SIGTERM to Process #{pid} for killing #{File.basename($0)} ")
       Process.kill(15, pid.to_i)
       exit(0)
    end

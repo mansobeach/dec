@@ -23,7 +23,7 @@
 #     --mnemonic <MNEMONIC> (mnemonic is case sensitive)
 #     --interval            the frequency it is polled I/F given by MNEMONIC (in seconds)
 #     --nodb                no Inventory recording
-#     --no-intray           skip step of delivery to intrays upon download
+#     --no-intray           skip step of local dissemination into intrays upon download
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number      
@@ -60,6 +60,7 @@ require 'cuc/CommandLauncher'
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
 
 ## 
 ## MAIN script function
@@ -488,6 +489,13 @@ def launchListener(entity)
       command  = %Q{decListener --mnemonic #{entity} --interval #{pI} -D}
    else
       command  = %Q{decListener --mnemonic #{entity} --interval #{pI}}
+   end
+
+   inConfig    = ReadConfigIncoming.instance
+   bLocalDissemination = inConfig.getSwitches(entity)[:localDissemination]
+
+   if bLocalDissemination == false then
+      command  = %Q{#{command} --no-intray}
    end
 
    if @isDebugMode == true then

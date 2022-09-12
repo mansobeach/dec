@@ -614,11 +614,9 @@ private
          if !xmlstruct.elements["User"].text.nil? then
             if xmlstruct.elements["User"].attributes["encrypted"] \
                and xmlstruct.elements["User"].attributes["encrypted"].to_s.downcase == 'true' then
-               
-               # user = cmdDecrypt(xmlstruct.elements["User"].text, getMagikGuord('DEC'))
                user = cmdDecryptStr(xmlstruct.elements["User"].text)
             else
-               user  = xmlstruct.elements["User"].text
+               user  = expandPathValue( xmlstruct.elements["User"].text )
             end
          end
       end

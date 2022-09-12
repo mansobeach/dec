@@ -1165,7 +1165,7 @@ private
          ##
          ## ------------------------------------------------
         
-         event  = EventManager.new
+         event  = DEC::EventManager.new
          
          if @isDebugMode == true then
             event.setDebugMode
@@ -1176,7 +1176,8 @@ private
          hParams["directory"] = @finalDir 
                
          if @isDebugMode == true then
-            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug("[LINE 1179] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug(hParams)
          end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
@@ -1425,6 +1426,23 @@ private
 
          setReceivedFromEntity(File.basename(filename), size, md5)
 
+         event  = DEC::EventManager.new
+         
+         if @isDebugMode == true then
+            event.setDebugMode
+         end
+
+         hParams              = Hash.new
+         hParams["filename"]  = File.basename(filename)
+         hParams["directory"] = @finalDir 
+               
+         if @isDebugMode == true then
+            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug(hParams)
+         end
+         
+         event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
+
          if @isNoInTray == false then
             disseminateFile(getFilenameFromFullPath(filename))
          end
@@ -1542,7 +1560,7 @@ private
             return true
          end
 
-         event  = EventManager.new
+         event  = DEC::EventManager.new
          
          if @isDebugMode == true then
             event.setDebugMode
@@ -1553,7 +1571,7 @@ private
          hParams["directory"] = @finalDir 
          
          if @isDebugMode == true then      
-            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug("[LINE 1557] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
          end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
@@ -2127,7 +2145,7 @@ private
       sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
 
       if @isDebugMode == true then
-         @logger.debug("DEC_ReceiverFromInterface::checkFileSource(#{fileName})")
+         @logger.debug("DEC_ReceiverFromInterface::checkFileSource(#{fileName})  => #{@entity}")
          # @logger.debug(sources)
       end
 
@@ -2139,6 +2157,9 @@ private
          end
          return false
       else
+         if @isDebugMode == true then
+            @logger.debug(sources)
+         end
          return sources.include?(@entity)
       end
 

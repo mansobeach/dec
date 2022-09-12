@@ -125,6 +125,11 @@ Gem::Specification.new do |s|
          s.executables   << 'decTestInterface_OData_DHUS'
          s.executables   << 'decTestInterface_S2PRIP'
       end
+
+      if ENV.include?("DEC_NAOS") == true then
+         s.executables   << 'decTestInterface_NAOS_IVV-0500'
+      end
+
    end
    ## --------------------------------------------
 

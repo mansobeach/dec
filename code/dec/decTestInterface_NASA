@@ -133,6 +133,10 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @@logger.debug(cmd)
       ret = system(cmd)
       
+      cmd = "decConfigInterface2DB -p EXTERNAL"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
    end
 
    ## -----------------------------------------------------------
@@ -146,31 +150,27 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
 
    def testSFL
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-
-      cmd = "decConfigInterface2DB -a NASA_SFL"
-      @@logger.debug(cmd)
-      ret = system(cmd)
       
-      cmd = "decCheckConfig -e NASA_SFL"
+      cmd = "decCheckConfig -e TEST_NASA_SFL"
       @@logger.info(cmd)
       assert(system(cmd), "list from NASA MSFC")  
 
-      cmd = "decGetFromInterface -m NASA_SFL -l"
+      cmd = "decGetFromInterface -m TEST_NASA_SFL -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_SFL")
+      assert(system(cmd), "list from TEST_NASA_SFL")
 
-      cmd = "decGetFromInterface -m NASA_SFL"
+      cmd = "decGetFromInterface -m TEST_NASA_SFL --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_SFL")
+      assert(system(cmd), "pull from TEST_NASA_SFL")
   
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       # different files can be received with the same filename
-      cmd = "decGetFromInterface -m NASA_SFL"
+      cmd = "decGetFromInterface -m TEST_NASA_SFL --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_SFL")
+      assert(system(cmd), "pull from TEST_NASA_SFL")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -180,37 +180,53 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file pull")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Pull mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: File conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of file")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File duplication traced in DEC logs in #{__method__.to_s}") 
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## -----------------------------------------------------------
+   
    def testNBULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decConfigInterface2DB -a NASA_NBULA"
+      cmd = "decConfigInterface2DB -a TEST_NASA_NBULA"
       @@logger.debug(cmd)
       ret = system(cmd)
 
-      cmd = "decCheckConfig -e NASA_NBULA"
+      cmd = "decCheckConfig -e TEST_NASA_NBULA"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_NBULA")
+      assert(system(cmd), "list from TEST_NASA_NBULA")
 
-      cmd = "decGetFromInterface -m NASA_NBULA -l"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULA -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_NBULA")
+      assert(system(cmd), "list from TEST_NASA_NBULA")
 
-      cmd = "decGetFromInterface -m NASA_NBULA"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULA --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_NBULA")
+      assert(system(cmd), "pull from TEST_NASA_NBULA")
   
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       # different files can be received with the same filename
-      cmd = "decGetFromInterface -m NASA_NBULA"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULA --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_NBULA")
+      assert(system(cmd), "pull from TEST_NASA_NBULA")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -220,6 +236,21 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file pull")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Pull mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: File conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of file")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File duplication traced in DEC logs in #{__method__.to_s}") 
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
@@ -228,30 +259,30 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
    def testNBULC
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decConfigInterface2DB -a NASA_NBULC"
+      cmd = "decConfigInterface2DB -a TEST_NASA_NBULC"
       @@logger.debug(cmd)
       ret = system(cmd)
 
-      cmd = "decCheckConfig -e NASA_NBULC"
+      cmd = "decCheckConfig -e TEST_NASA_NBULC"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_NBULC")
+      assert(system(cmd), "list from TEST_NASA_NBULC")
 
-      cmd = "decGetFromInterface -m NASA_NBULC -l"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULC -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_NBULC")
+      assert(system(cmd), "list from TEST_NASA_NBULC")
 
-      cmd = "decGetFromInterface -m NASA_NBULC"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_NBULC")
+      assert(system(cmd), "pull from TEST_NASA_NBULC")
   
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
 
       # different files can be received with the same filename
-      cmd = "decGetFromInterface -m NASA_NBULC"
+      cmd = "decGetFromInterface -m TEST_NASA_NBULC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_NBULC")
+      assert(system(cmd), "pull from TEST_NASA_NBULC")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -261,6 +292,21 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file pull")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Pull mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: File conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of file")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File duplication traced in DEC logs in #{__method__.to_s}") 
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end

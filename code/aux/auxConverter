@@ -7,6 +7,7 @@
 #       S2     - Copernicus Sentinel-2
 #       S3     - Copernicus Sentinel-3
 #       NAOS   - NAOS mission
+#       KSAT   - Kongsberg Satellite Services
 #     --version         shows the version number
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
@@ -17,7 +18,7 @@
 #
 # Ruby source for #auxConverter
 #
-# Written by DEIMOS Space S.L. (bolf)
+# Written by DEIMOS Space S.L.
 #
 # Data Exchange Component -> 
 # 

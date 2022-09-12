@@ -68,6 +68,11 @@ class CheckerProcessUniqueness
    ## * Returns True if it is running.
    ## * Returns False if its not.
    def isRunning
+
+      if @isDebugMode == true then
+         puts "CheckerProcessUniqueness::isRunning => file lock #{@fileLock}"
+      end
+
       if FileTest.exist?(@fileLock) == false then
          return false
       end
@@ -225,6 +230,9 @@ private
    # * It returns the PID from the File if successful.
    # * Otherwise it returns false.
    def readPID
+      if @isDebugMode == true then
+         puts "file lock #{@fileLock}"
+      end
       if FileTest.exist?(@fileLock) == false then
          return false
       end

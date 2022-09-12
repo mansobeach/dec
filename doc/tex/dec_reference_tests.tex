@@ -121,18 +121,32 @@ Below the available test runners are listed; some are covered at the annex of th
      \item \textbf{decTestInterface\_ILRS} : Interface test exploiting EUROLAS Data Center server
      \item \textbf{decTestInterface\_OData\_ADGS} : this is a functional interface test to verify the OData Server implementation DEC can support
      \item \textbf{decTestInterface\_OData\_DHUS} : Interface test exploiting OData API by Copernicus DIAS (OpenHub)
-     \item \textbf{decTestInterface\_NASA\_CDDIS} : Interface test exploiting NASA Crustal Dynamics Data Information System (CDDIS) Archive
+     \item \textbf{decTestInterface\_NASA} : Interface test exploiting NASA CDDIS \& MSFC data
      \item \textbf{decTestInterface\_NOAA} : Interface test exploiting NOAA Space Weather Prediction Center server
      \item \textbf{decTestInterface\_S2PRIP} : Interface test exploiting internal ESA Copernicus Production Service for Sentinel-2 mission
      \item \textbf{decTestInterface\_SCIHUB} : Interface test exploiting Copernicus DIAS (OpenHub) bulk catalogue export by HTTP in CSV files
      \item \textbf{decTestInterface\_SPCS} : Interface test exploiting SPCS API for CDM     
 \end{itemize}
 
+\subsection{Celestrak}
+This interface test with Celestrak comprises the following data-flows:
+\begin{itemize}
+    \item \textbf{TLE} : retrieval of TLE associated to different missions such as DE1, DE2, S2A, S2B updated on daily basis.
+    \item \textbf{TCA} : retrieval of TLE catalogue of objects monitored updated on daily basis.
+    \item \textbf{SFS} : retrieval of space-weather forecast short-term covering the "Ap" and "F10.7" indexes covering 45 days generated on daily basis.
+\end{itemize}
+
+\subsection{NASA}
+This interface test with NASA comprises the following data-flows:
+\begin{itemize}
+    \item \textbf{NBULA} : retrieval of NASA Bulletin A with Earth Rotation Parameters updated on weekly basis.
+    \item \textbf{NBULC} : retrieval of NASA Bulletin C with TAI-UTC correlation and which is only updated by the leap second announcements ; latest is in 2017.
+    \item \textbf{SFL} : retrieval of space-weather forecast long-term covering the "Ap" and "F10.7" indexes covering updated on monthly basis.
+\end{itemize}
 
 
 \section{Integration Tests}
-TBW / verify specific DEC configurations in the frame of the projects 
-leverages the CICD chain and testing infrastructure
+There are some specific DEC tests which leverage the DEC CICD chain and testing infrastructure devoted for integration within projects. These tests are not generic but fairly straightforward to produce allowing to verify the interface integration among the service back-ends of the project. This information is included in this document for advise to ask for them if deemed valuable by any project.
 
 
 \end{document}

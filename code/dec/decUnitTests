@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -W0
 
 #########################################################################
 ##
@@ -266,7 +266,6 @@ class DECTestCase < Test::Unit::TestCase
          exit(99)
       end
       
-
       # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
       if @isDebugMode then
@@ -775,10 +774,7 @@ class DECTestCase < Test::Unit::TestCase
    ## --------------------------------------------------------
 
    def test_parsers
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-      @@logger.info("START => DEC_UnitTests::#{__method__.to_s}")
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
                   
       ftReadConf = ReadInterfaceConfig.instance
       ftReadConf.update
@@ -825,7 +821,9 @@ class DECTestCase < Test::Unit::TestCase
       assert(inConfig.isUnCompressed?(["GPS", "S2_7Z-X_1" , "S2_7Z-X_2" , "S2_7Z-X_3"]), "isUnCompressed?")
 
       puts inConfig.getSwitches("SCIHUB")
-      
+      @@logger.debug(inConfig.getSwitches("SCIHUB"))
+      @@logger.debug(inConfig.getSwitches("SCIHUB")[:localDissemination])
+
       puts inConfig.deleteDownloaded?("SCIHUB")
       assert(inConfig.deleteDownloaded?("SCIHUB") != nil, "deleteDownloaded?")
 
@@ -872,14 +870,12 @@ class DECTestCase < Test::Unit::TestCase
       puts arr
 
       # ftpSend    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")
-      @@logger.info("END  => DEC_UnitTests::#{__method__.to_s}")
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## ---------------------------------------------------------
 
    def test_decValidateConfig
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       cmd = "decValidateConfig -v"
       puts cmd
@@ -894,7 +890,7 @@ class DECTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -i"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decValidateConfig -o"
@@ -925,6 +921,8 @@ class DECTestCase < Test::Unit::TestCase
       assert(File.exist?("/tmp/dec_config/dec_config.xml"),             "Extracted dec_config.xml")
       assert(File.exist?("/tmp/dec_config/dec_incoming_files.xml"),     "Extracted dec_incoming_files.xml")
       
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## -----------------------------------------------------------
 
@@ -2193,60 +2191,58 @@ class DECTestCase < Test::Unit::TestCase
 
 
    def test_decListener
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       cmd = "decListener -v"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       cmd = "decListener -s non_existing_interface"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
                
       cmd = "decListener -m LOCALHOST_NOT_SECURE --nodb -i 60"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
    
       sleep(10)
 
       cmd = "decListener -s LOCALHOST_NOT_SECURE"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       sleep(10)
       
       cmd = "decListener -c"
-      puts cmd
+      @@logger.debug(cmd)
       assert(!system(cmd), cmd)
        
       cmd = "decListener -S"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       sleep(10)
   
       cmd = "decListener -a"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       sleep(15)
 
       cmd = "decListener -a -R"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
       sleep(10)
             
       cmd = "decListener -S"
-      puts cmd
+      @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
       sleep(20)
       
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+
    end
 
    ## -------------------------------------------------------------

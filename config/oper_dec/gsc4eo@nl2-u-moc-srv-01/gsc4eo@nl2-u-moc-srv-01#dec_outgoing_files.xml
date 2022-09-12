@@ -7,154 +7,117 @@
    <ListInterfaces>
 
       <Interface>
-         <Name>LOCALHOST_FTP_PASSIVE</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftp_passive</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
+         <Name>SFTP_TCA_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_tca</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA/_TEMP_</UploadTemp>
       </Interface>
 
       <Interface>
-         <Name>LOCALHOST_FTP</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftp</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
+         <Name>SFTP_TLE_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_tle</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TLE</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TLE/_TEMP_</UploadTemp>
       </Interface>
-            
+   
       <Interface>
-         <Name>LOCALHOST_FTPS</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_ftps</LocalOutbox>
-         <UploadDir>/tmp/tmp/dir1/</UploadDir>
-         <UploadTemp>/tmp/tmp/dir2/</UploadTemp>
+         <Name>SFTP_SFS_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_sfs</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_SFS</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_SFS/_TEMP_</UploadTemp>
       </Interface>
 
       <Interface>
-         <Name>LOCALHOST_SECURE</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_secure</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
+         <Name>SFTP_SFL_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_sfl</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_SFL</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_SFL/_TEMP_</UploadTemp>
       </Interface>
 
       <Interface>
-         <Name>LOCALHOST_NOT_SECURE</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_notsecure</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/localhost_notsecure/upload/_TEMP_</UploadTemp>
-      </Interface>
-      
-      <Interface>
-         <Name>FILESYSTEM</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_if_filesystem</LocalOutbox>
-         <UploadDir>/tmp/dec_simul_if/filesystem/upload</UploadDir>
-         <UploadTemp>/tmp/dec_simul_if/filesystem/upload/_TEMP_</UploadTemp>
-      </Interface>      
-
-<!--
-      <Interface>
-         <Name>WEBDAV</Name>
-         <LocalOutbox>$DEC_TMP/dec/out_basket_webdav</LocalOutbox>
-         <UploadDir>/tmp</UploadDir>
-         <UploadTemp>/</UploadTemp>
-      </Interface>
- -->
-       <Interface>
-         <Name>WEBDAV2</Name>
-         <LocalOutbox>/tmp/dec_local_dissemination/POD_IN</LocalOutbox>
-         <UploadDir>/tmp/http_put</UploadDir>
-         <UploadTemp>/tmp/http_put/tmp</UploadTemp>
+         <Name>SFTP_NBULA_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_nbula</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULA</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULA/_TEMP_</UploadTemp>
       </Interface>
 
-       <Interface>
-         <Name>POD_PUSH</Name>
-         <LocalOutbox>/tmp/dec_tmp/dec/out_basket_pod_push</LocalOutbox>
-         <UploadDir>/tmp/http_put/pod</UploadDir>
-         <UploadTemp>/tmp/http_put/tmp</UploadTemp>
+      <Interface>
+         <Name>SFTP_NBULC_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_nbulc</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULC</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULC/_TEMP_</UploadTemp>
       </Interface>
-            
+
+      <Interface>
+         <Name>SFTP_TLE_DDC</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/ddc</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/DDC/inTray/CEL/AUX_TLE</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/DDC/inTray/CEL/AUX_TLE/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
+         <Name>SFTP_TLE_KSAT</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/ksa</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/KSA/inTray/CEL/AUX_TLE</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/KSA/inTray/CEL/AUX_TLE/_TEMP_</UploadTemp>
+      </Interface>
+
    </ListInterfaces>
 
    <!-- =========================================================== -->
 
    <ListFiles>
 
-      <File Type="test_local_*.bin">
+      <File Type="NS1_OPER_AUX_TCA___*">
          <Description></Description>
          <ToList>
-            <Interface Name="FILESYSTEM"  Compress="NONE" DeliveryMethods="LOCAL" />
+            <Interface Name="SFTP_TCA_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
-      <File Type="test_ftp_*.bin">
+      <File Type="NS1_OPER_AUX_TLE___*">
          <Description></Description>
          <ToList>
-            <Interface Name="LOCALHOST_FTP"  Compress="NONE" DeliveryMethods="FTP" />
+            <Interface Name="SFTP_TLE_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
-      <File Type="test_http_*.bin">
+      <File Type="NS1_OPER_AUX_SFS___*">
          <Description></Description>
          <ToList>
-            <Interface Name="WEBDAV2"  Compress="NONE" DeliveryMethods="HTTP" />
+            <Interface Name="SFTP_SFS_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
-      <File Type="test_sftp_*.bin">
+      <File Type="NS1_OPER_AUX_SFL___*">
          <Description></Description>
          <ToList>
-            <Interface Name="LOCALHOST_SECURE"  Compress="NONE" DeliveryMethods="SFTP" />
-            <!--
-            <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="SFTP" />
-            -->
+            <Interface Name="SFTP_SFL_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+         </ToList>
+      </File>      
+
+      <File Type="NS1_OPER_AUX_NBULA__*">
+         <Description></Description>
+         <ToList>
+            <Interface Name="SFTP_NBULA_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+         </ToList>
+      </File> 
+
+      <File Type="NS1_OPER_AUX_NBULC__*">
+         <Description></Description>
+         <ToList>
+            <Interface Name="SFTP_NBULC_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+         </ToList>
+      </File> 
+
+      <File Type="NAOS1_*.tle">
+         <Description></Description>
+         <ToList>
+            <Interface Name="SFTP_TLE_DDC"   Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_TLE_KSAT"  Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
-      <File Type="finals.all"> 
-         <Description></Description>
-         <ToList>
-            <Interface Name="FILESYSTEM"              Compress="NONE"   DeliveryMethods="LOCAL" />
-            <Interface Name="LOCALHOST_FTP"           Compress="NONE"   DeliveryMethods="FTP"  />
-            <Interface Name="LOCALHOST_FTP_PASSIVE"   Compress="NONE"   DeliveryMethods="FTP"  />
-            <Interface Name="LOCALHOST_FTPS"          Compress="NONE"   DeliveryMethods="FTPS" />
-            <Interface Name="WEBDAV2"                 Compress="7Z"     DeliveryMethods="HTTP" />
-         </ToList>
-      </File>
-
-      <File Type="tai-utc.dat"> 
-         <Description></Description>
-         <ToList>
-         <!--
-            <Interface Name="FILESYSTEM"    Compress="7Z"     DeliveryMethods="LOCAL" />
-            -->
-            <Interface Name="WEBDAV2"                 Compress="NONE"   DeliveryMethods="HTTP" />
-            <Interface Name="LOCALHOST_FTPS"          Compress="NONE"   DeliveryMethods="FTPS" />
-            <Interface Name="LOCALHOST_FTP"           Compress="NONE"   DeliveryMethods="FTP"  />
-            <Interface Name="LOCALHOST_FTP_PASSIVE"   Compress="NONE"   DeliveryMethods="FTP"  />
-         </ToList>
-      </File>
-   
-      <File Type="./GIP_PROBA2/*GIP_PROBAS*"> 
-         <Description></Description>
-         <ToList>
-            <Interface Name="LOCALHOST_NOT_SECURE"    Compress="NONE"      DeliveryMethods="FTP" />
-            <Interface Name="LOCALHOST_SECURE"        Compress="NONE"      DeliveryMethods="SFTP" />
-            <!--
-            <Interface Name="FILESYSTEM"              Compress="7Z"        DeliveryMethods="LOCAL" />
-            -->
-         </ToList>
-      </File>
-
-      <File Type="S2A*">
-         <Description></Description>
-         <ToList>
-            <Interface Name="LOCALHOST_NOT_SECURE"  Compress="7Z" DeliveryMethods="FTP" />
-         </ToList>
-      </File>
-
-      <File Type="S2B*">
-         <Description></Description>
-         <ToList>
-            <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="SFTP" />
-         </ToList>
-      </File>
 
    </ListFiles>
 

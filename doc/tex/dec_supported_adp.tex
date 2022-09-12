@@ -32,8 +32,12 @@ The information included in the following sections do not represent the full int
 \section{CelesTrak }
 Celestrak publishes the NORAD satellite catalogue of TLE with a convenient public anonymous API.\newline  
 
-\subsection{Deimos-1 \& Deimos-2 TLE }
-DEC SW queries the CelesTrak API to check its availability and request the spacecraft according to its SATCAT identifier (i.e. NORAD identifier). Two different workflows CELES\_D1 and CELES\_D2 are defined to retrieve the TLE of DE1 and DE2 spacecrafts, which are subsequently dumped into files and renamed accordingly for their unambiguous identification.\newline
+\subsection{Satellite TLE }
+The DEC SW queries the CelesTrak API to check its availability and request the spacecraft according to its SATCAT identifier (i.e. NORAD identifier).
+
+\par
+\noindent
+Deimos satellites can be retrieved using CELES\_D1 and CELES\_D2 interface workflows, which are defined to retrieve the TLE of DE1 and DE2 spacecrafts, which are subsequently dumped into files and renamed accordingly for their unambiguous identification. Other missions such as Copernicus Sentinels have also been tested.\newline
 	
 \inlinecode{bash}{ \$> decTestInterface_CelesTrak} \newline
 
@@ -76,6 +80,98 @@ mv /tmp/dec/in_basket_if_celes/gp.php?CATNR=40013 /tmp/dec/in_basket_if_celes/"$
 [ INFO] 2022-03-02 10:32:50 NODE_1.test - DECTestCaseCelesTrak::test_pull => END
 \end{Verbatim}
 
+\subsection{CelesTrak TLE Catalogue }
+The DEC SW queries the CelesTrak API to obtain the TLE catalogue of active objects which they are monitoring.\newline
+	
+\inlinecode{bash}{ \$> decTestInterface_CelesTrak -n testTCA} \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-08-29 09:00:30.185 nl2-u-moc-srv-01.test - DECTestCaseCelesTrak::testTCA START
+[DEBUG] 2022-08-29 09:00:30.185 nl2-u-moc-srv-01.test - rm -f /tmp/dec/int/NS1_OPER_AUX_TCA____*
+[DEBUG] 2022-08-29 09:00:30.195 nl2-u-moc-srv-01.test - rm -f /tmp/dec/in_basket_if_celes/tca/*
+[DEBUG] 2022-08-29 09:00:30.202 nl2-u-moc-srv-01.test - decConfigInterface2DB -a CELESTRAK_TCA
+[ INFO] 2022-08-29 09:00:31.235 nl2-u-moc-srv-01.db   - [DEC_001] I/F CELESTRAK_TCA: added to the DEC Inventory/Interface db
+[ INFO] 2022-08-29 09:00:31.246 nl2-u-moc-srv-01.test - decCheckConfig -e CELESTRAK_TCA
+[DEBUG] 2022-08-29 09:00:35.982 nl2-u-moc-srv-01.chck - [DEC_XXX] I/F CELESTRAK_TCA: File gp.php?GROUP=active&FORMAT=2le is available
+[ INFO] 2022-08-29 09:00:35.989 nl2-u-moc-srv-01.chck - [DEC_004] I/F CELESTRAK_TCA: exchange point is reachable 👍
+[ INFO] 2022-08-29 09:00:36.570 nl2-u-moc-srv-01.chck - [DEC_003] I/F CELESTRAK_TCA: interface is correctly declared in DEC/Inventory 👍
+[ INFO] 2022-08-29 09:00:36.584 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_TCA -l
+[ INFO] 2022-08-29 09:00:38.443 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_TCA: Polling Started - List mode is true
+[ INFO] 2022-08-29 09:00:41.998 nl2-u-moc-srv-01.pull - [DEC_105] I/F CELESTRAK_TCA: File gp.php?GROUP=active&FORMAT=2le is available
+[ INFO] 2022-08-29 09:00:41.999 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_TCA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:00:41.999 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_TCA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 09:00:42.020 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_TCA
+[ INFO] 2022-08-29 09:00:44.460 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_TCA: Polling Started - List mode is false
+[ INFO] 2022-08-29 09:00:47.859 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_TCA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:00:50.490 nl2-u-moc-srv-01.pull - [DEC_110] I/F CELESTRAK_TCA: gp.php?GROUP=active&FORMAT=2le downloaded with size 901984 bytes
+[ INFO] 2022-08-29 09:00:50.546 nl2-u-moc-srv-01.pull - [DEC_115] Intray NAOS_IN: "gp.php?GROUP=active&FORMAT=2le" disseminated into /data/mocExternalInterfaces/tmp/naos/
+[ INFO] 2022-08-29 09:00:50.547 nl2-u-moc-srv-01.pull - [DEC_130] I/F CELESTRAK_TCA: event triggered newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/"gp.php?GROUP=active&FORMAT=2le" -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA
+[ INFO] 2022-08-29 09:00:50.858 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_TCA____20220829T000000_21000101T000000_0001.TXT generated from gp.php?GROUP=active&FORMAT=2le
+[ INFO] 2022-08-29 09:00:50.861 nl2-u-moc-srv-01.pull - [DEC_130] I/F CELESTRAK_TCA: event completed newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/"gp.php?GROUP=active&FORMAT=2le" -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA
+[ INFO] 2022-08-29 09:00:50.913 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_TCA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 09:00:50.933 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_TCA
+[ INFO] 2022-08-29 09:00:53.089 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_TCA: Polling Started - List mode is false
+[ INFO] 2022-08-29 09:00:56.571 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_TCA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:00:59.329 nl2-u-moc-srv-01.pull - [DEC_111] I/F CELESTRAK_TCA: gp.php?GROUP=active&FORMAT=2le downloaded is duplicated / same md5
+[ INFO] 2022-08-29 09:00:59.379 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_TCA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 09:00:59.397 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 09:01:00.372 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"gp.php?GROUP=active&FORMAT=2le","interface":"CELESTRAK_TCA","date":"2022-08-29 07:00:50 UTC","protocol":"HTTP","size":901984,"md5":"d20f2ec1e1bd0c5aaf31e2c06fa41193"}
+[ INFO] 2022-08-29 09:01:00.372 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"250.00 B/s","volume":"880.84 KiB"}
+[ INFO] 2022-08-29 09:01:00.375 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[DEBUG] 2022-08-29 09:01:00.383 nl2-u-moc-srv-01.test - Verification of log trace: TCA conversion to NAOS mission
+[DEBUG] 2022-08-29 09:01:00.384 nl2-u-moc-srv-01.test - grep AUX_001 /data/mocExternalInterfaces/log/DEC000001.log
+[ INFO] 2022-08-29 09:00:50.858 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_TCA____20220829T000000_21000101T000000_0001.TXT generated from gp.php?GROUP=active&FORMAT=2le
+[DEBUG] 2022-08-29 09:01:00.388 nl2-u-moc-srv-01.test - Verification of log trace: Duplication of TCA
+[DEBUG] 2022-08-29 09:01:00.388 nl2-u-moc-srv-01.test - grep DEC_111 /data/mocExternalInterfaces/log/DEC000001.log
+[ INFO] 2022-08-29 09:00:59.330 nl2-u-moc-srv-01.pull - [DEC_111] I/F CELESTRAK_TCA: gp.php?GROUP=active&FORMAT=2le downloaded is duplicated / same md5
+[ INFO] 2022-08-29 09:01:00.396 nl2-u-moc-srv-01.test - DECTestCaseCelesTrak::testTCA END
+\end{Verbatim}
+
+
+\subsection{CelesTrak Space-weather }
+The DEC SW queries the CelesTrak interface to retrieve the resource SW-Last5Years.txt which is updated on daily basis carrying a 45-day forecast of daily ap and F10.7 index.
+
+\inlinecode{bash}{ \$> decTestInterface_CelesTrak -n testSFS} \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-08-29 09:04:29.134 nl2-u-moc-srv-01.test - DECTestCaseCelesTrak::testSFS START
+[DEBUG] 2022-08-29 09:04:29.134 nl2-u-moc-srv-01.test - decConfigInterface2DB -a CELESTRAK_SFS
+[ INFO] 2022-08-29 09:04:30.155 nl2-u-moc-srv-01.db   - [DEC_001] I/F CELESTRAK_SFS: added to the DEC Inventory/Interface db
+[ INFO] 2022-08-29 09:04:30.181 nl2-u-moc-srv-01.test - decCheckConfig -e CELESTRAK_SFS
+[DEBUG] 2022-08-29 09:04:33.528 nl2-u-moc-srv-01.chck - [DEC_XXX] I/F CELESTRAK_SFS: File SW-Last5Years.txt is available
+[ INFO] 2022-08-29 09:04:33.537 nl2-u-moc-srv-01.chck - [DEC_004] I/F CELESTRAK_SFS: exchange point is reachable 
+[ INFO] 2022-08-29 09:04:34.172 nl2-u-moc-srv-01.chck - [DEC_003] I/F CELESTRAK_SFS: interface is correctly declared in DEC/Inventory
+[ INFO] 2022-08-29 09:04:34.187 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_SFS -l
+[ INFO] 2022-08-29 09:04:36.285 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_SFS: Polling Started - List mode is true
+[ INFO] 2022-08-29 09:04:38.032 nl2-u-moc-srv-01.pull - [DEC_105] I/F CELESTRAK_SFS: File SW-Last5Years.txt is available
+[ INFO] 2022-08-29 09:04:38.032 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_SFS: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:04:38.032 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_SFS: Pull iteration completed successfully
+[ INFO] 2022-08-29 09:04:38.048 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_SFS
+[ INFO] 2022-08-29 09:04:39.934 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_SFS: Polling Started - List mode is false
+[ INFO] 2022-08-29 09:04:41.712 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_SFS: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:04:43.346 nl2-u-moc-srv-01.pull - [DEC_110] I/F CELESTRAK_SFS: SW-Last5Years.txt downloaded with size 308713 bytes
+[ INFO] 2022-08-29 09:04:43.400 nl2-u-moc-srv-01.pull - [DEC_115] Intray NAOS_IN: SW-Last5Years.txt disseminated into /data/mocExternalInterfaces/tmp/naos/
+[ INFO] 2022-08-29 09:04:43.401 nl2-u-moc-srv-01.pull - [DEC_130] I/F CELESTRAK_SFS: event triggered newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/SW-Last5Years.txt -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_SFS
+[ INFO] 2022-08-29 09:04:43.720 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_SFS____20220829T000000_20221012T000000_0001.TXT generated from SW-Last5Years.txt
+[ INFO] 2022-08-29 09:04:43.723 nl2-u-moc-srv-01.pull - [DEC_130] I/F CELESTRAK_SFS: event completed newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/SW-Last5Years.txt -d /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_SFS
+[ INFO] 2022-08-29 09:04:43.768 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_SFS: Pull iteration completed successfully
+[ INFO] 2022-08-29 09:04:43.786 nl2-u-moc-srv-01.test - decGetFromInterface -m CELESTRAK_SFS
+[ INFO] 2022-08-29 09:04:45.677 nl2-u-moc-srv-01.pull - [DEC_005] I/F CELESTRAK_SFS: Polling Started - List mode is false
+[ INFO] 2022-08-29 09:04:47.376 nl2-u-moc-srv-01.pull - [DEC_060] I/F CELESTRAK_SFS: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 09:04:49.003 nl2-u-moc-srv-01.pull - [DEC_111] I/F CELESTRAK_SFS: SW-Last5Years.txt downloaded is duplicated / same md5
+[ INFO] 2022-08-29 09:04:49.047 nl2-u-moc-srv-01.pull - [DEC_100] I/F CELESTRAK_SFS: Pull iteration completed successfully
+[ INFO] 2022-08-29 09:04:49.065 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 09:04:50.028 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"SW-Last5Years.txt","interface":"CELESTRAK_SFS","date":"2022-08-29 07:04:43 UTC","protocol":"HTTP","size":308713,"md5":"8586b873d2dd81d6c647b13b0223355f"}
+[ INFO] 2022-08-29 09:04:50.028 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"85.00 B/s","volume":"301.48 KiB"}
+[ INFO] 2022-08-29 09:04:50.031 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[DEBUG] 2022-08-29 09:04:50.039 nl2-u-moc-srv-01.test - Verification of log trace: SFS conversion to NAOS mission
+[DEBUG] 2022-08-29 09:04:50.039 nl2-u-moc-srv-01.test - grep AUX_001 /data/mocExternalInterfaces/log/DEC000001.log
+[ INFO] 2022-08-29 09:04:43.720 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_SFS____20220829T000000_20221012T000000_0001.TXT generated from SW-Last5Years.txt
+[DEBUG] 2022-08-29 09:04:50.043 nl2-u-moc-srv-01.test - Verification of log trace: Duplication of short-term weather forecast
+[DEBUG] 2022-08-29 09:04:50.043 nl2-u-moc-srv-01.test - grep DEC_111 /data/mocExternalInterfaces/log/DEC000001.log
+[ INFO] 2022-08-29 09:04:49.003 nl2-u-moc-srv-01.pull - [DEC_111] I/F CELESTRAK_SFS: SW-Last5Years.txt downloaded is duplicated / same md5
+[ INFO] 2022-08-29 09:04:50.051 nl2-u-moc-srv-01.test - DECTestCaseCelesTrak::testSFS END
+\end{Verbatim}
 
 \pagebreak
 
@@ -604,6 +700,141 @@ The Copernicus Sentinel-3 constellation are equipped with a laser retro reflecto
 [ INFO] 2022-02-21 11:09:33 NODE_1.pull - [DEC_100] I/F ILRS: Pull iteration completed successfully
 [DEBUG] 2022-02-21 11:09:33 NODE_1.test - DECTestCaseILRS::test_ILRS_S3 END
 	\end{Verbatim}
+
+
+\pagebreak
+
+\section{NASA}
+NASA is a major public data provider covering several different domains such as earth observation / geophysical, navigation, space-weather, etc.\newline  
+
+\subsection{NASA Bulletin A}
+NASA CDDIS publishes Bulletin A Earth rotation parameters with a slight format different from IERS.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testNBULA } \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-08-29 10:10:37.159 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testNBULA START
+[DEBUG] 2022-08-29 10:10:37.160 nl2-u-moc-srv-01.test - decConfigInterface2DB -a NASA_NBULA
+[ INFO] 2022-08-29 10:10:38.162 nl2-u-moc-srv-01.db   - [DEC_001] I/F NASA_NBULA: added to the DEC Inventory/Interface db
+[ INFO] 2022-08-29 10:10:38.172 nl2-u-moc-srv-01.test - decCheckConfig -e NASA_NBULA
+[DEBUG] 2022-08-29 10:10:40.352 nl2-u-moc-srv-01.chck - [DEC_XXX] I/F NASA_NBULA: File finals2000A.data is available
+[ INFO] 2022-08-29 10:10:40.358 nl2-u-moc-srv-01.chck - [DEC_004] I/F NASA_NBULA: exchange point is reachable 👍
+[ INFO] 2022-08-29 10:10:40.937 nl2-u-moc-srv-01.chck - [DEC_003] I/F NASA_NBULA: interface is correctly declared in DEC/Inventory 👍
+[ INFO] 2022-08-29 10:10:40.950 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULA -l
+[ INFO] 2022-08-29 10:10:42.770 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULA: Polling Started - List mode is true
+[ INFO] 2022-08-29 10:10:43.866 nl2-u-moc-srv-01.pull - [DEC_105] I/F NASA_NBULA: File finals2000A.data is available
+[ INFO] 2022-08-29 10:10:43.866 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:10:43.866 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:10:43.882 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULA
+[ INFO] 2022-08-29 10:10:45.822 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULA: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:10:46.910 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:10:52.267 nl2-u-moc-srv-01.pull - [DEC_110] I/F NASA_NBULA: finals2000A.data downloaded with size 2184184 bytes
+[ INFO] 2022-08-29 10:10:52.323 nl2-u-moc-srv-01.pull - [DEC_115] Intray NAOS_IN: finals2000A.data disseminated into /data/mocExternalInterfaces/tmp/naos/
+[ INFO] 2022-08-29 10:10:52.324 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_NBULA: event triggered newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/finals2000A.data -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULA
+[ INFO] 2022-08-29 10:10:52.655 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_NBULA__20220826T000000_20230902T000000_0001.TXT generated from finals2000A.data
+[ INFO] 2022-08-29 10:10:52.659 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_NBULA: event completed newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/finals2000A.data -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULA
+[ INFO] 2022-08-29 10:10:52.698 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:10:52.714 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:10:53.672 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"finals2000A.data","interface":"NASA_NBULA","date":"2022-08-29 08:10:52 UTC","protocol":"HTTP","size":2184184,"md5":"078b0239fa414d9e9a2c36668edbbccb"}
+[ INFO] 2022-08-29 10:10:53.673 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"606.00 B/s","volume":"2.08 MiB"}
+[ INFO] 2022-08-29 10:10:53.676 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:10:53.684 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULA
+[ INFO] 2022-08-29 10:10:55.821 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULA: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:10:56.922 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULA: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:10:59.668 nl2-u-moc-srv-01.pull - [DEC_111] I/F NASA_NBULA: finals2000A.data downloaded is duplicated / same md5
+[ INFO] 2022-08-29 10:10:59.716 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULA: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:10:59.732 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:11:00.967 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"finals2000A.data","interface":"NASA_NBULA","date":"2022-08-29 08:10:52 UTC","protocol":"HTTP","size":2184184,"md5":"078b0239fa414d9e9a2c36668edbbccb"}
+[ INFO] 2022-08-29 10:11:00.967 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"606.00 B/s","volume":"2.08 MiB"}
+[ INFO] 2022-08-29 10:11:00.971 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:11:00.982 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testNBULA END
+\end{Verbatim}
+
+\subsection{NASA Bulletin C}
+NASA CDDIS publishes Bulletin C leap second announcement with a slight format different from IERS.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testNBULC } \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-08-29 10:28:42.405 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testNBULC START
+[DEBUG] 2022-08-29 10:28:42.405 nl2-u-moc-srv-01.test - decConfigInterface2DB -a NASA_NBULC
+[ INFO] 2022-08-29 10:28:43.475 nl2-u-moc-srv-01.db   - [DEC_001] I/F NASA_NBULC: added to the DEC Inventory/Interface db
+[ INFO] 2022-08-29 10:28:43.487 nl2-u-moc-srv-01.test - decCheckConfig -e NASA_NBULC
+[DEBUG] 2022-08-29 10:28:46.214 nl2-u-moc-srv-01.chck - [DEC_XXX] I/F NASA_NBULC: File tai-utc.dat is available
+[ INFO] 2022-08-29 10:28:46.257 nl2-u-moc-srv-01.chck - [DEC_004] I/F NASA_NBULC: exchange point is reachable 👍
+[ INFO] 2022-08-29 10:28:46.897 nl2-u-moc-srv-01.chck - [DEC_003] I/F NASA_NBULC: interface is correctly declared in DEC/Inventory 👍
+[ INFO] 2022-08-29 10:28:46.911 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULC -l
+[ INFO] 2022-08-29 10:28:48.871 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULC: Polling Started - List mode is true
+[ INFO] 2022-08-29 10:28:49.943 nl2-u-moc-srv-01.pull - [DEC_105] I/F NASA_NBULC: File tai-utc.dat is available
+[ INFO] 2022-08-29 10:28:49.943 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULC: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:28:49.944 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULC: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:28:49.960 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULC
+[ INFO] 2022-08-29 10:28:51.963 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULC: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:28:53.038 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULC: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:28:54.169 nl2-u-moc-srv-01.pull - [DEC_110] I/F NASA_NBULC: tai-utc.dat downloaded with size 3321 bytes
+[ INFO] 2022-08-29 10:28:54.238 nl2-u-moc-srv-01.pull - [DEC_115] Intray NAOS_IN: tai-utc.dat disseminated into /data/mocExternalInterfaces/tmp/naos/
+[ INFO] 2022-08-29 10:28:54.239 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_NBULC: event triggered newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/tai-utc.dat -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULC
+[ INFO] 2022-08-29 10:28:54.582 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_NBULC__20170101T000000_21000101T000000_0001.TXT generated from tai-utc.dat
+[ INFO] 2022-08-29 10:28:54.586 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_NBULC: event completed newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/tai-utc.dat -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_NBULC
+[ INFO] 2022-08-29 10:28:54.625 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULC: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:28:54.643 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:28:55.630 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"tai-utc.dat","interface":"NASA_NBULC","date":"2022-08-29 08:28:54 UTC","protocol":"HTTP","size":3321,"md5":"cd22c7ec716a489509e3bfdb7bac42fc"}
+[ INFO] 2022-08-29 10:28:55.630 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"0.00 B/s","volume":"3.24 KiB"}
+[ INFO] 2022-08-29 10:28:55.633 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:28:55.642 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_NBULC
+[ INFO] 2022-08-29 10:28:57.541 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_NBULC: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:28:58.658 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_NBULC: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:28:59.768 nl2-u-moc-srv-01.pull - [DEC_111] I/F NASA_NBULC: tai-utc.dat downloaded is duplicated / same md5
+[ INFO] 2022-08-29 10:28:59.806 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_NBULC: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:28:59.824 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:29:00.812 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"tai-utc.dat","interface":"NASA_NBULC","date":"2022-08-29 08:28:54 UTC","protocol":"HTTP","size":3321,"md5":"cd22c7ec716a489509e3bfdb7bac42fc"}
+[ INFO] 2022-08-29 10:29:00.812 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"0.00 B/s","volume":"3.24 KiB"}
+[ INFO] 2022-08-29 10:29:00.815 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:29:00.828 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testNBULC END
+\end{Verbatim}
+
+\subsection{Space-weather F10.7 \& Ap Index}
+NASA MSFC publishes Bulletin C leap second announcement with statistical index of solar radio 10.7 cm flux (F10.7), and the geomagnetic planetary index, Ap.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testSFL } \newline
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2022-08-29 10:35:33.742 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testSFL START
+[DEBUG] 2022-08-29 10:35:33.742 nl2-u-moc-srv-01.test - decConfigInterface2DB -a NASA_SFL
+[ INFO] 2022-08-29 10:35:34.799 nl2-u-moc-srv-01.db   - [DEC_001] I/F NASA_SFL: added to the DEC Inventory/Interface db
+[ INFO] 2022-08-29 10:35:34.810 nl2-u-moc-srv-01.test - decCheckConfig -e NASA_SFL
+[DEBUG] 2022-08-29 10:35:36.846 nl2-u-moc-srv-01.chck - [DEC_XXX] I/F NASA_SFL: File jul2022f10_prd.txt is available
+[ INFO] 2022-08-29 10:35:36.852 nl2-u-moc-srv-01.chck - [DEC_004] I/F NASA_SFL: exchange point is reachable
+[ INFO] 2022-08-29 10:35:37.456 nl2-u-moc-srv-01.chck - [DEC_003] I/F NASA_SFL: interface is correctly declared in DEC/Inventory
+[ INFO] 2022-08-29 10:35:37.468 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_SFL -l
+[ INFO] 2022-08-29 10:35:39.543 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_SFL: Polling Started - List mode is true
+[ INFO] 2022-08-29 10:35:40.386 nl2-u-moc-srv-01.pull - [DEC_105] I/F NASA_SFL: File jul2022f10_prd.txt is available
+[ INFO] 2022-08-29 10:35:40.386 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_SFL: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:35:40.386 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_SFL: Pull iteration completed successfully
+[ INFO] 2022-08-29 10:35:40.403 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_SFL
+[ INFO] 2022-08-29 10:35:42.324 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_SFL: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:35:43.199 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_SFL: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:35:44.381 nl2-u-moc-srv-01.pull - [DEC_110] I/F NASA_SFL: jul2022f10_prd.txt downloaded with size 18431 bytes
+[ INFO] 2022-08-29 10:35:44.446 nl2-u-moc-srv-01.pull - [DEC_115] Intray NAOS_IN: jul2022f10_prd.txt disseminated into /data/mocExternalInterfaces/tmp/naos/
+[ INFO] 2022-08-29 10:35:44.447 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_SFL: event triggered newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/jul2022f10_prd.txt -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_SFL
+[ INFO] 2022-08-29 10:35:44.768 nl2-u-moc-srv-01.auxc - [AUX_001] NS1_OPER_AUX_SFL____20220101T000000_20411001T000000_0001.TXT generated from jul2022f10_prd.txt
+[ INFO] 2022-08-29 10:35:44.772 nl2-u-moc-srv-01.pull - [DEC_130] I/F NASA_SFL: event completed newfile2intray => auxConverter -m NAOS -f /data/mocExternalInterfaces/tmp/naos/jul2022f10_prd.txt -d /data/mocExternalInterfaces/FDS/inTray/NAS/AUX_SFL
+[ INFO] 2022-08-29 10:35:44.816 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_SFL: Pull iteration completed successfully
+[ INFO] 2022-08-29 10:35:44.832 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:35:45.811 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"jul2022f10_prd.txt","interface":"NASA_SFL","date":"2022-08-29 08:35:44 UTC","protocol":"HTTP","size":18431,"md5":"94ec62c2a075011f5988287064b263ff"}
+[ INFO] 2022-08-29 10:35:45.811 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"5.00 B/s","volume":"18.00 KiB"}
+[ INFO] 2022-08-29 10:35:45.814 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:35:45.821 nl2-u-moc-srv-01.test - decGetFromInterface -m NASA_SFL
+[ INFO] 2022-08-29 10:35:47.673 nl2-u-moc-srv-01.pull - [DEC_005] I/F NASA_SFL: Polling Started - List mode is false
+[ INFO] 2022-08-29 10:35:48.547 nl2-u-moc-srv-01.pull - [DEC_060] I/F NASA_SFL: Polling Completed / New file(s) 1 available for pull
+[ INFO] 2022-08-29 10:35:49.624 nl2-u-moc-srv-01.pull - [DEC_111] I/F NASA_SFL: jul2022f10_prd.txt downloaded is duplicated / same md5
+[ INFO] 2022-08-29 10:35:49.658 nl2-u-moc-srv-01.pull - [DEC_100] I/F NASA_SFL: Pull iteration completed successfully 🕺
+[ INFO] 2022-08-29 10:35:49.675 nl2-u-moc-srv-01.test - decStats
+[ INFO] 2022-08-29 10:35:50.680 nl2-u-moc-srv-01.stat - [DEC_144] Pull 1h: {"filename":"jul2022f10_prd.txt","interface":"NASA_SFL","date":"2022-08-29 08:35:44 UTC","protocol":"HTTP","size":18431,"md5":"94ec62c2a075011f5988287064b263ff"}
+[ INFO] 2022-08-29 10:35:50.680 nl2-u-moc-srv-01.stat - [DEC_144] Pull stats: {"numFiles":1,"hours":1,"rate":"5.00 B/s","volume":"18.00 KiB"}
+[ INFO] 2022-08-29 10:35:50.683 nl2-u-moc-srv-01.stat - [DEC_244] Push 1h: No files pushed
+[ INFO] 2022-08-29 10:35:50.696 nl2-u-moc-srv-01.test - DECTestInterface_NASA_CDDIS::testSFL END
+\end{Verbatim}
 
 
 \pagebreak
