@@ -338,11 +338,10 @@
       </Interface>
       
       <Interface>
-         <Name>IERS</Name>
+         <Name>TEST_IERS_BULA</Name>
          <LocalInbox>/tmp/dec/if_iers_in_basket</LocalInbox>
          <DownloadDirs>
-		      <Directory DepthSearch="0">products/eop/rapid/standard</Directory>
-            <Directory DepthSearch="0">products/eop/rapid/daily</Directory>
+		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -490,6 +489,13 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+      <File Type="bulletinA.txt">
+         <Description>AUX_BULA__</Description>
+         <FromList>
+            <Interface>TEST_IERS_BULA</Interface>
+         </FromList>
+      </File>
+
        <File Type="touch_file*">
          <Description>test file</Description>
          <FromList>

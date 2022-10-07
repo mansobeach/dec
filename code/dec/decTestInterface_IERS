@@ -1,71 +1,50 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -W0
 
 #########################################################################
-#
-# === Ruby source for #DEC_TestCases class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# module DEC
-#
+###
+### === Ruby source for #DEC_TestCases NASA CDDIS class
+###
+### === Written by DEIMOS Space S.L.
+###
+### === Data Exchange Component
+### 
+### module DEC
+###
 #########################################################################
 
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
+require 'date'
 
+require 'cuc/Log4rLoggerFactory'
 require 'cuc/DirUtils'
-require 'ctc/FTPClientCommands'
+
 require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
-require 'dec/ReadInterfaceConfig'
-require 'dec/ReadConfigOutgoing'
-require 'dec/ReadConfigIncoming'
 
-# Preconditions:
-# 1 - setup 
-# 1.1 - load_config_development
-# 1.2 - inventory database is created
-
-# 2 - teardown
-# 2.1 - purge archive
-# 2.2 - inventory database is destroyed
-
-#  1  - test_decConfigInterface2DB
-#  2  - test_decGetFromInterface
-#  3  - test_decListener
+# The following configurations support this test interface:
+# > rake -f build_dec.rake dec:install   / unit-tests
+# > rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos_test]
 
 
-# Select a single test of the suite
 
-# ruby decUnitTests -n test_my_method 
-
-# Start FTP Server in MacOS Sierra
-# launchctl load -w /System/Library/LaunchDaemons/ftp.plist
-
-# Stop FTP Server
-# launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
-
-class DECTestCase < Test::Unit::TestCase
+class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
 
    include CUC::DirUtils
-   include CTC::FTPClientCommands
    include DEC
 
    
    # Order of the test cases execution according to defintion within code
-   self.test_order = :defined
-   
-   @my_argv = ARGV.dup
-   
+   #self.test_order = :defined
+      
    ## ------------------------------------------------------
    
-   Test::Unit.at_start do      
+   Test::Unit.at_start do
+      @my_argv = ARGV.dup
       puts
       puts "======================================"
-      puts "DEC Interface Test Cases for IERS"
+      puts "DEC NASA Interface Test Cases #{self.class.name.split('::').last}"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -95,448 +74,195 @@ class DECTestCase < Test::Unit::TestCase
          end
       end   
       
-            @@arrDownloadFiles = [ \
-                           "finals.all", \
-                           "gpsrapid.out" \
-                           ]
-
-      
-=begin
-      puts
-      puts
-      puts "THINK IT TWICE  !!! "
-      puts
-      puts "do you want to continue Y/n" 
-      puts
-      puts
-      
-      c = STDIN.getc
-            
-      
-      if c != 'Y' then
-         exit(99)
-      end
-
-=end      
-      
       @@conf = DEC_Environment.new
-      
-      @@conf.wrapper_load_config_development
 
+      @@conf.wrapper_load_config
 
-      puts      
-      @@conf.wrapper_print_environment
-      puts
-      
-      
-      @@conf.createEnvironmentDirs
-
-
-      if @@conf.wrapper_check_environment == false then
-         puts "DEC environment not suited for unit tests"
+      @decConfigDir = ENV['DEC_CONFIG']
+ 
+      ## ----------------------------------
+      ## initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new("test", "#{@decConfigDir}/dec_log_config.xml")
+   
+      @@logger = loggerFactory.getLogger   
+      if @@logger == nil then
          puts
-         exit(99)
+		   puts "Error in #{File.basename(__FILE__)}"
+     	   puts "Could not initialize logging system !  :-("
+         puts "Check DEC logs configuration under \"#{@decConfigDir}/orchestrator_log_config.xml\"" 
+ 	      puts
+   	   exit(99)
       end
-      
+
+      ## ----------------------------------
+      @@conf.wrapper_unset_config
+
+      @@logger.info("NASA interface tests")
       
    end
    
    ## ------------------------------------------------------
-   
+
    Test::Unit.at_exit do
-      puts "End of DEC test for IERS interface"
+      @@logger.info("End of DEC tests #{File.basename(__FILE__)}")
    end
-   
+
    ## ------------------------------------------------------
-   
-   ## Setup before every test-case
-   ##
+
    def setup
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
-      puts
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
       
-      @@conf.wrapper_load_config_development
-            
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
       system("\\rm -rf #{reportDir}")
-      system("\\rm -rf /tmp/dec*")
+      # system("\\rm -rf /tmp/dec*")
       system("\\rm -rf /tmp/DEC*.log")
+      system("\\rm -rf /data/mocExternalInterfaces/log/DEC*.log")
 
-      ftConfig    = ReadInterfaceConfig.instance
-      configOut   = ReadConfigOutgoing.instance
-      configIn    = ReadConfigIncoming.instance
-      arrEnts     = ftConfig.getAllMnemonics
-
-#      arrEnts.each{|x|
-#                  
-#         bEnabled4Send  = ftConfig.isEnabled4Sending?(x)
-#         bEnabled4Recv  = ftConfig.isEnabled4Receiving?(x)
-#
-#         ## --------------------------------------
-#
-#         if bEnabled4Send == true then
-#         
-#            uploadDir = configOut.getUploadDir(x)
-#         
-#            if uploadDir == nil or uploadDir == "" then
-#               next
-#            end
-#         
-#            if uploadDir[0,1] != '/' then
-#               uploadDir = '~/' + uploadDir
-#            end
-#            
-#            checkDirectory(uploadDir)
-#
-#            uploadTemp = configOut.getUploadTemp(x)
-#         
-#            if uploadTemp[0,1] != '/' then
-#               uploadTemp = '~/' + uploadTemp
-#            end
-#            checkDirectory(uploadTemp)
-#         end
-#
-#         ## --------------------------------------
-#
-#         if bEnabled4Recv == true then
-#            arr = configIn.getDownloadDirs(x)
-#            
-#            arr.each{|dir|
-#               
-#               downloadDir = ""
-#
-#               if dir[:directory][0,1] != '/' then
-#                  downloadDir = '~/' + dir[:directory]
-#               else
-#                  downloadDir = dir[:directory]
-#               end
-#               
-#               checkDirectory(downloadDir)
-#            }
-#            
-##            ## create the files available for pulling
-##            
-##            if x.upcase.include?("LOCALHOST") or x.upcase.include?("FILESYSTEM") then
-##               @@arrDownloadFiles.each{|filename|
-##                  puts "#{filename}    => #{arr[0][:directory]}/#{filename}"
-##                  system("echo \'#{filename}\' > #{arr[0][:directory]}/#{filename}")
-##               }
-##            end
-#            
-#         end
-#
-#         ## --------------------------------------
-#      }
-#      
-      
-      cmd = "decManageDB -c"
-      ret = system(cmd)
-      
-      if ret == false then
-         puts
-         puts "Error when creating the DEC inventory ! :-("
-         puts
-         # exit(99)
-      end
-      
-      cmd = "decConfigInterface2DB -p EXTERNAL"
-      
-      ret = system(cmd)
-      
-      if ret == false then
-         puts
-         puts "Error when adding interface configuration to the database ! :-("
-         puts
-         # exit(99)
-      end
-      
-   end
-   ## --------------------------------------------------------
-   ## After every test case
-
-   def teardown
-      puts
-      puts "================================================"
-      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
-      puts
-
-      @@conf.wrapper_load_config_development
+      cmd = "mkdir -p /tmp/dec/int/"
+      @@logger.debug(cmd)
+      system(cmd)
 
       cmd = "decManageDB -d"
-      puts cmd
+      @@logger.debug(cmd)
       ret = system(cmd)
-       
-      if ret == false then
-         puts "Error when dropping the dec inventory ! :-("
-         puts
-         exit(99)
-      end
-   end
-   ## ------------------------------------------------------
 
-   ## ------------------------------------------------------
-
-   def test_decGetFromInterface
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
-      puts
-
-      @@conf.wrapper_load_config_development
-
-      puts
-      puts
-      @@conf.print_environment
-      puts
-      puts
-
+      cmd = "decManageDB -c"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+      
       cmd = "decConfigInterface2DB -p EXTERNAL"
-      assert(system(cmd), "decConfigInterface2DB --process EXTERNAL")
+      @@logger.debug(cmd)
+      ret = system(cmd)
 
-      @entityConfig     = ReadInterfaceConfig.instance
-      conf              = ReadConfigIncoming.instance
-      @finalDir         = conf.getIncomingDir("IERS")
-      
-      checkDirectory(@finalDir)
+   end
 
-      # finals.all / gpsrapid.out
-            
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
-            
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      sleep(5.0)
-      
-      cmd = "decGetFromInterface -m IERS --nodb --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
+   ## -----------------------------------------------------------
 
-      sleep(5.0)
+   def teardown      
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
 
-      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/gpsrapid.out"), "retrieved gpsrapid.out")
 
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
+   ## -----------------------------------------------------------
 
-      cmd = "decGetFromInterface -m IERS --no-intray"
-      puts cmd
-      assert(system(cmd), cmd)
+   ## -----------------------------------------------------------
+   
+   def testBULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      assert(File.exist?("#{@finalDir}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{@finalDir}/gpsrapid.out"), "retrieved gpsrapid.out")
+      cmd = "decConfigInterface2DB -a TEST_IERS_BULA"
+      @@logger.debug(cmd)
+      ret = system(cmd)
 
-      FileUtils.rm_f("#{@finalDir}/finals.all")
-      FileUtils.rm_f("#{@finalDir}/gpsrapid.out")
+      cmd = "decCheckConfig -e TEST_IERS_BULA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_IERS_BULA")
 
-      cmd = "decStats -v"
-      assert(system(cmd), cmd)
+      cmd = "decGetFromInterface -m TEST_IERS_BULA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_IERS_BULA")
 
-      cmd = "decStats -f non_received_file.kk"
-      assert(!system(cmd), cmd)
-      
-      cmd = "decStats -f finals.all"
-      assert(system(cmd), cmd)
+      cmd = "decGetFromInterface -m TEST_IERS_BULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from TEST_IERS_BULA")
+  
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
 
-      cmd = "decStats -f gpsrapid.out"
-      assert(system(cmd), cmd)
+      # different files can be received with the same filename
+      cmd = "decGetFromInterface -m TEST_IERS_BULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from TEST_IERS_BULA")
 
       cmd = "decStats"
-      assert(system(cmd), cmd)
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
 
-      sleep(5.0)
-
-      cmd = "decGetFromInterface -m IERS --no-intray"
-      puts
-      assert(system(cmd), cmd)
-
-      assert(!File.exist?("#{@finalDir}/finals.all"), "should not retrieve twice finals.all")
-      assert(!File.exist?("#{@finalDir}/gpsrapid.out"), "should not retrieve twice gpsrapid.out")
-
-      cmd = "decStats -H 1"
-      assert(system(cmd), cmd)
-      
-      cmd = "decStats -H 2"
-      assert(system(cmd), cmd)
-      
-   end
-   ## ------------------------------------------------------
-
-   def test_decGetFromInterface_NODB
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "DEC_UnitTests::#{__method__.to_s}"
-      puts
-
-      @@conf.wrapper_load_config_development
-
-      cmd = "decManageDB -d"
-      assert(system(cmd), "decManageDB -d")
-
-      @entityConfig     = ReadInterfaceConfig.instance
-      conf              = ReadConfigIncoming.instance
-      @finalDir         = conf.getIncomingDir("IERS")
-      
-      checkDirectory(@finalDir)
-      
-      ENV.delete('DEC_DB_ADAPTER')
-      ENV.delete('DEC_DATABASE_NAME')
-      ENV.delete('DEC_DATABASE_USER')
-      ENV.delete('DEC_DATABASE_PASSWORD')
-
-      puts
-      puts
-      @@conf.print_environment
-      puts
-      puts
-
-      cmd = "decValidateConfig -a"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -a -e IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-            
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      sleep(2.0)
-      
-      cmd = "decGetFromInterface -m IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      dimConfig = ReadConfigIncoming.instance
-      
-      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
-
-      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
-
-      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
-      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
-      
-   end
-   ## ------------------------------------------------------
-
-   def test_IERS_Bulletin_A_B
-      puts
-      puts
-      puts "================================================"
-      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
-      puts
-
-      cmd = "decValidateConfig -a"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      cmd = "decCheckConfig -a -e IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-            
-      cmd = "decGetFromInterface -m IERS -l --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-      
-      sleep(2.0)
-      
-      cmd = "decGetFromInterface -m IERS --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      dimConfig = ReadConfigIncoming.instance
-      
-      dimsDirs = dimConfig.getTargetDirs4Filetype("gpsrapid.*")
-
-      assert(File.exist?("#{dimsDirs[0]}/finals.all"), "retrieved finals.all")
-      assert(File.exist?("#{dimsDirs[0]}/gpsrapid.out"), "retrieved gpsrapid.out")
-
-      FileUtils.rm_f("#{dimsDirs[0]}/finals.all")
-      FileUtils.rm_f("#{dimsDirs[0]}/gpsrapid.out")
-
-   end
-
-   ## ------------------------------------------------------
-
-   def test_IERS_S3_Bulletin_C
-
-      puts
-      puts "================================================"
-      puts "#{File.basename(__FILE__)}::#{__method__.to_s}"
-      puts
-
-      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("LEAP"))
-      checkDirectory(ReadConfigIncoming.instance.getIncomingDir("PUBLISH_S3"))
-      
-      ReadConfigIncoming.instance.getDownloadDirs("PUBLISH_S3").each do |dir|
-         checkDirectory(dir[:directory])
-      end
-
-      cmd = "decGetFromInterface -m LEAP -l"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      sleep(5.0)
-
-      cmd = "decGetFromInterface -m LEAP --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      sleep(5.0)
-
-      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
-      puts cmd
-      assert(system(cmd), cmd)      
-
-      cmd = "decGetFromInterface -m PUBLISH_S3"
-      puts cmd
-      assert(system(cmd), cmd)      
-
-      file = "/tmp/dec_final_dissemination/S3/S3__GN_1_LSC_AX_*"
-      
-      arr = Dir["#{file}"]
-      
-      assert(File.exist?(arr[0]), "S3__GN_1_LSC_AX Downloaded")
-
-      cmd = "decGetFromInterface -m LEAP --nodb"
-      puts cmd
-      assert(system(cmd), cmd)
-
-      sleep(5.0)
-
-      cmd = "decGetFromInterface -m PUBLISH_S3 -l"
-      puts cmd
-      assert(system(cmd), cmd)      
-
-      cmd = "decGetFromInterface -m PUBLISH_S3"
-      puts cmd
-      assert(system(cmd), cmd)      
-      
       arr = Dir["/tmp/DEC*.log"]
-            
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
       cmd = "grep ERROR #{arr[0]}"
-      puts cmd
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
-   
-   end
-   ## ------------------------------------------------------
 
+      @@logger.debug("Verification of log trace: file pull")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Pull mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: File conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of file")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
+
+   def testBULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decConfigInterface2DB -a TEST_IERS_BULC"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decCheckConfig -e TEST_IERS_BULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_IERS_BULC")
+
+      cmd = "decGetFromInterface -m TEST_IERS_BULC -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_IERS_BULC")
+
+      cmd = "decGetFromInterface -m TEST_IERS_BULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from TEST_IERS_BULC")
+  
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      # different files can be received with the same filename
+      cmd = "decGetFromInterface -m TEST_IERS_BULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from TEST_IERS_BULC")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file pull")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "Pull mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: File conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication of file")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File duplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## -----------------------------------------------------------
 
 
 end
-
 
 ## ===================================================================
 

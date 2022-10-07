@@ -25,6 +25,7 @@ module Converters
    ## - 22 731                       => "%y%m%d"   / Length 6
    ## - 2017JAN                      => "%Y%b"     / Length 7
    ## - 20120325                     => "%Y%m%d"   / Length 8
+   ## - 2012  3 25                   => "%Y %m %d" / Length 10
    ## - 2017 JAN  1                  => "%Y %b %d" / Length 11
    ## - 20120325T154814              => "%Y%m%dT%H%M%S" / Length 17            => XL_ASCII_CCSDSA_COMPACT
    ## - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
@@ -93,7 +94,11 @@ module Converters
       if str.length == 11 then
          return DateTime.strptime(str,"%Y %b %d")
       end
-      
+
+      if str.length == 10 then
+         return DateTime.strptime(str,"%Y %m %d")
+      end
+
       if str.length == 8 then
          return DateTime.strptime(str,"%Y%m%d")
       end
@@ -113,6 +118,9 @@ module Converters
       end
       ## ---------------------------------------- 
       
+      raise "FATAL ERROR in CUC::Converters str2date(#{str}) / length #{str.length}"
+
+=begin
       puts
       puts "FATAL ERROR in CUC::Converters str2date(#{str}) / length #{str.length}"
       puts
@@ -121,6 +129,8 @@ module Converters
 
       return DateTime.new(str.slice(0,4).to_i, str.slice(4,2).to_i, str.slice(6,2).to_i,
                           str.slice(9,2).to_i,  str.slice(11,2).to_i, str.slice(13,2).to_i)
+=end
+
    end
 
    ## -----------------------------------------------------------

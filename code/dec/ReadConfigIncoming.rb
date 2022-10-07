@@ -19,6 +19,7 @@
 require 'date'
 require 'singleton'
 require 'rexml/document'
+require 'roman-numerals'
 
 require 'cuc/DirUtils'
 

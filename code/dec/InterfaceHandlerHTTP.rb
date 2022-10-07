@@ -369,7 +369,11 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
       ret = http.perform
 
-      if http.response_code == 302 then
+      if @isDebugMode == true then
+         @logger.debug("#{user}:#{pass} => response code #{http.response_code}")
+      end
+
+      if http.response_code == 302 or http.response_code == 401 then
          return getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
       end
 

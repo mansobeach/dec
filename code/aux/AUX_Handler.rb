@@ -8,7 +8,7 @@
 #
 # === Data Exchange Component
 # 
-# Git: $Id: AUX_Handler.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+# Git: $Id: AUX_Handler.rb,v 
 #
 # Module AUX management
 # 
@@ -20,6 +20,8 @@ require 'cuc/Converters'
 require 'aux/AUX_Handler_Celestrak_SFS'
 require 'aux/AUX_Handler_Celestrak_TCA'
 require 'aux/AUX_Handler_Celestrak_TLE'
+require 'aux/AUX_Handler_IERS_BULA_ASCII'
+require 'aux/AUX_Handler_IERS_BULA_XML'
 require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
@@ -113,7 +115,17 @@ private
       if File.fnmatch(AUX_Pattern_Celestrak_TLE, filename) == true then
          @handler = AUX_Handler_Celestrak_TLE.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
-      end   
+      end
+
+      if File.fnmatch(AUX_Pattern_IERS_BULA_ASCII, filename) == true then
+         @handler = AUX_Handler_IERS_BULA_ASCII.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_IERS_BULA_XML, filename) == true then
+         @handler = AUX_Handler_IERS_BULA_XML.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
 
       if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULA, filename) == true then
          @handler = AUX_Handler_NASA_CDDIS_BULA.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
@@ -126,7 +138,7 @@ private
       end
 
       if File.fnmatch(AUX_Pattern_IERS_Leap_Second, filename.downcase) == true then
-         @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target, @targetDir)
+         @handler = AUX_Handler_IERS_Leap_Second.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
       end
 

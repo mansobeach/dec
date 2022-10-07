@@ -8,7 +8,7 @@
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: AUX_Hander_IERS_Leap_Second.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+### Git: $Id: AUX_Hander_IERS_Leap_Second.rb
 ###
 ### Module AUX management
 ### 
@@ -16,6 +16,7 @@
 #########################################################################
 
 ### IERS Bulletin-C / Leap Second TAI-UTC
+## https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat
 
 ### MMM_SS_L_TTTTTT_yyyymmddThhmmss_YYYYMMDDTHHMMSS_ YYYYMMDDTHHMMSS_<instance ID>_GGG_<class ID>.<extension>
 ###
@@ -51,7 +52,7 @@ require 'aux/AUX_Handler_Generic'
 
 module AUX
 
-AUX_Pattern_IERS_Leap_Second = "leap_second.*"
+AUX_Pattern_IERS_Leap_Second = "leap_second.dat"
 
 class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
    
@@ -59,29 +60,22 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, target, dir = "", isDebug = false)
+   def initialize(full_path, target, dir = "", logger = nil, isDebug = false)
+
       @target = target
-      # puts "AUX_Handler_IERS_Leap_Second::initialize"
-      super(full_path, dir, isDebug)
       
-      @input_file_pattern  = "leap_second"
+      super(full_path, dir, logger, isDebug)
+      
+      case @target.upcase
+         when "NAOS" then convert_NAOS
+         when "S3"   then convert_S3
+         when "POD"  then convert_POD
+         else raise "#{@target.upcase} not supported"
+      end
+ 
       @strValidityStart    = ""
       @strValidityStop     = ""
       
-      if target.upcase == "S3" then
-         @mission    = "S3_"
-         @fileType = "GN_1_LSC_AX"
-      end
-      
-      if target.upcase == "POD" then
-         @mission    = "POD"
-         @fileType = "AUX_LSC_AX"
-      end
-
-      @input_file_pattern = "leap_second"
-
-      @instanceID = "____________________USN_O_NR_POD"
-      @extension  = "SEN3"
    end   
    ## -------------------------------------------------------------
    
@@ -91,16 +85,15 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
    end
    ## -------------------------------------------------------------
    
+   # NS1_TEST_AUX_BULC___20220707T000000_21000101T000000_0001.EOF
    def rename
-      @strCreationDate  = self.getCreationDate
-      @newName          = "#{@mission}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@strCreationDate}_#{@instanceID}.#{@extension}"
+      @newName          = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
       super(@newName)
       return @full_path_new
    end
    ## -------------------------------------------------------------
 
    def convert
-      @strCreation = self.getCreationDate 
       parse
       return rename
    end
@@ -108,20 +101,31 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
 
 private
 
-   @listFiles = nil
-   @mailer    = nil
+   ## -----------------------------------------------------------
 
+   def convert_NAOS
+      @mission    = "NS1"
+      @fileType   = "AUX_BULC__"
+      @extension  = "TXT"
+   end
    ## -----------------------------------------------------------
    
-   ## -----------------------------------------------------------
-
    def convert_S3
+      @mission    = "S3_"
+      @fileType   = "GN_1_LSC_AX"
+      @instanceID = "____________________USN_O_NR_POD"
+      @extension  = "SEN3"
+      raise "not implemented for #{@target}"
+   end
+   ## -------------------------------------------------------------
+   
+   def convert_POD
+      @mission    = "POD"
+      @fileType   = "AUX_LSC_AX"
+      raise "not implemented for #{@target}"
    end
    ## -------------------------------------------------------------
 
-   def convert_POD
-      raise "Not Implemented yet"
-   end
    ## -------------------------------------------------------------
 
    def parse
@@ -139,7 +143,7 @@ private
             end
          end
          
-         # Read first line of data to get validity start
+         # Read last line of data to get validity start
          if line[0] != "#" then
             fields = line.split(" ")
             day      = fields[1].to_s.rjust(2, "0")
@@ -149,7 +153,7 @@ private
             if @isDebugMode == true then
                puts "Validity Start: #{@strValidityStart}"
             end            
-            break
+            # break
          end
       end
    end

@@ -467,9 +467,9 @@ def body
 
 
             if ret == true then
-#               if @isDebugMode == true then
-                  @logger.debug("Event OnReceiveNewFilesOK triggered")
-#               end
+               if @isDebugMode == true then
+                  @logger.debug("Event triggered OnReceiveNewFilesOK")
+               end
                
                event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
 
@@ -479,7 +479,7 @@ def body
                                     )
             else
                if @isDebugMode == true then
-                  @logger.debug("Event OnReceiveError triggered")
+                  @logger.debug("Event triggered OnReceiveError")
                end
                event.trigger(@entity, "ONRECEIVEERROR", nil, @logger)
             end

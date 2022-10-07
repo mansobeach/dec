@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by Nazzareno Straccia (NSIT SYSTEMS) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.org/EarthParameter" xmlns:Q1="http://www.example.org/LOS" xmlns:Q2="http://www.example.org/NAOSCommon" targetNamespace="http://www.example.org/EarthParameter" elementFormDefault="qualified">
+	<import namespace="http://www.example.org/NAOSCommon" schemaLocation="NAOSCommon.xsd"/>
+	<element name="Earth_Explorer_File" type="tns:EarthParameterFileType"/>
+	<complexType name="EarthParameterFileType">
+		<sequence>
+			<element name="Earth_Explorer_Header" type="Q2:Earth_Explorer_Header"/>
+			<element name="Variable_Header" type="tns:EarthParamDataType"/>
+		</sequence>
+	</complexType>
+	<complexType name="EarthParamDataType">
+		<sequence>
+			<element name="Header" type="Q2:Variable_HeaderType"/>
+			<element name="EarthRadius" type="tns:EarthRadiusType"/>
+			<element name="EarthRotationSpeed" type="double"/>
+			<element name="LightSpeed" type="double"/>
+			<element name="AtmosphericRefraction" type="tns:AtmosphericRefractionType"/>
+		</sequence>
+	</complexType>
+	<complexType name="EarthRadiusType">
+		<sequence>
+			<element name="MeanRadius" type="double"/>
+			<element name="PoleRadius" type="double"/>
+			<element name="EquatorRadius" type="double"/>
+		</sequence>
+	</complexType>
+	<complexType name="AtmosphericRefractionType">
+		<sequence>
+			<element name="UseAtmRefraction" type="boolean"></element>
+			<element name="AtmRefraction" type="tns:RefractionType" minOccurs="1" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="RefractionType">
+		<sequence>
+			<element name="Height" type="double"></element>
+			<element name="RefractionIndex" type="double"></element>
+		</sequence>
+	</complexType>
+</schema>

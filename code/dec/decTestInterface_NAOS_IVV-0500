@@ -205,20 +205,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of TCA")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: TCA conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "TCA conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards TCA consumers:")
+      @@logger.debug("Verification of push towards AUTO4EO:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards TCA consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards AUTO4EO traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -258,20 +259,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of SFS")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: SFS conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "SFS conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards SFS consumers:")
+      @@logger.debug("Verification of push towards AUTO4EO:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards SFS consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards AUTO4EO traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -309,20 +311,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of SFL")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "SFL duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: SFL conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "SFL conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards SFL consumers:")
+      @@logger.debug("Verification of push towards AUTO4EO:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards SFL consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards AUTO4EO traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -360,20 +363,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of NBULA")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "NBULA duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: NBULA conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "NBULA conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards NBULA consumers:")
+      @@logger.debug("Verification of push towards AUTO4EO:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards NBULA consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards AUTO4EO traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -413,20 +417,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of NBULC")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "NBULA duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: NBULC conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "NBULC conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards NBULC consumers:")
+      @@logger.debug("Verification of push towards Secure area:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards NBULC consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards Secure area traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -434,7 +439,108 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end   
    
-   ## ------------------------------------------------------
+   ## -----------------------------------------------------------
+
+   def testBULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e IERS_BULC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IERS_BULC")
+   
+      cmd = "decGetFromInterface -m IERS_BULC -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IERS_BULC")
+   
+      cmd = "decGetFromInterface -m IERS_BULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IERS_BULC")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m IERS_BULC --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IERS_BULC")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards Secure area:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      assert(system(cmd), "Verification of push towards Secure area traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
+   ## -----------------------------------------------------------
+
+   def testBULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e IERS_BULA"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IERS_BULA")
+   
+      cmd = "decGetFromInterface -m IERS_BULA -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IERS_BULA")
+   
+      cmd = "decGetFromInterface -m IERS_BULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IERS_BULA")
+      
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m IERS_BULA --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IERS_BULA")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+   
+      arr = Dir["/tmp/DEC*.log"]
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of push towards Secure area:")
+      cmd = "grep DEC\_210 #{arr[0]}"
+      assert(system(cmd), "Verification of push towards Secure area traced in DEC logs in #{__method__.to_s}") 
+
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end   
 
    ## -----------------------------------------------------------
 
@@ -466,20 +572,21 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       arr = Dir["/tmp/DEC*.log"]
       arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
 
-      @@logger.debug("Verification of log trace: Duplication of TLE")
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+
+      @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "TLE duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Suplication traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of log trace: TLE conversion to NAOS mission")
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "TLE conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to NAOS mission traced in DEC logs in #{__method__.to_s}") 
 
-      @@logger.debug("Verification of push towards TLE consumers:")
+      @@logger.debug("Verification of push towards AUTO4EO:")
       cmd = "grep DEC\_210 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "Verification of push towards TLE consumers traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "Verification of push towards AUTO4EO traced in DEC logs in #{__method__.to_s}") 
 
       cmd = "grep ERROR #{arr[0]}"
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
@@ -589,6 +696,18 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       sleep(60)
 
       cmd = "decListener -m CELESTRAK_TLE -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m IERS_BULA -i 86400"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
+
+      cmd = "decListener -m IERS_BULC -i 86400"
       @@logger.debug(cmd)
       ret = system(cmd)
 

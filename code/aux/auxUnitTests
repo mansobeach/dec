@@ -109,6 +109,80 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_NAOS_IERS_BULA_ASCII
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletinA.txt #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletinA.txt",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_IERS_BULA = "#{@@testDir}/bulletinA.txt"
+      cmd = "auxConverter -m NAOS -f #{file_IERS_BULA} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS BULA to NAOS mission")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_BULA__*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_IERS_BULA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletina-xxxv-039.xml #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletina-xxxv-039.xml",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_IERS_BULA = "#{@@testDir}/bulletina-xxxv-039.xml"
+      cmd = "auxConverter -m NAOS -f #{file_IERS_BULA} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS BULA to NAOS mission")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_BULA__*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_IERS_BULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+   
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/iers/Leap_Second.dat #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/iers/Leap_Second.dat",     @@testDir)
+   
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+   
+      file_IERS_BULC = "#{@@testDir}/Leap_Second.dat"
+      cmd = "auxConverter -m NAOS -f #{file_IERS_BULC} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert IERS (hpiers.obspm.fr) BULC to NAOS mission")
+   
+      arr = Dir["/tmp/aux_out2/NS1*AUX_BULC__*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+   
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   
+   ## --------------------------------------------------------
+
    def test_NAOS_NASA_NBULA
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       

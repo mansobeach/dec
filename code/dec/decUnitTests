@@ -775,7 +775,15 @@ class DECTestCase < Test::Unit::TestCase
 
    def test_parsers
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-                  
+      
+=begin
+      inConfig       = ReadConfigIncoming.instance
+      puts inConfig.getDownloadDirs("TEST_IERS_BULA")[0][:directory]
+      puts inConfig.getDownloadDirs("NASA_SFL")[0][:directory]
+      puts
+      exit
+=end
+
       ftReadConf = ReadInterfaceConfig.instance
       ftReadConf.update
       ftpRecv    = ftReadConf.getFTPServer("LOCALHOST_NOT_SECURE")

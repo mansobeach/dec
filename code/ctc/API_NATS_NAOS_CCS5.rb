@@ -59,7 +59,7 @@ module CTC
 
       API_NATS_F6_SUBJECT     = "CCS5.AutoPilot.NAOS.call"
       API_NATS_F6_BODY        = "HistoryReport"
-      API_NATS_F6_TIMEOUT     = 1200
+      API_NATS_F6_TIMEOUT     = 1800
 
       API_NATS_F99_SUBJECT    = "CCS5.AutoPilot.NAOS.eval"
       API_NATS_F99_BODY       = ""

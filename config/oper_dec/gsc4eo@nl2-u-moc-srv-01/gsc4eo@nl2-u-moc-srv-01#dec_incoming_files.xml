@@ -157,7 +157,7 @@
 
       <Interface>
          <Name>TEST_NASA_NBULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+         <LocalInbox>/data/mocExternalInterfaces/int/nbula</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
          </DownloadDirs>
@@ -173,7 +173,7 @@
 
       <Interface>
          <Name>NASA_NBULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+         <LocalInbox>/data/mocExternalInterfaces/int/nbula</LocalInbox>
          <DownloadDirs>
 		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
          </DownloadDirs>
@@ -189,7 +189,7 @@
 
       <Interface>
          <Name>TEST_NASA_NBULC</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
+         <LocalInbox>/data/mocExternalInterfaces/int/nbulc</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
          </DownloadDirs>
@@ -205,7 +205,7 @@
 
       <Interface>
          <Name>NASA_NBULC</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
+         <LocalInbox>/data/mocExternalInterfaces/int/nbulc</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
          </DownloadDirs>
@@ -223,7 +223,7 @@
          <Name>TEST_NASA_SFL</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/sfl</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt</Directory>
+            <Directory DepthSearch="0">%Q{sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt}</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -239,7 +239,7 @@
          <Name>NASA_SFL</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/sfl</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt</Directory>
+            <Directory DepthSearch="0">%Q{sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt}</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -250,7 +250,154 @@
             <LogUnknown>false</LogUnknown>
          </Switches>         
       </Interface>
+
+
+<!-- 
+
+https://datacenter.iers.org/data/xml/bulletina-xxxv-040.xml
+
+-->
+
+
+<!-- 
+
+puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_i+13).downcase}-#{(Time.new.strftime("%U").to_i-1).to_s.rjust(3,'0')}.xml}
+
+-->
+
+<Interface>
+   <Name>IERS_BULA</Name>
+   <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+   <DownloadDirs>
+      <Directory DepthSearch="0">%Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_i+13).downcase}-#{(Time.new.strftime("%U").to_i-1).to_s.rjust(3,'0')}.xml}</Directory>
+   </DownloadDirs>
+   <Switches>
+      <DeleteDownloaded>false</DeleteDownloaded>
+      <DeleteDuplicated>false</DeleteDuplicated>
+      <DeleteUnknown>false</DeleteUnknown>
+      <LocalDissemination>true</LocalDissemination>
+      <LogDuplicated>false</LogDuplicated>
+      <LogUnknown>false</LogUnknown>
+   </Switches>
+</Interface>
+
+<Interface>
+   <Name>TEST_IERS_BULA</Name>
+   <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+   <DownloadDirs>
+      <Directory DepthSearch="0">%Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_i+13).downcase}-#{(Time.new.strftime("%U").to_i-1).to_s.rjust(3,'0')}.xml}</Directory>
+   </DownloadDirs>
+   <Switches>
+      <DeleteDownloaded>false</DeleteDownloaded>
+      <DeleteDuplicated>false</DeleteDuplicated>
+      <DeleteUnknown>false</DeleteUnknown>
+      <LocalDissemination>true</LocalDissemination>
+      <LogDuplicated>false</LogDuplicated>
+      <LogUnknown>false</LogUnknown>
+   </Switches>
+</Interface> 
+
+
+      <!--
+
+      <Interface>
+         <Name>IERS_BULA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
       
+      <Interface>
+         <Name>TEST_IERS_BULA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>      
+
+   -->
+
+   <Interface>
+      <Name>IERS_BULA</Name>
+      <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+      <DownloadDirs>
+         <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
+      </DownloadDirs>
+      <Switches>
+         <DeleteDownloaded>false</DeleteDownloaded>
+         <DeleteDuplicated>false</DeleteDuplicated>
+         <DeleteUnknown>false</DeleteUnknown>
+         <LocalDissemination>true</LocalDissemination>
+         <LogDuplicated>false</LogDuplicated>
+         <LogUnknown>false</LogUnknown>
+      </Switches>
+   </Interface>
+   
+   <Interface>
+      <Name>TEST_IERS_BULA</Name>
+      <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
+      <DownloadDirs>
+         <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
+      </DownloadDirs>
+      <Switches>
+         <DeleteDownloaded>false</DeleteDownloaded>
+         <DeleteDuplicated>false</DeleteDuplicated>
+         <DeleteUnknown>false</DeleteUnknown>
+         <LocalDissemination>true</LocalDissemination>
+         <LogDuplicated>false</LogDuplicated>
+         <LogUnknown>false</LogUnknown>
+      </Switches>
+   </Interface>  
+
+      <Interface>
+         <Name>TEST_IERS_BULC</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
+
+      <Interface>
+         <Name>IERS_BULC</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>         
+      </Interface>
+
       <Interface>
          <Name>LOCAL_MOC_IN</Name>
          <LocalInbox>/data/mocExternalInterfaces/tmp/mocIN</LocalInbox>
@@ -332,6 +479,30 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+      <File Type="bulletinA.txt">
+         <Description>AUX_BULA__</Description>
+         <FromList>
+            <Interface>TEST_IERS_BULA</Interface>
+            <Interface>IERS_BULA</Interface>
+         </FromList>
+      </File>
+
+      <File Type="bulletina*.xml">
+         <Description>AUX_BULA__</Description>
+         <FromList>
+            <Interface>TEST_IERS_BULA</Interface>
+            <Interface>IERS_BULA</Interface>
+         </FromList>
+      </File>
+
+      <File Type="Leap_Second.dat">
+         <Description>AUX_BULC__</Description>
+         <FromList>
+            <Interface>TEST_IERS_BULC</Interface>
+            <Interface>IERS_BULC</Interface>
+         </FromList>
+      </File>
+
       <File Type="*CATNR=?????">
          <Description>AUX_TLE___</Description>
          <FromList>

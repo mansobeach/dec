@@ -23,11 +23,13 @@ module AUX
    
    include CUC::DirUtils
    
-   @@version = "0.0.5j"
+   @@version = "0.0.6b"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.6"  =>    "IERS Bulletin A XML has been integrated\n\
+         IERS Bulletin A ASCII updated for NAOS",
       "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\
          Celestrak TCA (TLE catalogue)  has been integrated\n\
          Celestrak TLE (TLE prediction) has been integrated\n\

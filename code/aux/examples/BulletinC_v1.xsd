@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/BulletinC" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.org/BulletinC" xmlns:Q1="http://www.example.org/prova" xmlns:Q2="http://www.example.org/LOS" xmlns:Q3="http://www.example.org/NAOSCommon">
+
+    <import schemaLocation="NAOSCommon.xsd" namespace="http://www.example.org/NAOSCommon"></import>
+    <element name="Earth_Explorer_File" type="tns:BulletinCFileType"></element>
+
+    <complexType name="BulletinCFileType">
+    	<sequence>
+    		<element name="Earth_Explorer_Header" type="Q3:Earth_Explorer_Header"></element>
+    		<element name="Variable_Header" type="tns:BulletinCDataType"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="BulletinCDataType">
+    	<sequence>
+    		<element name="UTC-TAI" type="int"></element>
+    		<element name="UTC-GPS" type="int"></element>
+    	</sequence>
+    </complexType>
+</schema>

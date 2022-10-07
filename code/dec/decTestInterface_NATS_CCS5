@@ -12,6 +12,8 @@
 ###
 #########################################################################
 
+## rake -f build_dec.rake dec:build[aiv,naos-aiv,naos]
+
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
@@ -96,6 +98,15 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
       ## ----------------------------------
       @@conf.wrapper_unset_config
       
+      ## ----------------------------------
+      ## backup previous log file
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+
+      cmd = "mv -f #{arr[0]} #{arr[0]}.PREV.#{Time.now.to_s.gsub!(" ", "")}"
+      @@logger.debug(cmd)
+      system(cmd)
+      ## ----------------------------------
+
    end
    
    ## ------------------------------------------------------
@@ -265,6 +276,10 @@ class DECTestInterface_NATS_CCS5 < Test::Unit::TestCase
       ret = system(cmd)
       assert(ret, cmd)
 =end
+
+      arr = Dir["/data/mocExternalInterfaces/log/DEC*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end

@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.36g"
+   @@version = "1.0.37a"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.37" =>    "New gem roman-numerals is required", \
       "1.0.36" =>    "LocalDissemination config items required to drive automation decListener", \
       "1.0.35" =>    "Management of duplications with MD5 for HTTP protocol", \
       "1.0.34" =>    "NATS protocol support for NAOS MCS CCS5", \

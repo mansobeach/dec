@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
   
   # s.add_dependency('dec', '> 1.0.30')
+  s.add_dependency('roman-numerals', '~> 0.3')
 
   ## ----------------------------------------------
   

@@ -173,7 +173,7 @@
 
   <!-- ================================================================ --> 
  
-  <Interface Name="IERS">
+  <Interface Name="TEST_IERS_BULA">
     <Desc>IERS Interface</Desc>
     <TXRXParams>
       <Enabled4Sending>false</Enabled4Sending>
@@ -186,18 +186,17 @@
       <ParallelDownload>5</ParallelDownload>
     </TXRXParams>    
     <Server>
-      <Protocol>FTP</Protocol>
-      <!-- ftp.cddis.eosdis.nasa.gov /products/iers-->
-      <Hostname>ftp.iers.org</Hostname>
-	   <Port>21</Port>
-      <User>anonymous</User>
-      <Pass>guest</Pass>
+      <Protocol>HTTP</Protocol>
+      <Hostname>datacenter.iers.org</Hostname>
+	    <Port>443</Port>
+      <User></User>
+      <Pass></Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
       <RetrieveContentFlag>true</RetrieveContentFlag>
-      <SecureFlag>false</SecureFlag>
+      <SecureFlag>true</SecureFlag>
       <VerifyPeerSSL>false</VerifyPeerSSL>
       <CompressFlag>false</CompressFlag>
-      <PassiveFlag>true</PassiveFlag>
+      <PassiveFlag>false</PassiveFlag>
       <CleanUpFreq Unit="s">5</CleanUpFreq>
     </Server>
     <DeliverByMailTo>

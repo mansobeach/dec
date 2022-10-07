@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.example.org/NAOSCommon" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.example.org/NAOSCommon">
+
+
+    <xsd:complexType name="HeaderLDType">
+    	<xsd:sequence>
+    		<xsd:element name="Fixed_Header" type="Fixed_HeaderType">
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="Fixed_HeaderType">
+    	<xsd:sequence>
+    		<xsd:element name="File_Name" type="xsd:string"></xsd:element>
+    		<xsd:element name="File_Description" type="xsd:string"></xsd:element>
+    		<xsd:element name="Notes" type="xsd:string"></xsd:element>
+    		<xsd:element name="Mission">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:enumeration value="NS1"></xsd:enumeration>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="File_Class">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:enumeration value="OPER"></xsd:enumeration>
+    					<xsd:enumeration value="TEST"></xsd:enumeration>
+    					<xsd:enumeration value="SVTx"></xsd:enumeration>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="File_type">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:length value="10"></xsd:length>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="Validity_Period"
+    			type="Validity_PeriodType">
+    		</xsd:element>
+    		<xsd:element name="File_Version"
+    			type="xsd:nonNegativeInteger">
+    		</xsd:element>
+    		<xsd:element name="Source" type="SourceType"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:simpleType name="UTCDateTimeSec">
+    	<xsd:restriction base="NAOSTimeType">
+    		<xsd:pattern value="UTC=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}">
+    		</xsd:pattern>
+    	</xsd:restriction>    	
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UTCDateTimeMillsec">
+     	<xsd:restriction base="NAOSTimeType">
+    		<xsd:pattern value="UTC=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}">
+    		</xsd:pattern>
+    	</xsd:restriction>    	
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UTCDateTimeMicroSec">
+    	<xsd:restriction base="NAOSTimeType">
+    		<xsd:pattern value="UTC=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}">
+    		</xsd:pattern>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UTCDateTimeNanoSec">
+    	<xsd:restriction base="NAOSTimeType">
+    		<xsd:pattern value="UTC=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{9}">
+    		</xsd:pattern>
+    	</xsd:restriction>
+    </xsd:simpleType>    
+
+
+    <xsd:simpleType name="NAOSTimeType">
+    	<xsd:restriction base="xsd:string"></xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:complexType name="SourceType">
+    	<xsd:sequence>
+    		<xsd:element name="System" type="xsd:string"></xsd:element>
+    		<xsd:element name="Creator" type="xsd:string"></xsd:element>
+    		<xsd:element name="Creator_Version" type="xsd:string"></xsd:element>
+    		<xsd:element name="Creation_Date" type="UTCDateTimeSec"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="Validity_PeriodType">
+    	<xsd:sequence>
+    		<xsd:element name="Validity_Start" type="UTCDateTimeSec"></xsd:element>
+    		<xsd:element name="Validity_Stop" type="UTCDateTimeSec"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Earth_Explorer_Header">
+    	<xsd:sequence>
+    		<xsd:element name="Fixed_Header" type="Fixed_HeaderType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Variable_HeaderType">
+    	<xsd:sequence>
+    		<xsd:element name="Status">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:enumeration value="T"></xsd:enumeration>
+    					<xsd:enumeration value="V"></xsd:enumeration>
+    					<xsd:enumeration value="NV"></xsd:enumeration>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="InputData" type="xsd:string" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Variable_HeaderLDType">
+    	<xsd:sequence>
+    		<xsd:element name="InputData" type="xsd:string" minOccurs="1" maxOccurs="100"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="UTMVertexType">
+    	<xsd:sequence>
+    		<xsd:element name="East" type="xsd:double"></xsd:element>
+    		<xsd:element name="North" type="xsd:double"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

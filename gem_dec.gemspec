@@ -162,6 +162,7 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-smtp', '~> 0.3')
   s.add_dependency('net-ssh', '~> 6.1')
+  s.add_dependency('roman-numerals', '~> 0.3')
   s.add_dependency('ed25519', '~> 1.3')
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')

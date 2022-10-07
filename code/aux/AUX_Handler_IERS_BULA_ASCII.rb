@@ -2,29 +2,36 @@
 
 #########################################################################
 ###
-### === Ruby source for #AUX_Handler_NASA_CDDIS_BULA class
+### === Ruby source for #AUX_Handler_IERS_BULA_ASCII class
 ###
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: AUX_Handler_NASA_CDDIS_BULA.rb
+### Git: $Id: AUX_Handler_IERS_BULA.rb
 ###
 ### Module AUX management
 ### 
 ###
 #########################################################################
 
-### NASA CDDIS Bulletin A
-### https://cddis.nasa.gov//archive/products/iers/finals2000A.data
+### IERS Bulletin A
+### https://datacenter.iers.org/data/latestVersion/bulletinA.txt
+
+### https://datacenter.iers.org/data/xml/bulletina-xxxv-040.xml
+### 6 October 2022 Vol. XXXV No. 040
+### 2022 - XXXV
+### 2021 - XXXIV
+### 2020 - XXXIII
+### (...)
 
 require 'aux/AUX_Handler_Generic'
 
 module AUX
 
-AUX_Pattern_NASA_CDDIS_BULA = "finals2000A.data"
+AUX_Pattern_IERS_BULA_ASCII = "bulletinA.txt"
 
-class AUX_Handler_NASA_CDDIS_BULA < AUX_Handler_Generic
+class AUX_Handler_IERS_BULA_ASCII < AUX_Handler_Generic
    
    ## -------------------------------------------------------------
       
@@ -48,11 +55,11 @@ class AUX_Handler_NASA_CDDIS_BULA < AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      @logger.debug("AUX_Handler_NASA_CDDIS_BULA debug mode is on")
+      @logger.debug("AUX_Handler_IERS_BULA_ASCII debug mode is on")
    end
    ## -------------------------------------------------------------
    
-   # NS1_TEST_AUX_NBULA__20220707T000000_99999999T999999_0001.EOF
+   # NS1_TEST_AUX_BULA___20220707T000000_20230706T000000_0001.EOF
    def rename
       @newName          = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
       super(@newName)
@@ -68,14 +75,12 @@ class AUX_Handler_NASA_CDDIS_BULA < AUX_Handler_Generic
    ## -------------------------------------------------------------
 
 private
-
-   @listFiles = nil
    
    ## -----------------------------------------------------------
    
    def convert_NAOS
       @mission    = "NS1"
-      @fileType   = "AUX_NBULA_"
+      @fileType   = "AUX_BULA__"
       @extension  = "TXT"
    end
    ## -----------------------------------------------------------
@@ -92,31 +97,25 @@ private
 
    def parse
       if @isDebugMode == true then
-         @logger.debug("AUX_Handler_NASA_CDDIS_BULA::parse")
+         @logger.debug("AUX_Handler_IERS_BULA_ASCII::parse")
       end
-      bFirstPrediction = false
+      dateStart         = nil
+      dateStop          = nil
+      bFirstPrediction  = true
       File.readlines(@full_path).each do |line|
-
-         if line.slice(16,1) == 'P' and !bFirstPrediction then
-            bFirstPrediction = true
-            strDate           = line.slice(0,6).gsub!(" ", "0")
-            if strDate == nil then
-               strDate = line.slice(0,6)
+         strDate = line.slice(7, 10)
+         begin
+            someDate         = str2date(strDate)
+            if bFirstPrediction == true then
+               bFirstPrediction = false
+               dateStart = someDate
             end
-            dateStart         = str2date(strDate)
-            @strValidityStart = "#{dateStart.year}#{dateStart.month.to_s.rjust(2, "0")}#{dateStart.day.to_s.rjust(2, "0")}T000000"       
+            dateStop = someDate
+         rescue Exception => e
          end
-
-         if line.slice(16,1) == 'P' and bFirstPrediction then
-            strDate           = line.slice(0,6).gsub!(" ", "0")
-            if strDate == nil then
-               strDate = line.slice(0,6)
-            end
-            dateStop          = str2date(strDate)
-            @strValidityStop  = "#{dateStop.year}#{dateStop.month.to_s.rjust(2, "0")}#{dateStop.day.to_s.rjust(2, "0")}T000000"  
-         end
-         
       end
+      @strValidityStart = "#{dateStart.year}#{dateStart.month.to_s.rjust(2, "0")}#{dateStart.day.to_s.rjust(2, "0")}T000000"
+      @strValidityStop  = "#{dateStop.year}#{dateStop.month.to_s.rjust(2, "0")}#{dateStop.day.to_s.rjust(2, "0")}T000000"
    end
    ## -------------------------------------------------------------
       
