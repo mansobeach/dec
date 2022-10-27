@@ -19,6 +19,10 @@
 
 ## http://www.mukeshkumar.net/articles/curl/how-to-use-curl-command-line-tool-with-ftp-and-sftp
 
+## https://stackoverflow.com/questions/5386482/how-to-run-the-sftp-command-with-a-password-from-bash-script
+
+## https://stackoverflow.com/questions/11738169/how-to-send-password-using-sftp-batch-file
+
 module CTC
 
 module FTPClientCommands
@@ -323,6 +327,28 @@ module FTPClientCommands
    end
    ## -----------------------------------------------------------   
    
+   ## Create secureftp (sftp) command. Also creates or appends into 
+   ## the batchFile passed as parameter.
+   ## - host (IN): string containing the host name.
+   ## - port (IN): string containing the port number.
+   ## - user (IN): string containing the user name.
+   ## - pass (IN): string containing the pass name.
+   ## - batchFile (IN): string containing the batchfile filename.
+   ## - cmd (IN): string containing the sftp command to be executed.
+   ## - arg1 (IN): string containing an argument for the sftp cmd or nil.
+   ## - arg2 (IN): string containing an argument for the sftp cmd or nil.
+   ## - compress (IN): optional argument for compressing SSH communication. 
+   def createSftpSshPassCommand(host, port, user, pass, batchFile, cmd, arg1, arg2, compress=false)
+      if compress == false then
+         command = %Q{sshpass -e sftp -oBatchMode=no -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+      else
+         command = %Q{sshpass -e sftp -oBatchMode=no -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
+      end
+      addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
+      return command      
+   end
+   ## -----------------------------------------------------------   
+
    private
    
    #-------------------------------------------------------------

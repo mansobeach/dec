@@ -1,6 +1,7 @@
 **/.DS_Store
 **/gem
 *.gem
+*.7z
 gem
 code/mpl/include/bckp
 code/mpl/lib/MACIN64

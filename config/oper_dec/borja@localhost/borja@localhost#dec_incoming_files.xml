@@ -286,7 +286,23 @@
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
          </Switches>         
-      </Interface>      
+      </Interface>
+
+      <Interface>
+         <Name>LOCALHOST_SECURE_PASSWORD</Name>
+         <LocalInbox>/tmp/dec/in_basket_if_localhost_secure_password</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/tmp/dec_simul_if/localhost_secure_password/download</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>true</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>true</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>         
+      </Interface>         
             
       <Interface>
          <Name>FILESYSTEM</Name>
@@ -461,7 +477,7 @@
          <Name>NASA_SFL</Name>
          <LocalInbox>/tmp/dec/ext/nasa_msfc</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt</Directory>
+            <Directory DepthSearch="0">%Q{sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt}</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -541,6 +557,7 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description></Description>
          <FromList>
             <Interface>LOCALHOST_SECURE</Interface>
+            <Interface>LOCALHOST_SECURE_PASSWORD</Interface>
          </FromList>
       </File>
 

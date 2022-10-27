@@ -6,7 +6,7 @@
 #
 # Written by DEIMOS Space S.L. (bolf)
 #
-# Data Exchange Component -> Common Transfer Component
+# Data Exchange Component -> DEC
 # 
 # Git: $Id: CheckerFTPConfig.rb,v 1.11 2014/10/13 18:39:54 algs Exp $
 #
@@ -346,7 +346,7 @@ private
       end
 
       if @ftpElement[:isSecure] == true then
-         sftpClient = SFTPBatchClient.new(host, port, user, @batchFile)
+         sftpClient = SFTPBatchClient.new(host, port, user, pass, @batchFile, false, @logger)
          if @isDebugMode == true then
             sftpClient.setDebugMode
          end

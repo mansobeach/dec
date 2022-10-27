@@ -1,0 +1,8 @@
+alias decCheckConfig='podman exec dec decCheckConfig'
+alias decConfigInterface2DB='podman exec dec decConfigInterface2DB'
+alias decGetFromInterface='podman exec dec decGetFromInterface'
+alias decListener='podman exec dec decListener'
+alias decManageDB='podman exec dec decManageDB'
+alias decNATS='podman exec dec decNATS'
+alias decStats='podman exec dec decStats'
+alias decValidateConfig='podman exec dec decValidateConfig'

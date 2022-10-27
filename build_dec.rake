@@ -18,6 +18,8 @@ require 'rake'
 require 'date'
 
 require 'cuc/CryptHelper'
+require_relative 'code/dec/DEC_Environment'
+
 ### ============================================================================
 ###
 ### Task associated to DEC component
@@ -145,6 +147,108 @@ namespace :dec do
    end
 
    ## ----------------------------------------------------------------
+   
+   # https://docs.podman.io/en/latest/markdown/podman-load.1.html
+   # https://docs.podman.io/en/latest/markdown/podman-create.1.html
+   # https://docs.podman.io/en/latest/markdown/podman-run.1.html
+
+   desc "podman run"
+
+   task :podman_run, [:image_file] do |t, args|
+      img = args[:image_file]
+      puts "executing Docker Container DEC with config #{img}"
+   
+      if img.include?(".7z") == true then
+         cmd = "7za x #{img}"
+         puts cmd
+         retval = system(cmd)
+         img = img.dup.gsub("7z", "tar")
+         # img = Dir["#{File.basename(img, ".7")}*"][0]
+      end
+
+      cmd = "podman container stop dec"
+      puts cmd
+      retval = system(cmd)
+
+      cmd = "podman container rm dec"
+      puts cmd
+      retval = system(cmd)      
+
+      cmd = "podman load -i #{img}"
+      puts cmd
+      retval = system(cmd)
+
+      # cmd = "podman run --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos_gsc4eo_nl2-s-aut-srv-01:latest"
+      cmd = "podman run --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos-test_gsc4eo_nl2-u-moc-srv-01:latest"
+      puts cmd
+      retval = system(cmd)
+
+   end
+   ## ----------------------------------------------------------------
+
+   # https://docs.podman.io/en/latest/markdown/podman-machine-init.1.html
+   # https://docs.podman.io/en/latest/markdown/podman-build.1.html
+   # https://docs.podman.io/en/latest/markdown/podman-save.1.html
+
+   # podman build -f Containerfile.simple .
+   desc "podman build"
+
+   task :podman_build, [:user, :host, :suffix] do |t, args|
+      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
+      version = DEC.class_variable_get(:@@version)
+      puts "building Docker Container DEC #{version} with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
+   
+      # Invoke the gem build task 
+      Rake::Task['dec:build'].invoke(args[:user], args[:host], args[:suffix])
+
+      puts "starting podman qemu environment"
+
+      cmd = "podman machine init --volume=/data:/data --timezone Europe/London"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      cmd = "podman machine start"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      ## dec-1.0.37c_naos_test_gsc4eo@nl2-u-moc-srv-01.gem
+
+      dockerFile  = "dec_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.dockerfile"
+      imgFile     = "dec_#{version}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}"
+      imgName     = "dec_#{args[:suffix]}_#{args[:user]}_#{args[:host]}"
+
+      if File.exist?("install/docker/#{dockerFile}") == false then
+         puts "DEC Dockerfile #{dockerFile} not present in repository"
+         exit(99)
+      end
+
+      cmd = "podman build --format docker -f \"install/docker/#{dockerFile}\" -t #{imgName} ."
+      puts
+      puts cmd
+      puts
+      retval = system(cmd)
+
+      cmd = "podman save -o #{imgFile}.tar #{imgName}"
+      puts
+      puts cmd
+      puts
+      retval = system(cmd)
+
+      cmd = "7za a -t7z #{imgFile}.7z #{imgFile}.tar -mx=7"
+      puts cmd
+      retval = system(cmd)
+
+      cmd = "rm -f #{imgFile}.tar"
+      puts cmd
+      retval = system(cmd) 
+
+   end
+
+   ## ----------------------------------------------------------------
 
    desc "build DEC gem & docker image (container)"
 
@@ -269,6 +373,8 @@ namespace :dec do
       @filename = "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
       cp @filename, "install/gems/dec_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
+      rm "install/gems/dec_latest.gem"
+      ln @filename, "install/gems/dec_latest.gem"
       # rm @filename
    end
 
@@ -453,6 +559,9 @@ namespace :dec do
       puts
       puts "Most used recipes:" 
       puts
+      puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos-test]"
+      puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos]"
+      puts 
       puts "DEC Unit Tests"
       puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg_odata]"
       puts "rake -f build_dec.rake dec:install[borja,localhost,s2_test_pg]"
@@ -470,7 +579,7 @@ namespace :dec do
       puts "NAOS / NAOS-MOC-SERVER"
       puts "pull CELESTRAK_SFS, CELESTRAK_TLE, CELESTRAK_TCA, NASA_NBULA, NASA_NBULC, NASA_SFL"
       puts "push TBD"
-      puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-u-moc-srv-01,naos_test]"
+      puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-u-moc-srv-01,naos-test]"
       puts      
       puts "NAOS / NAOS-MCS-IVV"
       puts "pull NAOS_MCS_SFTP"

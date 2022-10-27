@@ -35,6 +35,13 @@
       </Interface>
 
       <Interface>
+         <Name>LOCALHOST_SECURE_PASSWORD</Name>
+         <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_secure_password</LocalOutbox>
+         <UploadDir>/tmp/dec_simul_if/localhost_secure_password/upload</UploadDir>
+         <UploadTemp>/tmp/dec_simul_if/localhost_secure_password/upload/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
          <Name>LOCALHOST_NOT_SECURE</Name>
          <LocalOutbox>$DEC_TMP/dec/out_basket_if_localhost_notsecure</LocalOutbox>
          <UploadDir>/tmp/dec_simul_if/localhost_notsecure/upload</UploadDir>
@@ -101,6 +108,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="LOCALHOST_SECURE"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="LOCALHOST_SECURE_PASSWORD"  Compress="NONE" DeliveryMethods="SFTP" />
             <!--
             <Interface Name="LOCALHOST_SECURE"  Compress="7Z" DeliveryMethods="SFTP" />
             -->

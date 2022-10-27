@@ -116,7 +116,7 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
    ## ------------------------------------------------------
    
    Test::Unit.at_exit do
-      @@logger.info("End of DEC test for Celestrak")
+      @@logger.info("End of DEC test NAOS IVV-0500")
    end
    
    ## ------------------------------------------------------

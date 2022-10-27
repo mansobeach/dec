@@ -197,11 +197,12 @@ This section enumerates the different databases which can be used by DEC SW. Onl
 \end{itemize}
 
 \subsection{Network Tools}
-This section enumerates the network tools which can be used by DEC SW.
+This section enumerates the network tools which are used by DEC SW.
 \par
 \begin{itemize}
 	\item \href{https://www.ncftp.com}{\textit{ncftp}} : application programs implementing the File Transfer Protocol (FTP)
 	\item \href{https://www.openssh.com}{\textit{sftp}} : application programs implementing the Secure File Transfer Protocol (SFTP)
+    \item \href{https://linux.die.net/man/1/sshpass}{\textit{sshpass}}: application to handle the SSH password in non interactive mode (SFTP)
 	\item \href{https://curl.haxx.se}{\textit{curl}} : command line tool and library for transferring data with URLs (WebDAV)
 \end{itemize}
 
@@ -284,7 +285,9 @@ Finished in 54.38868 seconds.
 \end{lstlisting}
 
 \section{DEC App Container}
-It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production). This approach avoids the eventual pains suffered throughout the previous sections by entirely defining an execution environment fitting the needs. 
+It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production). This approach avoids the eventual pains suffered throughout the previous sections by entirely defining an execution environment fitting the needs.
+
+
 
 
 \end{document}

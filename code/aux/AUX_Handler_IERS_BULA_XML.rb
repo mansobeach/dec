@@ -19,9 +19,11 @@
 ### https://datacenter.iers.org/data/xml/bulletina-xxxv-040.xml
 ### https://datacenter.iers.org/data/latestVersion/bulletinA.txt
 
+require 'rexml/document'
+require 'roman-numerals'
 
 require 'aux/AUX_Handler_Generic'
-require 'roman-numerals'
+
 
 module AUX
 
@@ -29,6 +31,8 @@ AUX_Pattern_IERS_BULA_XML = "bulletina-*-*.xml"
 
 class AUX_Handler_IERS_BULA_XML < AUX_Handler_Generic
    
+   include REXML
+
    ## -------------------------------------------------------------
       
    ## Class constructor.
@@ -95,23 +99,51 @@ private
       if @isDebugMode == true then
          @logger.debug("AUX_Handler_IERS_BULA_XML::parse")
       end
-      dateStart         = nil
-      dateStop          = nil
-      bFirstPrediction  = true
-      File.readlines(@full_path).each do |line|
-         strDate = line.slice(7, 10)
-         begin
-            someDate         = str2date(strDate)
-            if bFirstPrediction == true then
-               bFirstPrediction = false
-               dateStart = someDate
-            end
-            dateStop = someDate
-         rescue Exception => e
+
+      fileBULA          = File.new(@full_path)
+      xmlFile           = REXML::Document.new(fileBULA)
+      path              = "/EOP/data/timeSeries/time"
+      
+      bFirst = true
+
+      aDay, aMonth, aYear              = nil
+      firstDay, firstMonth, firstYear  = nil
+      lastDay, lastMonth, lastYear     = nil
+
+      XPath.each(xmlFile, path){
+         |time|
+
+         XPath.each(time, "dateYear"){
+            |year|
+            aYear = year.text
+         }
+
+         XPath.each(time, "dateMonth"){
+            |month|
+            aMonth = month.text
+         }
+
+         XPath.each(time, "dateDay"){
+            |day|
+            aDay = day.text
+         }
+
+         if bFirst == true then
+            bFirst      = false
+            firstDay    = aDay
+            firstMonth  = aMonth
+            firstYear   = aYear
+            next
          end
-      end
-      @strValidityStart = "#{dateStart.year}#{dateStart.month.to_s.rjust(2, "0")}#{dateStart.day.to_s.rjust(2, "0")}T000000"
-      @strValidityStop  = "#{dateStop.year}#{dateStop.month.to_s.rjust(2, "0")}#{dateStop.day.to_s.rjust(2, "0")}T000000"
+
+         lastDay     = aDay
+         lastMonth   = aMonth
+         lastYear    = aYear
+
+      }
+
+      @strValidityStart  = "#{firstYear}#{firstMonth}#{firstDay}T000000"
+      @strValidityStop   = "#{lastYear}#{lastMonth}#{lastDay}T000000"
    end
    ## -------------------------------------------------------------
       

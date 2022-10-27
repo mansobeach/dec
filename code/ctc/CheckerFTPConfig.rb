@@ -48,6 +48,8 @@ class CheckerFTPConfig
          showFTPConfig(true, true)
       end
      
+      puts "PEDO"
+
       retVal = checkFTPConfig(true, true)
      
       return retVal
@@ -59,6 +61,8 @@ class CheckerFTPConfig
          showFTPConfig(true, false)
       end
    
+      puts "PEDO2"
+
       retVal = checkFTPConfig(true, false)
       return retVal
    end
@@ -68,6 +72,9 @@ class CheckerFTPConfig
       if @isDebugMode == true then
          showFTPConfig(false, true)
       end  
+
+      puts "PEDO3"
+
       retVal = checkFTPConfig(false, true)
       return retVal   
    end
@@ -168,6 +175,8 @@ private
    # otherwise it returns false.
    def checkFTPConfig(bCheck4Send, bCheck4Receive)
 
+      puts "KAKAKAAKAK"
+
       mirror=false
 #      if @ftpElement[:FTPServerMirror] != nil then
 #         mirror=true
@@ -259,6 +268,9 @@ private
             end
          end
 
+         puts "KAKAKAAKAK22"
+
+
 #         #mirror server check
 #         if mirror then
 #            retVal = checkRemoteDirectory(dir, true)
@@ -345,7 +357,7 @@ private
       end
 
       if @ftpElement[:isSecure] == true then
-         sftpClient = SFTPBatchClient.new(host, port, user, @batchFile)
+         sftpClient = SFTPBatchClient.new(host, pass, port, user, @batchFile, false, @logger)
          if @isDebugMode == true then
             sftpClient.setDebugMode
          end

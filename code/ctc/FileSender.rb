@@ -248,8 +248,10 @@ class FileSender
             sftpClient  = SFTPBatchClient.new(@hostname,
                                              @port,
                                              @user,
+                                             @password,
                                              @ftBatchFilename,
-                                             @pushServer[:isCompressed])
+                                             @pushServer[:isCompressed],
+                                             @logger)
             if @isDebugMode == true then
                sftpClient.setDebugMode
             end
@@ -506,8 +508,10 @@ class FileSender
       sftpClient  = SFTPBatchClient.new(@hostname,
                                             @port,
                                             @user,
+                                            @password,
                                             @ftBatchFilename,
-                                            @pushServer[:isCompressed])
+                                            @pushServer[:isCompressed],
+                                            @logger)
 #       sftpClient.setDebugMode
       sftpClient.addCommand("rm", targetFile, nil)
        
@@ -561,8 +565,10 @@ private
       sftpClient  = CTC::SFTPBatchClient.new(@hostname,
                                            @port,
                                            @user,
+                                           @password,
                                            @ftBatchFilename,
-                                           @pushServer[:isCompressed])
+                                           @pushServer[:isCompressed],
+                                           @logger)
     
       sftpClient.addCommand("cd", uploadTemp, nil)
       sftpClient.addCommand("rm","*", nil)

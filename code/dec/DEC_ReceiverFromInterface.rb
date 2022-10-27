@@ -1458,7 +1458,10 @@ private
          sftpClient = CTC::SFTPBatchClient.new(@ftpserver[:hostname],
                                              @ftpserver[:port],
                                              @ftpserver[:user],
-                                             @ftBatchFilename)
+                                             @ftpserver[:password],
+                                             @ftBatchFilename,
+                                             false,
+                                             @logger)
          if @isDebugMode == true then
             sftpClient.setDebugMode
          end
@@ -1755,7 +1758,10 @@ private
 			   sftpClient = CTC::SFTPBatchClient.new(@ftpserver[:hostname],
                                              @ftpserver[:port],
                                              @ftpserver[:user],
-                                             @ftBatchFilename)
+                                             @ftpserver[:password],
+                                             @ftBatchFilename,
+                                             false,
+                                             @logger)
             if @isDebugMode == true then
                sftpClient.setDebugMode
             end

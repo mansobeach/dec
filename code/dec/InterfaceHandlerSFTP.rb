@@ -145,22 +145,53 @@ class InterfaceHandlerSFTP < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerSFTP::getDirList => #{remotePath}")
       end
 
-      cmd = self.createSftpCommand(@server[:hostname],
+      cmd = ""
+
+      if @server[:password] == "" then
+
+         cmd = self.createSftpCommand(@server[:hostname],
                                   @server[:port],
                                   @server[:user],
                                   @batchFile,
                                   "cd #{remotePath}",
                                   nil,
                                   nil)
-      cmd = self.createSftpCommand(@server[:hostname],
+         cmd = self.createSftpCommand(@server[:hostname],
                                   @server[:port],
                                   @server[:user],
                                   @batchFile,
                                   "ls",
                                   "-1",
                                   nil)
+      else
+
+         cmd = self.createSftpSshPassCommand(@server[:hostname],
+                                 @server[:port],
+                                 @server[:user],
+                                 @server[:password],
+                                 @batchFile,
+                                 "cd #{remotePath}",
+                                 nil,
+                                 nil)
+         
+         cmd = self.createSftpSshPassCommand(@server[:hostname],
+                                 @server[:port],
+                                 @server[:user],
+                                 @server[:password],
+                                 @batchFile,
+                                 "ls",
+                                 "-1",
+                                 nil)
+
+         ENV['SSHPASS'] = @server[:password]
+
+      end
                                   
       retVal = system(cmd)
+
+      if @server[:password] != "" then
+         ENV.delete('SSHPASS')
+      end
 
       if FileTest.exist?(@batchFile) then
          File.delete(@batchFile)

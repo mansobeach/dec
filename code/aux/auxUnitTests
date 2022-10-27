@@ -109,7 +109,7 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
-   def test_NAOS_IERS_BULA_ASCII
+   def test_IERS_BULA_ASCII_NAOS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletinA.txt #{@@testDir}")
@@ -133,7 +133,7 @@ class AUXTestCase < Test::Unit::TestCase
 
    ## --------------------------------------------------------
 
-   def test_NAOS_IERS_BULA
+   def test_IERS_BULA_NAOS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/iers/bulletina-xxxv-039.xml #{@@testDir}")

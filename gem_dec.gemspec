@@ -116,6 +116,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decUnitTests_ncftpput'
       s.executables   << 'decUnitTests_SBOA'
       s.executables   << 'decUnitTests_SFTP'
+      s.executables   << 'decUnitTests_SFTP_PASSWORD'
       s.executables   << 'decUnitTests_WebDAV'
       s.executables   << 'decUnitTests_WebDAV_SECURE'
       s.executables   << 'decUnitTests_mail'
@@ -162,6 +163,7 @@ Gem::Specification.new do |s|
   s.add_dependency('net-sftp', '~> 2.1')
   s.add_dependency('net-smtp', '~> 0.3')
   s.add_dependency('net-ssh', '~> 6.1')
+  s.add_dependency('rexml', '~> 3.2')
   s.add_dependency('roman-numerals', '~> 0.3')
   s.add_dependency('ed25519', '~> 1.3')
   s.add_dependency('nokogiri', '~> 1.1')
@@ -196,7 +198,7 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------
 
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Data Exchange Component installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Data Exchange Component installed #{DEC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
     
   ## ----------------------------------------------
      

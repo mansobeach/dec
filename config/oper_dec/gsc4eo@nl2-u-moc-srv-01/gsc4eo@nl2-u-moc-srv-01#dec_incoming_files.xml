@@ -297,6 +297,22 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
    </Switches>
 </Interface> 
 
+<Interface>
+   <Name>TEST_IERS_ALLBULA</Name>
+   <LocalInbox>/data/mocExternalInterfaces/int/allbula</LocalInbox>
+   <DownloadDirs>
+      <Directory DepthSearch="0">/data/csv/finals2000A.all.csv</Directory>
+   </DownloadDirs>
+   <Switches>
+      <DeleteDownloaded>false</DeleteDownloaded>
+      <DeleteDuplicated>false</DeleteDuplicated>
+      <DeleteUnknown>false</DeleteUnknown>
+      <LocalDissemination>true</LocalDissemination>
+      <LogDuplicated>false</LogDuplicated>
+      <LogUnknown>false</LogUnknown>
+   </Switches>
+</Interface> 
+
 
       <!--
 
@@ -349,22 +365,7 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
          <LogUnknown>false</LogUnknown>
       </Switches>
    </Interface>
-   
-   <Interface>
-      <Name>TEST_IERS_BULA</Name>
-      <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-      <DownloadDirs>
-         <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-      </DownloadDirs>
-      <Switches>
-         <DeleteDownloaded>false</DeleteDownloaded>
-         <DeleteDuplicated>false</DeleteDuplicated>
-         <DeleteUnknown>false</DeleteUnknown>
-         <LocalDissemination>true</LocalDissemination>
-         <LogDuplicated>false</LogDuplicated>
-         <LogUnknown>false</LogUnknown>
-      </Switches>
-   </Interface>  
+    
 
       <Interface>
          <Name>TEST_IERS_BULC</Name>
@@ -545,6 +546,13 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          </FromList>
       </File>
    
+      <File Type="finals2000A.all.csv">
+         <Description>TBD</Description>
+         <FromList>
+            <Interface>TEST_IERS_ALLBULA</Interface>
+         </FromList>
+      </File>
+
       <File Type="tai-utc.dat">
          <Description>AUX_NBULC_</Description>
          <FromList>

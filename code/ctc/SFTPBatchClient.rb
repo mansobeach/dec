@@ -15,6 +15,11 @@
 #
 #########################################################################
 
+## https://stackoverflow.com/questions/5386482/how-to-run-the-sftp-command-with-a-password-from-bash-script
+
+## https://stackoverflow.com/questions/11738169/how-to-send-password-using-sftp-batch-file
+
+
 require 'ctc/FTPClientCommands'
 
 module CTC
@@ -27,24 +32,39 @@ class SFTPBatchClient
    
    # Class Constructor.
    # It requires the hostname, port, user and the batchfile.   
-   def initialize(host, port, user, batchFile, compress=false)
+   def initialize(host, port, user, pass, batchFile, compress=false, logger = nil)
       @isDebugMode = false
       @host        = host
       @port        = port
       @user        = user
+      @pass        = pass
       @batchFile   = "#{batchFile}.#{Time.now.to_f}.#{Random.new.rand(1.5)}"
       @cmd         = ""
       @compress    = compress
       checkModuleIntegrity
+      if @pass != nil then
+         ENV['SSHPASS'] = @pass
+         ObjectSpace.define_finalizer( self, self.class.finalize )
+      end
    end   
-   #-------------------------------------------------------------
+   # -------------------------------------------------------------
+   
+   def self.finalize
+      proc { ENV.delete('SSHPASS') }
+   end
+   # -------------------------------------------------------------
    
    # It appends a sftp command to the batch file.
    # - cmd (IN): string containing the sftp command to be added to the batch file.
    # - arg1 (IN): string containing an argument for the sftp cmd or nil.
    # - arg2 (IN): string containing an argument for the sftp cmd or nil.
    def addCommand(cmd, arg1, arg2)
-      @cmd = self.createSftpCommand(@host, @port, @user, @batchFile, cmd, arg1, arg2, @compress)
+      if @pass == nil then
+         @cmd = self.createSftpCommand(@host, @port, @user, @batchFile, cmd, arg1, arg2, @compress)
+      else
+         @cmd = self.createSftpSshPassCommand(@host, @port, @user, @pass, @batchFile, cmd, arg1, arg2, @compress)
+      end
+      return @cmd
    end
    #-------------------------------------------------------------   
    

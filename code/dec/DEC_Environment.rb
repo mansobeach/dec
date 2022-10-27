@@ -24,12 +24,14 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.37a"
+   @@version = "1.0.37e"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.37" =>    "New gem roman-numerals is required", \
+      "1.0.37" =>    "New gem roman-numerals is required\n\
+          Support of SFTP authentication with password using sshpass\n\
+          Listener on status message code is fixed", \
       "1.0.36" =>    "LocalDissemination config items required to drive automation decListener", \
       "1.0.35" =>    "Management of duplications with MD5 for HTTP protocol", \
       "1.0.34" =>    "NATS protocol support for NAOS MCS CCS5", \
@@ -498,6 +500,7 @@ module DEC
                   "ncftpget", \
                   "ncftpput", \
                   "openssl", \
+                  "sshpass", \
                   "sftp" \
                   ]
       

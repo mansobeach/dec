@@ -39,6 +39,11 @@ namespace :aux do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
+      begin
+         rm "install/gems/aux_latest.gem"
+      rescue Exception => e
+      end
+      ln filename, "install/gems/aux_latest.gem"
       cp filename, "aux.gem"
       mv filename, "install/gems/"
       mv "aux.gem", "install/gems/"

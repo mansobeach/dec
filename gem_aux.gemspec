@@ -38,6 +38,6 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------  
   
-  s.post_install_message = "Elecnor Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Auxiliary Data Management installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "Elecnor Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Auxiliary Data Management installed #{AUX.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
   
 end
