@@ -148,9 +148,41 @@ namespace :dec do
 
    ## ----------------------------------------------------------------
    
+   desc "podman init"
+   task :podman_init do
+      puts "starting podman qemu environment"
+
+      cmd = "podman machine stop"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      cmd = "podman machine rm"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      cmd = "podman machine init --volume=/data:/data --timezone Europe/London"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+
+      cmd = "podman machine start"
+      puts
+      puts cmd
+      puts
+      system(cmd)
+   end
+
+   ## ----------------------------------------------------------------
+
    # https://docs.podman.io/en/latest/markdown/podman-load.1.html
    # https://docs.podman.io/en/latest/markdown/podman-create.1.html
    # https://docs.podman.io/en/latest/markdown/podman-run.1.html
+   # https://www.tutorialworks.com/podman-host-networking/
 
    desc "podman run"
 
@@ -163,7 +195,6 @@ namespace :dec do
          puts cmd
          retval = system(cmd)
          img = img.dup.gsub("7z", "tar")
-         # img = Dir["#{File.basename(img, ".7")}*"][0]
       end
 
       cmd = "podman container stop dec"
@@ -179,7 +210,7 @@ namespace :dec do
       retval = system(cmd)
 
       # cmd = "podman run --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos_gsc4eo_nl2-s-aut-srv-01:latest"
-      cmd = "podman run --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos-test_gsc4eo_nl2-u-moc-srv-01:latest"
+      cmd = "podman run --userns keep-id --env 'USER' --add-host=nl2-s-aut-srv-01:192.168.1.24 --network=host --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos-test_gsc4eo_nl2-u-moc-srv-01:latest"
       puts cmd
       retval = system(cmd)
 
@@ -201,24 +232,10 @@ namespace :dec do
       # Invoke the gem build task 
       Rake::Task['dec:build'].invoke(args[:user], args[:host], args[:suffix])
 
-      puts "starting podman qemu environment"
-
-      cmd = "podman machine init --volume=/data:/data --timezone Europe/London"
-      puts
-      puts cmd
-      puts
-      system(cmd)
-
-      cmd = "podman machine start"
-      puts
-      puts cmd
-      puts
-      system(cmd)
-
       ## dec-1.0.37c_naos_test_gsc4eo@nl2-u-moc-srv-01.gem
 
       dockerFile  = "dec_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.dockerfile"
-      imgFile     = "dec_#{version}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}"
+      imgFile     = "dec-#{version}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}"
       imgName     = "dec_#{args[:suffix]}_#{args[:user]}_#{args[:host]}"
 
       if File.exist?("install/docker/#{dockerFile}") == false then
@@ -559,6 +576,7 @@ namespace :dec do
       puts
       puts "Most used recipes:" 
       puts
+      puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-u-moc-srv-01,naos-test]"
       puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos-test]"
       puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos]"
       puts 

@@ -1415,7 +1415,7 @@ private
          # File is made available at the interface inbox
          md5 = CUC::WrapperMD5SUM.new(File.basename(filename)).md5
 
-         if hasBeenAlreadyReceived(File.basename(filename), md5) == true then
+         if @isNoDB == false and hasBeenAlreadyReceived(File.basename(filename), md5) == true then
             @logger.info("[DEC_111] I/F #{@entity}: #{File.basename(filename)} downloaded is duplicated / same md5")
             return true
          end

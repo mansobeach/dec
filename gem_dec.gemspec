@@ -18,7 +18,6 @@ include DEC
 Gem::Specification.new do |s|
   s.name        = 'dec'
   s.version     = "#{DEC.class_variable_get(:@@version)}"
-  # s.version     = "1.0.34m"
   s.platform    = Gem::Platform::RUBY
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
@@ -169,6 +168,11 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')
   
+  if ENV.include?("DEC_TEST") == true then
+     s.add_dependency('minitest', '~> 5.15')
+     s.add_dependency('test-unit', '~> 3.5')
+  end
+
 #  ## --------------------------------------------
 #  ##
 #  ## Tailored installer to avoid some gems only for the OData client

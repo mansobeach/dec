@@ -24,13 +24,14 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.37e"
+   @@version = "1.0.37j"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
       "1.0.37" =>    "New gem roman-numerals is required\n\
           Support of SFTP authentication with password using sshpass\n\
+          Support of SFTP known_host checks disabled for the container build process\n\
           Listener on status message code is fixed", \
       "1.0.36" =>    "LocalDissemination config items required to drive automation decListener", \
       "1.0.35" =>    "Management of duplications with MD5 for HTTP protocol", \
