@@ -23,6 +23,8 @@
 
 ## https://stackoverflow.com/questions/11738169/how-to-send-password-using-sftp-batch-file
 
+## https://www.shellhacks.com/disable-ssh-host-key-checking/
+
 module CTC
 
 module FTPClientCommands
@@ -318,9 +320,9 @@ module FTPClientCommands
    ## - compress (IN): optional argument for compressing SSH communication. 
    def createSftpCommand(host, port, user, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
-         command = %Q{sftp -oBatchMode=no -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+         command = %Q{sftp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -oBatchMode=no -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
       else
-         command = %Q{sftp -oBatchMode=no -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
+         command = %Q{sftp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -oBatchMode=no -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
       end
       addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
       return command      
@@ -340,9 +342,9 @@ module FTPClientCommands
    ## - compress (IN): optional argument for compressing SSH communication. 
    def createSftpSshPassCommand(host, port, user, pass, batchFile, cmd, arg1, arg2, compress=false)
       if compress == false then
-         command = %Q{sshpass -e sftp -oBatchMode=no -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
+         command = %Q{sshpass -e sftp -oBatchMode=no -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -oConnectTimeout=10 -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}
       else
-         command = %Q{sshpass -e sftp -oBatchMode=no -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
+         command = %Q{sshpass -e sftp -oBatchMode=no -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -oConnectTimeout=10 -C -oPort=#{port} -oLogLevel=QUIET -b #{batchFile} #{user}@#{host}}   
       end
       addCommand2SftpBatchFile(batchFile, cmd, arg1, arg2)
       return command      
