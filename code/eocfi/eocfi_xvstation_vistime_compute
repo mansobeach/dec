@@ -1,0 +1,238 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#
+# This is a command line tool that generates the ground station visibilities 
+# for a given satellite (currently Sentinel2A).
+# 
+# Inputs required and default locations are:
+#   ./data/S2__OPER_MPL_GND_DB
+#   ./data/S2A_OPER_MPL_ORBSCT
+#   ./data/S2A_OPER_MPL_SWTVIS
+#
+# Parameters:
+# 
+# -s / --orbit-abs-start flag:
+#
+# Parameter for the absolute start orbit
+#
+#
+# -e / --orbit-abs-end flag:
+#
+# Parameter for the absolute start orbit
+#
+#
+#
+# == Usage
+# mp_xvstation_vistime_compute --orbit-abs-start <orbit_start> --orbit-abs-end <orbit_end> -S <GFUCINBX>
+#     --list  it lists the ground stations
+#     --orbit-abs-start <orbit>     absolute start orbit
+#     --orbit-abs-end <orbit>       absolute end orbit
+#     --Debug     shows Debug info during the execution
+#     --help      shows this help
+#
+# 
+# == Author
+# Elecnor Deimos-Space
+#
+
+require 'getoptlong'
+require 'rubygems'
+
+require 'cuc/Converters'
+require 'cuc/Log4rLoggerFactory'
+require 'mpl/MPL_Environment'
+require 'mpl/MPL_Loader_Wrapper_Earth_Explorer'
+
+
+include CUC::Converters
+
+
+# MAIN script function
+def main
+
+   include MPL
+   
+   @isDebugMode      = false
+   @bShowVersion     = false
+   @bShowUsage       = false
+   @bList            = false
+
+   @orbit_abs_start  = 0
+   @orbit_abs_end    = 0
+   @station          = ""
+   
+   opts = GetoptLong.new(
+     ["--orbit-abs-start",   "-s",     GetoptLong::REQUIRED_ARGUMENT],
+     ["--Station",   "-S",             GetoptLong::REQUIRED_ARGUMENT],
+     ["--orbit-abs-end",   "-e",       GetoptLong::REQUIRED_ARGUMENT],
+     ["--list", "-l",                  GetoptLong::NO_ARGUMENT],
+     ["--version", "-v",               GetoptLong::NO_ARGUMENT],
+     ["--Debug", "-D",                 GetoptLong::NO_ARGUMENT],
+     ["--usage", "-u",                 GetoptLong::NO_ARGUMENT],
+     ["--help", "-h",                  GetoptLong::NO_ARGUMENT]
+     )
+    
+   begin
+      opts.each do |opt, arg|
+         case opt
+            when "--Debug"                then @isDebugMode             = true
+            when "--list"                 then @bList                   = true    
+            when "--version"              then @bShowVersion            = true 
+            when "--usage"                then @bShowUsage              = true
+            when "--Station"              then @station                 = arg.to_s
+            when "--orbit-abs-start"      then @orbit_abs_start         = arg.to_i
+            when "--orbit-abs-end"        then @orbit_abs_end           = arg.to_i
+			   when "--help"                 then usage
+         end
+      end
+   rescue Exception => e
+      puts e.to_s
+      exit(99)
+   end
+
+   if @bShowVersion == true then
+      print("\nElecnor - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{MPL.class_variable_get(:@@version)}]", "\n\n")
+      hRecord = MPL.class_variable_get(:@@change_record)
+      hRecord.each_pair{|key, value|
+         puts "#{key} => #{value}"
+      }
+      
+      cfi         = MPL::Earth_Explorer_CFI.new
+      val         = cfi.xo_check_library_version(@isDebugMode)
+      puts
+      exit(0)
+   end
+
+   if self.checkEnvironmentEssential == false then
+      puts
+      self.printEnvironmentError
+      puts
+      exit(99)
+   end
+
+
+   # ------------------------------------------
+   # initialize logger
+      
+   loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['MPL_CONFIG']}/mptools_log_config.xml")
+
+   @logger = loggerFactory.getLogger
+      
+   if @logger == nil then
+      puts
+		puts "Error in #{File.basename(__FILE__)}"
+		puts "Could not set up logging system !  :-("
+      puts "Check MPL logs configuration under \"#{ENV['MPL_CONFIG']}/mptools_log_config.xml\"" 
+		puts
+		puts
+		exit(99)
+   end
+   # ------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
+   end
+   # ------------------------------------------
+
+   if @orbit_abs_start == 0 and @orbit_abs_end == 0 and @bList == false then
+      usage
+      exit(99)
+   end
+   # ------------------------------------------
+   
+   statDB         = "./data/S2__OPER_MPL_GND_DB"
+   roef           = "./data/S2A_OPER_MPL_ORBSCT"
+   swath          = "./data/S2A_OPER_MPL_SWTVIS"
+
+   if File.exist?(statDB) == false then
+      statDB = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
+   end
+
+   if File.exist?(roef) == false then
+      roef = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT"
+   end
+
+   if File.exist?(swath) == false then
+      swath = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_SWTVIS"
+   end
+
+   # ------------------------------------------
+
+   if @bList == true then
+      listStations(statDB)
+      exit(0)
+   end
+
+   # ------------------------------------------
+
+   cfi            = MPL::Earth_Explorer_CFI.new
+   arrStationID   = cfi.xd_read_station_id(statDB, @isDebugMode)
+
+   arrStationID.each{|station_id|
+      if @isDebugMode == true then
+         @logger.debug(station_id)
+      end
+      outFile  = "S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
+   
+      if @station == station_id then
+         @logger.debug("Generating #{outFile} #{@orbit_abs_start} - #{@orbit_abs_end}")
+         retVal   = cfi.xv_stationvistime_compute(
+                                    roef, 
+                                    swath, 
+                                    statDB, 
+                                    station_id, 
+                                    @orbit_abs_start, 
+                                    @orbit_abs_end, 
+                                    outFile,
+                                    @isDebugMode
+                                    )
+         break
+      end
+   }
+
+   exit(0)
+
+end
+
+## ----------------------------------------------------------
+
+def listStations(statDB)
+
+   if File.exist?(statDB) == false then
+      @logger.error("station file #{statDB} not found")
+      exit(99)
+   end
+   
+   cfi            = MPL::Earth_Explorer_CFI.new
+   arrStationID   = cfi.xd_read_station_id(statDB, @isDebugMode)
+
+   @logger.info("ground stations defined in #{statDB}")
+   arrStationID.each{|station_id|
+      @logger.info(station_id)
+   }
+
+end
+## ----------------------------------------------------------
+
+## Print command line help
+def usage
+   fullpathFile = File.expand_path(__FILE__)
+   
+   value = `#{"head -36 #{fullpathFile}"}`
+      
+   value.lines.drop(1).each{
+      |line|
+      len = line.length - 1
+      puts line[2, len]
+   }  
+end
+## ----------------------------------------------------------
+
+
+## ===================================================================
+## Start of the main body
+main
+## End of the main body
+## ===================================================================
