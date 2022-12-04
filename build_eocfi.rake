@@ -227,7 +227,7 @@ namespace :eocfi do
       Rake::Task["eocfi:uninstall"].invoke
       
       # cmd = "gem install #{@filename} -- --with-cflags=-Wno-implicit-function-declaration"
-      cmd = "gem install #{@filename}"
+      cmd = "gem install #{@filename} --no-document"
       puts cmd
       system(cmd)
       rm @filename

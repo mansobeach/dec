@@ -17,13 +17,16 @@ require 'eocfi/EOCFI_Environment'
 require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
 
 ## 1 - test_xo_check_library_version
-## 2 - test_xo_time_to_orbit
-## 3 - test_xo_position_on_orbit_to_time
 ## 4 - test_xd_read_station_id
 ## 5 - test_xd_read_station
-## 6 - test_xv_stationvistime_compute
+## 5.1 - NAOS_test_xd_read_station
+## 6 - test_xd_read_station_file
+## X - test_xl_time_ref_init_file
+## 2 - test_xo_time_to_orbit
+## 3 - test_xo_position_on_orbit_to_time
+## 7 - test_xv_stationvistime_compute
 
-class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
+class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
    include CUC::Converters
 
@@ -74,7 +77,7 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
       # ------------------------------------------
       # initialize logger
       
-      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['MPL_CONFIG']}/mptools_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['MPL_CONFIG']}/eocfi_log_config.xml")
 
       @@logger = loggerFactory.getLogger
       
@@ -89,7 +92,6 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
       end
       # ------------------------------------------
 
-
       @@logger.debug("#{EOCFI.class_variable_get(:@@version)}")
       
       hRecord = EOCFI.class_variable_get(:@@change_record)
@@ -97,6 +99,7 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
          @@logger.debug("#{key} => #{value}")
       }      
 
+      $stderr.reopen(File.new("/tmp/eocfi_stderr", 'w'))
 
       @@testObject = EOCFI::Earth_Explorer_CFI.new
 
@@ -137,37 +140,7 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-   ## Test to compute the date-time
-
-   def test_xo_time_to_orbit
-   
-      # require_relative 'ruby_earth_explorer_cfi'
-
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")
-      
-      isDebugMode = false
-      strDate     = "20170422T120000"
-      val         = @@testObject.xo_time_to_orbit(\
-                           "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
-                           strDate, \
-                           isDebugMode \
-                           )
-      @@logger.debug("Date => #{strDate} Orbit => #{val}")
-   
-      assert(val != -1, "Orbit Absolute obtained from date")
-            
-      ## error management for orbit ephemeris file not found
-      
-      val   = @@testObject.xo_time_to_orbit(\
-                           "wrong_path/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
-                           strDate, \
-                           isDebugMode \
-                           )   
-      assert(val == -1, "Orbit Absolute failed due to wrong path to ROF")
-      
-   end
-   ## ------------------------------------------------------
-
+  
    ## ------------------------------------------------------
 
    ## Read Station File
@@ -195,9 +168,13 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
 
       stationInfo    = @@testObject.xd_read_station(statDB, "GMASPABX", true)
       
+      @@logger.debug(stationInfo.mission_name)
+
       @@logger.debug(stationInfo.antenna)
       
       @@logger.debug(stationInfo.purpose)
+
+      @@logger.debug(stationInfo.descriptor)
       
       @@logger.debug(stationInfo.type)
       
@@ -213,34 +190,81 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
+   ## Read Station File NAOS mission
+
+   def NAOS_test_xd_read_station
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START NS1_OPER_MPL_GND_DB")   
+      statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_GND_DB"
+      @@logger.debug(statDB)
+
+      arrStationID   = @@testObject.xd_read_station_id(statDB, false)
+      arrStationID.each{|stationCode|
+         @@logger.debug("xd_read_station(#{stationCode})")
+         stationInfo    = @@testObject.xd_read_station(statDB, stationCode, false)
+         @@logger.debug("Descriptor - #{stationInfo.descriptor}")
+         @@logger.debug("Purpose - #{stationInfo.purpose}")
+         @@logger.debug("Antenna - #{stationInfo.antenna}")   
+         @@logger.debug("Type - #{stationInfo.type}")
+         @@logger.debug("Alt - #{stationInfo.station_alt} m")
+         @@logger.debug("Lat - #{stationInfo.station_lat} N")
+         @@logger.debug("Lon - #{stationInfo.station_long} E")
+         @@logger.debug("Mission - #{stationInfo.mission_name}")
+      }
+   
+   # not working
+   #   
+   #   @@logger.debug("Mask type - #{stationInfo.mask_type}")
+   #   @@logger.debug("Elevation AOS - #{stationInfo.mis_aos_el}")
+   #   @@logger.debug("Elevation LOS - #{stationInfo.mis_los_el}")
+   
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   
+   end
+   ## ------------------------------------------------------
+
+   ## Read Station File
+
+   def test_xd_read_station_file
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")   
+
+      statDB               = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
+      @@logger.debug("station database => #{statDB}")
+      file_station_data    = @@testObject.xd_read_station_file(statDB, true)
+      puts file_station_data.num_rec
+      puts file_station_data.xd_station_rec.station_id
+      puts file_station_data.station_id
+      
+      #@@testObject.xd_free_station_file(file_station_data, true)
+      
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   end
+
    ## ------------------------------------------------------
 
    ## 
 
-  def test_xv_stationvistime_compute
+   def test_xv_stationvistime_compute
   
-     # require_relative 'ruby_earth_explorer_cfi'
+   # require_relative 'ruby_earth_explorer_cfi'
   
-     @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s}")   
 
-     statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
-     roef           = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBPRE_20170420T072457_20170430T072457_0001.EOF"
-     swath          = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_SWTVIS"
+      statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
+      roef           = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBPRE_20170420T072457_20170430T072457_0001.EOF"
+      swath          = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_SWTVIS"
 
-     isDebugMode    = false
-     arrStationID   = @@testObject.xd_read_station_id(statDB, isDebugMode)
+      isDebugMode    = false
+      arrStationID   = @@testObject.xd_read_station_id(statDB, isDebugMode)
 
-     puts Dir.pwd
+      puts Dir.pwd
 
-     arrStationID.each{|station_id|
+      arrStationID.each{|station_id|
        
-        outFile  = "/tmp/S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
+      outFile  = "/tmp/S2A_OPER_MPL_GNDVIS_#{station_id}.xml"
         
-        @@logger.debug("Generating #{outFile} with cfi.xv_stationvistime_compute")
+      @@logger.debug("Generating #{outFile} with cfi.xv_stationvistime_compute")
      
-      #next
-     
-        retVal   = @@testObject.xv_stationvistime_compute(
+      retVal   = @@testObject.xv_stationvistime_compute(
                                    roef, 
                                    swath, 
                                    statDB, 
@@ -250,10 +274,59 @@ class TestCase_Wrapper_Earth_Explorer_CFI < Test::Unit::TestCase
                                    outFile,
                                    isDebugMode
                                    )
-     }
+      }
 
-  end
-  ## ------------------------------------------------------
+   end
+   ## ------------------------------------------------------
+
+   ## Test to compute the date-time
+
+   def test_xl_time_ref_init_file
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+   
+      isDebugMode = false
+      strDate     = "20170422T120000"
+      val         = @@testObject.xl_time_ref_init_file(\
+                        "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
+                        strDate, \
+                        isDebugMode \
+                        )
+      @@logger.debug("Date => #{strDate} Orbit => #{val}")
+
+
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   end
+
+   ## ------------------------------------------------------
+
+   ## Test to compute the date-time
+
+   def test_xo_time_to_orbit
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+   
+      isDebugMode = false
+      strDate     = "20170422T120000"
+      val         = @@testObject.xo_time_to_orbit(\
+                        "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
+                        strDate, \
+                        isDebugMode \
+                        )
+      @@logger.debug("Date => #{strDate} Orbit => #{val}")
+
+      assert(val != -1, "Orbit Absolute obtained from date")
+         
+      ## error management for orbit ephemeris file not found
+   
+      val   = @@testObject.xo_time_to_orbit(\
+                        "wrong_path/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
+                        strDate, \
+                        isDebugMode \
+                        )   
+      assert(val == -1, "Orbit Absolute failed due to wrong path to ROF")
+      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+   end
+   ## ------------------------------------------------------
+
 
   ## Orbit and Angle to Time
 

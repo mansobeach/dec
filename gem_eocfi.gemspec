@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   end
   ## --------------------------------------------
  
-  s.files       = Dir['config/mptools_log_config.xml'] + \
+  s.files       = Dir['config/eocfi_log_config.xml'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/eocfi/data/*'] + \
                   Dir['code/eocfi/ext/ruby_earth_explorer_cfi.bundle'] + \

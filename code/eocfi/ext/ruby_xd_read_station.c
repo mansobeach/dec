@@ -20,6 +20,7 @@
 /*============================================================================*/
 
 static xd_station_rec station_rec ;
+static int iDebug ;
 
 
 /*
@@ -63,7 +64,7 @@ VALUE method_xd_read_station(
                                           ) 
 {
  
-   int iDebug = RTEST(isDebugMode) ;
+   iDebug = RTEST(isDebugMode) ;
    
    if (iDebug == 1)
    {
@@ -72,9 +73,8 @@ VALUE method_xd_read_station(
    
    /* --------------------------------------------------- */
    /* error handling */
-   
    long n,
-       func_id ; /* Error codes vector */
+   func_id ; /* Error codes vector */
    
    /* --------------------------------------------------- */
    char msg[XD_MAX_COD][XD_MAX_STR] ; /* Error messages vector */
@@ -90,9 +90,13 @@ VALUE method_xd_read_station(
    strcpy (station_file, StringValueCStr(strStationDB)) ;
    strcpy (station_id, StringValueCStr(strStationID)) ;
    
+   if (iDebug == 1)
+   {
+      printf("DEBUG: ruby_method_xd_read_station station_file: %s\n", station_file) ;  
+   }
+
    /* --------------------------------------------------- */
    
-
    local_status = xd_read_station(
                                        station_file,
                                        station_id, 
@@ -132,6 +136,11 @@ VALUE method_xd_read_station(
       
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+/* Mapping of the struct xd_station_rec */
+
 /* -------------------------------------------------------------------------- */
 
 VALUE method_xd_read_station_antenna(VALUE self) 
@@ -152,12 +161,38 @@ VALUE method_xd_read_station_purpose(VALUE self)
 
 /* -------------------------------------------------------------------------- */
 
+VALUE method_xd_read_station_descriptor(VALUE self) 
+{
+   xd_station_rec* p ;
+   Data_Get_Struct(self, xd_station_rec, p) ;
+   return rb_str_new2(p->descriptor) ;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VALUE method_xd_read_station_station_id(VALUE self) 
+{
+   xd_station_rec* p ;
+   Data_Get_Struct(self, xd_station_rec, p) ;
+   return rb_str_new2(p->station_id) ;
+}
+
+/* -------------------------------------------------------------------------- */
 
 VALUE method_xd_read_station_type(VALUE self) 
 {
    xd_station_rec* p ;
    Data_Get_Struct(self, xd_station_rec, p) ;
    return rb_str_new2(p->type) ;
+}
+
+/* -------------------------------------------------------------------------- */
+
+VALUE method_xd_read_station_mission_name(VALUE self) 
+{
+   xd_station_rec* p ;
+   Data_Get_Struct(self, xd_station_rec, p) ;
+   return rb_str_new2(p->mission_name) ;
 }
 
 /* -------------------------------------------------------------------------- */

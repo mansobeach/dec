@@ -24,7 +24,7 @@ module EOCFI
    
    include CUC::DirUtils
    
-   @@version = "0.0.1j"
+   @@version = "0.0.1q"
    
    ## -----------------------------------------------------------------
    
@@ -32,6 +32,7 @@ module EOCFI
       "0.0.1"  =>    "list of functions:\n\
          xd_read_station\n\
          xd_read_station_id\n\
+         xd_read_station_file\n\
          xo_check_library_version\n\
          xo_position_on_orbit_to_time\n\
          xo_time_to_orbit\n\
@@ -47,10 +48,10 @@ module EOCFI
       
       checkDirectory(destination)
       ## -----------------------------
-      ## MPL Config files
+      ## EOCFI Config files
    
       arrConfigFiles = [\
-         "mptools_log_config.xml" #,\
+         "eocfi_log_config.xml" #,\
       ]
       ## -----------------------------
 
@@ -90,9 +91,6 @@ module EOCFI
       # --------------------------------
       
    end
-   
-   ## -----------------------------------------------------------------
-
    ## -----------------------------------------------------------------
 
    def unset_config
@@ -106,11 +104,7 @@ module EOCFI
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
-   
-   ## -----------------------------------------------------------------
-
-   ## -----------------------------------------------------------------
-   
+      
    ## -----------------------------------------------------------------
 
    def check_environment
@@ -138,7 +132,7 @@ module EOCFI
       # --------------------------------
             
       if bCheck == false then
-         puts "MPL Essential environment variables configuration not complete"
+         puts "EOCFI Essential environment variables configuration not complete"
          puts
          return false
       end
@@ -146,20 +140,14 @@ module EOCFI
    end
    ## -----------------------------------------------------------------
 
-   ## -----------------------------------------------------------------
-
-
+ 
    ## -----------------------------------------------------------------
 
    def printEnvironmentError
-      puts "Execution environment not suited for mptools"
+      puts "Execution environment not suited for eocfi"
    end
    ## -----------------------------------------------------------------
-   
-   ## -----------------------------------------------------------------
-
-   ## -----------------------------------------------------------------
-   
+      
    
    ## -----------------------------------------------------------------   
    ##
