@@ -13,8 +13,10 @@ require 'test/unit'
 
 require 'cuc/Converters'
 require 'cuc/Log4rLoggerFactory'
-require 'eocfi/EOCFI_Environment'
+
 require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
+require 'eocfi/EOCFI_Environment'
+require 'eocfi/EOCFI_Constants'
 
 ## 1 - test_xo_check_library_version
 ## 4 - test_xd_read_station_id
@@ -29,6 +31,7 @@ require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
 class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
    include CUC::Converters
+   include EOCFI
 
    # Order of the test cases execution according to definition within code
    self.test_order = :defined
@@ -165,23 +168,15 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")   
 
       statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/S2__OPER_MPL_GND_DB"
-
       stationInfo    = @@testObject.xd_read_station(statDB, "GMASPABX", true)
       
       @@logger.debug(stationInfo.mission_name)
-
       @@logger.debug(stationInfo.antenna)
-      
       @@logger.debug(stationInfo.purpose)
-
       @@logger.debug(stationInfo.descriptor)
-      
       @@logger.debug(stationInfo.type)
-      
       @@logger.debug(stationInfo.station_alt)
-      
       @@logger.debug(stationInfo.station_lat)
-      
       @@logger.debug(stationInfo.station_long)
       
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
@@ -231,8 +226,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("station database => #{statDB}")
       file_station_data    = @@testObject.xd_read_station_file(statDB, true)
       puts file_station_data.num_rec
-      puts file_station_data.xd_station_rec.station_id
-      puts file_station_data.station_id
+      #puts file_station_data.xd_station_rec.station_id
+      #puts file_station_data.station_id
       
       #@@testObject.xd_free_station_file(file_station_data, true)
       
@@ -283,17 +278,45 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
    def test_xl_time_ref_init_file
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
-   
-      isDebugMode = false
-      strDate     = "20170422T120000"
+      
+      time_model     = XL_TIMEMOD_OSF
+      n_files        = 1
+      time_file      = Array.new
+      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
+      time_init_mode = XL_SEL_FILE
+      time_ref       = XL_TIME_UTC
+      time0          = utc_to_mj2000("20230101T000000")
+      time1          = utc_to_mj2000("20240101T000000")
+      orbit0         = 0
+      orbit1         = 99999
+      isDebugMode    = true
+      strDate        = "20230422T120000"
+
+      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")      
+      @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
+      @@logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
+      @@logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time0            :  #{time0}")
+      @@logger.debug("time1            :  #{time1}")
+      @@logger.debug("orbit0           :  #{orbit0}")
+      @@logger.debug("orbit1           :  #{orbit1}")
+      @@logger.debug("isDebugMode      :  #{isDebugMode}")
+
       val         = @@testObject.xl_time_ref_init_file(\
-                        "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
+                        time_model, \
+                        n_files, \
+                        time_file, \
+                        time_init_mode, \
+                        time_ref, \
+                        time0, \
+                        time1, \
+                        orbit0, \
+                        orbit1, \
                         strDate, \
                         isDebugMode \
                         )
+
       @@logger.debug("Date => #{strDate} Orbit => #{val}")
-
-
       @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
    end
 

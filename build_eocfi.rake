@@ -38,7 +38,7 @@ namespace :eocfi do
    
    ## ----------------------------------------------------------------
    
-   desc "build eocfi gem [user, host, suffix = s2 | s2odata]"
+   desc "build eocfi gem platform=MACIN64|LINUX64"
 
    task :build, [:platform] do |t, args|
       args.with_defaults(:platform => "MACIN64")
@@ -53,7 +53,7 @@ namespace :eocfi do
    
       ## -------------------------------
    
-      cmd = "cp -f code/eocfi/ext/lib/#{args[:platform]}/*.a code/eocfi/"
+      cmd = "cp -f code/eocfi/ext/lib/#{args[:platform]}/*.a code/eocfi/ext"
       puts cmd
       system(cmd)
    

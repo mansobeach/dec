@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
                   Dir['code/eocfi/ext/ruby_earth_explorer_cfi.bundle'] + \
                   Dir['code/eocfi/ext/*'] + \
                   Dir['code/eocfi/include/*.h'] + \
+                  Dir['code/eocfi/EOCFI_Constants.rb'] + \
                   Dir['code/eocfi/EOCFI_Environment.rb'] + \
                   Dir['code/eocfi/EOCFI_Loader_Wrapper_Earth_Explorer.rb'] + \
                   Dir['code/eocfi/eocfi_test_mptools'] + \

@@ -230,10 +230,19 @@ module Converters
 
    ## sdm_mjd2000_to_utc -d 6600.04170138889
    def mjd2000_to_utc(str)
-      days        = (str.to_f.to_i)* 86400
+      days        = (str.to_f.to_i)*86400
       remainder   = "0.#{str.to_s.split('.')[1]}".to_f*86400
       epoch       = Time.utc(2000,"jan",1,00,00,00).to_i
       return Time.at(epoch+days+remainder).utc 
+   end
+   ## -----------------------------------------------------------
+
+   def utc_to_mj2000(str)
+      epoch = DateTime.strptime("20000101T000000","%Y%m%dT%H%M%S")
+      dateUTC = str2date(str)
+      mjd200  = dateUTC - epoch
+      # dateUTC.to_date.amjd
+      return mjd200
    end
    ## -----------------------------------------------------------
 

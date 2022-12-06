@@ -26,13 +26,10 @@
 
 /* Defining a space for information 
 and references about the module to be stored internally */
-
 static VALUE ruby_earth_explorer_cfi   = Qnil ;
 static VALUE eocfi                     = Qnil ;
 
-
 /* Prototype for the initialization method - Ruby calls this, not you */
-
 void Init_ruby_earth_explorer_cfi() ;
 
 /* ========================================================= */
@@ -81,7 +78,7 @@ void Init_ruby_earth_explorer_cfi()
 
 	rb_define_method(ruby_earth_explorer_cfi, "xo_check_library_version", method_xo_check_library_version, 1) ;
    
-   rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 3) ; 
+   rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 11) ;
 
    rb_define_method(ruby_earth_explorer_cfi, "xo_time_to_orbit", method_xo_time_to_orbit, 3) ; 
    

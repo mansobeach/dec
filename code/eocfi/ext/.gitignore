@@ -1,2 +1,4 @@
+extconf_earth_explorer_cfi.rb
+Makefile
 *.o
 *.a
