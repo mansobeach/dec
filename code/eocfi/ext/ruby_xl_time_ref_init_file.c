@@ -78,13 +78,13 @@ VALUE method_xl_time_ref_init_file( VALUE self,
 
    if (n_files > 1)
    {
-      printf("ERROR: method_xl_time_ref_init_file => n_files supported cannot be > 1");
+      rb_fatal("ERROR: method_xl_time_ref_init_file => n_files supported cannot be > 1") ;
       return INT2NUM(1) ;
    }
 
    if (n_files != NUM2LONG(nFiles))
    {
-      printf("ERROR: method_xl_time_ref_init_file => inconsistency between n_files & time_file parameters");
+      rb_warn("ERROR: method_xl_time_ref_init_file => inconsistency between n_files & time_file parameters") ;
       n_files     = NUM2LONG(nFiles) ;
    }
 
@@ -114,8 +114,7 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    }
    else
    {
-      printf("ERROR: method_xl_time_ref_init_file => cannot open file %s", path_time_file) ;    
-      return LONG2NUM(-1) ;
+      rb_fatal("ERROR: method_xl_time_ref_init_file => cannot open file %s", path_time_file) ; 
    }
    /* --------------------------------------------------- */
  
@@ -132,16 +131,17 @@ VALUE method_xl_time_ref_init_file( VALUE self,
                                     &val_time1, 
                                     &time_id,
                                     ierr);
+
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file xl_time_ref_init_file status: %ld ierr: %li\n", status, *ierr) ;  
+   }
+
    if (status != XO_OK)
    {
       func_id = XL_TIME_REF_INIT_FILE_ID ;
       xo_get_msg(&func_id, ierr, &n, msg) ;
       xl_print_msg(&n, msg) ;
-   }
-
-   if (iDebug == 1)
-   {
-      printf("DEBUG: method_xl_time_ref_init_file xl_time_ref_init_file status: %i ierr: %i\n", status, *ierr) ;  
    }
 
    /* --------------------------------------------------- */
@@ -199,12 +199,11 @@ VALUE method_xl_time_ref_init_file( VALUE self,
       xl_get_msg(&func_id, ierr, &n, msg) ;
       xl_print_msg(&n, msg) ;
    }
-   /*
    else
    {
-      printf("\n\n\nSuccessful conversion from %s to %f\n\n\n\n", strUTCDate, dTimeProcessing) ;
+      if (iDebug == 1)
+         printf("DEBUG: method_xl_time_ref_init_file Successful conversion from %s to %f\n", strUTCDate, dTimeProcessing) ;
    }
-*/
 
    lOrbitStart          = 0 ;
    lOrbitStop           = 99999 ;
@@ -232,6 +231,12 @@ VALUE method_xl_time_ref_init_file( VALUE self,
                                  &val_time1,
                                  &orbit_id, 
                                  ierr) ;
+
+
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file xo_orbit_init_file status: %ld ierr: %li\n", status, *ierr) ;  
+   }                              
                                  
    if (status != XO_OK)
    {
@@ -261,18 +266,18 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    /* Free Memory */
    /* --------------------------- */
    
-   xl_time_close(&time_id, ierr) ;
-   
    xo_orbit_close (&orbit_id, ierr) ;
+
+   if (iDebug == 1)
+      printf("DEBUG: method_xl_time_ref_init_file date: %s to orbit number: %ld\n", strUTCDate, lOrbitNumber) ;
 
    if (iDebug == 1)
    {
       printf("DEBUG: EXIT method_xl_time_ref_init_file\n") ;  
    }
 
-   return LONG2NUM(lOrbitNumber) ;
+   return Data_Wrap_Struct(RBASIC(self)->klass, NULL, NULL, &time_id) ;
 
-   /* return Data_Wrap_Struct(RBASIC(self)->klass, NULL, NULL, &station_rec) ; */
 }
 
 /* -------------------------------------------------------------------------- */

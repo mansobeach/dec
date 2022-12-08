@@ -19,11 +19,12 @@ require 'eocfi/EOCFI_Environment'
 require 'eocfi/EOCFI_Constants'
 
 ## 1 - test_xo_check_library_version
-## 4 - test_xd_read_station_id
-## 5 - test_xd_read_station
-## 5.1 - NAOS_test_xd_read_station
-## 6 - test_xd_read_station_file
-## X - test_xl_time_ref_init_file
+## 2 - test_xd_read_station_id
+## 3 - test_xd_read_station
+## 3.1 - NAOS_test_xd_read_station
+## 4 - test_xd_read_station_file
+## 5 - test_xl_time_ref_init_file
+## 6 - test_xo_orbit_init_file
 ## 2 - test_xo_time_to_orbit
 ## 3 - test_xo_position_on_orbit_to_time
 ## 7 - test_xv_stationvistime_compute
@@ -43,7 +44,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    Test::Unit.at_start do      
       puts
       puts "======================================"
-      puts "mptools #{File.basename(__FILE__)} Unit Test Cases"
+      puts "EOCFI #{File.basename(__FILE__)} Unit Test Cases"
       puts
       puts
       puts "DO NOT EXECUTE IN THE PRODUCTION ENVIRONMENT !!!!!"
@@ -88,7 +89,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
          puts
 		   puts "Error in #{File.basename(__FILE__)}"
 		   puts "Could not set up logging system !  :-("
-         puts "Check MPL logs configuration under \"#{ENV['MPL_CONFIG']}/mptools_log_config.xml\"" 
+         puts "Check EOCFI logs configuration under \"#{ENV['MPL_CONFIG']}/eocfi_log_config.xml\"" 
 		   puts
 		   puts
 		   exit(99)
@@ -184,7 +185,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    end
 
    ## ------------------------------------------------------
-
    ## Read Station File NAOS mission
 
    def NAOS_test_xd_read_station
@@ -274,10 +274,10 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-   ## Test to compute the date-time
+   ## Test test_xl_time_ref_init_file
 
    def test_xl_time_ref_init_file
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
       
       time_model     = XL_TIMEMOD_OSF
       n_files        = 1
@@ -292,7 +292,9 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       isDebugMode    = true
       strDate        = "20230422T120000"
 
-      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")      
+      @@logger.debug("xl_time_ref_init_file")
+      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
+      @@logger.debug("n_files          :  #{n_files}")
       @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
       @@logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
       @@logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
@@ -302,22 +304,184 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("orbit1           :  #{orbit1}")
       @@logger.debug("isDebugMode      :  #{isDebugMode}")
 
-      val         = @@testObject.xl_time_ref_init_file(\
-                        time_model, \
-                        n_files, \
-                        time_file, \
-                        time_init_mode, \
-                        time_ref, \
-                        time0, \
-                        time1, \
-                        orbit0, \
-                        orbit1, \
-                        strDate, \
-                        isDebugMode \
+      time_id         = @@testObject.xl_time_ref_init_file(\
+                           time_model, \
+                           n_files, \
+                           time_file, \
+                           time_init_mode, \
+                           time_ref, \
+                           time0, \
+                           time1, \
+                           orbit0, \
+                           orbit1, \
+                           strDate, \
+                           isDebugMode \
                         )
+      @@logger.debug("time_id => #{time_id}")
 
-      @@logger.debug("Date => #{strDate} Orbit => #{val}")
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+      # -------------------------------
+
+      ascii_id_in       = XL_ASCII_CCSDSA_COMPACT
+      time_ref_in       = XL_TIME_UTC
+      ascii_in          = "20230720T120000"
+      proc_id_out       = XL_PROC
+      time_ref_out      = XL_TIME_UTC
+      processing_out    = nil
+
+      @@logger.debug("xl_time_ascii_to_processing")
+      @@logger.debug("ascii_id_in      : #{XL_Ascii_enum.key(ascii_id_in)}") 
+      @@logger.debug("time_ref_in      : #{XL_Time_ref_enum.key(time_ref_in)}")
+      @@logger.debug("ascii_in         : #{ascii_in}")
+      @@logger.debug("proc_id_out      : #{XL_Proc_enum.key(XL_PROC)}")
+      @@logger.debug("time_ref_out     : #{XL_Time_ref_enum.key(time_ref_out)}")
+      @@logger.debug("isDebugMode      : #{isDebugMode}")
+
+      processing_out = @@testObject.xl_time_ascii_to_processing(
+                           ascii_id_in,
+                           time_ref_in,
+                           ascii_in,
+                           proc_id_out,
+                           time_ref_out,
+                           processing_out,
+                           isDebugMode
+                        ) 
+                        
+      @@logger.debug("processing_out => #{processing_out}")
+
+      # ---------------------
+      @@logger.debug("xl_time_close")
+      @@logger.debug("isDebugMode      : #{isDebugMode}")
+      status = @@testObject.xl_time_close(isDebugMode)
+      # ---------------------
+
+      ascii_id_in       = XL_ASCII_CCSDSA_COMPACT
+      time_ref_in       = XL_TIME_UTC
+      ascii_in          = "20230722T000000"
+      proc_id_out       = XL_PROC
+      time_ref_out      = XL_TIME_UTC
+      processing_out    = nil
+
+      @@logger.debug("xl_time_ascii_to_processing")
+      @@logger.debug("ascii_id_in      : #{XL_Ascii_enum.key(ascii_id_in)}") 
+      @@logger.debug("time_ref_in      : #{XL_Time_ref_enum.key(time_ref_in)}")
+      @@logger.debug("ascii_in         : #{ascii_in}")
+      @@logger.debug("proc_id_out      : #{XL_Proc_enum.key(XL_PROC)}")
+      @@logger.debug("time_ref_out     : #{XL_Time_ref_enum.key(time_ref_out)}")
+      @@logger.debug("isDebugMode      : #{isDebugMode}")
+
+      processing_out = @@testObject.xl_time_ascii_to_processing(
+                           ascii_id_in,
+                           time_ref_in,
+                           ascii_in,
+                           proc_id_out,
+                           time_ref_out,
+                           processing_out,
+                           isDebugMode
+                        ) 
+                        
+      @@logger.debug("processing_out => #{processing_out}")
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+   ## ------------------------------------------------------
+
+   ## Test test_xo_orbit_init_file
+
+   def test_xo_orbit_init_file
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+
+      # ---------------------
+      time_model     = XL_TIMEMOD_OSF
+      n_files        = 1
+      time_file      = Array.new
+      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
+      time_init_mode = XL_SEL_FILE
+      time_ref       = XL_TIME_UTC
+      time0          = utc_to_mj2000("20230101T000000")
+      time1          = utc_to_mj2000("20240101T000000")
+      orbit0         = 0
+      orbit1         = 99999
+      isDebugMode    = true
+      strDate        = "20230422T120000"
+
+      @@logger.debug("xl_time_ref_init_file")
+      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
+      @@logger.debug("n_files          :  #{n_files}")
+      @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
+      @@logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
+      @@logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time0            :  #{time0}")
+      @@logger.debug("time1            :  #{time1}")
+      @@logger.debug("orbit0           :  #{orbit0}")
+      @@logger.debug("orbit1           :  #{orbit1}")
+      @@logger.debug("isDebugMode      :  #{isDebugMode}")
+
+      time_id         = @@testObject.xl_time_ref_init_file(\
+                           time_model, \
+                           n_files, \
+                           time_file, \
+                           time_init_mode, \
+                           time_ref, \
+                           time0, \
+                           time1, \
+                           orbit0, \
+                           orbit1, \
+                           strDate, \
+                           isDebugMode \
+                        )
+      @@logger.debug("time_id => #{time_id}")
+      # ---------------------
+
+      sat_id      = XO_SAT_SENTINEL_2A
+      model_id    = nil
+      # time_id     = nil
+      orbit_mode  = XO_ORBIT_INIT_AUTO
+      n_files     = 1
+      input_files = Array.new
+      input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
+      time_mode   = XO_SEL_FILE
+      time_ref    = XL_TIME_UTC
+      time0       = nil
+      time1       = nil
+      orbit0      = nil
+      orbit1      = nil
+      isDebugMode = true
+
+      @@logger.debug("xo_orbit_init_file")
+      @@logger.debug("sat_id      : #{XO_Sat_id_enum.key(sat_id)}")
+      @@logger.debug("model_id    : #{model_id}")
+      @@logger.debug("time_id     : #{time_id}")
+      @@logger.debug("orbit_mode  : #{XO_Orbit_init_mode.key(orbit_mode)}")
+      @@logger.debug("n_files     : #{n_files}")
+      @@logger.debug("input_files : #{File.basename(input_files[0])}")
+      @@logger.debug("time_mode   : #{XO_Time_init_mode.key(time_mode)}")
+      @@logger.debug("time_ref    : #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time0       : #{time0}")
+      @@logger.debug("time1       : #{time1}")
+      @@logger.debug("orbit0      : #{orbit0}")
+      @@logger.debug("orbit1      : #{orbit1}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+
+      orbit_id = @@testObject.xo_orbit_init_file(
+                     sat_id,
+                     model_id,
+                     time_id,
+                     orbit_mode,
+                     n_files,
+                     input_files,
+                     time_mode,
+                     time_ref,
+                     time0,
+                     time1,
+                     orbit0,
+                     orbit1,
+                     isDebugMode
+                  )
+
+      @@logger.debug("orbit_id => #{orbit_id}")
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
    end
 
    ## ------------------------------------------------------
@@ -325,7 +489,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    ## Test to compute the date-time
 
    def test_xo_time_to_orbit
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} START")
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
    
       isDebugMode = false
       strDate     = "20170422T120000"
@@ -346,7 +510,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
                         isDebugMode \
                         )   
       assert(val == -1, "Orbit Absolute failed due to wrong path to ROF")
-      @@logger.debug("#{File.basename(__FILE__)}::#{__method__.to_s} END")
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
    end
    ## ------------------------------------------------------
 

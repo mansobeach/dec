@@ -241,7 +241,6 @@ module Converters
       epoch = DateTime.strptime("20000101T000000","%Y%m%dT%H%M%S")
       dateUTC = str2date(str)
       mjd200  = dateUTC - epoch
-      # dateUTC.to_date.amjd
       return mjd200
    end
    ## -----------------------------------------------------------

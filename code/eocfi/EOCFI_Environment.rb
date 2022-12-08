@@ -33,11 +33,14 @@ module EOCFI
          xd_read_station\n\
          xd_read_station_id\n\
          xd_read_station_file\n\
+         xl_time_ref_init_file\n\
+         xl_time_ascii_to_processing\n\
          xo_check_library_version\n\
+         xo_orbit_init_file\n\
          xo_position_on_orbit_to_time\n\
          xo_time_to_orbit\n\
          xv_stationvistime_compute",
-      "0.0.0"  =>    "first version of the mptools installer created" \
+      "0.0.0"  =>    "first version of the eocfi installer created" \
    }
    ## -----------------------------------------------------------------
       
