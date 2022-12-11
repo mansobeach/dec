@@ -481,6 +481,32 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
       @@logger.debug("orbit_id => #{orbit_id}")
 
+      abs_orbit   = 9000
+      isDebugMode = false
+      @@logger.debug("xo_orbit_info")
+      @@logger.debug("orbit_id    : #{orbit_id}")
+      @@logger.debug("abs_orbit   : #{abs_orbit}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+
+      result = @@testObject.xo_orbit_info(
+         orbit_id,
+         abs_orbit,
+         isDebugMode
+      )
+
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE)}   :#{result[XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH)}   :#{result[XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST_DRIFT)}     :#{result[XO_ORBIT_INFO_EXTRA_MLST_DRIFT]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST)}           :#{result[XO_ORBIT_INFO_EXTRA_MLST]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_ANX_LONG)}       :#{result[XO_ORBIT_INFO_EXTRA_ANX_LONG]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_UTC_ANX)}        :#{result[XO_ORBIT_INFO_EXTRA_UTC_ANX]}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_NODAL_PERIOD)}   :#{result[XO_ORBIT_INFO_EXTRA_NODAL_PERIOD]}")
+
+      cmd = "cat /tmp/eocfi_stderr"
+      @@logger.debug(cmd)
+      system(cmd)
+
+
       @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
    end
 

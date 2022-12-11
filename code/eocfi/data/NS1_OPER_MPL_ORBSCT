@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<Earth_Explorer_File>
+  <Earth_Explorer_Header>
+    <Fixed_Header>
+      <File_Name>NS1_TEST_MPL_ORBSCT_20211221T100410_99999999T999999_0000</File_Name>
+      <File_Description>Reference Orbit Scenario File</File_Description>
+      <Notes/>
+      <Mission>NAOS_POSIBLE</Mission>
+      <File_Class></File_Class>
+      <File_Type>MPL_ORBSCT</File_Type>
+      <Validity_Period>
+        <Validity_Start>UTC=2021-12-21T10:04:10</Validity_Start>
+        <Validity_Stop>UTC=2100-01-01T00:00:00</Validity_Stop>
+      </Validity_Period>
+      <File_Version>0000</File_Version>
+      <Source>
+        <System></System>
+        <Creator>EXPLORER_GEN_FILES: xg_gen_osf_create</Creator>
+        <Creator_Version>3.0</Creator_Version>
+        <Creation_Date>UTC=2022-11-21T15:56:12</Creation_Date>
+      </Source>
+    </Fixed_Header>
+    <Variable_Header>
+      <Time_Reference>UT1</Time_Reference>
+    </Variable_Header>
+  </Earth_Explorer_Header>
+  <Data_Block type="xml">
+    <List_of_Orbit_Changes count="1">
+      <Orbit_Change>
+        <Orbit>
+          <Absolute_Orbit>1</Absolute_Orbit>
+          <Relative_Orbit>1</Relative_Orbit>
+          <Cycle_Number>1</Cycle_Number>
+          <Phase_Number>1</Phase_Number>
+        </Orbit>
+        <Cycle>
+          <Repeat_Cycle unit="day">8</Repeat_Cycle>
+          <Cycle_Length unit="orbit">123</Cycle_Length>
+          <ANX_Longitude unit="deg">247.2842</ANX_Longitude>
+          <!--
+            <ANX_Longitude unit="deg">247.2842</ANX_Longitude>
+            <ANX_Longitude unit="deg">0.000000</ANX_Longitude>
+            <ANX_Longitude unit="deg">1.000000</ANX_Longitude>
+          <ANX_Longitude unit="deg">67.2842</ANX_Longitude>
+          -->
+          <MLST>22:30:00.000000</MLST>
+          <MLST_Drift unit="s/day">0.000000</MLST_Drift>
+        </Cycle>
+        <Time_of_ANX>
+          <TAI>UTC=2021-12-21T22:04:47.609998</TAI>
+          <UTC>UTC=2021-12-21T22:04:10.000000</UTC>
+          <UT1>UTC=2021-12-21T22:04:10.000000</UT1>
+        </Time_of_ANX>
+      </Orbit_Change>
+    </List_of_Orbit_Changes>
+  </Data_Block>
+</Earth_Explorer_File>

@@ -134,7 +134,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
    }
    else
    {
-      rb_fatal("ERROR: method_xl_time_ref_init_file => cannot open file %s", path_orbit_file) ; 
+      rb_fatal("ERROR: method_xo_orbit_init_file => cannot open file %s", path_orbit_file) ; 
    }
 
    xl_model_id    model_id    = {NULL} ;
