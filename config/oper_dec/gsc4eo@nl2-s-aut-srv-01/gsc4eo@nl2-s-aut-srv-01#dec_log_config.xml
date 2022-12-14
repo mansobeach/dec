@@ -11,7 +11,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="nl2-u-moc-srv-01"/>
+  <parameter name="mainLoggerName" value="nl2-s-aut-srv-01"/>
  </pre_config>
 
 <!-- ============================================= -->
@@ -29,7 +29,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
   
   <type>RollingFileOutputter</type>
 
-  <filename>/data/mocExternalInterfaces/log/dec/DEC-MOC-UAP-.log</filename>
+  <filename>/data/mocExternalInterfaces/log/dec/DEC-MOC-SAP-.log</filename>
 
   <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
       <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
@@ -47,7 +47,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 
 <!-- ============================================= -->
 
- <logger name="nl2-u-moc-srv-01" level="DEBUG" trace="false">
+ <logger name="nl2-s-aut-srv-01" level="DEBUG" trace="false">
    <outputter>console</outputter>
    <outputter>dec_log</outputter>
  </logger>

@@ -366,6 +366,32 @@ module EOCFI
       "XO_ORBIT_INFO_EXTRA_NUM_ELEMENTS"     => XO_ORBIT_INFO_EXTRA_NUM_ELEMENTS
    }
 
+   UNIT_XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE     = "days"
+   UNIT_XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH     = "orbits"
+   UNIT_XO_ORBIT_INFO_EXTRA_MLST_DRIFT       = "seconds/day"
+   UNIT_XO_ORBIT_INFO_EXTRA_MLST             = "hours"
+   UNIT_XO_ORBIT_INFO_EXTRA_ANX_LONG         = "degrees"
+   UNIT_XO_ORBIT_INFO_EXTRA_UTC_ANX          = "days (MJD2000)"
+   UNIT_XO_ORBIT_INFO_EXTRA_POS_X            = "m"
+   UNIT_XO_ORBIT_INFO_EXTRA_POS_Y            = "m"
+   UNIT_XO_ORBIT_INFO_EXTRA_POS_Z            = "m"
+   UNIT_XO_ORBIT_INFO_EXTRA_VEL_X            = "m/s"
+   UNIT_XO_ORBIT_INFO_EXTRA_VEL_Y            = "m/s"
+   UNIT_XO_ORBIT_INFO_EXTRA_VEL_Z            = "m/s"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A      = "Semi-major axis (a) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E      = "Eccentricity (e) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I      = "Inclination (i) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA     = "Right ascension of the ascending node ( Ω ) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W      = "Argument of perigee ( ω ) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M      = "Mean anomaly (M) / mean"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_A       = "Semi-major axis (a) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_E       = "Eccentricity (e) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_I       = "Inclination (i) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA      = "Right ascension of the ascending node ( Ω ) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_W       = "Argument of perigee ( ω ) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_M       = "Mean anomaly (M) / osculating"
+   UNIT_XO_ORBIT_INFO_EXTRA_UTC_SMX          = "days (MJD2000)"
+   UNIT_XO_ORBIT_INFO_EXTRA_NODAL_PERIOD     = "seconds"
    # --------------------------------------------
 
 

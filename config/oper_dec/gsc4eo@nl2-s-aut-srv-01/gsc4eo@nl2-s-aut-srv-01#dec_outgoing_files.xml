@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces>
+
+      <Interface>
+         <Name>MCS_TM_SREC_KSAT</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/MCS/inTray/KSA/TM__SREC__/</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/MCS/inTray</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/MCS/inTray/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
+         <Name>MCS_TM_SREC_DDC</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/MCS/inTray/DDC/TM__SREC__/</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/MCS/inTray</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/MCS/inTray/_TEMP_</UploadTemp>
+      </Interface>
+
+
+   </ListInterfaces>
+
+   <!-- =========================================================== -->
+
+   <ListFiles>
+
+      <File Type="NS1*.tlm">
+         <Description></Description>
+         <ToList>
+            <Interface Name="MCS_TM_SREC_KSAT"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="MCS_TM_SREC_DDC"   Compress="NONE" DeliveryMethods="SFTP" />
+         </ToList>
+      </File>
+
+
+   </ListFiles>
+
+   <!-- =========================================================== -->
+
+</Config>

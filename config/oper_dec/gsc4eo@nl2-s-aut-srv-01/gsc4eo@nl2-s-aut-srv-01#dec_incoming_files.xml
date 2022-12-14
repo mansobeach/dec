@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+      <Interface>
+         <Name>SIM_DDC_ADA_DOP</Name>
+         <LocalInbox>/data/mocExternalInterfaces/FDS/inTray/DDC/ADA_DOP___</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/satnms/rgs/NAOS</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_DDC_ADA_TDA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/FDS/inTray/DDC/ADA_TDA___</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/satnms/rgs/NAOS</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_KSAT_ADA_DOP</Name>
+         <LocalInbox>/data/mocExternalInterfaces/FDS/inTray/KSA/ADA_DOP___</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/ivvmoc/ksat_ftp_server/doppler_data</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_KSAT_ADA_TDA</Name>
+         <LocalInbox>/data/mocExternalInterfaces/FDS/inTray/KSA/ADA_TDA___</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/ivvmoc/ksat_ftp_server/tracking_data</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_DDC_TLM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/MCS/inTray/DDC/TM__SREC__/sftp</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="2">/home/ibb/archive/tm1</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_KSAT_TLM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/MCS/inTray/KSA/TM__SREC__/sftp</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/ivvmoc/ksat_ftp_server/telemetry</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>SIM_KSAT_SCH_RPL</Name>
+         <LocalInbox>/data/mocExternalInterfaces/FDS/inTray/KSA/SCH_RPL___</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/ivvmoc/ksat_ftp_server/schedule_reply</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+  
+   </ListInterfaces>
+<!-- 
+
+https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
+
+   Time.now.to_date << 1
+
+   <Directory DepthSearch="0">sites/default/files/atoms/files/#{}f10_prd.txt</Directory>
+
+-->
+
+
+   <!-- =========================================================== -->
+
+   <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+      <File Type="TRK_NAOS1*ANG*.GEO">
+         <Description>ADA (Antenna Data) station tracking data / angular rates</Description>
+         <FromList>
+            <Interface>SIM_DDC_ADA_TDA</Interface>
+            <Interface>SIM_KSAT_ADA_TDA</Interface>
+         </FromList>
+      </File>
+
+      <File Type="TRK_NAOS1*RAN*.GEO">
+         <Description>ADA (Antenna Data) station tracking data / one way doppler</Description>
+         <FromList>
+            <Interface>SIM_DDC_ADA_DOP</Interface>
+            <Interface>SIM_KSAT_ADA_DOP</Interface>
+         </FromList>
+      </File>
+
+      <File Type="NS1*.tlm">
+         <Description>TLM</Description>
+         <FromList>
+            <Interface>SIM_DDC_TLM</Interface>
+            <Interface>SIM_KSAT_TLM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ksat_schedule_reply*.xml">
+         <Description>TLM</Description>
+         <FromList>
+            <Interface>SIM_KSAT_SCH_RPL</Interface>
+         </FromList>
+      </File>
+
+
+   </DownloadRules>
+
+   <!-- =========================================================== -->
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+                
+      </ListIntrays>
+
+      <!-- =============================================== -->
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+
+
+      </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+</Config>

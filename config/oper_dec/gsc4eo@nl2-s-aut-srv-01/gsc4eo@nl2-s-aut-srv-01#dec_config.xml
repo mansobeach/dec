@@ -46,8 +46,8 @@
    
    
    <Reports>
-            
-       <!-- DEC push / delivery reports / push (decSend2Interface) -->      
+                        
+      <!-- DEC push / delivery reports / push (decSend2Interface) -->      
             
       <Report Name="DeliveredFiles">
          <Enabled>true</Enabled>

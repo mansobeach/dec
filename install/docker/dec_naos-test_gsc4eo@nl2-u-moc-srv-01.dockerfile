@@ -46,8 +46,8 @@ RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
 #
 RUN addgroup -g 2020 -S gsc4eo && adduser -u 2020 -S gsc4eo -G gsc4eo -s /bin/bash
 # ------------------------------------------------
-COPY ./install/scripts/entrypoint_dec_naos_nl2-s-aut-srv-01_gsc4eo.sh /usr/bin/
-RUN ln -s /usr/bin/entrypoint_dec_naos_nl2-s-aut-srv-01_gsc4eo.sh /    
+COPY ./install/scripts/entrypoint_dec_naos_nl2-u-moc-srv-01_gsc4eo.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_dec_naos_nl2-u-moc-srv-01_gsc4eo.sh /    
 # ------------------------------------------------
 # ------------------------------------------------
 # ------------------------------------------------
@@ -63,4 +63,4 @@ COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/gsc4eo/.ssh/id_rsa
 # COPY --chown=2020:2020 ./config/ssh/known_hosts /home/gsc4eo/.ssh/known_hosts
 ENV USER=gsc4eo HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
 # "------------------------------------------------
-ENTRYPOINT ["/usr/bin/entrypoint_dec_naos_nl2-s-aut-srv-01_gsc4eo.sh"]
+ENTRYPOINT ["/usr/bin/entrypoint_dec_naos_nl2-u-moc-srv-01_gsc4eo.sh"]

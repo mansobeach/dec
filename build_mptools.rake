@@ -82,7 +82,8 @@ namespace :mptools do
       puts "compile C extensions"
       
       prevDir = Dir.pwd
-      
+
+=begin      
       Dir.chdir("code/mpl/lib/#{args[:platform]}")
       
       cmd = "gcc -fPIC -g -O3 -shared -o libearth_explorer_cfi.so -Wl,-force_load libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a"
@@ -92,11 +93,11 @@ namespace :mptools do
       cmd = "mv -f libearth_explorer_cfi.so ../../"
       puts cmd
       system(cmd)
-      
+=end      
       
       Dir.chdir(prevDir)
-      Dir.chdir("code/mpl")
-      cmd = "ruby extconf_earth_explorer_cfi.rb"
+      Dir.chdir("code/mpl/ext")
+      cmd = "ruby extconf_earth_explorer_cfi_#{args[:platform]}.rb"
       puts cmd
       system(cmd)
       
@@ -124,7 +125,7 @@ namespace :mptools do
       
       prevDir = Dir.pwd
       
-      Dir.chdir("code/mpl")
+      Dir.chdir("code/mpl/ext")
       
       cmd = "cp extconf_earth_explorer_cfi_#{args[:platform]}.rb extconf_earth_explorer_cfi.rb"
       puts cmd
@@ -132,6 +133,28 @@ namespace :mptools do
       
       Dir.chdir(prevDir)      
       
+   end
+   ## ----------------------------------------------------------------
+
+   ## ----------------------------------------------------------------
+
+   desc "setup C extension for the specified platform"
+
+   task :makelib, [:platform] do |t, args|
+      args.with_defaults(:platform => "MACIN64")
+    
+      puts "link C library"
+    
+      prevDir = Dir.pwd
+    
+      Dir.chdir("code/mpl/lib/#{args[:platform]}")
+ 
+      cmd = "gcc -fPIC -g -O3 -shared -o libearth_explorer_cfi.so -Wl,-force_load libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a"
+      puts cmd
+      system(cmd)
+    
+      Dir.chdir(prevDir)
+          
    end
    ## ----------------------------------------------------------------
 

@@ -263,6 +263,12 @@ namespace :dec do
       puts cmd
       retval = system(cmd) 
 
+      cmd = "md5sum #{imgFile}.7z"
+      ret = `#{cmd}`
+      cmd = "echo #{ret.split(" ")[0]} > #{imgFile}.7z.md5"
+      puts cmd
+      system(cmd)
+
    end
 
    ## ----------------------------------------------------------------
@@ -392,6 +398,12 @@ namespace :dec do
       cp @filename, "install/gems/"
       rm "install/gems/dec_latest.gem"
       ln @filename, "install/gems/dec_latest.gem"
+
+      cmd = "md5sum #{@filename}"
+      ret = `#{cmd}`
+      cmd = "echo #{ret.split(" ")[0]} > #{@filename}.md5"
+      puts cmd
+      system(cmd)
       # rm @filename
    end
 
@@ -594,15 +606,19 @@ namespace :dec do
       puts "pull LOCALFERRO"
       puts "rake -f build_dec.rake dec:build[dec,s2boa-cloudferro,s2]"      
       puts
-      puts "NAOS / NAOS-MOC-SERVER"
+      puts "NAOS / NAOS-MOC-SERVER (UAP)"
       puts "pull CELESTRAK_SFS, CELESTRAK_TLE, CELESTRAK_TCA, NASA_NBULA, NASA_NBULC, NASA_SFL"
       puts "push TBD"
       puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-u-moc-srv-01,naos-test]"
+      puts
+      puts "NAOS / NAOS-MOC-SERVER (UAP)"
+      puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-s-aut-srv-01,naos-test]"
+      puts "pull SIM_DDC_ADA, SIM_DDC_TLM, SIM_KSAT_ADA, SIM_KSAT_TLM"
       puts      
       puts "NAOS / NAOS-MCS-IVV"
       puts "pull NAOS_MCS_SFTP"
       puts "push NAOS_MCS_SFTP"
-      puts "rake -f build_dec.rake dec:build[aiv,naos-aiv,naos]"      
+      puts "rake -f build_dec.rake dec:build[aiv,naos-aiv,naos]"
       puts                  
       puts "Obsolete:"
       puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"

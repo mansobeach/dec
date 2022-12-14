@@ -6,7 +6,7 @@
 
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-
+<!--
       <Interface>
          <Name>SPCS</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/</LocalInbox>
@@ -22,38 +22,7 @@
             <LogUnknown>false</LogUnknown>
          </Switches>
       </Interface>
-
-      <Interface>
-         <Name>CELES_D1</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/d1</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=35681</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>      
-
-      <Interface>
-         <Name>CELES_D2</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/d2</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40013</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>  
+   -->
 
       <Interface>
          <Name>TEST_CELESTRAK_SFS</Name>
@@ -509,8 +478,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <FromList>
             <Interface>CELESTRAK_TLE</Interface>
             <Interface>TEST_CELESTRAK_TLE</Interface>
-            <Interface>CELES_D1</Interface>
-            <Interface>CELES_D2</Interface>
          </FromList>
       </File>
 
@@ -561,13 +528,14 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          </FromList>
       </File>
 
+      <!--
       <File Type="*cdm*">
          <Description>conjunction data message</Description>
          <FromList>
             <Interface>SPCS</Interface>
          </FromList>
       </File>
-
+   -->
 
          
    </DownloadRules>
