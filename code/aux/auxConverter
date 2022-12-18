@@ -31,9 +31,7 @@ require 'rubygems'
 require 'getoptlong'
 
 require 'cuc/Log4rLoggerFactory'
-
 require 'dec/DEC_Environment'
-
 require 'aux/AUX_Environment'
 require 'aux/AUX_Handler'
 

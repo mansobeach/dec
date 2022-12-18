@@ -39,14 +39,32 @@ namespace :aux do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
+      
       begin
          rm "install/gems/aux_latest.gem"
       rescue Exception => e
       end
+
+      begin
+         rm "install/gems/aux_latest.gem.md5"
+      rescue Exception => e
+      end
+
       ln filename, "install/gems/aux_latest.gem"
       cp filename, "aux.gem"
+     
+      cmd = "md5sum #{filename}"
+      ret = `#{cmd}`
+      cmd = "echo #{ret.split(" ")[0]} > #{filename}.md5"
+      puts cmd
+      system(cmd)
+
       mv filename, "install/gems/"
       mv "aux.gem", "install/gems/"
+
+      ln "#{filename}.md5", "install/gems/aux_latest.gem.md5"
+      mv "#{filename}.md5", "install/gems/"
+
    end
 
    ## ----------------------------------------------------------------

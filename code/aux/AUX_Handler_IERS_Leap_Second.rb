@@ -15,6 +15,10 @@
 ###
 #########################################################################
 
+###
+## https://aviation.stackexchange.com/questions/90839/what-are-satellite-time-gps-time-and-utc-time
+## GPS time = TAI - 19s (always).
+
 ### IERS Bulletin-C / Leap Second TAI-UTC
 ## https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat
 
@@ -48,7 +52,10 @@
 ### S3__GN_1_LSC_AX_20000101T000000_20130101T000000_20120901T030000___________________USN_O_NR_POD.SEN3
 ###
 
+require 'cuc/Converters'
+
 require 'aux/AUX_Handler_Generic'
+require 'aux/WriteXMLFile_NAOS_AUX_BULC'
 
 module AUX
 
@@ -56,6 +63,7 @@ AUX_Pattern_IERS_Leap_Second = "leap_second.dat"
 
 class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
    
+   include CUC
    ## -------------------------------------------------------------
       
    ## Class constructor.
@@ -67,9 +75,9 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
       super(full_path, dir, logger, isDebug)
       
       case @target.upcase
-         when "NAOS" then convert_NAOS
-         when "S3"   then convert_S3
-         when "POD"  then convert_POD
+         when "NAOS" then initMetadata_NAOS
+         when "S3"   then initMetadata_S3
+         when "POD"  then initMetadata_POD
          else raise "#{@target.upcase} not supported"
       end
  
@@ -95,6 +103,15 @@ class AUX_Handler_IERS_Leap_Second < AUX_Handler_Generic
 
    def convert
       parse
+
+      case @target.upcase
+         when "NAOS" then return convertNAOS
+         else 
+            if @isDebugMode == true then
+               @logger.debug("no file internal conversion for #{@target.upcase}") 
+            end
+      end
+
       return rename
    end
    ## -------------------------------------------------------------
@@ -103,14 +120,16 @@ private
 
    ## -----------------------------------------------------------
 
-   def convert_NAOS
-      @mission    = "NS1"
-      @fileType   = "AUX_BULC__"
-      @extension  = "TXT"
+   def initMetadata_NAOS
+      @mission       = "NS1"
+      @fileType      = "AUX_BULC__"
+      @extension     = "EOF"
+      @diffTAI2UTC   = nil
+      @diffUTC2GPS   = nil
    end
    ## -----------------------------------------------------------
    
-   def convert_S3
+   def initMetadata_S3
       @mission    = "S3_"
       @fileType   = "GN_1_LSC_AX"
       @instanceID = "____________________USN_O_NR_POD"
@@ -119,7 +138,7 @@ private
    end
    ## -------------------------------------------------------------
    
-   def convert_POD
+   def initMetadata_POD
       @mission    = "POD"
       @fileType   = "AUX_LSC_AX"
       raise "not implemented for #{@target}"
@@ -139,26 +158,63 @@ private
             year     = fields[6]
             @strValidityStop = "#{year}#{month}#{day}T000000"
             if @isDebugMode == true then
-               puts "Validity Stop: #{@strValidityStop}"
+               @logger.debug("Validity Stop: #{@strValidityStop}")
             end
          end
          
          # Read last line of data to get validity start
          if line[0] != "#" then
             fields = line.split(" ")
-            day      = fields[1].to_s.rjust(2, "0")
-            month    = fields[2].to_s.rjust(2, "0")
-            year     = fields[3]
+            day            = fields[1].to_s.rjust(2, "0")
+            month          = fields[2].to_s.rjust(2, "0")
+            year           = fields[3]
+            @diffTAI2UTC   = fields[4].to_i
             @strValidityStart = "#{year}#{month}#{day}T000000"
             if @isDebugMode == true then
-               puts "Validity Start: #{@strValidityStart}"
-            end            
+               @logger.debug("Validity Start: #{@strValidityStart}")
+               @logger.debug("TAI-UTC => #{@diffTAI2UTC} seconds")
+            end
             # break
          end
       end
    end
    ## -------------------------------------------------------------
+   
+   def convertNAOS
       
+      if @isDebugMode == true then
+         @logger.debug("BEGING convertNAOS")
+      end
+      
+      filename    = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}"
+      auxBULC     = WriteXMLFile_NAOS_AUX_BULC.new("#{@targetDir}/#{filename}.EOF", @logger, @isDebugMode)
+
+      if @isDebugMode == true then
+         auxBULC.setDebugMode
+      end
+
+      valStart = str2date(@strValidityStart).strftime("UTC=%Y-%m-%dT%H:%M:%S")
+      valStop  = str2date(@strValidityStop).strftime("UTC=%Y-%m-%dT%H:%M:%S")
+
+      auxBULC.writeFixedHeader(filename, valStart, valStop)
+
+      ## GPS time = TAI - 19s (always).
+      @diffUTC2GPS = @diffTAI2UTC - 19
+
+      auxBULC.writeVariableHeader(@diffTAI2UTC, @diffUTC2GPS)
+
+      auxBULC.write
+
+      @logger.info("[AUX_001] #{filename}.EOF generated from #{@filename}")
+
+      if @isDebugMode == true then
+         @logger.debug("END convertNAOS")
+      end
+
+      return "#{filename}.EOF"
+   end
+   ## -------------------------------------------------------------
+
 end # class
 
 end # module

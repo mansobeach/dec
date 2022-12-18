@@ -172,7 +172,7 @@ class AUXTestCase < Test::Unit::TestCase
       file_IERS_BULC = "#{@@testDir}/Leap_Second.dat"
       cmd = "auxConverter -m NAOS -f #{file_IERS_BULC} -d /tmp/aux_out2"
       @@logger.info(cmd)
-      assert(system(cmd), "convert IERS (hpiers.obspm.fr) BULC to NAOS mission")
+      assert(system(cmd), "convert IERS BULC to NAOS mission")
    
       arr = Dir["/tmp/aux_out2/NS1*AUX_BULC__*"]
       @@logger.info("#{arr.length} file converted")

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG_FILE
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationSchema.xsd">
+    <!-- Satellites instrument definition, part of LTP definition. A group per configured spacecraft. -->
+    <File_Description>Satellites instrument definition, part of LTP definition. A group per configured spacecraft.</File_Description>
+    <parameters SSCFversion="0.1">
+        <!-- S2A instrument  parameters -->
+        <group name="S2A">
+            <matrix>
+                <name>transitionTimes</name>
+                <type unit="secs">long</type>
+                <information>Allowed transitions and switching times between the MSI operational modes.</information>
+                <columns>
+                    <columnName>IMAGE</columnName>
+                    <columnName>IDLE</columnName>
+                    <columnName>STANDBY</columnName>
+                </columns>
+                <rows>
+                    <rowName>IMAGE</rowName>
+                    <rowName>IDLE</rowName>
+                    <rowName>STANDBY</rowName>
+                </rows>
+                <matrixElem>
+                    <row>
+                        <value>-1</value>
+                        <value>19</value>
+                        <value>-1</value>
+                    </row>
+                    <row>
+                        <value>17</value>
+                        <value>-1</value>
+                        <value>16</value>
+                    </row>
+                    <row>
+                        <value>-1</value>
+                        <value>295</value>
+                        <value>-1</value>
+                    </row>
+                </matrixElem>
+            </matrix>
+            <matrix>
+                <name>acqTransitionTimes</name>
+                <type unit="secs">long</type>
+                <information>Allowed transitions times between MSI operational modes.</information>
+                <columns>
+                    <columnName>MSI_SUN_CAL</columnName>
+                    <columnName>MSI_DARK_CAL_OPEN</columnName>
+                    <columnName>MSI_DARK_CAL_CLOSED</columnName>
+                    <columnName>MSI_VICARIOUS</columnName>
+                    <columnName>MSI_NOM_OBS</columnName>
+                    <columnName>MSI_RAW</columnName>
+                    <columnName>MSI_TEST</columnName>
+                </columns>
+                <rows>
+                    <rowName>MSI_SUN_CAL</rowName>
+                    <rowName>MSI_DARK_CAL_OPEN</rowName>
+                    <rowName>MSI_DARK_CAL_CLOSED</rowName>
+                    <rowName>MSI_VICARIOUS</rowName>
+                    <rowName>MSI_NOM_OBS</rowName>
+                    <rowName>MSI_RAW</rowName>
+                    <rowName>MSI_TEST</rowName>
+                </rows>
+                <matrixElem>
+                    <row>
+                        <value>0</value>
+                        <value>55</value>
+                        <value>85</value>
+                        <value>72</value>
+                        <value>72</value>
+                        <value>72</value>
+                        <value>72</value>
+                    </row>
+                    <row>
+                        <value>71</value>
+                        <value>0</value>
+                        <value>63</value>
+                        <value>51</value>
+                        <value>51</value>
+                        <value>51</value>
+                        <value>51</value>
+                    </row>
+                    <row>
+                        <value>87</value>
+                        <value>49</value>
+                        <value>0</value>
+                        <value>67</value>
+                        <value>67</value>
+                        <value>67</value>
+                        <value>67</value>
+                    </row>
+                    <row>
+                        <value>57</value>
+                        <value>20</value>
+                        <value>50</value>
+                        <value>0</value>
+                        <value>37</value>
+                        <value>37</value>
+                        <value>37</value>
+                    </row>
+                    <row>
+                        <value>57</value>
+                        <value>20</value>
+                        <value>50</value>
+                        <value>37</value>
+                        <value>0</value>
+                        <value>37</value>
+                        <value>37</value>
+                    </row>
+                    <row>
+                        <value>57</value>
+                        <value>20</value>
+                        <value>50</value>
+                        <value>37</value>
+                        <value>37</value>
+                        <value>0</value>
+                        <value>37</value>
+                    </row>
+                    <row>
+                        <value>57</value>
+                        <value>20</value>
+                        <value>50</value>
+                        <value>37</value>
+                        <value>37</value>
+                        <value>37</value>
+                        <value>0</value>
+                    </row>
+                </matrixElem>
+            </matrix>
+            <single>
+                <name>maxOperationTime</name>
+                <type unit="mins">double</type>
+                <information>Maximum operation time for MSI duty cycle (minutes)</information>
+                <value>48.0</value>
+            </single>
+            <single>
+                <name>operationWindow</name>
+                <type unit="mins">double</type>
+                <information>MSI duty cycle (rolling window for checking the maximum operation time) (minutes)</information>
+                <value>100.0</value>
+            </single>
+            <single>
+                <name>maximumSZA</name>
+                <type>double</type>
+                <information>Maximum SZA allowed by default (if not defined in a PR)</information>
+                <value>180.0</value>
+            </single>
+            <single>
+                <name>minimumSZA</name>
+                <type>double</type>
+                <information>Minimum SZA allowed by default (if not defined in a PR)</information>
+                <value>10.0</value>
+            </single>
+            <single>
+                <name>minimumLengthMSI</name>
+                <type unit="secs">double</type>
+                <information>Minimum number of MSI scenes on one imaging operations</information>
+                <value>5.0</value>
+            </single>
+            <single>
+                <name>minSepSameTimelines</name>
+                <type unit="secs">double</type>
+                <information>Minimum separation between same timelines segments to merge them (secs).</information>
+                <value>30.0</value>
+            </single>
+            <single>
+                <name>minSepDifferentTimelines</name>
+                <type unit="secs">double</type>
+                <information>Minimum separation between different timelines segments to merge them (secs).</information>
+                <value>25.0</value>
+            </single>
+            <single>
+                <name>sceneDuration</name>
+                <type unit="secs">double</type>
+                <information>Scene duration</information>
+                <value>3.608</value>
+            </single>
+            <single>
+                <name>sceneSize</name>
+                <type unit="bytes">double</type>
+                <information>Scene memory size </information>
+                <value>219276288</value>
+            </single>
+            <list>
+                <name>sensingMargins</name>
+                <type unit="secs">double</type>
+                <information>Start/Stop (left/right) margins added to the sensing operations</information>
+                <value>5.0</value>
+                <value>3.5</value>
+            </list>
+            <single>
+                <name>XOFFtoXONtransitionMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin between XOFF and XON transition (unit=secs)</information>
+                <value>10</value>
+            </single>
+            <list>
+                <name>NPPFRecordMargins</name>
+                <type unit="secs">double</type>
+                <information>Time margin before, after acquisition start where the record start must be set (unit=secs)</information>
+                <value>5</value>
+                <value>4</value>
+            </list>
+            <single>
+                <name>NPPFReqToIdleMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin between different operations (unit=secs)</information>
+                <value>-2.5</value>
+            </single>
+            <single>
+                <name>NPPFDownlinkStopMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin between the stop downlink and the hktm/sad downlink (unit=secs)</information>
+                <value>11</value>
+            </single>
+            <single>
+                <name>NPPFIdleToImageMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin between from idle to image operation (unit=secs)</information>
+                <value>3</value>
+            </single>
+            <single>
+                <name>NPPFDeleteQueueMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin between an activity and delete queue request (unit=secs)</information>
+                <value>5</value>
+            </single>
+            <single>
+                <name>NPPFRTRecordStopMargin</name>
+                <type unit="secs">double</type>
+                <information>Time margin for the Record Stop in RT (unit=secs)</information>
+                <value>-1.0</value>
+            </single>
+            <matrix>
+                <name>calibrationTimes</name>
+                <type>double</type>
+                <information>Duration in number of scenes, margins in secs</information>
+                <columns>
+                    <columnName>preDurationCal</columnName>
+                    <columnName>postDurationCal</columnName>
+                    <columnName>preMarginCal</columnName>
+                    <columnName>postMarginCal</columnName>
+                </columns>
+                <rows>
+                    <rowName>MSI_SUN_CAL</rowName>
+                    <rowName>MSI_SHORT_DARK_CAL_CLOSED</rowName>
+                    <rowName>MSI_LONG_DARK_CAL_CLOSED</rowName>
+                    <rowName>MSI_DARK_CAL_OPEN</rowName>
+                </rows>
+                <matrixElem>
+                    <row>
+                        <value>8</value>
+                        <value>4</value>
+                        <value>66</value>
+                        <value>63</value>
+                    </row>
+                    <row>
+                        <value>0</value>
+                        <value>503</value>
+                        <value>30</value>
+                        <value>1822</value>
+                    </row>
+                    <row>
+                        <value>0</value>
+                        <value>668</value>
+                        <value>30</value>
+                        <value>2439</value>
+                    </row>
+                    <row>
+                        <value>0</value>
+                        <value>13</value>
+                        <value>0</value>
+                        <value>64</value>
+                    </row>
+                </matrixElem>
+            </matrix>
+            <matrix>
+                <name>diffuserTime</name>
+                <type unit="secs">double</type>
+                <information>CSM Diffuser usage time for every calibration type</information>
+                <columns>
+                    <columnName>diffuserTime</columnName>
+                </columns>
+                <rows>
+                    <rowName>MSI_SUN_CAL</rowName>
+                    <rowName>MSI_DARK_CAL_CLOSED</rowName>
+                </rows>
+                <matrixElem>
+                    <row>
+                        <value>10</value>
+                    </row>
+                    <row>
+                        <value>5</value>
+                    </row>
+                </matrixElem>
+            </matrix>
+            <single>
+                <name>IdleSbyInDescendingOrbits</name>
+                <type>string</type>
+                <information>Flag to determine if a transition from Idle to Standby in descending orbit should exists</information>
+                <allowedValues>
+                    <allowedValue>ALWAYS</allowedValue>
+                    <allowedValue>DEPEND_ON_DUTY_CYCLE</allowedValue>
+                    <allowedValue>NEVER</allowedValue>
+                </allowedValues>
+                <value>DEPEND_ON_DUTY_CYCLE</value>
+            </single>
+        </group>
+    </parameters>
+</CONFIG_FILE>

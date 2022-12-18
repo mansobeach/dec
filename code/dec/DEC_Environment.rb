@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.37j"
+   @@version = "1.0.38a"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.38" =>    "TBD", \
       "1.0.37" =>    "New gem roman-numerals is required\n\
           Support of SFTP authentication with password using sshpass\n\
           Support of SFTP known_host checks disabled for the container build process\n\

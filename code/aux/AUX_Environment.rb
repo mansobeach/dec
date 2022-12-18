@@ -28,7 +28,7 @@ module AUX
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.7"  =>    "NOAA Report Solar Geophysical Activity has been integrated", \
+      "0.0.7"  =>    "IERS Bulletin C conversion for NAOS mission", \
       "0.0.6"  =>    "IERS Bulletin A XML has been integrated\n\
          IERS Bulletin A ASCII updated for NAOS",
       "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\

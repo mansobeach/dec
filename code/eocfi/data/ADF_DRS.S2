@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Earth_Explorer_File xmlns="http://eop-cfi.esa.int/CFI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eop-cfi.esa.int/CFI
+	http://eop-cfi.esa.int/CFI/EE_CFI_SCHEMAS/EO_OPER_INT_ATTDEF_0100.XSD" schemaVersion="1.0">
+	<Earth_Explorer_Header>
+		<Fixed_Header>
+			<File_Name>S2A_TEST_INT_ATTDEF_00000000T000000_99999999T999999_0001</File_Name>
+			<File_Description>Attitude Definition File</File_Description>
+			<Notes/>
+			<Mission>Sentinel-2</Mission>
+			<File_Class>TEST</File_Class>
+			<File_Type>INT_ATTDEF</File_Type>
+			<Validity_Period>
+				<Validity_Start>UTC=0000-00-00T00:00:00</Validity_Start>
+				<Validity_Stop>UTC=9999-99-99T99:99:99</Validity_Stop>
+			</Validity_Period>
+			<File_Version>0001</File_Version>
+			<Source>
+				<System>ESOVNG</System>
+				<Creator>ESTEC</Creator>
+				<Creator_Version>1.0</Creator_Version>
+				<Creation_Date>UTC=2015-10-27T12:00:00</Creation_Date>
+			</Source>
+		</Fixed_Header>
+		<Variable_Header/>
+	</Earth_Explorer_Header>
+	<Data_Block type="xml">
+		<Attitude_Definition>
+        	<Sat_Nominal_Att>
+          		<Parameter_Model>
+	    			<Model>5</Model>
+	    			<List_of_Parameters count="1">
+						<Parameter>-0.000072921158553</Parameter>
+	    			</List_of_Parameters>
+	  			</Parameter_Model>
+       		 </Sat_Nominal_Att>
+        	<Sat_Att>
+	   			<Angle_Model>
+	     			<Angle_1 unit="deg">0</Angle_1>
+	    		    <Angle_2 unit="deg">0</Angle_2>
+       			    <Angle_3 unit="deg">0</Angle_3>
+	  		    </Angle_Model>
+            </Sat_Att>
+	 		<Instr_Att>
+	   			<Angle_Model>
+	    			<Angle_1 unit="deg">0</Angle_1>
+	     			<Angle_2 unit="deg">0</Angle_2>
+             		<Angle_3 unit="deg">0</Angle_3>
+	   			</Angle_Model>	
+	   			<Offsets>
+	    			<Offset_X unit="m">0</Offset_X>
+             		<Offset_Y unit="m">0</Offset_Y>
+	     			<Offset_Z unit="m">0</Offset_Z>
+	   			</Offsets>
+	  		</Instr_Att>
+	 	</Attitude_Definition>
+	</Data_Block>
+</Earth_Explorer_File>

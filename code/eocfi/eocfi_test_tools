@@ -13,15 +13,15 @@ require 'test/unit'
 
 require 'cuc/Converters'
 require 'cuc/Log4rLoggerFactory'
-require 'mpl/MPL_Environment'
-require 'mpl/MPL_Loader_Wrapper_Earth_Explorer'
+require 'eocfi/EOCFI_Environment'
+require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
 
 ## 1 - test_mp_xvstation_vistime_compute
 
-class TestCase_MPTOOLS < Test::Unit::TestCase
+class TestCase_EOCFITOOLS < Test::Unit::TestCase
 
    include CUC::Converters
-   include MPL
+   include EOCFI
 
    # Order of the test cases execution according to definition within code
    self.test_order = :defined
@@ -63,14 +63,14 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
          end
       end
 
-      @@conf = MPL_Environment.new
+      @@conf = EOCFI_Environment.new
       @@conf.wrapper_load_config
       @@conf.wrapper_print_environment
 
       # ------------------------------------------
       # initialize logger
       
-      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['MPL_CONFIG']}/mptools_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['EOCFI_CONFIG']}/eocfi_log_config.xml")
 
       @@logger = loggerFactory.getLogger
       
@@ -78,7 +78,7 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
          puts
 		   puts "Error in #{File.basename(__FILE__)}"
 		   puts "Could not set up logging system !  :-("
-         puts "Check MPL logs configuration under \"#{ENV['MPL_CONFIG']}/mptools_log_config.xml\"" 
+         puts "Check eocfi logs configuration under \"#{ENV['EOCFI_CONFIG']}/eocfi_log_config.xml\"" 
 		   puts
 		   puts
 		   exit(99)
@@ -86,9 +86,9 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
       # ------------------------------------------
 
 
-      @@logger.debug("#{MPL.class_variable_get(:@@version)}")
+      @@logger.debug("#{EOCFI.class_variable_get(:@@version)}")
       
-      hRecord = MPL.class_variable_get(:@@change_record)
+      hRecord = EOCFI.class_variable_get(:@@change_record)
       hRecord.each_pair{|key, value|
          @@logger.debug("#{key} => #{value}")
       }      
@@ -102,7 +102,6 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
    Test::Unit.at_exit do
       @@logger.debug("End of #{File.basename(__FILE__)} Unit Test Cases")
    end
-   
    ## ------------------------------------------------------
 
    ## Setup before every test-case
@@ -122,18 +121,18 @@ class TestCase_MPTOOLS < Test::Unit::TestCase
 
    ## Test to print out the library version
 
-   def test_mp_xvstation_vistime_compute   
-      cmd = "mp_xvstation_vistime_compute -v"
+   def test_eocfi_orbit
+      cmd = "eocfi_orbit -v"
       @@logger.debug(cmd)
-      assert(system(cmd), "mp_xvstation_vistime_compute version")
+      assert(system(cmd), "eocfi_orbit version")
       
-      cmd = "mp_xvstation_vistime_compute -l"
+      cmd = "eocfi_orbit -l"
       @@logger.debug(cmd)
-      assert(system(cmd), "mp_xvstation_vistime_compute list stations")
+      assert(system(cmd), "eocfi_orbit list stations")
 
-      cmd = "mp_xvstation_vistime_compute -S GKIRUNBX -s 9572 -e 9575"
+      cmd = "eocfi_orbit -S KSATSVAL -s 9572 -e 9575"
       @@logger.debug(cmd)
-      assert(system(cmd), "mp_xvstation_vistime_compute for Kiruna")
+      assert(system(cmd), "eocfi_orbit for Kiruna")
 
    end
    ## ------------------------------------------------------

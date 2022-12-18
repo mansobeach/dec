@@ -45,7 +45,7 @@ VALUE method_xl_time_close(
 
    if (iDebug == 1)
    {
-      printf("DEBUG: EXIT ruby_method_xl_time_close\n") ;
+      printf("DEBUG: EXIT method_xl_time_close\n") ;
    }
    
    return LONG2NUM(status) ;

@@ -24,7 +24,7 @@ module EOCFI
    
    include CUC::DirUtils
    
-   @@version = "0.0.1u"
+   @@version = "0.0.1v"
    
    ## -----------------------------------------------------------------
    
@@ -39,6 +39,8 @@ module EOCFI
          xo_orbit_init_file\n\
          xo_position_on_orbit_to_time\n\
          xo_time_to_orbit\n\
+         xo_osv_compute\n\
+         xo_osv_compute_extra\n\
          xv_stationvistime_compute",
       "0.0.0"  =>    "first version of the eocfi installer created" \
    }
@@ -80,8 +82,8 @@ module EOCFI
    def load_config
    
       # --------------------------------
-      if !ENV['MPL_CONFIG'] then
-         ENV['MPL_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      if !ENV['EOCFI_CONFIG'] then
+         ENV['EOCFI_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
       # --------------------------------
 
@@ -103,7 +105,7 @@ module EOCFI
    
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
-      puts "MPL_CONFIG                    => #{ENV['MPL_CONFIG']}"
+      puts "EOCFI_CONFIG                  => #{ENV['EOCFI_CONFIG']}"
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
@@ -127,10 +129,10 @@ module EOCFI
       bCheck = true
       
       # --------------------------------
-      # MPL_CONFIG can be defined by the customer to override 
+      # EOCFI_CONFIG can be defined by the customer to override 
       # the configuration shipped with the gem
-      if !ENV['MPL_CONFIG'] then
-         ENV['MPL_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      if !ENV['EOCFI_CONFIG'] then
+         ENV['EOCFI_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
       # --------------------------------
             

@@ -28,6 +28,7 @@ require 'eocfi/EOCFI_Constants'
 ## 6.1 - test_xo_orbit_init_file_naos
 ## 2 - test_xo_time_to_orbit
 ## 3 - test_xo_position_on_orbit_to_time
+##   - test_xv_swath_id_init
 ## 7 - test_xv_stationvistime_compute
 
 class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
@@ -82,7 +83,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       # ------------------------------------------
       # initialize logger
       
-      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['MPL_CONFIG']}/eocfi_log_config.xml")
+      loggerFactory = CUC::Log4rLoggerFactory.new("#{File.basename(__FILE__)}", "#{ENV['EOCFI_CONFIG']}/eocfi_log_config.xml")
 
       @@logger = loggerFactory.getLogger
       
@@ -90,7 +91,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
          puts
 		   puts "Error in #{File.basename(__FILE__)}"
 		   puts "Could not set up logging system !  :-("
-         puts "Check EOCFI logs configuration under \"#{ENV['MPL_CONFIG']}/eocfi_log_config.xml\"" 
+         puts "Check EOCFI logs configuration under \"#{ENV['EOCFI_CONFIG']}/eocfi_log_config.xml\"" 
 		   puts
 		   puts
 		   exit(99)
@@ -148,7 +149,148 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-  
+    ## ------------------------------------------------------
+
+   ## Test test_xo_orbit_init_file
+
+   def testNAOS1
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+
+      # ---------------------
+      time_model     = XL_TIMEMOD_OSF
+      n_files        = 1
+      time_file      = Array.new
+      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
+      time_init_mode = XL_SEL_FILE
+      time_ref       = XL_TIME_UTC
+      time0          = utc_to_mj2000("20230101T000000")
+      time1          = utc_to_mj2000("20240101T000000")
+      orbit0         = 0
+      orbit1         = 99999
+      isDebugMode    = true
+      strDate        = "20230422T120000"
+
+      @@logger.debug("xl_time_ref_init_file")
+      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
+      @@logger.debug("n_files          :  #{n_files}")
+      @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
+      @@logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
+      @@logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time0            :  #{time0}")
+      @@logger.debug("time1            :  #{time1}")
+      @@logger.debug("orbit0           :  #{orbit0}")
+      @@logger.debug("orbit1           :  #{orbit1}")
+      @@logger.debug("isDebugMode      :  #{isDebugMode}")
+
+      time_id         = @@testObject.xl_time_ref_init_file(\
+                           time_model, \
+                           n_files, \
+                           time_file, \
+                           time_init_mode, \
+                           time_ref, \
+                           time0, \
+                           time1, \
+                           orbit0, \
+                           orbit1, \
+                           strDate, \
+                           isDebugMode \
+                        )
+      @@logger.debug("time_id => #{time_id}")
+      # ---------------------
+
+      sat_id      = XO_SAT_GENERIC
+      model_id    = nil
+      # time_id     = nil
+      orbit_mode  = XO_ORBIT_INIT_AUTO
+      n_files     = 1
+      input_files = Array.new
+      input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
+      time_mode   = XO_SEL_FILE
+      time_ref    = XL_TIME_UTC
+      time0       = nil
+      time1       = nil
+      orbit0      = nil
+      orbit1      = nil
+      isDebugMode = true
+
+      @@logger.debug("xo_orbit_init_file")
+      @@logger.debug("sat_id      : #{XO_Sat_id_enum.key(sat_id)}")
+      @@logger.debug("model_id    : #{model_id}")
+      @@logger.debug("time_id     : #{time_id}")
+      @@logger.debug("orbit_mode  : #{XO_Orbit_init_mode.key(orbit_mode)}")
+      @@logger.debug("n_files     : #{n_files}")
+      @@logger.debug("input_files : #{File.basename(input_files[0])}")
+      @@logger.debug("time_mode   : #{XO_Time_init_mode.key(time_mode)}")
+      @@logger.debug("time_ref    : #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time0       : #{time0}")
+      @@logger.debug("time1       : #{time1}")
+      @@logger.debug("orbit0      : #{orbit0}")
+      @@logger.debug("orbit1      : #{orbit1}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+
+      orbit_id = @@testObject.xo_orbit_init_file(
+                     sat_id,
+                     model_id,
+                     time_id,
+                     orbit_mode,
+                     n_files,
+                     input_files,
+                     time_mode,
+                     time_ref,
+                     time0,
+                     time1,
+                     orbit0,
+                     orbit1,
+                     isDebugMode
+                  )
+
+      @@logger.debug("orbit_id => #{orbit_id}")
+
+      abs_orbit   = 9000
+      isDebugMode = false
+      @@logger.debug("xo_orbit_info")
+      @@logger.debug("orbit_id    : #{orbit_id}")
+      @@logger.debug("abs_orbit   : #{abs_orbit}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+
+      result = @@testObject.xo_orbit_info(
+         orbit_id,
+         abs_orbit,
+         isDebugMode
+      )
+
+      @@logger.debug("orbit cycle")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE)}   : #{result[XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE]} #{UNIT_XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH)}   : #{result[XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH]} #{UNIT_XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST_DRIFT)}     : #{result[XO_ORBIT_INFO_EXTRA_MLST_DRIFT]} #{UNIT_XO_ORBIT_INFO_EXTRA_MLST_DRIFT}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST)}           : #{result[XO_ORBIT_INFO_EXTRA_MLST]} #{UNIT_XO_ORBIT_INFO_EXTRA_MLST}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_ANX_LONG)}       : #{result[XO_ORBIT_INFO_EXTRA_ANX_LONG]} #{UNIT_XO_ORBIT_INFO_EXTRA_ANX_LONG}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_UTC_ANX)}        : #{result[XO_ORBIT_INFO_EXTRA_UTC_ANX]} #{UNIT_XO_ORBIT_INFO_EXTRA_UTC_ANX}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_NODAL_PERIOD)}   : #{result[XO_ORBIT_INFO_EXTRA_NODAL_PERIOD]} #{UNIT_XO_ORBIT_INFO_EXTRA_NODAL_PERIOD}")
+      @@logger.debug("mean keplerian elements")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA)}  : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M}")
+      @@logger.debug("osculating keplerian elements")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_A)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_A]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_A}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_E)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_E]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_E}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_I)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_I]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_I}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA)}  : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_W}")
+      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_M}")
+
+      cmd = "cat /tmp/eocfi_stderr"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+
+
    ## ------------------------------------------------------
 
    ## Read Station File
@@ -394,6 +536,24 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
+   ## Test test_xv_swath_id_init
+
+   def test_xv_swath_id_init
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+
+      isDebugMode    = true
+      @@logger.debug("isDebugMode      :  #{isDebugMode}")
+
+      swath_id         = @@testObject.xv_swath_id_init(isDebugMode)
+
+      cmd = "cat /tmp/eocfi_stderr"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+   ## ------------------------------------------------------
+
    ## Test test_xo_orbit_init_file
 
    def test_xo_orbit_init_file
@@ -489,6 +649,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
       @@logger.debug("orbit_id => #{orbit_id}")
 
+      # ---------------------
+
       abs_orbit   = 9000
       isDebugMode = false
       @@logger.debug("xo_orbit_info")
@@ -510,151 +672,51 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_UTC_ANX)}        : #{result[XO_ORBIT_INFO_EXTRA_UTC_ANX]} #{UNIT_XO_ORBIT_INFO_EXTRA_UTC_ANX}")
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_NODAL_PERIOD)}   : #{result[XO_ORBIT_INFO_EXTRA_NODAL_PERIOD]} #{UNIT_XO_ORBIT_INFO_EXTRA_NODAL_PERIOD}")
 
-      cmd = "cat /tmp/eocfi_stderr"
-      @@logger.debug(cmd)
-      system(cmd)
-
-      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
-
-
-
-   ## ------------------------------------------------------
-
-   ## ------------------------------------------------------
-
-   ## Test test_xo_orbit_init_file
-
-   def test_xo_orbit_init_file_naos
-      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-
-      # ---------------------
-      time_model     = XL_TIMEMOD_OSF
-      n_files        = 1
-      time_file      = Array.new
-      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
-      time_init_mode = XL_SEL_FILE
-      time_ref       = XL_TIME_UTC
-      time0          = utc_to_mj2000("20230101T000000")
-      time1          = utc_to_mj2000("20240101T000000")
-      orbit0         = 0
-      orbit1         = 99999
-      isDebugMode    = true
-      strDate        = "20230422T120000"
-
-      @@logger.debug("xl_time_ref_init_file")
-      @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
-      @@logger.debug("n_files          :  #{n_files}")
-      @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
-      @@logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
-      @@logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
-      @@logger.debug("time0            :  #{time0}")
-      @@logger.debug("time1            :  #{time1}")
-      @@logger.debug("orbit0           :  #{orbit0}")
-      @@logger.debug("orbit1           :  #{orbit1}")
-      @@logger.debug("isDebugMode      :  #{isDebugMode}")
-
-      time_id         = @@testObject.xl_time_ref_init_file(\
-                           time_model, \
-                           n_files, \
-                           time_file, \
-                           time_init_mode, \
-                           time_ref, \
-                           time0, \
-                           time1, \
-                           orbit0, \
-                           orbit1, \
-                           strDate, \
-                           isDebugMode \
-                        )
-      @@logger.debug("time_id => #{time_id}")
       # ---------------------
 
-      sat_id      = XO_SAT_GENERIC
-      model_id    = nil
-      # time_id     = nil
-      orbit_mode  = XO_ORBIT_INIT_AUTO
-      n_files     = 1
-      input_files = Array.new
-      input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
-      time_mode   = XO_SEL_FILE
-      time_ref    = XL_TIME_UTC
-      time0       = nil
-      time1       = nil
-      orbit0      = nil
-      orbit1      = nil
+      mode        = 0
+      time        = 6524.0
       isDebugMode = true
 
-      @@logger.debug("xo_orbit_init_file")
-      @@logger.debug("sat_id      : #{XO_Sat_id_enum.key(sat_id)}")
-      @@logger.debug("model_id    : #{model_id}")
-      @@logger.debug("time_id     : #{time_id}")
-      @@logger.debug("orbit_mode  : #{XO_Orbit_init_mode.key(orbit_mode)}")
-      @@logger.debug("n_files     : #{n_files}")
-      @@logger.debug("input_files : #{File.basename(input_files[0])}")
-      @@logger.debug("time_mode   : #{XO_Time_init_mode.key(time_mode)}")
-      @@logger.debug("time_ref    : #{XL_Time_ref_enum.key(time_ref)}")
-      @@logger.debug("time0       : #{time0}")
-      @@logger.debug("time1       : #{time1}")
-      @@logger.debug("orbit0      : #{orbit0}")
-      @@logger.debug("orbit1      : #{orbit1}")
-      @@logger.debug("isDebugMode : #{isDebugMode}")
-
-      orbit_id = @@testObject.xo_orbit_init_file(
-                     sat_id,
-                     model_id,
-                     time_id,
-                     orbit_mode,
-                     n_files,
-                     input_files,
-                     time_mode,
-                     time_ref,
-                     time0,
-                     time1,
-                     orbit0,
-                     orbit1,
-                     isDebugMode
-                  )
-
-      @@logger.debug("orbit_id => #{orbit_id}")
-
-      abs_orbit   = 9000
-      isDebugMode = false
-      @@logger.debug("xo_orbit_info")
+      @@logger.debug("xo_osv_compute")
       @@logger.debug("orbit_id    : #{orbit_id}")
-      @@logger.debug("abs_orbit   : #{abs_orbit}")
+      @@logger.debug("mode        : #{mode} / Propagation model. Dummy input for current version.")
+      @@logger.debug("time_ref    : #{XL_Time_ref_enum.key(time_ref)}")
+      @@logger.debug("time        : #{time}")
       @@logger.debug("isDebugMode : #{isDebugMode}")
 
-      result = @@testObject.xo_orbit_info(
+
+      result = @@testObject.xo_osv_compute(
+                                             orbit_id,
+                                             mode,
+                                             time_ref,
+                                             time,
+                                             isDebugMode
+                                          )
+
+      # ---------------------
+
+      
+      extra_choice   = XO_ORBIT_EXTRA_ALL_RESULTS
+      isDebugMode    = true
+
+      @@logger.debug("xo_osv_compute_extra")
+      @@logger.debug("orbit_id      : #{orbit_id}")
+      @@logger.debug("extra_choice  : #{XO_ORBIT_EXTRA_choice_enum.key(extra_choice)}")
+
+      result = @@testObject.xo_osv_compute_extra(
          orbit_id,
-         abs_orbit,
+         extra_choice,
          isDebugMode
       )
 
-      @@logger.debug("orbit cycle")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE)}   : #{result[XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE]} #{UNIT_XO_ORBIT_INFO_EXTRA_REPEAT_CYCLE}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH)}   : #{result[XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH]} #{UNIT_XO_ORBIT_INFO_EXTRA_CYCLE_LENGTH}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST_DRIFT)}     : #{result[XO_ORBIT_INFO_EXTRA_MLST_DRIFT]} #{UNIT_XO_ORBIT_INFO_EXTRA_MLST_DRIFT}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MLST)}           : #{result[XO_ORBIT_INFO_EXTRA_MLST]} #{UNIT_XO_ORBIT_INFO_EXTRA_MLST}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_ANX_LONG)}       : #{result[XO_ORBIT_INFO_EXTRA_ANX_LONG]} #{UNIT_XO_ORBIT_INFO_EXTRA_ANX_LONG}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_UTC_ANX)}        : #{result[XO_ORBIT_INFO_EXTRA_UTC_ANX]} #{UNIT_XO_ORBIT_INFO_EXTRA_UTC_ANX}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_NODAL_PERIOD)}   : #{result[XO_ORBIT_INFO_EXTRA_NODAL_PERIOD]} #{UNIT_XO_ORBIT_INFO_EXTRA_NODAL_PERIOD}")
-      @@logger.debug("mean keplerian elements")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_A}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_E}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_I}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA)}  : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_RA}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_W}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_MEAN_KEPL_M}")
-      @@logger.debug("osculating keplerian elements")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_A)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_A]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_A}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_E)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_E]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_E}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_I)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_I]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_I}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA)}  : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_W}")
-      @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_M}")
+      # ---------------------
 
+      result.each{|item|
+         @@logger.debug(item)
+      }
 
+      # ---------------------
 
       cmd = "cat /tmp/eocfi_stderr"
       @@logger.debug(cmd)
@@ -663,6 +725,11 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
    end
 
+
+
+   ## ------------------------------------------------------
+
+ 
    ## ------------------------------------------------------
 
    ## Test to compute the date-time
@@ -693,8 +760,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-
-  ## Orbit and Angle to Time
+   ## Orbit and Angle to Time
 
     def test_xo_position_on_orbit_to_time
     

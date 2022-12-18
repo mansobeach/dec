@@ -1,0 +1,138 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<Earth_Explorer_File xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eop-cfi.esa.int/esov http://eop-cfi.esa.int/esov/ESOVNG_SCHEMAS/EO_ESOVNG_IDF_0100.XSD"
+    xmlns="http://eop-cfi.esa.int/esov" schemaVersion="1.0">
+    <Earth_Explorer_Header>
+        <Fixed_Header>
+            <File_Name>SENTINEL2A.idf</File_Name>
+            <File_Description>Satellite Identification File</File_Description>
+			<Notes></Notes>
+			<Mission>Sentinel-2A</Mission>
+			<File_Class>TEST</File_Class>
+			<File_Type>ESOVNG_IDF</File_Type>
+			<Validity_Period>
+				<Validity_Start>UTC=0000-00-00T00:00:00</Validity_Start>
+				<Validity_Stop>UTC=9999-99-99T99:99:99</Validity_Stop>
+			</Validity_Period>
+			<File_Version>0001</File_Version>
+			<Source>
+        			<System>Manual</System>
+        			<Creator>ESA/ESTEC</Creator>
+				    <Creator_Version>2.4</Creator_Version>
+				    <Creation_Date>UTC=2017-04-04T12:00:00</Creation_Date>
+      		</Source>
+		</Fixed_Header>
+		<Variable_Header></Variable_Header>
+	</Earth_Explorer_Header>
+	<Data_Block type="xml">
+		<Idf>
+			<Spacecraft>
+				<Name>SENTINEL2A</Name>
+				<Eecfi_Id>112</Eecfi_Id>
+				<File_Extension>.S2</File_Extension>
+				<Min_Orbits_Day>14.1</Min_Orbits_Day>
+				<Max_Orbits_Day>14.5</Max_Orbits_Day>
+				<Uses_DRS>true</Uses_DRS>
+				<DRS_Settings>
+					<Longitude unit="deg">9.0</Longitude>
+					<Min_Tangent_Height unit="m">100000.0</Min_Tangent_Height>
+					<Inclusive_Mask_Points count="12">
+						<Point>
+							<Azimuth unit="deg">+005.000000</Azimuth>
+							<Elevation unit="deg">-040.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+005.000000</Azimuth>
+							<Elevation unit="deg">-033.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+016.000000</Azimuth>
+							<Elevation unit="deg">-033.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+016.000000</Azimuth>
+							<Elevation unit="deg">-011.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+026.000000</Azimuth>
+							<Elevation unit="deg">-011.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+026.000000</Azimuth>
+							<Elevation unit="deg">-000.500000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+184.000000</Azimuth>
+							<Elevation unit="deg">-000.500000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+184.000000</Azimuth>
+							<Elevation unit="deg">-010.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+200.000000</Azimuth>
+							<Elevation unit="deg">-010.000000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+200.000000</Azimuth>
+							<Elevation unit="deg">-086.500000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+030.000000</Azimuth>
+							<Elevation unit="deg">-086.500000</Elevation>
+						</Point>
+						<Point>
+							<Azimuth unit="deg">+030.000000</Azimuth>
+							<Elevation unit="deg">-040.000000</Elevation>
+						</Point>
+					</Inclusive_Mask_Points>
+					<Exclusive_Mask_Points count="0"></Exclusive_Mask_Points>
+				</DRS_Settings>
+				<Default_Settings>
+					<Repeat_Cycle unit="day">10</Repeat_Cycle>
+					<Cycle_Length unit="orbit">143</Cycle_Length>
+					<ANX_Longitude unit="deg">1.000000</ANX_Longitude>
+					<MLST unit="h">22.500000</MLST>
+					<MLST_Drift unit="s/day">0.0</MLST_Drift>
+					<Date>2017-01-02T00:00:00</Date>
+					<Absolute_Reference_Orbit>8006</Absolute_Reference_Orbit>
+				</Default_Settings>
+				<TLE_Satellite_Data_Settings>
+					<NORAD_Sat_Number>40697</NORAD_Sat_Number>
+					<NORAD_Sat_Cat>SENTINEL-2A</NORAD_Sat_Cat>
+					<International_Designator>15028A</International_Designator>
+				</TLE_Satellite_Data_Settings>
+				<Default_Orbit_Files>
+					<OSF>S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF</OSF>
+					<POF_ROF/>
+					<TLE/>
+				</Default_Orbit_Files>
+				<List_of_Instruments count="2">
+					<Instrument>
+						<Name>ORBIT</Name>
+						<Display_Name>Orbit</Display_Name>
+						<Swath_Type>POINT</Swath_Type>
+						<Appearance>
+							<Colour>C0C0C0</Colour>
+							<Draw>SOLID</Draw>
+							<Fill>HOLLOW</Fill>
+							<Opacity>100</Opacity>
+						</Appearance>
+					</Instrument>
+					<Instrument>
+						<Name>MSI</Name>
+						<Display_Name>MSI</Display_Name>
+						<Swath_Type>LINE</Swath_Type>
+						<Apply_SZA>true</Apply_SZA>
+						<Appearance>
+							<Colour>993366</Colour>
+							<Draw>SOLID</Draw>
+							<Fill>SOLID</Fill>
+							<Opacity>50</Opacity>
+						</Appearance>
+					</Instrument>
+				</List_of_Instruments>
+			</Spacecraft>
+		</Idf>
+	</Data_Block>
+</Earth_Explorer_File>

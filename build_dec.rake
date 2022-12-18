@@ -404,6 +404,7 @@ namespace :dec do
       cmd = "echo #{ret.split(" ")[0]} > #{@filename}.md5"
       puts cmd
       system(cmd)
+      ln "#{@filename}.md5", "install/gems/dec_latest.gem.md5"
       # rm @filename
    end
 
@@ -610,9 +611,11 @@ namespace :dec do
       puts "pull CELESTRAK_SFS, CELESTRAK_TLE, CELESTRAK_TCA, NASA_NBULA, NASA_NBULC, NASA_SFL"
       puts "push TBD"
       puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-u-moc-srv-01,naos-test]"
+      puts "rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos-test]"
       puts
-      puts "NAOS / NAOS-MOC-SERVER (UAP)"
+      puts "NAOS / NAOS-AUTO (SAP)"
       puts "rake -f build_dec.rake dec:build[gsc4eo,nl2-s-aut-srv-01,naos-test]"
+      puts "rake -f build_dec.rake dec:install[gsc4eo,nl2-s-aut-srv-01,naos-test]"
       puts "pull SIM_DDC_ADA, SIM_DDC_TLM, SIM_KSAT_ADA, SIM_KSAT_TLM"
       puts      
       puts "NAOS / NAOS-MCS-IVV"

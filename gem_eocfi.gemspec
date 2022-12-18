@@ -36,13 +36,16 @@ Gem::Specification.new do |s|
   s.files       = Dir['config/eocfi_log_config.xml'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/eocfi/data/*'] + \
+                  Dir['code/eocfi/data/NS1_GSOV_MPL_GND_DB'] + \
+                  Dir['code/eocfi/data/NS1_GSOV_MPL_ORBSCT'] + \
+                  Dir['code/eocfi/data/S2A_GSOV_MPL_ORBSCT'] + \
                   Dir['code/eocfi/ext/ruby_earth_explorer_cfi.bundle'] + \
                   Dir['code/eocfi/ext/*'] + \
                   Dir['code/eocfi/include/*.h'] + \
                   Dir['code/eocfi/EOCFI_Constants.rb'] + \
                   Dir['code/eocfi/EOCFI_Environment.rb'] + \
                   Dir['code/eocfi/EOCFI_Loader_Wrapper_Earth_Explorer.rb'] + \
-                  Dir['code/eocfi/eocfi_test_mptools'] + \
+                  Dir['code/eocfi/eocfi_test_tools'] + \
                   Dir['code/eocfi/eocfi_test_wrapper_earth_explorer'] + \
                   Dir['code/eocfi/eocfi_xvstation_vistime_compute'] + \
                   Dir['code/eocfi/explorer_orbit/data/*']
@@ -54,9 +57,10 @@ Gem::Specification.new do |s|
   s.bindir        = [ 'code/eocfi' ]
 
   s.executables   = [ \
-                     'eocfi_test_mptools', \
-                     'eocfi_xvstation_vistime_compute', \
-                     'eocfi_test_wrapper_earth_explorer' \
+                      'eocfi_orbit', \
+                      'eocfi_test_tools', \
+                      'eocfi_xvstation_vistime_compute', \
+                      'eocfi_test_wrapper_earth_explorer' \
                      ]
   
   ## --------------------------------------------
