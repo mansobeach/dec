@@ -2,6 +2,7 @@
 **/gem
 *.gem
 *.7z
+*.md5
 gem
 code/mpl/include/bckp
 code/mpl/lib/MACIN64
