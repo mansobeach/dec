@@ -33,19 +33,21 @@ Gem::Specification.new do |s|
   s.files       = Dir['config/mptools_log_config.xml'] + \
                   Dir['code/cuc/*.rb'] + \
                   Dir['code/mpl/data/*'] + \
-                  Dir['code/mpl/*.c'] + \
+                  Dir['code/mpl/ext/ruby_earth_explorer_cfi.bundle'] + \
+                  Dir['code/mpl/ext/*'] + \
                   Dir['code/mpl/include/*.h'] + \
-                  Dir["code/mpl/lib/#{ENV['MPTOOLS_PLATFORM']}/*.a"] + \
+#                  Dir["code/mpl/lib/#{ENV['MPTOOLS_PLATFORM']}/*.a"] + \
 #                  Dir['code/mpl/libearth_explorer_cfi.so'] + \
                   Dir['code/mpl/MPL_Environment.rb'] + \
                   Dir['code/mpl/MPL_Loader_Wrapper_Earth_Explorer.rb'] + \
                   Dir['code/mpl/mp_xvstation_vistime_compute'] + \
                   Dir['code/mpl/test_mptools'] + \
                   Dir['code/mpl/test_wrapper_earth_explorer_cfi'] + \
-#                  Dir['code/mpl/ruby_earth_explorer_cfi.bundle'] + \
+                  Dir['code/mpl/ruby_earth_explorer_cfi.bundle'] + \
                   Dir['code/mpl/explorer_orbit/data/*']
 
-  s.extensions  = %w[code/mpl/extconf_earth_explorer_cfi.rb]
+  # s.extensions  = %w[code/mpl/extconf_earth_explorer_cfi.rb]
+  s.extensions  = ['code/mpl/ext/extconf_earth_explorer_cfi_MACIN64.rb']
 
   s.require_paths = [ 'code', 'code/mpl' ]
 

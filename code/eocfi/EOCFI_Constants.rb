@@ -458,8 +458,80 @@ module EOCFI
       "XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS"         => XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS
    }
 
-   # --------------------------------------------
+   # XO_ORBIT_EXTRA_Model_independant_enum;
 
+   XO_ORBIT_EXTRA_GEOC_LONG                     = 0
+   XO_ORBIT_EXTRA_GEOD_LAT                      = 1
+   XO_ORBIT_EXTRA_GEOD_ALT                      = 2
+   XO_ORBIT_EXTRA_GEOC_LONG_D                   = 3
+   XO_ORBIT_EXTRA_GEOD_LAT_D                    = 4
+   XO_ORBIT_EXTRA_GEOD_ALT_D                    = 5
+   XO_ORBIT_EXTRA_GEOC_LONG_2D                  = 6
+   XO_ORBIT_EXTRA_GEOD_LAT_2D                   = 7
+   XO_ORBIT_EXTRA_GEOD_ALT_2D                   = 8
+   XO_ORBIT_EXTRA_RAD_CUR_PARALLEL_MERIDIAN     = 9
+   XO_ORBIT_EXTRA_RAD_CUR_ORTHO_MERIDIAN        = 10
+   XO_ORBIT_EXTRA_RAD_CUR_ALONG_GROUNDTRACK     = 11
+   XO_ORBIT_EXTRA_NORTH_VEL                     = 12
+   XO_ORBIT_EXTRA_EAST_VEL                      = 13
+   XO_ORBIT_EXTRA_MAG_VEL                       = 14
+   XO_ORBIT_EXTRA_AZ_VEL                        = 15
+   XO_ORBIT_EXTRA_NORTH_ACC                     = 16
+   XO_ORBIT_EXTRA_EAST_ACC                      = 17
+   XO_ORBIT_EXTRA_GROUNDTRACK_ACC               = 18
+   XO_ORBIT_EXTRA_AZ_ACC                        = 19
+   XO_ORBIT_EXTRA_SAT_ECLIPSE_FLAG              = 20
+   XO_ORBIT_EXTRA_SZA                           = 21
+   XO_ORBIT_EXTRA_MLST                          = 22
+   XO_ORBIT_EXTRA_TLST                          = 23
+   XO_ORBIT_EXTRA_TRUE_SUN_RA                   = 24
+   XO_ORBIT_EXTRA_TRUE_SUN_DEC                  = 25
+   XO_ORBIT_EXTRA_TRUE_SUN_SEMIDIAM             = 26
+   XO_ORBIT_EXTRA_MOON_RA                       = 27
+   XO_ORBIT_EXTRA_MOON_DEC                      = 28
+   XO_ORBIT_EXTRA_MOON_SEMI_DIAM                = 29
+   XO_ORBIT_EXTRA_MOON_AREA_LIT                 = 30
+   XO_ORBIT_EXTRA_OSC_KEPL_A                    = 31
+   XO_ORBIT_EXTRA_OSC_KEPL_E                    = 32
+   XO_ORBIT_EXTRA_OSC_KEPL_I                    = 33
+   XO_ORBIT_EXTRA_OSC_KEPL_RA                   = 34
+   XO_ORBIT_EXTRA_OSC_KEPL_W                    = 35
+   XO_ORBIT_EXTRA_OSC_KEPL_M                    = 36
+   XO_ORBIT_EXTRA_ORBIT_RAD                     = 37
+   XO_ORBIT_EXTRA_RADIAL_ORB_VEL                = 38
+   XO_ORBIT_EXTRA_TRANS_ORB_VEL                 = 39
+   XO_ORBIT_EXTRA_ORB_VEL_MAG                   = 40
+   XO_ORBIT_EXTRA_RA_SAT                        = 41
+   XO_ORBIT_EXTRA_DEC_SAT                       = 42
+   XO_ORBIT_EXTRA_EARTH_ROTATION_ANGLE          = 43
+   XO_ORBIT_EXTRA_RA_SAT_D                      = 44
+   XO_ORBIT_EXTRA_RA_SAT_2D                     = 45
+   XO_ORBIT_EXTRA_OSC_TRUE_LAT                  = 46
+   XO_ORBIT_EXTRA_OSC_TRUE_LAT_D                = 47
+   XO_ORBIT_EXTRA_OSC_TRUE_LAT_2D               = 48
+   XO_ORBIT_EXTRA_NUM_INDEP_ELEMENTS            = 49
+
+   XO_ORBIT_EXTRA_GEOC_LONG_UNIT          = "deg / Geocentric longitude of satellite and SSP (EF frame)  => [0,360)" 
+   XO_ORBIT_EXTRA_GEOD_LAT_UNIT           = "deg / Geodetic latitude of satellite and SSP (EF frame)   => [-90,+90]"
+   XO_ORBIT_EXTRA_GEOD_ALT_UNIT           = "m / Geodetic altitude of the satellite (EF frame)"
+   # --------------------------------------------
+   
+   # xo_osv_compute return OSV array mapping
+   # OSV array mapping
+
+   RB_OSV_IDX_POS_X = 0
+   RB_OSV_IDX_POS_Y = 1
+   RB_OSV_IDX_POS_Z = 2
+   RB_OSV_IDX_VEL_X = 3
+   RB_OSV_IDX_VEL_Y = 4
+   RB_OSV_IDX_VEL_Z = 5
+   RB_OSV_IDX_ACC_X = 6
+   RB_OSV_IDX_ACC_Y = 7
+   RB_OSV_IDX_ACC_Z = 8
+
+   RB_OSV_POS_UNIT = "m"
+   RB_OSV_VEL_UNIT = "m/s"
+   RB_OSV_ACC_UNIT = "m/s^2"
 
 end
 

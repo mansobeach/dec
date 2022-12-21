@@ -203,6 +203,8 @@ private
 
       auxBULC.writeVariableHeader(@diffTAI2UTC, @diffUTC2GPS)
 
+      auxBULC.writeDataBlock
+
       auxBULC.write
 
       @logger.info("[AUX_001] #{filename}.EOF generated from #{@filename}")

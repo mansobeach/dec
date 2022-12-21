@@ -79,19 +79,19 @@ VALUE method_xo_osv_compute_extra(
 
    if (status == XO_OK)
    {
-      for (n=0; n < XO_ORBIT_EXTRA_NUM_INDEP_ELEMENTS; n++)
+      for (n=0; n < XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS; n++)
       {
          if (iDebug == 1) 
-            printf("DEBUG: method_xo_osv_compute_extra\t- orbit_extra_out[%ld] = %lf \n", n, extra_out[n] ) ;
+            printf("DEBUG: method_xo_osv_compute_extra\t- orbit_extra_out[%ld] = %lf \n", n, model_out[n] ) ;
 
-         rb_ary_store(arrResult, idx, rb_float_new(extra_out[n]) ) ;
+         rb_ary_store(arrResult, idx, rb_float_new(model_out[n]) ) ;
          idx++;
       }
 
-      for (n=0; n<XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS; n++)
+      for (n=0; n< XO_ORBIT_EXTRA_NUM_INDEP_ELEMENTS; n++)
       {
          if (iDebug == 1) 
-            printf("DEBUG: method_xo_osv_compute_extra\t- orbit_model_out[%ld] = %lf \n", n, model_out[n] ) ;
+            printf("DEBUG: method_xo_osv_compute_extra\t- orbit_model_out[%ld] = %lf \n", n, extra_out[n] ) ;
          
          rb_ary_store(arrResult, idx, rb_float_new(extra_out[n]) ) ;
          idx++;

@@ -149,28 +149,28 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    char strUTCDate [30] ;
    strcpy(strUTCDate, StringValueCStr(strUTC) ) ; 
 
-   xl_model_id    model_id    = {NULL} ;
-   xo_orbit_id    orbit_id    = {NULL} ;
-
+   
    
    /* orbit initilization */
    /* ------------------- */
-   long time_mode, orbit_mode ;
-   long sat_id ;
-   /* --------------------------------------------------- */
-   /* --------------------------------------------------- */
-   /* xo_time_to_orbit & xo_orbit_to_time variables */
-   long second_t, microsec_t ; 
+   
   
    
-   
-   long lOrbitNumber, lOrbitStart, lOrbitStop ;
 
 
    long ascii_id_in, lProcessingFormat ;
 
    /* ------------------------------------------------------ */
    /* xl_time_ascii_to_processing */
+
+ 
+  
+   /*
+
+ long second_t, microsec_t ; 
+  
+  long time_mode, orbit_mode ;
+   long sat_id ;
 
    double dTimeProcessing, dTimeStart, dTimeStop ;
    
@@ -205,24 +205,36 @@ VALUE method_xl_time_ref_init_file( VALUE self,
          printf("DEBUG: method_xl_time_ref_init_file Successful conversion from %s to %f\n", strUTCDate, dTimeProcessing) ;
    }
 
-   lOrbitStart          = 0 ;
-   lOrbitStop           = 99999 ;
+   */
+  
 
    /* orbit initialization with an OSF */
    /* -------------------------------- */
+
+   /*
+  
+   xl_model_id    model_id    = {NULL} ;
+   xo_orbit_id    orbit_id    = {NULL} ;
+
+
+   long lOrbitNumber, lOrbitStart, lOrbitStop ;
+
+   lOrbitStart          = 0 ;
+   lOrbitStop           = 99999 ;
+
    n_files    = 1 ;
    time_mode  = XO_SEL_FILE ;
    orbit_mode = XO_ORBIT_INIT_AUTO ;
-   sat_id               = XO_SAT_SENTINEL_2A ;   
+   sat_id     = XO_SAT_SENTINEL_2A ;   
 
-   status = xo_orbit_init_file(  &sat_id,             // XO_SAT_SENTINEL_2A
-                                 &model_id,           // NULL 
-                                 &time_id,            // NULL
-                                 &orbit_mode,         // XO_ORBIT_INIT_AUTO
-                                 &n_files,            // 1
-                                 time_file,          // Array of one OSF
-                                 &time_mode,          // XO_SEL_FILE
-                                 &time_ref,       // XL_TIME_UTC
+   status = xo_orbit_init_file(  &sat_id,
+                                 &model_id,
+                                 &time_id,
+                                 &orbit_mode,
+                                 &n_files,          
+                                 time_file,           
+                                 &time_mode,      
+                                 &time_ref,          
                                  &time0, 
                                  &time1, 
                                  &lOrbitStart, 
@@ -261,15 +273,13 @@ VALUE method_xl_time_ref_init_file( VALUE self,
       xo_get_msg(&func_id, ierr, &n, msg) ;
       xo_print_msg(&n, msg) ;
    }
-
-   /* --------------------------- */
-   /* Free Memory */
-   /* --------------------------- */
    
    xo_orbit_close (&orbit_id, ierr) ;
 
    if (iDebug == 1)
       printf("DEBUG: method_xl_time_ref_init_file date: %s to orbit number: %ld\n", strUTCDate, lOrbitNumber) ;
+
+   */
 
    if (iDebug == 1)
    {

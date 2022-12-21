@@ -98,8 +98,8 @@ VALUE method_xl_time_ascii_to_processing( VALUE self,
       printf("DEBUG: EXIT method_xl_time_ascii_to_processing\n") ;  
    }
 
-   processing_out_ = LONG2NUM(processing_out);
-   return LONG2NUM(processing_out) ;
+   processing_out_ = DBL2NUM(processing_out);
+   return DBL2NUM(processing_out) ;
 
    
 }

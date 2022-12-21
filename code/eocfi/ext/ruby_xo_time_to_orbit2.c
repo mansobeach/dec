@@ -23,14 +23,14 @@
 /*============================================================================*/
 
 
-VALUE method_xo_time_to_orbit(VALUE self, VALUE strROEF, VALUE strUTC, VALUE isDebugMode) 
+VALUE method_xo_time_to_orbit2(VALUE self, VALUE strROEF, VALUE strUTC, VALUE isDebugMode) 
 {
 
    int iDebug = RTEST(isDebugMode) ;
    
    if (iDebug == 1)
    {
-      printf("DEBUG: ENTRY ruby_xo_time_to_orbit::method_xo_time_to_orbit\n") ;  
+      printf("DEBUG: ENTRY ruby_xo_time_to_orbit::method_xo_time_to_orbit2\n") ;  
    }
 
    char strUTCDate [30] ;
@@ -227,7 +227,7 @@ VALUE method_xo_time_to_orbit(VALUE self, VALUE strROEF, VALUE strUTC, VALUE isD
 
    if (iDebug == 1)
    {
-      printf("DEBUG: EXIT ruby_xo_time_to_orbit::method_xo_time_to_orbit\n") ;  
+      printf("DEBUG: EXIT ruby_xo_time_to_orbit::method_xo_time_to_orbit2\n") ;  
    }
 
    return LONG2NUM(lOrbitNumber) ;

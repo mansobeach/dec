@@ -51,7 +51,8 @@ class WriteXMLFile_NAOS_AUX_BULC
    
    def writeFixedHeader(filename, validityStart, validityStop)
       
-      header = @xmlRoot.add_element("Fixed_Header")
+      @eeHeader   = @xmlRoot.add_element("Earth_Explorer_Header")
+      header      = @eeHeader.add_element("Fixed_Header")
 
       xmlFilename             = header.add_element("File_Name")
       xmlFilename.text        = filename
@@ -99,14 +100,19 @@ class WriteXMLFile_NAOS_AUX_BULC
    end
    #-------------------------------------------------------------
 
-   def  writeVariableHeader(leapUTC, leapGPS)
-      header          = @xmlRoot.add_element("Variable_Header")
+   def writeVariableHeader(leapUTC, leapGPS)
+      header          = @eeHeader.add_element("Variable_Header")
       utc             = header.add_element("UTC-TAI")
       utc.add_attribute("unit",   "seconds")
       utc.text        = leapUTC
       gps             = header.add_element("UTC-GPS")
       gps.text        = leapGPS
       gps.add_attribute("unit",   "seconds")
+   end
+   #-------------------------------------------------------------
+   
+   def writeDataBlock
+      @dataBlock   = @xmlRoot.add_element("Data_Block")
    end
    #-------------------------------------------------------------
    

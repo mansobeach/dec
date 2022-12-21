@@ -85,23 +85,38 @@ VALUE method_xo_osv_compute(
    {
       printf("DEBUG: method_xo_osv_compute\t-  time = %lf \n", time );
       printf("DEBUG: method_xo_osv_compute\t-  Earth Fixed Coordinate System: \n") ;
-      printf("DEBUG: method_xo_osv_compute\t-  pos[0] = %lf metres \n", pos_out[0] );
-      printf("DEBUG: method_xo_osv_compute\t-  pos[1] = %lf metres \n", pos_out[1] );
-      printf("DEBUG: method_xo_osv_compute\t-  pos[2] = %lf metres \n", pos_out[2] );
-      printf("DEBUG: method_xo_osv_compute\t-  vel[0] = %lf m/s \n", vel_out[0] );
-      printf("DEBUG: method_xo_osv_compute\t-  vel[1] = %lf m/s \n", vel_out[1] );
-      printf("DEBUG: method_xo_osv_compute\t-  vel[2] = %lf m/s \n", vel_out[2] );
-      printf("DEBUG: method_xo_osv_compute\t-  acc[0] = %lf m/s^2 \n", acc_out[0] );
-      printf("DEBUG: method_xo_osv_compute\t-  acc[1] = %lf m/s^2 \n", acc_out[1] );
-      printf("DEBUG: method_xo_osv_compute\t-  acc[2] = %lf m/s^2 \n", acc_out[2] );
+      printf("DEBUG: method_xo_osv_compute\t-  pos[0] = %lf metres \n", pos_out[0] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  pos[1] = %lf metres \n", pos_out[1] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  pos[2] = %lf metres \n", pos_out[2] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  vel[0] = %lf m/s \n", vel_out[0] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  vel[1] = %lf m/s \n", vel_out[1] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  vel[2] = %lf m/s \n", vel_out[2] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  acc[0] = %lf m/s^2 \n", acc_out[0] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  acc[1] = %lf m/s^2 \n", acc_out[1] ) ;
+      printf("DEBUG: method_xo_osv_compute\t-  acc[2] = %lf m/s^2 \n", acc_out[2] ) ;
    }
 
+   VALUE arrResult = rb_ary_new2(9) ;
+
+   if (status == XO_OK)
+   {   
+      rb_ary_store(arrResult, 0, rb_float_new(pos_out[0]) ) ;
+      rb_ary_store(arrResult, 1, rb_float_new(pos_out[1]) ) ;
+      rb_ary_store(arrResult, 2, rb_float_new(pos_out[2]) ) ;
+      rb_ary_store(arrResult, 3, rb_float_new(vel_out[0]) ) ;
+      rb_ary_store(arrResult, 4, rb_float_new(vel_out[1]) ) ;
+      rb_ary_store(arrResult, 5, rb_float_new(vel_out[2]) ) ;
+      rb_ary_store(arrResult, 6, rb_float_new(acc_out[0]) ) ;
+      rb_ary_store(arrResult, 7, rb_float_new(acc_out[1]) ) ;
+      rb_ary_store(arrResult, 7, rb_float_new(acc_out[2]) ) ;
+   }
+  
    if (iDebug == 1)
    {
       printf("DEBUG: EXIT method_xo_osv_compute\n") ;  
    }
 
-   return LONG2NUM(status) ;
+   return arrResult ;
 
 }
 

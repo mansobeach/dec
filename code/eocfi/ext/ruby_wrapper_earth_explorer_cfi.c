@@ -46,7 +46,7 @@ VALUE method_xl_time_close() ;
 VALUE method_xo_orbit_init_file() ;
 VALUE method_xo_orbit_info() ;
 VALUE method_xo_position_on_orbit_to_time() ;
-VALUE method_xo_time_to_orbit() ;
+VALUE method_xo_time_to_orbit2() ;
 VALUE method_xo_osv_compute() ;
 VALUE method_xo_osv_compute_extra() ;
 
@@ -92,7 +92,7 @@ void Init_ruby_earth_explorer_cfi()
    rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_init_file", method_xo_orbit_init_file, 13) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_info", method_xo_orbit_info, 3) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_position_on_orbit_to_time", method_xo_position_on_orbit_to_time, 4) ;
-   rb_define_method(ruby_earth_explorer_cfi, "xo_time_to_orbit", method_xo_time_to_orbit, 3) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xo_time_to_orbit2", method_xo_time_to_orbit2, 3) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_osv_compute", method_xo_osv_compute, 5) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_osv_compute_extra", method_xo_osv_compute_extra, 3) ;
    

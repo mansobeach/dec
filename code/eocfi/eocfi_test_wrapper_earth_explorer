@@ -246,6 +246,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
       @@logger.debug("orbit_id => #{orbit_id}")
 
+      # ---------------------
+
       abs_orbit   = 9000
       isDebugMode = false
       @@logger.debug("xo_orbit_info")
@@ -282,14 +284,14 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_W}")
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_M}")
 
+      # ---------------------
+
       cmd = "cat /tmp/eocfi_stderr"
       @@logger.debug(cmd)
       system(cmd)
 
       @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
    end
-
-
 
    ## ------------------------------------------------------
 
