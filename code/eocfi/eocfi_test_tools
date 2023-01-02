@@ -130,9 +130,9 @@ class TestCase_EOCFITOOLS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), "eocfi_orbit list stations")
 
-      cmd = "eocfi_orbit -S KSATSVAL -s 9572 -e 9575"
+      cmd = "eocfi_orbit -s 20220101T000000 -X"
       @@logger.debug(cmd)
-      assert(system(cmd), "eocfi_orbit for Kiruna")
+      assert(system(cmd), "eocfi_orbit for 20220101T000000")
 
    end
    ## ------------------------------------------------------

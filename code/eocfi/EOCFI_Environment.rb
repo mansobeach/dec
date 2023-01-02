@@ -24,7 +24,7 @@ module EOCFI
    
    include CUC::DirUtils
    
-   @@version = "0.0.1v"
+   @@version = "0.0.1w"
    
    ## -----------------------------------------------------------------
    
@@ -33,6 +33,7 @@ module EOCFI
          xd_read_station\n\
          xd_read_station_id\n\
          xd_read_station_file\n\
+         xd_read_tle\n\
          xl_time_ref_init_file\n\
          xl_time_ascii_to_processing\n\
          xo_check_library_version\n\

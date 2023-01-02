@@ -19,6 +19,7 @@
 /*  EXPCFI xv_station_vis_time direct call          */
 /*============================================================================*/
 
+extern VALUE rbException ;
 
 VALUE method_xd_read_station_id(
                                           VALUE self,
@@ -53,6 +54,25 @@ VALUE method_xd_read_station_id(
    strcpy (stat_file, StringValueCStr(strStationDB)) ;
 
    /* --------------------------------------------------- */
+
+   FILE *file;
+   if ((file = fopen(stat_file, "r")))
+   {
+      if (iDebug == 1)
+         printf("DEBUG: ruby_method_xd_read_station_id file %s is available\n", stat_file) ;
+
+      fclose(file) ;
+   }
+   else
+   {
+      if (iDebug == 1)
+         printf("DEBUG: ruby_method_xd_read_station_id file %s not found\n", stat_file) ;
+
+      rb_raise(rbException, "ruby_method_xd_read_station_id file %s not found", stat_file) ;
+      
+   }
+   /* --------------------------------------------------- */
+
 
    long num_stations ;
    char ** station_list_id ;

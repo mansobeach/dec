@@ -105,7 +105,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
          @@logger.debug("#{key} => #{value}")
       }      
 
-      $stderr.reopen(File.new("/tmp/eocfi_stderr", 'w'))
+#      @@logger.debug("$stderr.reopen => /tmp/eocfi_stderr")
+#      $stderr.reopen(File.new("/tmp/eocfi_stderr", 'w'))
 
       @@testObject = EOCFI::Earth_Explorer_CFI.new
 
@@ -149,7 +150,68 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-    ## ------------------------------------------------------
+   def test_xd_read_tle
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+
+      # ---------------------
+
+      tle_file    = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.txt"
+      # tle_file    = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_AUX_TLE____20221214T000000_20221224T000000_0000.TXT"
+      satellite   = ""
+      isDebugMode = true
+      tle_data    = nil
+      # ---------------------
+
+      @@logger.debug("=> xd_read_tle(")
+      @@logger.debug("tle_file    : #{tle_file}")
+      @@logger.debug("satellite   : #{satellite}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
+
+      begin
+         tle_data         = @@testObject.xd_read_tle(\
+            tle_file, \
+            satellite, \
+            isDebugMode
+         )
+      rescue => exception
+         @@logger.error(exception.to_s)
+      end
+
+      @@logger.debug("tle_data: #{tle_data}")
+      @@logger.info("number of TLE records: #{tle_data.xd_read_tle_file_num_rec}")
+      @@logger.info("=> NORAD LINE ZERO")
+      @@logger.info("NORAD SATCAT   : #{tle_data.xd_read_tle_rec_norad_satcat(0)}")
+      @@logger.info("=> NORAD FIRST LINE")
+      @@logger.info("Sat. number    : #{tle_data.xd_read_tle_rec_sat_number(0)}")
+      @@logger.info("Classification : #{tle_data.xd_read_tle_rec_classification(0)}")
+      @@logger.info("INT DESIGNATOR : #{tle_data.xd_read_tle_rec_int_des(0)}")
+      @@logger.info("Epoch          : #{tle_data.xd_read_tle_rec_time(0)} / #{mjd2000_to_utc(tle_data.xd_read_tle_rec_time(0))}")
+      @@logger.info("First  Time Derivative Mean Motion : #{tle_data.xd_read_tle_rec_1st_mean_motion(0)}")
+      @@logger.info("Second Time Derivative Mean Motion : #{tle_data.xd_read_tle_rec_2nd_mean_motion(0)}")
+      @@logger.info("BSTAR drag     : #{tle_data.xd_read_tle_rec_bstar(0)}")
+      @@logger.info("Ephemeris type : #{tle_data.xd_read_tle_rec_ephemeris_type(0)}")
+      @@logger.info("Element number : #{tle_data.xd_read_tle_rec_element_number(0)}")
+      @@logger.info("Checksum#1     : #{tle_data.xd_read_tle_rec_checksum1(0)}")
+      @@logger.info("=> NORAD SECOND LINE")
+      @@logger.info("Eccentricity   : #{tle_data.xd_read_tle_rec_eccentricity(0)}")
+      @@logger.info("Argument of Perigee  : #{tle_data.xd_read_tle_rec_w(0)} degrees")
+      @@logger.info("Inclination    : #{tle_data.xd_read_tle_rec_inclination(0)} degrees")
+      @@logger.info("Right Ascension of the Ascending Node (RAAN) : #{tle_data.xd_read_tle_rec_RAAN(0)} degrees")
+      @@logger.info("Mean Anomaly   : #{tle_data.xd_read_tle_rec_mean_anomaly(0)} degrees")
+      @@logger.info("Mean Motion    : #{tle_data.xd_read_tle_rec_mean_motion(0)} rev/day")
+      @@logger.info("Revolution @ epoch : #{tle_data.xd_read_tle_rec_abs_orbit(0)} revs")
+      @@logger.info("Checksum#2     : #{tle_data.xd_read_tle_rec_checksum2(0)}")
+      # ---------------------
+
+      cmd = "cat /tmp/eocfi_stderr"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
+   ## ------------------------------------------------------
 
    ## Test test_xo_orbit_init_file
 
@@ -160,17 +222,18 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       time_model     = XL_TIMEMOD_OSF
       n_files        = 1
       time_file      = Array.new
-      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
+      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_GSOV_MPL_ORBSCT"
       time_init_mode = XL_SEL_FILE
       time_ref       = XL_TIME_UTC
-      time0          = utc_to_mj2000("20230101T000000")
-      time1          = utc_to_mj2000("20240101T000000")
+      time0          = utc_to_mjd2000("20220101T000000")
+      time1          = utc_to_mjd2000("20230101T000000")
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
-      strDate        = "20230422T120000"
+      strDate        = "20220722T120000"
+      time_id        = nil
 
-      @@logger.debug("xl_time_ref_init_file")
+      @@logger.debug("=> xl_time_ref_init_file(")
       @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
       @@logger.debug("n_files          :  #{n_files}")
       @@logger.debug("time_file        :  #{File.basename(time_file[0])}")
@@ -181,31 +244,47 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("orbit0           :  #{orbit0}")
       @@logger.debug("orbit1           :  #{orbit1}")
       @@logger.debug("isDebugMode      :  #{isDebugMode}")
+      @@logger.debug(")")
 
-      time_id         = @@testObject.xl_time_ref_init_file(\
-                           time_model, \
-                           n_files, \
-                           time_file, \
-                           time_init_mode, \
-                           time_ref, \
-                           time0, \
-                           time1, \
-                           orbit0, \
-                           orbit1, \
-                           strDate, \
-                           isDebugMode \
-                        )
+      @@logger.debug("BEFORE xl_time_ref_init_file")
+
+      begin
+         time_id         = @@testObject.xl_time_ref_init_file(\
+            time_model, \
+            n_files, \
+            time_file, \
+            time_init_mode, \
+            time_ref, \
+            time0, \
+            time1, \
+            orbit0, \
+            orbit1, \
+            strDate, \
+            isDebugMode \
+         )
+      rescue => exception
+         @@logger.error(exception.to_s)
+      end
+     
+      @@logger.debug("AFTER xl_time_ref_init_file")
+
       @@logger.debug("time_id => #{time_id}")
       # ---------------------
 
-      sat_id      = XO_SAT_GENERIC
+      @@logger.debug("BEFORE xo_orbit_init_file")
+
+      # sat_id      = XO_SAT_GENERIC
+      sat_id      = XO_SAT_SENTINEL_1A
       model_id    = nil
       # time_id     = nil
       orbit_mode  = XO_ORBIT_INIT_AUTO
       n_files     = 1
       input_files = Array.new
-      input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
-      time_mode   = XO_SEL_FILE
+      # input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_ORBSCT"
+      input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.txt"
+      # input_files << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_AUX_TLE____20221214T000000_20221224T000000_0000.TXT"
+      
+      time_mode   = XO_SEL_TIME
       time_ref    = XL_TIME_UTC
       time0       = nil
       time1       = nil
@@ -213,7 +292,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       orbit1      = nil
       isDebugMode = true
 
-      @@logger.debug("xo_orbit_init_file")
+      @@logger.debug("=> xo_orbit_init_file(")
       @@logger.debug("sat_id      : #{XO_Sat_id_enum.key(sat_id)}")
       @@logger.debug("model_id    : #{model_id}")
       @@logger.debug("time_id     : #{time_id}")
@@ -227,6 +306,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("orbit0      : #{orbit0}")
       @@logger.debug("orbit1      : #{orbit1}")
       @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
 
       orbit_id = @@testObject.xo_orbit_init_file(
                      sat_id,
@@ -246,14 +326,36 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
       @@logger.debug("orbit_id => #{orbit_id}")
 
+      @@logger.debug("AFTER xo_orbit_init_file")
+
+      # ---------------------
+=begin
+      @@logger.debug("BEFORE xo_orbit_id_check")
+
+      isDebugMode = false
+      @@logger.debug("=> xo_orbit_id_check(")
+      @@logger.debug("orbit_id    : #{orbit_id}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
+
+      result = @@testObject.xo_orbit_id_check(
+         orbit_id,
+         isDebugMode
+      )
+
+      @@logger.debug("AFTER xo_orbit_id_check")
+=end
       # ---------------------
 
-      abs_orbit   = 9000
+      @@logger.debug("BEFORE xo_orbit_info")
+
+      abs_orbit   = 1
       isDebugMode = false
-      @@logger.debug("xo_orbit_info")
+      @@logger.debug("=> xo_orbit_info(")
       @@logger.debug("orbit_id    : #{orbit_id}")
       @@logger.debug("abs_orbit   : #{abs_orbit}")
       @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
 
       result = @@testObject.xo_orbit_info(
          orbit_id,
@@ -283,6 +385,9 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA)}  : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_RA}")
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_W)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_W]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_W}")
       @@logger.debug("#{XO_ORBIT_INFO_EXTRA_enum.key(XO_ORBIT_INFO_EXTRA_OSC_KEPL_M)}   : #{result[XO_ORBIT_INFO_EXTRA_OSC_KEPL_M]} #{UNIT_XO_ORBIT_INFO_EXTRA_OSC_KEPL_M}")
+
+      @@logger.debug("AFTER xo_orbit_info")
+
 
       # ---------------------
 
@@ -336,8 +441,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
    ## Read Station File NAOS mission
 
    def test_xd_read_station_naos
-      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s} NS1_OPER_MPL_GND_DB")   
-      statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_MPL_GND_DB"
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s} NS1_GSOV_MPL_GND_DB")   
+      statDB         = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_GSOV_MPL_GND_DB"
       @@logger.debug(statDB)
 
       arrStationID   = @@testObject.xd_read_station_id(statDB, false)
@@ -437,8 +542,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
       time_init_mode = XL_SEL_FILE
       time_ref       = XL_TIME_UTC
-      time0          = utc_to_mj2000("20230101T000000")
-      time1          = utc_to_mj2000("20240101T000000")
+      time0          = utc_to_mjd2000("20230101T000000")
+      time1          = utc_to_mjd2000("20240101T000000")
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
@@ -568,8 +673,8 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
       time_init_mode = XL_SEL_FILE
       time_ref       = XL_TIME_UTC
-      time0          = utc_to_mj2000("20230101T000000")
-      time1          = utc_to_mj2000("20240101T000000")
+      time0          = utc_to_mjd2000("20230101T000000")
+      time1          = utc_to_mjd2000("20240101T000000")
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
@@ -697,8 +802,23 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
                                           )
 
       # ---------------------
-
       
+      @@logger.debug("BEFORE xo_orbit_id_check")
+
+      isDebugMode = true
+      @@logger.debug("=> xo_orbit_id_check(")
+      @@logger.debug("orbit_id    : #{orbit_id}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
+
+      result = @@testObject.xo_orbit_id_check(
+                                 orbit_id,
+                                 isDebugMode
+      )
+
+      @@logger.debug("AFTER xo_orbit_id_check")
+      # ---------------------
+
       extra_choice   = XO_ORBIT_EXTRA_ALL_RESULTS
       isDebugMode    = true
 
@@ -718,6 +838,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
          @@logger.debug(item)
       }
 
+
       # ---------------------
 
       cmd = "cat /tmp/eocfi_stderr"
@@ -736,12 +857,12 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
 
    ## Test to compute the date-time
 
-   def test_xo_time_to_orbit
+   def test_xo_time_to_orbit2
       @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
    
       isDebugMode = false
       strDate     = "20170422T120000"
-      val         = @@testObject.xo_time_to_orbit(\
+      val         = @@testObject.xo_time_to_orbit2(\
                         "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
                         strDate, \
                         isDebugMode \
@@ -752,7 +873,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
          
       ## error management for orbit ephemeris file not found
    
-      val   = @@testObject.xo_time_to_orbit(\
+      val   = @@testObject.xo_time_to_orbit2(\
                         "wrong_path/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF", \
                         strDate, \
                         isDebugMode \

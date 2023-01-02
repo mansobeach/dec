@@ -18,7 +18,10 @@
 #include <explorer_orbit.h>
 
 xl_time_id time_id = {NULL} ;
+
 static int iDebug ;
+
+extern VALUE rbException ;
 
 VALUE method_xl_time_ref_init_file( VALUE self,
                                     VALUE timeModel,
@@ -76,6 +79,11 @@ VALUE method_xl_time_ref_init_file( VALUE self,
 
    n_files     = RARRAY_LEN(timeFile) ;
 
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file checking n_files[%li] coherency\n", n_files) ;  
+   }
+
    if (n_files > 1)
    {
       rb_fatal("ERROR: method_xl_time_ref_init_file => n_files supported cannot be > 1") ;
@@ -86,6 +94,11 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    {
       rb_warn("ERROR: method_xl_time_ref_init_file => inconsistency between n_files & time_file parameters") ;
       n_files     = NUM2LONG(nFiles) ;
+   }
+
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file AFTER checking n_files[%li] coherency\n", n_files) ;  
    }
 
    time_model     = NUM2LONG(timeModel) ;
@@ -107,17 +120,38 @@ VALUE method_xl_time_ref_init_file( VALUE self,
 
    /* --------------------------------------------------- */
    /* Error handling for orbit ephemeris presence */
+
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file BEFORE checking path_time_file[%s] coherency\n", path_time_file) ;  
+   }
+
    FILE *file;
    if ((file = fopen(path_time_file, "r")))
    {
+      if (iDebug == 1)
+         printf("DEBUG: method_xl_time_ref_init_file file %s is available\n", path_time_file) ;
+
       fclose(file) ;
    }
    else
    {
+      if (iDebug == 1)
+         printf("DEBUG: method_xl_time_ref_init_file file %s not found\n", path_time_file) ;
+
+      rb_raise(rbException, "method_xl_time_ref_init_file file %s not found", path_time_file) ;
+      
+      /*
       rb_fatal("ERROR: method_xl_time_ref_init_file => cannot open file %s", path_time_file) ; 
+      */
    }
    /* --------------------------------------------------- */
  
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xl_time_ref_init_file BEFORE xl_time_ref_init_file\n") ;  
+   }
+
    status = xl_time_ref_init_file(  &time_model, 
                                     &n_files, 
                                     time_file,
@@ -158,8 +192,6 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    
 
 
-   long ascii_id_in, lProcessingFormat ;
-
    /* ------------------------------------------------------ */
    /* xl_time_ascii_to_processing */
 
@@ -179,6 +211,7 @@ VALUE method_xl_time_ref_init_file( VALUE self,
    dTimeStart           = -18260.0 ;
    dTimeStop            = 36523.0 ;
   
+long ascii_id_in, lProcessingFormat ;
 
    ascii_id_in          = XL_ASCII_CCSDSA_COMPACT ;
    lProcessingFormat    = XL_PROC ;

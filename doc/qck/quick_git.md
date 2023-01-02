@@ -7,6 +7,12 @@
 
 ### Git Configuration
 
+
+## Show Configuration
+
+- `git config --list`
+
+
 Configuration commands to log the user working in the repository
 
 - `git config --global user.name "Your Name"`

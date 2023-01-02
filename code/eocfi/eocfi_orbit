@@ -43,9 +43,10 @@ require 'rubygems'
 
 require 'cuc/Converters'
 require 'cuc/Log4rLoggerFactory'
+require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
 require 'eocfi/EOCFI_Environment'
 require 'eocfi/EOCFI_Constants'
-require 'eocfi/EOCFI_Loader_Wrapper_Earth_Explorer'
+require 'eocfi/EOCFI_MissionFiles'
 
 
 # MAIN script function
@@ -91,12 +92,19 @@ def main
             when "--Station"              then @station                 = arg.to_s
             when "--startDate"            then @startDate               = arg.to_s
             when "--endDate"              then @endDate                 = arg.to_s
-			   when "--help"                 then usage
+			   when "--help"                 then @bShowUsage              = true
          end
       end
    rescue Exception => e
       puts e.to_s
       exit(99)
+   end
+
+   # ------------------------------------------
+
+   if @bShowUsage == true then
+      usage
+      exit(0)
    end
 
    # ------------------------------------------
@@ -157,24 +165,17 @@ def main
 
    # ------------------------------------------
 
-   statDB         = "./data/NS1_GSOV_MPL_GND_DB"
-   @roef           = "./data/NS1_GSOV_MPL_ORBSCT"
-   swath          = "./data/S2A_OPER_MPL_SWTVIS"
+   missionFiles = EOCFI_MissionFiles.new(@logger)
 
-   if File.exist?(statDB) == false then
-      statDB = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_GSOV_MPL_GND_DB"
+   if @isDebugMode == true then
+      @logger.info("orbit reference : #{missionFiles.file_MPL_ORBSCT}")
+      @logger.info("ground stations : #{missionFiles.file_MPL_GND_DB}")
+      @logger.info("swath template  : #{missionFiles.file_MPL_SWTVIS}")
    end
 
-   if File.exist?(@roef) == false then
-      @roef = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_GSOV_MPL_ORBSCT"
-   end
-
-   if File.exist?(swath) == false then
-      swath = "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_SWTVIS"
-   end
-
-   # ------------------------------------------
-   
+   statDB         = missionFiles.file_MPL_GND_DB
+   @roef          = missionFiles.file_MPL_ORBSCT
+   swath          = missionFiles.file_MPL_SWTVIS
 
    # ------------------------------------------
 
@@ -208,6 +209,9 @@ def main
    @logger.info("position[x] = #{osv[RB_OSV_IDX_POS_X]} #{RB_OSV_POS_UNIT}")
    @logger.info("position[y] = #{osv[RB_OSV_IDX_POS_Y]} #{RB_OSV_POS_UNIT}")
    @logger.info("position[z] = #{osv[RB_OSV_IDX_POS_Z]} #{RB_OSV_POS_UNIT}")
+   @logger.info("velocity[x] = #{osv[RB_OSV_IDX_VEL_X]} #{RB_OSV_VEL_UNIT}")
+   @logger.info("velocity[y] = #{osv[RB_OSV_IDX_VEL_Y]} #{RB_OSV_VEL_UNIT}")
+   @logger.info("velocity[z] = #{osv[RB_OSV_IDX_VEL_Z]} #{RB_OSV_VEL_UNIT}")
 
    if @bOSVExtra == true then
       osvExtra = genOSVExtra()
@@ -255,11 +259,13 @@ def showOrbitInfo
    abs_orbit   = 1
    isDebugMode = @isDebugMode
 
-   @logger.debug("=> xo_orbit_info(")
-   @logger.debug("orbit_id    : #{@orbit_id}")
-   @logger.debug("abs_orbit   : #{abs_orbit}")
-   @logger.debug("isDebugMode : #{isDebugMode}")
-   @logger.debug(")")
+   if @isDebugMode == true then
+      @logger.debug("=> xo_orbit_info(")
+      @logger.debug("orbit_id    : #{@orbit_id}")
+      @logger.debug("abs_orbit   : #{abs_orbit}")
+      @logger.debug("isDebugMode : #{isDebugMode}")
+      @logger.debug(")")
+   end
 
    result = @cfi.xo_orbit_info(
       @orbit_id,
@@ -350,22 +356,23 @@ end
 def initTime
 
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 
    time_model     = XL_TIMEMOD_OSF
    n_files        = 1
    time_file      = Array.new
-   time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_GSOV_MPL_ORBSCT"
+   time_file << @roef
    time_init_mode = XL_SEL_FILE
    time_ref       = XL_TIME_UTC
-   time0          = utc_to_mj2000("20230101T000000")
-   time1          = utc_to_mj2000("20240101T000000")
+   time0          = utc_to_mjd2000("20230101T000000")
+   time1          = utc_to_mjd2000("20240101T000000")
    orbit0         = 0
    orbit1         = 99999
-   isDebugMode    = @isDebugMode
+   # isDebugMode    = @isDebugMode
+   isDebugMode    = false
    # strDate        = "20230422T120000"
    strDate        = @startDate
 
@@ -376,8 +383,8 @@ def initTime
       @logger.debug("time_file        :  #{File.basename(time_file[0])}")
       @logger.debug("time_init_mode   :  #{XL_Time_init_mode_enum.key(time_init_mode)}")
       @logger.debug("time_ref         :  #{XL_Time_ref_enum.key(time_ref)}")
-      @logger.debug("time0            :  #{time0}")
-      @logger.debug("time1            :  #{time1}")
+      @logger.debug("time0            :  #{time0} ; #{mjd2000_to_utc(time0)}")
+      @logger.debug("time1            :  #{time1} ; #{mjd2000_to_utc(time1)}")
       @logger.debug("orbit0           :  #{orbit0}")
       @logger.debug("orbit1           :  #{orbit1}")
       @logger.debug("isDebugMode      :  #{isDebugMode}")
@@ -402,18 +409,19 @@ def initTime
       @logger.debug("time_id => #{@time_id}")
    end
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   
+   # if @isDebugMode == true then
+   #   @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 end
 ## ----------------------------------------------------------
 
 def convertTime(strTime)
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 
    ascii_id_in       = XL_ASCII_CCSDSA_COMPACT
@@ -422,7 +430,8 @@ def convertTime(strTime)
    proc_id_out       = XL_PROC
    time_ref_out      = XL_TIME_UTC
    processing_out    = nil
-   isDebugMode       = @isDebugMode
+   # isDebugMode       = @isDebugMode
+   isDebugMode       = false
 
    if @isDebugMode == true then
       @logger.debug("=> xl_time_ascii_to_processing(")
@@ -450,9 +459,9 @@ def convertTime(strTime)
    end
 
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
    
    return processing_out
@@ -463,9 +472,9 @@ end
 def initOrbit
    
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #    @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 
    sat_id      = XO_SAT_GENERIC
@@ -481,7 +490,8 @@ def initOrbit
    time1       = nil
    orbit0      = nil
    orbit1      = nil
-   isDebugMode = @isDebugMode
+   # isDebugMode = @isDebugMode
+   isDebugMode = false
 
    if @isDebugMode == true then
       @logger.debug("=> xo_orbit_init_file(")
@@ -523,9 +533,9 @@ def initOrbit
    # ---------------------
    
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 end
 
@@ -534,22 +544,23 @@ end
 def genOSV(processing_time)
   
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
   
    mode        = 0
    time_ref    = XL_TIME_UTC
    time        = processing_time
-   isDebugMode = @isDebugMode
+   # isDebugMode = @isDebugMode
+   isDebugMode = false
   
    if @isDebugMode == true then
       @logger.debug("=> xo_osv_compute(")
       @logger.debug("orbit_id    : #{@orbit_id}")
       @logger.debug("mode        : #{mode} / Propagation model. Dummy input for current version.")
       @logger.debug("time_ref    : #{XL_Time_ref_enum.key(time_ref)}")
-      @logger.debug("time        : #{time}")
+      @logger.debug("time        : #{time} ; #{mjd2000_to_utc(time)}")
       @logger.debug("isDebugMode : #{isDebugMode}")
       @logger.debug(")")
    end
@@ -568,9 +579,9 @@ def genOSV(processing_time)
    # ---------------------
    
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
    return osv
 end
@@ -579,13 +590,14 @@ end
 
 def genOSVExtra
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
 
    extra_choice   = XO_ORBIT_EXTRA_ALL_RESULTS
-   isDebugMode    = @isDebugMode
+   # isDebugMode    = @isDebugMode
+   isDebugMode    = false
 
    if @isDebugMode == true then
       @logger.debug("=> xo_osv_compute_extra(")
@@ -601,15 +613,15 @@ def genOSVExtra
    )
 
    # ---------------------
-   if @isDebugMode == true then
-      result.each{|item|
-         @logger.debug(item)
-      }
-   end
+   # if @isDebugMode == true then
+   #   result.each{|item|
+   #      @logger.debug(item)
+   #   }
+   # end
    # ---------------------
-   if @isDebugMode == true then
-      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
-   end
+   # if @isDebugMode == true then
+   #   @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   # end
    # ---------------------
    return result
 end

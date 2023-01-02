@@ -17,6 +17,7 @@
 
 #include <explorer_orbit.h>
 
+extern VALUE rbException ;
 extern xl_time_id time_id ;
 static int iDebug ;
 xo_orbit_id    orbit_id    = {NULL} ;
@@ -69,9 +70,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
          orbit_file_mode,
          n_files, 
          time_init_mode,
-         time_ref,
-         orbit0,
-         orbit1 ;
+         time_ref ;
 
    /* inputs*/
    double time0, time1 ;
@@ -130,11 +129,21 @@ VALUE method_xo_orbit_init_file( VALUE self,
    FILE *file;
    if ((file = fopen(path_orbit_file, "r")))
    {
+      if (iDebug == 1)
+         printf("DEBUG: method_xo_orbit_init_file file %s is available\n", path_orbit_file) ;
+
       fclose(file) ;
    }
    else
    {
-      rb_fatal("ERROR: method_xo_orbit_init_file => cannot open file %s", path_orbit_file) ; 
+      if (iDebug == 1)
+         printf("DEBUG: method_xo_orbit_init_file file %s not found\n", path_orbit_file) ;
+
+      rb_raise(rbException, "method_xo_orbit_init_file file %s not found", path_orbit_file) ;
+
+      /*
+      rb_fatal("ERROR: method_xo_orbit_init_file => cannot open file %s", path_orbit_file) ;
+      */
    }
 
    xl_model_id    model_id    = {NULL} ;

@@ -237,10 +237,10 @@ module Converters
    end
    ## -----------------------------------------------------------
 
-   def utc_to_mj2000(str)
-      epoch = DateTime.strptime("20000101T000000","%Y%m%dT%H%M%S")
-      dateUTC = str2date(str)
-      mjd200  = dateUTC - epoch
+   def utc_to_mjd2000(str)
+      epoch    = DateTime.strptime("20000101T000000","%Y%m%dT%H%M%S")
+      dateUTC  = str2date(str)
+      mjd200   = dateUTC - epoch
       return mjd200
    end
    ## -----------------------------------------------------------

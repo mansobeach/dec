@@ -2,11 +2,11 @@
 <Earth_Explorer_File xmlns="http://eop-cfi.esa.int/CFI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.0" xsi:schemaLocation="http://eop-cfi.esa.int/CFI EO_OPER_MPL_GND_DB_0201.XSD">
   <Earth_Explorer_Header>
     <Fixed_Header>
-      <File_Name>NS1_OPER_MPL_GND_DB_00000000T000000_99999999T99999</File_Name>
+      <File_Name>NS1_GSOV_MPL_GND_DB_00000000T000000_99999999T99999</File_Name>
       <File_Description>Station masks definition</File_Description>
       <Notes/>
       <Mission>NAOS</Mission>
-      <File_Class>OPER</File_Class>
+      <File_Class>GSOV</File_Class>
       <File_Type>MPL_GND_DB</File_Type>
       <Validity_Period>
         <Validity_Start>UTC=2022-01-01T00:00:00</Validity_Start>
