@@ -119,7 +119,7 @@ void Init_ruby_earth_explorer_cfi()
 
 	rb_define_method(ruby_earth_explorer_cfi, "xo_check_library_version", method_xo_check_library_version, 1) ;
    
-   rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 11) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 10) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_ascii_to_processing", method_xl_time_ascii_to_processing, 7) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_close", method_xl_time_close, 1) ;
 

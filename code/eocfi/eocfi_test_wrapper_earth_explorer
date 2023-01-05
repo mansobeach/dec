@@ -230,7 +230,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
-      strDate        = "20220722T120000"
       time_id        = nil
 
       @@logger.debug("=> xl_time_ref_init_file(")
@@ -259,7 +258,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
             time1, \
             orbit0, \
             orbit1, \
-            strDate, \
             isDebugMode \
          )
       rescue => exception
@@ -539,7 +537,7 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       time_model     = XL_TIMEMOD_OSF
       n_files        = 1
       time_file      = Array.new
-      time_file << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
+      time_file      << "#{File.dirname(File.expand_path(__FILE__))}/data/S2A_OPER_MPL_ORBSCT_20150625T073255_99999999T999999_0006.EOF"
       time_init_mode = XL_SEL_FILE
       time_ref       = XL_TIME_UTC
       time0          = utc_to_mjd2000("20230101T000000")
@@ -547,7 +545,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
-      strDate        = "20230422T120000"
 
       @@logger.debug("xl_time_ref_init_file")
       @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
@@ -571,9 +568,9 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
                            time1, \
                            orbit0, \
                            orbit1, \
-                           strDate, \
                            isDebugMode \
                         )
+                        
       @@logger.debug("time_id => #{time_id}")
 
       # -------------------------------
@@ -678,7 +675,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       orbit0         = 0
       orbit1         = 99999
       isDebugMode    = true
-      strDate        = "20230422T120000"
 
       @@logger.debug("xl_time_ref_init_file")
       @@logger.debug("time_model       :  #{XL_Time_model_enum.key(time_model)}")
@@ -702,7 +698,6 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
                            time1, \
                            orbit0, \
                            orbit1, \
-                           strDate, \
                            isDebugMode \
                         )
       @@logger.debug("time_id => #{time_id}")

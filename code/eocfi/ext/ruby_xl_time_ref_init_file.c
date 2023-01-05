@@ -33,7 +33,7 @@ VALUE method_xl_time_ref_init_file( VALUE self,
                                     VALUE time1_,
                                     VALUE orbit0_,
                                     VALUE orbit1_,
-                                    VALUE strUTC, VALUE isDebugMode) 
+                                    VALUE isDebugMode) 
 {
 
    iDebug = RTEST(isDebugMode) ;
@@ -171,148 +171,14 @@ VALUE method_xl_time_ref_init_file( VALUE self,
       printf("DEBUG: method_xl_time_ref_init_file xl_time_ref_init_file status: %ld ierr: %li\n", status, *ierr) ;  
    }
 
-   if (status != XO_OK)
+   if (status != XL_OK)
    {
       func_id = XL_TIME_REF_INIT_FILE_ID ;
-      xo_get_msg(&func_id, ierr, &n, msg) ;
+      xl_get_msg(&func_id, ierr, &n, msg) ;
       xl_print_msg(&n, msg) ;
    }
 
    /* --------------------------------------------------- */
-
-   char strUTCDate [30] ;
-   strcpy(strUTCDate, StringValueCStr(strUTC) ) ; 
-
-   
-   
-   /* orbit initilization */
-   /* ------------------- */
-   
-  
-   
-
-
-   /* ------------------------------------------------------ */
-   /* xl_time_ascii_to_processing */
-
- 
-  
-   /*
-
- long second_t, microsec_t ; 
-  
-  long time_mode, orbit_mode ;
-   long sat_id ;
-
-   double dTimeProcessing, dTimeStart, dTimeStop ;
-   
-  
-   
-   dTimeStart           = -18260.0 ;
-   dTimeStop            = 36523.0 ;
-  
-long ascii_id_in, lProcessingFormat ;
-
-   ascii_id_in          = XL_ASCII_CCSDSA_COMPACT ;
-   lProcessingFormat    = XL_PROC ;
-   
-   status         = xl_time_ascii_to_processing(
-                                             &time_id,            // NULL 
-                                             &ascii_id_in,        // XL_ASCII_CCSDSA_COMPACT
-                                             &time_ref,       // XL_TIME_UTC
-                                             strUTCDate,          // 20180720T120000
-                                             &lProcessingFormat,  // XL_PROC
-                                             &time_ref,       // XL_TIME_UTC
-                                             &dTimeProcessing,    // <output>
-                                             ierr                 // Error handling
-                                             ) ;
-   if (status != XO_OK)
-   {
-      func_id = XL_TIME_ASCII_TO_PROCESSING_ID ;
-      xl_get_msg(&func_id, ierr, &n, msg) ;
-      xl_print_msg(&n, msg) ;
-   }
-   else
-   {
-      if (iDebug == 1)
-         printf("DEBUG: method_xl_time_ref_init_file Successful conversion from %s to %f\n", strUTCDate, dTimeProcessing) ;
-   }
-
-   */
-  
-
-   /* orbit initialization with an OSF */
-   /* -------------------------------- */
-
-   /*
-  
-   xl_model_id    model_id    = {NULL} ;
-   xo_orbit_id    orbit_id    = {NULL} ;
-
-
-   long lOrbitNumber, lOrbitStart, lOrbitStop ;
-
-   lOrbitStart          = 0 ;
-   lOrbitStop           = 99999 ;
-
-   n_files    = 1 ;
-   time_mode  = XO_SEL_FILE ;
-   orbit_mode = XO_ORBIT_INIT_AUTO ;
-   sat_id     = XO_SAT_SENTINEL_2A ;   
-
-   status = xo_orbit_init_file(  &sat_id,
-                                 &model_id,
-                                 &time_id,
-                                 &orbit_mode,
-                                 &n_files,          
-                                 time_file,           
-                                 &time_mode,      
-                                 &time_ref,          
-                                 &time0, 
-                                 &time1, 
-                                 &lOrbitStart, 
-                                 &lOrbitStop,
-                                 &val_time0,
-                                 &val_time1,
-                                 &orbit_id, 
-                                 ierr) ;
-
-
-   if (iDebug == 1)
-   {
-      printf("DEBUG: method_xl_time_ref_init_file xo_orbit_init_file status: %ld ierr: %li\n", status, *ierr) ;  
-   }                              
-                                 
-   if (status != XO_OK)
-   {
-      func_id = XO_ORBIT_INIT_FILE_ID ;
-      xo_get_msg(&func_id, ierr, &n, msg) ;
-      xo_print_msg(&n, msg) ;
-   }
-
-
-   status = xo_time_to_orbit(&orbit_id, 
-                              &time_ref,
-                              &dTimeProcessing,
-                              &lOrbitNumber, 
-                              &second_t, 
-                              &microsec_t,
-                              ierr) ;
-
-  
-   if (status != XO_OK)
-   {
-      func_id = XO_TIME_TO_ORBIT_ID ;
-      xo_get_msg(&func_id, ierr, &n, msg) ;
-      xo_print_msg(&n, msg) ;
-   }
-   
-   xo_orbit_close (&orbit_id, ierr) ;
-
-   if (iDebug == 1)
-      printf("DEBUG: method_xl_time_ref_init_file date: %s to orbit number: %ld\n", strUTCDate, lOrbitNumber) ;
-
-   */
 
    if (iDebug == 1)
    {

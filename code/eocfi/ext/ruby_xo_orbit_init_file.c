@@ -130,7 +130,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
    if ((file = fopen(path_orbit_file, "r")))
    {
       if (iDebug == 1)
-         printf("DEBUG: method_xo_orbit_init_file file %s is available\n", path_orbit_file) ;
+         printf("DEBUG: method_xo_orbit_init_file file %s is available\n", orbit_file[0]) ;
 
       fclose(file) ;
    }
@@ -159,7 +159,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
                                  &time_id,            // NULL
                                  &orbit_file_mode,    // XO_ORBIT_INIT_AUTO
                                  &n_files,            // 1
-                                 orbit_file,          // Array of one OSF
+                                 orbit_file,          // Array of one file
                                  &time_init_mode,     // XO_SEL_FILE
                                  &time_ref,           // XL_TIME_UTC
                                  &time0, 

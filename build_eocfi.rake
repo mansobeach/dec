@@ -16,6 +16,9 @@
 
 require 'rake'
 
+require_relative 'code/eocfi/EOCFI_Environment'
+include EOCFI
+
 ### ============================================================================
 ###
 ### Task associated to MPL codebase
@@ -53,7 +56,7 @@ namespace :eocfi do
    
       ## -------------------------------
    
-      cmd = "cp -f code/eocfi/ext/lib/#{args[:platform]}/*.a code/eocfi/ext"
+      cmd = "cp -f code/eocfi/ext/lib/#{EOCFI.class_variable_get(:@@ESA_EOCFI_VERSION)}/#{args[:platform]}/*.a code/eocfi/ext"
       puts cmd
       system(cmd)
    

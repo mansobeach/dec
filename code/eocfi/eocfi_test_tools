@@ -123,16 +123,21 @@ class TestCase_EOCFITOOLS < Test::Unit::TestCase
 
    def test_eocfi_orbit
       cmd = "eocfi_orbit -v"
-      @@logger.debug(cmd)
+      @@logger.info(cmd)
       assert(system(cmd), "eocfi_orbit version")
       
       cmd = "eocfi_orbit -l"
-      @@logger.debug(cmd)
+      @@logger.info(cmd)
       assert(system(cmd), "eocfi_orbit list stations")
 
       cmd = "eocfi_orbit -s 20220101T000000 -X"
-      @@logger.debug(cmd)
+      @@logger.info(cmd)
       assert(system(cmd), "eocfi_orbit for 20220101T000000")
+
+      tle = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.txt"
+      cmd = "eocfi_orbit --tle #{tle} -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "TLE management")
 
    end
    ## ------------------------------------------------------

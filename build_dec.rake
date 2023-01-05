@@ -404,6 +404,11 @@ namespace :dec do
       cmd = "echo #{ret.split(" ")[0]} > #{@filename}.md5"
       puts cmd
       system(cmd)
+      begin
+         File.unlink("install/gems/dec_latest.gem.md5")
+      rescue Exception => e
+         puts e.to_s
+      end
       ln "#{@filename}.md5", "install/gems/dec_latest.gem.md5"
       # rm @filename
    end
@@ -589,6 +594,10 @@ namespace :dec do
       puts
       puts "Most used recipes:" 
       puts
+      puts "== PODMAN INIT =="
+      puts "rake -f build_dec.rake dec:podman_init"
+      puts
+      puts "== PODMAN RECIPEES =="
       puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-u-moc-srv-01,naos-test]"
       puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos-test]"
       puts "rake -f build_dec.rake dec:podman_build[gsc4eo,nl2-s-aut-srv-01,naos]"

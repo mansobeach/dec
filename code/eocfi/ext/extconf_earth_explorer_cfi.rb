@@ -24,9 +24,6 @@ prevDir = Dir.pwd
 
 Dir.chdir(File.dirname(__FILE__))
 
-cmd = "cp lib/MACIN64/* ."
-puts cmd
-system(cmd)
 
 cmd = "gcc -fPIC -g -O3 -shared -o libearth_explorer_cfi.so -Wl,-force_load libexplorer_visibility.a libexplorer_orbit.a libexplorer_lib.a libexplorer_file_handling.a libxml2.a libexplorer_data_handling.a libexplorer_pointing.a libtiff.a libgeotiff.a"
 puts cmd
@@ -49,7 +46,7 @@ HEADER_DIRS = [INCLUDEDIR, File.expand_path(File.join(File.dirname(__FILE__), ".
 
 libs = ['-lxml2', '-lexplorer_lib', '-lexplorer_orbit', '-lexplorer_pointing', '-lexplorer_data_handling', '-lexplorer_file_handling', '-lexplorer_visibility', '-learth_explorer_cfi']
 
-dir_config('mpl', HEADER_DIRS, LIB_DIRS)
+dir_config('eocfi', HEADER_DIRS, LIB_DIRS)
 
 
 # iterate though the libs array, and append them to the $LOCAL_LIBS array used for the makefile creation

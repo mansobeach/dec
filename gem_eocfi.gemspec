@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
                   Dir['code/eocfi/data/NS1_GSOV_MPL_GND_DB'] + \
                   Dir['code/eocfi/data/NS1_GSOV_MPL_ORBSCT'] + \
                   Dir['code/eocfi/data/S2A_GSOV_MPL_ORBSCT'] + \
-                  Dir['code/eocfi/ext/ruby_earth_explorer_cfi.bundle'] + \
+#                  Dir['code/eocfi/ext/ruby_earth_explorer_cfi.bundle'] + \
                   Dir['code/eocfi/ext/*'] + \
                   Dir['code/eocfi/include/*.h'] + \
                   Dir['code/eocfi/EOCFI*.rb'] + \
@@ -85,7 +85,9 @@ Gem::Specification.new do |s|
    
   ## ----------------------------------------------
 
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} Elecnor Deimos-Space #{'1F47E'.hex.chr('UTF-8')} eocfi #{EOCFI.class_variable_get(:@@version)} installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} Elecnor Deimos-Space  #{'1F47E'.hex.chr('UTF-8')} eocfi #{EOCFI.class_variable_get(:@@version)} installed \360\237\215\200 \360\237\215\200 \360\237\215\200 \n\
+#{'1F680'.hex.chr('UTF-8')} European Space Agency #{'1F6F0'.hex.chr('UTF-8')}  EOCFI version #{EOCFI.class_variable_get(:@@ESA_EOCFI_VERSION)} #{'1F483'.hex.chr('UTF-8')} #{'1F483'.hex.chr('UTF-8')} #{'1F483'.hex.chr('UTF-8')}\n\
+#{EOCFI.class_variable_get(:@@ESA_EOCFI_URL)}"
     
   ## ----------------------------------------------
      

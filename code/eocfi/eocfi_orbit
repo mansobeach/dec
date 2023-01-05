@@ -2,12 +2,8 @@
 
 # == Synopsis
 #
-# This is a tool that produces some orange juice
+# This is a eocfi tool to perform some orbit computations
 # 
-# Inputs required and default locations are:
-#   ./data/S2__OPER_MPL_GND_DB
-#   ./data/S2A_OPER_MPL_ORBSCT
-#   ./data/S2A_OPER_MPL_SWTVIS
 #
 # Parameters:
 # 
@@ -25,6 +21,7 @@
 # == Usage
 # eocfi_orbit --startDate <date> --endDate <endDate> -S <GFUCINBX>
 #     --list  it lists the ground stations
+#     --tle         <TLE file> 
 #     --startDate   <date>     
 #     --endDate     <date>
 #     --eXtra     generates OSV ancillary data
@@ -65,10 +62,12 @@ def main
    @startDate        = nil
    @endDate          = nil
    @station          = ""
-   
+   fileTLE           = nil
+
    opts = GetoptLong.new(
      ["--startDate",   "-s",           GetoptLong::REQUIRED_ARGUMENT],
-     ["--endDate ",   "-e",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--endDate",   "-e",             GetoptLong::REQUIRED_ARGUMENT],
+     ["--tle",   "-t",                GetoptLong::REQUIRED_ARGUMENT],
      ["--Station",   "-S",             GetoptLong::REQUIRED_ARGUMENT],
      ["--list", "-l",                  GetoptLong::NO_ARGUMENT],
      ["--eXtra", "-X",                 GetoptLong::NO_ARGUMENT],
@@ -84,7 +83,8 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--Debug"                then @isDebugMode             = true
-            when "--list"                 then @bList                   = true    
+            when "--tle"                  then fileTLE                  = arg.to_s
+            when "--list"                 then @bList                   = true
             when "--version"              then @bShowVersion            = true 
             when "--eXtra"                then @bOSVExtra               = true
             when "--Config"               then @bShowConfig             = true
@@ -163,8 +163,6 @@ def main
    end
    # ------------------------------------------
 
-   # ------------------------------------------
-
    missionFiles = EOCFI_MissionFiles.new(@logger)
 
    if @isDebugMode == true then
@@ -179,6 +177,42 @@ def main
 
    # ------------------------------------------
 
+   # TLE management
+
+   if fileTLE != nil then
+      
+      if File.exist?(fileTLE) == false then
+         @logger.error("File #{fileTLE} is not available")
+         exit(99)
+      end
+      readTLE(fileTLE)
+      initTime()
+      initOrbit(fileTLE)
+      osv = genOSV(@tleEpoch)
+
+      @logger.info("Earth Centered Earth Fixed / Cartesian coordinates:")
+      @logger.info("epoch = #{mjd2000_to_utc(@tleEpoch)} / #{@tleEpoch}")
+      @logger.info("position[x] = #{osv[RB_OSV_IDX_POS_X]} #{RB_OSV_POS_UNIT}")
+      @logger.info("position[y] = #{osv[RB_OSV_IDX_POS_Y]} #{RB_OSV_POS_UNIT}")
+      @logger.info("position[z] = #{osv[RB_OSV_IDX_POS_Z]} #{RB_OSV_POS_UNIT}")
+      @logger.info("velocity[x] = #{osv[RB_OSV_IDX_VEL_X]} #{RB_OSV_VEL_UNIT}")
+      @logger.info("velocity[y] = #{osv[RB_OSV_IDX_VEL_Y]} #{RB_OSV_VEL_UNIT}")
+      @logger.info("velocity[z] = #{osv[RB_OSV_IDX_VEL_Z]} #{RB_OSV_VEL_UNIT}")
+   
+      if @bOSVExtra == true then
+         osvExtra = genOSVExtra()
+         @logger.info("OSV Ancillary data:")
+         @logger.info("lon = #{osvExtra[XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS+XO_ORBIT_EXTRA_GEOC_LONG]} #{XO_ORBIT_EXTRA_GEOC_LONG_UNIT}")
+         @logger.info("lat = #{osvExtra[XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS+XO_ORBIT_EXTRA_GEOD_LAT]} #{XO_ORBIT_EXTRA_GEOD_LAT_UNIT}")
+         @logger.info("alt = #{osvExtra[XO_ORBIT_EXTRA_NUM_DEP_ELEMENTS+XO_ORBIT_EXTRA_GEOD_ALT]} #{XO_ORBIT_EXTRA_GEOD_ALT_UNIT}")
+      end
+      exit(0)
+   end
+   # ------------------------------------------
+
+
+   # ------------------------------------------
+
    if @bList == true then
       listStations(statDB)
       exit(0)
@@ -186,11 +220,13 @@ def main
 
    # ------------------------------------------
 
+   # ------------------------------------------
+
    initTime()
 
    initOrbit()
 
-   if @bShowConfig == true then
+   if @bShowConfig == true or @isDebugMode == true then
       showOrbitInfo
    end
 
@@ -238,9 +274,6 @@ def main
                      strDate, \
                      isDebugMode \
                      )
-
-
-     
 
    exit(0)
 
@@ -353,6 +386,66 @@ def listStations(statDB)
 end
 ## ----------------------------------------------------------
 
+def readTLE(tle_file)
+
+   satellite   = ""
+   isDebugMode = @isDebugMode
+   tle_data    = nil
+   # ---------------------
+
+   if @isDebugMode == true then
+      @logger.debug("=> xd_read_tle(")
+      @logger.debug("tle_file    : #{tle_file}")
+      @logger.debug("satellite   : #{satellite}")
+      @logger.debug("isDebugMode : #{isDebugMode}")
+      @logger.debug(")")
+   end
+
+   begin
+      tle_data  = @cfi.xd_read_tle(\
+                     tle_file, \
+                     satellite, \
+                     isDebugMode
+      )
+   rescue => exception
+      @logger.error(exception.to_s)
+   end
+
+   if @isDebugMode == true then
+      @logger.debug("tle_data: #{tle_data}")
+   end
+
+   @logger.info("number of TLE records: #{tle_data.xd_read_tle_file_num_rec}")
+   @logger.info("=> NORAD LINE ZERO:")
+   @logger.info("NORAD SATCAT   : #{tle_data.xd_read_tle_rec_norad_satcat(0)}")
+   @logger.info("=> NORAD FIRST LINE:")
+   @logger.info("Sat. number        : #{tle_data.xd_read_tle_rec_sat_number(0)}")
+   @logger.info("Classification     : #{tle_data.xd_read_tle_rec_classification(0)}")
+   @logger.info("INT DESIGNATOR     : #{tle_data.xd_read_tle_rec_int_des(0)}")
+   @logger.info("Epoch              : #{tle_data.xd_read_tle_rec_time(0)} / #{mjd2000_to_utc(tle_data.xd_read_tle_rec_time(0))}")
+   @logger.info("First  Time Derivative Mean Motion : #{tle_data.xd_read_tle_rec_1st_mean_motion(0)}")
+   @logger.info("Second Time Derivative Mean Motion : #{tle_data.xd_read_tle_rec_2nd_mean_motion(0)}")
+   @logger.info("BSTAR drag         : #{tle_data.xd_read_tle_rec_bstar(0)}")
+   @logger.info("Ephemeris type     : #{tle_data.xd_read_tle_rec_ephemeris_type(0)}")
+   @logger.info("Element number     : #{tle_data.xd_read_tle_rec_element_number(0)}")
+   @logger.info("Checksum#1         : #{tle_data.xd_read_tle_rec_checksum1(0)}")
+   @logger.info("=> NORAD SECOND LINE")
+   @logger.info("Eccentricity       : #{tle_data.xd_read_tle_rec_eccentricity(0)}")
+   @logger.info("Argument of Perigee: #{tle_data.xd_read_tle_rec_w(0)} degrees")
+   @logger.info("Inclination        : #{tle_data.xd_read_tle_rec_inclination(0)} degrees")
+   @logger.info("Right Ascension of the Ascending Node (RAAN) : #{tle_data.xd_read_tle_rec_RAAN(0)} degrees")
+   @logger.info("Mean Anomaly       : #{tle_data.xd_read_tle_rec_mean_anomaly(0)} degrees")
+   @logger.info("Mean Motion        : #{tle_data.xd_read_tle_rec_mean_motion(0)} rev/day")
+   @logger.info("Revolution @ epoch : #{tle_data.xd_read_tle_rec_abs_orbit(0)} revs")
+   @logger.info("Checksum#2         : #{tle_data.xd_read_tle_rec_checksum2(0)}")
+   # ---------------------
+
+   @startDate = mjd2000_to_utc(tle_data.xd_read_tle_rec_time(0)).strftime("%Y%m%dT%H%M%S")
+   @tleEpoch  = tle_data.xd_read_tle_rec_time(0)
+
+end
+## ----------------------------------------------------------
+
 def initTime
 
    # ---------------------
@@ -364,7 +457,7 @@ def initTime
    time_model     = XL_TIMEMOD_OSF
    n_files        = 1
    time_file      = Array.new
-   time_file << @roef
+   time_file      << @roef
    time_init_mode = XL_SEL_FILE
    time_ref       = XL_TIME_UTC
    time0          = utc_to_mjd2000("20230101T000000")
@@ -373,8 +466,6 @@ def initTime
    orbit1         = 99999
    # isDebugMode    = @isDebugMode
    isDebugMode    = false
-   # strDate        = "20230422T120000"
-   strDate        = @startDate
 
    if @isDebugMode == true then
       @logger.debug("=> xl_time_ref_init_file(")
@@ -386,6 +477,7 @@ def initTime
       @logger.debug("time0            :  #{time0} ; #{mjd2000_to_utc(time0)}")
       @logger.debug("time1            :  #{time1} ; #{mjd2000_to_utc(time1)}")
       @logger.debug("orbit0           :  #{orbit0}")
+      @logger.debug("orbit1           :  #{orbit1}")
       @logger.debug("orbit1           :  #{orbit1}")
       @logger.debug("isDebugMode      :  #{isDebugMode}")
       @logger.debug(")")
@@ -401,7 +493,6 @@ def initTime
                            time1, \
                            orbit0, \
                            orbit1, \
-                           strDate, \
                            isDebugMode \
                      )
 
@@ -469,7 +560,7 @@ def convertTime(strTime)
 end
 ## ----------------------------------------------------------
 
-def initOrbit
+def initOrbit(orbitFile = nil)
    
    # ---------------------
    # if @isDebugMode == true then
@@ -483,15 +574,22 @@ def initOrbit
    orbit_mode  = XO_ORBIT_INIT_AUTO
    n_files     = 1
    input_files = Array.new
-   input_files << @roef
+   
+   if orbitFile != nil then
+      input_files << orbitFile
+      sat_id      = XO_SAT_SENTINEL_1A
+   else
+      input_files << @roef
+   end
+
    time_mode   = XO_SEL_FILE
    time_ref    = XL_TIME_UTC
    time0       = nil
    time1       = nil
    orbit0      = nil
    orbit1      = nil
-   # isDebugMode = @isDebugMode
-   isDebugMode = false
+   isDebugMode = @isDebugMode
+   #isDebugMode = false
 
    if @isDebugMode == true then
       @logger.debug("=> xo_orbit_init_file(")

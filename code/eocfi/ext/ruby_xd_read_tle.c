@@ -132,30 +132,30 @@ VALUE method_xd_read_tle(
    {
     
       printf("xd_read_tle OK \n") ;
-      printf("tle_data num records => %li \n", tle_data.num_rec) ;
+      printf("tle_data num records => %li \n ", tle_data.num_rec) ;
 
       for(n = 0 ; n < tle_data.num_rec ;n++)
       {
-         printf("tle_rec[%li] 0 NORAD SATCAT             => %s \n", n, tle_data.tle_rec[n].norad_satcat) ;
-         printf("tle_rec[%li] 1.2  satellite number      => %ld \n", n, tle_data.tle_rec[n].sat_number) ;
-         printf("tle_rec[%li] 1.3  classification        => %c \n", n, tle_data.tle_rec[n].classification) ;
-         printf("tle_rec[%li] 1.[4,5,6] int. designator  => %s \n", n, tle_data.tle_rec[n].int_des) ;
-         printf("tle_rec[%li] 1.[7,8] Epoch MJD2000      => %lf \n", n, tle_data.tle_rec[n].time) ;
-         printf("tle_rec[%li] 1.9  First Time Derivative of Mean Motion => %lf \n", n, tle_data.tle_rec[n].n_1st) ;
-         printf("tle_rec[%li] 1.10 Second Time Derivative of Mean Motion => %lf \n", n, tle_data.tle_rec[n].n_2nd) ;
-         printf("tle_rec[%li] 1.11 BSTAR drag term       => %lf \n", n, tle_data.tle_rec[n].bstar) ;
-         printf("tle_rec[%ld] 1.12 Ephemeris type        => %d \n", n, tle_data.tle_rec[n].ephemeris_type) ;
-         printf("tle_rec[%li] 1.13 Element number        => %d \n", n, tle_data.tle_rec[n].index) ;
-         printf("tle_rec[%li] 1.14 checksum1             => %d \n", n, tle_data.tle_rec[n].checksum1) ;
-         printf("tle_rec[%li] 2.2  satellite number      => %ld \n", n, tle_data.tle_rec[n].sat_number) ;
-         printf("tle_rec[%li] 2.3  Inclination                => %lf degrees\n", n, tle_data.tle_rec[n].i) ;
+         printf("tle_rec[%li] 0 NORAD SATCAT                   => %s \n", n, tle_data.tle_rec[n].norad_satcat) ;
+         printf("tle_rec[%li] 1.2  satellite number            => %ld \n", n, tle_data.tle_rec[n].sat_number) ;
+         printf("tle_rec[%li] 1.3  classification              => %c \n", n, tle_data.tle_rec[n].classification) ;
+         printf("tle_rec[%li] 1.[4,5,6] int. designator        => %s \n", n, tle_data.tle_rec[n].int_des) ;
+         printf("tle_rec[%li] 1.[7,8] Epoch MJD2000            => %lf \n", n, tle_data.tle_rec[n].time) ;
+         printf("tle_rec[%li] 1.9  First Time Derivative of Mean Motion    => %lf \n", n, tle_data.tle_rec[n].n_1st) ;
+         printf("tle_rec[%li] 1.10 Second Time Derivative of Mean Motion   => %lf \n", n, tle_data.tle_rec[n].n_2nd) ;
+         printf("tle_rec[%li] 1.11 BSTAR drag term             => %lf \n", n, tle_data.tle_rec[n].bstar) ;
+         printf("tle_rec[%ld] 1.12 Ephemeris type              => %d \n", n, tle_data.tle_rec[n].ephemeris_type) ;
+         printf("tle_rec[%li] 1.13 Element number              => %d \n", n, tle_data.tle_rec[n].index) ;
+         printf("tle_rec[%li] 1.14 checksum1                   => %d \n", n, tle_data.tle_rec[n].checksum1) ;
+         printf("tle_rec[%li] 2.2  satellite number            => %ld \n", n, tle_data.tle_rec[n].sat_number) ;
+         printf("tle_rec[%li] 2.3  Inclination                 => %lf degrees\n", n, tle_data.tle_rec[n].i) ;
          printf("tle_rec[%li] 2.4  Right Ascension of the Ascending Node => %lf degrees\n", n, tle_data.tle_rec[n].ra) ;
-         printf("tle_rec[%li] 2.5  Eccentricity               => %lf \n", n, tle_data.tle_rec[n].e) ;
-         printf("tle_rec[%li] 2.6  Argument of Perigee        => %lf degrees\n", n, tle_data.tle_rec[n].w) ;
-         printf("tle_rec[%li] 2.7  Mean Anomaly               => %lf degrees\n", n, tle_data.tle_rec[n].m) ;
-         printf("tle_rec[%li] 2.8  Mean Motion                => %lf rev/day\n", n, tle_data.tle_rec[n].n) ;
-         printf("tle_rec[%li] 2.9  Revolution number  @ epoch => %ld \n", n, tle_data.tle_rec[n].abs_orbit) ;
-         printf("tle_rec[%li] 2.10 checksum2                  => %d \n", n, tle_data.tle_rec[n].checksum2) ;
+         printf("tle_rec[%li] 2.5  Eccentricity                => %lf \n", n, tle_data.tle_rec[n].e) ;
+         printf("tle_rec[%li] 2.6  Argument of Perigee         => %lf degrees\n", n, tle_data.tle_rec[n].w) ;
+         printf("tle_rec[%li] 2.7  Mean Anomaly                => %lf degrees\n", n, tle_data.tle_rec[n].m) ;
+         printf("tle_rec[%li] 2.8  Mean Motion                 => %lf rev/day\n", n, tle_data.tle_rec[n].n) ;
+         printf("tle_rec[%li] 2.9  Revolution number  @ epoch  => %ld \n", n, tle_data.tle_rec[n].abs_orbit) ;
+         printf("tle_rec[%li] 2.10 checksum2                   => %d \n", n, tle_data.tle_rec[n].checksum2) ;
          /* printf("tle_rec[%li] Rev. number @epoch   => %ld \n", n, tle_data.tle_rec[n].abs_orbit) ; */
       }
 

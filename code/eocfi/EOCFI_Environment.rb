@@ -29,7 +29,7 @@ module EOCFI
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "0.0.1"  =>    "list of functions:\n\
+      "0.0.1"  =>    "list of EOCFI supported functions:\n\
          xd_read_station\n\
          xd_read_station_id\n\
          xd_read_station_file\n\
@@ -46,7 +46,12 @@ module EOCFI
       "0.0.0"  =>    "first version of the eocfi installer created" \
    }
    ## -----------------------------------------------------------------
-      
+   
+   @@ESA_EOCFI_VERSION  = "4.23"
+   @@ESA_EOCFI_LICENSE  = "https://eop-cfi.esa.int/Repo/PUBLIC/DOCUMENTATION/LICENSING/2.4/ESA-CL_v2.4_Strong_Copyleft.pdf"
+   @@ESA_EOCFI_EMAIL    = "cfi@eopp.esa.int"
+   @@ESA_EOCFI_URL      = "https://eop-cfi.esa.int/index.php/mission-cfi-software/eocfi-software"
+
    ## -----------------------------------------------------------------
 
    ## extract MPL configuration from installation directory 
