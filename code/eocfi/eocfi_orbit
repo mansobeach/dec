@@ -61,13 +61,13 @@ def main
    @bOSVExtra        = false
    @startDate        = nil
    @endDate          = nil
-   @station          = ""
+   @station          = nil
    fileTLE           = nil
 
    opts = GetoptLong.new(
      ["--startDate",   "-s",           GetoptLong::REQUIRED_ARGUMENT],
      ["--endDate",   "-e",             GetoptLong::REQUIRED_ARGUMENT],
-     ["--tle",   "-t",                GetoptLong::REQUIRED_ARGUMENT],
+     ["--tle",   "-t",                 GetoptLong::REQUIRED_ARGUMENT],
      ["--Station",   "-S",             GetoptLong::REQUIRED_ARGUMENT],
      ["--list", "-l",                  GetoptLong::NO_ARGUMENT],
      ["--eXtra", "-X",                 GetoptLong::NO_ARGUMENT],
@@ -133,9 +133,7 @@ def main
 		exit(99)
    end
    # ------------------------------------------
-
    @cfi         = EOCFI::Earth_Explorer_CFI.new
-   
    # ------------------------------------------
 
    if @bShowVersion == true then
@@ -185,6 +183,7 @@ def main
          @logger.error("File #{fileTLE} is not available")
          exit(99)
       end
+      # initTLE_SAT_GENERIC()
       readTLE(fileTLE)
       initTime()
       initOrbit(fileTLE)
@@ -213,8 +212,29 @@ def main
 
    # ------------------------------------------
 
+   # Ground Stations information
+
    if @bList == true then
       listStations(statDB)
+      exit(0)
+   end
+
+   if @station != nil then
+      begin
+         stationInfo = @cfi.xd_read_station(statDB, @station, @isDebugMode)
+         @logger.info("Ground Station => #{stationInfo.station_id}")
+         @logger.info("Mission      : #{stationInfo.mission_name}")
+         @logger.info("Antenna      : #{stationInfo.antenna}")
+         @logger.info("Purpose      : #{stationInfo.purpose}")
+         @logger.info("Descriptor   : #{stationInfo.descriptor}")
+         @logger.info("Type         : #{stationInfo.type}")
+         @logger.info("Latitude     : #{stationInfo.station_lat} degrees")
+         @logger.info("Longitude    : #{stationInfo.station_long} degrees")
+         @logger.info("Altitude     : #{stationInfo.station_alt} m")
+      rescue Exception => e
+         @logger.error("#{e.to_s}")
+         exit(99)
+      end
       exit(0)
    end
 
@@ -388,7 +408,7 @@ end
 
 def readTLE(tle_file)
 
-   satellite   = ""
+   satellite   = "SENTINEL-1A"
    isDebugMode = @isDebugMode
    tle_data    = nil
    # ---------------------
@@ -577,7 +597,10 @@ def initOrbit(orbitFile = nil)
    
    if orbitFile != nil then
       input_files << orbitFile
-      sat_id      = XO_SAT_SENTINEL_1A
+      # orbit_mode   = XO_ORBIT_INIT_TLE_MODE
+      # orbit_mode   = XO_ORBIT_INIT_TLE_SGP4_MODE
+      orbit_mode   = XO_ORBIT_INIT_TLE_SDP4_MODE
+      sat_id       = XO_SAT_SENTINEL_1A
    else
       input_files << @roef
    end
@@ -722,6 +745,49 @@ def genOSVExtra
    # end
    # ---------------------
    return result
+end
+## ----------------------------------------------------------
+
+def initTLE_SAT_GENERIC
+   # ---------------------
+   if @isDebugMode == true then
+      @logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+   # ---------------------
+
+
+   sat_id            =  XD_SAT_GENERIC
+   norad_sat_number  = 00000
+   norad_sat_cat     = "GENERIC"
+   int_des           = "00000  "
+   isDebugMode       = @isDebugMode
+
+   @logger.info("Using xl_set_tle_sat_data: #{sat_id}, #{norad_sat_number}, #{norad_sat_cat}, #{int_des}")
+
+   if @isDebugMode == true then
+      @logger.debug("=> xl_set_tle_sat_data(")
+      @logger.debug("sat_id            : #{XO_Sat_id_enum.key(sat_id)}")
+      @logger.debug("norad_sat_number  : #{norad_sat_number}")
+      @logger.debug("norad_sat_cat     : #{norad_sat_cat}")
+      @logger.debug("int_des           : #{int_des}")
+      @logger.debug("isDebugMode       : #{isDebugMode}")
+      @logger.debug(")")
+   end
+
+   result = @cfi.xl_set_tle_sat_data(
+                  sat_id,
+                  norad_sat_number,
+                  norad_sat_cat,
+                  int_des,
+                  isDebugMode
+            )
+
+   # ---------------------
+   if @isDebugMode == true then
+      @logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+   # ---------------------
+
 end
 ## ----------------------------------------------------------
 

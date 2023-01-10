@@ -46,6 +46,7 @@ void Init_Ruby_Exception() ;
 
 VALUE method_xo_check_library_version() ;
 
+VALUE method_xl_set_tle_sat_data() ;
 VALUE method_xl_time_ref_init_file() ;
 VALUE method_xl_time_ascii_to_processing() ;
 VALUE method_xl_time_close() ;
@@ -57,6 +58,32 @@ VALUE method_xo_position_on_orbit_to_time() ;
 VALUE method_xo_time_to_orbit2() ;
 VALUE method_xo_osv_compute() ;
 VALUE method_xo_osv_compute_extra() ;
+
+VALUE method_xd_read_oem() ;
+   VALUE method_xd_read_oem_num_rec() ;
+   VALUE method_xd_read_oem_ccsds_oem_vers() ;
+   VALUE method_xd_read_oem_comment_header() ;
+   VALUE method_xd_read_oem_originator() ;
+   VALUE method_xd_read_oem_creation_date() ;
+   VALUE method_xd_read_oem_metadata_object_name() ;
+   VALUE method_xd_read_oem_metadata_object_id() ;
+   VALUE method_xd_read_oem_metadata_center_name() ;
+   VALUE method_xd_read_oem_metadata_ref_frame() ;
+   VALUE method_xd_read_oem_metadata_ref_frame_epoch() ;
+   VALUE method_xd_read_oem_metadata_time_system() ;
+   VALUE method_xd_read_oem_metadata_start_time() ;
+   VALUE method_xd_read_oem_metadata_stop_time() ;
+   VALUE method_xd_read_oem_metadata_useable_start_time() ;
+   VALUE method_xd_read_oem_metadata_useable_stop_time() ;
+   /*
+   VALUE method_xd_read_rec_oem_abs_orbit() ;
+   */
+   VALUE method_xd_read_rec_oem_utc_time() ;
+   VALUE method_xd_read_rec_oem_ref_frame() ;
+   VALUE method_xd_read_rec_oem_time_ref_of() ;
+   VALUE method_xd_read_rec_oem_pos();
+   VALUE method_xd_read_rec_oem_vel();
+   VALUE method_xd_read_rec_oem_quality() ;
 
 VALUE method_xd_read_station_file() ;
    VALUE method_xd_read_station_file_num_rec() ;
@@ -119,6 +146,7 @@ void Init_ruby_earth_explorer_cfi()
 
 	rb_define_method(ruby_earth_explorer_cfi, "xo_check_library_version", method_xo_check_library_version, 1) ;
    
+   rb_define_method(ruby_earth_explorer_cfi, "xl_set_tle_sat_data", method_xl_set_tle_sat_data, 5) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 10) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_ascii_to_processing", method_xl_time_ascii_to_processing, 7) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_close", method_xl_time_close, 1) ;
@@ -131,6 +159,35 @@ void Init_ruby_earth_explorer_cfi()
    rb_define_method(ruby_earth_explorer_cfi, "xo_osv_compute", method_xo_osv_compute, 5) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_osv_compute_extra", method_xo_osv_compute_extra, 3) ;
    
+   rb_define_method(ruby_earth_explorer_cfi, "xd_read_oem", method_xd_read_oem, 2) ;
+      rb_define_method(ruby_earth_explorer_cfi, "num_rec_oem", method_xd_read_oem_num_rec, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "ccsds_oem_vers", method_xd_read_oem_ccsds_oem_vers, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_comment_header", method_xd_read_oem_comment_header, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_originator", method_xd_read_oem_originator, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_creation_date", method_xd_read_oem_creation_date, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_object_name", method_xd_read_oem_metadata_object_name, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_object_id", method_xd_read_oem_metadata_object_id, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_center_name", method_xd_read_oem_metadata_center_name, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_ref_frame", method_xd_read_oem_metadata_ref_frame, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_ref_frame_epoch", method_xd_read_oem_metadata_ref_frame_epoch, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_time_system", method_xd_read_oem_metadata_time_system, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_start_time", method_xd_read_oem_metadata_start_time, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_stop_time", method_xd_read_oem_metadata_stop_time, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_useable_start_time", method_xd_read_oem_metadata_useable_start_time, 0) ;
+      rb_define_method(ruby_earth_explorer_cfi, "oem_metadata_useable_stop_time", method_xd_read_oem_metadata_useable_stop_time, 0) ;
+
+      /*
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_abs_orbit", method_xd_read_rec_oem_abs_orbit, 1) ;
+      */
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_utc_time", method_xd_read_rec_oem_utc_time, 1) ;
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_ref_frame", method_xd_read_rec_oem_ref_frame, 1) ;
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_time_ref_of", method_xd_read_rec_oem_time_ref_of, 1) ;
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_pos", method_xd_read_rec_oem_pos, 1) ;
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_vel", method_xd_read_rec_oem_vel, 1) ;
+      rb_define_method(ruby_earth_explorer_cfi, "rec_oem_quality", method_xd_read_rec_oem_quality, 1) ;
+
+      
+
    rb_define_method(ruby_earth_explorer_cfi, "xd_read_station_file", method_xd_read_station_file, 2) ;
       rb_define_method(ruby_earth_explorer_cfi, "num_rec", method_xd_read_station_file_num_rec, 0) ;
       rb_define_method(ruby_earth_explorer_cfi, "xd_station_rec", method_xd_read_station_file_xd_station_rec, 0) ;

@@ -85,7 +85,8 @@ VALUE method_xd_read_tle(
    
    if (iDebug == 1)
    {
-      printf("DEBUG: ruby_method_xd_read_tle file_tle: %s\n", file_tle) ;  
+      printf("DEBUG: ruby_method_xd_read_tle file_tle       : %s\n", file_tle) ;
+      printf("DEBUG: ruby_method_xd_read_tle satellite_name : %s\n", satellite_name) ;   
    }
    
    FILE *file;
@@ -132,7 +133,7 @@ VALUE method_xd_read_tle(
    {
     
       printf("xd_read_tle OK \n") ;
-      printf("tle_data num records => %li \n ", tle_data.num_rec) ;
+      printf("tle_data num records => %li \n", tle_data.num_rec) ;
 
       for(n = 0 ; n < tle_data.num_rec ;n++)
       {

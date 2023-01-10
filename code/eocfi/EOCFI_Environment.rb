@@ -24,12 +24,13 @@ module EOCFI
    
    include CUC::DirUtils
    
-   @@version = "0.0.1w"
+   @@version = "0.0.1x"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
       "0.0.1"  =>    "list of EOCFI supported functions:\n\
+         xd_read_oem\n\
          xd_read_station\n\
          xd_read_station_id\n\
          xd_read_station_file\n\

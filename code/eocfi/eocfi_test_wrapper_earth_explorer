@@ -23,9 +23,10 @@ require 'eocfi/EOCFI_Constants'
 ## 3 - test_xd_read_station
 ## 3.1 - test_xd_read_station_naos
 ## 4 - test_xd_read_station_file
-## 5 - test_xl_time_ref_init_file
-## 6 - test_xo_orbit_init_file
-## 6.1 - test_xo_orbit_init_file_naos
+## 5 - test_xl_set_tle_sat_data
+## 6 - test_xl_time_ref_init_file
+## 7 - test_xo_orbit_init_file
+## 7.1 - test_xo_orbit_init_file_naos
 ## 2 - test_xo_time_to_orbit
 ## 3 - test_xo_position_on_orbit_to_time
 ##   - test_xv_swath_id_init
@@ -149,6 +150,77 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       @@logger.debug(val)
    end
    ## ------------------------------------------------------
+
+   def testOEM
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+      oem_file    = "#{File.dirname(File.expand_path(__FILE__))}/data/NS1_OPER_ORB_OEM____20100825T000000_20100827T000000_0001.OEM"
+      isDebugMode = true
+      oem_data    = @@testObject.xd_read_oem(oem_file, isDebugMode)
+      @@logger.info("ORIGINATOR     :  #{oem_data.oem_originator}")
+      @@logger.info("COMMENT        :  #{oem_data.oem_comment_header}")
+      @@logger.info("CCSDS_OEM_VERS :  #{oem_data.ccsds_oem_vers}")
+      @@logger.info("CREATION_DATE  :  #{oem_data.oem_creation_date}")
+      @@logger.info("OBJECT_NAME    :  #{oem_data.oem_metadata_object_name}")
+      @@logger.info("OBJECT_ID      :  #{oem_data.oem_metadata_object_id}")
+      @@logger.info("REF_FRAME      :  #{oem_data.oem_metadata_ref_frame}")
+      @@logger.info("CENTER_NAME    :  #{oem_data.oem_metadata_center_name}")
+      # @@logger.info("REF_FRAME_EPOCH:  #{oem_data.oem_metadata_ref_frame_epoch}")
+      @@logger.info("TIME_SYSTEM    :  #{oem_data.oem_metadata_time_system}")
+      @@logger.info("START_TIME     :  #{oem_data.oem_metadata_start_time}")
+      @@logger.info("STOP_TIME      :  #{oem_data.oem_metadata_stop_time}")
+      @@logger.info("Num of OSVs    :  #{oem_data.num_rec_oem}")
+      
+      #@@logger.info("#{oem_data.rec_oem_abs_orbit(0)}")
+      # @@logger.info("REF_FRAME[0] = #{oem_data.rec_oem_ref_frame(0)}")
+      @@logger.info("time_ref_of    = #{oem_data.rec_oem_time_ref_of(0)}")
+      @@logger.info("quality        = #{oem_data.rec_oem_quality(0)}")
+      @@logger.info("pos[0][x,y,z]  = #{oem_data.rec_oem_pos(0)}")
+      @@logger.info("vel[0][x,y,z]  = #{oem_data.rec_oem_vel(0)}")
+      @@logger.info("#{oem_data.rec_oem_utc_time(0)}")
+      @@logger.info("#{oem_data.rec_oem_utc_time(1)}")
+      @@logger.info("#{oem_data.rec_oem_utc_time(2)}")
+      @@logger.info("#{oem_data.rec_oem_utc_time(3)}")
+      
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+   ## ------------------------------------------------------
+
+=begin
+   def test_TLE_S1A
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+      # ---------------------
+
+      tle_file    = "#{File.dirname(File.expand_path(__FILE__))}/data/39634.txt"
+      satellite   = "SENTINEL-1A"
+      isDebugMode = true
+      tle_data    = nil
+      # ---------------------
+ 
+      @@logger.debug("=> xd_read_tle(")
+      @@logger.debug("tle_file    : #{tle_file}")
+      @@logger.debug("satellite   : #{satellite}")
+      @@logger.debug("isDebugMode : #{isDebugMode}")
+      @@logger.debug(")")
+ 
+      begin
+          tle_data         = @@testObject.xd_read_tle(\
+             tle_file, \
+             satellite, \
+             isDebugMode
+          )
+      rescue => exception
+          @@logger.error(exception.to_s)
+      end
+
+      cmd = "cat /tmp/eocfi_stderr"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+=end
+   ## ------------------------------------------------------
+
 
    def test_xd_read_tle
       @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
@@ -527,6 +599,39 @@ class TestCase_Wrapper_EOCFI < Test::Unit::TestCase
       }
 
    end
+   ## ------------------------------------------------------
+
+   def test_xl_set_tle_sat_data
+      @@logger.debug("BEGIN #{File.basename(__FILE__)}::#{__method__.to_s}")
+
+      sat_id            =  XD_SAT_GENERIC
+      norad_sat_number  = 00000
+      norad_sat_cat     = "GENERIC"
+      int_des           = "00000  "
+      isDebugMode       = true
+
+   
+      @@logger.debug("=> xl_set_tle_sat_data(")
+      @@logger.debug("sat_id            : #{XO_Sat_id_enum.key(sat_id)}")
+      @@logger.debug("norad_sat_number  : #{norad_sat_number}")
+      @@logger.debug("norad_sat_cat     : #{norad_sat_cat}")
+      @@logger.debug("int_des           : #{int_des}")
+      @@logger.debug("isDebugMode       : #{isDebugMode}")
+      @@logger.debug(")")
+   
+
+      result = @@testObject.xl_set_tle_sat_data(
+                  sat_id,
+                  norad_sat_number,
+                  norad_sat_cat,
+                  int_des,
+                  isDebugMode
+            )
+
+
+      @@logger.debug("END #{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+
    ## ------------------------------------------------------
 
    ## Test test_xl_time_ref_init_file

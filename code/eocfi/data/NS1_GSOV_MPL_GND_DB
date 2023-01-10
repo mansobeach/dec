@@ -23,13 +23,13 @@
     <Variable_Header/>
   </Earth_Explorer_Header>
   <Data_Block type="xml">
-    <List_of_Ground_Stations count="2">
+    <List_of_Ground_Stations count="5">
       <Ground_Station>
-        <Station_id>DDCREDU</Station_id>
-        <Descriptor>DDC</Descriptor>
+        <Station_id>BELAS0</Station_id>
+        <Descriptor>DDC - Belgium Site Redu</Descriptor>
         <Antenna>XS-BAND</Antenna>
         <Purpose>GLOBAL</Purpose>
-        <Type/>
+        <Type>DDC-NOMINAL</Type>
         <Location>
           <Long unit="deg">5.144060180</Long>
           <Lat unit="deg">+50.005042290</Lat>
@@ -48,11 +48,11 @@
         </List_of_Mask_Points>
       </Ground_Station>
       <Ground_Station>
-        <Station_id>KSATSVAL</Station_id>
-        <Descriptor>KSAT - Svalbard</Descriptor>
+        <Station_id>NORASN</Station_id>
+        <Descriptor>KSAT - Svalbard (Nominal)</Descriptor>
         <Antenna>XS-BAND</Antenna>
         <Purpose>GLOBAL</Purpose>
-        <Type/>
+        <Type>KSAT-NOMINAL</Type>
         <Location>
           <Long unit="deg">+15.389693</Long>
           <Lat unit="deg">+78.230811</Lat>
@@ -69,7 +69,76 @@
         <Default_El unit="deg">+000.000000</Default_El>
         <List_of_Mask_Points count="000">
         </List_of_Mask_Points>
-      </Ground_Station>      
+      </Ground_Station>
+      <Ground_Station>
+        <Station_id>KSTAIN</Station_id>
+        <Descriptor>KSAT - Inuvik (Nominal)</Descriptor>
+        <Antenna>S-BAND</Antenna>
+        <Purpose>GLOBAL</Purpose>
+        <Type>KSAT-LEOP-SBAND</Type>
+        <Location>
+          <Long unit="deg">+133.54</Long>
+          <Lat unit="deg">+68.32</Lat>
+          <Alt unit="m">+100.0</Alt>
+        </Location>
+        <List_of_Spacecrafts count="1">
+          <Spacecraft>
+            <Name>NAOS1</Name>
+            <Aos_El unit="deg">+5.0</Aos_El>
+            <Los_El unit="deg">+5.0</Los_El>
+            <Mask>AOS_LOS</Mask>
+          </Spacecraft>
+        </List_of_Spacecrafts>
+        <Default_El unit="deg">+005.000000</Default_El>
+        <List_of_Mask_Points count="000">
+        </List_of_Mask_Points>
+      </Ground_Station>
+      <Ground_Station>
+        <Station_id>KSTATN</Station_id>
+        <Descriptor>KSAT - Troll (Nominal)</Descriptor>
+        <Antenna>S-BAND</Antenna>
+        <Purpose>GLOBAL</Purpose>
+        <Type>KSAT-LEOP-SBAND</Type>
+        <Location>
+          <Long unit="deg">+2.532235</Long>
+          <Lat unit="deg">-72.012501</Lat>
+          <Alt unit="m">+1270.0</Alt>
+        </Location>
+        <List_of_Spacecrafts count="1">
+          <Spacecraft>
+            <Name>NAOS1</Name>
+            <Aos_El unit="deg">+5.0</Aos_El>
+            <Los_El unit="deg">+5.0</Los_El>
+            <Mask>AOS_LOS</Mask>
+          </Spacecraft>
+        </List_of_Spacecrafts>
+        <Default_El unit="deg">+005.000000</Default_El>
+        <List_of_Mask_Points count="000">
+        </List_of_Mask_Points>
+      </Ground_Station>
+      <Ground_Station>
+        <Station_id>KSTASG</Station_id>
+        <Descriptor>KSAT - Singapore (Nominal)</Descriptor>
+        <Antenna>S-BAND</Antenna>
+        <Purpose>GLOBAL</Purpose>
+        <Type>KSAT-LEOP-SBAND</Type>
+        <Location>
+          <Long unit="deg">103.835143</Long>
+          <Lat unit="deg">+1.398238</Lat>
+          <Alt unit="m">+55.0</Alt>
+        </Location>
+        <List_of_Spacecrafts count="1">
+          <Spacecraft>
+            <Name>NAOS1</Name>
+            <Aos_El unit="deg">+5.0</Aos_El>
+            <Los_El unit="deg">+5.0</Los_El>
+            <Mask>AOS_LOS</Mask>
+          </Spacecraft>
+        </List_of_Spacecrafts>
+        <Default_El unit="deg">+005.000000</Default_El>
+        <List_of_Mask_Points count="000">
+        </List_of_Mask_Points>
+      </Ground_Station>                                   
     </List_of_Ground_Stations>
   </Data_Block>
 </Earth_Explorer_File>

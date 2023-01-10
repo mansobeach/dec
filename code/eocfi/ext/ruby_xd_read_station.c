@@ -21,7 +21,7 @@
 
 static xd_station_rec station_rec ;
 static int iDebug ;
-
+extern VALUE rbException ;
 
 /*
 
@@ -81,7 +81,7 @@ VALUE method_xd_read_station(
    /* --------------------------------------------------- */
 
    long xd_ierr[XD_ERR_VECTOR_MAX_LENGTH] ;
-   long local_status ;
+   long status ;
 
    /* --------------------------------------------------- */
 
@@ -97,17 +97,27 @@ VALUE method_xd_read_station(
 
    /* --------------------------------------------------- */
    
-   local_status = xd_read_station(
+   status = xd_read_station(
                                        station_file,
                                        station_id, 
                                        &station_rec, 
                                        xd_ierr
                                        ) ;
-   if (local_status != XD_OK)
+
+   if (iDebug == 1)
+   {
+      printf("DEBUG: method_xd_read_station xd_read_station status: %ld ierr: %li\n", status, *xd_ierr) ;  
+   }
+
+   if (status != XD_OK)
    {
       func_id = XD_READ_STATION_ID ;
       xd_get_msg(&func_id, xd_ierr, &n, msg) ;
       xd_print_msg(&n, msg) ;
+
+      /* raise exception */
+      rb_raise(rbException, "ruby_method_xd_read_station file failed") ;
+
    }
    else
    {

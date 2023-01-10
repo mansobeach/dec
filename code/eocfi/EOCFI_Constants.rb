@@ -201,6 +201,7 @@ module EOCFI
    XL_SAT_SENTINEL_2C   = 128
    XO_SAT_SENTINEL_2C   = 128
    
+   XD_SAT_GENERIC       = 200
    XL_SAT_GENERIC       = 200
    XO_SAT_GENERIC       = 200
    
@@ -219,6 +220,7 @@ module EOCFI
       "XL_SAT_SENTINEL_2B"    => XL_SAT_SENTINEL_2B,
       "XO_SAT_SENTINEL_2B"    => XO_SAT_SENTINEL_2B,
       "XL_SAT_SENTINEL_2C"    => XL_SAT_SENTINEL_2C,
+      "XD_SAT_GENERIC"        => XD_SAT_GENERIC,
       "XL_SAT_GENERIC"        => XL_SAT_GENERIC,
       "XO_SAT_GENERIC"        => XO_SAT_GENERIC,
       "XL_SAT_GENERIC_GEO"    => XL_SAT_GENERIC_GEO,
@@ -308,6 +310,28 @@ module EOCFI
       "XO_ORBIT_INIT_MAX_VALUE"                 => XO_ORBIT_INIT_MAX_VALUE
    }
    # --------------------------------------------
+
+   XO_PROPAG_MODEL_NOT_INITIALIZED        = -1
+   XO_PROPAG_MODEL_MEAN_KEPL              = 0
+   XO_PROPAG_MODEL_SPOT                   = 1
+   XO_PROPAG_MODEL_TLE                    = 2
+   XO_PROPAG_MODEL_PRECISE                = 3
+   XO_PROPAG_MODEL_GEO                    = 4
+   XO_PROPAG_MODEL_AUTO                   = 10
+   XO_PROPAG_MODEL_DOUBLE                 = 100
+
+   # --------------------------------------------
+
+   XO_Propag_model_enum = {
+      "XO_PROPAG_MODEL_NOT_INITIALIZED"   => XO_PROPAG_MODEL_NOT_INITIALIZED,
+      "XO_PROPAG_MODEL_MEAN_KEPL"         => XO_PROPAG_MODEL_MEAN_KEPL,
+      "XO_PROPAG_MODEL_SPOT"              => XO_PROPAG_MODEL_SPOT,
+      "XO_PROPAG_MODEL_TLE"               => XO_PROPAG_MODEL_TLE,
+      "XO_PROPAG_MODEL_PRECISE"           => XO_PROPAG_MODEL_PRECISE,
+      "XO_PROPAG_MODEL_GEO"               => XO_PROPAG_MODEL_GEO,
+      "XO_PROPAG_MODEL_AUTO"              => XO_PROPAG_MODEL_AUTO,
+      "XO_PROPAG_MODEL_DOUBLE"            => XO_PROPAG_MODEL_DOUBLE
+   }
 
    # --------------------------------------------
    # XO_ORBIT_INFO_EXTRA_enum

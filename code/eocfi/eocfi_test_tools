@@ -130,6 +130,18 @@ class TestCase_EOCFITOOLS < Test::Unit::TestCase
       @@logger.info(cmd)
       assert(system(cmd), "eocfi_orbit list stations")
 
+      cmd = "eocfi_orbit -S BELAS0"
+      @@logger.info(cmd)
+      assert(system(cmd), "eocfi_orbit station definition")
+
+      cmd = "eocfi_orbit -S BELAS0"
+      @@logger.info(cmd)
+      assert(system(cmd), "eocfi_orbit station definition")
+
+      cmd = "eocfi_orbit -S IDONOTEXIST"
+      @@logger.info(cmd)
+      assert(!system(cmd), "eocfi_orbit failure to invoke definition for unexisting ground station")
+
       cmd = "eocfi_orbit -s 20220101T000000 -X"
       @@logger.info(cmd)
       assert(system(cmd), "eocfi_orbit for 20220101T000000")
