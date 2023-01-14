@@ -396,7 +396,12 @@ namespace :dec do
       @filename = "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
       cp @filename, "install/gems/dec_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
-      rm "install/gems/dec_latest.gem"
+      begin
+         rm "install/gems/dec_latest.gem"
+      rescue Exception => e
+         puts e.to_s
+      end
+      puts "ln #{@filename} install/gems/dec_latest.gem"
       ln @filename, "install/gems/dec_latest.gem"
 
       cmd = "md5sum #{@filename}"
