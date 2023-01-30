@@ -16,7 +16,7 @@
 
 #include <explorer_data_handling.h>
 
-static xd_oem_file oem_data ;
+xd_oem_file oem_data ;
 static xd_osv_list_read_configuration read_config ;
 static int iDebug ;
 extern VALUE rbException ;

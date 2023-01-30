@@ -123,7 +123,9 @@ private
    def initMetadata_NAOS
       @mission       = "NS1"
       @fileType      = "AUX_BULC__"
-      @extension     = "EOF"
+      # file deviates from the EOFFS hence it is flagged as xml
+      # @extension     = "EOF"
+      @extension     = "EEF"
       @diffTAI2UTC   = nil
       @diffUTC2GPS   = nil
    end
@@ -180,6 +182,9 @@ private
    end
    ## -------------------------------------------------------------
    
+   # reference 
+   # https://jira.elecnor-deimos.com/secure/attachment/151209/151209_%5BDPC%5DNS1_OPER_AUX_BULC___20170101T000000_20230628T000000_0001.EEF
+
    def convertNAOS
       
       if @isDebugMode == true then
@@ -187,7 +192,7 @@ private
       end
       
       filename    = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}"
-      auxBULC     = WriteXMLFile_NAOS_AUX_BULC.new("#{@targetDir}/#{filename}.EOF", @logger, @isDebugMode)
+      auxBULC     = WriteXMLFile_NAOS_AUX_BULC.new("#{@targetDir}/#{filename}.#{@extension}", @logger, @isDebugMode)
 
       if @isDebugMode == true then
          auxBULC.setDebugMode
@@ -203,17 +208,18 @@ private
 
       auxBULC.writeVariableHeader(@diffTAI2UTC, @diffUTC2GPS)
 
-      auxBULC.writeDataBlock
+      # no datablock 
+      # auxBULC.writeDataBlock
 
       auxBULC.write
 
-      @logger.info("[AUX_001] #{filename}.EOF generated from #{@filename}")
+      @logger.info("[AUX_001] #{filename}.#{@extension} generated from #{@filename}")
 
       if @isDebugMode == true then
          @logger.debug("END convertNAOS")
       end
 
-      return "#{filename}.EOF"
+      return "#{filename}.#{@extension}"
    end
    ## -------------------------------------------------------------
 

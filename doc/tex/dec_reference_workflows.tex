@@ -89,8 +89,14 @@ This section covers the manual workflow by explicit CLI invoke to execute the pu
 \begin{itemize}
     \item \hyperref[DEC005]{DEC\_005} : Interface polling is started
     \item \hyperref[DEC060]{DEC\_060} : Number of files available
-     \item \hyperref[DEC110]{DEC\_110} : File is downloaded
+    \item \hyperref[DEC110]{DEC\_110} : File is downloaded
     \item \hyperref[DEC100]{DEC\_100} : Interface pull iteration completed
+\end{itemize}
+
+\subsubsection{File conversion}
+\inlinecode{bash}{ \$>  auxConverter -m S3 -f /tmp/aux/20210514RSGA.txt -d /tmp/aux_out2} \newline
+\begin{itemize}
+    \item \hyperref[AUX001]{AUX\_001} : File has been converted
 \end{itemize}
 
 \subsection{Automation Pull Workflow}

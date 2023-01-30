@@ -46,13 +46,19 @@ void Init_Ruby_Exception() ;
 
 VALUE method_xo_check_library_version() ;
 
+VALUE method_xl_model_init() ;
+VALUE method_xl_model_get_data() ;
+VALUE method_xl_run_init() ;
 VALUE method_xl_set_tle_sat_data() ;
 VALUE method_xl_time_ref_init_file() ;
 VALUE method_xl_time_ascii_to_processing() ;
 VALUE method_xl_time_close() ;
 
+VALUE method_xo_verbose() ;
 VALUE method_xo_orbit_init_file() ;
+VALUE method_xo_orbit_init_status() ;
 VALUE method_xo_orbit_id_check() ;
+VALUE method_xo_run_init() ;
 VALUE method_xo_orbit_info() ;
 VALUE method_xo_position_on_orbit_to_time() ;
 VALUE method_xo_time_to_orbit2() ;
@@ -81,9 +87,11 @@ VALUE method_xd_read_oem() ;
    VALUE method_xd_read_rec_oem_utc_time() ;
    VALUE method_xd_read_rec_oem_ref_frame() ;
    VALUE method_xd_read_rec_oem_time_ref_of() ;
-   VALUE method_xd_read_rec_oem_pos();
-   VALUE method_xd_read_rec_oem_vel();
+   VALUE method_xd_read_rec_oem_pos() ;
+   VALUE method_xd_read_rec_oem_vel() ;
    VALUE method_xd_read_rec_oem_quality() ;
+
+VALUE method_xd_orbit_file_diagnostics() ;
 
 VALUE method_xd_read_station_file() ;
    VALUE method_xd_read_station_file_num_rec() ;
@@ -146,13 +154,19 @@ void Init_ruby_earth_explorer_cfi()
 
 	rb_define_method(ruby_earth_explorer_cfi, "xo_check_library_version", method_xo_check_library_version, 1) ;
    
+   rb_define_method(ruby_earth_explorer_cfi, "xl_model_init", method_xl_model_init, 2) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xl_model_get_data", method_xl_model_get_data, 2) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xl_run_init", method_xl_run_init, 4) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_set_tle_sat_data", method_xl_set_tle_sat_data, 5) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_ref_init_file", method_xl_time_ref_init_file, 10) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_ascii_to_processing", method_xl_time_ascii_to_processing, 7) ;
    rb_define_method(ruby_earth_explorer_cfi, "xl_time_close", method_xl_time_close, 1) ;
 
+   rb_define_method(ruby_earth_explorer_cfi, "xo_verbose", method_xo_verbose, 1) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_init_file", method_xo_orbit_init_file, 13) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_init_status", method_xo_orbit_init_status, 2) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_id_check", method_xo_orbit_id_check, 2) ;
+   rb_define_method(ruby_earth_explorer_cfi, "xo_run_init", method_xo_run_init, 3) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_orbit_info", method_xo_orbit_info, 3) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_position_on_orbit_to_time", method_xo_position_on_orbit_to_time, 4) ;
    rb_define_method(ruby_earth_explorer_cfi, "xo_time_to_orbit2", method_xo_time_to_orbit2, 3) ;
@@ -186,6 +200,7 @@ void Init_ruby_earth_explorer_cfi()
       rb_define_method(ruby_earth_explorer_cfi, "rec_oem_vel", method_xd_read_rec_oem_vel, 1) ;
       rb_define_method(ruby_earth_explorer_cfi, "rec_oem_quality", method_xd_read_rec_oem_quality, 1) ;
 
+   rb_define_method(ruby_earth_explorer_cfi, "xd_orbit_file_diagnostics", method_xd_orbit_file_diagnostics, 4) ;
       
 
    rb_define_method(ruby_earth_explorer_cfi, "xd_read_station_file", method_xd_read_station_file, 2) ;

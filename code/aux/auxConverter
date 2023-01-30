@@ -1,5 +1,17 @@
 #!/usr/bin/env ruby
 #
+# == Synopsis
+#
+# This is a Data Exchange Component (DEC) command line tool that manages the
+# file conversions / harmonisation according to every mission standard and 
+# mission service providers such as ground stations.
+#
+# This tool can be used manually from the command line or included in the DEC
+# configuration as part of any pull or push workflow.
+# 
+# For reference to the current file formant conversions and the auxiliary data
+# files supported, please execute the tool with the --version flag.
+#
 # == Usage
 # auxConverter -m S3 -f <full_path_file> -d <dir>
 #     --mission <id>    mission identifier
@@ -8,12 +20,16 @@
 #       S3     - Copernicus Sentinel-3
 #       NAOS   - NAOS mission
 #       KSAT   - Kongsberg Satellite Services
-#     --version         shows the version number
+#     --version         shows the version number / supported conversions
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
 # 
+# == Author
+# Elecnor Deimos-Space
 #
-
+# == Copyright
+# Copyright (c) 2021 Elecnor Deimos-Space
+#
 #########################################################################
 #
 # Ruby source for #auxConverter
@@ -75,7 +91,7 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{AUX.class_variable_get(:@@version)}]", "\n\n")
+      print("\nElecnor Deimos-Space ", File.basename($0), " Version: [#{AUX.class_variable_get(:@@version)}]", "\n\n")
       hRecord = AUX.class_variable_get(:@@change_record)
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -147,7 +163,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
-   value = `#{"head -14 #{fullpathFile}"}`
+   value = `#{"head -32 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

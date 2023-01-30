@@ -17,13 +17,11 @@
 require 'rubygems'
 require 'fileutils'
 
-require 'cuc/DirUtils'
 
 module AUX
    
-   include CUC::DirUtils
    
-   @@version = "0.0.7a"
+   @@version = "0.0.7c"
    
    ## -----------------------------------------------------------------
    
@@ -32,8 +30,8 @@ module AUX
       "0.0.6"  =>    "IERS Bulletin A XML has been integrated\n\
          IERS Bulletin A ASCII updated for NAOS",
       "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\
-         Celestrak TCA (TLE catalogue)  has been integrated\n\
-         Celestrak TLE (TLE prediction) has been integrated\n\
+         Celestrak TCA (TLE catalogue) has been integrated\n\
+         Celestrak TLE (TLE mission)   has been integrated\n\
          NASA MSFC Solar Flux (F10.7) / Geomagnetic disturbance (Ap) has been integrated\n\
          NASA CDDIS Bulletin A / Earth Orientation Parameters has been integrated\n\
          NASA CDDIS Bulletin C / TAI-UTC has been integrated",

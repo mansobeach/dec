@@ -18,9 +18,10 @@
 #include <explorer_orbit.h>
 
 extern VALUE rbException ;
-extern xl_time_id time_id ;
+extern xl_time_id       time_id ;
+extern xl_model_id      model_id ;
+xo_orbit_id             orbit_id    = {NULL} ;
 static int iDebug ;
-xo_orbit_id    orbit_id    = {NULL} ;
 
 VALUE method_xo_orbit_init_file( VALUE self,
                                     VALUE sat_id_,
@@ -115,7 +116,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
       lOrbitStop = NUM2LONG(orbit1_) ;   
    /* ------------------ */   
 
-   for(int idx =0 ; idx < n_files; idx++)
+   for(int idx = 0 ; idx < n_files; idx++)
    {
       VALUE entry = rb_ary_entry(input_files_, idx) ;
       char * c_str = StringValueCStr(entry) ;
@@ -145,8 +146,6 @@ VALUE method_xo_orbit_init_file( VALUE self,
       rb_fatal("ERROR: method_xo_orbit_init_file => cannot open file %s", path_orbit_file) ;
       */
    }
-
-   xl_model_id    model_id    = {NULL} ;
    
    /* --------------------------------------------------- */
 
@@ -173,7 +172,7 @@ VALUE method_xo_orbit_init_file( VALUE self,
 
    if (iDebug == 1)
    {
-      printf("DEBUG: method_xo_orbit_init_file xo_orbit_init_file status: %ld ierr: %li\n", status, *ierr) ;  
+      printf("DEBUG: method_xo_orbit_init_file xo_orbit_init_file status: %ld ierr: %li orbit_id: %li model_id: %li\n", status, *ierr, orbit_id, model_id) ;  
    }
                                  
    if (status != XO_OK)

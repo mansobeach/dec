@@ -17,6 +17,7 @@
 
 require 'cuc/Converters'
 
+require 'aux/AUX_Handler_CCSDS_OEM'
 require 'aux/AUX_Handler_Celestrak_SFS'
 require 'aux/AUX_Handler_Celestrak_TCA'
 require 'aux/AUX_Handler_Celestrak_TLE'
@@ -97,6 +98,11 @@ private
       
       filename = File.basename(@full_path)
 
+      if File.fnmatch(AUX_Pattern_CCSDS_OEM, filename) == true then
+         @handler = AUX_Handler_CCSDS_OEM.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
       if File.fnmatch(AUX_Pattern_NASA_MSFC_ForecastSolarFlux, filename) == true then
          @handler = AUX_Handler_NASA_MSFC_ForecastSolarFlux.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
@@ -148,12 +154,12 @@ private
       end
 
       if File.fnmatch(AUX_Pattern_IGS_Broadcast_Ephemeris, filename.downcase) == true then
-         @handler = AUX_Handler_IGS_Broadcast_Ephemeris.new(@full_path, @target, @targetDir)
+         @handler = AUX_Handler_IGS_Broadcast_Ephemeris.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
       end
       
       if File.fnmatch(AUX_Pattern_NOAA_RSGA_Daily, filename) == true then
-         @handler = AUX_Handler_NOAA_RSGA_Daily.new(@full_path, @target, @targetDir)
+         @handler = AUX_Handler_NOAA_RSGA_Daily.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
       end      
       

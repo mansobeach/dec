@@ -1,3 +1,4 @@
+require_relative 'code/cuc/DirUtils'
 require_relative 'code/aux/AUX_Environment'
 include AUX
 
@@ -15,6 +16,12 @@ Gem::Specification.new do |s|
   s.files       = Dir['code/aux/*.rb'] + \
                   Dir['code/cuc/DirUtils.rb'] + \
                   Dir['code/cuc/Converters.rb'] + \
+                  Dir['code/cuc/CryptHelper.rb'] + \
+                  Dir['code/cuc/FT_PackageUtils.rb'] + \
+                  Dir['code/cuc/Log4rLoggerFactory.rb'] + \
+                  Dir['code/dec/DEC_Environment.rb'] + \
+                  Dir['code/dec/ReadConfigDEC.rb'] + \
+                  Dir['config/dec_config.xml'] + \
                   Dir['config/dec_log_config.xml']
 
   s.require_paths = ['code', 'code/aux']

@@ -28,12 +28,17 @@ In order to check the version which is currently installed the gem command can b
 \inlinecode{bash}{ \$> gem list | grep dec  }
 
 \begin{Verbatim}[tabsize=4]
-    dec (1.0.35)
+    dec (1.0.37)
 \end{Verbatim}
 
 \inlinecode{bash}{ \$> decValidateConfig -v  }
 
 \begin{Verbatim}[tabsize=4]
+1.0.37 => New gem roman-numerals is required
+          Support of SFTP authentication with password using sshpass
+          Support of SFTP known_host checks disabled for the container build process
+          Listener on status message code is fixed
+1.0.36 => LocalDissemination config items required to drive automation decListener
 1.0.35 => Management of duplications with MD5 for HTTP protocol
 1.0.34 => NATS protocol support for NAOS MCS CCS5
 1.0.33 => Update to use ruby 3.x series as interpreter
@@ -127,6 +132,37 @@ In order to check the version which is currently installed the gem command can b
 1.0.2 => commands triggered by reception events are now logged
 1.0.1 => decStats -H <hours> has been integrated
 1.0.0 => first version of the dec installer created
+\end{Verbatim}
+
+\par
+\noindent 
+The auxiliary data converter tool is installed separately since it can be used as a standalone tool if precised. \newline
+
+\inlinecode{bash}{ \$> gem list | grep aux  }
+
+\begin{Verbatim}[tabsize=4]
+    aux (0.0.7b)
+\end{Verbatim}
+
+\inlinecode{bash}{ \$> auxConverter -v  }
+
+\begin{Verbatim}[tabsize=4]
+Elecnor Deimos-Space auxConverter Version: [0.0.7b]
+
+0.0.7 => IERS Bulletin C conversion for NAOS mission
+0.0.6 => IERS Bulletin A XML has been integrated
+         IERS Bulletin A ASCII updated for NAOS
+0.0.5 => Celestrak CssiSpaceWeather Daily Prediction has been integrated
+         Celestrak TCA (TLE catalogue) has been integrated
+         Celestrak TLE (TLE mission)   has been integrated
+         NASA MSFC Solar Flux (F10.7) / Geomagnetic disturbance (Ap) has been integrated
+         NASA CDDIS Bulletin A / Earth Orientation Parameters has been integrated
+         NASA CDDIS Bulletin C / TAI-UTC has been integrated
+0.0.4 => NOAA Report Solar Geophysical Activity has been integrated
+0.0.3 => IERS Bulletin A / Earth Orientation Parameters has been integrated
+0.0.2 => IGS Broadcast Ephemeris Daily has been integrated
+0.0.1 => IERS Bulletin C / TAI-UTC has been integrated
+0.0.0 => first version of the aux installer created
 \end{Verbatim}
 
 \end{document}

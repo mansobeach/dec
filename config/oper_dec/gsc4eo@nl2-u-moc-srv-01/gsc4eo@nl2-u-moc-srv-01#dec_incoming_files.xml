@@ -77,8 +77,12 @@
          <Name>TEST_CELESTRAK_TLE</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/tle</LocalInbox>
          <DownloadDirs>
-            <!-- Sentinel-2B -->
+            <!-- Sentinel-2A 
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40697</Directory>
+            -->
+            <!-- Sentinel-2B  -->
             <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=42063</Directory>
+           
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>

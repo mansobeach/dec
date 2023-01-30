@@ -51,7 +51,7 @@ class WriteXMLFile_NAOS_AUX_BULC
    
    def writeFixedHeader(filename, validityStart, validityStop)
       
-      @eeHeader   = @xmlRoot.add_element("Earth_Explorer_Header")
+      @eeHeader   = @xmlRoot.add_element("tns:Earth_Explorer_Header")
       header      = @eeHeader.add_element("Fixed_Header")
 
       xmlFilename             = header.add_element("File_Name")
@@ -69,7 +69,9 @@ class WriteXMLFile_NAOS_AUX_BULC
       xmlFileClass            = header.add_element("File_Class")
       xmlFileClass.text       = "OPER"
 
-      xmlFileType             = header.add_element("File_Type")
+      # dirty life:
+      # https://jira.elecnor-deimos.com/browse/NAOSMOC-326
+      xmlFileType             = header.add_element("File_type")
       xmlFileType.text        = "AUX_BULC__"
 
       xmlValPeriod            = header.add_element("Validity_Period")
@@ -101,13 +103,17 @@ class WriteXMLFile_NAOS_AUX_BULC
    #-------------------------------------------------------------
 
    def writeVariableHeader(leapUTC, leapGPS)
-      header          = @eeHeader.add_element("Variable_Header")
-      utc             = header.add_element("UTC-TAI")
-      utc.add_attribute("unit",   "seconds")
+      # dirty life
+      # header          = @eeHeader.add_element("tns:Variable_Header")
+      header          = @xmlRoot.add_element("tns:Variable_Header")
+      utc             = header.add_element("tns:UTC-TAI")
+      # dirty life
+      # utc.add_attribute("unit",   "seconds")
       utc.text        = leapUTC
-      gps             = header.add_element("UTC-GPS")
+      gps             = header.add_element("tns:UTC-GPS")
       gps.text        = leapGPS
-      gps.add_attribute("unit",   "seconds")
+      # dirty life
+      # gps.add_attribute("unit",   "seconds")
    end
    #-------------------------------------------------------------
    
@@ -153,7 +159,14 @@ private
 
       # <?xml version="1.0"?>
       # <Earth_Observation_File xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://eop-cfi.esa.int/CFI http://eop-cfi.esa.int/CFI/EE_CFI_SCHEMAS/EO_OPER_AUX_ORBRES_0300.XSD" schemaVersion="3.0" xmlns="http://eop-cfi.esa.int/CFI">
-      @xmlRoot          = @xmlFile.add_element("Earth_Explorer_File")
+      
+      # <tns:Earth_Explorer_File xmlns:tns="http://www.example.org/BulletinC" xmlns="http://www.example.org/NAOSCommon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/BulletinC BulletinC_v1.xsd">
+      
+      @xmlRoot          = @xmlFile.add_element("tns:Earth_Explorer_File")
+      @xmlRoot.add_namespace('xmlns:tns', 'http://www.example.org/BulletinC')
+      @xmlRoot.add_namespace('http://www.example.org/NAOSCommon')
+      @xmlRoot.add_namespace('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+      @xmlRoot.add_attribute('xsi:schemaLocation', 'http://www.example.org/BulletinC BulletinC_v1.xsd')
 
    end   
    #-------------------------------------------------------------

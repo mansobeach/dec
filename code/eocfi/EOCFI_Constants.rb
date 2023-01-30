@@ -62,6 +62,41 @@ module EOCFI
   
    # --------------------------------------------
 
+
+   XL_MODEL_DEFAULT        = 0
+   XL_MODEL_CONFIG         = 1
+
+   XL_Model_sets_enum = {
+      "XL_MODEL_DEFAULT"   => XL_MODEL_DEFAULT,
+      "XL_MODEL_CONFIG"    => XL_MODEL_CONFIG 
+   }
+
+   XL_MODEL_TYPE_EARTH        = 0
+   XL_MODEL_TYPE_SUN          = 1
+   XL_MODEL_TYPE_MOON         = 2
+   XL_MODEL_TYPE_PLANET       = 3
+   XL_MODEL_TYPE_STAR         = 4
+   XL_MODEL_TYPE_NUTATION     = 5
+   XL_MODEL_TYPE_PRECESSION   = 6
+   XL_MODEL_TYPE_CONSTANTS    = 7
+   XL_MODEL_TYPE_LIGHT_PROPAGATION = 8
+   XL_NUM_MODEL_TYPES_ENUM    = 9
+
+   xl_model_types_enum = {
+      "XL_MODEL_TYPE_EARTH"      => XL_MODEL_TYPE_EARTH,
+      "XL_MODEL_TYPE_SUN"        => XL_MODEL_TYPE_SUN,
+      "XL_MODEL_TYPE_MOON"       => XL_MODEL_TYPE_MOON,
+      "XL_MODEL_TYPE_PLANET"     => XL_MODEL_TYPE_PLANET,
+      "XL_MODEL_TYPE_STAR"       => XL_MODEL_TYPE_STAR,
+      "XL_MODEL_TYPE_NUTATION"   => XL_MODEL_TYPE_NUTATION,
+      "XL_MODEL_TYPE_PRECESSION" => XL_MODEL_TYPE_PRECESSION,
+      "XL_MODEL_TYPE_CONSTANTS"  => XL_MODEL_TYPE_CONSTANTS,
+      "XL_MODEL_TYPE_LIGHT_PROPAGATION"  => XL_MODEL_TYPE_LIGHT_PROPAGATION,
+      "XL_NUM_MODEL_TYPES_ENUM"  => XL_NUM_MODEL_TYPES_ENUM
+   }
+
+   XL_MODEL_EARTH_DEFAULT = 0
+
    # --------------------------------------------
    # XL_Time_model_enum
    XL_TIMEMOD_AUTO                           = -2
@@ -201,6 +236,9 @@ module EOCFI
    XL_SAT_SENTINEL_2C   = 128
    XO_SAT_SENTINEL_2C   = 128
    
+   XL_SAT_METOP_SG_A1   = 134
+   XO_SAT_METOP_SG_A1   = 134
+
    XD_SAT_GENERIC       = 200
    XL_SAT_GENERIC       = 200
    XO_SAT_GENERIC       = 200
@@ -220,6 +258,8 @@ module EOCFI
       "XL_SAT_SENTINEL_2B"    => XL_SAT_SENTINEL_2B,
       "XO_SAT_SENTINEL_2B"    => XO_SAT_SENTINEL_2B,
       "XL_SAT_SENTINEL_2C"    => XL_SAT_SENTINEL_2C,
+      "XL_SAT_METOP_SG_A1"    => XL_SAT_METOP_SG_A1,
+      "XO_SAT_METOP_SG_A1"    => XO_SAT_METOP_SG_A1,
       "XD_SAT_GENERIC"        => XD_SAT_GENERIC,
       "XL_SAT_GENERIC"        => XL_SAT_GENERIC,
       "XO_SAT_GENERIC"        => XO_SAT_GENERIC,

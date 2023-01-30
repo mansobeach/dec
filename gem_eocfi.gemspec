@@ -48,6 +48,7 @@ Gem::Specification.new do |s|
                   Dir['code/eocfi/EOCFI_Loader_Wrapper_Earth_Explorer.rb'] + \
                   Dir['code/eocfi/eocfi_test_tools'] + \
                   Dir['code/eocfi/eocfi_test_wrapper_earth_explorer'] + \
+                  Dir['code/eocfi/eocfi_test_wrapper_MA1'] + \
                   Dir['code/eocfi/eocfi_xvstation_vistime_compute'] + \
                   Dir['code/eocfi/explorer_orbit/data/*']
 
@@ -61,7 +62,8 @@ Gem::Specification.new do |s|
                       'eocfi_orbit', \
                       'eocfi_test_tools', \
                       'eocfi_xvstation_vistime_compute', \
-                      'eocfi_test_wrapper_earth_explorer' \
+                      'eocfi_test_wrapper_earth_explorer', \
+                      'eocfi_test_wrapper_MA1' \
                      ]
   
   ## --------------------------------------------

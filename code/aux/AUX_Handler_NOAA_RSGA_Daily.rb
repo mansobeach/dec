@@ -65,10 +65,10 @@ class AUX_Handler_NOAA_RSGA_Daily < AUX_Handler_Generic
       
    ## Class constructor.
    ## * entity (IN):  full_path_filename
-   def initialize(full_path, target, dir = "", isDebug = false)
+   def initialize(full_path, target, dir = "", logger = nil, isDebug = false)
       @target = target
 
-      super(full_path, dir, isDebug)
+      super(full_path, dir, logger, isDebug)
             
       if target.upcase == "S3" then
          @mission    = "S3_"

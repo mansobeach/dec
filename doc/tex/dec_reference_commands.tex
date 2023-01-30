@@ -521,73 +521,47 @@ Copyright (c) 2008 ESA - DEIMOS Space S.L.
 
 \end{verbatim}
 
-\section{decUnitTests}
-
-\section{decUnitTests\_IERS}
-
-\section{decValidateConfig}
+\label{auxConverter}
+\section{auxConverter}
 
 \begin{verbatim}
 
 == Synopsis
 
-This is a DEC command line tool that checks the validity of DEC configuration
-files according to DEC's XSD schemas. This tool should be run everytime a 
-configuration change is performed.
+This is a Data Exchange Component (DEC) command line tool that manages the
+file conversions / harmonisation according to every mission standard and 
+mission service providers such as ground stations.
 
--e flag:
+This tool can be used manually from the command line or included in the DEC
+configuration as part of any pull or push workflow.
 
-With this option the Interfaces (Entities) configuration file (interfaces.xml)
-is validated using the schema interfaces.xsd
-
--g flag:
-
-With the main DEC configuration file (dec_config.xml)
-is validated using the schema dec_config.xsd
-
--i flag:
-
-With this option the Incoming file-types configuration file (dec_incoming_files.xml)
-is validated using the schema dec_incoming_files.xsd
-
--o flag:
-
-With this option the Outgoing file-types configuration file (dec_outgoing_files.xml)
-is validated using the schema dec_outgoing_files.xsd
-
--m flag:
-
-With this option the DEC Mail configuration file (ft_mail_config.xml) is
-validated using the schema ft_mail_config.xsd
-
--l flag:
-
-With this option the DEC Logs configuration file (dec_log_config.xml) is
-validated using the schema dec_log_config.xsd
-
--a flag:
-
-This is the all flag, which performs all the checks described before.
-
+For reference to the current file formant conversions and the auxiliary data
+files supported, please execute the tool with the --version flag.
 
 == Usage
--a     Check all DEC configuration files
--g     Check DEC's general configuration file dec_config.xml
--e     Check the Entities Configuration file dec_interfaces.xml
--m     Check the mail configuration file ft_mail_config.xml
--i     Check the incoming file-types configuration file dec_incoming_files.xml
--i     Check the outgoing file-types configuration file dec_outgoing_files.xml
--h     shows this help
--v     shows version number
-
+auxConverter -m S3 -f <full_path_file> -d <dir>
+    --mission <id>    mission identifier
+      POD    - Copernicus Sentinel-3 Precise Orbit Determination
+      S2     - Copernicus Sentinel-2
+      S3     - Copernicus Sentinel-3
+      NAOS   - NAOS mission
+      KSAT   - Kongsberg Satellite Services
+    --version         shows the version number / supported conversions
+    --Debug           shows Debug info during the execution
+    --help            shows this help
 
 == Author
-DEIMOS-Space S.L.
+Elecnor Deimos-Space
 
 == Copyright
-Copyright (c) 2007 ESA - DEIMOS Space S.L.
+Copyright (c) 2021 Elecnor Deimos-Space
 
 \end{verbatim}
+
+
+\section{decUnitTests}
+
+\section{decUnitTests\_IERS}
 
 \end{document}
 

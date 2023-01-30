@@ -92,14 +92,12 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
       checkDirectory(@@testDir)
       #FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/Leap_Second.dat",      @@testDir)
-
      
       # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/finals2000A.daily",    @@testDir)
       # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/brdc0060.20n",         @@testDir)
       # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/brdc0060.20n.Z",       @@testDir)
       # FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/20200101RSGA.txt",     @@testDir)
 
-      
    end
    ## --------------------------------------------------------
    ## After every test case
@@ -156,6 +154,31 @@ class AUXTestCase < Test::Unit::TestCase
    end
 
    ## --------------------------------------------------------
+
+   def test_OEM2ORBRES
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/naos/NS1_OPER_ORB_OEM____20100825T000000_20100827T000000_0001.OEM #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/naos/NS1_OPER_ORB_OEM____20100825T000000_20100827T000000_0001.OEM", @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_OEM = "#{@@testDir}/NS1_OPER_ORB_OEM____20100825T000000_20100827T000000_0001.OEM"
+      cmd      = "auxConverter -m NAOS -f #{file_OEM} -d /tmp/aux_out2 -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert CCSDS OEM (NAOS mission) to EOCFI AUX_ORBRES")
+
+      arr = Dir["/tmp/aux_out2/NS1*AUX_ORBRES*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
 
    ## --------------------------------------------------------
 
@@ -360,6 +383,24 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_NOAA_RSGA
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      cmd = "rm -f /tmp/aux_out2/S*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/noaa/20230114RSGA.txt #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/noaa/20230114RSGA.txt",     @@testDir)
+
+      rsga        = "#{@@testDir}/20230114RSGA.txt"
+      cmd         = "auxConverter -m S3 -f #{rsga} -d /tmp/aux_out2 -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "converter NOAA Report Solar Geophysical Activity")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+   ## --------------------------------------------------------
 
 =begin
    def test_auxConverter
@@ -409,7 +450,7 @@ class AUXTestCase < Test::Unit::TestCase
       cmd         = "auxConverter -f #{rsga} -d /tmp/aux_out4"
       puts cmd
       puts
-      assert(system(cmd), "converter NOAA Repor Solar Geophysical Activity")
+      assert(system(cmd), "converter NOAA Report Solar Geophysical Activity")
 
 
    end

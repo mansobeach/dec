@@ -47,16 +47,18 @@ The information messages by DEC SW are meant in general for tracing the nominal 
 	\item \textbf{[DEC\_135]} I/F "interface": "filename" pull report created
 	\item \textbf{[DEC\_210]} I/F "interface": File "filename" sent using "protocol"
 	\item \textbf{[DEC\_211]} File retrieved from SourceDir to the GlobalOutbox (prior its \textit{push} circulation) 
-	\item \textbf{[DEC\_212]} TBW
-	\item \textbf{[DEC\_213]} TBW
-	\item \textbf{[DEC\_214]} TBW
+	\item \textbf{[DEC\_212]} File removed from SourceDir upon DEC\_211
+	\item \textbf{[DEC\_213]} File placed at the Interface LocalOutbox
+	\item \textbf{[DEC\_214]} File compressed at the interface LocalOutbox
     \item \textbf{[DEC\_254]} Request of OData metadata to interface
     \item \textbf{[DEC\_255]} Retry Request of OData URL		
     \item \textbf{[DEC\_257]} Metadata OData file created	
     \item \textbf{[DEC\_259]} Download request to an OData interface delivery point
     \item \textbf{[DEC\_260]} Successful download from an OData interface delivery point
+    \item \textbf{[AUX\_001]} File conversion from source file source is performed   
     \item \textbf{[NATS001]} I/F "interface": NATS Request performed
-	\item \textbf{[NATS002]} I/F "interface": NATS Request is successful	
+	\item \textbf{[NATS002]} I/F "interface": NATS Request is successful
+    \item \textbf{[NATS003]} I/F "interface": NATS Subscribe to some queue is performed 
 \end{itemize}
 
 \label{DEC000}
@@ -209,23 +211,23 @@ The file referenced in the message has been uploaded to the interface placed int
 
 \label{DEC211}
 \subsection{[DEC\_211] Push Setup / File at GlobalOutbox}
-File has been placed in the GlobalOutbox for push circulations.
+The file has been placed in the GlobalOutbox for push circulations.
 
 \label{DEC212}
 \subsection{[DEC\_212] Push Setup / File at Removed from SourceDir}
-TBW.
+The file has been removed from the SourceDir upon its previous availability at the GlobalOutbox for push circulation.
 
 \label{DEC213}
 \subsection{[DEC\_213] Push Setup / File at Interface LocalOutbox}
-TBW.
+The file has been placed in the Interface LocalOutbox for push circulations.
 
 \label{DEC214}
 \subsection{[DEC\_214] Push Setup / File Compressed at Interface LocalOutbox}
-TBW.
+The file has been compressed in the Interface LocalOutbox location for push circulations.
 
 \label{DEC235}
 \subsection{[DEC\_235] Report Generation DeliveredFiles to Interface}
-TBW.
+This message traces the generation of the report which refers to the files pushed towards the configured interfaces.
 
 \label{DEC240}
 \subsection{[DEC\_240] Push Email Notification to Interface}
@@ -269,6 +271,10 @@ Request to download using HTTP a product from an OData service.
 \label{DEC260}
 \subsection{[DEC\_260] OData Download Successful}
 Product download successful from an OData service.
+
+\label{AUX001}
+\subsection{[AUX\_001] Auxiliary Data Conversion}
+This message contains trace information regarding the file conversions from some source.
 
 \label{NATS001}
 \subsection{[NATS001] NATS Request Perfomed}
@@ -371,6 +377,8 @@ The error messages by DEC SW are meant in general for tracing problems encounter
 	\item \textbf{[DEC\_713]} Could not place file in  \textit{LocalOutbox} to prepare files out-tray for push
 	\item \textbf{[DEC\_798]} Configuration problem	
 	\item \textbf{[DEC\_799]} Integration problem
+    \item \textbf{[AUX\_600]} Cannot read specified file
+    \item \textbf{[AUX\_666]} Input file is not recognized
 \end{itemize}
 
 \label{DEC600}
@@ -595,7 +603,6 @@ This message is logged when the command executed associated to some \hyperref[Ev
 	[ERROR] [DEC_750] I/F NOAA: EventManager failed execution of auxConverter / No such file or directory - auxConverter
 \end{verbatim}
 
-
 \label{DEC798}
 \subsection{[DEC\_798] Configuration Error}
 This message is logged when the XML schema validation corresponding to a given configuration file is failing. 
@@ -604,10 +611,17 @@ This message is logged when the XML schema validation corresponding to a given c
 	[DEC_798] Fail schema check for dec_interfaces
 \end{verbatim}
 
-
 \label{DEC799}
 \subsection{[DEC\_799] Integration Error}
 This message is logged when some unexpected error raised. 
+
+\label{AUX600}
+\subsection{[AUX\_600] Cannot access File}
+This message is logged when the file to be converted can not be reached from the specified path. 
+
+\label{AUX666}
+\subsection{[AUX\_666] No File conversion pattern found}
+This message is logged when the file to be converted does not meet any file converted pattern (i.e. the SW does not recognize the type of the input file). 
 
 \subsubsection{Missing SW Dependency}
 Some SW dependency required by DEC was not found in \$PATH. Refer to \hyperref[FOSS]{\textit{section FOSS}} to check the SW dependencies which DEC needs for its correct execution.

@@ -13,14 +13,17 @@
 \begin{document}
 
 \section{Install OS Dependencies}
- DEC SW is compatible with any POSIX OS. The information contained in this section aims to ensure that the ruby interpreter can be built at the target platform ; this approach aims for active obsolescence management allowing to make usage of recent stable versions avoiding lock-down by the OS distribution packages, which are usually very constraining in this respect. The SW packages are the very few which are requiring an OS administrator profile (i.e. root user) whilst DEC SW is recommended to live in the OS user environment which will execute it.\newline
+ DEC SW is compatible with any POSIX OS. The information contained in this section aims to ensure that the ruby interpreter can be built at the target platform ; this approach aims for active obsolescence management allowing to make usage of recent stable versions avoiding lock-down by the OS distribution packages, which are usually very constraining in this respect. The SW packages are the very few which are requiring an OS administrator profile (i.e. root user) whilst DEC SW is recommended to live in the OS user environment which will execute it.
  
+ \subsection{Debian / Ubuntu based distributions}
+ The packages required for Linux distributions based on Debian package manager are listed below:
  \par
  \noindent
  \inlinecode{bash}{ \$> apt-get install curl}  \newline 
  \inlinecode{bash}{ \$> apt-get install git}  \newline
  \inlinecode{bash}{ \$> apt-get install jq}  \newline
  \inlinecode{bash}{ \$> apt-get install libssl-dev}  \newline
+ \inlinecode{bash}{ \$> apt-get install sshpass}  \newline
  \inlinecode{bash}{ \$> apt-get install libsqlite3-dev}  \newline
  \inlinecode{bash}{ \$> apt-get install sqlite3}  \newline
  \inlinecode{bash}{ \$> apt-get install libpq-dev}  \newline
@@ -28,8 +31,26 @@
  \inlinecode{bash}{ \$> apt-get install ncftp}  \newline
  \inlinecode{bash}{ \$> apt-get install p7zip-full}  \newline
 
-If you are \(unlucky\) using RHEL, some of the above packages might not be directly available in the OS distribution repository.
-
+\subsection{Red-Hat based distributions}
+ The installation of packages with RHEL based distributions are constrained by the repositories configured ; official RHEL lack yum support for some of the above SW packages listed in previous section for Debian / Ubuntu based distributions. The following dependencies are installed manually using rpm:
+ \begin{Verbatim}
+ ncftp-3.2.5-18.el8.x86_64.rpm
+ p7zip-16.02-20.el7.x86_64.rpm
+ sshpass-1.09-4.el8.x86_64.rpm
+ \end{Verbatim}
+ 
+ \subsection{macOS}
+  The installation of SW dependencies in macOS can be resolved in different ways ; the tools which are not natively available with the OS or XCode development environment are installed using the package manager "brew" ; openssl is however shipped with macOS but its underlying library libressl does not support some of the algorithms used, therefore it is required to install it with brew and ensure its execution prevails over the native version.
+ \par
+  \noindent
+  \inlinecode{bash}{ \$> brew install jq}  \newline
+  \inlinecode{bash}{ \$> brew install ncftp}  \newline
+  \inlinecode{bash}{ \$> brew install openssl}  \newline
+  \inlinecode{bash}{ \$> brew install p7zip}  \newline
+ \par
+ \noindent
+ 
+ 
 
 \section{Install Ruby}
  This section covers the install of \textit{Ruby} interpreter and the \textit{gem} dependencies needed by DEC SW. It is recommended that the \textit{Ruby} interpreter is done locally for the Linux user who shall execute the DEC SW.\newline
@@ -126,7 +147,8 @@ Different versions can be locally installed and select the one of choice at any 
 
 
 \section{Download DEC SW}
-This section contains the link to download the DEC SW installer \textit{gemfile} \href{https://drive.google.com/uc?export=download&id=1gieDRpDEBzKv5Xr0qwPvBz34RHphTnQq}{\textit{dec-stable.gem}} with the unit tests configuration. It is necessary to be logged-in with your DEIMOS \textit{gmail} account to \textit{authorise} the download. Do not hesitate in requesting tailored installation packages according to your needs.
+The natural step is to get the DEC SW gem for installation ; according to the project, the repository or the source of the install kit may differ
+is section contains the link to download the DEC SW installer \textit{gemfile} \href{https://nexus3.elecnor-deimos.com/repository/NAOS-IVV/dec/dec-1.0.38a_naos-test_gsc4eo@nl2-u-moc-srv-01.gem}{\textit{dec.gem}} with the unit tests configuration. It is necessary to be logged-in with your DEIMOS \textit{corporate} account in Nexus to \textit{authorise} the download. Do not hesitate in requesting tailored installation packages according to your needs.
 
 \section{Install DEC SW}
 
@@ -285,7 +307,34 @@ Finished in 54.38868 seconds.
 \end{lstlisting}
 
 \section{DEC App Container}
-It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerisation (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production). This approach avoids the eventual pains suffered throughout the previous sections by entirely defining an execution environment fitting the needs.
+It is not strictly in the scope of this reference manual to describe the different integration and deployment strategies to make usage of the DEC SW. However it is considered valuable to document that the SW is ready for containerization (i.e. docker containers) and that such deployment strategy has been successfully used to design full standalone nodes including also standard TCP/IP servers to hub all the interface connections. In this respect there are available some dockerfiles IaaS to define the node SW dependencies in different execution environments (i.e. IVV, Production).
+
+\par
+\noindent
+\newline
+The files to be pushed or the files pulled to be made available to the end-peers are usually exchanged in the host which runs the container. Hence the execution of the DEC App container needs some mount point in the host ; this aspect is managed seamlessly by the different SW handling containers execution (i.e. docker, kubernetes, podman).
+
+\par
+\noindent
+\newline
+The DEC SW can be managed from the command line interface as it were natively installed in the host. As such the command reference of this manual can be used by just pointing to the DEC container by some alias definition invoking the execution for which the execution arguments are naturally appended:
+\begin{verbatim}
+alias decCheckConfig='podman exec dec decCheckConfig'
+alias decConfigInterface2DB='podman exec dec decConfigInterface2DB'
+alias decDeliverFiles='podman exec dec decDeliverFiles'
+alias decGetFromInterface='podman exec dec decGetFromInterface'
+alias decListDirUpload='podman exec dec decListDirUpload'
+alias decListener='podman exec dec decListener'
+alias decManageDB='podman exec dec decManageDB'
+alias decNATS='podman exec dec decNATS'
+alias decSend2Interface='podman exec dec decSend2Interface'
+alias decStart='podman run --userns keep-id --env '\''USER'\'' --add-host=nl2-s-aut-srv-01:172.23.253.16 --network=host --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos-test_gsc4eo_nl2-u-moc-srv-01:latest'
+alias decStats='podman exec dec decStats'
+alias decTestInterface_CelesTrak='podman exec -i dec decTestInterface_CelesTrak'
+alias decTestInterface_NAOS_IVV-0500='podman exec -i dec decTestInterface_NAOS_IVV-0500'
+alias decTestInterface_NASA='podman exec -i dec decTestInterface_NASA'
+alias decValidateConfig='podman exec dec decValidateConfig'
+\end{verbatim}
 
 
 
