@@ -46,6 +46,7 @@ class OrchestratorIngester
 
       @orcTmpDir           = @ftReadConf.getTmpDir
       @parallelIngest      = @ftReadConf.getParallelIngest
+      @archiveHandler      = @ftReadConf.getArchiveHandler
       
       if ENV['ORC_DB_ADAPTER'] == "sqlite3" then
          @parallelIngest      = 1
@@ -67,7 +68,7 @@ class OrchestratorIngester
 
    def ingestFile(polledFile)
       bIngested   = false
-      cmd         = "minArcFile -T S2PDGS -f #{polledFile} -t"         
+      cmd         = "minArcFile -T #{@archiveHandler} -f #{polledFile} -t"         
       filetype    = `#{cmd}`.chop
       
       if @isDebugMode == true then
@@ -77,7 +78,7 @@ class OrchestratorIngester
                                  
       if @ftReadConf.isValidFileType?(polledFile) == true then
          @newFile = true
-         cmd      = "minArcStore --noserver -t S2PDGS -m -f #{@pollingDir}/#{polledFile}"
+         cmd      = "minArcStore --noserver -t #{@archiveHandler} -m -f #{@pollingDir}/#{polledFile}"
          if @isDebugMode == true then
             cmd = "#{cmd.dup} -D"
          end

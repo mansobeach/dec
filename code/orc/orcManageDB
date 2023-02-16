@@ -117,13 +117,6 @@ def main
 
    ## -------------------------------------------------------
 
-   if @isDebugMode == true then
-      puts
-      self.print_environment
-      puts
-   end
-   ## -------------------------------------------------------
-
    ## ----------------------------------
    ## initialize logger
    
@@ -146,6 +139,12 @@ def main
    end
 
    ## ----------------------------------
+
+   if @isDebugMode == true then
+      self.log_environment(@logger)
+   end
+
+    ## ----------------------------------
 
    require 'orc/ORC_Migrations'
    require 'orc/ORC_DataModel'
@@ -204,11 +203,15 @@ def main
          if File.exist?(@dbName) == true then
             File.delete(@dbName)
          end
+
+         @logger.info("[ORC_000] Removed ORC tables")
+
+
       rescue Exception => e
-         @logger.error("[ORC_705] #{e.to_s}")
          if @isDebugMode == true then
-            puts e.backtrace
+            @logger.debug(e.backtrace)
          end
+         @logger.error("[ORC_705] #{e.to_s}")
          exit(99)
       end
 
@@ -222,10 +225,10 @@ def main
             CreateTriggerProducts.up
          end
          rescue Exception => e
-            @logger.error("[ORC_705] #{e.to_s}")
             if @isDebugMode == true then
-               puts e.backtrace
+               @logger.debug(e.backtrace)
             end
+            @logger.error("[ORC_705] #{e.to_s}")
             raise
          end
 
@@ -269,9 +272,8 @@ def main
 #            CreateRunningJobs.up
 #         end
 
+         @logger.info("[ORC_000] Created ORC tables")
 
-         puts "Right !"
-         puts "Bye"
       rescue Exception => e
          exit(99)
       end

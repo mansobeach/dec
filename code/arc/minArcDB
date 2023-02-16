@@ -158,13 +158,12 @@ def main
    ## ------------------------------------------------------
    
    if @bIsDebugMode == true then
-      self.print_environment
+      self.log_environment(@logger)
    end
    # -------------------------------------------------------
 
    if ENV["MINARC_ARCHIVE_ROOT"] == nil or ENV["MINARC_ARCHIVE_ROOT"] == "" then
-      puts "#{__FILE__} requires local mode configuration / environment unready :-("
-      puts
+      @logger.error("#{__FILE__} requires local mode configuration / environment unready :-(")
       exit(99)
    end
 
@@ -179,13 +178,13 @@ def main
             File.delete(@dbName)
          end
          CreateServedFiles.down
-         exit(0)
+         @logger.info("[ARC_000] Removed minARC tables")
+         return
       rescue Exception => e
          if @bIsDebugMode == true then
-            puts e.backtrace
-            puts
+            @logger.debug(e.backtrace)
          end
-         puts e.to_s
+         @logger.error(e.to_s)
 
          if @bHappy == true then
             exit(0)
@@ -200,14 +199,12 @@ def main
          CreateArchivedFiles.up
          CreateUsers.up
          CreateServedFiles.up
-         puts "Right !"
-         puts "Bye"
+         @logger.info("[ARC_000] Created minARC tables")
       rescue Exception => e
          if @bIsDebugMode == true then
-            puts e.backtrace
-            puts
+            @logger.debug(e.backtrace)
          end
-         puts e.to_s
+         @logger.error(e.to_s)
 
          if @bHappy == true then
             exit(0)
@@ -226,7 +223,7 @@ def main
          migration2 = AddIndexFilename.new
          migration2.change
       else
-         puts "Index on filename already exists :-)"
+         @logger.warn("Index on filename already exists :-)")
       end
 
       if ActiveRecord::Base.connection.index_exists?(:archived_files, :name) == false
@@ -235,7 +232,7 @@ def main
          migration3 = AddIndexName.new
          migration3.change
       else
-         puts "Index on name already exists :-)"
+         @logger.warn("Index on name already exists :-)")
       end
             
 #      if ArchivedFile.columns_hash["size_in_disk"].type == :integer then
@@ -246,26 +243,22 @@ def main
  
       if ArchivedFile.columns_hash["uuid"] == nil or \
          ArchivedFile.columns_hash["md5"] == nil then
-         puts "Updating table archived_files to meet version 1.1"
+         @logger.info("Updating table archived_files to meet version 1.1")
          migration5 = Add_version_1_1.new
          migration5.change
-         puts
-         puts
-         puts ArchivedFile.columns_hash["uuid"]
-         puts ArchivedFile.columns_hash["md5"]
+         @logger.info(ArchivedFile.columns_hash["uuid"])
+         @logger.info(ArchivedFile.columns_hash["md5"])
       else
-         puts "uuid, md5 columns already exists :-)"
+         @logger.warn("uuid, md5 columns already exists :-)")
       end
 
       if ArchivedFile.columns_hash["filename_original"] == nil then
-         puts "Updating table archived_files to meet version 1.2"
+         @logger.warn("Updating table archived_files to meet version 1.2")
          migration6 = Add_version_1_2.new
          migration6.change
-         puts
-         puts
-         puts ArchivedFile.columns_hash["filename_original"]
+         @logger.info(ArchivedFile.columns_hash["filename_original"])
       else
-         puts "filename_original exists :-)"
+         @logger.warn("filename_original exists :-)")
       end
      
       exit(0)

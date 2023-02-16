@@ -512,12 +512,10 @@ class FileArchiver
                                     size_original, \
                                     md5)
          }
-         if @isDebugMode == true then
-            puts
-            puts "inventoryNewFile(#{full_path_file}) :"
-            puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-            puts
-            puts
+
+         if @isDebugMode == true and @logger != nil then
+            @logger.debug("inventoryNewFile(#{full_path_file}) :")
+            @logger.debug( perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y") )
          end
 
       end
@@ -540,12 +538,9 @@ class FileArchiver
                               size_original)
       }
       
-      if @isDebugMode == true then
-         puts
-         puts "store(#{full_path_file}) :"
-         puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-         puts
-         puts
+      if @isDebugMode == true and @logger != nil then
+         @logger.debug("store(#{full_path_file}) :")
+         @logger.debug( perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y") )
       end
       
       if retVal == true then
@@ -951,9 +946,12 @@ private
       else
          cmd = "chmod 744 #{destDir}; \\chmod 444 #{destDir}/" << File.basename(full_path_filename)
       end
+      
+      ## -------------------------------------------
 
-      if @isDebugMode == true then
-         puts cmd
+
+      if @isDebugMode == true and @logger != nil then
+         @logger.debug(cmd)
       end
       
       ret = system(cmd)
@@ -990,29 +988,28 @@ private
                                        md5)
          }
       
-         if @isDebugMode == true then
-            puts
-            puts "inventoryNewFile(#{full_path_filename}) :"
-            puts perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")
-            puts
-            puts
+         if @isDebugMode == true and @logger != nil then
+            @logger.debug("inventoryNewFile(#{full_path_filename}) :")
+            @logger.debug( perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y") )
          end
 
          ## ------------------------------------------------------ 
          ## If could not store in the database (likely duplication)
          ## file is already at 
          if retVal == false then
-            puts "Copying file #{File.basename(full_path_filename)} into ERROR area "
+            if @isDebugMode and @logger != nil then
+               @logger.debug("Copying file #{File.basename(full_path_filename)} into ERROR area ")
+            end
             if @bMove == true then
                cmd = "\\cp -f #{destDir}/#{File.basename(full_path_filename)} #{@archiveError}/"
-               if @isDebugMode then
-                  puts cmd
+               if @isDebugMode and @logger != nil then
+                  @logger.debug(cmd)
                end
                system(cmd)
             else
                cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
-               if @isDebugMode then
-                  puts cmd
+               if @isDebugMode and @logger != nil then
+                  @logger.debug(cmd)
                end
                system(cmd)
             end

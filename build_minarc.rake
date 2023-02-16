@@ -250,6 +250,9 @@ namespace :minarc do
       puts
       puts "unit tests           : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
       puts
+      puts "NAOSBOA"
+      puts "naosboa@orc_boa       : rake -f build_minarc.rake minarc:build[naosboa,orc_boa,naos_test_pg]" 
+      puts
       puts "CLOUDFERRO LTA"
       puts "s2boa@cloudferro     : rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]"
       puts "client@cloudferro    : rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2]"

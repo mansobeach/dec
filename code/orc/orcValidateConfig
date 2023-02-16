@@ -256,7 +256,7 @@ def main
    end
 
    if bReturn == true then
-      @logger.info("[ORC_000] Configuration check is correct #{'1F57A'.hex.chr('UTF-8')}")
+      @logger.info("[ORC_002] Configuration check is correct #{'1F57A'.hex.chr('UTF-8')}")
       exit(0)
    else
       @logger.error("[ORC_600] Configuration check has failed #{'1F480'.hex.chr('UTF-8')}")

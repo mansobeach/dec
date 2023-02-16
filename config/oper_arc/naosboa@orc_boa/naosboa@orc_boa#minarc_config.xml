@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <Node>NAOSBOA minARC</Node>
+
+  <CleanUp Frequency="10" Unit="s">
+  
+    <List_of_CleanUpRules>
+      <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
+    </List_of_CleanUpRules>
+  
+  </CleanUp>
+
+   <Archive>
+      <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
+   </Archive>
+
+   <Workflow>
+      <ArchiveServer>https://localhost:4567</ArchiveServer>
+      <ArchiveRoot>/minarc_root</ArchiveRoot>
+      <ArchiveError>/minarc_root/.errors</ArchiveError>
+      <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
+      <TempDir>/tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host></Database_Host>
+      <Database_Port>5432</Database_Port>      
+      <Database_Name>minarc_orc_db</Database_Name>
+      <Database_User>minarc_orc</Database_User>
+      <Database_Password></Database_Password>
+   </Inventory>
+
+   <Client>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <User>test</User>
+      <Password>test</Password>
+   </Client>
+
+</Configuration>

@@ -22,11 +22,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.3.0"
+   @@version = "1.3.1a"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.3.1"  =>      "Handler_NAOS created for NAOS mission", \
       "1.3.0"  =>      "Model updated to record ServedFiles\n\
          migration to ruby 2.7 for activesupport\n\
          gems addressable added as a dependency\n\
@@ -249,6 +250,19 @@ module ARC
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
       puts "MINARC_ARCHIVE_ERROR          => #{ENV['MINARC_ARCHIVE_ERROR']}"
       puts "Workflow/ArchiveIntray        => #{ARC::ReadMinarcConfig.instance.getArchiveIntray}"
+   end
+   ## ----------------------------------------------------------------
+
+   def log_environment(logger)
+      logger.info("MINARC_DB_ADAPTER          => #{ENV['MINARC_DB_ADAPTER']}")
+      logger.info("MINARC_SERVER              => #{ENV['MINARC_SERVER']}")
+      logger.info("MINARC_DATABASE_NAME       => #{ENV['MINARC_DATABASE_NAME']}")
+      logger.info("MINARC_DATABASE_HOST       => #{ENV['MINARC_DATABASE_HOST']}")
+      logger.info("MINARC_DATABASE_PORT       => #{ENV['MINARC_DATABASE_PORT']}")
+      logger.info("MINARC_DATABASE_USER       => #{ENV['MINARC_DATABASE_USER']}")
+      logger.info("MINARC_DATABASE_PASSWORD   => #{ENV['MINARC_DATABASE_PASSWORD']}")
+      logger.info("MINARC_ARCHIVE_ROOT        => #{ENV['MINARC_ARCHIVE_ROOT']}")
+      logger.info("MINARC_ARCHIVE_ERROR       => #{ENV['MINARC_ARCHIVE_ERROR']}")
    end
    ## ----------------------------------------------------------------
 

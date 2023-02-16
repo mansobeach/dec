@@ -91,6 +91,10 @@ module Converters
          exit(99)
       end
      
+      if str.length == 14 then
+         return DateTime.strptime(str,"%Y%m%d%H%M%S")
+      end
+
       if str.length == 11 then
          return DateTime.strptime(str,"%Y %b %d")
       end

@@ -489,6 +489,7 @@ class ORCTestCase < Test::Unit::TestCase
       puts "==========================================="
       puts "Miscelanea"
       puts orcConf.getAllMiscelanea
+      puts orcConf.getArchiveHandler
       puts "==========================================="
       puts "Failure directory"
       puts orcConf.getFailureDir

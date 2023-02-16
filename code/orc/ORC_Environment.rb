@@ -22,11 +22,13 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.14"
+   @@version = "0.0.15b"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "0.0.15"  =>   "New configuration item ArchiveHandler used to select the minARC plug-in\n\
+          Unit test created for NAOS",\
       "0.0.14"  =>   "orcValidateConfig checks the integrity of all rules beyond the xsd schema", \
       "0.0.13"  =>   "Robustification to handle miss-configuration of processing rules:\n\
           https://jira.elecnor-deimos.com/browse/S2MPASUP-449",\
@@ -180,6 +182,18 @@ module ORC
    end
    ## ----------------------------------------------------------------
   
+   def log_environment(logger)
+      logger.info("ORC_TMP           => #{ENV['ORC_TMP']}")
+      logger.info("ORC_CONFIG        => #{ENV['ORC_CONFIG']}")
+      logger.info("ORC_DB_ADAPTER    => #{ENV['ORC_DB_ADAPTER']}")
+      logger.info("ORC_DATABASE_HOST => #{ENV['ORC_DATABASE_HOST']}")
+      logger.info("ORC_DATABASE_PORT => #{ENV['ORC_DATABASE_PORT']}")
+      logger.info("ORC_DATABASE_NAME => #{ENV['ORC_DATABASE_NAME']}")
+      logger.info("ORC_DATABASE_USER => #{ENV['ORC_DATABASE_USER']}")
+      logger.info("ORC_DATABASE_PASSWORD => #{ENV['ORC_DATABASE_PASSWORD']}")
+   end
+   ## ----------------------------------------------------------------
+
    def check_environment
       retVal = checkEnvironmentEssential
       if retVal == true then

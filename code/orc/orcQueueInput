@@ -318,8 +318,17 @@ def main
       exit(0)
    end
    # ----------------------------------------------
+   
+   require 'orc/ReadOrchestratorConfig'
 
-   cmd            = "minArcFile -T S2PDGS -f #{@filename} -t"         
+   @ftReadConf          = ORC::ReadOrchestratorConfig.instance
+   if @isDebugMode == true then
+      @ftReadConf.setDebugMode
+   end
+
+   @archiveHandler      = @ftReadConf.getArchiveHandler
+
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -t"         
    @filetype      = `#{cmd}`.chop         
 
    if @filetype == nil or @filetype == "" then
@@ -391,10 +400,10 @@ def main
       exit(99)
    end
 
-   cmd            = "minArcFile -T S2PDGS -f #{@filename} -s"         
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -s"         
    tmpStart       = `#{cmd}`.chop         
 
-   cmd            = "minArcFile -T S2PDGS -f #{@filename} -e"         
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -e"         
    tmpStop        = `#{cmd}`.chop         
 
    

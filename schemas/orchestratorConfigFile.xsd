@@ -62,6 +62,7 @@
 
  <xs:complexType name="Type_Miscelanea">
   <xs:sequence>
+    <xs:element name="ArchiveHandler"                 type="xs:string"                    maxOccurs="1"/>
     <xs:element name="PollingDir"                     type="xs:string"                    maxOccurs="1"/>
     <xs:element name="PollingFreq"                    type="FreqType"                     maxOccurs="1"/>
     <xs:element name="ParallelIngestions"             type="posIntType"                   maxOccurs="1"/>

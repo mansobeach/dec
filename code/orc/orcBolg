@@ -142,7 +142,7 @@ def main
 
    ## ----------------------------------
    ## initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("Orchtratr", "#{@orcConfigDir}/orchestrator_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("Main     ", "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode

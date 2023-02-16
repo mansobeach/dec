@@ -6,15 +6,18 @@
 ###
 ### === Data Exchange Component (DEC)
 ### 
-### Git: gem_dec.gemspec,v $Id$ $Date$
+### Git: gem_minarc.gemspec,v $Id$ $Date$
 ###
-### System Component DEC
+### System Component DEC / MINARC
 ###
 #########################################################################
 
+require_relative 'code/arc/MINARC_Environment'
+include ARC
+
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = '1.3.0'
+  s.version     = "#{ARC.class_variable_get(:@@version)}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -70,12 +73,12 @@ Gem::Specification.new do |s|
                      'minArcStatus'
                       ]
 
-
   ## --------------------------------------------
   ##
   ## Include test executables
   if ENV.include?("MINARC_TEST") == true then
      s.executables   << 'minArcUnitTests'
+     s.executables   << 'minArcUnitTests_NAOS'
      s.executables   << 'minArcUnitTestsOData'
      s.executables   << 'minArcSmokeTestLocal'
      s.executables   << 'minArcSmokeTestRemote'
@@ -135,7 +138,7 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------
 
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed #{ARC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
     
   ## ----------------------------------------------
   

@@ -155,6 +155,10 @@ namespace :orc do
       puts "rake -f build_minarc.rake minarc:install[orctest,localhost]"
       puts "rake -f build_orc.rake orc:install[orctest,localhost]"
       puts
+      puts " *** NAOSBOA ***"
+      puts "rake -f build_minarc.rake minarc:install[naosboa,orc_boa,naos_test_pg]"
+      puts "rake -f build_orc.rake orc:install[naosboa,orc_boa]"
+      puts
       puts " *** S2PDGSENG / Inputhub ***"
       puts "rake -f build_minarc.rake minarc:build[boa_app_s2boa,e2espm-inputhub,s2_pg]"
       puts "rake -f build_orc.rake orc:build[boa_app_s2boa,e2espm-inputhub]"

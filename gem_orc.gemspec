@@ -1,6 +1,9 @@
+require_relative 'code/orc/ORC_Environment'
+include ORC
+
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = '0.0.14'
+  s.version     = "#{ORC.class_variable_get(:@@version)}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -22,11 +25,9 @@ Gem::Specification.new do |s|
                   Dir['config/orc_test_postgresql.env'] + \
                   Dir['install/orc_test.bash']
 
-
   s.require_paths = ['code', 'code/orc']
 
   s.bindir        = ['code/orc']
-
 
   s.executables   = [ 
                      'orcBolg', \
@@ -38,6 +39,7 @@ Gem::Specification.new do |s|
                      'orcResourceChecker', \
                      'orcScheduler', \
                      'orcUnitTests', \
+                     'orcUnitTests_NAOS', \
                      'orcValidateConfig'
                      ]
 
@@ -61,6 +63,6 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------  
     
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Elecnor Deimos Generic Orchestrator installed \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Elecnor Deimos Generic Orchestrator installed #{ORC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
   
 end

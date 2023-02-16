@@ -14,6 +14,7 @@ INFO:
 
 ORC_000: Configuration is correct
 
+ORC_000: 
 ORC_005: Starting Orchestrator
 ORC_006: Starting orcIngester
 ORC_007: Starting orcScheduler

@@ -10,6 +10,9 @@ Modules
 
 INFO:
 ARC_000: Purge Archive
+
+ARC_000: Table Created
+ARC_000: Table Removed
 ARC_001: User Created
 ARC_005: Server Started
 ARC_031: Status => No daemon is running

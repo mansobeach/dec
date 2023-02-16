@@ -330,7 +330,10 @@ class ReadOrchestratorConfig
 
 
    # ----------------Miscelanea Methods---------------------------
-   # -------------------------------------------------------------
+   def getArchiveHandler
+      return @@miscelanea[:archiveHandler]
+   end
+   ## ------------------------------------------------------------
    
    def getAllMiscelanea
       return @@miscelanea
@@ -417,7 +420,7 @@ private
       Struct.new("OrchPriorityRule", :rank, :dataType, :fileType, :sort)
       Struct.new("OrchProcessRule", :output, :triggerInput, :coverage, :executable, :listOfInputs)  #output is dataType on the orchestratorConfig.xml (processing rules)
       Struct.new("OrchListOfInputs", :dataType, :coverage, :mandatory, :excludeDataType)
-      Struct.new("OrchMiscelanea", :pollingDir, :pollingFreq, :parallelIngest, :schedulingFreq, :resourceManager, :procWorkingDir, :successDir, :failureDir, :breakPointDir, :tmpDir)
+      Struct.new("OrchMiscelanea", :archiveHandler, :pollingDir, :pollingFreq, :parallelIngest, :schedulingFreq, :resourceManager, :procWorkingDir, :successDir, :failureDir, :breakPointDir, :tmpDir)
       Struct.new("OrchProcParameter", :name, :value, :unit)
 
       if Struct::const_defined? "Inventory" then
@@ -465,8 +468,8 @@ private
    end
    #-------------------------------------------------------------
 
-   def fillMiscelanea(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
-      return Struct::OrchMiscelanea.new(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+   def fillMiscelanea(archiveHandler, pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+      return Struct::OrchMiscelanea.new(archiveHandler, pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
    end
    ## -----------------------------------------------------------
 
@@ -643,6 +646,7 @@ private
    # - xmlFile (IN): XML file
    def parseMiscelanea(xmlFile)
 
+      archiveHandler = nil
       pollingDir     = ""
       pollingFreq    = ""
       parallelIngest = 1
@@ -656,18 +660,19 @@ private
       XPath.each(xmlFile,"OrchestratorConfiguration/Miscelanea"){
          |mc|
             #gets the 9 children on the xml tree
-      pollingDir        = mc.elements[1].text
-      pollingFreq       = mc.elements[2].text
-      parallelIngest    = mc.elements[3].text.to_i
-      schedulingFreq    = mc.elements[4].text
-      resourceManager   = mc.elements[5].text
-      procWorkingDir    = mc.elements[6].text
-      successDir        = mc.elements[7].text
-      failureDir        = mc.elements[8].text
-      breakPointDir     = mc.elements[9].text
-      tmpDir            = mc.elements[10].text
+      archiveHandler    = mc.elements[1].text
+      pollingDir        = mc.elements[2].text
+      pollingFreq       = mc.elements[3].text
+      parallelIngest    = mc.elements[4].text.to_i
+      schedulingFreq    = mc.elements[5].text
+      resourceManager   = mc.elements[6].text
+      procWorkingDir    = mc.elements[7].text
+      successDir        = mc.elements[8].text
+      failureDir        = mc.elements[9].text
+      breakPointDir     = mc.elements[10].text
+      tmpDir            = mc.elements[11].text
 
-      @@miscelanea = fillMiscelanea(pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
+      @@miscelanea = fillMiscelanea(archiveHandler, pollingDir, pollingFreq, parallelIngest, schedulingFreq, resourceManager, procWorkingDir, successDir, failureDir, breakPointDir, tmpDir)
       }
       
       
