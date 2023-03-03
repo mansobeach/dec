@@ -40,7 +40,7 @@ require 'arc/ReadMinarcConfig'
 
 ##  1  - testStore
 
-class TestCaseMINARC_NAOS < Test::Unit::TestCase
+class TestCaseMINARC_DUMMY < Test::Unit::TestCase
 
    include CTC::WrapperCURL
 
@@ -143,8 +143,6 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
       @@prevDir = Dir.pwd
       @@testDataDir        = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )     
       Dir.chdir(@@testDataDir)
-      system("echo \'S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
-      system("echo \'S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001\' > S2B_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF")
       Dir.chdir(@@prevDir)
 
       system("minArcServer -k")
@@ -162,23 +160,10 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
       sleep(2.0)
 
       @@arrInputFiles = [ \
-                           "NS1_OPER_CNF_CONT___20220706T000000_20220709T000000_0001.xml", \
-                           "NS1_OPER_ORB_OEM____20220709T000000_20220717T000000_0001.OEM", \
-                           "NS1_OPER_ORB_OPM____20220709T000000_20220709T000000_0001.OPM", \
-                           "NS1_OPER_ORB_SOERT__20220709T000000_20220717T000000_0001.OPM", \
-                           "NS1_OPER_PLA_GSP____20220709T000000_20220717T000000_0001.xml", \
-                           "NS1_OPER_PLA_MAINT__20220709T000000_20220717T000000_0001.xml", \
-                           "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml", \
-                           "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml", \
-                           "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl", \
-                           "NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.xml", \
-                           "NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001.EEF", \
-                           "NS1_TEST_PLA_OSC____20220710T000000_20220715T000000_0001.xml", \
-                           "TRK_NAOS1_TG1_ANG_20221004000000.GEO", \
-                           "TRK_NAOS1_TG1_RAN_20221004000000.GEO", \
-                           "TRK_NAOS1_TG2_ANG_20221004000000.GEO", \
-                           "TRK_NAOS1_TG2_RAN_20221004000000.GEO", \
-                           "NS1_OPER_SCH_REQ____20220706T000000_20220709T000000_0001.XML" \
+                           "properties.json", \
+                           "irrelevant_name", \
+                           "extension.1.2.3", \
+                           "I_love_your_name" \
                            ]
                        
    end
@@ -186,8 +171,8 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
    # --------------------------------------------------------
    
    Test::Unit.at_exit do
-      @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
-      @@logger.info("END   => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")
    end
    
    # --------------------------------------------------------   
@@ -195,7 +180,7 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
    # Setup before every test-case
    #
    def setup
-      @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
       puts __method__.to_s
       puts
       puts "================================================"
@@ -215,8 +200,6 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), "created used test")
       
-      
-      
       system("\\rm -rf /tmp/minarc_log_file*.log")
       
       cmd = "minArcPurge -Y"
@@ -228,45 +211,39 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
          exit(99)
       end
 
-      
       @path = "#{ENV['MINARC_BASE']}/code/arc"
       
       Dir.chdir(@@testDataDir)
       Dir.chdir(@@prevDir)    
 
-      @@logger.info("END   => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")
    end
    # --------------------------------------------------------
    # After every test case
 
    def teardown
-      @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
-      @@logger.info("END   => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")
    end
    ## ------------------------------------------------------
 
    def testStore
-      @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
 
       system("mkdir -p /tmp/minarc/tmp/")
       
       @@arrInputFiles.each{|filename|
-         @@logger.debug("TestCaseMINARC_NAOS::#{__method__.to_s} #{filename}")
+         @@logger.debug("TestCaseMINARC_DUMMY::#{__method__.to_s} #{filename}")
          system("echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}")
-         cmd = "minArcStore -t NAOS -f \"/tmp/minarc/tmp/#{filename}\" --noserver -D"
+         cmd = "minArcStore -t DUMMY -f \"/tmp/minarc/tmp/#{filename}\" --noserver -D"
          @@logger.debug(cmd)
          assert(system(cmd), "store of #{filename}")
-
-         if filename.include?(".tcl") == true then
-            cmd = "minArcStatus -f #{filename.gsub!("_PLA_", "_TCL_")} --noserver | jq"
-         else
-            cmd = "minArcStatus -f #{filename} --noserver | jq"
-         end
+         cmd = "minArcStatus -f #{filename} --noserver | jq"
          @@logger.debug(cmd)
          assert(system(cmd), "status of #{filename}")
       }
 
-      @@logger.info("END   => TestCaseMINARC_NAOS::#{__method__.to_s}")
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")
    end
 
    ## ------------------------------------------------------

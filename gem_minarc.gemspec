@@ -78,6 +78,7 @@ Gem::Specification.new do |s|
   ## Include test executables
   if ENV.include?("MINARC_TEST") == true then
      s.executables   << 'minArcUnitTests'
+     s.executables   << 'minArcUnitTests_DUMMY'
      s.executables   << 'minArcUnitTests_NAOS'
      s.executables   << 'minArcUnitTestsOData'
      s.executables   << 'minArcSmokeTestLocal'

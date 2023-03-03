@@ -124,10 +124,13 @@ class FileArchiver
       
       # setProfileMode
       
+      hParams = Hash.new
+      hParams[:logger]        = @logger   
+      hParams[:isDebugMode]   = @isDebugMode
+
       arrFiles.each{|full_path_file|
             
-            # nameDecoder = nameDecoderKlass.new(fileName)
-            nameDecoder = nameDecoderKlass.new(full_path_file)
+            nameDecoder = nameDecoderKlass.new(full_path_file, nil, hParams)
             
             # --------------------------------------------------------
             
@@ -452,8 +455,6 @@ class FileArchiver
             # Now the filename provided is full-path to allow 
             # plug-ins process physically the file if needed
             
-            # nameDecoder = nameDecoderKlass.new(fileName)
-            
             
             # 2018-09-06
             # New interface with plug-ins
@@ -461,11 +462,13 @@ class FileArchiver
             
             hParams = Hash.new
             
+            hParams[:logger]        = @logger
+            hParams[:isDebugMode]   = @isDebugMode
+            
             if bDelete == true then
                hParams[:bDeleteSource] = bDelete
             end
-            
-            
+                  
             nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location, hParams)
             
             #

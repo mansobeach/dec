@@ -22,12 +22,13 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.3.1a"
+   @@version = "1.3.1b"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
-      "1.3.1"  =>      "Handler_NAOS created for NAOS mission", \
+      "1.3.1"  =>      "Handler_NAOS created for NAOS mission\n\
+         Handler_DUMMY created for generic testing", \
       "1.3.0"  =>      "Model updated to record ServedFiles\n\
          migration to ruby 2.7 for activesupport\n\
          gems addressable added as a dependency\n\

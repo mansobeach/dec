@@ -92,7 +92,7 @@ module WrapperCURL
   
    ## -------------------------------------------------------------
    ##
-   def getURL(url, verifySSL = false, user = nil, pass = nil, isDebugMode = false)
+   def getURL(url, verifySSL = false, user = nil, pass = nil, isDebugMode = false, logger = nil)
       
       cmd = ""
       
@@ -109,19 +109,35 @@ module WrapperCURL
       end      
 
       
-      if isDebugMode == true then
-         puts cmd
+      if isDebugMode == true and logger != nil then
+         logger.debug(cmd)
       end
       
+      if isDebugMode == true and logger == nil then
+         puts cmd
+      end
+
       output = `#{cmd}`
       
       if $? != 0 then
          if isDebugMode == true then
-            puts
-            puts "Failed execution of #{cmd} ! :-("
-            puts "Exit code #{$?}"
-            puts output
-            puts 
+            
+            if logger == nil then
+               puts
+               puts "Failed execution of #{cmd} ! :-("
+               puts "Exit code #{$?}"
+               puts output
+               puts
+            end
+            
+            if logger != nil then
+               logger.error("Failed execution of #{cmd}")
+               logger.error("Exit code #{$?}")
+               if output.chop != "" then
+                  logger.error(output)
+               end
+            end
+            
          end
          return false
       end

@@ -63,17 +63,24 @@ class Handler_NAOS
    ## Name now must be a full_path one
    def initialize (name, destination = nil, args = {})
       
+      @logger      = args[:logger]
+      @isDebugMode = args[:isDebugMode]
+
+      if @isDebugMode == true then
+         @logger.debug("Handler_NAOS")
+      end
+
       if name[0,1] != '/' then
          @bDecodeNameOnly = true
       else
          @bDecodeNameOnly = false
       end
       
-      archRoot       = ENV['MINARC_ARCHIVE_ROOT']
-      @filename      = File.basename(name, ".*")
+      archRoot             = ENV['MINARC_ARCHIVE_ROOT']
+      @filename            = File.basename(name, ".*")
       @filename_original   = File.basename(name)
-      @archive_path  = ""
-      @validated     = false
+      @archive_path        = ""
+      @validated           = false
 
 
       # ----------------------------------------------------     
@@ -95,6 +102,11 @@ class Handler_NAOS
             @stop = self.str2date(@filename.slice(36, 15))
          end
          @validated        = true
+
+         # TC sequences should have a different type than the source MTL plan
+         if File.extname(name) == ".tcl" then
+            @type             = @filename.slice(9,10).gsub("PLA", "TCL")
+         end
       end
 
       # ----------------------------------------------------
@@ -119,13 +131,6 @@ class Handler_NAOS
       # ----------------------------------------------------
      
       # ----------------------------------------------------
-
-     
-      # ----------------------------------------------------
-      
-     
-      
-      # ----------------------------------------------------
       
       # S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_SUPER_TCI.xml
       # S2__OPER_DEC_F_RECV_2BOA_20200205T183117_V20200205T183117_20200205T183117_S2PDGS.xml
@@ -147,7 +152,7 @@ class Handler_NAOS
          
       if @validated == false then
          puts @filename.length
-         puts "#{@filename} not supported by Handler_S2PDGS !"
+         puts "#{@filename} not supported by Handler_NAOS"
          puts
          exit(99)
       end
@@ -164,6 +169,22 @@ class Handler_NAOS
       @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
 
       @size_original = File.size(name)
+
+      # TC sequences should have a different filename than the source MTL plan
+      if File.extname(name) == ".tcl" then
+         newname = name.gsub("_PLA_", "_TCL_")
+         cmd = "mv -f #{name} #{newname}"
+         if @isDebugMode == true then
+            @logger.debug(cmd)
+         end
+         ret = system(cmd)
+         
+         if ret == false then
+            @logger.error("Failed #{cmd}")
+            raise "error renaming file: #{cmd}"
+         end
+         name = newname
+      end
 
       if File.extname(name).downcase != ".zip" and 
          File.extname(name).downcase != ".tgz" and 
@@ -248,7 +269,8 @@ private
       ret = system(cmd)
       
       if ret == false then
-         puts "Fatal Error in Handler_S2PDGS::compressFile"
+         @logger.error("Fatal Error in Handler_NAOS::compressFile")
+         puts "Fatal Error in Handler_NAOS::compressFile"
          puts
          puts cmd
          puts
@@ -266,6 +288,8 @@ private
 
    ## -----------------------------------------------------------
  
+   def handleTCL(full_path_name)
+   end
    ## -----------------------------------------------------------
    
 end

@@ -49,8 +49,8 @@ class MINARC_Client
    # Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
-      puts "MINARC_Client debug mode is on"
-      puts "MINARC_Server is #{@minArcServer}"
+      @logger.debug("MINARC_Client debug mode is on")
+      @logger.debug("MINARC_Server is #{@minArcServer}")
    end
    # ------------------------------------------------
 
@@ -167,11 +167,9 @@ class MINARC_Client
    def statusGlobal
       url = "#{@minArcServer}#{API_URL_STAT_GLOBAL}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::statusGlobal => #{url}"
-         puts
+         @logger.debug("MINARC_Client::statusGlobal => #{url}")
       end
-      return JSON.parse(getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode))
+      return JSON.parse(getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger))
    end
    ## ------------------------------------------------------
    

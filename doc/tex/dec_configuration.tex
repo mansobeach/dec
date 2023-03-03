@@ -175,7 +175,7 @@ The \textit{Server} configuration item defines the parameters which rule the net
 	\begin{Verbatim}
 		<User encrypted='true'>uiutw90k</User>
 	\end{Verbatim}
-	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true, the SSH keys associated to the system user are used instead ; the value can optionally be kept encrypted using OpenSSL:
+	\item \textit{Pass} : password for authentication ; in case of secure \textit{SecureFlag} set to true and the protocol \textit{SFTP},if this configuration item is empty, then the SSH keys associated to the OS user are used instead ; the value of this configuration item can optionally be kept encrypted using OpenSSL:
 	\begin{Verbatim}
 		<Pass encrypted='true'>uiutw90OFb+JMH9Lk5OogQ==</Pass>
 	\end{Verbatim}

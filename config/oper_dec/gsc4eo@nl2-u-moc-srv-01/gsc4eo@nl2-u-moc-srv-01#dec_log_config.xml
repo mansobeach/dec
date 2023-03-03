@@ -11,7 +11,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="nl2-u-moc-srv-01"/>
+  <parameter name="mainLoggerName" value="luuaplmds01"/>
  </pre_config>
 
 <!-- ============================================= -->
@@ -47,7 +47,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 
 <!-- ============================================= -->
 
- <logger name="nl2-u-moc-srv-01" level="DEBUG" trace="false">
+ <logger name="luuaplmds01" level="DEBUG" trace="false">
    <outputter>console</outputter>
    <outputter>dec_log</outputter>
  </logger>

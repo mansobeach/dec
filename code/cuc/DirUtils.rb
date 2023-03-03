@@ -80,8 +80,9 @@ module DirUtils
          cmd = %{mkdir -p #{dir}}
          retVal  = system(cmd)
          if retVal == false then
-            print("\n\nError DirUtils::checkDirectory ", dir, " !  :-(\n\n")
-            exit(99) 
+            raise "Error DirUtils::checkDirectory - #{dir}"
+            # print("\n\nError DirUtils::checkDirectory ", dir, " !  :-(\n\n")
+            # exit(99) 
          end
       end
    end

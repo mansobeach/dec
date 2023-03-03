@@ -185,7 +185,7 @@ def main
    # -------------------------------------------------------
 
    if @bShowVersionServer == true then
-      arc = ARC::MINARC_Client.new
+      arc = ARC::MINARC_Client.new(@logger)
       if @isDebugMode == true then
          arc.setDebugMode
       end
@@ -233,7 +233,7 @@ def main
             puts ret
          end
       else
-         arc = ARC::MINARC_Client.new
+         arc = ARC::MINARC_Client.new(@logger)
          
          if @isDebugMode == true then
             arc.setDebugMode
@@ -268,7 +268,7 @@ def main
             exit(66)
          end
       else
-         arc = ARC::MINARC_Client.new
+         arc = ARC::MINARC_Client.new(@logger)
          
          if @isDebugMode == true then
             arc.setDebugMode

@@ -22,7 +22,7 @@
       <Hostname>localhost</Hostname>
 	   <Port>22</Port>      
       <User>borja</User>
-      <Pass>N/A</Pass>
+      <Pass></Pass>
       <UploadDir>/tmp/dec_simul_if/localhost_secure/upload</UploadDir>
       <UploadTemp>/tmp/dec_simul_if/localhost_secure/upload/_TEMP_</UploadTemp>
       <DownloadDirs>

@@ -58,7 +58,8 @@ COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10
 #SHELL ["/bin/bash", "-c"]
 USER gsc4eo
 RUN   mkdir -p /home/gsc4eo/.ssh
-COPY --chown=2020:2020 ./config/ssh/* /home/gsc4eo/.ssh/
+COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa.pub /home/gsc4eo/.ssh/
+COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/gsc4eo/.ssh/
 COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/gsc4eo/.ssh/id_rsa
 # COPY --chown=2020:2020 ./config/ssh/known_hosts /home/gsc4eo/.ssh/known_hosts
 ENV USER=gsc4eo HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"

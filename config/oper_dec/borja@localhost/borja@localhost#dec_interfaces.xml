@@ -135,7 +135,10 @@
     <Hostname>localhost</Hostname>
    <Port>22</Port>      
     <User>borja</User>
+    <!--
     <Pass encrypted='true'>cGVycmlsbG8K</Pass>
+    -->
+    <Pass>pasguordkaka</Pass>
     <RegisterContentFlag>false</RegisterContentFlag>
     <RetrieveContentFlag>true</RetrieveContentFlag>
     <SecureFlag>true</SecureFlag>

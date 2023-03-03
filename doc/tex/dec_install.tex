@@ -32,12 +32,31 @@
  \inlinecode{bash}{ \$> apt-get install p7zip-full}  \newline
 
 \subsection{Red-Hat based distributions}
- The installation of packages with RHEL based distributions are constrained by the repositories configured ; official RHEL lack yum support for some of the above SW packages listed in previous section for Debian / Ubuntu based distributions. The following dependencies are installed manually using rpm:
+ The installation of packages with RHEL based distributions are constrained by the repositories configured ; official RHEL lack yum support for some of the above SW packages listed in previous section for Debian / Ubuntu based distributions. 
+ 
+  The packages required for Linux distributions based on Red-Hat based distributions are listed below:
+  \par
+  \noindent
+  \inlinecode{bash}{ \$> dnf groupinstall "Development Tools"}  \newline
+  \inlinecode{bash}{ \$> yum -y install perl-IPC-Cmd}  \newline 
+  \inlinecode{bash}{ \$> yum install curl}  \newline 
+  \inlinecode{bash}{ \$> apt-get install sshpass}  \newline
+  \inlinecode{bash}{ \$> dnf install sqlite}  \newline
+  \inlinecode{bash}{ \$> apt-get install sqlite-devel}  \newline
+  \inlinecode{bash}{ \$> yum install -y openssl-devel}  \newline
+  \inlinecode{bash}{ \$> yum install -y libxml2}  \newline
+  
+ \par
+ \noindent 
+ The following dependencies can be installed manually using rpm available at Nexus:
  \begin{Verbatim}
  ncftp-3.2.5-18.el8.x86_64.rpm
  p7zip-16.02-20.el7.x86_64.rpm
  sshpass-1.09-4.el8.x86_64.rpm
  \end{Verbatim}
+ 
+ \inlinecode{bash}{ \$> yum install -y libxml2}  \newline
+ 
  
  \subsection{macOS}
   The installation of SW dependencies in macOS can be resolved in different ways ; the tools which are not natively available with the OS or XCode development environment are installed using the package manager "brew" ; openssl is however shipped with macOS but its underlying library libressl does not support some of the algorithms used, therefore it is required to install it with brew and ensure its execution prevails over the native version.
