@@ -3,7 +3,7 @@
 rsync over ssh
 
 rsync -rhv -e ssh --progress /Users/borja/Music/Lossless/  borja@192.168.1.118:music/Lossless
-
+rsync -rhv -e ssh --progress /Users/borja/Projects/naos/1.repository/naos-ivv/  aiv@naos-aiv:naos-git-aiv
 
 http://www.joedog.org/siege-home
 
