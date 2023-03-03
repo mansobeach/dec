@@ -1350,9 +1350,7 @@ class ORCTestCase < Test::Unit::TestCase
    ## -------------------------------------------------------------
 
    def test_orcValidateConfig
-      puts "================================================"
-      puts "ORC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.info("START => orcUnitTests::#{__method__.to_s}")
 
       checkDirectory("/tmp/orc_config")
       FileUtils.rm_rf(Dir.glob('/tmp/orc_config/*'))
@@ -1393,11 +1391,17 @@ class ORCTestCase < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
+      cmd = "orcValidateConfig -C"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
       arr = Dir["/tmp/dec_orchestrator*.log"]
       cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
       puts cmd
       system(cmd)
+
+      @@logger.info("END => orcUnitTests::#{__method__.to_s}")
 
    end
 

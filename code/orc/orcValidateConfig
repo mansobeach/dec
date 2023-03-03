@@ -25,6 +25,7 @@
 #  -a          Check all ORC configuration files
 #  -g          Check ORC's general configuration file orchestratorConfigFile.xml
 #  -l          Check the log configuration file orchestrator_log_config.xml
+#  -C          print the configuration directory location
 #  -X <dir>    eXtract the configuration into the specified directory
 #  -N <label>  label of the node to be appended into the configuration
 #  -h          shows this help
@@ -72,6 +73,7 @@ def main
    @bShowVersion     = false
    @bShowUsage       = false
    @bOutgoing        = false
+   @bShowConfigDir   = false
    @targetDir        = ""
    @nodeName         = ""
 
@@ -79,6 +81,7 @@ def main
      ["--eXtract", "-X",         GetoptLong::REQUIRED_ARGUMENT],
      ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],   
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
+     ["--Config", "-C",          GetoptLong::NO_ARGUMENT],
      ["--log", "-l",             GetoptLong::NO_ARGUMENT],     
      ["--mail", "-m",            GetoptLong::NO_ARGUMENT],
      ["--general", "-g",         GetoptLong::NO_ARGUMENT],
@@ -94,6 +97,7 @@ def main
             when "--eXtract"  then @targetDir         = arg.to_s
             when "--Node"     then @nodeName          = arg.to_s         
             when "--version"  then @bShowVersion      = true
+            when "--Config"   then @bShowConfigDir    = true
             when "--Debug"    then @isDebugMode       = true
             when "--help"     then @bShowUsage        = true
             when "--incoming" then @bIncoming         = true
@@ -124,7 +128,7 @@ def main
       exit(0)
    end
  
-   if @targetDir == "" and @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
+   if @targetDir == "" and @bShowConfigDir == false and @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
       usage
       exit(66)
    end
@@ -162,6 +166,10 @@ def main
 
    ## ----------------------------------
 
+   if @bShowConfigDir == true then
+      print self.getConfigDir
+		exit(0)
+   end
 
    ## --------------------------------------------
    ##
@@ -295,7 +303,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -38 #{fullpathFile}"}`
+   value = `#{"head -40 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

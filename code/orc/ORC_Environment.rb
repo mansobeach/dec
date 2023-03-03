@@ -22,12 +22,13 @@ module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.15b"
+   @@version = "0.0.15c"
    
    ## ----------------------------------------------------------------
    
    @@change_record = { \
       "0.0.15"  =>   "New configuration item ArchiveHandler used to select the minARC plug-in\n\
+          orcValidateConfig option to print the configuration directory\n\
           Unit test created for NAOS",\
       "0.0.14"  =>   "orcValidateConfig checks the integrity of all rules beyond the xsd schema", \
       "0.0.13"  =>   "Robustification to handle miss-configuration of processing rules:\n\
@@ -319,6 +320,13 @@ module ORC
    end
    ## -----------------------------------------------------------------
 
+   def getConfigDir
+      if !ENV['ORC_CONFIG'] then
+         return File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      else
+         return ENV['ORC_CONFIG']
+      end
+   end
 
    ## ----------------------------------------------------------------
    
