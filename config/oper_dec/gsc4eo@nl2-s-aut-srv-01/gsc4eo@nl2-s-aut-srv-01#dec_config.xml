@@ -103,7 +103,7 @@
       <Database_Adapter>sqlite3</Database_Adapter>
       <Database_Host>localhost</Database_Host>
       <Database_Port></Database_Port>
-      <Database_Name>/data/mocExternalInterfaces/db/dec_inventory</Database_Name>
+      <Database_Name>/data/mocExternalInterfaces/DEC/db/inventory_dec</Database_Name>
       <Database_User>root</Database_User>
       <Database_Password>2mysql</Database_Password>
    </Inventory>

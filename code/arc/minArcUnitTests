@@ -1703,11 +1703,7 @@ class TestCaseStore < Test::Unit::TestCase
    ## minARC inventory is not created
 
    def test_minArcServer
-      puts __method__.to_s
-      puts
-      puts "================================================"
-      puts "MINARC_UnitTests::#{__method__.to_s}"
-      puts
+      @@logger.debug("START => MINARC_UnitTests::#{__method__.to_s}")
       
       cmd = "minArcPurge -Y"
       @@logger.debug(cmd)
@@ -1720,8 +1716,6 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcServer -c -D"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
-
-      puts
 
       cmd = "minArcServer -k -D"
       @@logger.debug(cmd)
@@ -1757,6 +1751,10 @@ class TestCaseStore < Test::Unit::TestCase
       cmd = "minArcStatus -V"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
+
+      cmd = "minArcRetrieve -T"
+      @@logger.debug(cmd)
+      ret = system(cmd)
 
       ## ------------------------------------
       ## store file
@@ -1796,7 +1794,7 @@ class TestCaseStore < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       ## ------------------------------------
-      
+      @@logger.debug("END => MINARC_UnitTests::#{__method__.to_s}")
       return
 
       cmd = "minArcRetrieve -f NON_EXISTING_FILE"

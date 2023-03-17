@@ -7,6 +7,13 @@
    <ListInterfaces>
 
       <Interface>
+         <Name>SFTP_DEC_SAP</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/outbox/dec_sap</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/DEC/inTray/all</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/DEC/inTray/all/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
          <Name>SFTP_TCA_AUTO</Name>
          <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_tca</LocalOutbox>
          <UploadDir>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA___</UploadDir>
@@ -100,6 +107,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_TCA_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"   Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
@@ -107,6 +115,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_TLE_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"   Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
@@ -114,6 +123,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_SFS_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"   Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 
@@ -121,6 +131,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_SFL_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"   Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>      
 
@@ -128,6 +139,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_BULA_CAD"   Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"    Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File> 
 
@@ -136,6 +148,7 @@
          <ToList>
             <Interface Name="SFTP_NBULA_AUTO"   Compress="NONE" DeliveryMethods="SFTP" />
             <Interface Name="SFTP_NBULA_US"     Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"      Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File> 
 
@@ -143,6 +156,7 @@
          <Description></Description>
          <ToList>
             <Interface Name="SFTP_BULC_CAD"   Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"    Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File> 
 
@@ -151,6 +165,7 @@
          <ToList>
             <Interface Name="SFTP_NBULC_AUTO"   Compress="NONE" DeliveryMethods="SFTP" />
             <Interface Name="SFTP_NBULC_US"     Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"      Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File> 
 
@@ -159,6 +174,7 @@
          <ToList>
             <Interface Name="SFTP_TLE_DDC"   Compress="NONE" DeliveryMethods="SFTP" />
             <Interface Name="SFTP_TLE_KSAT"  Compress="NONE" DeliveryMethods="SFTP" />
+            <Interface Name="SFTP_DEC_SAP"   Compress="NONE" DeliveryMethods="SFTP" />
          </ToList>
       </File>
 

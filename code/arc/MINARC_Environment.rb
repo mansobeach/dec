@@ -28,7 +28,8 @@ module ARC
    
    @@change_record = { \
       "1.3.1"  =>      "Handler_NAOS created for NAOS mission\n\
-         Handler_DUMMY created for generic testing", \
+         Handler_DUMMY created for generic testing\n\
+         Increased log messages",\
       "1.3.0"  =>      "Model updated to record ServedFiles\n\
          migration to ruby 2.7 for activesupport\n\
          gems addressable added as a dependency\n\

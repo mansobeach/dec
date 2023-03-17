@@ -273,13 +273,28 @@ class FileStatus
 
       hResult = Hash.new
       
-        
-      arrFiles          = ArchivedFile.all   
-      numTotalFiles     = ArchivedFile.count
-      lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
-      lastArchiveDate   = ArchivedFile.last.archive_date
-      arrTypes          = ArchivedFile.select(:filetype).distinct
-       
+      begin  
+         arrFiles          = ArchivedFile.all   
+         numTotalFiles     = ArchivedFile.count
+         lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
+         lastArchiveDate   = ArchivedFile.last.archive_date
+         arrTypes          = ArchivedFile.select(:filetype).distinct
+      rescue Exception => e
+         # Archive is likely to be empty
+         hResult[:total_size]                = nil
+         hResult[:total_size_in_disk]        = nil
+         hResult[:total_size_original]       = nil
+         hResult[:num_total_files]           = nil
+         hResult[:num_files_last_hour]       = nil
+         hResult[:num_file_types]            = nil
+         hResult[:last_date_archive]         = nil
+         hResult[:last_archive_filename]     = nil
+         hResult[:last_hour_size_original]   = nil
+         hResult[:last_hour_size]            = nil
+         hResult[:last_hour_size_in_disk]    = nil
+         return hResult.to_json
+      end
+
       lastHourCount     = lastHourFiles.count
       sizeOriginal      = Filesize.from("#{arrFiles.sum(:size_original)} B").pretty
       sizefile          = Filesize.from("#{arrFiles.sum(:size)} B").pretty

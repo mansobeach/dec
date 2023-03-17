@@ -118,13 +118,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
    ## -----------------------------------------------------------
 
-   ## -----------------------------------------------------------
-   ## DEC - Pull
-
-
-   ## -----------------------------------------------------------
-
-   ## -----------------------------------------------------------
+  
    ## -----------------------------------------------------------
 
    def getUploadDirList(bTemp = false)
@@ -203,7 +197,6 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       if @isDebugMode == true and response.code.to_i == 200 then 
          puts response.body
       end
-      
               
       if response.code.to_i == 404 or response.code.to_i == 400 then
          if shortCircuit == true then 
@@ -245,7 +238,6 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       require 'net/https'
       require 'uri'
 
-
       host        = ""
       url         = ""
       port        = @server[:port].to_i
@@ -270,6 +262,14 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          bFound   = false
          req      = Curl::Easy.new(url)
          
+         if @verifyPeerSSL == false then
+            if @isDebugMode == true and @logger != nil then
+               @logger.debug("#{@entity} I/F: HTTP HEAD VerifyPeerSSL is disabled")
+            end
+            req.ssl_verify_peer = false
+            req.ssl_verify_host = false
+         end
+
          if user != nil and user != "" then
             req.username = user
          end
@@ -278,17 +278,28 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
             req.password = pass
          end
 
-         req.http_head
-         ret = req.perform
+         ret = true
+
+         begin
+            req.http_head
+            ret = req.perform
+         rescue Exception => e
+            bFound = false
+            ret    = false
+            @logger.error("[DEC_614] I/F #{@entity}: Cannot HEAD #{url}")
+            return nil
+            #raise "[DEC_614] I/F #{@entity}: Cannot HEAD #{url}"
+         end
 
          if ret == true then
+            bFound = true
             if @isDebugMode == true then
                @logger.debug("Found #{File.basename(url)}")
             end
             return url
          end
          
-         if @isDebugMode == true then
+         if @isDebugMode == true and bFound == true then
             @logger.debug("#{url} => #{ret.status}")
          end
                         

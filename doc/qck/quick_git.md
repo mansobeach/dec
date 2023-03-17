@@ -28,6 +28,19 @@ Configuration commands to log the user working in the repository
 
 `git clone https://username:password@remote`
 
+
+### Management of credentials
+
+git config --global --unset core.askpass
+git config --global --set core.askpass
+
+git config --global credential.helper store
+git config --show-origin --get credential.helper
+cat /Users/borja/.gitconfig
+
+# do some git pull (twice to reset?)
+
+
 ### Undo a commit
 
 `git revert <commit_id>`
@@ -131,6 +144,10 @@ Resolve conflicts from remote repository
 ========================================
 git pull --rebase
 
+git fetch
+git checkout origin/develop <file_path>
+git checkout origin/develop src/eboa/logging.py
+git pull origin develop
 
 Steps Branching
 ===============

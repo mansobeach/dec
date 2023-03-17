@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <Node>DEC / minARC AUTO @ SAP</Node>
+
+  <CleanUp Frequency="10" Unit="s">
+  
+    <List_of_CleanUpRules>
+      <!--
+      <CleanUpRule Filetype="TLM_MIRA0_" Rule="Older"  Date="archive_date"    Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_VS_PRO" Rule="Older"  Date="validity_start"  Age="100"     Unit="s" />
+      <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
+      -->
+    </List_of_CleanUpRules>
+  
+  </CleanUp>
+
+   <Archive>
+      <Usage_Threshold type="upper" unit="percentage">90</Usage_Threshold>
+   </Archive>
+
+   <!-- all directories need to refer to /data to persist in the host -->
+   <Workflow>
+      <ArchiveServer>https://localhost:4567</ArchiveServer>
+      <ArchiveRoot>/data/mocExternalInterfaces/DEC/archive_root</ArchiveRoot>
+      <ArchiveError>/data/mocExternalInterfaces/DEC/archive_error</ArchiveError>
+      <ArchiveIntray>/data/mocExternalInterfaces/DEC/inTrayARC</ArchiveIntray>
+      <TempDir>/tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>sqlite3</Database_Adapter>
+      <Database_Host>localhost</Database_Host>
+      <Database_Port></Database_Port>      
+      <Database_Name>/data/mocExternalInterfaces/DEC/db/inventory_minarc</Database_Name>
+      <Database_User></Database_User>
+      <Database_Password></Database_Password>
+   </Inventory>
+
+   <Client>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <User>test</User>
+      <Password>test</Password>
+   </Client>
+
+</Configuration>

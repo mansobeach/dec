@@ -1,12 +1,12 @@
   <log4r_config>
  
    <pre_config>
-    <parameter name="mainLoggerName" value="ARC"/>
+    <parameter name="mainLoggerName" value="lundclaut01"/>
    </pre_config>
  
    <outputter name="minarc_log" level="DEBUG">
       <type>RollingFileOutputter</type>
-      <filename>/tmp/minarc_log_file.log</filename>
+      <filename>/data/mocExternalInterfaces/log/dec/DEC-MOC-SAP-.log</filename>
       <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
          <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
       </formatter>
@@ -24,8 +24,7 @@
       <trunc>false</trunc>
    </outputter>
 
-
-   <logger name="ARC" level="DEBUG" trace="false">
+   <logger name="lundclaut01" level="DEBUG" trace="false">
     <outputter>minarc_log</outputter>
     <outputter>minarc_log_stdout</outputter>
    </logger>

@@ -165,7 +165,11 @@ class CheckerInterfaceConfig
             if @protocol == "LOCAL" then
                retVal = @checkLocal4Recv.checkLocal4Receive
             else
-               retVal = @check4Recv.check4Receive
+               begin
+                  retVal = @check4Recv.check4Receive
+               rescue Exception => e
+                  retVal = false
+               end
             end
          else
             if @protocol == "LOCAL" then

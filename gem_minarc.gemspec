@@ -50,8 +50,8 @@ Gem::Specification.new do |s|
   if ENV.include?("MINARC_TEST") == true then
      s.files = s.files + Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF']
      s.files = s.files + Dir['code/arc/plugins/test/S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006.EOF']
-     s.files = s.files + Dir['code/arc/plugins/test/example_1.m2ts']
-     s.files = s.files + Dir['code/arc/plugins/test/example_1.mp4']
+     # s.files = s.files + Dir['code/arc/plugins/test/example_1.m2ts']
+     # s.files = s.files + Dir['code/arc/plugins/test/example_1.mp4']
   end
   ## --------------------------------------------
 
@@ -117,7 +117,7 @@ Gem::Specification.new do |s|
   ##
   ## Tailored installer to include Postgresql
   if ENV.include?("MINARC_PG") == true then
-     s.add_dependency('pg', '~> 1.2.3')
+     # s.add_dependency('pg', '~> 1.2.3')
   end
   ## --------------------------------------------
 

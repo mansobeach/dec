@@ -57,13 +57,12 @@ class MINARC_Client
    # Set the flag for profiling execution time.
    def setProfileMode
       @isProfileMode = true
-      puts "MINARC_Client profile mode is on"
-      puts
+      @logger.debug("MINARC_Client profile mode is on")
    end
    # ------------------------------------------------
    
    def getVersion
-      return getURL("#{@minArcServer}#{API_URL_VERSION}", @verifyPeerSSL, @user, @pass, @isDebugMode)
+      return getURL("#{@minArcServer}#{API_URL_VERSION}", @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)
    end
    ## -------------------------------------------------
 
@@ -86,9 +85,7 @@ class MINARC_Client
       ret = postFile("#{@minArcServer}#{API_URL_STORE}", @verifyPeerSSL, @user, @pass, newVal, hParams, @isDebugMode)
       
       if ret == false then
-         puts
-         puts "Failed to archive #{full_path_filename} :-("
-         puts
+         @logger.debug("Failed to archive #{full_path_filename} :-(")
       else
          full_path_filename.replace(newVal)
       end
@@ -100,31 +97,25 @@ class MINARC_Client
    def listFile_By_Filetype(filetype)
       url = "#{@minArcServer}#{API_URL_LIST_FILETYPE}/#{filetype}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::listFile_By_Filetype => #{url}"
-         puts
+         @logger.debug("MINARC_Client::listFile_By_Filetype => #{url}")
       end
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)   
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)   
    end
    # ------------------------------------------------
    
    def listFile_By_Name(filename)
       url = "#{@minArcServer}#{API_URL_LIST_FILENAME}/#{filename}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::listFile_By_Name => #{url}"
-         puts
+         @logger.debug("MINARC_Client::listFile_By_Name => #{url}")
       end
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)
    end
    ## -------------------------------------------------
    
    def retrieveFile(filename)
       url = "#{@minArcServer}#{API_URL_RETRIEVE}/#{filename}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::retrieveFile => #{url}"
-         puts
+         @logger.debug("MINARC_Client::retrieveFile => #{url}")
       end
       # return getDirtyFile_obsoleteCurl(url, filename, @isDebugMode)
       return getFile(url, @verifyPeerSSL, @user, @pass, filename, @isDebugMode)
@@ -134,33 +125,28 @@ class MINARC_Client
    def deleteFile(filename)
       url = "#{@minArcServer}#{API_URL_DELETE}/#{filename}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::deleteFile => #{url}"
-         puts
+         @logger.debug("MINARC_Client::deleteFile => #{url}")
       end
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)
    end
    # ------------------------------------------------
    
    def getAllFileTypes
       url = "#{@minArcServer}#{API_URL_GET_FILETYPES}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::getAllFileTypes => #{url}"
-         puts
+         @logger.debug("MINARC_Client::getAllFileTypes => #{url}")
       end
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)
    end
    # ------------------------------------------------
    
    def statusFileType(filetype)
       url = "#{@minArcServer}#{API_URL_STAT_FILETYPES}/#{filetype}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::statusFileType => #{url}"
+         @logger.debug("MINARC_Client::statusFileType => #{url}")
          puts
       end
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode)   
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger)   
    end
    ## ------------------------------------------------------
 
@@ -176,12 +162,10 @@ class MINARC_Client
    def statusFileName(filename)
       url = "#{@minArcServer}#{API_URL_STAT_FILENAME}/#{filename}"
       if @isDebugMode == true then
-         puts
-         puts "MINARC_Client::statusFileName => #{url}"
-         puts
+         @logger.debug("MINARC_Client::statusFileName => #{url}")
       end
       # return JSON.parse(getURL(url, @isDebugMode))
-      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode) 
+      return getURL(url, @verifyPeerSSL, @user, @pass, @isDebugMode, @logger) 
    end
    # ------------------------------------------------
    

@@ -68,7 +68,6 @@ namespace :minarc do
          ENV.delete('MINARC_PG')
       end
 
-   
       if args[:suffix].include?("test") == true then
          puts "building gem minarc #{args[:suffix]} with flag MINARC_TEST"
          ENV['MINARC_TEST'] = "true"
@@ -77,15 +76,41 @@ namespace :minarc do
       end
       
       cmd = "gem build gem_minarc.gemspec"
+      puts cmd
       ret = `#{cmd}`
       if $?.exitstatus != 0 then
          puts "Failed to build gem for minArc"
          exit(99)
       end
+
+      begin
+         File.unlink("install/gems/minarc_latest.gem.md5")
+      rescue Exception => e
+         # puts e.to_s
+      end
+
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
       mv filename, "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
       @filename = "#{name}_#{args[:suffix]}_#{args[:user]}@#{args[:host]}.gem"
+
+      cmd = "md5sum #{@filename}"
+      puts cmd
+      ret = `#{cmd}`
+      cmd = "echo #{ret.split(" ")[0]} > #{@filename}.md5"
+      puts cmd
+      system(cmd)
+
+      ln "#{@filename}.md5", "install/gems/minarc_latest.gem.md5"
+
+      begin
+         rm "install/gems/minarc_latest.gem"
+      rescue Exception => e
+         # puts e.to_s
+      end
+      puts "ln #{@filename} install/gems/minarc_latest.gem"
+      ln @filename, "install/gems/minarc_latest.gem"
+
       cp @filename, "install/gems/minarc_#{args[:suffix]}.gem"
       cp @filename, "install/gems/"
       # rm @filename
@@ -95,7 +120,7 @@ namespace :minarc do
 
    ## ----------------------------------------------------------------
 
-   desc "load Orchestrator configuration package"
+   desc "load Orchestrator / minarc configuration package"
 
    task :load_config, [:user, :host] do |t, args|
       args.with_defaults(:user => :borja, :host => "localhost")
@@ -110,7 +135,9 @@ namespace :minarc do
       
       @arrConfigFiles.each{|file|
          filename = "#{path}/#{prefix}#{file}"
-         cp filename, "config/#{file}"
+         if File.exist?(filename) == true then
+            cp filename, "config/#{file}"
+         end
       }
    end
    ## --------------------------------------------------------------------
@@ -250,7 +277,8 @@ namespace :minarc do
       puts
       puts "unit tests           : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
       puts
-      puts "NAOSBOA"
+      puts "NAOS"
+      puts "naosboa@orc_boa       : rake -f build_minarc.rake minarc:build[gsc4eo,nl2-s-aut-srv-01,naos_test]" 
       puts "naosboa@orc_boa       : rake -f build_minarc.rake minarc:build[naosboa,orc_boa,naos_test_pg]" 
       puts
       puts "CLOUDFERRO LTA"
