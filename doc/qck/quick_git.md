@@ -31,6 +31,8 @@ Configuration commands to log the user working in the repository
 
 ### Management of credentials
 
+- `git config --global credential.helper store`
+
 git config --global --unset core.askpass
 git config --global --set core.askpass
 
