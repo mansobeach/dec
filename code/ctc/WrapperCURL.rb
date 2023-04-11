@@ -102,6 +102,10 @@ module WrapperCURL
          cmd = "curl"
       end
       
+      if isDebugMode == true then
+         cmd = "#{cmd.dup} -v"
+      end
+
       if user != nil and user != "" then
          cmd = "#{cmd.dup} -u #{user}:#{escapePassword(pass)} --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET #{url}"
       else

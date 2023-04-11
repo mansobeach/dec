@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require_relative 'IVV_Environment_NAOS_MOC'
+
+include IVV
+
+rakefile = File.expand_path( 'Tasks_NAOS.rake', IVV.getGemLocation )
+
+if File.exist?( File.expand_path("~/rakefile") ) == true then
+    cmd = "rm -f ~/rakefile.bckp"
+    # puts cmd
+    system(cmd)
+
+    cmd = "mv ~/rakefile ~/rakefile.bckp"
+    # puts cmd
+    system(cmd)
+end
+
+system("ln -s #{rakefile} ~/rakefile")

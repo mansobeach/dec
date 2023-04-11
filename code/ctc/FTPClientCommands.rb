@@ -25,6 +25,9 @@
 
 ## https://www.shellhacks.com/disable-ssh-host-key-checking/
 
+## SSH COMMAND 
+## ssh -t -oBatchMode=no -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -oConnectTimeout=10 -oPort=22 -oLogLevel=QUIET gsc4eoadmin@naos-aiv-fds 'sudo systemctl start naos-fds4eo-app.service'
+
 module CTC
 
 module FTPClientCommands

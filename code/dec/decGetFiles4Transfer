@@ -40,7 +40,7 @@
 # 
 # === Written by DEIMOS Space S.L.   (bolf)
 #
-# === Data Exchange Component -> Data Distributor Component
+# === Data Exchange Component
 # 
 # Git: $Id: decGetFiles4Transfer 1.4 2007/12/05 17:49:11 decdev Exp $
 #
@@ -111,6 +111,24 @@ def main
       exit(99)
    end
 
+   # ----------------------------------
+   # initialize logger
+   loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{@@configDirectory}/dec_log_config.xml")
+   if @isDebugMode then
+      loggerFactory.setDebugMode
+   end
+   @logger = loggerFactory.getLogger
+   if @logger == nil then
+      puts
+      puts "Error in DEC_ReceiverFromInterface::initialize"
+      puts "Could not set up logging system !  :-("
+      puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
+      puts
+      puts
+      exit(99)
+   end
+   # ----------------------------------
+
    checkModuleIntegrity
    
    locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true)
@@ -121,7 +139,7 @@ def main
    # Register in lock file the process
    locker.setRunning
 
-   @archiveRetriever = RetrieverFromArchive.new
+   @archiveRetriever = RetrieverFromArchive.new(@logger, @isDebugMode)
    if @isDebugMode == true then
       @archiveRetriever.setDebugMode
    end

@@ -45,7 +45,7 @@ class RetrieverFromArchive
    ## -----------------------------------------------------------
       
    ## Class constructor.
-   def initialize
+   def initialize(logger, debug = false)
       decConfig            = DEC::ReadConfigDEC.instance
       @confDest            = ReadConfigOutgoing.instance
       @arrFileTypes        = @confDest.getAllOutgoingTypes
@@ -54,27 +54,11 @@ class RetrieverFromArchive
       @bDeleteSourceFiles  = decConfig.deleteSourceFiles?
       @sourceDirectory     = decConfig.getSourceDir
       @globalOutbox        = decConfig.getGlobalOutbox
-      @isDebugMode         = false
+      @logger              = logger
+      @isDebugMode         = debug
       @uploadDirs          = decConfig.getUploadDirs
       
       checkModuleIntegrity
-      
-      # initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{@@configDirectory}/dec_log_config.xml")
-      if @isDebugMode then
-         loggerFactory.setDebugMode
-      end
-      @logger = loggerFactory.getLogger
-      if @logger == nil then
-         puts
-			puts "Error in DEC_ReceiverFromInterface::initialize"
-			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
-			puts
-			puts
-			exit(99)
-      end
-      
    end   
    ## -----------------------------------------------------------
    
@@ -182,17 +166,20 @@ private
          exit(99)
       end        
             
-      @@configDirectory = configDir
-
-            
+      @@configDirectory = configDir        
       @targetDirectory = @globalOutbox
-      
       time             = Time.new
       tmpConfigFile    = time.to_i.to_s
-      
       @targetDirectory = %Q{#{@targetDirectory}/_Delivery_/#{tmpConfigFile}}
     
+      if @isDebugMode == true then
+         @logger.debug("Push source directory #{@sourceDirectory} is checked")
+      end
       checkDirectory(@sourceDirectory)
+
+      if @isDebugMode == true then
+         @logger.debug("Push target directory #{@targetDirectory} is checked")
+      end
       checkDirectory(@targetDirectory)
    end
    ## -----------------------------------------------------------
@@ -295,7 +282,7 @@ private
    ## ------------------------------------------------------------
    
    def mv2GlobalOutBox(filetype)
-      cmd = "\\ln -f #{Dir.pwd}/#{filetype} #{@targetDirectory}/#{filetype} >& /dev/null"
+      cmd = "\\ln -f #{Dir.pwd}/#{filetype} #{@targetDirectory}/#{filetype} >&2 /dev/null"
 
       if @isDebugMode == true then               
          @logger.debug(cmd)
@@ -323,7 +310,7 @@ private
          @logger.debug("mvFile2OutTray => #{filename} #{destination} #{compress}")
       end
       
-      cmd = "\\ln -f #{Dir.pwd}/#{filename} #{destination}/#{filename} >& /dev/null"
+      cmd = "\\ln -f #{Dir.pwd}/#{filename} #{destination}/#{filename} >&2 /dev/null"
 
       if @isDebugMode == true then               
          @logger.debug(cmd)

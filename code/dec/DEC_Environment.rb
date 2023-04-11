@@ -24,11 +24,12 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.38e"
+   @@version = "1.0.39.2"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
+      "1.0.39" =>    "Support of SSH commands", \
       "1.0.38" =>    "Fix on HTTP HEAD to use VerifyPeerSSL configuration", \
       "1.0.37" =>    "New gem roman-numerals is required\n\
           Support of SFTP authentication with password using sshpass\n\
