@@ -242,6 +242,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
                            ]
 
       @@arrInputFiles = [ \
+                              "NS1_OPER_TM__GPS____20220706T000501_20220709T000501_0001.xml", \
                               "NS1_OPER_CNF_CONT___20220706T000000_20220709T000000_0001.xml", \
                               "NS1_OPER_ORB_OEM____20220709T000000_20220717T000000_0001.OEM", \
                               "NS1_OPER_ORB_OPM____20220709T000000_20220709T000000_0001.OPM", \
@@ -250,21 +251,18 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
                               "NS1_OPER_PLA_MAINT__20220709T000000_20220717T000000_0001.xml", \
                               "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml", \
                               "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml", \
-                              "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl", \
+#                              "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl", \
                               "NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.xml", \
                               "NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001.EEF", \
                               "NS1_TEST_PLA_OSC____20220710T000000_20220715T000000_0001.xml", \
-                              "TRK_NAOS1_TG1_ANG_20221004000000.GEO", \
-                              "TRK_NAOS1_TG1_RAN_20221004000000.GEO", \
-                              "TRK_NAOS1_TG2_ANG_20221004000000.GEO", \
-                              "TRK_NAOS1_TG2_RAN_20221004000000.GEO" \
+                              "NS1_TEST_PLA_DPL____20220710T000000_20220715T000000_0001.xml" \
+                              # "IVV_DEC_TM-GPS_20220706T000000_20220709T00000.xml", \
+#                              "TRK_NAOS1_TG1_ANG_20221004000000.GEO", \
+#                              "TRK_NAOS1_TG1_RAN_20221004000000.GEO", \
+#                              "TRK_NAOS1_TG2_ANG_20221004000000.GEO", \
+#                              "TRK_NAOS1_TG2_RAN_20221004000000.GEO" \
                               ]
 
-                            
-           @@arrInputFiles2 = [ \
-                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
-                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
-                           ]
         
            @orcConfigDir = ENV['ORC_CONFIG']
       require 'orc/ReadOrchestratorConfig'
@@ -453,9 +451,9 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       orcConf.update
       pollingDir = orcConf.getPollingDir
      
-      FileUtils.rm_f("/tmp/dec_orchestrator*.log")
+      FileUtils.rm_f("/log/naosboa_orc*.log")
       
-      cmd = "rm -f /tmp/dec_orchestrator*.log"
+      cmd = "rm -f /log/naosboa_orc*.log"
       puts cmd
       system(cmd)
 
@@ -516,7 +514,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
@@ -525,7 +523,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       sleep(5.0)
 
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
       puts cmd
       system(cmd)
@@ -565,7 +563,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
 
       cmd = "orcBolg -c start"
       assert(system(cmd), cmd)
-
+      @@logger.debug("sleep for 300 secs zzZZZZzzzzzZZZZZZZzzzzz")
       sleep(300)
 
       cmd = "orcQueueInput -l -Q"
@@ -594,14 +592,14 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
 
 
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
       puts cmd
       system(cmd)
@@ -654,7 +652,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "grep ERROR #{arr[0]}"
       puts cmd
       assert(system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
@@ -683,7 +681,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
 
 
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
       puts cmd
       system(cmd)
@@ -732,7 +730,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       @@logger.info("orcUnitTests::#{__method__.to_s} END")
-      arr = Dir["/tmp/dec_orchestrator*.log"]
+      arr = Dir["/log/naosboa_orc*.log"]
       cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
       puts cmd
       system(cmd)

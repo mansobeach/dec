@@ -79,8 +79,8 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC.class_variable_get(:@@version)}]", "\n")
-      hRecord = ORC.class_variable_get(:@@change_record)
+      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ORC::VERSION}]", "\n")
+      hRecord = ORC::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
       }

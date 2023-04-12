@@ -30,7 +30,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 
@@ -50,7 +50,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 
@@ -68,7 +68,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 
@@ -87,7 +87,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         host    = getHostname( args[:host], args[:environment] )
@@ -104,7 +104,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 
@@ -123,7 +123,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 
@@ -141,7 +141,7 @@ namespace :gta do
         @logger = load_logger
         args.with_defaults(:environment => 'ndc')
         if args[:host] == nil then
-            @logger.error("rake #{Rake.application.top_level_tasks[0]} - missing host parameter")
+            @logger.error("rake #{t.name} - missing host parameter")
             next
         end
         user    = 'gsc4eoadmin' 

@@ -49,6 +49,12 @@
       </DataProvider>
 
       <DataProvider isTriggerType="yes">
+	      <DataType>PLA_DPL</DataType>
+	      <FileType>*PLA_DPL*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
+      <DataProvider isTriggerType="yes">
 	      <DataType>PLA_MAN</DataType>
 	      <FileType>*PLA_MAN*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
@@ -71,7 +77,19 @@
 	      <FileType>*ksat_schedule_request*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
-      
+
+      <DataProvider isTriggerType="yes">
+	      <DataType>TM_GPS</DataType>
+	      <FileType>*TM__GPS*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>      
+
+      <DataProvider isTriggerType="yes">
+	      <DataType>DEC_GPS</DataType>
+	      <FileType>*DEC_TM-GPS*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
+
       <DataProvider isTriggerType="no">
 	      <DataType>ADA_DOP___</DataType>
 	      <FileType>*TRK_*RAN*.GEO</FileType>
@@ -140,6 +158,8 @@
       <PriorityRule rank="7"     class="DataType" type="PLA_MAINT"      sort="DESC" />
       <PriorityRule rank="8"     class="DataType" type="ORB_OEM"        sort="DESC" />
       <PriorityRule rank="9"     class="DataType" type="SCH_REQ"        sort="DESC" />
+      <PriorityRule rank="10"    class="DataType" type="PLA_DPL"        sort="DESC" />
+      <PriorityRule rank="11"    class="DataType" type="TM_GPS"         sort="DESC" />
 
    </List_of_PriorityRules>
 
@@ -175,7 +195,13 @@
 	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>
-      </ProcessingRule>   
+      </ProcessingRule>
+
+      <ProcessingRule dataType="PLA_DPL" triggerType="PLA_DPL" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
 
       <ProcessingRule dataType="PLA_MAN" triggerType="PLA_MAN" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
@@ -196,6 +222,18 @@
       </ProcessingRule>   
 
       <ProcessingRule dataType="SCH_REQ" triggerType="SCH_REQ" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType="TM_GPS" triggerType="TM_GPS" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType="DEC_GPS" triggerType="DEC_GPS" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>

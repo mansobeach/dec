@@ -282,7 +282,7 @@ private
    ## ------------------------------------------------------------
    
    def mv2GlobalOutBox(filetype)
-      cmd = "\\ln -f #{Dir.pwd}/#{filetype} #{@targetDirectory}/#{filetype} >&2 /dev/null"
+      cmd = "\\ln -f #{Dir.pwd}/#{filetype} #{@targetDirectory}/#{filetype} >&2 "
 
       if @isDebugMode == true then               
          @logger.debug(cmd)
@@ -310,7 +310,7 @@ private
          @logger.debug("mvFile2OutTray => #{filename} #{destination} #{compress}")
       end
       
-      cmd = "\\ln -f #{Dir.pwd}/#{filename} #{destination}/#{filename} >&2 /dev/null"
+      cmd = "\\ln -f #{Dir.pwd}/#{filename} #{destination}/#{filename} >&2 "
 
       if @isDebugMode == true then               
          @logger.debug(cmd)

@@ -3,7 +3,7 @@ include ORC
 
 Gem::Specification.new do |s|
   s.name        = 'orc'
-  s.version     = "#{ORC.class_variable_get(:@@version)}"
+  s.version     = "#{ORC::VERSION}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/ORC component"
   s.description = "Generic Orchestrator"
@@ -63,6 +63,6 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------  
     
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Elecnor Deimos Generic Orchestrator installed #{ORC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Elecnor Deimos Generic Orchestrator installed #{ORC::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
   
 end

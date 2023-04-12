@@ -48,6 +48,7 @@ namespace :orc do
       end
    
       cmd = "gem build gem_orc.gemspec"
+      puts cmd
       ret = `#{cmd}`
       if $? != 0 then
          puts "Failed to build gem for Orchestrator"

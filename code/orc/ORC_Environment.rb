@@ -16,17 +16,18 @@
 
 require 'dotenv'
 require 'cuc/DirUtils'
-require 'orc/ReadOrchestratorConfig'
+require_relative 'ReadOrchestratorConfig'
 
 module ORC
    
    include CUC::DirUtils
    
-   @@version = "0.0.15c"
+   VERSION   = "0.0.16.3"
    
    ## ----------------------------------------------------------------
    
-   @@change_record = { \
+   CHANGE_RECORD = { \
+      "0.0.16"  =>   "TBW", \
       "0.0.15"  =>   "New configuration item ArchiveHandler used to select the minARC plug-in\n\
           orcValidateConfig option to print the configuration directory\n\
           Unit test created for NAOS",\
@@ -60,6 +61,7 @@ module ORC
       "0.0.2"  =>    "Unused dependencies with DEC/ctc sources removed", \
       "0.0.1"  =>    "First cleaned-up version of the orchestrator" \
    }
+
    ## ----------------------------------------------------------------
    
    @@arrEnv = [ \

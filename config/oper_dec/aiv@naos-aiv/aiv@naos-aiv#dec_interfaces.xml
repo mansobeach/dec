@@ -20,7 +20,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>172.23.253.28</Hostname>
+      <Hostname>LUNDCLMCS01</Hostname>
       <Port>22</Port>      
       <User>ccsexec</User>
       <Pass encrypted='true'>bGVpZGVuMQo=</Pass>
@@ -45,7 +45,6 @@
     <!--
          <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
          <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>
-     
          <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
     -->
     </Events>
@@ -74,7 +73,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>NATS</Protocol>
-      <Hostname>172.23.253.28</Hostname>
+      <Hostname>LUNDCLMCS01</Hostname>
       <Port>4222</Port>      
       <User>N/A</User>
       <Pass encrypted='false'>N/A</Pass>

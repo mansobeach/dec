@@ -113,7 +113,7 @@ def main
 
    # ----------------------------------
    # initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{@@configDirectory}/dec_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("push", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
@@ -122,7 +122,7 @@ def main
       puts
       puts "Error in DEC_ReceiverFromInterface::initialize"
       puts "Could not set up logging system !  :-("
-      puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
       puts
       puts
       exit(99)
