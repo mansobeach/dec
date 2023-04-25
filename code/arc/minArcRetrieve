@@ -141,6 +141,7 @@
 #     --Hardlink                 It performs a Hardlink rather than a copy from Archive
 #     --All                      It retrieves all entries in the inventory
 #     --Types                    it shows all file-types archived
+#     --Unpack                   it unpacks the file
 #     --inv <full path filename> It generates an export of the inventory in excel format
 #     --Report <full filename>   Ask for report generation, full path and name of the report to generate.
 #     --rule <filering-rule>     Enable result filtering

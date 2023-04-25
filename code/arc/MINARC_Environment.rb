@@ -22,11 +22,12 @@ module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.3.1b"
-   
+   @@version = "1.3.2.2"
+   VERSION   = "1.3.2.2"
    ## ----------------------------------------------------------------
    
    @@change_record = { \
+      "1.3.2"  =>      "Handler_DUMMY fixed to decode any filename", \
       "1.3.1"  =>      "Handler_NAOS created for NAOS mission\n\
          Handler_DUMMY created for generic testing\n\
          Increased log messages",\

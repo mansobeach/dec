@@ -22,12 +22,12 @@ module ORC
    
    include CUC::DirUtils
    
-   VERSION   = "0.0.16.3"
+   VERSION   = "0.0.16.4"
    
    ## ----------------------------------------------------------------
    
    CHANGE_RECORD = { \
-      "0.0.16"  =>   "TBW", \
+      "0.0.16"  =>   "New unit test for BOA generic configuration", \
       "0.0.15"  =>   "New configuration item ArchiveHandler used to select the minARC plug-in\n\
           orcValidateConfig option to print the configuration directory\n\
           Unit test created for NAOS",\

@@ -1095,7 +1095,7 @@ class TestCaseStore < Test::Unit::TestCase
       puts
 
       
-      arc = ARC::MINARC_Client.new(true)
+      arc = ARC::MINARC_Client.new(@logger)
       # arc.setDebugMode
 
       type     = "S2PDGS"
@@ -1192,7 +1192,7 @@ class TestCaseStore < Test::Unit::TestCase
       Dir.chdir(@@prevDir)
 
       pwd = Dir.pwd               
-#      arc = ARC::MINARC_Client.new(true)
+#      arc = ARC::MINARC_Client.new(@logger, true)
 #      arc.setDebugMode
 #
 #      type     = "S2PDGS"

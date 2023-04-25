@@ -647,16 +647,16 @@ private
    ## -----------------------------------------------------------
    
    def inventoryNewFile(filename_original,
-      full_path_filename, \
-      type, \
-      start, \
-      stop, \
-      arrAddFields, \
-      path = "", \
-      size = 0, \
-      size_in_disk = 0, \
-      size_original = 0, \
-      md5 = nil)
+                        full_path_filename, \
+                        type, \
+                        start, \
+                        stop, \
+                        arrAddFields, \
+                        path = "", \
+                        size = 0, \
+                        size_in_disk = 0, \
+                        size_original = 0, \
+                        md5 = nil)
   
       archival_date = Time.now
   
@@ -731,6 +731,8 @@ private
 #         end
       
       rescue Exception => e
+
+         @logger.error(e.to_s)
          
 #         ## necessary for the ORC contingency test
 #         

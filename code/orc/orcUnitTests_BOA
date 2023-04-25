@@ -22,11 +22,13 @@ require 'cuc/Log4rLoggerFactory'
 require 'orc/ORC_Environment'
 require 'arc/MINARC_Environment'
 
+
+
+
 ## Preconditions:
 #
-## 0.1 - rake -f build_minarc.rake minarc:build[naosboa,orc_boa,naos_test_pg]
-## orc configuration for orcUnitTests orctest@localhost
-## 0.2 - rake -f build_orc.rake orc:install
+## 0.1 - rake -f build_minarc.rake minarc:install[naosboa,orc_boa,naos_test_pg]
+## 0.2 - rake -f build_orc.rake orc:install[boatest,orc_boa]
 #
 # 1 - setup 
 # 1.1 - load_config_development
@@ -42,7 +44,7 @@ require 'arc/MINARC_Environment'
 # ruby orcUnitTests -n test_my_method 
 
 
-class ORCTestCaseNAOS < Test::Unit::TestCase
+class ORCTestCaseBOA < Test::Unit::TestCase
 
    include CUC::DirUtils
    include ORC
@@ -203,67 +205,15 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
          puts
       end
          
-      
-      @@arrInputFiles_with_error = [ \
-                           "bizarre_file.sht", \
-                           "EDR_OPER_SER_SR1_OA_PDMC_20210111T060002_V20210111T052640_20210111T054055", \
-                           "S2__OPER_SRA_EDRS_A_PDMC_20180719T030000_V20180719T030000_20180831T233257.EOF", \
-                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "S2__OPER_REP_ARC____EPA__20180721T110140_V20180721T085229_20180721T085414.EOF", \
-                           "S2__OPER_REP_ARC____MPC__20180721T110140_V20180721T085229_20180721T085414.EOF", \
-                           "S2__OPER_REP_OPAI___EPA__20180721T130012_V20180721T010002_20180721T130001.EOF", \
-                           "S2__OPER_REP_OPAI___MPC__20180721T130012_V20180721T010002_20180721T130001.EOF", \
-                           "S2A_OPER_MPL__NPPF__20180720T110000_20180806T140000_0001.TGZ", \
-                           "S2__OPER_REP_OPLTAS_UPA__20180722T060002_V20180721T030002_20180722T060002.EOF", \
-                           "S2A_OPER_MPL__NPPF__20180820T110000_20180906T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20190420T110000_20190426T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20170820T110000_20170906T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20180920T110000_20180926T140000_0001.TGZ", \
-                           "S2A_OPER_MPL__NPPF__20190520T110000_20190526T140000_0001.TGZ", \
-                           "S2A_OPER_MPL_ORBPRE_20180720T030221_20180730T030221_0001.EOF", \
-                           "S2A_OPER_REP_PASS_E_EDRS_20180720T235700_V20180720T234817_20180720T235645.EOF", \
-                           "S2A_OPER_REP_STNACQ_SGS__20180724T123414_V20180724T120243_20180724T121539.EOF", \
-                           "S2A_OPER_MPL_SPMPS__PDMC_20180719T090005_V20180720T090000_20180726T090000.EOF", \
-                           "S2A_OPER_MPL_FSSGS__PDMC_20180719T090008_V20180720T090000_20180726T090000.EOF", \
-                           "S2__OPER_REP_OPLTA__EPA__20180721T130015_V20180721T010002_20180721T130001.EOF", \
-                           "S2__OPER_REP_OPLTAS_UPA__20190522T060002_V20190521T030002_20190522T060002.EOF", \
-                           "S2__OPER_GIP_PROBA2_MPC__20190502T000212_V20190506T004000_21000101T000000_B00.TGZ", \
-                           "S2A_OPER_GIP_PROBAS_MPC__20190307T000207_V20190311T000000_21000101T000000_B00.TGZ", \
-                           "S2__OPER_REP_OPDAM1_PDMC_20180721T110501_V20180721T085229_20180721T085229.EOF" \
-                           ]
-
-      @@troubleMakers = [ \
-                           "EDR_OPER_SER_SR1_OA_PDMC_20210111T060002_V20210111T052640_20210111T054055", \
-                           "S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "EDR_OPER_SER_SR1_OA_PDMC_20210222T090000_V20210111T052640_20210111T054055", \
-                           "S2B_OPER_REP_OPDPC__MPC__20180721T061746_V20180721T061746_20180721T061746.EOF", \
-                           "S2B_OPER_REP_OPDPC__SGS__20210121T235959_V20200721T061746_20180721T061746.EOF" \
-                           ]
-
+   
       @@arrInputFiles = [ \
-                              "NS1_OPER_TM__GPS____20220706T000501_20220709T000501_0001.xml", \
-                              "NS1_OPER_CNF_CONT___20220706T000000_20220709T000000_0001.xml", \
-                              "NS1_OPER_ORB_OEM____20220709T000000_20220717T000000_0001.OEM", \
-                              "NS1_OPER_ORB_OPM____20220709T000000_20220709T000000_0001.OPM", \
-                              "NS1_OPER_ORB_SOERT__20220709T000000_20220717T000000_0001.OPM", \
-                              "NS1_OPER_PLA_GSP____20220709T000000_20220717T000000_0001.xml", \
-                              "NS1_OPER_PLA_MAINT__20220709T000000_20220717T000000_0001.xml", \
-                              "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml", \
-                              "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml", \
-#                              "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl", \
-                              "NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.xml", \
-                              "NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001.EEF", \
-                              "NS1_TEST_PLA_OSC____20220710T000000_20220715T000000_0001.xml", \
-                              "NS1_TEST_PLA_DPL____20220710T000000_20220715T000000_0001.xml" \
-                              # "IVV_DEC_TM-GPS_20220706T000000_20220709T00000.xml", \
-#                              "TRK_NAOS1_TG1_ANG_20221004000000.GEO", \
-#                              "TRK_NAOS1_TG1_RAN_20221004000000.GEO", \
-#                              "TRK_NAOS1_TG2_ANG_20221004000000.GEO", \
-#                              "TRK_NAOS1_TG2_RAN_20221004000000.GEO" \
-                              ]
-
-        
+         "source.json", \
+         "properties.json", \
+         "irrelevant_name", \
+         "extension.1.2.3", \
+         "I_love_your_name" \
+         ]
+    
            @orcConfigDir = ENV['ORC_CONFIG']
       require 'orc/ReadOrchestratorConfig'
  
@@ -290,8 +240,8 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
    ## ------------------------------------------------------
    
    Test::Unit.at_exit do
-      @@logger.info("START => ORCTestCaseNAOS::#{__method__.to_s}")
-      @@logger.info("END   => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
    end
    
    ## ------------------------------------------------------ 
@@ -299,7 +249,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
    ## Setup before every test-case
    ##
    def setup
-      @@logger.info("START => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
       
       cmd = "rm -f /log/naosboa_orc*.log"
       @@logger.debug(cmd)
@@ -333,14 +283,14 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       @@logger.debug(cmd)
       system(cmd)
 
-      @@logger.info("END   => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
    end
    ## --------------------------------------------------------
    ## After every test case
 
    def teardown
-      @@logger.info("START => ORCTestCaseNAOS::#{__method__.to_s}")
-      @@logger.info("END   => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
    end
    ## ------------------------------------------------------
 
@@ -348,20 +298,57 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
    ## ------------------------------------------------------
 
    def testConfig
-      @@logger.info("START => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
 
       orcConf = ORC::ReadOrchestratorConfig.instance
       orcConf.update
       
       assert( orcConf.isValidFileType?("NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001"), "valid file ?" ) 
 
-      @@logger.info("END   => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
    end
  
    ## -----------------------------------------------------------
 
+   def test_queue_file
+
+      FileUtils.rm_f("/log/naosboa_orc*.log")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
+
+      cmd = "minArcDB -d"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      cmd = "minArcDB -c"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      system("echo 'holy crap' > /tmp/minarc/tmp/source.json")
+      cmd = "minArcStore -t DUMMY -f \"/tmp/minarc/tmp/source.json\" --noserver"
+      @@logger.debug(cmd)
+      assert(system(cmd), "store of source.json")
+      
+      cmd = "minArcStatus -f source.json --noserver | jq"
+      @@logger.debug(cmd)
+      assert(system(cmd), "status of source.json")
+
+      cmd = "minArcRetrieve -f source.json -L /inputs --noserver"
+      @@logger.debug(cmd)
+      assert(system(cmd), "retrieve of source.json")
+
+      cmd      = 'orcQueueInput -f source -P -s NRT'
+      @@logger.debug(cmd)
+      retVal   = system(cmd)
+      if @isDebugMode == true then
+         @logger.debug("#{cmd} / #{retVal}")
+      end
+
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
+   end
+   ## -----------------------------------------------------------
+
    def test_train_slow
-      @@logger.info("START => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("START => ORCTestCaseBOA::#{__method__.to_s}")
 
       FileUtils.rm_f("/log/naosboa_orc*.log")
       
@@ -434,7 +421,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
       @@logger.debug(cmd)
       system(cmd)
      
-      @@logger.info("END   => ORCTestCaseNAOS::#{__method__.to_s}")
+      @@logger.info("END   => ORCTestCaseBOA::#{__method__.to_s}")
    end
 
    ## -----------------------------------------------------------
@@ -610,84 +597,6 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
    ## -------------------------------------------------------------
 
   
-   
-   ## -------------------------------------------------------------
-
-   def test_resiliency
-
-      puts "================================================"
-      puts "ORC_UnitTests::#{__method__.to_s}"
-      puts
-     
-      @@logger.info("orcUnitTests::#{__method__.to_s} START")     
-      
-      orcConf = ORC::ReadOrchestratorConfig.instance
-      orcConf.update
-      pollingDir = orcConf.getPollingDir
-                
-      system("orcBolg -c stop")
-      sleep(5.0)
-
-      system("minArcPurge -Y")
-      system("minArcDB -d")
-      system("minArcDB -c")
-      
-      system("orcManageDB -d")
-      system("orcManageDB -c")
-           
-      @@troubleMakers.each{|filename|
-         cmd = "echo \'#{filename}\' > #{pollingDir}/#{filename}"
-         ret = system(cmd)
-         @@logger.debug("#{cmd} / #{ret}")
-      }
-
-      sleep(3.0)
-
-      cmd = "orcBolg -c start"
-      assert(system(cmd), cmd)
-
-      sleep(50)
-   
-      cmd = "orcBolg -c stop"
-      @@logger.debug(cmd)
-      assert(system(cmd), cmd)
-
-      arr = Dir["/log/naosboa_orc*.log"]
-      cmd = "grep ERROR #{arr[0]}"
-      puts cmd
-      assert(system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
-
-      cmd = "orcQueueInput -l -Q"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
-      cmd = "orcQueueInput -l -P"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
-
-      cmd = "orcQueueInput -l -F"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
-
-      cmd = "orcQueueInput -l -S"
-      puts cmd
-      puts
-      assert(system(cmd), cmd)
-
-
-      @@logger.info("orcUnitTests::#{__method__.to_s} END")
-      arr = Dir["/log/naosboa_orc*.log"]
-      cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
-      puts cmd
-      system(cmd)
-      
-
-   end
    
    ## -------------------------------------------------------------
 

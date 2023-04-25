@@ -156,6 +156,10 @@ namespace :orc do
       puts "rake -f build_minarc.rake minarc:install[orctest,localhost]"
       puts "rake -f build_orc.rake orc:install[orctest,localhost]"
       puts
+      puts " *** BOA ***"
+      puts "rake -f build_minarc.rake minarc:install[naosboa,orc_boa,naos_test_pg]"
+      puts "rake -f build_orc.rake orc:install[boatest,orc_boa]"
+      puts
       puts " *** NAOSBOA ***"
       puts "rake -f build_minarc.rake minarc:install[naosboa,orc_boa,naos_test_pg]"
       puts "rake -f build_orc.rake orc:install[naosboa,orc_boa]"

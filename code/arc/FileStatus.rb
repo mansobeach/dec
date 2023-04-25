@@ -420,7 +420,7 @@ private
       if @isDebugMode == true then
          puts "FileStatus::#{__method__.to_s}"
       end
-      arc = ARC::MINARC_Client.new
+      arc = ARC::MINARC_Client.new(@logger)
       if @isDebugMode == true then
          arc.setDebugMode
       end

@@ -160,6 +160,7 @@ class TestCaseMINARC_DUMMY < Test::Unit::TestCase
       sleep(2.0)
 
       @@arrInputFiles = [ \
+                           "source.json", \
                            "properties.json", \
                            "irrelevant_name", \
                            "extension.1.2.3", \
@@ -227,6 +228,35 @@ class TestCaseMINARC_DUMMY < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
+   def test1File
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
+
+      system("echo 'holy crap' > /tmp/minarc/tmp/source.json")
+      cmd = "minArcStore -t DUMMY -f \"/tmp/minarc/tmp/source.json\" --noserver -D"
+      @@logger.debug(cmd)
+      assert(system(cmd), "store of source.json")
+      
+      cmd = "minArcStatus -f source.json --noserver | jq"
+      @@logger.debug(cmd)
+      assert(system(cmd), "status of source.json")
+
+      cmd = "minArcFile -T DUMMY -f source -t -D"
+      @@logger.debug(cmd)
+      assert(system(cmd), "status of source.json")
+
+      cmd = "minArcFile -T DUMMY -f source -s -D"
+      @@logger.debug(cmd)
+      assert(system(cmd), "status of source.json")
+
+      cmd = "minArcFile -T DUMMY -f source -e -D"
+      @@logger.debug(cmd)
+      assert(system(cmd), "status of source.json")
+
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")
+   end
+
+   ## ------------------------------------------------------
+
    def testStore
       @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
 
@@ -248,7 +278,30 @@ class TestCaseMINARC_DUMMY < Test::Unit::TestCase
 
    ## ------------------------------------------------------
    
-  
+   def testRetrieve
+      @@logger.info("START => TestCaseMINARC_DUMMY::#{__method__.to_s}")
+
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      @@arrInputFiles.each{|filename|
+         @@logger.debug("TestCaseMINARC_DUMMY::#{__method__.to_s} #{filename}")
+         system("echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}")
+         cmd = "minArcStore -t DUMMY -f \"/tmp/minarc/tmp/#{filename}\" --noserver -D"
+         @@logger.debug(cmd)
+         assert(system(cmd), "store of #{filename}")
+         
+         cmd = "minArcStatus -f #{filename} --noserver | jq"
+         @@logger.debug(cmd)
+         assert(system(cmd), "status of #{filename}")
+
+         cmd = "minArcRetrieve -f #{filename} -L /tmp --noserver -D"
+         @@logger.debug(cmd)
+         assert(system(cmd), "retrieve of #{filename}")
+
+      }
+
+      @@logger.info("END   => TestCaseMINARC_DUMMY::#{__method__.to_s}")      
+   end
    ## ------------------------------------------------------
 
 

@@ -328,24 +328,24 @@ def main
 
    @archiveHandler      = @ftReadConf.getArchiveHandler
 
-   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -t"         
-   @filetype      = `#{cmd}`.chop         
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -t"
+   if @isDebugMode == true then
+      @logger.debug(cmd)
+   end        
+   @filetype      = `#{cmd}`.chop
+   if @isDebugMode == true then
+      @logger.debug(@fileType)
+   end        
 
    if @filetype == nil or @filetype == "" then
-      puts
-      puts "Could not identify the file-type for #{@filename} :-("
-      puts
+      @logger.error("Could not identify the file-type for #{@filename}")
       exit(99)
    end
 
    if @arrStatus.include?(@initialStatus) == false then
-      puts
-      puts "Status \"#{@initialStatus}\" is not a valid status :-("
-      puts
-      puts
+      @logger.error("Status \"#{@initialStatus}\" is not a valid status :-(")
       exit(99)
    end
-
 
    ## ------------------------------------------------------
 
@@ -356,22 +356,16 @@ def main
       begin
          row = Pending2QueueFile.where(filename: @filename)      
       rescue Exception => e
-         puts
-         puts e.to_s
-         puts
+         @logger.error(e.to_s)
          if @isDebugMode == true then
-            puts
-            puts e.backtrace
-            puts
+            @logger.error(e.backtrace)
          end
          exit(127)
       end
 
       if row != nil then      
          if row.to_a.length > 0 then
-            puts
-            puts "File #{row.to_a[0].filename} was already in pending queue :-|"
-            puts
+            @logger.error("File #{row.to_a[0].filename} was already in pending queue :-|")
             exit(127)
          end
       end
@@ -400,11 +394,24 @@ def main
       exit(99)
    end
 
-   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -s"         
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -s"
+   if @isDebugMode == true then
+      @logger.debug(cmd)
+   end 
    tmpStart       = `#{cmd}`.chop         
+   if @isDebugMode == true then
+      @logger.debug(tmpStart)
+   end 
 
-   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -e"         
+   cmd            = "minArcFile -T #{@archiveHandler} -f #{@filename} -e"
+   if @isDebugMode == true then
+      @logger.debug(cmd)
+   end       
    tmpStop        = `#{cmd}`.chop         
+   if @isDebugMode == true then
+      @logger.debug(tmpStop)
+   end 
+
 
    
    # If stop-date is EOM set a valid date

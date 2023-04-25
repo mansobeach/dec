@@ -271,6 +271,30 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
    
+   def testDecodeArchivedFile
+      @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
+
+      system("mkdir -p /tmp/minarc/tmp/")
+      
+      @@arrInputFiles.each{|filename|
+         @@logger.debug("TestCaseMINARC_NAOS::#{__method__.to_s} #{filename}")
+         system("echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}")
+         cmd = "minArcStore -t NAOS -f \"/tmp/minarc/tmp/#{filename}\" --noserver -D"
+         @@logger.debug(cmd)
+         assert(system(cmd), "store of #{filename}")
+
+         if filename.include?(".tcl") == true then
+            cmd = "minArcStatus -f #{filename.gsub!("_PLA_", "_TCL_")} --noserver | jq"
+         else
+            cmd = "minArcStatus -f #{filename} --noserver | jq"
+         end
+         @@logger.debug(cmd)
+         assert(system(cmd), "status of #{filename}")
+      }
+
+      @@logger.info("END   => TestCaseMINARC_NAOS::#{__method__.to_s}")      
+      cmd = "minArcFile -f TRK_NAOS1_TG1_ANG_20221004000000 -T NAOS -e -D" 
+   end
   
    ## ------------------------------------------------------
 

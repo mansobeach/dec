@@ -67,7 +67,9 @@ class Handler_DUMMY
 
       @type             = "TYPE_DUMMY"
       @start            = DateTime.new(2100,1,1)
+      @str_start        = "21000101T000000"
       @stop             = DateTime.new(2100,1,1)
+      @str_stop         = "21000101T000000"
       @generation_date  = DateTime.new(2100,1,1)
       @validated        = true
 
@@ -85,26 +87,31 @@ class Handler_DUMMY
 
       # ----------------------------------------------------
 
-      @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
-      @size_original = File.size(name)
-
-      # ----------------------------------------------------
-
       if @isDebugMode == true  then
          @logger.debug("name                 => #{name}")
          @logger.debug("type                 => #{@type}")
          @logger.debug("start                => #{@start}")
          @logger.debug("stop                 => #{@stop}")
          @logger.debug("generation_date      => #{@generation_date}")
+      end
+
+      if @bDecodeNameOnly == true then
+         return
+      end
+
+      @archive_path  = "#{archRoot}/#{@type}/#{Date.today.strftime("%Y")}/#{Date.today.strftime("%m")}/#{Date.today.strftime("%d")}"
+      @size_original = File.size(name)
+
+      # ----------------------------------------------------
+
+      if @isDebugMode == true  then
          @logger.debug("archive_path         => #{@archive_path}")
          @logger.debug("size_original        => #{@size_original}")
       end
 
       # ----------------------------------------------------
 
-      if @bDecodeNameOnly == true then
-         return
-      end
+      
 
       # ----------------------------------------------------
 
