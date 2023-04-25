@@ -2,7 +2,15 @@
 
 # == Synopsis
 #
-# This is a command line tool that connects to NAOS MCS using NATS & SFTP.
+# This is a command line tool that connects to NAOS MCS CCS5 using NATS, HTTP & SFTP.
+#
+# > FSTATUS : Get the status of the CCS5 session 
+# decNATS -n NAOS_IVV_MCS_NATS -FSTATUS
+# > FSTART  : Start a CCS5 session
+# decNATS -n NAOS_IVV_MCS_NATS -FSTART
+# > FSTOP   : Stop a CCS5 session
+# decNATS -n NAOS_IVV_MCS_NATS -FSTOP
+#
 #
 # F0. Get Session 
 #
@@ -83,7 +91,7 @@
 # Deimos-Space S.L.
 #
 # == Copyright
-# Copyright (c) 2022 Deimos Space S.L.
+# Copyright (c) 2022 Elecnor Deimos Space S.L.U.
 #
 
 #########################################################################
@@ -129,6 +137,7 @@ require 'cuc/Converters'
 
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
+require 'dec/HTTPClientCCS5'
 require 'dec/NATSClientCCS5'
 require 'dec/NATSClient'
 
@@ -234,7 +243,9 @@ def main
 
   ## ------------------------------------------------------
 
-  @logger.info("[DEC_005] I/F #{@ifNATS}: Polling Started")
+  if strFunction != "FSTATUS" and strFunction != "FSTOP" and strFunction != "FSTART" then
+    @logger.info("[DEC_005] I/F #{@ifNATS}: Polling Started")
+  end
 
   if strSubject != "" then
     client = NATSClient.new(@ifNATS, @logger, @isDebugMode)
@@ -249,10 +260,17 @@ def main
 
   ## ------------------------------------------------------
 
-  ccs5 = NATSClientCCS5.new(@ifNATS, @ifSFTP, @logger, @isDebugMode)
+  httpCCS5  = HTTPClientCCS5.new(@ifNATS, @logger, @isDebugMode)
+  ccs5      = NATSClientCCS5.new(@ifNATS, @ifSFTP, @logger, @isDebugMode)
 
   begin
     case strFunction
+      when "FSTATUS" then 
+        httpCCS5.requestFSTATUS
+      when "FSTART" then 
+        httpCCS5.requestFSTART
+      when "FSTOP" then 
+        httpCCS5.requestFSTOP
       when "F0" then 
         ccs5.requestF0
       when "F2" then 
@@ -289,7 +307,7 @@ end
 def usage
   fullpathFile = File.expand_path(__FILE__)    
   
-  value = `#{"head -86 #{fullpathFile}"}`
+  value = `#{"head -95 #{fullpathFile}"}`
      
   value.lines.drop(1).each{
      |line|

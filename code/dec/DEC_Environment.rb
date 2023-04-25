@@ -24,12 +24,15 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.39.3"
+   @@version = "1.0.39.6"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.39" =>    "Support of SSH commands", \
+      "1.0.39" =>    "Support of SSH commands\n\
+          decNATS for NAOS updated according to:\n\
+          https://jira.elecnor-deimos.com/browse/NAOSMCS-52\n\
+          decListener exit code always set to 0 if command is successful", \
       "1.0.38" =>    "Fix on HTTP HEAD to use VerifyPeerSSL configuration", \
       "1.0.37" =>    "New gem roman-numerals is required\n\
           Support of SFTP authentication with password using sshpass\n\

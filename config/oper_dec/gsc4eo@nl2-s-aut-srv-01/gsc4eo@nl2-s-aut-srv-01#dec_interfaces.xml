@@ -17,7 +17,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>nl2-s-mcs-srv-01</Hostname>
+      <Hostname>lundclmcs01</Hostname>
       <Port>22</Port>
       <User>ccsexec</User>
       <Pass encrypted='true'>bGVpZGVuMQo=</Pass>
@@ -68,7 +68,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>nl2-s-mcs-srv-01</Hostname>
+      <Hostname>lundclmcs01</Hostname>
       <Port>22</Port>
       <User>ccsexec</User>
       <Pass encrypted='true'>bGVpZGVuMQo=</Pass>
@@ -120,7 +120,7 @@
   </TXRXParams>    
   <Server>
     <Protocol>SFTP</Protocol>
-    <Hostname>nl2-s-ivv-srv-02</Hostname>
+    <Hostname>luuaplivv01</Hostname>
     <Port>22</Port>
     <User>ivvmoc</User>
     <Pass>D3im0s_1vvm0c</Pass>
@@ -173,7 +173,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>nl2-s-ivv-srv-02</Hostname>
+      <Hostname>luuaplivv01</Hostname>
       <Port>22</Port>
       <User>ivvmoc</User>
       <Pass>D3im0s_1vvm0c</Pass>
@@ -225,7 +225,7 @@
   </TXRXParams>    
   <Server>
     <Protocol>SFTP</Protocol>
-    <Hostname>nl2-s-ivv-srv-02</Hostname>
+    <Hostname>luuaplivv01</Hostname>
     <Port>22</Port>
     <User>ivvmoc</User>
     <Pass>D3im0s_1vvm0c</Pass>
@@ -277,7 +277,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>nl2-s-ivv-srv-02</Hostname>
+      <Hostname>luuaplivv01</Hostname>
       <Port>22</Port>
       <User>ivvmoc</User>
       <Pass>D3im0s_1vvm0c</Pass>
@@ -330,7 +330,7 @@
       </TXRXParams>    
       <Server>
         <Protocol>SFTP</Protocol>
-        <Hostname>nl2-s-ivv-srv-02</Hostname>
+        <Hostname>luuaplivv01</Hostname>
         <Port>22</Port>
         <User>ivvmoc</User>
         <Pass>D3im0s_1vvm0c</Pass>
@@ -381,7 +381,7 @@
     </TXRXParams>    
     <Server>
       <Protocol>SFTP</Protocol>
-      <Hostname>nl2-s-ivv-srv-02</Hostname>
+      <Hostname>luuaplivv01</Hostname>
       <Port>22</Port>
       <User>ivvmoc</User>
       <Pass>D3im0s_1vvm0c</Pass>
@@ -433,7 +433,7 @@
   </TXRXParams>    
   <Server>
     <Protocol>SFTP</Protocol>
-    <Hostname>nl2-s-ivv-srv-02</Hostname>
+    <Hostname>luuaplivv01</Hostname>
     <Port>22</Port>
     <User>ivvmoc</User>
     <Pass>D3im0s_1vvm0c</Pass>

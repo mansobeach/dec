@@ -28,7 +28,14 @@
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
-       <File Type="IVV_DEC_TM*.xml">
+      <File Type="*DEC_TM*.xml">
+         <Description>TM decoded from MCS</Description>
+         <FromList>
+            <Interface>NAOS_IVV_MCS_SFTP</Interface>
+         </FromList>
+      </File>
+
+      <File Type="*dec_tm*.xml">
          <Description>TM decoded from MCS</Description>
          <FromList>
             <Interface>NAOS_IVV_MCS_SFTP</Interface>

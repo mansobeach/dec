@@ -418,8 +418,8 @@ end
 ## It checks whether the Listeners are running or not
 ## It returns:
 ## * 0 -> All listeners are running
-## * 1 -> All listeners are not running
-## * 2 -> Some of them are not running
+## * 1 -> All listeners are not running / changed to 0 if command is successful
+## * 2 -> Some of them are not running / changed to 0 if command is successful
 ##
 def checkListeners
    ftReadConf   = ReadInterfaceConfig.instance
@@ -451,9 +451,11 @@ def checkListeners
       exit(0)
    end
    if bNone == true then
-      exit(1)
+      # exit(1)
+      exit(0)
    end
-   exit(2)
+   # exit(2)
+   exit(0)
 end
 ## ---------------------------------------------------------
 ##

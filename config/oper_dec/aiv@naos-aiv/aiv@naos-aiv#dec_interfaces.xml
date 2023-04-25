@@ -74,7 +74,7 @@
     <Server>
       <Protocol>NATS</Protocol>
       <Hostname>LUNDCLMCS01</Hostname>
-      <Port>4222</Port>      
+      <Port>4222</Port> 
       <User>N/A</User>
       <Pass encrypted='false'>N/A</Pass>
       <RegisterContentFlag>false</RegisterContentFlag>
