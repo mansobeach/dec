@@ -184,19 +184,18 @@ private
 
    def deleteFromArchive(aFile)
 
-      # cmd = "\\chmod -R a+w #{@archiveRoot}/#{aFile.path}/" << "/#{aFile.filename}"
+      #cmd = "\\chmod -R a+w #{@archiveRoot}/#{aFile.path}/" << "/#{aFile.filename}"
       cmd = "\\chmod -R a+w #{aFile.path}/" << "/#{aFile.filename}*"
 
       system(cmd)
 
-      # cmd = "\\rm -rf #{@archiveRoot}/#{aFile.path}/" << "/#{aFile.filename}"
+      #cmd = "\\rm -rf #{@archiveRoot}/#{aFile.path}/" << "/#{aFile.filename}"
       cmd = "\\rm -rf #{aFile.path}/" << "/#{aFile.filename}"
 
       retVal = system(cmd)
 
       if retVal == true then
          aFile.destroy
-         # puts "(Deleted)  : " << aFile.filename
          return true
       else
          puts "Could not delete #{aFile.filename} from archive :-("
