@@ -25,6 +25,38 @@
    -->
 
       <Interface>
+         <Name>TEST_ECMWF_TCC</Name>
+         <LocalInbox>/data/mocExternalInterfaces/delivery_root/sftp</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/data/mocExternalInterfaces/ECM/inTray/AUX_WEF</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface> 
+
+      <Interface>
+         <Name>ECMWF_TCC</Name>
+         <LocalInbox>/data/mocExternalInterfaces/delivery_root/sftp</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/data/mocExternalInterfaces/ECM/inTray/AUX_WEF</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>true</LogUnknown>
+         </Switches>
+      </Interface> 
+
+      <Interface>
          <Name>TEST_CELESTRAK_SFS</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/sfs</LocalInbox>
          <DownloadDirs>
@@ -453,6 +485,14 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+     <File Type="ECMWF_tcc*.grib">
+         <Description>ECMWF_TCC</Description>
+         <FromList>
+            <Interface>TEST_ECMWF_TCC</Interface>
+            <Interface>ECMWF_TCC</Interface>
+         </FromList>
+      </File>
+
       <File Type="bulletinA.txt">
          <Description>AUX_BULA__</Description>
          <FromList>

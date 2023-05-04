@@ -119,6 +119,22 @@
          </Switches>
       </Interface>
   
+      <Interface>
+         <Name>MCS_EXT_RPT_EOT</Name>
+         <LocalInbox>/data/mocExternalInterfaces/EOT/outTray/MOC_FILES_</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/home/ccsexec/REPORTS/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+         </Switches>
+      </Interface>
+
    </ListInterfaces>
 <!-- 
 
@@ -166,6 +182,26 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          </FromList>
       </File>
 
+      <File Type="NS1_OPER_RPT_TMPKT*">
+         <Description>MCS EXT REPORT TM PACKET</Description>
+         <FromList>
+            <Interface>MCS_EXT_RPT_EOT</Interface>
+         </FromList>
+      </File>
+
+      <File Type="NS1_OPER_RPT_TMPAR*">
+         <Description>MCS EXT REPORT TM PARAMETERS</Description>
+         <FromList>
+            <Interface>MCS_EXT_RPT_EOT</Interface>
+         </FromList>
+      </File>
+
+      <File Type="NS1_OPER_RPT_TCREC*">
+         <Description>MCS EXT REPORT TC RAW PACKETS</Description>
+         <FromList>
+            <Interface>MCS_EXT_RPT_EOT</Interface>
+         </FromList>
+      </File>
 
    </DownloadRules>
 

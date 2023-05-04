@@ -14,6 +14,13 @@
       </Interface>
 
       <Interface>
+         <Name>SFTP_TCC_AUTO</Name>
+         <LocalOutbox>/data/mocExternalInterfaces/delivery_root</LocalOutbox>
+         <UploadDir>/data/mocExternalInterfaces/US/inTray/ECM/AUX_WEF</UploadDir>
+         <UploadTemp>/data/mocExternalInterfaces/US/inTray/ECM/AUX_WEF/_TEMP_</UploadTemp>
+      </Interface>
+
+      <Interface>
          <Name>SFTP_TCA_AUTO</Name>
          <LocalOutbox>/data/mocExternalInterfaces/outbox/aut_tca</LocalOutbox>
          <UploadDir>/data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA___</UploadDir>
@@ -102,6 +109,13 @@
    <!-- =========================================================== -->
 
    <ListFiles>
+
+      <File Type="ECMWF_tcc*.grib">
+         <Description>ECMWF Total Cloud Cover</Description>
+         <ToList>
+            <Interface Name="SFTP_TCC_AUTO"  Compress="NONE" DeliveryMethods="SFTP" />
+         </ToList>
+      </File>
 
       <File Type="NS1_OPER_AUX_TCA___*">
          <Description></Description>

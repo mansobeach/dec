@@ -143,6 +143,7 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
       system("\\rm -rf /data/mocExternalInterfaces/FDS/inTray/CEL/AUX_TCA/NS1*")
       system("\\rm -rf /data/mocExternalInterfaces/KSA/inTray/CEL/AUX_TLE/NAOS1*")
       system("\\rm -rf /data/mocExternalInterfaces/DDC/inTray/CEL/AUX_TLE/NAOS1*")
+      system("\\rm -rf /data/mocExternalInterfaces/delivery_root/sftp/*")
       system("\\rm -rf /data/mocExternalInterfaces/delivery_root/NS1*")
       system("\\rm -rf /data/mocExternalInterfaces/delivery_root/NAOS1*")
       system("\\rm -rf /data/mocExternalInterfaces/outbox/ddc/sftp/*")
@@ -699,6 +700,16 @@ class DECTestCaseNAOS_IVV_0500 < Test::Unit::TestCase
    def testAUTO2
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
+      # simulate ECMWF push into the UAP
+      cmd = "cp /data/mocExternalInterfaces/ecmwf/ECMWF_tcc_20230404T0.grib /data/mocExternalInterfaces/ECM/inTray/AUX_WEF/"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      cmd = "decListener -m ECMWF_TCC -i 3600"
+      @@logger.debug(cmd)
+      ret = system(cmd)
+
+      sleep(60)
 
       cmd = "decListener -m NASA_NBULA -i 86400"
       @@logger.debug(cmd)
