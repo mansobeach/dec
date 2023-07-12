@@ -16,18 +16,23 @@
 
 require 'dotenv'
 require 'cuc/DirUtils'
-require 'arc/ReadMinarcConfig'
+begin
+   require 'arc/ReadMinarcConfig'
+rescue Exception
+   require_relative 'ReadMinarcConfig'
+end
 
 module ARC
    
    include CUC::DirUtils
    
-   @@version = "1.3.2.2"
-   VERSION   = "1.3.2.2"
+   VERSION   = "1.3.2.3"
    ## ----------------------------------------------------------------
    
-   @@change_record = { \
-      "1.3.2"  =>      "Handler_DUMMY fixed to decode any filename", \
+   CHANGE_RECORD = { \
+      "1.3.2"  =>      "Fixed Handler_DUMMY to decode any filename\n\
+         Handler_NAOS updated for TLE\n\
+         Fixed the gem installation warning regarding ASCII-8BIT to UTF-8 encoding",\
       "1.3.1"  =>      "Handler_NAOS created for NAOS mission\n\
          Handler_DUMMY created for generic testing\n\
          Increased log messages",\

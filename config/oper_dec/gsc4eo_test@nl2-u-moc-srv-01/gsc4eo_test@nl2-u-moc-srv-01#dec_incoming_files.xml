@@ -25,6 +25,24 @@
    -->
 
       <Interface>
+         <Name>TEST_NASA_RFM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/rfm</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/MOLT/MOD09A1.061/2023.06.18/</Directory>
+            <Directory DepthSearch="0">/MOLT/MOD09A1.061/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
+      <Interface>
          <Name>TEST_ECMWF_TCC</Name>
          <LocalInbox>/data/mocExternalInterfaces/delivery_root/sftp</LocalInbox>
          <DownloadDirs>
@@ -37,6 +55,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface> 
 
@@ -53,6 +72,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface> 
 
@@ -69,6 +89,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface> 
 
@@ -85,6 +106,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>  
 
@@ -102,6 +124,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -123,6 +146,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface> 
 
@@ -140,6 +164,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface> 
 
@@ -157,6 +182,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -173,6 +199,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -189,6 +216,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -205,6 +233,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface> 
 
@@ -221,6 +250,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>      
 
@@ -237,6 +267,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -253,6 +284,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -283,6 +315,7 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
       <LocalDissemination>true</LocalDissemination>
       <LogDuplicated>false</LogDuplicated>
       <LogUnknown>false</LogUnknown>
+      <MD5>true</MD5>
    </Switches>
 </Interface>
 
@@ -299,6 +332,7 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
       <LocalDissemination>true</LocalDissemination>
       <LogDuplicated>false</LogDuplicated>
       <LogUnknown>false</LogUnknown>
+      <MD5>true</MD5>
    </Switches>
 </Interface> 
 
@@ -315,62 +349,9 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
       <LocalDissemination>true</LocalDissemination>
       <LogDuplicated>false</LogDuplicated>
       <LogUnknown>false</LogUnknown>
+      <MD5>true</MD5>
    </Switches>
 </Interface> 
-
-
-      <!--
-
-      <Interface>
-         <Name>IERS_BULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>true</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>
-      
-      <Interface>
-         <Name>TEST_IERS_BULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>true</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>      
-
-   -->
-
-   <Interface>
-      <Name>IERS_BULA</Name>
-      <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-      <DownloadDirs>
-         <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-      </DownloadDirs>
-      <Switches>
-         <DeleteDownloaded>false</DeleteDownloaded>
-         <DeleteDuplicated>false</DeleteDuplicated>
-         <DeleteUnknown>false</DeleteUnknown>
-         <LocalDissemination>true</LocalDissemination>
-         <LogDuplicated>false</LogDuplicated>
-         <LogUnknown>false</LogUnknown>
-      </Switches>
-   </Interface>
-    
 
       <Interface>
          <Name>TEST_IERS_BULC</Name>
@@ -385,6 +366,7 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -401,72 +383,10 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
-      <Interface>
-         <Name>LOCAL_MOC_IN</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocIN</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocIN/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>TEST_LOCAL_MOC_IN</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocIN</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocIN/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>LOCAL_MOC_OUT</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocOUT/</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocOUT/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>TEST_LOCAL_MOC_OUT</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocOUT/</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocOUT/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
 
 
    </ListInterfaces>
@@ -485,7 +405,21 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
-     <File Type="ECMWF_tcc*.grib">
+      <File Type="MOD09A1*.xml">
+         <Description>MODIS MOD09A1 HDF description in XML</Description>
+         <FromList>
+            <Interface>TEST_NASA_RFM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="202*.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>TEST_NASA_RFM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ECMWF_tcc*.grib">
          <Description>ECMWF_TCC</Description>
          <FromList>
             <Interface>TEST_ECMWF_TCC</Interface>

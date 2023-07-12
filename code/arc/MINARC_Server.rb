@@ -365,7 +365,7 @@ class MINARC_Server < Sinatra::Base
       msg = "GET #{ARC::API_URL_GET_FILETYPES} : get archived filetypes"
       logger.info msg
       
-      "#{ARC.class_variable_get(:@@version)}"
+      "#{ARC::VERSION}"
       
       cmd = "minArcRetrieve -T --noserver"
       
@@ -390,9 +390,9 @@ class MINARC_Server < Sinatra::Base
    ## curl -X GET http://localhost:4567/dec/arc/version
 
    get ARC::API_URL_VERSION do
-      msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC.class_variable_get(:@@version)}"
+      msg = "GET #{ARC::API_URL_VERSION} : minarc version: #{ARC::VERSION}"
       @@logger.info(msg)
-      "#{@@node} : #{ARC.class_variable_get(:@@version)}"
+      "#{@@node} : #{ARC::VERSION}"
    end
    
    ## =================================================================

@@ -150,7 +150,7 @@
       </File>      
 
       <File Type="NS1_OPER_AUX_BULA___*">
-         <Description></Description>
+         <Description>IERS Bulletin A</Description>
          <ToList>
             <Interface Name="SFTP_BULA_CAD"   Compress="NONE" DeliveryMethods="SFTP" />
             <Interface Name="SFTP_DEC_SAP"    Compress="NONE" DeliveryMethods="SFTP" />
@@ -167,7 +167,7 @@
       </File> 
 
       <File Type="NS1_OPER_AUX_BULC___*">
-         <Description></Description>
+         <Description>IERS Bulletin C</Description>
          <ToList>
             <Interface Name="SFTP_BULC_CAD"   Compress="NONE" DeliveryMethods="SFTP" />
             <Interface Name="SFTP_DEC_SAP"    Compress="NONE" DeliveryMethods="SFTP" />

@@ -404,6 +404,9 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          return true
       end
 
+      @logger.error("Unexpected error for #{url}")
+      @logger.error("#{url} => #{http.response_code}")
+      @logger.error("#{http.body_str}")
       
       puts ret
       puts http.body_str

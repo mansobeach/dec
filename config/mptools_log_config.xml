@@ -11,7 +11,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 <log4r_config>
  
  <pre_config>
-  <parameter name="mainLoggerName" value="mptools"/>
+  <parameter name="mainLoggerName" value="eocfi"/>
  </pre_config>
 
 <!-- ============================================= -->
@@ -29,7 +29,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
   
   <type>RollingFileOutputter</type>
 
-  <filename>/tmp/mptools.log</filename>
+  <filename>/tmp/eocfi.log</filename>
 
   <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
       <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
@@ -47,7 +47,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 
 <!-- ============================================= -->
 
- <logger name="mptools" level="DEBUG" trace="false">
+ <logger name="eocfi" level="DEBUG" trace="false">
    <outputter>console</outputter>
    <outputter>mp_log</outputter>
  </logger>

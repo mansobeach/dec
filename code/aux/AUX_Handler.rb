@@ -28,6 +28,8 @@ require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NASA_CDDIS_BULA'
 require 'aux/AUX_Handler_NASA_CDDIS_BULC'
+require 'aux/AUX_Handler_NASA_EOSDIS_ASTGTM'
+require 'aux/AUX_Handler_NASA_EOSDIS_MOD09A1'
 require 'aux/AUX_Handler_NASA_MSFC_ForecastSolarFlux'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
@@ -86,7 +88,7 @@ private
       
       # puts "AUX_Handler::checkModuleIntegrity"
             
-      if File.exist?(@full_path) == false then
+      if File.exist?(@full_path) == false and Dir.exist?(@full_path) == false then
          raise("#{@full_path} does not exist")
       end
       
@@ -161,8 +163,18 @@ private
       if File.fnmatch(AUX_Pattern_NOAA_RSGA_Daily, filename) == true then
          @handler = AUX_Handler_NOAA_RSGA_Daily.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
-      end      
+      end
       
+      if File.fnmatch(AUX_Pattern_NASA_EOSDIS_ASTGTM, filename) == true then
+         @handler = AUX_Handler_NASA_EOSDIS_ASTGTM.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_NASA_EOSDIS_MOD09A1, filename) == true then
+         @handler = AUX_Handler_NASA_EOSDIS_MOD09A1.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
       raise "no pattern found for #{filename}"
    end
    ## -----------------------------------------------------------

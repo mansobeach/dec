@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <Node>minARC unit tests node</Node>
+  <Node>NAOSBOA minARC</Node>
 
   <CleanUp Frequency="10" Unit="s">
   
     <List_of_CleanUpRules>
-      <CleanUpRule Filetype="TLM_MIRA0_" Rule="Older"  Date="archive_date"    Age="100"     Unit="s" />
-      <CleanUpRule Filetype="MPL_VS_PRO" Rule="Older"  Date="validity_start"  Age="100"     Unit="s" />
       <CleanUpRule Filetype="MPL_ORBSCT" Rule="Older"  Date="validity_stop"   Age="2592000" Unit="s" />
     </List_of_CleanUpRules>
   
@@ -19,19 +17,19 @@
 
    <Workflow>
       <ArchiveServer>https://localhost:4567</ArchiveServer>
-      <ArchiveRoot>/tmp/minarc</ArchiveRoot>
-      <ArchiveError>/tmp/minarc_error2</ArchiveError>
+      <ArchiveRoot>/minarc_root</ArchiveRoot>
+      <ArchiveError>/minarc_root/.errors</ArchiveError>
       <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
       <TempDir>/tmp</TempDir>
    </Workflow>
 
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
-      <Database_Host>localhost</Database_Host>
+      <Database_Host></Database_Host>
       <Database_Port>5432</Database_Port>      
-      <Database_Name>postgres</Database_Name>
-      <Database_User>e2edc</Database_User>
-      <Database_Password>e2edc</Database_Password>
+      <Database_Name>minarc_orc_db</Database_Name>
+      <Database_User>minarc_orc</Database_User>
+      <Database_Password></Database_Password>
    </Inventory>
 
    <Client>

@@ -15,6 +15,8 @@
 # This class allows minarc to handle NAOS files:
 
 =begin
+"NAOS1_20220708T0047.tle"
+"NS1_TEST_TM__GPS____20220706T000000_20220709T000000_0001.xml"
 "NS1_OPER_CNF_CONT___20220706T000000_20220709T000000_0001.xml"
 "NS1_OPER_ORB_OEM____20220709T000000_20220717T000000_0001.OEM"
 "NS1_OPER_ORB_OPM____20220709T000000_20220709T000000_0001.OPM"
@@ -24,7 +26,6 @@
 "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml"
 "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml"
 "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl"
-"NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.xml"
 "NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001.EEF"
 "NS1_TEST_PLA_OSC____20220710T000000_20220715T000000_0001.xml"
 "TRK_NAOS1_TG1_ANG_20221004000000.GEO" 
@@ -82,6 +83,24 @@ class Handler_NAOS
       @archive_path        = ""
       @validated           = false
 
+      # ----------------------------------------------------
+
+      # NAOS1_20220708T0047.tle
+      if File.extname(name) == ".tle" then
+         begin
+            @type             = "AUX_TLE___"
+            @str_start        = "#{@filename.split('_')[1].slice(0, 13)}00"
+            @str_stop         = @str_start
+            @start            = self.str2date(@str_start)
+            @stop             = @start
+            @generation_date  = @start
+            @validated        = true
+         rescue Exception => e
+            @logger.error(e.to_s)
+            @logger.error(e.backtrace)
+            @validated        = false
+         end
+      end
 
       # ----------------------------------------------------     
       

@@ -9,7 +9,7 @@
 <outputter name="console"  level="DEBUG" >
    <type>StdoutOutputter</type>
 	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-		<date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+		<date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
 	</formatter>
 </outputter>
 
@@ -18,9 +18,9 @@
  
    <outputter name="orchestrator_log" level="DEBUG" >
     <type>RollingFileOutputter</type>
-    <filename>/tmp/dec_orchestrator.log</filename>
+    <filename>/log/naosboa_orc.log</filename>
     <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-     <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+     <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
     </formatter>
     <trunc>false</trunc>
     <maxsize>10000000</maxsize>

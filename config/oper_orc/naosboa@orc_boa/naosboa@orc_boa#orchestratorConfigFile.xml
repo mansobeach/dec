@@ -20,7 +20,7 @@
 
       <DataProvider isTriggerType="yes">
 	      <DataType>AUX_TLE</DataType>
-	      <FileType>*AUX_TLE*</FileType>
+	      <FileType>*NAOS*.tle</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
@@ -85,6 +85,18 @@
       </DataProvider>      
 
       <DataProvider isTriggerType="yes">
+	      <DataType>TM_THR</DataType>
+	      <FileType>*TM__THR*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>  
+
+      <DataProvider isTriggerType="yes">
+	      <DataType>TM_MSC</DataType>
+	      <FileType>*TM__MSC*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>  
+
+      <DataProvider isTriggerType="yes">
 	      <DataType>DEC_GPS</DataType>
 	      <FileType>*DEC_TM-GPS*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
@@ -114,7 +126,7 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
-      <DataProvider isTriggerType="no">
+      <DataProvider isTriggerType="yes">
 	      <DataType>CNF_OAT___</DataType>
 	      <FileType>*CNF_OAT___*</FileType>
 	      <Directory>[update]/data/l0-in/</Directory>
@@ -132,35 +144,21 @@
 
    <!-- ====================================================== -->
 
-<!-- 
-
-1. AUX_TLE
-2. ORB_SOERT
-4. PLA_SCR
-5. PLA_SBA
-6. PLA_OSC
-7. PLA_MAN
-8. PLA_MAINT
-9. ORB_OEM
-10. ksat_schedule_request
-
-
-
--->
-
    <List_of_PriorityRules>
       <PriorityRule rank="1"     class="DataType" type="AUX_TLE"        sort="DESC" />
       <PriorityRule rank="2"     class="DataType" type="ORB_SOERT"      sort="DESC" />
-      <PriorityRule rank="3"     class="DataType" type="PLA_SCR"        sort="DESC" />
-      <PriorityRule rank="4"     class="DataType" type="PLA_SBA"        sort="DESC" />
-      <PriorityRule rank="5"     class="DataType" type="PLA_OSC"        sort="DESC" />
-      <PriorityRule rank="6"     class="DataType" type="PLA_MAN"        sort="DESC" />
-      <PriorityRule rank="7"     class="DataType" type="PLA_MAINT"      sort="DESC" />
-      <PriorityRule rank="8"     class="DataType" type="ORB_OEM"        sort="DESC" />
-      <PriorityRule rank="9"     class="DataType" type="SCH_REQ"        sort="DESC" />
-      <PriorityRule rank="10"    class="DataType" type="PLA_DPL"        sort="DESC" />
-      <PriorityRule rank="11"    class="DataType" type="TM_GPS"         sort="DESC" />
-
+      <PriorityRule rank="3"     class="DataType" type="CNF_OAT___"     sort="DESC" />
+      <PriorityRule rank="4"     class="DataType" type="PLA_SCR"        sort="DESC" />
+      <PriorityRule rank="5"     class="DataType" type="PLA_SBA"        sort="DESC" />
+      <PriorityRule rank="6"     class="DataType" type="PLA_OSC"        sort="DESC" />
+      <PriorityRule rank="7"     class="DataType" type="PLA_MAN"        sort="DESC" />
+      <PriorityRule rank="8"     class="DataType" type="PLA_MAINT"      sort="DESC" />
+      <PriorityRule rank="9"     class="DataType" type="ORB_OEM"        sort="DESC" />
+      <PriorityRule rank="10"    class="DataType" type="SCH_REQ"        sort="DESC" />
+      <PriorityRule rank="11"    class="DataType" type="PLA_DPL"        sort="DESC" />
+      <PriorityRule rank="12"    class="DataType" type="TM_GPS"         sort="DESC" />
+      <PriorityRule rank="13"    class="DataType" type="TM_THR"         sort="DESC" />
+      <PriorityRule rank="14"    class="DataType" type="TM_MSC"         sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -178,6 +176,18 @@
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>   
+
+      <ProcessingRule dataType="CNF_OAT___" triggerType="CNF_OAT___" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
+
+      <ProcessingRule dataType="PLA_OSC" triggerType="PLA_OSC" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
 
       <ProcessingRule dataType="PLA_SCR" triggerType="PLA_SCR" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
@@ -228,6 +238,18 @@
       </ProcessingRule>
 
       <ProcessingRule dataType="TM_GPS" triggerType="TM_GPS" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType="TM_MSC" triggerType="TM_MSC" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>
+
+      <ProcessingRule dataType="TM_THR" triggerType="TM_THR" coverage="SAME">
 	      <executable>eboa_triggering.py -r -f %F</executable>
 	      <List_of_Inputs>
 	      </List_of_Inputs>

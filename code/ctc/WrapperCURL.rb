@@ -443,6 +443,7 @@ module WrapperCURL
 
    # Redirect host needs to become part of the function signature
    # It should have been obtained as part of the 302 reply
+   # This is currently specific of NASA CDDIS 
    def getFileWithRedirection(url, \
                               filename, \
                               user, \

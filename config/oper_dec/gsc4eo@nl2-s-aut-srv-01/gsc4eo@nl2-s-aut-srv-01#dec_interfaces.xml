@@ -11,7 +11,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>    
@@ -62,7 +62,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>    
@@ -114,7 +114,7 @@
     <ImmediateRetries>3</ImmediateRetries>
     <LoopRetries>2</LoopRetries>
     <LoopDelay unit="s">120</LoopDelay>
-    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingInterval unit="s">60</PollingInterval>
     <PollingSize>470</PollingSize>
     <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
@@ -167,7 +167,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>    
@@ -219,7 +219,7 @@
     <ImmediateRetries>3</ImmediateRetries>
     <LoopRetries>2</LoopRetries>
     <LoopDelay unit="s">120</LoopDelay>
-    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingInterval unit="s">60</PollingInterval>
     <PollingSize>470</PollingSize>
     <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
@@ -271,7 +271,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>    
@@ -324,7 +324,7 @@
         <ImmediateRetries>3</ImmediateRetries>
         <LoopRetries>2</LoopRetries>
         <LoopDelay unit="s">120</LoopDelay>
-        <PollingInterval unit="s">86400</PollingInterval>
+        <PollingInterval unit="s">60</PollingInterval>
         <PollingSize>470</PollingSize>
         <ParallelDownload>3</ParallelDownload>
       </TXRXParams>    
@@ -375,7 +375,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>    
@@ -427,7 +427,7 @@
     <ImmediateRetries>3</ImmediateRetries>
     <LoopRetries>2</LoopRetries>
     <LoopDelay unit="s">120</LoopDelay>
-    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingInterval unit="s">60</PollingInterval>
     <PollingSize>470</PollingSize>
     <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
@@ -478,7 +478,7 @@
       <ImmediateRetries>3</ImmediateRetries>
       <LoopRetries>2</LoopRetries>
       <LoopDelay unit="s">120</LoopDelay>
-      <PollingInterval unit="s">86400</PollingInterval>
+      <PollingInterval unit="s">60</PollingInterval>
       <PollingSize>470</PollingSize>
       <ParallelDownload>3</ParallelDownload>
     </TXRXParams>

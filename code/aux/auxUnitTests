@@ -277,6 +277,31 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_NAOS_NASA_ASTGTM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      dir_astgtm = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/TEST_ASTERV3DEM"
+
+      cmd      = "auxConverter -m NAOS -f #{dir_astgtm} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA ASTGTM V3 to NAOS mission DEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_NASA_RFM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      dir_modis = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/MOD09A1"
+
+      cmd      = "auxConverter -m NAOS -f #{dir_modis} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA MODIS V6.1 to NAOS mission packaging")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
    ## --------------------------------------------------------
 
    def test_NAOS_NASA_SFL

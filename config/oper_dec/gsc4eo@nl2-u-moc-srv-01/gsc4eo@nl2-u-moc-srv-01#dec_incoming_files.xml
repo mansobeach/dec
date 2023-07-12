@@ -25,20 +25,39 @@
    -->
 
       <Interface>
-         <Name>TEST_ECMWF_TCC</Name>
-         <LocalInbox>/data/mocExternalInterfaces/delivery_root/sftp</LocalInbox>
+         <Name>NASA_RFM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/MOD09A1</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/ECM/inTray/AUX_WEF</Directory>
+		      <Directory DepthSearch="0">/MOLT/MOD09A1.061/2023.06.18/</Directory>
+            <Directory DepthSearch="0">/MOLT/MOD09A1.061/</Directory>
          </DownloadDirs>
          <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
+            <DeleteDownloaded>false</DeleteDownloaded>
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>true</LogUnknown>
-         </Switches>
-      </Interface> 
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
+   <Interface>
+         <Name>NASA_ASTGTM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/ASTERV3DEM</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/ASTT/ASTGTM.003/2000.03.01/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
 
       <Interface>
          <Name>ECMWF_TCC</Name>
@@ -53,22 +72,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>true</LogUnknown>
-         </Switches>
-      </Interface> 
-
-      <Interface>
-         <Name>TEST_CELESTRAK_SFS</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/sfs</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">SpaceData/SW-Last5Years.txt</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface> 
 
@@ -85,6 +89,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -92,8 +97,8 @@
          <Name>CELESTRAK_TLE</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/tle</LocalInbox>
          <DownloadDirs>
-            <!-- Sentinel-2B -->
-            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=42063</Directory>
+            <!-- Sentinel-2B / DE2 40013 -->
+            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40013</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -102,52 +107,14 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
-
-      <Interface>
-         <Name>TEST_CELESTRAK_TLE</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/tle</LocalInbox>
-         <DownloadDirs>
-            <!-- Sentinel-2A 
-            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=40697</Directory>
-            -->
-            <!-- Sentinel-2B  -->
-            <Directory DepthSearch="0">NORAD/elements/gp.php?CATNR=42063</Directory>
-           
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface> 
-
-      <Interface>
-         <Name>TEST_CELESTRAK_TCA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/tca</LocalInbox>
-         <DownloadDirs>
-            <!-- Sentinel-2B -->
-            <Directory DepthSearch="0">NORAD/elements/gp.php?GROUP=active&#038;FORMAT=2le</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface> 
 
       <Interface>
          <Name>CELESTRAK_TCA</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/tca</LocalInbox>
          <DownloadDirs>
-            <!-- Sentinel-2B -->
             <Directory DepthSearch="0">NORAD/elements/gp.php?GROUP=active&#038;FORMAT=2le</Directory>
          </DownloadDirs>
          <Switches>
@@ -157,24 +124,9 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
-
-      <Interface>
-         <Name>TEST_NASA_NBULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/nbula</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/archive/products/iers/finals2000A.data</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
 
       <Interface>
          <Name>NASA_NBULA</Name>
@@ -189,24 +141,9 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
-
-      <Interface>
-         <Name>TEST_NASA_NBULC</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/nbulc</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/archive/products/iers/tai-utc.dat</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface> 
 
       <Interface>
          <Name>NASA_NBULC</Name>
@@ -221,24 +158,9 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>      
-
-      <Interface>
-         <Name>TEST_NASA_SFL</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/sfl</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">%Q{sites/default/files/atoms/files/#{(Time.now.to_date &lt;&lt; 1).strftime("%b%Y").to_s.downcase!}f10_prd.txt}</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
 
       <Interface>
          <Name>NASA_SFL</Name>
@@ -253,6 +175,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -283,110 +206,9 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
       <LocalDissemination>true</LocalDissemination>
       <LogDuplicated>false</LogDuplicated>
       <LogUnknown>false</LogUnknown>
+      <MD5>true</MD5>
    </Switches>
 </Interface>
-
-<Interface>
-   <Name>TEST_IERS_BULA</Name>
-   <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-   <DownloadDirs>
-      <Directory DepthSearch="0">%Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_i+13).downcase}-#{(Time.new.strftime("%U").to_i-1).to_s.rjust(3,'0')}.xml}</Directory>
-   </DownloadDirs>
-   <Switches>
-      <DeleteDownloaded>false</DeleteDownloaded>
-      <DeleteDuplicated>false</DeleteDuplicated>
-      <DeleteUnknown>false</DeleteUnknown>
-      <LocalDissemination>true</LocalDissemination>
-      <LogDuplicated>false</LogDuplicated>
-      <LogUnknown>false</LogUnknown>
-   </Switches>
-</Interface> 
-
-<Interface>
-   <Name>TEST_IERS_ALLBULA</Name>
-   <LocalInbox>/data/mocExternalInterfaces/int/allbula</LocalInbox>
-   <DownloadDirs>
-      <Directory DepthSearch="0">/data/csv/finals2000A.all.csv</Directory>
-   </DownloadDirs>
-   <Switches>
-      <DeleteDownloaded>false</DeleteDownloaded>
-      <DeleteDuplicated>false</DeleteDuplicated>
-      <DeleteUnknown>false</DeleteUnknown>
-      <LocalDissemination>true</LocalDissemination>
-      <LogDuplicated>false</LogDuplicated>
-      <LogUnknown>false</LogUnknown>
-   </Switches>
-</Interface> 
-
-
-      <!--
-
-      <Interface>
-         <Name>IERS_BULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>true</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>
-      
-      <Interface>
-         <Name>TEST_IERS_BULA</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>true</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>
-      </Interface>      
-
-   -->
-
-   <Interface>
-      <Name>IERS_BULA</Name>
-      <LocalInbox>/data/mocExternalInterfaces/int/bula</LocalInbox>
-      <DownloadDirs>
-         <Directory DepthSearch="0">/data/latestVersion/bulletinA.txt</Directory>
-      </DownloadDirs>
-      <Switches>
-         <DeleteDownloaded>false</DeleteDownloaded>
-         <DeleteDuplicated>false</DeleteDuplicated>
-         <DeleteUnknown>false</DeleteUnknown>
-         <LocalDissemination>true</LocalDissemination>
-         <LogDuplicated>false</LogDuplicated>
-         <LogUnknown>false</LogUnknown>
-      </Switches>
-   </Interface>
-    
-
-      <Interface>
-         <Name>TEST_IERS_BULC</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/bulc</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/iers/bul/bulc/Leap_Second.dat</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>true</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
 
       <Interface>
          <Name>IERS_BULC</Name>
@@ -401,73 +223,9 @@ puts %Q{/data/xml/bulletina-#{RomanNumerals.to_roman(Time.new.strftime("%y").to_
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
-
-      <Interface>
-         <Name>LOCAL_MOC_IN</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocIN</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocIN/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>TEST_LOCAL_MOC_IN</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocIN</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocIN/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>LOCAL_MOC_OUT</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocOUT/</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocOUT/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
-      <Interface>
-         <Name>TEST_LOCAL_MOC_OUT</Name>
-         <LocalInbox>/data/mocExternalInterfaces/tmp/mocOUT/</LocalInbox>
-         <DownloadDirs>
-            <Directory DepthSearch="0">/data/mocExternalInterfaces/tmp/mocOUT/tmp</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>true</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>false</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-         </Switches>         
-      </Interface>
-
 
    </ListInterfaces>
 <!-- 
@@ -485,10 +243,48 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+      <File Type="ASTGTMV003_*.xml">
+         <Description>ASTER DEM xml</Description>
+         <FromList>
+            <Interface>NASA_ASTGTM</Interface>
+         </FromList>
+      </File>
+
+<!--
+
+      <File Type="ASTGTMV003_*.jpg">
+         <Description>ASTER DEM jpg</Description>
+         <FromList>
+            <Interface>NASA_ASTGTM</Interface>
+         </FromList>
+      </File>
+
+      -->
+
+      <File Type="MOD09A1*.xml">
+         <Description>MODIS MOD09A1 HDF description in XML</Description>
+         <FromList>
+            <Interface>NASA_RFM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="MOD09A1*.hdf">
+         <Description>MODIS MOD09A1 HDF</Description>
+         <FromList>
+            <Interface>NASA_RFM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="202*.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM</Interface>
+         </FromList>
+      </File>
+
      <File Type="ECMWF_tcc*.grib">
          <Description>ECMWF_TCC</Description>
          <FromList>
-            <Interface>TEST_ECMWF_TCC</Interface>
             <Interface>ECMWF_TCC</Interface>
          </FromList>
       </File>
@@ -496,7 +292,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
       <File Type="bulletinA.txt">
          <Description>AUX_BULA__</Description>
          <FromList>
-            <Interface>TEST_IERS_BULA</Interface>
             <Interface>IERS_BULA</Interface>
          </FromList>
       </File>
@@ -504,7 +299,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
       <File Type="bulletina*.xml">
          <Description>AUX_BULA__</Description>
          <FromList>
-            <Interface>TEST_IERS_BULA</Interface>
             <Interface>IERS_BULA</Interface>
          </FromList>
       </File>
@@ -512,7 +306,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
       <File Type="Leap_Second.dat">
          <Description>AUX_BULC__</Description>
          <FromList>
-            <Interface>TEST_IERS_BULC</Interface>
             <Interface>IERS_BULC</Interface>
          </FromList>
       </File>
@@ -521,7 +314,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description>AUX_TLE___</Description>
          <FromList>
             <Interface>CELESTRAK_TLE</Interface>
-            <Interface>TEST_CELESTRAK_TLE</Interface>
          </FromList>
       </File>
 
@@ -529,14 +321,12 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description>AUX_TCA___</Description>
          <FromList>
             <Interface>CELESTRAK_TCA</Interface>
-            <Interface>TEST_CELESTRAK_TCA</Interface>
          </FromList>
       </File>
       
       <File Type="*Last5Years*">
          <Description>AUX_SFS___</Description>
          <FromList>
-            <Interface>TEST_CELESTRAK_SFS</Interface>
             <Interface>CELESTRAK_SFS</Interface>
          </FromList>
       </File>
@@ -545,7 +335,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description>AUX_SFL___</Description>
          <FromList>
             <Interface>NASA_SFL</Interface>
-            <Interface>TEST_NASA_SFL</Interface>
          </FromList>
       </File>
 
@@ -553,14 +342,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description>AUX_NBULA_</Description>
          <FromList>
             <Interface>NASA_NBULA</Interface>
-            <Interface>TEST_NASA_NBULA</Interface>
-         </FromList>
-      </File>
-   
-      <File Type="finals2000A.all.csv">
-         <Description>TBD</Description>
-         <FromList>
-            <Interface>TEST_IERS_ALLBULA</Interface>
          </FromList>
       </File>
 
@@ -568,7 +349,6 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          <Description>AUX_NBULC_</Description>
          <FromList>
             <Interface>NASA_NBULC</Interface>
-            <Interface>TEST_NASA_NBULC</Interface>
          </FromList>
       </File>
 

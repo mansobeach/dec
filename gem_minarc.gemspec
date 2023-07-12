@@ -17,7 +17,7 @@ include ARC
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
-  s.version     = "#{ARC.class_variable_get(:@@version)}"
+  s.version     = "#{ARC::VERSION}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
@@ -139,7 +139,7 @@ Gem::Specification.new do |s|
   
   ## ----------------------------------------------
 
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed #{ARC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed #{ARC::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
     
   ## ----------------------------------------------
   

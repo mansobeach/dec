@@ -94,7 +94,7 @@ class WriteXMLFile_NAOS_AUX_BULC
       xmlCreator.text         = "DEC/AUX"
 
       xmlCreatorVersion       = xmlSource.add_element("Creator_Version")
-      xmlCreatorVersion.text  = "#{DEC.class_variable_get(:@@version)}/#{AUX.class_variable_get(:@@version)}"
+      xmlCreatorVersion.text  = "#{DEC.class_variable_get(:@@version)}/#{AUX::VERSION}"
 
       xmlCreationDate         = xmlSource.add_element("Creation_Date")
       xmlCreationDate.text    = Time.now.utc.strftime("UTC=%Y-%m-%dT%H:%M:%S")

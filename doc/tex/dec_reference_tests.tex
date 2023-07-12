@@ -105,6 +105,9 @@ Push operations leverage the MOVE method to ensure the integrity of the push cir
 
 \inlinecode{bash}{ \$> decUnitTests_HTTP -n test_pull} \newline
 
+\subsubsection{NATS}
+The DEC SW includes a generic NATS client to perform requests and subscribe to messages (cf. \hyperref[decNATS]{decNATS}). Such tool has been crafted in the framework of NAOS mission. The protocol NATS is a message oriented application protocol whose implementation is delegated to well-proven libraries in the open source domain. For verification purposes, there is no dedicated unit test but an interface test which exploits \hyperref[decNATS]{decNATS} and hence it verifies correct usage of NATS request and subscribe messages. The interface test is \textit{decTestInterface\_NATS\_CCS5}.
+
 \section{Interface Tests}
 This sections brings a brief reference to some dedicated interface tests which may be leveraged. The principle is that the general DEC SW unit test capacities can be expanded and tailored with minimum effort to address dedicated interface tests which can also be exploited in IVV and Production environments. \newline
 
@@ -121,6 +124,7 @@ Below the available test runners are listed; some are covered at the annex of th
      \item \textbf{decTestInterface\_ILRS} : Interface test exploiting EUROLAS Data Center server
      \item \textbf{decTestInterface\_OData\_ADGS} : this is a functional interface test to verify the OData Server implementation DEC can support
      \item \textbf{decTestInterface\_OData\_DHUS} : Interface test exploiting OData API by Copernicus DIAS (OpenHub)
+     \item \textbf{decTestInterface\_NATS\_CCS5} : Interface test exploiting NATS NAOS MCS / CCS5
      \item \textbf{decTestInterface\_NASA} : Interface test exploiting NASA CDDIS \& MSFC data
      \item \textbf{decTestInterface\_NOAA} : Interface test exploiting NOAA Space Weather Prediction Center server
      \item \textbf{decTestInterface\_S2PRIP} : Interface test exploiting internal ESA Copernicus Production Service for Sentinel-2 mission

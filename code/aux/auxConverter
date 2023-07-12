@@ -15,7 +15,7 @@
 # == Usage
 # auxConverter -m S3 -f <full_path_file> -d <dir>
 #     --mission <id>    mission identifier
-#       POD    - Copernicus Sentinel-3 Precise Orbit Determination
+#       POD    - Copernicus Precise Orbit Determination
 #       S2     - Copernicus Sentinel-2
 #       S3     - Copernicus Sentinel-3
 #       NAOS   - NAOS mission
@@ -91,8 +91,8 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nElecnor Deimos-Space ", File.basename($0), " Version: [#{AUX.class_variable_get(:@@version)}]", "\n\n")
-      hRecord = AUX.class_variable_get(:@@change_record)
+      print("\nElecnor Deimos-Space ", File.basename($0), " Version: [#{AUX::VERSION}]", "\n\n")
+      hRecord = AUX::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
       }      
@@ -140,7 +140,7 @@ def main
    end
    ## ----------------------------------
 
-   if File.exist?(@full_path_file) == false then
+   if File.exist?(@full_path_file) == false and Dir.exist?(@full_path_file) then
       @logger.error("[AUX_600] cannot access to #{@full_path_file}")
       exit(99)
    end

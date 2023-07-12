@@ -154,6 +154,15 @@ class ReadConfigIncoming
    end
    ## -------------------------------------------------------------
 
+   def md5?(mnemonic)
+      @@arrIncomingInterfaces.each{|interface|
+         if interface[:mnemonic] == mnemonic then
+            return interface[:switches][:md5]
+         end
+      }
+      return nil   
+   end
+   ## -------------------------------------------------------------
      
    def getDIMCompress(name)
       puts
@@ -610,7 +619,8 @@ private
                   :deleteUnknown, \
                   :localDissemination, \
                   :logDuplicated, \
-                  :logUnknown \
+                  :logUnknown, \
+                  :md5 \
                   )
 	end
 	## -------------------------------------------------------------
@@ -658,6 +668,7 @@ private
          bLocalDissemination     = nil
          bLogDuplicated          = nil
          bLogUnknown             = nil
+         bMD5                    = nil
 
          XPath.each(interface, "Name"){
              |name|
@@ -736,14 +747,25 @@ private
                 end
 
              }
-           
+
+             XPath.each(switch, "MD5"){
+               |name|
+               if name.text.upcase == "TRUE" then
+                  bMD5 = true
+               else
+                  bMD5 = false
+               end
+
+            }
+
              if_switches = Struct::Switches.new(if_name, \
                                     bDeleteDownloaded, \
                                     bDeleteDuplicated, \
                                     bDeleteUnknown, \
                                     bLocalDissemination, \
                                     bLogDuplicated, \
-                                    bLogUnknown )
+                                    bLogUnknown, \
+                                    bMD5 )
             
          }
 

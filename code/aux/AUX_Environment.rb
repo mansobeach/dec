@@ -20,12 +20,12 @@ require 'fileutils'
 
 module AUX
    
-   
-   @@version = "0.0.7c"
+   VERSION   = "0.0.8.2"
    
    ## -----------------------------------------------------------------
    
-   @@change_record = { \
+   CHANGE_RECORD = { \
+      "0.0.8"  =>    "NASA MODIS products: MOD09A1", \
       "0.0.7"  =>    "IERS Bulletin C conversion for NAOS mission", \
       "0.0.6"  =>    "IERS Bulletin A XML has been integrated\n\
          IERS Bulletin A ASCII updated for NAOS",

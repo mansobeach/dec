@@ -16,7 +16,7 @@ http://euccas.github.io/blog/20160518/make-logging-easy-in-ruby-with-log4r.html
 
 <!-- ============================================= -->
 
-<outputter name="console"  level="DEBUG" >
+<outputter name="console"  level="INFO" >
    <type>StdoutOutputter</type>
 	<formatter type="Log4r::PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
 		<date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>

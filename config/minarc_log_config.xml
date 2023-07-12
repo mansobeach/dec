@@ -6,9 +6,9 @@
  
    <outputter name="minarc_log" level="DEBUG">
       <type>RollingFileOutputter</type>
-      <filename>/tmp/minarc_log_file.log</filename>
+      <filename>/log/naosboa_orc.log</filename>
       <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-         <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+         <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
       </formatter>
       <trunc>false</trunc>
       <maxsize>10000000</maxsize>
@@ -19,7 +19,7 @@
    <outputter name="minarc_log_stdout" level="DEBUG" >
       <type>StdoutOutputter</type>
       <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
-         <date_pattern>%Y-%m-%d %H:%M:%S</date_pattern>
+         <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
       </formatter>
       <trunc>false</trunc>
    </outputter>

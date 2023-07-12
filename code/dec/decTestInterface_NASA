@@ -24,8 +24,7 @@ require 'dec/DEC_Environment'
 require 'dec/ReadConfigDEC'
 
 # The following configurations support this test interface:
-# > rake -f build_dec.rake dec:install   / unit-tests
-# > rake -f build_dec.rake dec:install[gsc4eo,nl2-u-moc-srv-01,naos_test]
+# > rake -f build_dec.rake dec:install[gsc4eo_test,nl2-u-moc-srv-01,naos_test]
 
 # This one below needs update
 # > rake -f build_dec.rake dec:install[aiv,naos-aiv,naos_test] / NAOS AIV
@@ -145,6 +144,22 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
    end
 
+   ## -----------------------------------------------------------
+
+   def testRFM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+   
+      cmd = "decCheckConfig -e TEST_NASA_RFM -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "check config of TEST_NASA_RFM")  
+
+      cmd = "decGetFromInterface -m TEST_NASA_RFM -l -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_NASA_RFM")
+
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
 
    ## -----------------------------------------------------------
 

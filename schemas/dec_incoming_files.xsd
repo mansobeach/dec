@@ -64,6 +64,7 @@
      <xs:element name="LocalDissemination"   type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="LogDuplicated"        type="BooleanType"   minOccurs="0" maxOccurs="1" />
      <xs:element name="LogUnknown"           type="BooleanType"   minOccurs="0" maxOccurs="1" />
+     <xs:element name="MD5"                  type="BooleanType"   minOccurs="0" maxOccurs="1" />
   </xs:sequence>
  </xs:complexType>
 

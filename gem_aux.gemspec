@@ -4,7 +4,7 @@ include AUX
 
 Gem::Specification.new do |s|
   s.name        = 'aux'
-  s.version     = "#{AUX.class_variable_get(:@@version)}"
+  s.version     = "#{AUX::VERSION}"
   s.licenses    = ['Nonstandard']
   s.summary     = "DEC/AUX component"
   s.description = "Auxiliary Data Gathering"
@@ -39,12 +39,13 @@ Gem::Specification.new do |s|
   s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
   
   # s.add_dependency('dec', '> 1.0.30')
+  s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('roman-numerals', '~> 0.3')
 
   ## ----------------------------------------------
   
   ## ----------------------------------------------  
   
-  s.post_install_message = "Elecnor Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Auxiliary Data Management installed #{AUX.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "Elecnor Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Auxiliary Data Management installed #{AUX::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
   
 end

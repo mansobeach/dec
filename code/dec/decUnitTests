@@ -841,6 +841,9 @@ class DECTestCase < Test::Unit::TestCase
       puts inConfig.deleteUnknown?("SCIHUB")
       assert(inConfig.deleteUnknown?("SCIHUB") != nil, "deleteUnknown?")
 
+      @@logger.debug("MD5 SCIHUB ? : #{inConfig.md5?("SCIHUB")}")
+      assert(inConfig.md5?("SCIHUB") != nil, "MD5")
+
       puts inConfig.logUnknown?("SCIHUB")
       assert(inConfig.logUnknown?("SCIHUB") != nil, "logUnknown?")
 

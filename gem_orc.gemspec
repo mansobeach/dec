@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
                      'orcScheduler', \
                      'orcUnitTests', \
                      'orcUnitTests_NAOS', \
+                     'orcUnitTests_BOA', \
                      'orcValidateConfig'
                      ]
 

@@ -19,6 +19,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>
 
@@ -35,6 +36,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>
 
@@ -51,6 +53,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>      
 
@@ -67,6 +70,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -83,6 +87,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -100,6 +105,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -117,6 +123,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>  
 
@@ -133,6 +140,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>
 
@@ -153,6 +161,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>         
       </Interface>
 
@@ -169,6 +178,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -185,6 +195,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -207,6 +218,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -229,6 +241,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -252,6 +265,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -269,6 +283,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
       
@@ -285,6 +300,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>         
       </Interface>
 
@@ -301,6 +317,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>         
       </Interface>         
             
@@ -317,6 +334,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -334,6 +352,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -350,6 +369,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
       
@@ -366,6 +386,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>
       </Interface>
       
@@ -389,6 +410,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -405,6 +427,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
          </Switches>         
       </Interface>
 
@@ -421,6 +444,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>         
       </Interface>
 
@@ -437,6 +461,7 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>true</LogDuplicated>
             <LogUnknown>true</LogUnknown>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
@@ -454,6 +479,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -470,6 +496,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
 
@@ -486,6 +513,7 @@
             <LocalDissemination>true</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
          </Switches>         
       </Interface>
       

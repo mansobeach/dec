@@ -40,8 +40,17 @@ git config --global credential.helper store
 git config --show-origin --get credential.helper
 cat /Users/borja/.gitconfig
 
+
+### Create a new repository
+
+`git init`
+`git branch -m develop`
+
 # do some git pull (twice to reset?)
 
+
+### Undo a file
+`git restore <file>`
 
 ### Undo a commit
 
@@ -104,7 +113,7 @@ git cat-file -p 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
 
 ### Retrieve a file from the repository
 
-git checkout master -- <filename>
+git checkout master -- filename
 
 
 Delete a file
@@ -146,6 +155,8 @@ Resolve conflicts from remote repository
 ========================================
 git pull --rebase
 
+git pull --rebase --autostash
+
 git fetch
 git checkout origin/develop <file_path>
 git checkout origin/develop src/eboa/logging.py
@@ -158,6 +169,18 @@ git checkout support_dhus_gnss
 
 git checkout -b support_dhus_gnss master
 
+
+### Git tagging & labeling
+### https://git-scm.com/book/en/v2/Git-Basics-Tagging
+
+Show tags with messages:
+`git tag -n9`
+
+Create tags with messages:
+`git tag NAOS-TDS-GS-TEC-IVV-0600-TP-GS-VAL-0020-v1.1 -m "Version 1.1 of the TDS for TP-GS-VAL-0020 (NAOS-GS-TEC-IVV-0600)"`
+
+Diff between tags
+`git diff NAOS-TDS-GS-TEC-IVV-0600-TP-GS-VAL-0020-v1.0 NAOS-TDS-GS-TEC-IVV-0600-TP-GS-VAL-0020-v1.1  --stat`
 
 
 

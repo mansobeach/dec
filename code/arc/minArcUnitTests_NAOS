@@ -164,6 +164,9 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
       @@arrInputFiles = [ \
                            "NS1_OPER_CNF_CONT___20220706T000000_20220709T000000_0001.xml", \
                            "NS1_OPER_ORB_OEM____20220709T000000_20220717T000000_0001.OEM", \
+                           "NS1_OPER_TM__GPS____20220706T000000_20220709T000000_0001.xml", \
+                           "NS1_OPER_TM__THR____20220706T000000_20220709T000000_0001.xml", \
+                           "NS1_OPER_TM__MSC____20220706T000000_20220709T000000_0001.xml", \
                            "NS1_OPER_ORB_OPM____20220709T000000_20220709T000000_0001.OPM", \
                            "NS1_OPER_ORB_SOERT__20220709T000000_20220717T000000_0001.OPM", \
                            "NS1_OPER_PLA_GSP____20220709T000000_20220717T000000_0001.xml", \
@@ -171,9 +174,10 @@ class TestCaseMINARC_NAOS < Test::Unit::TestCase
                            "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml", \
                            "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml", \
                            "NS1_TEST_PLA_SBA____20220710T000000_20220717T000000_0001.tcl", \
-                           "NS1_TEST_AUX_TLE____20220709T000000_99991231T235959_0001.xml", \
-                           "NS1_TEST_CNF_OAT____20220709T004210_20220716T230832_0001.EEF", \
-                           "NS1_TEST_PLA_OSC____20220710T000000_20220715T000000_0001.xml", \
+                           "NAOS1_20220708T0047.tle", \
+                           "NS1_OPER_CNF_OAT____20220709T004210_20220716T230832_0001.EEF", \
+                           "NS1_OPER_PLA_SCR____20220710T000000_20220712T000000_0001.xml", \
+                           "NS1_OPER_PLA_OSC____20220710T000000_20220715T000000_0001.xml", \
                            "TRK_NAOS1_TG1_ANG_20221004000000.GEO", \
                            "TRK_NAOS1_TG1_RAN_20221004000000.GEO", \
                            "TRK_NAOS1_TG2_ANG_20221004000000.GEO", \

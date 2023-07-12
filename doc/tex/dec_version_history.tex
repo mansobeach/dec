@@ -34,6 +34,11 @@ In order to check the version which is currently installed the gem command can b
 \inlinecode{bash}{ \$> decValidateConfig -v  }
 
 \begin{Verbatim}[tabsize=4]
+1.0.39 => Support of SSH commands
+          decNATS for NAOS updated according to:
+          https://jira.elecnor-deimos.com/browse/NAOSMCS-52
+          decListener exit code always set to 0 if command is successful
+1.0.38 => Fix on HTTP HEAD to use VerifyPeerSSL configuration
 1.0.37 => New gem roman-numerals is required
           Support of SFTP authentication with password using sshpass
           Support of SFTP known_host checks disabled for the container build process

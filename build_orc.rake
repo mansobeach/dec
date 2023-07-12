@@ -54,14 +54,31 @@ namespace :orc do
          puts "Failed to build gem for Orchestrator"
          exit(99)
       end
+
+      begin
+         File.unlink("install/gems/orc_latest.gem.md5")
+      rescue Exception => e
+         # puts e.to_s
+      end
+
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      cp filename, "orc.gem"
-      mv "orc.gem", "install"
+      cp filename, "orc_latest.gem"
+      mv "orc_latest.gem", "install"
       mv filename, "#{name}_#{args[:user]}@#{args[:host]}.gem"
       @filename = "#{name}_#{args[:user]}@#{args[:host]}.gem"
       # mv filename, "install/gems"
       cp @filename, "install/gems/"
+
+      cmd = "md5sum #{@filename}"
+      puts cmd
+      ret = `#{cmd}`
+      cmd = "echo #{ret.split(" ")[0]} > #{@filename}.md5"
+      puts cmd
+      system(cmd)
+
+      ln "#{@filename}.md5", "install/gems/orc_latest.gem.md5"
+
    end
 
    ## ----------------------------------------------------------------

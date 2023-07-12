@@ -86,6 +86,7 @@ class DEC_ReceiverFromInterface
       @bDeleteDownloaded   = DEC::ReadConfigIncoming.instance.deleteDownloaded?(@entity)
       @bLogDuplicated      = DEC::ReadConfigIncoming.instance.logDuplicated?(@entity)
       @bLogUnknown         = DEC::ReadConfigIncoming.instance.logUnknown?(@entity)
+      @bMD5                = DEC::ReadConfigIncoming.instance.md5?(@entity)
       @isDebugMode         = isDebug
       checkModuleIntegrity
       @isBenchmarkMode     = false
@@ -1405,6 +1406,14 @@ private
       ## HTTP PROTOCOL HANDLER
 
       if @protocol == "HTTP" then
+
+         if @bMD5 == false and hasBeenAlreadyReceived(filename) == true then
+            if @bLogDuplicated == true then
+               @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
+            end
+            return true
+         end
+
          retVal = @handler.downloadFile(filename)
 
          if retVal == false then
@@ -1915,9 +1924,13 @@ private
       #
       # 2016 patch
              
+      
       if arrDelete.uniq.length > 0 then
          
-         
+         if @isDebugMode == true then
+            @logger.debug("Discarding #{arrDelete.uniq.length} files")
+         end
+            
          arrDelete.uniq.each{|aFile|
          
             # ----------------------------------------------
@@ -1990,6 +2003,10 @@ private
          
          if forTracking == false or forTracking == true then
          
+            if @isDebugMode == true then
+               @logger.debug("[DEC_XXX] I/F #{@entity}: hasBeenAlreadyReceived? => #{filename}")
+            end
+
             if hasBeenAlreadyReceived(filename) == true then
                if @bLogDuplicated == true then
                   @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
@@ -2173,9 +2190,9 @@ private
    ## -------------------------------------------------------------
    
 	##  
-   def hasBeenAlreadyReceived(filename, md5 = nil)
+   def hasBeenAlreadyReceived(filename, md5 = false)
       if @isDebugMode == true then
-         @logger.debug("checking previous reception of #{filename} from #{@interface.name} => #{@interface.id}")
+         @logger.debug("checking previous reception of #{filename} from #{@interface.name} => #{@interface.id} | md5 flag #{md5}")
       end
       arrFiles = ReceivedFile.where(filename: filename)
 
@@ -2195,14 +2212,14 @@ private
 
          if file.interface_id == @interface.id then
             
-            if file.md5 != nil and file.md5 != "" and md5 == nil then
+            if md5 == false and @bMD5 == true then
                if @isDebugMode == true then
                   @logger.debug("#{filename} with md5 #{file.md5} / download is required")
                end
                next
             end 
 
-            if md5 != nil then
+            if md5 != false and md5 != true and @bMD5 == true then
                if file.md5 == md5 then
                   if @isDebugMode == true then
                      @logger.debug("[DEC_914] I/F #{@entity}: #{filename} found in database / same md5 was previously received ")

@@ -62,7 +62,7 @@ module CTC
       API_NATS_F6_TIMEOUT     = 1800
 
       API_NATS_F99_SUBJECT    = "CCS5.AutoPilot.NAOS.eval"
-      API_NATS_F99_BODY       = ""
+      API_NATS_F99_BODY       = "::CCSSEQ::getServerStatus LOCAL"
       API_NATS_F99_TIMEOUT    = 120
    end
 
