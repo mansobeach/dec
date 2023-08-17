@@ -150,6 +150,9 @@ def main
       handler = AUX_Handler.new(@full_path_file, @mission, @targetDir, @logger, @isDebugMode)   
       newName = handler.convert
    rescue Exception => e
+      if @isDebugMode == true then
+         @logger.debug(e.backtrace)
+      end
       @logger.error("[AUX_666] SW Problem #{e.to_s}")
       exit(99)
    end

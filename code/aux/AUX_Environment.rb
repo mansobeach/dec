@@ -20,25 +20,27 @@ require 'fileutils'
 
 module AUX
    
-   VERSION   = "0.0.8.2"
+   VERSION   = "0.0.8.3"
    
    ## -----------------------------------------------------------------
    
    CHANGE_RECORD = { \
-      "0.0.8"  =>    "NASA MODIS products: MOD09A1", \
+      "0.0.8"  =>    "NASA ASTER Global DEM: ASTGTM\n\
+         NASA SRTMGL1 is supported\n\
+         NASA MODIS products: MOD09A1",
       "0.0.7"  =>    "IERS Bulletin C conversion for NAOS mission", \
-      "0.0.6"  =>    "IERS Bulletin A XML has been integrated\n\
+      "0.0.6"  =>    "IERS Bulletin A XML is supported\n\
          IERS Bulletin A ASCII updated for NAOS",
-      "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction has been integrated\n\
-         Celestrak TCA (TLE catalogue) has been integrated\n\
-         Celestrak TLE (TLE mission)   has been integrated\n\
-         NASA MSFC Solar Flux (F10.7) / Geomagnetic disturbance (Ap) has been integrated\n\
-         NASA CDDIS Bulletin A / Earth Orientation Parameters has been integrated\n\
-         NASA CDDIS Bulletin C / TAI-UTC has been integrated",
-      "0.0.4"  =>    "NOAA Report Solar Geophysical Activity has been integrated", \
-      "0.0.3"  =>    "IERS Bulletin A / Earth Orientation Parameters has been integrated", \
-      "0.0.2"  =>    "IGS Broadcast Ephemeris Daily has been integrated", \
-      "0.0.1"  =>    "IERS Bulletin C / TAI-UTC has been integrated", \
+      "0.0.5"  =>    "Celestrak CssiSpaceWeather Daily Prediction is supported\n\
+         Celestrak TCA (TLE catalogue) is supported\n\
+         Celestrak TLE (TLE mission)   is supported\n\
+         NASA MSFC Solar Flux (F10.7) / Geomagnetic disturbance (Ap) is supported\n\
+         NASA CDDIS Bulletin A / Earth Orientation Parameters is supported\n\
+         NASA CDDIS Bulletin C / TAI-UTC is supported",
+      "0.0.4"  =>    "NOAA Report Solar Geophysical Activity is supported", \
+      "0.0.3"  =>    "IERS Bulletin A / Earth Orientation Parameters is supported", \
+      "0.0.2"  =>    "IGS Broadcast Ephemeris Daily is supported", \
+      "0.0.1"  =>    "IERS Bulletin C / TAI-UTC is supported", \
       "0.0.0"  =>    "first version of the aux installer created" \
    }
    ## -----------------------------------------------------------------

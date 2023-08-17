@@ -25,6 +25,45 @@
    -->
 
       <Interface>
+         <Name>TEST_NASA_ASTGTM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/DEM_ASTERV3</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/ASTT/ASTGTM.003/2000.03.01/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
+      <Interface>
+         <Name>TEST_NASA_SRTMDEM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/DEM_SRTMV3</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_1.html</Directory>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_2.html</Directory>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_3.html</Directory>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_4.html</Directory>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_5.html</Directory>
+            <Directory DepthSearch="0">/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_6.html</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
+      <Interface>
          <Name>TEST_NASA_RFM</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/rfm</LocalInbox>
          <DownloadDirs>
@@ -405,8 +444,47 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
+      <File Type="*SRTM*.xml">
+         <Description>SRTM DEM xml</Description>
+         <FromList>
+            <Interface>TEST_NASA_SRTMDEM</Interface>
+         </FromList>
+      </File>
+
+<!--
+
+      <File Type="*SRTM*.jpg">
+         <Description>SRTM DEM jpg</Description>
+         <FromList>
+            <Interface>TEST_NASA_SRTMDEM</Interface>
+         </FromList>
+      </File>
+
+      -->
+
+      <File Type="ASTGTMV003_*.xml">
+         <Description>ASTER DEM xml</Description>
+         <FromList>
+            <Interface>TEST_NASA_ASTGTM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ASTGTMV003_*.jpg">
+         <Description>ASTER DEM jpg quicklooks</Description>
+         <FromList>
+            <Interface>TEST_NASA_ASTGTM</Interface>
+         </FromList>
+      </File>
+
       <File Type="MOD09A1*.xml">
          <Description>MODIS MOD09A1 HDF description in XML</Description>
+         <FromList>
+            <Interface>TEST_NASA_RFM</Interface>
+         </FromList>
+      </File>
+
+      <File Type="MOD09A1*.hdf">
+         <Description>MODIS MOD09A1 HDF</Description>
          <FromList>
             <Interface>TEST_NASA_RFM</Interface>
          </FromList>

@@ -707,6 +707,75 @@ The Copernicus Sentinel-3 constellation are equipped with a laser retro reflecto
 \section{NASA}
 NASA is a major public data provider covering several different domains such as earth observation / geophysical, navigation, space-weather, etc.\newline  
 
+\subsection{ASTER Global DEM}
+ASTER Global DEM (ASTGTM) are publicly available as part of NASA EOSDIS. DEC is able to perform bulk data retrievals in an unattended mode. For the sake of the test, DEC has been configured to retrieve the tiles metadata and quick-looks only.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testASTGTM }
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2023-07-17 10:32:03.163 luuaplmds01.test - decGetFromInterface -m TEST_NASA_ASTGTM -l
+[ INFO] 2023-07-17 10:32:08.162 luuaplmds01.pull - [DEC_005] I/F TEST_NASA_ASTGTM: Polling Started - List mode is true
+[ INFO] 2023-07-17 10:34:02.702 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E006.1.jpg is available
+[ INFO] 2023-07-17 10:34:02.703 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E006.zip.xml is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E009.1.jpg is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E009.zip.xml is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E010.1.jpg is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E010.zip.xml is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E011.1.jpg is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E011.zip.xml is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E012.1.jpg is available
+[ INFO] 2023-07-17 10:34:02.704 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_N00E012.zip.xml is available
+(...)
+[ INFO] 2023-07-17 10:44:40.592 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_S83W157.1.jpg is available
+[ INFO] 2023-07-17 10:44:40.592 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_ASTGTM: File ASTGTMV003_S83W157.zip.xml is available
+[ INFO] 2023-07-17 10:44:40.592 luuaplmds01.pull - [DEC_060] I/F TEST_NASA_ASTGTM: Polling Completed / New file(s) 45824 available for pull
+[ INFO] 2023-07-17 10:44:40.592 luuaplmds01.pull - [DEC_100] I/F TEST_NASA_ASTGTM: Pull iteration completed successfully 🕺
+(...)
+[ INFO] 2023-07-17 10:44:40.905 luuaplmds01.test - decGetFromInterface -m TEST_NASA_ASTGTM
+[ INFO] 2023-07-17 10:44:45.122 luuaplmds01.pull - [DEC_005] I/F TEST_NASA_ASTGTM: Polling Started - List mode is false
+[ INFO] 2023-07-17 10:46:42.401 luuaplmds01.pull - [DEC_060] I/F TEST_NASA_ASTGTM: Polling Completed / New file(s) 45824 available for pull
+[ INFO] 2023-07-17 10:46:43.262 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E006.1.jpg downloaded with size 14925 bytes
+[ INFO] 2023-07-17 10:46:43.688 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E010.1.jpg downloaded with size 113799 bytes
+[ INFO] 2023-07-17 10:46:43.697 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E009.1.jpg downloaded with size 104509 bytes
+[ INFO] 2023-07-17 10:46:44.480 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E011.1.jpg downloaded with size 102038 bytes
+[ INFO] 2023-07-17 10:46:44.944 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E012.1.jpg downloaded with size 125479 bytes
+[ INFO] 2023-07-17 10:46:46.196 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E013.1.jpg downloaded with size 182996 bytes
+[ INFO] 2023-07-17 10:46:47.521 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E009.zip.xml downloaded with size 2851 bytes
+[ INFO] 2023-07-17 10:46:47.688 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E010.zip.xml downloaded with size 2850 bytes
+[ INFO] 2023-07-17 10:46:47.803 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E006.zip.xml downloaded with size 2849 bytes
+[ INFO] 2023-07-17 10:46:48.186 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E012.zip.xml downloaded with size 2852 bytes
+[ INFO] 2023-07-17 10:46:48.254 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E011.zip.xml downloaded with size 2852 bytes
+[ INFO] 2023-07-17 10:46:48.758 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E014.1.jpg downloaded with size 129451 bytes
+[ INFO] 2023-07-17 10:46:49.112 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E015.1.jpg downloaded with size 129684 bytes
+[ INFO] 2023-07-17 10:46:49.240 luuaplmds01.pull - [DEC_110] I/F TEST_NASA_ASTGTM: ASTGTMV003_N00E014.zip.xml downloaded with size 2852 bytes
+(...)
+\end{Verbatim}
+
+\subsection{MODIS Products}
+MODIS products are publicly available as part of NASA EOSDIS. DEC is able to perform bulk data retrievals in an unattended mode.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testRFM }
+
+\subsubsection{MOD09A1}
+MODIS L3 Surface Reflectance Product: HDF and XML metadata is managed ; the configuration also is polling the directories names in which the MOD09A1 products are published.\newline
+
+\inlinecode{bash}{ \$> decTestInterface_NASA -n testRFM }
+
+\begin{Verbatim}[fontsize=\tiny]
+[ INFO] 2023-07-17 10:02:27.007 luuaplmds01.test - decGetFromInterface -m TEST_NASA_RFM -l
+[ INFO] 2023-07-17 10:02:31.728 luuaplmds01.pull - [DEC_005] I/F TEST_NASA_RFM: Polling Started - List mode is true
+[ INFO] 2023-07-17 10:02:34.664 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File MOD09A1.A2023169.h00v08.061.2023178033738.hdf is available
+[ INFO] 2023-07-17 10:02:34.664 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File MOD09A1.A2023169.h00v08.061.2023178033738.hdf.xml is available
+[ INFO] 2023-07-17 10:02:34.664 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File MOD09A1.A2023169.h00v09.061.2023178031908.hdf is available
+[ INFO] 2023-07-17 10:02:34.664 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File MOD09A1.A2023169.h00v09.061.2023178031908.hdf.xml is available
+(...)
+[ INFO] 2023-07-17 10:02:34.730 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File 2023.06.10 is available
+[ INFO] 2023-07-17 10:02:34.730 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File 2023.06.18 is available
+[ INFO] 2023-07-17 10:02:34.730 luuaplmds01.pull - [DEC_105] I/F TEST_NASA_RFM: File 2023.06.26 is available
+[ INFO] 2023-07-17 10:02:34.730 luuaplmds01.pull - [DEC_060] I/F TEST_NASA_RFM: Polling Completed / New file(s) 771 available for pull
+\end{Verbatim}
+
+
 \subsection{NASA Bulletin A}
 NASA CDDIS publishes Bulletin A Earth rotation parameters with a slight format different from IERS.\newline
 

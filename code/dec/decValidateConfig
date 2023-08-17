@@ -50,6 +50,7 @@
 #  -i          Check the outgoing file-types configuration file dec_outgoing_files.xml
 #  -X <dir>    eXtract the configuration into the specified directory
 #  -N <label>  label of the node to be appended into the configuration
+#  -E          Edit the associated configuration file
 #  -h          shows this help
 #  -v          shows version number
 #    
@@ -65,7 +66,7 @@
 #
 # Data Exchange Component
 # 
-# Git: $Id$: decValidateConfig,v 1.6 2007/11/30 10:11:39 decdev Exp $
+# Git: $Id$: decValidateConfig,v 
 #
 #########################################################################
 
@@ -92,12 +93,14 @@ def main
    @bShowVersion     = false
    @bShowUsage       = false
    @bOutgoing        = false
+   @bEditConfig      = false
    @targetDir        = ""
    @nodeName         = ""
 
    opts = GetoptLong.new(
      ["--eXtract", "-X",         GetoptLong::REQUIRED_ARGUMENT],
      ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--Edit", "-E",            GetoptLong::NO_ARGUMENT],
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
      ["--incoming", "-i",        GetoptLong::NO_ARGUMENT],
      ["--outgoing", "-o",        GetoptLong::NO_ARGUMENT],
@@ -116,6 +119,7 @@ def main
          case opt
             when "--eXtract"  then @targetDir         = arg.to_s
             when "--Node"     then @nodeName          = arg.to_s
+            when "--Edit"     then @bEditConfig       = true
             when "--version"  then @bShowVersion      = true
             when "--Debug"    then @isDebugMode       = true
             when "--help"     then @bShowUsage        = true
@@ -123,8 +127,8 @@ def main
             when "--outgoing" then @bOutgoing         = true
             when "--entities" then @bEntities         = true
             when "--log"      then @bLog              = true
-	    when "--mail"     then @bMail             = true
-	    when "--general"  then @bGeneral          = true
+	         when "--mail"     then @bMail             = true
+	         when "--general"  then @bGeneral          = true
             when "--all"      then @bAll              = true
             when "--usage"    then @bShowUsage        = true
          end
@@ -181,8 +185,6 @@ def main
       exit(66)
    end
 
-
-
    ## --------------------------------------------
    ##
    ## Extract the DEC configuration from the gem installation directory
@@ -198,6 +200,10 @@ def main
    
    if @bGeneral == true or @bAll == true then
       
+      if @bEditConfig == true then
+         edit("dec_config")
+      end
+
       ret = validate("dec_config")
 
       if !bReturn or !ret then
@@ -210,6 +216,10 @@ def main
    
    if @bEntities == true or @bAll == true then
       
+      if @bEditConfig == true then
+         edit("dec_interfaces")
+      end
+
       ret = validate("dec_interfaces")
 
       if !bReturn or !ret then
@@ -221,6 +231,10 @@ def main
    # Check the incoming file-types configuration file dec_incoming_files.xml
    
    if @bIncoming == true or @bAll == true then
+      
+      if @bEditConfig == true then
+         edit("dec_incoming_files")
+      end
       
       ret = validate("dec_incoming_files")
 
@@ -234,6 +248,10 @@ def main
    
    if @bOutgoing == true or @bAll == true then
       
+      if @bEditConfig == true then
+         edit("dec_outgoing_files")
+      end
+
       ret = validate("dec_outgoing_files")
 
       if !bReturn or !ret then
@@ -246,6 +264,10 @@ def main
 
    if @bAll == true or @bMail == true then
  
+      if @bEditConfig == true then
+         edit("ft_mail_config")
+      end
+
       ret = validate("ft_mail_config")
 
       if !bReturn or !ret then
@@ -258,6 +280,10 @@ def main
 
    if @bAll == true or @bLog == true then
  
+      if @bEditConfig == true then
+         edit("dec_log_config")
+      end
+
       ret = validate("dec_log_config")
 
       if !bReturn or !ret then
@@ -310,13 +336,25 @@ def validate (fileName)
 end
 ## -------------------------------------------------------------
 
+def edit(fileName)
+   cmd = "vi #{ENV['DEC_CONFIG']}/#{fileName}.xml"
+   
+   if @isDebugMode == true and @logger != nil then
+      @logger.debug(cmd)
+   end
+
+   ret = system(cmd)
+
+   return true
+end
+
 ## -------------------------------------------------------------
 
 ## Print command line help
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -61 #{fullpathFile}"}`
+   value = `#{"head -62 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

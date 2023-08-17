@@ -1303,7 +1303,10 @@ private
    ## whislt nowadays the file download is performed within in most of the cases
    ## It is really crappy and it stinks
    def downloadFile(filename)
-            
+      if @isDebugMode == true then
+         @logger.debug("downloadFile('#{filename}')")
+      end
+
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 

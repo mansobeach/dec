@@ -71,10 +71,11 @@ The protocol \href{https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-par
 A dedicated client The protocol handler detects the trailing symbol slash in the Directory configuration item defined as part of the \hyperref[decODataClient]{\textit{decODataClient}} is devoted for this kind of interfaces to perform selection by sensing time or availability time of the data.
 
 \subsection{NATS}
-TBW. \newline
+\subsubsection{Request-Reply}
+NATS \href{https://docs.nats.io/nats-concepts/core-nats/reqreply}{request-reply} pattern is supported ; DEC performs NATS request according to some API configuration and it processes the received reply.
+\subsubsection{Subscribe}
+NATS \href{https://docs.nats.io/nats-concepts/core-nats/pubsub}{publish-subscribe} pattern is supported ; DEC subscribes to some subjects according to some API configuration to asynchronously receive the messages for their processing. \newline
 
-\par \noindent
-TBW
 
 \section{Network Protocols for Push}
 

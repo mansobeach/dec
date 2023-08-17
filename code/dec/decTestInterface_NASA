@@ -149,18 +149,49 @@ class DECTestInterface_NASA_CDDIS < Test::Unit::TestCase
    def testRFM
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
    
-      cmd = "decCheckConfig -e TEST_NASA_RFM -D"
+      cmd = "decCheckConfig -e TEST_NASA_RFM"
       @@logger.info(cmd)
       assert(system(cmd), "check config of TEST_NASA_RFM")  
 
-      cmd = "decGetFromInterface -m TEST_NASA_RFM -l -D"
+      cmd = "decGetFromInterface -m TEST_NASA_RFM -l"
       @@logger.info(cmd)
       assert(system(cmd), "list from TEST_NASA_RFM")
-
 
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
 
+   ## -----------------------------------------------------------
+   #
+   # current configuration only retrieves the metadata & quicklooks
+   def testASTGTM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+   
+      cmd = "decCheckConfig -e TEST_NASA_ASTGTM"
+      @@logger.info(cmd)
+      assert(system(cmd), "check config of TEST_NASA_ASTGTM")  
+
+      cmd = "decGetFromInterface -m TEST_NASA_ASTGTM -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_NASA_ASTGTM")
+
+      cmd = "decGetFromInterface -m TEST_NASA_ASTGTM"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_NASA_ASTGTM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
+   def testSRTMDEM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decGetFromInterface -m TEST_NASA_SRTMDEM -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from TEST_NASA_SRTMDEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
    ## -----------------------------------------------------------
 
    def testSFL

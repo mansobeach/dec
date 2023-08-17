@@ -209,8 +209,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       
       ## https://stackoverflow.com/questions/39653384/how-to-extract-html-links-and-text-using-nokogiri-and-xpath-and-css
       
-      arr = Array.new
-
+      arr   = Array.new
       doc   = Nokogiri::HTML.parse(response.body)
       
       # Get all anchors via xpath
@@ -220,17 +219,52 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       tags  = doc.xpath('//a/@href')
       
       tags.each do |tag|
-         if @isDebugMode == true then
-            @logger.debug(tag)
+         if tag.text.include?('http://') == true or tag.text.include?('https://') == true then
+            if @isDebugMode == true then
+               @logger.debug("getDirList item tag full URL => #{tag}")
+            end
+            if @isSecure == true then
+               arr << tag.text.to_s.gsub("http://", "https://")
+            else
+               arr << tag.text
+            end
+         else
+            if @isDebugMode == true then
+               @logger.debug("getDirList item tag relative URL => #{url}#{tag.text}")
+            end
+            arr << "#{url}#{tag.text}"
          end
-         arr << "#{url}#{tag.text}"
       end
    
       return arr
    end
 	## -----------------------------------------------------------
 
+   # the URL refers to a specific file
+   # however some files such as page_1.html are referring to the final target:
+   # https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/SRTMGL1_page_1.html
+   # those kind of files should be treated such as directories
+   #
+   #  <tbody>
+   #     <tr>
+   #        <td><img src="http://e4ftl01.cr.usgs.gov//icons/image2.gif" alt="[IMG]"></td>
+   #        <td><a href="http://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/N00E006.SRTMGL1.2.jpg">N00E006.SRTMGL1.2.jpg</a> </td>
+   #        <td>2014-10-22 14:38</td>
+   #        <td>191K</td>
+   #        <td>None</td>
+   #     </tr>
+   #
+
    def getListFile(remotePath, shortCircuit = false)
+
+      if remotePath.include?('page') and ( remotePath.include?('html') or  remotePath.include?('htm') )
+         if @isDebugMode == true then
+            @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} refers to page navigation html")
+            @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} url treated as a directory")
+         end
+         return getDirList(remotePath, shortCircuit)
+      end
+
       if @isDebugMode == true then
          @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} url treated as a file")
       end
@@ -357,51 +391,53 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          @logger.debug("InterfaceHandlerHTTP::downloadFile => #{url} url treated as a file / #{filename}")
       end
       
-      http = Curl::Easy.new(url)
-      
-      # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
-      
-      http.ssl_verify_peer = @verifyPeerSSL
-      
-      # Curl::Err::SSLPeerCertificateError ?????
-      http.ssl_verify_host = false      
-      http.http_auth_types = :basic
-
       user        = @server[:user]
       pass        = @server[:password]
 
-      if user != "" and user != nil then
-         http.username = user
-      end
-      
-      if pass != "" and pass != nil then
-         http.password = pass
-      end
-
-      ret = http.perform
-
-      if @isDebugMode == true then
-         @logger.debug("#{user}:#{pass} => response code #{http.response_code}")
-      end
-
-      if http.response_code == 302 or http.response_code == 401 then
-         return getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
-      end
-
-      if http.response_code == 301 then
-         return getURLFile(url, filename, false, nil, nil, @logger, @isDebugMode)
-      end
-
-      if http.response_code == 200 then
-         if @isDebugMode == true then
-            @logger.debug("Generating file #{Dir.pwd}/#{filename}")
+      begin
+         http = Curl::Easy.new(url)
+         # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
+         http.ssl_verify_peer = @verifyPeerSSL
+         # Curl::Err::SSLPeerCertificateError ?????
+         http.ssl_verify_host = false      
+         http.http_auth_types = :basic
+         
+         if user != "" and user != nil then
+            http.username = user
          end
-         aFile = File.new(filename, "wb")
-         # aFile.write(http.body)
-         aFile.write(http.body_str)
-         aFile.flush
-         aFile.close
-         return true
+         
+         if pass != "" and pass != nil then
+            http.password = pass
+         end
+   
+         ret = http.perform
+         
+         if @isDebugMode == true then
+            @logger.debug("#{user}:#{pass} => response code #{http.response_code}")
+         end
+   
+         if http.response_code == 302 or http.response_code == 401 then
+            return getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
+         end
+   
+         if http.response_code == 301 then
+            return getURLFile(url, filename, false, nil, nil, @logger, @isDebugMode)
+         end
+   
+         if http.response_code == 200 then
+            if @isDebugMode == true then
+               @logger.debug("Generating file #{Dir.pwd}/#{filename}")
+            end
+            aFile = File.new(filename, "wb")
+            # aFile.write(http.body)
+            aFile.write(http.body_str)
+            aFile.flush
+            aFile.close
+            return true
+         end
+
+      rescue Exception => e
+         ret = getFileWithRedirection(url, filename, user, pass, @logger, @isDebugMode)
       end
 
       @logger.error("Unexpected error for #{url}")

@@ -24,12 +24,13 @@ module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.40.1"
+   @@version = "1.0.40.3"
    
    ## -----------------------------------------------------------------
    
    @@change_record = { \
-      "1.0.40" =>    "MD5 config flag for pull to manage duplications", \
+      "1.0.40" =>    "MD5 config flag for pull to manage duplications\n\
+          HTTP handler treats html navigation pages as directories for pull",
       "1.0.39" =>    "Support of SSH commands\n\
           decNATS for NAOS updated according to:\n\
           https://jira.elecnor-deimos.com/browse/NAOSMCS-52\n\

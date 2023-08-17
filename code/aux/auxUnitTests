@@ -277,6 +277,20 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+   def test_NAOS_NASA_SRTMDEM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      file_srtmgl1 = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/SRTMDEM/N42W006.hgt"
+
+      cmd      = "auxConverter -m NAOS -f #{file_srtmgl1} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA SRTMGL1 V3 to NAOS mission DEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
    def test_NAOS_NASA_ASTGTM
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 

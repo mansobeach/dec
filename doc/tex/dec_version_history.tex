@@ -28,12 +28,13 @@ In order to check the version which is currently installed the gem command can b
 \inlinecode{bash}{ \$> gem list | grep dec  }
 
 \begin{Verbatim}[tabsize=4]
-    dec (1.0.37)
+    dec (1.0.40.1)
 \end{Verbatim}
 
 \inlinecode{bash}{ \$> decValidateConfig -v  }
 
 \begin{Verbatim}[tabsize=4]
+1.0.40 => MD5 config flag for pull to manage duplications
 1.0.39 => Support of SSH commands
           decNATS for NAOS updated according to:
           https://jira.elecnor-deimos.com/browse/NAOSMCS-52
@@ -146,14 +147,15 @@ The auxiliary data converter tool is installed separately since it can be used a
 \inlinecode{bash}{ \$> gem list | grep aux  }
 
 \begin{Verbatim}[tabsize=4]
-    aux (0.0.7b)
+    aux (0.0.8.3)
 \end{Verbatim}
 
 \inlinecode{bash}{ \$> auxConverter -v  }
 
 \begin{Verbatim}[tabsize=4]
-Elecnor Deimos-Space auxConverter Version: [0.0.7b]
-
+Elecnor Deimos-Space auxConverter Version: [0.0.8.3]
+0.0.8 => NASA ASTER Global DEM: ASTGTM
+         NASA MODIS products: MOD09A1
 0.0.7 => IERS Bulletin C conversion for NAOS mission
 0.0.6 => IERS Bulletin A XML has been integrated
          IERS Bulletin A ASCII updated for NAOS

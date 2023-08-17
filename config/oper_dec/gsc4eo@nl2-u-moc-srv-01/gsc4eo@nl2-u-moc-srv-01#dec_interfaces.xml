@@ -271,6 +271,55 @@
 
  <!-- ================================================================ -->
 
+ <Interface Name="NASA_SRTMDEM">
+  <Desc>NASA SRTM DEM V3</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">120</LoopDelay>
+    <PollingInterval unit="s">86400</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>6</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>HTTP</Protocol>
+    <Hostname>e4ftl01.cr.usgs.gov</Hostname>
+    <Port>443</Port>
+    <User encrypted='true'>Ym9yamFfbG9wZXpfZmVybmFuZGV6Cg==</User>
+    <Pass encrypted='true'>UGVycmlsbG82NjYK</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>true</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>false</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address>daniel.brosnan@deimos-space.com</Address>
+    </To>
+  </Notify>
+  <Events>
+  <!--
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m NAOS -f &quot;%F&quot; -d /data/mocExternalInterfaces/delivery_root"/>
+  -->
+  </Events>
+  <ContactInfo>
+    <Name>Mr Brosnan</Name>
+    <EMail>daniel.brosnan@deimos-space.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>Ronda de Poniente</Address>
+  </ContactInfo>
+</Interface>
+
   <!-- ================================================================ -->
 
 <Interface Name="NASA_ASTGTM">
