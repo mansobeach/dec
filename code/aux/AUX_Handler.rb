@@ -31,6 +31,7 @@ require 'aux/AUX_Handler_NASA_CDDIS_BULC'
 require 'aux/AUX_Handler_NASA_EOSDIS_ASTGTM'
 require 'aux/AUX_Handler_NASA_EOSDIS_MOD09A1'
 require 'aux/AUX_Handler_NASA_EOSDIS_SRTMGL1_Tile'
+require 'aux/AUX_Handler_USGS_EROS_SRTMGL1_Tile'
 require 'aux/AUX_Handler_NASA_MSFC_ForecastSolarFlux'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 
@@ -173,6 +174,11 @@ private
 
       if File.fnmatch(AUX_Pattern_NASA_EOSDIS_SRTMGL1_Tile, filename) == true then
          @handler = AUX_Handler_NASA_EOSDIS_SRTMGL1_Tile.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_USGS_EROS_SRTMGL1_Tile, filename) == true then
+         @handler = AUX_Handler_USGS_EROS_SRTMGL1_Tile.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
       end
 

@@ -20,13 +20,14 @@ require 'fileutils'
 
 module AUX
    
-   VERSION   = "0.0.8.3"
+   VERSION   = "0.0.8.4"
    
    ## -----------------------------------------------------------------
    
    CHANGE_RECORD = { \
       "0.0.8"  =>    "NASA ASTER Global DEM: ASTGTM\n\
          NASA SRTMGL1 is supported\n\
+         USGS SRTMGL1 (geotiff) is supported / requires GDAL\n\
          NASA MODIS products: MOD09A1",
       "0.0.7"  =>    "IERS Bulletin C conversion for NAOS mission", \
       "0.0.6"  =>    "IERS Bulletin A XML is supported\n\
