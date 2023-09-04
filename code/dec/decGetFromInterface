@@ -73,8 +73,18 @@ require 'dec/EventManager'
 
 @entity          = ""
 
+
 # MAIN script function
 def main
+
+   ## ================================================================
+   def SIGTERMHandler
+      puts "[#{File.basename($0)} #{@entity}] SIGTERM signal received ... sayonara, baby !"
+      @logger.info("[#{File.basename($0)} #{@entity}] SIGTERM signal received ... sayonara, baby !")
+      @locker.release
+      exit(99)
+   end
+   ## ================================================================
 
    include CUC::DirUtils
    include DEC
@@ -336,6 +346,10 @@ def init
    # Register in lock file the daemon
    @locker.setRunning
    @incomingDir = ReadConfigIncoming.instance.getIncomingDir(@entity)
+
+   # Register a handler for SIGTERM
+   trap 15,proc{ self.SIGTERMHandler }
+
 end
 ## -------------------------------------------------------------
 

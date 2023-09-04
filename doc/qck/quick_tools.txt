@@ -1,3 +1,6 @@
+== File manipulation ==
+sed -i "s/\/MOLT\/MOD09A1.061\/[^\/]*\/</\/MOLT\/MOD09A1.061\/9999.99.99\/</g" /Users/borja/.asdf/installs/ruby/3.1.4/lib/ruby/gems/3.1.0/gems/dec-1.0.40.4/code/dec/../../config/dec_incoming_files.xml
+
 == Networking profile ==
 
 rsync over ssh

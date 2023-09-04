@@ -1375,7 +1375,6 @@ class ORCTestCase < Test::Unit::TestCase
       puts
       assert(system(cmd), cmd)
 
-
       cmd = "orcValidateConfig -X /tmp/orc_config -N borja@localhost"
       puts cmd
       assert(system(cmd), cmd)
@@ -1392,6 +1391,14 @@ class ORCTestCase < Test::Unit::TestCase
       assert(system(cmd), cmd)
 
       cmd = "orcValidateConfig -C"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcValidateConfig -g -L"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcValidateConfig -a -L"
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
 

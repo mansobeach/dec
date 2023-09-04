@@ -710,8 +710,14 @@ class DEC_ReceiverFromInterface
                @logger.debug("From parent #{newpid} => #{File.basename(file)}")
             end
          end
-         
-         pid = Process.waitpid(-1, 0)
+         pid = nil
+
+         #begin
+            pid = Process.waitpid(-1, 0)
+         #rescue Exception => e
+         #   puts "hey blimey"
+         #   exit(98)
+         #end
 
          if $?.exitstatus == 0 then
             @arrFilesReceived << hProcessFiles[":#{pid}"]
@@ -1410,11 +1416,13 @@ private
 
       if @protocol == "HTTP" then
 
-         if @bMD5 == false and hasBeenAlreadyReceived(filename) == true then
-            if @bLogDuplicated == true then
-               @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
+         if @isNoDB == false then
+            if @bMD5 == false and hasBeenAlreadyReceived(filename) == true then
+               if @bLogDuplicated == true then
+                  @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
+               end
+               return true
             end
-            return true
          end
 
          retVal = @handler.downloadFile(filename)
@@ -2195,7 +2203,7 @@ private
 	##  
    def hasBeenAlreadyReceived(filename, md5 = false)
       if @isDebugMode == true then
-         @logger.debug("checking previous reception of #{filename} from #{@interface.name} => #{@interface.id} | md5 flag #{md5}")
+         @logger.debug("checking previous reception of #{filename} from #{@entity} => | md5 flag #{md5}")
       end
       arrFiles = ReceivedFile.where(filename: filename)
 

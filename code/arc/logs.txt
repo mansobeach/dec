@@ -46,6 +46,7 @@ ERROR:
 ARC_600: $user [IP Address]: Authentication failed
 ARC_601: Archive Root does not exist
 ARC_605: Could not archive $file
+ARC_606: Could not retrieve $file
 ARC_610: $file not present in the archive
 ARC_620: $file could not be deleted
 ARC_635: $file reallocation failure

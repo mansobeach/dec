@@ -147,7 +147,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       newArrFile = Array.new      
       @arrPullDirs.each{|element|
          dir         = element[:directory]
-         
+         @maxDepth   = element[:depthSearch]
          # ---------------------------------------
          # URL ends with "/" treat it as a directory         
          if dir[-1, 1] == "/" then
@@ -167,11 +167,12 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
    
    def getDirList(remotePath, shortCircuit = false)
       if @isDebugMode == true then
-         @logger.debug("InterfaceHandlerHTTP::getDirList => #{remotePath} url treated as a directory")
+         @logger.debug("InterfaceHandlerHTTP::getDirList => #{remotePath} url treated as a directory / DepthSearch = #{@maxDepth}")
       end
 
       host        = ""
       url         = ""
+      uri         = nil
       port        = @server[:port].to_i
       user        = @server[:user]
       pass        = @server[:password]
@@ -182,8 +183,14 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          host        = "https://#{@server[:hostname]}/"
       end
 
-      url = "#{host}#{remotePath}"
-      uri = URI.parse(url)
+      # This is if getDirList is invoked with a full link / depthsearch > 0
+      if remotePath.include?("://") == false then
+         url = "#{host}#{remotePath}"
+         uri = URI.parse(url)
+      else
+         url = remotePath
+         uri = URI.parse(url)
+      end
       
       ## ------------------
       ## Request headers
@@ -191,18 +198,18 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       response = Net::HTTP.get_response(uri)
       
       if @isDebugMode == true then
-         @logger.debug("HTTP HEAD #{url} => #{response.code}")
+         @logger.debug("InterfaceHandlerHTTP::getDirList => HTTP HEAD #{url} => #{response.code}")
       end
          
       if @isDebugMode == true and response.code.to_i == 200 then 
-         puts response.body
+         @logger.debug("InterfaceHandlerHTTP::getDirList => #{response.body}")
       end
               
       if response.code.to_i == 404 or response.code.to_i == 400 then
          if shortCircuit == true then 
             raise "I/F #{@entity}: #{response.code} / #{url}"
          else
-            @logger.error("I/F #{@entity}: #{response.code} / #{url}")
+            @logger.error("InterfaceHandlerHTTP::getDirList => I/F #{@entity}: #{response.code} / #{url}")
          end
       end
       ## ------------------
@@ -221,7 +228,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
       tags.each do |tag|
          if tag.text.include?('http://') == true or tag.text.include?('https://') == true then
             if @isDebugMode == true then
-               @logger.debug("getDirList item tag full URL => #{tag}")
+               @logger.debug("InterfaceHandlerHTTP::getDirList => item tag full URL => #{tag}")
             end
             if @isSecure == true then
                arr << tag.text.to_s.gsub("http://", "https://")
@@ -230,12 +237,27 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
             end
          else
             if @isDebugMode == true then
-               @logger.debug("getDirList item tag relative URL => #{url}#{tag.text}")
+               @logger.debug("InterfaceHandlerHTTP::getDirList => item tag relative URL => #{url}#{tag.text}")
             end
             arr << "#{url}#{tag.text}"
          end
       end
-   
+
+=begin
+      if @maxDepth > 0 then
+         arrDepth = Array.new
+         
+         arr.each do |url|
+            arrDepth << getListFile(url)
+         end
+
+         @maxDepth = @maxDepth - 1
+
+
+         return arrDepth
+      end
+=end
+
       return arr
    end
 	## -----------------------------------------------------------
@@ -257,7 +279,13 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
 
    def getListFile(remotePath, shortCircuit = false)
 
-      if remotePath.include?('page') and ( remotePath.include?('html') or  remotePath.include?('htm') )
+      if @isDebugMode == true then
+         @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} / DepthSearch = #{@maxDepth}")
+      end
+
+      # if it ends with "/" also
+
+      if (remotePath.include?('page') and ( remotePath.include?('html') or  remotePath.include?('htm') ) ) or remotePath[-1,1] == '/' then  # or (@maxDepth > 0)
          if @isDebugMode == true then
             @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} refers to page navigation html")
             @logger.debug("InterfaceHandlerHTTP::getListFile => #{remotePath} url treated as a directory")
@@ -298,7 +326,7 @@ class InterfaceHandlerHTTP < InterfaceHandlerAbstract
          
          if @verifyPeerSSL == false then
             if @isDebugMode == true and @logger != nil then
-               @logger.debug("#{@entity} I/F: HTTP HEAD VerifyPeerSSL is disabled")
+               @logger.debug("InterfaceHandlerHTTP::getListFile => #{@entity} I/F: HTTP HEAD VerifyPeerSSL is disabled")
             end
             req.ssl_verify_peer = false
             req.ssl_verify_host = false

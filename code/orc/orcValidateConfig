@@ -28,6 +28,8 @@
 #  -C          print the configuration directory location
 #  -X <dir>    eXtract the configuration into the specified directory
 #  -N <label>  label of the node to be appended into the configuration
+#  -E          Edit the associated configuration file
+#  -L          List the associated configuration file
 #  -h          shows this help
 #  -v          shows version number
 #    
@@ -38,14 +40,6 @@
 # == Copyright
 # Copyright (c) 2020 ESA - DEIMOS Space S.L.
 #
-
-#########################################################################
-#
-# Orchestrator Component
-# 
-# Git: $Id$: orcValidateConfig,v 1.6 2007/11/30 10:11:39 decdev Exp $
-#
-#########################################################################
 
 require 'getoptlong'
 
@@ -74,12 +68,16 @@ def main
    @bShowUsage       = false
    @bOutgoing        = false
    @bShowConfigDir   = false
+   @bEditConfig      = false
+   @bListConfig      = false
    @targetDir        = ""
    @nodeName         = ""
 
    opts = GetoptLong.new(
      ["--eXtract", "-X",         GetoptLong::REQUIRED_ARGUMENT],
-     ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],   
+     ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--List", "-L",            GetoptLong::NO_ARGUMENT],
+     ["--Edit", "-E",            GetoptLong::NO_ARGUMENT],   
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
      ["--Config", "-C",          GetoptLong::NO_ARGUMENT],
      ["--log", "-l",             GetoptLong::NO_ARGUMENT],     
@@ -95,7 +93,9 @@ def main
       opts.each do |opt, arg|
          case opt
             when "--eXtract"  then @targetDir         = arg.to_s
-            when "--Node"     then @nodeName          = arg.to_s         
+            when "--Node"     then @nodeName          = arg.to_s
+            when "--Edit"     then @bEditConfig       = true
+            when "--List"     then @bListConfig       = true
             when "--version"  then @bShowVersion      = true
             when "--Config"   then @bShowConfigDir    = true
             when "--Debug"    then @isDebugMode       = true
@@ -128,7 +128,7 @@ def main
       exit(0)
    end
  
-   if @targetDir == "" and @bShowConfigDir == false and @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
+   if @targetDir == "" and @bListConfig == false and @bShowConfigDir == false and @bLog == false and @bOutgoing == false and @bIncoming == false and @bEntities == false and @bAll == false and @bMail == false and @bTrays == false and @bGeneral == false then
       usage
       exit(66)
    end
@@ -190,12 +190,22 @@ def main
          @logger.debug("Checking orchestrator_log_config.xml")
       end
 
-      ret = validate("orchestrator_log_config")
-
-      if !bReturn or !ret then
-         bReturn = false
+      if @bListConfig == true then
+         list("orchestrator_log_config")
+         # exit(0)
       else
-         @logger.info("[ORC_001] Valid schema check for orchestrator_log_config.xml #{'1F4AA'.hex.chr('UTF-8')}")
+
+         if @bEditConfig == true then
+            edit("orchestrator_log_config")
+         end
+
+         ret = validate("orchestrator_log_config")
+
+         if !bReturn or !ret then
+            bReturn = false
+         else
+            @logger.info("[ORC_001] Valid schema check for orchestrator_log_config.xml #{'1F4AA'.hex.chr('UTF-8')}")
+         end
       end
      
    end
@@ -208,14 +218,24 @@ def main
          @logger.debug("Checking orchestratorConfigFile.xml")
       end
 
-      ret = validate("orchestratorConfigFile")
-
-      if !bReturn or !ret then
-         bReturn = false
+      if @bListConfig == true then
+         list("orchestratorConfigFile")
+         exit(0)
       else
-         @logger.info("[ORC_001] Valid schema check for orchestratorConfigFile.xml #{'1F4AA'.hex.chr('UTF-8')}")
-      end
 
+         if @bEditConfig == true then
+            edit("orchestratorConfigFile")
+         end
+
+         ret = validate("orchestratorConfigFile")
+
+         if !bReturn or !ret then
+            bReturn = false
+         else
+            @logger.info("[ORC_001] Valid schema check for orchestratorConfigFile.xml #{'1F4AA'.hex.chr('UTF-8')}")
+         end
+
+      end
 
       orcConf = ORC::ReadOrchestratorConfig.instance
       if @isDebugMode == true then
@@ -263,6 +283,10 @@ def main
       bReturn = false
    end
 
+   if @bListConfig == true then
+      exit(0)
+   end
+
    if bReturn == true then
       @logger.info("[ORC_002] Configuration check is correct #{'1F57A'.hex.chr('UTF-8')}")
       exit(0)
@@ -276,7 +300,7 @@ end
 ## -------------------------------------------------------------
 ## Check the given XML file using the corresponding XSD schema file
 
-def validate (fileName)
+def validate(fileName)
    rootPath = File.join(File.dirname(File.expand_path(__FILE__)), "../../schemas")
 
    cmd = "xmllint --schema #{rootPath}/#{fileName}.xsd #{ENV['ORC_CONFIG']}/#{fileName}.xml --noout 2>/dev/null"
@@ -292,10 +316,27 @@ def validate (fileName)
       @logger.error("Fail schema check for #{fileName}")
    end
    
-   return ret   
+   return ret
 end
 ## -------------------------------------------------------------
 
+def edit(fileName)
+   cmd = "vi #{ENV['ORC_CONFIG']}/#{fileName}.xml"
+   
+   if @isDebugMode == true and @logger != nil then
+      @logger.debug(cmd)
+   end
+
+   ret = system(cmd)
+
+   return true
+end
+
+## -------------------------------------------------------------
+
+def list(fileName)
+   puts "#{ENV['ORC_CONFIG']}/#{fileName}.xml"
+end
 
 ## -------------------------------------------------------------
 

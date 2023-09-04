@@ -569,10 +569,8 @@ private
             cmd = "\\cp -f #{path}/#{entry} #{destDir}/#{entry}"
          end
 
-         if @isDebugMode then
-#             puts srcDir
-#             puts path
-            puts cmd
+         if @isDebugMode and @logger != nil then
+            @logger.debug(cmd)
          end
          
          tmpVal = system(cmd)
@@ -599,12 +597,16 @@ private
             @logger.info("[ARC_202] Retrieved: #{File.basename(fileName,File.extname(fileName))}")
          else
             puts "(Retrieved) : " << File.basename(fileName,File.extname(fileName))
+         end         
+         return true
+      else
+
+         if @logger != nil then
+            @logger.error("[ARC_606] could not retrieve #{File.basename(fileName,File.extname(fileName))} from #{path}/#{entry} to #{destDir}/#{entry} #{'1F480'.hex.chr('UTF-8')}")
+         else
+            puts "[ARC_606] could not retrieve #{File.basename(fileName,File.extname(fileName))} from #{path}/#{entry} to #{destDir}/#{entry} #{'1F480'.hex.chr('UTF-8')}"
          end
 
-         
-         return true
-
-      else
          return false
       end
 

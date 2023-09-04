@@ -6,6 +6,40 @@
 
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+      <Interface>
+         <Name>NASA_RFM</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/MOD09A1</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="1">/MOLT/MOD09A1.061/2023.08.21/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
+      <Interface>
+         <Name>NASA_RFM_URL</Name>
+         <LocalInbox>/data/mocExternalInterfaces/int/MOD09A1_URL</LocalInbox>
+         <DownloadDirs>
+		      <Directory DepthSearch="0">/MOLT/MOD09A1.061/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>         
+      </Interface>
+
 <!--
       <Interface>
          <Name>SPCS</Name>
@@ -24,24 +58,7 @@
       </Interface>
    -->
 
-      <Interface>
-         <Name>NASA_RFM</Name>
-         <LocalInbox>/data/mocExternalInterfaces/int/MOD09A1</LocalInbox>
-         <DownloadDirs>
-		      <Directory DepthSearch="0">/MOLT/MOD09A1.061/2023.06.18/</Directory>
-            <Directory DepthSearch="0">/MOLT/MOD09A1.061/</Directory>
-         </DownloadDirs>
-         <Switches>
-            <DeleteDownloaded>false</DeleteDownloaded>
-            <DeleteDuplicated>false</DeleteDuplicated>
-            <DeleteUnknown>false</DeleteUnknown>
-            <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>true</LogDuplicated>
-            <LogUnknown>false</LogUnknown>
-            <MD5>false</MD5>
-         </Switches>         
-      </Interface>
-
+      
       <Interface>
          <Name>NASA_ASTGTM</Name>
          <LocalInbox>/data/mocExternalInterfaces/int/ASTERV3DEM</LocalInbox>
@@ -304,10 +321,66 @@ https://www.nasa.gov/sites/default/files/atoms/files/jun2022f10_prd.txt
          </FromList>
       </File>
 
-      <File Type="202*.*.*">
+      <File Type="2023.08.??">
          <Description>MODIS MOD09A1 Directory links</Description>
          <FromList>
-            <Interface>NASA_RFM</Interface>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2023.09.??">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2023.10.??">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2023.11.??">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2023.12.??">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2024.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2025.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2026.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
+         </FromList>
+      </File>
+
+      <File Type="2027.*.*">
+         <Description>MODIS MOD09A1 Directory links</Description>
+         <FromList>
+            <Interface>NASA_RFM_URL</Interface>
          </FromList>
       </File>
 

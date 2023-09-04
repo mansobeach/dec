@@ -51,6 +51,7 @@
 #  -X <dir>    eXtract the configuration into the specified directory
 #  -N <label>  label of the node to be appended into the configuration
 #  -E          Edit the associated configuration file
+#  -L          List the associated configuration file
 #  -h          shows this help
 #  -v          shows version number
 #    
@@ -94,12 +95,14 @@ def main
    @bShowUsage       = false
    @bOutgoing        = false
    @bEditConfig      = false
+   @bListConfig      = false
    @targetDir        = ""
    @nodeName         = ""
 
    opts = GetoptLong.new(
      ["--eXtract", "-X",         GetoptLong::REQUIRED_ARGUMENT],
      ["--Node", "-N",            GetoptLong::REQUIRED_ARGUMENT],
+     ["--List", "-L",            GetoptLong::NO_ARGUMENT],
      ["--Edit", "-E",            GetoptLong::NO_ARGUMENT],
      ["--all", "-a",             GetoptLong::NO_ARGUMENT],
      ["--incoming", "-i",        GetoptLong::NO_ARGUMENT],
@@ -120,6 +123,7 @@ def main
             when "--eXtract"  then @targetDir         = arg.to_s
             when "--Node"     then @nodeName          = arg.to_s
             when "--Edit"     then @bEditConfig       = true
+            when "--List"     then @bListConfig       = true
             when "--version"  then @bShowVersion      = true
             when "--Debug"    then @isDebugMode       = true
             when "--help"     then @bShowUsage        = true
@@ -134,7 +138,7 @@ def main
          end
       end
    rescue Exception
-     exit(99)
+      exit(99)
    end
  
    if @bShowVersion == true then
@@ -200,15 +204,23 @@ def main
    
    if @bGeneral == true or @bAll == true then
       
-      if @bEditConfig == true then
-         edit("dec_config")
+      if @bListConfig == true then
+         list("dec_config")
+      else
+
+         if @bEditConfig == true then
+            edit("dec_config")
+         end
+   
+         ret = validate("dec_config")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
+
       end
 
-      ret = validate("dec_config")
-
-      if !bReturn or !ret then
-         bReturn = false
-      end
+      
 
    end
 
@@ -216,14 +228,20 @@ def main
    
    if @bEntities == true or @bAll == true then
       
-      if @bEditConfig == true then
-         edit("dec_interfaces")
-      end
+      if @bListConfig == true then
+         list("dec_interfaces")
+      else
 
-      ret = validate("dec_interfaces")
+         if @bEditConfig == true then
+            edit("dec_interfaces")
+         end
+   
+         ret = validate("dec_interfaces")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
 
-      if !bReturn or !ret then
-         bReturn = false
       end
 
    end
@@ -232,14 +250,20 @@ def main
    
    if @bIncoming == true or @bAll == true then
       
-      if @bEditConfig == true then
-         edit("dec_incoming_files")
-      end
-      
-      ret = validate("dec_incoming_files")
+      if @bListConfig == true then
+         list("dec_incoming_files")
+      else
 
-      if !bReturn or !ret then
-         bReturn = false
+         if @bEditConfig == true then
+            edit("dec_incoming_files")
+         end
+         
+         ret = validate("dec_incoming_files")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
+         
       end
 
    end
@@ -248,14 +272,20 @@ def main
    
    if @bOutgoing == true or @bAll == true then
       
-      if @bEditConfig == true then
-         edit("dec_outgoing_files")
-      end
+      if @bListConfig == true then
+         list("dec_outgoing_files")
+      else
 
-      ret = validate("dec_outgoing_files")
+         if @bEditConfig == true then
+            edit("dec_outgoing_files")
+         end
+   
+         ret = validate("dec_outgoing_files")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
 
-      if !bReturn or !ret then
-         bReturn = false
       end
 
    end
@@ -264,14 +294,20 @@ def main
 
    if @bAll == true or @bMail == true then
  
-      if @bEditConfig == true then
-         edit("ft_mail_config")
-      end
+      if @bListConfig == true then
+         list("ft_mail_config")
+      else
 
-      ret = validate("ft_mail_config")
+         if @bEditConfig == true then
+            edit("ft_mail_config")
+         end
+   
+         ret = validate("ft_mail_config")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
 
-      if !bReturn or !ret then
-         bReturn = false
       end
 
    end
@@ -280,14 +316,20 @@ def main
 
    if @bAll == true or @bLog == true then
  
-      if @bEditConfig == true then
-         edit("dec_log_config")
-      end
+      if @bListConfig == true then
+         list("dec_log_config")
+      else
 
-      ret = validate("dec_log_config")
+         if @bEditConfig == true then
+            edit("dec_log_config")
+         end
+   
+         ret = validate("dec_log_config")
+   
+         if !bReturn or !ret then
+            bReturn = false
+         end
 
-      if !bReturn or !ret then
-         bReturn = false
       end
 
    end
@@ -348,6 +390,11 @@ def edit(fileName)
    return true
 end
 
+## -------------------------------------------------------------
+
+def list(fileName)
+   puts "#{ENV['DEC_CONFIG']}/#{fileName}.xml"
+end
 ## -------------------------------------------------------------
 
 ## Print command line help
