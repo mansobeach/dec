@@ -279,13 +279,13 @@
       <ParallelIngestions>1</ParallelIngestions>
       <SchedulingFreq unit="s">10</SchedulingFreq>
       <ResourceManager>orcResourceChecker</ResourceManager>
-      <ProcWorkingDir>/tmp/processorWd</ProcWorkingDir>
-      <SuccessDir>/tmp/success</SuccessDir>
-      <FailureDir>/tmp/failure</FailureDir>
-      <BreakPointDir>/tmp/breakpoints</BreakPointDir>
-      <TmpDir>/tmp/tmp</TmpDir>
-   </Miscelanea>
-
+      <ProcWorkingDir>/minarc_root/processorWd</ProcWorkingDir>
+      <SuccessDir>/minarc_root/success</SuccessDir>
+      <FailureDir>/minarc_root/failure</FailureDir>
+      <BreakPointDir>/minarc_root/breakpoints</BreakPointDir>
+      <TmpDir>/minarc_root/tmp</TmpDir>
+    </Miscelanea>
+ 
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
       <Database_Host></Database_Host>
