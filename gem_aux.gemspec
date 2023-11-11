@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
                   Dir['code/cuc/CryptHelper.rb'] + \
                   Dir['code/cuc/FT_PackageUtils.rb'] + \
                   Dir['code/cuc/Log4rLoggerFactory.rb'] + \
-                  Dir['code/dec/DEC_Environment.rb'] + \
+#                  Dir['code/dec/DEC_Environment.rb'] + \
                   Dir['code/dec/ReadConfigDEC.rb'] + \
                   Dir['config/dec_config.xml'] + \
                   Dir['config/dec_log_config.xml']

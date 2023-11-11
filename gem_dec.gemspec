@@ -76,6 +76,10 @@ Gem::Specification.new do |s|
                      'decStats'\
                      ]
   
+   if ENV.include?("DEC_NAOS") == true then
+      s.executables   << 'dec_script_NAOS_NASA_RFM'
+   end
+
    ## --------------------------------------------
    ##
    ## Tailored installer to include only the OData client

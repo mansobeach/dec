@@ -211,6 +211,7 @@ namespace :dec do
 
       # cmd = "podman run --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos_gsc4eo_nl2-s-aut-srv-01:latest"
       cmd = "podman run --userns keep-id --env 'USER' --add-host=nl2-s-aut-srv-01:192.168.1.24 --network=host --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos-test_gsc4eo_nl2-u-moc-srv-01:latest"
+      cmd = "podman run --userns keep-id --env 'USER' --add-host=nl2-s-aut-srv-01:192.168.1.24 --network=host --tz=Europe/London --name dec -d --mount type=bind,source=/data,destination=/data localhost/dec_naos_gsc4eo_nl2-u-moc-srv-01:latest"
       puts cmd
       retval = system(cmd)
 
@@ -385,6 +386,7 @@ namespace :dec do
       ## -------------------------------
    
       cmd = "gem build gem_dec.gemspec"
+      puts cmd
       ret = `#{cmd}`
       if $? != 0 then
          puts "Failed to build gem for DEC"
