@@ -18,13 +18,14 @@ require 'rubygems'
 require 'fileutils'
 
 require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
 require 'dec/ReadConfigDEC'
 
 module DEC
    
    include CUC::DirUtils
    
-   @@version = "1.0.40.4"
+   @@version = "1.0.40.5"
    
    ## -----------------------------------------------------------------
    
@@ -231,6 +232,24 @@ module DEC
       
    end
    
+   ## -----------------------------------------------------------------
+
+   def load_logger(label)
+       # initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new(label, "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
+      
+      @logger = loggerFactory.getLogger
+   
+      if @logger == nil then
+		   puts "Could not set up logging system !  :-("
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+		   puts
+		   puts
+		   exit(99)
+      end
+
+      return @logger
+   end
    ## -----------------------------------------------------------------
 
    def load_config_developmentRPF
