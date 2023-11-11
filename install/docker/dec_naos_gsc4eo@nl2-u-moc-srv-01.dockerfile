@@ -10,9 +10,10 @@
 # https://hub.docker.com/_/alpine
 # https://pkgs.alpinelinux.org/packages
 #
-FROM alpine:3.15
+FROM alpine:3.17
 # ================================================
 RUN apk update && apk add --no-cache build-base
+RUN apk --no-cache add linux-headers
 RUN apk --no-cache add procps
 RUN apk --no-cache add ca-certificates
 RUN apk --no-cache add tzdata

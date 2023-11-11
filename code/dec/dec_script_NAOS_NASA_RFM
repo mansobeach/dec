@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'dec/DEC_Environment'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
+
+include DEC
+
+self.load_config
+@logger         = self.load_logger("dec_script")
+prevDir         = Dir.pwd
+
+cmd             = "decValidateConfig -i -L"
+pathCfg         = "#{`#{cmd}`}".chomp
+
+@configFile     = DEC::ReadConfigIncoming.instance
+Dir.chdir(@configFile.getIncomingDir('NASA_RFM_URL'))
+pattern         = "????.??.??"
+arr             = Dir[pattern]
+firstProduct    = arr[0]
+@logger.info("I/F NASA_RFM: updating configuration with path /MOLT/MOD09A1.061/#{firstProduct}")
+cmd             = "sed -i -r \'s|/MOLT/MOD09A1.061/[^/<]+|/MOLT/MOD09A1.061/#{firstProduct}|g\' #{pathCfg}"
+@logger.info(cmd)
+ret             = system(cmd)
+
+if ret == true then
+    cmd = "rm -f #{firstProduct}"
+    @logger.info(cmd)
+    ret = system(cmd)
+    if ret == false then
+        @logger.error("Could not delete #{@configFile.getIncomingDir('NASA_RFM_URL')}/#{firstProduct}")
+        exit(66)
+    end
+end 
+exit(0)
