@@ -99,7 +99,7 @@ Gem::Specification.new do |s|
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('byebug', '~> 11.1')
   s.add_dependency('dotenv', '~> 2.7')
-  s.add_dependency('exiftool', '~> 1.2')
+  s.add_dependency('exiftool', ['>= 1.2.4', '< 1.2.5'])
   s.add_dependency('filesize', '~> 0.1')
   s.add_dependency('ftools', '~> 0.0')
   s.add_dependency('json', '~> 2.0')

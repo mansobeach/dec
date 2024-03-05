@@ -26,13 +26,14 @@ module ARC
    
    include CUC::DirUtils
    
-   VERSION   = "1.3.2.4"
+   VERSION   = "1.3.2.5"
    ## ----------------------------------------------------------------
    
    CHANGE_RECORD = { \
       "1.3.2"  =>      "Fixed Handler_DUMMY to decode any filename\n\
          Handler_NAOS updated for TLE\n\
-         Fixed the gem installation warning regarding ASCII-8BIT to UTF-8 encoding",\
+         Fixed the gem installation warning regarding ASCII-8BIT to UTF-8 encoding\n\
+         exiftool dependency constrained with version 1.2.4 for compatibility with ruby 2\n", \
       "1.3.1"  =>      "Handler_NAOS created for NAOS mission\n\
          Handler_DUMMY created for generic testing\n\
          Increased log messages",\
