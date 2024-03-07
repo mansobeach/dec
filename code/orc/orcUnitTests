@@ -48,6 +48,7 @@ require 'arc/MINARC_Environment'
 ##  9  - test_contingency_inventory
 ## 10  - test_resiliency
 ## 11  - test_train_slow
+## 12  - test_reprocessing
 
 # Select a single test of the suite
 
@@ -1840,6 +1841,126 @@ class ORCTestCase < Test::Unit::TestCase
    end
 
    ## -------------------------------------------------------------
+
+   def test_reprocessing
+
+      puts "================================================"
+      puts "ORC_UnitTests::#{__method__.to_s}"
+      puts
+     
+      @@logger.info("orcUnitTests::#{__method__.to_s} START")     
+      
+      orcConf = ORC::ReadOrchestratorConfig.instance
+      orcConf.update
+      pollingDir = orcConf.getPollingDir
+                
+      system("orcBolg -c stop")
+      sleep(5.0)
+
+      system("minArcPurge -Y")
+      system("minArcDB -d")
+      system("minArcDB -c")
+      
+      system("orcManageDB -d")
+      system("orcManageDB -c")
+     
+      filename = 'S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF'
+
+      cmd = "echo \'#{filename}\' > #{pollingDir}/#{filename}"
+      ret = system(cmd)
+      @@logger.debug("#{cmd} / #{ret}")
+      
+      sleep(3.0)
+
+      cmd = "orcBolg -c start"
+      assert(system(cmd), cmd)
+
+      sleep(30)
+
+      cmd = "orcQueueInput -l -Q"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -F"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -S"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -d S2B_OPER_REP_OPDPC__SGS__20180721T061746_V20180721T061746_20180721T061746.EOF"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -Q"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -F"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -S"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "echo \'#{filename}\' > #{pollingDir}/#{filename}"
+      ret = system(cmd)
+      @@logger.debug("#{cmd} / #{ret}")
+      
+      sleep(30)
+
+      cmd = "orcQueueInput -l -Q"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -P"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -F"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "orcQueueInput -l -S"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
+      cmd = "echo \'#{filename}\' > #{pollingDir}/#{filename}"
+      ret = system(cmd)
+      @@logger.debug("#{cmd} / #{ret}")
+      
+      sleep(30)
+
+      cmd = "orcBolg -c stop"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+      
+      arr = Dir["/tmp/dec_orchestrator*.log"]
+      cmd = "grep ERROR #{arr[0]}"
+      puts cmd
+      assert(!system(cmd), "ERROR found in orchestrator logs in #{__method__.to_s}") 
+
+      @@logger.info("orcUnitTests::#{__method__.to_s} END")
+      arr = Dir["/tmp/dec_orchestrator*.log"]
+      cmd = "cp #{arr[0]} /tmp/LOG_ORCUnitTest_#{__method__.to_s}"
+      puts cmd
+      system(cmd)
+      
+   end
+      
+   ## -------------------------------------------------------------
+
+
 
 end
 

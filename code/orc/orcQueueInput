@@ -264,7 +264,7 @@ def main
    
    @orcConfigDir       = ENV['ORC_CONFIG']
       
-   loggerFactory = CUC::Log4rLoggerFactory.new("MrQueue " , "#{@orcConfigDir}/orchestrator_log_config.xml")
+   loggerFactory = CUC::Log4rLoggerFactory.new("MrQueue  " , "#{@orcConfigDir}/orchestrator_log_config.xml")
    
    if @isDebugMode then
       loggerFactory.setDebugMode
@@ -349,6 +349,9 @@ def main
 
    ## ------------------------------------------------------
 
+   
+   ## ------------------------------------------------------
+
    ## -P (Pending) - Ingestion queues as pending
 
    if @filename != "" and @bPending == true then     
@@ -365,7 +368,7 @@ def main
 
       if row != nil then      
          if row.to_a.length > 0 then
-            @logger.error("File #{row.to_a[0].filename} was already in pending queue :-|")
+            @logger.error("[ORC_XXX] #{row.to_a[0].filename} was already in pending queue :-|")
             exit(127)
          end
       end
@@ -381,13 +384,12 @@ def main
          orcFile = OrchestratorQueue.where(trigger_product_id: oldTrigger.to_a[0].id)
 
          if orcFile != nil and orcFile.to_a.length > 0 then
-            puts
-            puts "#{oldTrigger.to_a[0].filename} was already queued :-|"
-            puts 
+            @logger.error("[ORC_603] #{oldTrigger.to_a[0].filename} was previously queued")
             exit(127)
          end
       end
    end
+
 
    if (@bStart == true and @bStop == false) or (@bStart == false and @bStop == true) then
       puts "-start and -stop options must go together"
@@ -707,7 +709,6 @@ def list
       puts
    end
 
-
    if @bPending == true then
       print "PENDING_DATE-----FILENAME------------------------------------------------------FILETYPE--", "\n"
  
@@ -795,11 +796,15 @@ def deleteFile
    if orcFile != nil then
       begin
          orcFile.destroy
-         puts "#{theFilename} removed from Orchestrator TriggerProducts table"
+         if @isDebugMode == true then
+            @logger.debug("#{theFilename} removed from Orchestrator TriggerProducts table")
+         end
       rescue Exception => e
-         puts "Could not delete #{theFilename} from TriggerProducts table :-("
+         @logger.error("[ORC_XXX] #{theFilename} could not be deleted from TriggerProducts table")
       end
    end
+
+   @logger.info("[ORC_214] #{@filename} removed from queue(s)")
 
 end
 ## -------------------------------------------------------------

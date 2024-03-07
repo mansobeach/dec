@@ -78,6 +78,7 @@ class OrchestratorIngester
                                  
       if @ftReadConf.isValidFileType?(polledFile) == true then
          @newFile = true
+         
          cmd      = "minArcStore --noserver -t #{@archiveHandler} -m -f #{@pollingDir}/#{polledFile}"
          if @isDebugMode == true then
             cmd = "#{cmd.dup} -D"
@@ -87,11 +88,36 @@ class OrchestratorIngester
          if @isDebugMode == true then
             @logger.debug("#{cmd} => #{$?}")
          end
-               
+         
          if retVal == true then
             @logger.info("[ORC_110] #{polledFile} archived")            
-            bIngested = true                              
-            
+            bIngested = true
+         else
+            cmd = "minArcRetrieve --noserver -l -f #{File.basename(polledFile, ".*")}"
+            retVal   = system(cmd)
+            if @isDebugMode == true then
+               @logger.debug("#{cmd} / #{retVal}")
+            end
+            if retVal == true then
+               bIngested = true
+
+               @logger.warn("[ORC_304] #{polledFile} polled is already in the archive")
+
+               @triggerProd = TriggerProduct.find_by_filename(polledFile)
+               if @triggerProd != nil then
+                  @logger.warn("[ORC_303] #{polledFile} polled has been previously processed / it is discarded")
+                  bIngested = false
+               else
+                  bIngested = true
+               end
+
+            else
+               bIngested = false
+               @logger.error("[ORC_611] #{polledFile} archiving failed")
+            end
+         end
+
+         if bIngested == true then
             ## Queue in pending the trigger file-types
             if @ftReadConf.isFileTypeTrigger?(polledFile) == true then
                cmd      = "orcQueueInput -f #{polledFile} -P -s NRT"
@@ -115,9 +141,6 @@ class OrchestratorIngester
             else
                @logger.warn("[ORC_305] #{polledFile} / #{@ftReadConf.getDataType(polledFile)} is not trigger-type")
             end
-         else
-            bIngested = false
-            @logger.error("[ORC_611] #{polledFile} archiving failed")
          end  
       else
          bIngested = false
@@ -204,7 +227,7 @@ class OrchestratorIngester
             if child[1].exitstatus == 0 then
                @newFile = true
             else
-               @logger.error("Problem(s) during file ingestion")
+               # @logger.error("Problem(s) during file ingestion")
             end
          }
       end

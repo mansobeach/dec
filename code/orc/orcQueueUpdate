@@ -381,7 +381,7 @@ def set_product_to_success
    # check that the file is not already present in the successful products list
    tmpProd = SuccessfulTriggerProduct.find_by_trigger_product_id(@trigger_prod_id)
    if tmpProd != nil then
-      @logger.error("Trigger is in 'orchestrator queue' and 'successful products / Inconsistency #{'1F480'.hex.chr('UTF-8')}")
+      @logger.error("[ORC_XXX] Trigger is in 'orchestrator queue' and 'successful products / Inconsistency #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
 
