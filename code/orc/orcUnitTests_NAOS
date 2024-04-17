@@ -249,6 +249,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
                               "NS1_OPER_ORB_SOERT__20220709T000000_20220717T000000_0001.OPM", \
                               "NS1_OPER_PLA_SCR____20220710T000000_20220712T000000_0001.xml", \
                               "NS1_OPER_PLA_GSP____20220709T000000_20220717T000000_0001.xml", \
+                              "NS1_OPER_PLA_PGU____20220711T000000_20220712T000000_0001.xml", \
                               "NS1_OPER_PLA_MAINT__20220709T000000_20220717T000000_0001.xml", \
                               "NS1_OPER_PLA_MAN____20220709T000000_20220717T000000_0001.xml", \
                               "NS1_OPER_PLA_SBA____20220710T000000_20220717T000000_0001.xml", \
@@ -492,6 +493,7 @@ class ORCTestCaseNAOS < Test::Unit::TestCase
          sleep(1)
       }
       
+      @@logger.debug("sleeping 250s")
       sleep(250)
       
       

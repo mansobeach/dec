@@ -138,6 +138,11 @@
 	      <Directory>[update]/data/l0-in/</Directory>
       </DataProvider>
 
+      <DataProvider isTriggerType="yes">
+	      <DataType>PLA_PGU</DataType>
+	      <FileType>*PLA_PGU*</FileType>
+	      <Directory>[update]/data/l0-in/</Directory>
+      </DataProvider>
 
    </List_of_DataProviders>
 
@@ -146,8 +151,8 @@
 
    <List_of_PriorityRules>
       <PriorityRule rank="1"     class="DataType" type="AUX_TLE"        sort="DESC" />
-      <PriorityRule rank="2"     class="DataType" type="ORB_SOERT"      sort="DESC" />
       <PriorityRule rank="3"     class="DataType" type="CNF_OAT___"     sort="DESC" />
+      <PriorityRule rank="2"     class="DataType" type="ORB_SOERT"      sort="DESC" />
       <PriorityRule rank="4"     class="DataType" type="PLA_SCR"        sort="DESC" />
       <PriorityRule rank="5"     class="DataType" type="PLA_SBA"        sort="DESC" />
       <PriorityRule rank="6"     class="DataType" type="PLA_OSC"        sort="DESC" />
@@ -159,6 +164,7 @@
       <PriorityRule rank="12"    class="DataType" type="TM_GPS"         sort="DESC" />
       <PriorityRule rank="13"    class="DataType" type="TM_THR"         sort="DESC" />
       <PriorityRule rank="14"    class="DataType" type="TM_MSC"         sort="DESC" />
+      <PriorityRule rank="15"    class="DataType" type="PLA_PGU"        sort="DESC" />
    </List_of_PriorityRules>
 
    <!-- ====================================================== -->
@@ -260,6 +266,12 @@
 	      <List_of_Inputs>
 	      </List_of_Inputs>
       </ProcessingRule>
+
+      <ProcessingRule dataType="PLA_PGU" triggerType="PLA_PGU" coverage="SAME">
+	      <executable>eboa_triggering.py -r -f %F</executable>
+	      <List_of_Inputs>
+	      </List_of_Inputs>
+      </ProcessingRule>   
 
       
    </List_of_ProcessingRules>

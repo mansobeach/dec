@@ -22,11 +22,12 @@ module ORC
    
    include CUC::DirUtils
    
-   VERSION   = "0.0.17.0"
+   VERSION   = "0.0.18.0"
    
    ## ----------------------------------------------------------------
    
    CHANGE_RECORD = { \
+      "0.0.18"  =>   "New configuration rule for NAOS PLA_PGU", \
       "0.0.17"  =>   "Handling of previously archived inputs / reprocessing using orcQueueInput -d <file>", \
       "0.0.16"  =>   "New unit test for BOA generic configuration", \
       "0.0.15"  =>   "New configuration item ArchiveHandler used to select the minARC plug-in\n\
