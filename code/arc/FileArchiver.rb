@@ -468,7 +468,7 @@ class FileArchiver
             if bDelete == true then
                hParams[:bDeleteSource] = bDelete
             end
-                  
+            
             nameDecoder = nameDecoderKlass.new(full_path_file, full_path_location, hParams)
             
             #

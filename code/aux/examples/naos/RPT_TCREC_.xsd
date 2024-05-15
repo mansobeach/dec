@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:element name="DartRetrieval">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" name="TcPacket">
+          <xs:complexType>
+            <xs:sequence minOccurs="0">
+              <xs:element maxOccurs="unbounded" name="TcParam">
+                <!-- TC Parameters -->
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string"/>
+                  <!-- TC Parameter Name -->
+                  <xs:attribute name="rawValue" type="xs:unsignedShort"/>
+                  <!-- parameter raw value -->
+                  <xs:attribute name="engValue" type="xs:string"/>
+                  <!-- parameter eng value -->
+                  <xs:attribute name="isDef" type="xs:unsignedByte"/>
+                  <!-- value is default (0=false, 1=true)-->
+                  <xs:attribute name="isDecal" type="xs:unsignedByte"/>
+                  <!-- value is decalibrated (0=false, 1=true) -->
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string"/>
+            <!-- TC Name -->
+            <xs:attribute name="lastUpdateTime" type="xs:dateTime"/>
+            <!-- Time of the last verification stage update -->
+            <xs:attribute name="id" type="xs:unsignedInt"/>
+            <!-- TC packet (cache) ID -->
+            <xs:attribute name="apid" type="xs:unsignedByte"/>
+            <!-- Application Process ID -->
+            <xs:attribute name="ssc" type="xs:unsignedByte"/>
+            <!-- Source Sequence Identifier -->
+            <xs:attribute name="type" type="xs:unsignedByte"/>
+            <!-- PUS service type -->
+            <xs:attribute name="stype" type="xs:unsignedByte"/>
+            <!-- PUS service sub-type -->
+            <xs:attribute name="mapid" type="xs:unsignedByte"/>
+            <!-- Multiplexer Access Point Identier -->
+            <xs:attribute name="vc" type="xs:unsignedByte"/>
+            <!-- Virtual Channel -->
+            <xs:attribute name="trx" type="xs:dateTime"/>
+            <!-- Telecommand generation time -->
+            <xs:attribute name="completed" type="xs:unsignedByte"/>
+            <!-- Telecommand completed status -->
+            <xs:attribute name="raw" type="xs:string"/>
+            <!-- TC packet raw data -->
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="bench" type="xs:string"/>
+      <!-- spacecraft name -->
+      <xs:attribute name="startTm" type="xs:dateTime"/>
+      <!-- retrieval start time -->
+      <xs:attribute name="endTm" type="xs:dateTime"/>
+      <!-- retrieval end time -->
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

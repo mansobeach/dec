@@ -1,0 +1,4 @@
+<ParameterValues bench="NAOS" retrStyle="change" startTm="2016-06-01T15:07:47.231" endTm="2016-06-01T20:01:53.181">
+    <ParameterValue pk="420" name="ASWEV03Z" rawValue="2" engValue="EMM" monState="OK" generationTime="2016-06-01T15:07:48.675" rawValidity="1" engValidity="1" id="6" receivedTime="2023-04-25T13:01:06.919" bitOffset="200" bitSize="8" sample="1" curve="ASWT001" limits="" alert="0" spid="102603000" depth="0" vc="0" />
+    <ParameterValue pk="313240" name="ASWEV03Z" rawValue="2" engValue="EMM" monState="OK" generationTime="2016-06-01T15:58:27.675" rawValidity="1" engValidity="1" id="23975" receivedTime="2023-04-25T13:51:44.932" bitOffset="208" bitSize="8" sample="1" curve="ASWT001" limits="" alert="0" spid="102603100" depth="0" vc="0" />
+</ParameterValues>

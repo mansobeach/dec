@@ -254,6 +254,30 @@ class AUXTestCase < Test::Unit::TestCase
 
    ## --------------------------------------------------------
 
+   def test_S2_NASA_NBULC
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+      
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/tai-utc.dat",     @@testDir)
+
+      cmd = "rm -f /tmp/aux_out2/NS1*"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_NASA_NBULC = "#{@@testDir}/tai-utc.dat"
+      cmd = "auxConverter -m S2 -f #{file_NASA_NBULC} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS BULC to Copernicus Sentinel-2 mission")
+
+      arr = Dir["/tmp/aux_out2/S2*UT1UTC*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
    def test_NAOS_CELESTRAK_SFS
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
       
@@ -454,6 +478,8 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
    ## --------------------------------------------------------
+
+   
 
 =begin
    def test_auxConverter

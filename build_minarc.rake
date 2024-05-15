@@ -277,6 +277,10 @@ namespace :minarc do
       puts
       puts "unit tests           : rake -f build_minarc.rake minarc:build[borja,localhost,s2_test_pg]"
       puts
+      puts
+      puts "ADGS"
+      puts "rake -f build_minarc.rake minarc:install[adgs,localhost,adgs_test_pg]"
+      puts
       puts "NAOS"
       puts "naosboa@orc_boa       : rake -f build_minarc.rake minarc:build[gsc4eo,nl2-s-aut-srv-01,naos_test]" 
       puts "naosboa@orc_boa       : rake -f build_minarc.rake minarc:build[naosboa,orc_boa,naos_test_pg]" 

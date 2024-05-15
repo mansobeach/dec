@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT GranuleMetaDataFile (DTDVersion, DataCenterId, GranuleURMetaData)>
+
+<!-- Version identifier of  the DTD used to generate the file -->
+<!ELEMENT DTDVersion (#PCDATA)>
+
+<!-- DataCenterId of the site that stores this metadata (e.g., EDC) -->
+<!ELEMENT DataCenterId (#PCDATA)>
+
+
+<!ELEMENT GranuleURMetaData
+(GranuleUR?, DbID?, InsertTime?, LastUpdate?, DeleteTime?, CollectionMetaData,
+DataFiles?, ECSDataGranule?, PGEVersionClass?, (RangeDateTime | SingleDateTime)?,
+SpatialDomainContainer?, OrbitCalculatedSpatialDomain?,  MeasuredParameter?,
+ProcessingQA?, StorageMediumClass?, Review?, Platform*, AnalysisSource*, Campaign*,
+PSAs?, InputGranule?, BrowseProduct?, PHProduct?, QAProduct?, MPProduct?, AncillaryInputGranules?)>
+<!ELEMENT GranuleUR (#PCDATA)>
+<!ELEMENT DbID (#PCDATA)>
+<!ELEMENT InsertTime (#PCDATA)>
+<!ELEMENT LastUpdate (#PCDATA)>
+<!ELEMENT DeleteTime (#PCDATA)>
+
+<!ELEMENT CollectionMetaData (ShortName, VersionID)>
+<!ELEMENT ShortName (#PCDATA)>
+<!ELEMENT VersionID (#PCDATA)>
+
+<!-- Added as part of End To End checksum functionality, encapsulates information about granule data files -->
+<!ELEMENT DataFiles (DataFileContainer+)>
+<!-- it represents a science granule data file and information needed for verifying data integrity -->
+<!ELEMENT DataFileContainer (DistributedFileName, FileSize, ChecksumType?, Checksum?, ChecksumOrigin?)>
+<!-- the name of the file distributed to the user -->
+<!ELEMENT DistributedFileName (#PCDATA)>
+<!-- the size of the data file in bytes -->
+<!ELEMENT FileSize (#PCDATA)>
+<!-- the type of the computed checksum, NONE of it's not available -->
+<!ELEMENT ChecksumType (#PCDATA)>
+<!-- the actual checksum value, 0 if no checksum was computed (together with NONE as the ChecksumType -->
+<!ELEMENT Checksum (#PCDATA)>
+<!-- the ID of the entity the computed the checksum (i.e. STMGT, DataProvider etc.) -->
+<!ELEMENT ChecksumOrigin (#PCDATA)>
+
+<!ELEMENT ECSDataGranule
+(SizeMBECSDataGranule?, ReprocessingPlanned?, ReprocessingActual?, LocalGranuleID?, DayNightFlag?,
+ProductionDateTime?, LocalVersionID?)>
+<!ELEMENT SizeMBECSDataGranule (#PCDATA)>
+<!ELEMENT ReprocessingPlanned (#PCDATA)>
+<!ELEMENT ReprocessingActual (#PCDATA)>
+<!ELEMENT LocalGranuleID (#PCDATA)>
+<!ELEMENT DayNightFlag (#PCDATA)>
+<!ELEMENT ProductionDateTime (#PCDATA)>
+<!ELEMENT LocalVersionID (#PCDATA)>
+
+<!ELEMENT PGEVersionClass (PGEVersion)>
+<!ELEMENT PGEVersion (#PCDATA)>
+
+<!ELEMENT RangeDateTime
+(RangeEndingTime, RangeEndingDate, RangeBeginningTime, RangeBeginningDate)>
+<!ELEMENT RangeEndingTime (#PCDATA)>
+<!ELEMENT RangeEndingDate (#PCDATA)>
+<!ELEMENT RangeBeginningTime (#PCDATA)>
+<!ELEMENT RangeBeginningDate (#PCDATA)>
+
+<!ELEMENT SingleDateTime (TimeofDay, CalendarDate)>
+<!ELEMENT TimeofDay (#PCDATA)>
+<!ELEMENT CalendarDate (#PCDATA)>
+
+<!ELEMENT SpatialDomainContainer
+(GranuleLocality*, VerticalSpatialDomain*, HorizontalSpatialDomainContainer?)>
+
+<!ELEMENT GranuleLocality (LocalityValue)>
+<!ELEMENT LocalityValue (#PCDATA)>
+ 
+<!ELEMENT VerticalSpatialDomain (VerticalSpatialDomainContainer)>
+
+<!ELEMENT VerticalSpatialDomainContainer
+(VerticalSpatialDomainType, VerticalSpatialDomainValue)>
+<!ELEMENT VerticalSpatialDomainType (#PCDATA)>
+<!ELEMENT VerticalSpatialDomainValue (#PCDATA)>
+
+<!ELEMENT HorizontalSpatialDomainContainer
+(ZoneIdentifierClass?, (Point | Circle | BoundingRectangle | GPolygon | Global))>
+
+<!ELEMENT ZoneIdentifierClass (ZoneIdentifier)>
+<!ELEMENT ZoneIdentifier (#PCDATA)>
+
+<!ELEMENT Point (PointLongitude, PointLatitude)>
+<!ELEMENT PointLongitude (#PCDATA)>
+<!ELEMENT PointLatitude (#PCDATA)>
+
+<!ELEMENT Circle (CenterLatitude, CenterLongitude, Radius, RadiusUnits?)>
+<!ELEMENT CenterLatitude (#PCDATA)>
+<!ELEMENT CenterLongitude (#PCDATA)>
+<!ELEMENT Radius (#PCDATA)>
+<!ELEMENT RadiusUnits (#PCDATA)>
+
+
+<!ELEMENT BoundingRectangle
+(WestBoundingCoordinate, NorthBoundingCoordinate, EastBoundingCoordinate, SouthBoundingCoordinate)>
+<!ELEMENT WestBoundingCoordinate (#PCDATA)>
+<!ELEMENT NorthBoundingCoordinate (#PCDATA)>
+<!ELEMENT EastBoundingCoordinate (#PCDATA)>
+<!ELEMENT SouthBoundingCoordinate (#PCDATA)>
+
+<!ELEMENT GPolygon (Boundary)+>
+<!ELEMENT Boundary (Point, Point, Point, Point*)>
+
+<!ELEMENT Global EMPTY>
+
+<!ELEMENT OrbitCalculatedSpatialDomain (OrbitCalculatedSpatialDomainContainer)+>
+
+<!ELEMENT OrbitCalculatedSpatialDomainContainer
+(OrbitalModelName?, OrbitNumber?, OrbitRange?, EquatorCrossingLongitude, EquatorCrossingDate, EquatorCrossingTime)>
+
+<!ELEMENT OrbitalModelName (#PCDATA)>
+<!ELEMENT OrbitNumber (#PCDATA)>
+
+<!ELEMENT OrbitRange (StartOrbitNumber, StopOrbitNumber)>
+<!ELEMENT StartOrbitNumber (#PCDATA)>
+<!ELEMENT StopOrbitNumber (#PCDATA)>
+
+<!ELEMENT EquatorCrossingLongitude (#PCDATA)>
+<!ELEMENT EquatorCrossingDate (#PCDATA)>
+<!ELEMENT EquatorCrossingTime (#PCDATA)>
+
+<!ELEMENT MeasuredParameter (MeasuredParameterContainer)+>
+<!ELEMENT MeasuredParameterContainer (ParameterName, QAStats?, QAFlags?)>
+<!ELEMENT ParameterName (#PCDATA)>
+
+<!ELEMENT QAStats
+(QAPercentMissingData?, QAPercentOutofBoundsData?, QAPercentInterpolatedData?, QAPercentCloudCover?)>
+<!ELEMENT QAPercentMissingData (#PCDATA)>
+<!ELEMENT QAPercentOutofBoundsData (#PCDATA)>
+<!ELEMENT QAPercentInterpolatedData (#PCDATA)>
+<!ELEMENT QAPercentCloudCover (#PCDATA)>
+
+<!ELEMENT QAFlags
+(AutomaticQualityFlag?, AutomaticQualityFlagExplanation?, OperationalQualityFlag?, OperationalQualityFlagExplanation?, ScienceQualityFlag?, ScienceQualityFlagExplanation?)>
+<!ELEMENT AutomaticQualityFlag (#PCDATA)>
+<!ELEMENT AutomaticQualityFlagExplanation (#PCDATA)>
+<!ELEMENT OperationalQualityFlag (#PCDATA)>
+<!ELEMENT OperationalQualityFlagExplanation (#PCDATA)>
+<!ELEMENT ScienceQualityFlag (#PCDATA)>
+<!ELEMENT ScienceQualityFlagExplanation (#PCDATA)>
+
+<!ELEMENT ProcessingQA (ProcessingQAContainer)+>
+
+<!ELEMENT ProcessingQAContainer (ProcessingQADescription, ProcessingQAAttribute)>
+<!ELEMENT ProcessingQADescription (#PCDATA)>
+<!ELEMENT ProcessingQAAttribute (#PCDATA)>
+
+<!ELEMENT StorageMediumClass (StorageMedium)+>
+<!ELEMENT StorageMedium (#PCDATA)>
+
+<!ELEMENT Review (ReviewContainer)+>
+<!ELEMENT ReviewContainer (ScienceReviewStatus, ScienceReviewDate, FutureReviewDate?)>
+<!ELEMENT ScienceReviewStatus (#PCDATA)>
+<!ELEMENT ScienceReviewDate (#PCDATA)>
+<!ELEMENT FutureReviewDate (#PCDATA)>
+
+<!ELEMENT Platform (PlatformShortName,Instrument*)>
+<!ELEMENT PlatformShortName (#PCDATA)>
+
+<!ELEMENT Instrument (InstrumentShortName, Sensor*, OperationMode*)>
+<!ELEMENT InstrumentShortName (#PCDATA)>
+<!ELEMENT OperationMode (#PCDATA)>
+
+
+<!ELEMENT Sensor (SensorShortName, SensorCharacteristic*)>
+<!ELEMENT SensorShortName (#PCDATA)>
+
+<!ELEMENT SensorCharacteristic (SensorCharacteristicName, SensorCharacteristicValue)>
+<!ELEMENT SensorCharacteristicName (#PCDATA)>
+<!ELEMENT SensorCharacteristicValue (#PCDATA)>
+
+<!ELEMENT AnalysisSource (AnalysisShortName)>
+<!ELEMENT AnalysisShortName (#PCDATA)>
+
+<!ELEMENT Campaign (CampaignShortName)>
+<!ELEMENT CampaignShortName (#PCDATA)>
+
+<!ELEMENT PSAs (PSA+)>
+<!ELEMENT PSA (PSAName, PSAValue*)>
+<!ELEMENT PSAName (#PCDATA)>
+<!ELEMENT PSAValue (#PCDATA)>
+
+<!ELEMENT InputGranule (InputPointer+)>
+<!ELEMENT InputPointer (#PCDATA)>
+
+<!-- List of browse granules that are related to this granule -->
+<!ELEMENT BrowseProduct (BrowseGranuleId+)>
+<!ELEMENT BrowseGranuleId (#PCDATA)>
+
+<!-- List of production history granules that are related to this granule -->
+<!ELEMENT PHProduct (PHGranuleId+)>
+<!ELEMENT PHGranuleId (#PCDATA)>
+
+<!-- List of QA granules that are related to this granule -->
+<!ELEMENT QAProduct (QAGranuleId+)>
+<!ELEMENT QAGranuleId (#PCDATA)>
+
+<!-- List of MP granules that are related to this granule -->
+<!ELEMENT MPProduct (MPGranuleId+)>
+<!ELEMENT MPGranuleId (#PCDATA)>
+
+
+<!ELEMENT AncillaryInputGranules (AncillaryInputGranule+)>
+<!ELEMENT AncillaryInputGranule (AncillaryInputType, AncillaryInputPointer)>
+<!ELEMENT AncillaryInputType (#PCDATA)>
+<!ELEMENT AncillaryInputPointer (#PCDATA)>
+

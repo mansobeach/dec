@@ -4,11 +4,11 @@
 ###
 ### === Ruby source for #AUX_Handler_NASA_CDDIS_BULC class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Data Exchange Component
 ### 
-### Git: $Id: AUX_Handler_NASA_CDDIS_BULC.rb,v 1.21 2013/03/14 13:40:57 bolf Exp $
+### Git: $Id: AUX_Handler_NASA_CDDIS_BULC.rb,v 1.21 
 ###
 ### Module AUX management
 ### 
@@ -39,6 +39,7 @@ class AUX_Handler_NASA_CDDIS_BULC < AUX_Handler_Generic
       
       case @target.upcase
          when "NAOS" then convert_NAOS
+         when "S2"   then convert_S2
          when "S3"   then convert_S3
          when "POD"  then convert_POD
          else raise "#{@target.upcase} not supported"
@@ -54,9 +55,18 @@ class AUX_Handler_NASA_CDDIS_BULC < AUX_Handler_Generic
    end
    ## -------------------------------------------------------------
    
+
+   # S2__OPER_AUX_UT1UTC_PDMC_YYYYMMDDTHHMMSS_VYYYYMMDDTHHMMSS_YYYYMMDDTHHMMSS.txt
+   # S2__OPER_AUX_UT1UTC_PDMC_YYYYMMDDTHHMMSS_VYYYYMMDDTHHMMSS_YYYYMMDDTHHMMSS.txt
+   # S2__OPER_AUX_UT1UTC_PDMC_20240513T000000_V20170101T000000_21000101T000000.txt
    # NS1_TEST_AUX_NBULC__20220707T000000_21000101T000000_0001.EOF
    def rename
-      @newName          = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
+
+      case @target.upcase
+         when "NAOS" then @newName           = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
+         when "S2"   then @newName           = "#{@mission}_#{@fileClass}_#{@fileType}_PDMC_#{@strCreation}_V#{@strValidityStart}_#{@strValidityStop}.#{@extension}"
+         else @newName                       = "#{@mission}_#{@fileClass}_#{@fileType}_#{@strValidityStart}_#{@strValidityStop}_#{@fileVersion}.#{@extension}"
+      end
       super(@newName)
       return @full_path_new
    end
@@ -81,6 +91,14 @@ private
       @extension  = "TXT"
    end
    ## -----------------------------------------------------------
+
+   # # S2__OPER_AUX_UT1UTC_PDMC_YYYYMMDDTHHMMSS_VYYYYMMDDTHHMMSS_YYYYMMDDTHHMMSS.txt
+   def convert_S2
+      @mission    = "S2_"
+      @fileType   = "AUX_UT1UTC"
+      @extension  = "txt"
+   end
+   ## -------------------------------------------------------------
 
    def convert_S3
       raise "not implemented for #{@target}"

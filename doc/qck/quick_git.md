@@ -52,6 +52,10 @@ cat /Users/borja/.gitconfig
 ### Undo a file
 `git restore <file>`
 
+`git restore -s SHA1 -- <filename>`
+
+`git restore -s e575258ec397b7c2e66f14c0660fc45f57a57d03 -- NS1_TEST_TM__GPS____20220706T000000_20220709T000000_0001.xml`
+
 ### Undo a commit
 
 `git revert <commit_id>`

@@ -322,7 +322,7 @@ class ReadConfigIncoming
          intray = getInTrayDir(dim)
          if intray == false then
             puts "ERROR in #{@@configFile} file !"
-            puts "#{dim} is not declared in the DIM_List"
+            puts "#{dim} is not declared in the ListFilesDisseminated"
             puts "Please check your configuration file"
             puts
             exit(99)
@@ -353,7 +353,7 @@ class ReadConfigIncoming
          intray = getInTrayDir(dim)
          if intray == false then
             puts "ERROR in #{@@configFile} file !"
-            puts "#{dim} is not declared in the DIM_List"
+            puts "#{dim} is not declared in the ListFilesDisseminated"
             puts "Please check your configuration file"
             puts
             exit(99)

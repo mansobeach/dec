@@ -111,17 +111,19 @@ namespace :dec do
    desc "build docker DEC image [user , host , prefix]"
 
    task :image_build, [:user, :host, :suffix] do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
+      # args.with_defaults(:user => :borja, :host => :localhost, :suffix => :s2)
+     
+      dockerFile = "Dockerfile.#{args[:suffix]}.dec.#{args[:host]}.#{args[:user]}.yaml"
+   
       puts "building Docker Image DEC with config #{args[:user]} #{args[:suffix]}@#{args[:host]}"
-   
-      dockerFile = "Dockerfile.dec.#{args[:suffix]}.#{args[:host]}.#{args[:user]}"
-   
+      puts "#{dockerFile}"
+
       if File.exist?("install/docker/#{dockerFile}") == false then
          puts "DEC Dockerfile #{dockerFile} not present in repository"
          exit(99)
       end
    
-      cmd = "docker image build --rm=false -t app_dec_#{args[:suffix]}:latest . -f \"install/docker/#{dockerFile}\""
+      cmd = "docker image build --rm=false -t app_#{args[:suffix]}_dec:latest . -f \"install/docker/#{dockerFile}\""
       puts cmd
       retval = system(cmd)
    end
@@ -361,6 +363,11 @@ namespace :dec do
       if args[:suffix].downcase.include?("naos") == true then
          puts "building gem dec #{args[:suffix]} with flag DEC_ODATA"
          ENV['DEC_NAOS']       = "true"
+      end
+
+      if args[:suffix].downcase.include?("adgs") == true then
+         puts "building gem dec #{args[:suffix]} with flag DEC_ODATA"
+         ENV['DEC_ADGS']       = "true"
       end
 
       if args[:suffix].downcase.include?("s2") == true then
@@ -638,6 +645,10 @@ namespace :dec do
       puts "pull NAOS_MCS_SFTP"
       puts "push NAOS_MCS_SFTP"
       puts "rake -f build_dec.rake dec:build[aiv,naos-aiv,naos]"
+      puts
+      puts "ADGS"
+      puts "rake -f build_dec.rake dec:build[adgs,localhost,adgs_test_pg]"
+      puts "rake -f build_dec.rake dec:install[adgs,localhost,adgs_test_pg]"
       puts                  
       puts "Obsolete:"
       puts "rake -f build_dec.rake dec:build[s2decservice,e2espm-inputhub,s2_pg]"

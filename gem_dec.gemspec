@@ -80,6 +80,10 @@ Gem::Specification.new do |s|
       s.executables   << 'dec_script_NAOS_NASA_RFM'
    end
 
+   if ENV.include?("DEC_ADGS") == true then
+      s.executables   << 'dec_script_ADGS_S1_MPC'
+   end
+
    ## --------------------------------------------
    ##
    ## Tailored installer to include only the OData client
@@ -110,6 +114,7 @@ Gem::Specification.new do |s|
       s.executables   << 'decTestInterface_SPCS'
       s.executables   << 'decUnitTests'
       s.executables   << 'decUnitTests_ADP'
+      s.executables   << 'decUnitTests_ADGS'
       s.executables   << 'decUnitTests_FTP'
       s.executables   << 'decUnitTests_FTP_PASSIVE'
       s.executables   << 'decUnitTests_FTPS'

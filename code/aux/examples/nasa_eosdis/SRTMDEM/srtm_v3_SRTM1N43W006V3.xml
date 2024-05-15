@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<eemetadata:scene xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:eemetadata="http://earthexplorer.usgs.gov/eemetadata.xsd">
+    <eemetadata:metadataFields>
+                    <eemetadata:metadataField name="Entity ID" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#entity_id">
+                <eemetadata:metadataValue xsi:type="xsd:string">SRTM1N43W006V3</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="Acquisition Date" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#acquisition_date">
+                <eemetadata:metadataValue xsi:type="xsd:string">2000-02-11 00:00:00-06</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="Publication Date" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#publication_date">
+                <eemetadata:metadataValue xsi:type="xsd:string">2014-09-23 00:00:00-05</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="Resolution" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#resolution">
+                <eemetadata:metadataValue xsi:type="xsd:string">1-ARC</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="Date Updated" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#date_updated">
+                <eemetadata:metadataValue xsi:nil="true"></eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NW Corner Lat" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">44&amp;deg;00&#039;00&quot;N</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NW Corner Long" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">6&amp;deg;00&#039;00&quot;W</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NE Corner Lat" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">44&amp;deg;00&#039;00&quot;N</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NE Corner Long" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">5&amp;deg;00&#039;00&quot;W</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SE Corner Lat" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">43&amp;deg;00&#039;00&quot;N</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SE Corner Long" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">5&amp;deg;00&#039;00&quot;W</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SW Corner Lat" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">43&amp;deg;00&#039;00&quot;N</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SW Corner Long" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees ">
+                <eemetadata:metadataValue xsi:type="xsd:string">6&amp;deg;00&#039;00&quot;W</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NW Corner Lat dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">44</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NW Corner Long dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">-6</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NE Corner Lat dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">44</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="NE Corner Long dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">-5</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SE Corner Lat dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_degrees">
+                <eemetadata:metadataValue xsi:type="xsd:string">43</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SE Corner Long dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">-5</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SW Corner Lat dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">43</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+                    <eemetadata:metadataField name="SW Corner Long dec" link="https://www.usgs.gov/centers/eros/science/shuttle-radar-topography-mission-data-dictionary
+#coordinates_decimal">
+                <eemetadata:metadataValue xsi:type="xsd:string">-6</eemetadata:metadataValue>
+            </eemetadata:metadataField>
+            </eemetadata:metadataFields>
+    <eemetadata:browseLinks>
+                    <eemetadata:browse caption="Standard Browse" thumbLink="https://ims.cr.usgs.gov/thumbnail/srtm_v3/1arc/w006/n43_w006_1arc_v3.jpg">
+                <eemetadata:browseLink>https://ims.cr.usgs.gov/browse/srtm_v3/1arc/w006/n43_w006_1arc_v3.jpg</eemetadata:browseLink>
+            </eemetadata:browse>
+            </eemetadata:browseLinks>
+    <eemetadata:overlayLinks>
+                    <eemetadata:overlay caption="Standard Browse" thumbLink="https://ims.cr.usgs.gov/thumbnail/srtm_v3/1arc/w006/n43_w006_1arc_v3.jpg">
+                <eemetadata:overlayLink>https://ims.cr.usgs.gov/wms.py?service=WMS&amp;request=GetMap&amp;map=srtm_v3&amp;layers=SRTM1N43W006V3</eemetadata:overlayLink>
+            </eemetadata:overlay>
+            </eemetadata:overlayLinks>
+</eemetadata:scene>

@@ -1313,6 +1313,8 @@ private
          @logger.debug("downloadFile('#{filename}')")
       end
 
+      event  = DEC::EventManager.new
+
       # Quoting the filename to avoid problems with special chars (like #)
       quoted_filename = %Q{"#{filename}"}
 
@@ -1351,7 +1353,18 @@ private
             return false
          end
          
+         # File is made available at the interface inbox
+         md5 = CUC::WrapperMD5SUM.new(File.basename(filename)).md5
+
+         # @logger.debug("#{filename} / #{md5}")
+
          size = nil
+
+         if @isNoDB == false and hasBeenAlreadyReceived(File.basename(filename), md5) == true then
+            @logger.info("[DEC_111] I/F #{@entity}: #{File.basename(filename)} downloaded is duplicated / same md5")
+            return true
+         end
+
          if @port == 21 then
             begin
                size = File.size("#{@localDir}/#{File.basename(filename)}")
@@ -1372,9 +1385,20 @@ private
          end
                  
 			# update DEC Inventory
-			setReceivedFromEntity(File.basename(filename), size)
+			setReceivedFromEntity(File.basename(filename), size, md5)
 
          @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
+
+         hParams              = Hash.new
+         hParams["filename"]  = File.basename(filename)
+         hParams["directory"] = @finalDir
+
+         if @isDebugMode == true then
+            @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug(hParams)
+         end
+         
+         event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
 
          ## --------------------------------------
          ##
@@ -1446,7 +1470,6 @@ private
 
          setReceivedFromEntity(File.basename(filename), size, md5)
 
-         event  = DEC::EventManager.new
          
          if @isDebugMode == true then
             event.setDebugMode

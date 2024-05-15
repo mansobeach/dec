@@ -26,7 +26,7 @@ module ARC
    
    include CUC::DirUtils
    
-   VERSION   = "1.3.2.5"
+   VERSION   = "1.3.2.7"
    ## ----------------------------------------------------------------
    
    CHANGE_RECORD = { \

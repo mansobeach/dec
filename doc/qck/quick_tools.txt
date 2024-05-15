@@ -6,6 +6,7 @@ sed -i "s/\/MOLT\/MOD09A1.061\/[^\/]*\/</\/MOLT\/MOD09A1.061\/9999.99.99\/</g" /
 rsync over ssh
 
 rsync -rhv -e ssh --progress /Users/borja/Music/Lossless/  borja@192.168.1.118:music/Lossless
+rsync -rhv -e ssh --progress /Users/borja/Music/Lossless/  borja@mansobeach.local:music/Lossless
 rsync -rhv -e ssh --progress /Users/borja/Projects/naos/1.repository/naos-ivv/  aiv@naos-aiv:naos-git-aiv
 
 http://www.joedog.org/siege-home

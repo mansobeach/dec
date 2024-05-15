@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:element name="ParameterValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" name="ParameterValue">
+          <xs:complexType>
+            <xs:attribute name="pk" type="xs:unsignedShort"/>
+            <!--Primary Key (archive unique identifier)-->
+            <xs:attribute name="name" type="xs:string"/>
+            <!-- parameter name -->
+            <xs:attribute name="rawValue" type="xs:decimal"/>
+            <!-- parameter raw value -->
+            <xs:attribute name="engValue" type="xs:string"/>
+            <!-- parameter engineering value -->
+            <xs:attribute name="monState" type="xs:string"/>
+            <!-- monitoring state -->
+            <xs:attribute name="generationTime" type="xs:dateTime"/>
+            <!-- on-board time -->
+            <xs:attribute name="rawValidity" type="xs:unsignedByte"/>
+            <!-- validity of raw value (0=invalid, 1=valid) -->
+            <xs:attribute name="engValidity" type="xs:unsignedByte"/>
+            <!-- validity of engineering value (0=invalid, 1=valid))-->
+            <xs:attribute name="id" type="xs:unsignedByte"/>
+            <!-- Reference to the TM packet ID that last updated the TM parameter -->
+            <xs:attribute name="receivedTime" type="xs:dateTime"/>
+            <!-- local time -->
+            <xs:attribute name="bitOffset" type="xs:unsignedShort"/>
+            <!-- parameter bit offset -->
+            <xs:attribute name="bitSize" type="xs:unsignedByte"/>
+            <!-- parameter bit size -->
+            <xs:attribute name="sample" type="xs:unsignedByte"/>
+            <!-- sample number (for supercommutated and variable packet samples) -->
+            <xs:attribute name="curve" type="xs:string"/>
+            <!-- applicable calibration curve at time of recording -->
+            <xs:attribute name="limits" type="xs:string"/>
+            <!-- applicable limit at time of recording -->
+            <xs:attribute name="alert" type="xs:unsignedByte"/>
+            <!-- indication whether monitoring status is cause for alert -->
+            <xs:attribute name="spid" type="xs:unsignedInt"/>
+            <!-- the SPID of the packet referenced by the id field -->
+            <xs:attribute name="depth" type="xs:unsignedByte"/>
+            <!-- the nesting depth of the parameter when extracted -->
+            <xs:attribute name="vc" type="xs:unsignedByte"/>
+            <!-- the virtual channel of the packet from which the parameter was updated -->
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="bench" type="xs:string"/>
+      <!-- spacecraft name -->
+      <xs:attribute name="retrStyle" type="xs:string"/>
+      <!-- retrieval mode: change, update, poll -->
+      <xs:attribute name="startTm" type="xs:dateTime"/>
+      <!-- retrieval start time -->
+      <xs:attribute name="endTm" type="xs:dateTime"/>
+      <!-- retrieval end time -->
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
+
+include DEC
+
+## TO-DO LIST MODE
+
+self.load_config
+@logger  = self.load_logger("script_S1MPC")
+@logger.info("Polling S1 MPC")
+
+cmd     = "curl -s -k https://sar-mpc.eu/api/v1/?metadata_date__gt=2024-04-29"
+@logger.debug(cmd)
+result  = `#{cmd}`
+
+json_reply      = JSON.parse(result)
+num_products    = json_reply['count']
+arr_products    = json_reply['results']
+
+@logger.info("Found #{num_products} products")
+
+arr_products.each{
+    |item|
+    @logger.info("#{item['product_type']} - #{item['physical_name']}")
+    cmd  = "curl --progress-bar -k -L #{item['remote_url']} --output /tmp/#{item['physical_name']}"
+    @logger.debug(cmd)
+    ret = system(cmd)
+    if ret == true then
+        @logger.info("success download of #{item['physical_name']}")
+    else
+        @logger.error("failed download of #{item['physical_name']}")
+    end
+    # to be removed / just download one product
+    break
+}
+
+exit(0)
