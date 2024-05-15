@@ -2,12 +2,12 @@
 
 # == Synopsis
 #
-# This is a Data Exchange Component (DEC) command line tool 
+# This is a Data Exchange Component (DEC) command line tool
 # that manages the I/Fs listeners for data retrieval.
 #
 # The DEC listeners automates the file pulling from the configured interface.
 # One listener is devoted for every interface configured.
-# 
+#
 # The behaviour of the listener is driven by the settings defined
 # in the configuration file $DEC_CONFIG/dec_interfaces.xml
 #
@@ -26,8 +26,8 @@
 #     --no-intray           skip step of local dissemination into intrays upon download
 #     --help                shows this help
 #     --Debug               shows Debug info during the execution
-#     --version             shows version number      
-# 
+#     --version             shows version number
+#
 # == Author
 # DEIMOS-Space S.L.
 #
@@ -62,7 +62,7 @@ require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
 
-## 
+##
 ## MAIN script function
 ##
 def main
@@ -81,11 +81,11 @@ def main
    @isNoIntray         = false
    @bShowVersion       = false
    @bShowUsage         = false
-   @mnemonic           = "" 
+   @mnemonic           = ""
    @intervalSeconds    = 0
-     
+
    opts = GetoptLong.new(
-      ["--mnemonic", "-m",       GetoptLong::REQUIRED_ARGUMENT],     
+      ["--mnemonic", "-m",       GetoptLong::REQUIRED_ARGUMENT],
       ["--interval", "-i",       GetoptLong::REQUIRED_ARGUMENT],
       ["--stop", "-s",           GetoptLong::REQUIRED_ARGUMENT],
       ["--usage", "-u",          GetoptLong::NO_ARGUMENT],
@@ -101,13 +101,13 @@ def main
       )
 
    self.load_config
-   
+
    if self.checkEnvironmentEssential == false then
       puts
       self.printEnvironmentError
       puts
       exit(99)
-   end   
+   end
 
    checkModuleIntegrity
 
@@ -121,7 +121,7 @@ def main
       puts
 		puts "Error in decListener::main"
 		puts "Could not set up logging system !  :-("
-      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\""
 		puts
 		puts
 		exit(99)
@@ -134,8 +134,8 @@ def main
 	         when "--check"    then @bCheckListeners      = true
             when "--Debug"    then @isDebugMode          = true
             when "--Reload"   then @isReload             = true
-            when "--version"  then @bShowVersion         = true            
-            when "--mnemonic" then @mnemonic             = arg            
+            when "--version"  then @bShowVersion         = true
+            when "--mnemonic" then @mnemonic             = arg
             when "--help"     then @bShowUsage           = true
             when "--interval" then @intervalSeconds      = arg.to_i
 	         when "--stop"     then
@@ -144,7 +144,7 @@ def main
                   exit(99)
                end
                @bStopInterface         = true
-               @mnemonic               = arg 
+               @mnemonic               = arg
             when "--Stop"           then @bStopListeners    = true
             when "--usage"          then @bShowUsage        = true
             when "--nodb"           then @isNoDB            = true
@@ -153,16 +153,16 @@ def main
       end
    rescue Exception
       exit(99)
-   end 
-   
+   end
+
    if @bShowVersion == true then
       print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{DEC.class_variable_get(:@@version)}]", "\n\n")
       hRecord = DEC.class_variable_get(:@@change_record)
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
-      }      
+      }
       exit(0)
-   end   
+   end
 
    if @bShowUsage == true then
       usage
@@ -174,7 +174,7 @@ def main
       usage
       exit(66)
    end
- 
+
    if @launchAllListeners == false and (@mnemonic == "" or @intervalSeconds == 0) and @bCheckListeners == false \
           and @bStopListeners == false and @bStopInterface == false then
       usage
@@ -192,12 +192,12 @@ def main
       @logger.info("[DEC_000] listeners to every I/F has been killed #{'1F608'.hex.chr('UTF-8')}")
       exit(0)
    end
- 
+
    if @bCheckListeners == true then
       checkListeners
       exit(0)
    end
- 
+
    @projectName = ReadConfigDEC.instance.getProjectName
    @projectID   = ReadConfigDEC.instance.getProjectID
 
@@ -209,35 +209,39 @@ def main
       end
       exit(0)
    else
-      
+
       if existEntity?(@mnemonic) == false then
          @logger.error("[DEC_605] I/F #{@mnemonic}: db inventory is not configured / reachable #{'1F480'.hex.chr('UTF-8')}")
          @logger.error("[DEC_601] I/F #{@mnemonic}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
-   
+
       ftReadConf   = ReadInterfaceConfig.instance
-   
+
       if ftReadConf.isEnabled4Receiving?(@mnemonic) == false then
          @logger.error("[DEC_605] I/F #{@entity}: Enabled4Receiving flag is disabled #{'1F480'.hex.chr('UTF-8')}")
          @logger.error("[DEC_601] I/F #{@entity}: Failed to start its listener #{'1F480'.hex.chr('UTF-8')}")
          exit(99)
       end
-   
+
       listener = CUC::Listener.new(File.basename($0), @mnemonic, @intervalSeconds,
                               self.method("pollInterface").to_proc)
 
-      trap("SIGHUP") {  
+      trap("SIGHUP") {
                         @logger.info("Polling Requested for #{@mnemonic} I/F")
-                     }   
+                     }
 
       if @isDebugMode == true
          listener.setDebugMode
       end
-		   
+
       # start server
       @logger.info("[DEC_006] I/F #{@mnemonic}: Listener has been switched-on")
-      listener.run
+      begin
+         listener.run
+      rescue Exception => e
+         @logger.error("[DEC_799] Fatal Error #{e.to_s} #{'1F480'.hex.chr('UTF-8')}")
+      end
       # @logger.info("[DEC_006] I/F #{@mnemonic}: Listener has been switched-on")
    end
 end
@@ -247,29 +251,29 @@ end
 ## independent PollingInterval for each one.
 def pollInterface
    startTime = Time.new
-   startTime.utc   
+   startTime.utc
    # puts "Polling #{@mnemonic} I/F ..."
    # @logger.info("Polling #{@mnemonic} I/F ...")
-   
+
    if @isDebugMode == true then
       @logger.debug("Polling #{@mnemonic} I/F ...")
-   end 
-      
+   end
+
    if @isDebugMode == true then
       command  = %Q{decGetFromInterface --mnemonic #{@mnemonic} -D}
    else
       command  = %Q{decGetFromInterface --mnemonic #{@mnemonic}}
    end
-   
+
    # ----------------------------------------------------------
    # 20160907
    # decGetFromInterface --del-unknown flag would need a cleaner approach
    # New attribute in configuration file is needed
 
-#   command  = %Q{#{command} --del-unknown} 
+#   command  = %Q{#{command} --del-unknown}
 
    ## ------------------------------------------------------
-   
+
    if @isNoDB == true then
       command  = %Q{#{command} --nodb}
    end
@@ -288,10 +292,10 @@ def pollInterface
 
 # DCC Commands provide a lot of console output
 # Because of this, if it is desired to use DCC_CommandLauncher execute
-# They must implement a kind of silent mode.   
+# They must implement a kind of silent mode.
 #   retVal = execute(command, "decListener")
    retVal = system(command)
-      
+
    if retVal == true then
       if @isDebugMode == true then
          @logger.debug("Success Polling #{@mnemonic} I/F !")
@@ -301,54 +305,54 @@ def pollInterface
          @logger.debug("Could not Poll #{@mnemonic} I/F !")
       end
       # if previous polling failed, retry again inmediately
-      
+
       # -------------------------------------
-      # 20170518 
-      
+      # 20170518
+
       # With multiple simultaneous downloads on the same server,
-      # error condition can now be different a network glitch 
+      # error condition can now be different a network glitch
       # but connectivity rejection by FW in between which can associate
-      # this scenario with a DoS attack, 
+      # this scenario with a DoS attack,
       # hence inmediate retry brings inmediate rejection by FW
-      #  
+      #
       # This waiting time to remove DCC from FW temporal blacklist
-      # should become an adaptative one, for the time being set 
+      # should become an adaptative one, for the time being set
       # to two minutes with S2PDGS PDMC observations
-      
+
       sleep(120)
-      
+
       # -------------------------------------
-      
+
       return 1
-   end 
+   end
 
    # calculate required time and new interval time.
    stopTime     = Time.new
-   stopTime.utc   
+   stopTime.utc
    requiredTime = stopTime - startTime
-   
+
    nwIntSeconds = @intervalSeconds - requiredTime.to_i
-   
+
    if @isDebugMode == true and nwIntSeconds > 0 then
       puts "New Trigger Interval is #{nwIntSeconds} seconds | #{@intervalSeconds} - #{requiredTime.to_i}"
    end
-   
+
    if @isDebugMode == true and nwIntSeconds < 0 then
       puts "Time performed for polling is higher than interval Server !"
       puts "polling interval -> #{@intervalSeconds} seconds "
       puts "time required    -> #{requiredTime.to_i} seconds "
       puts
    end
-      
-   # The lowest time we return is one second. 
+
+   # The lowest time we return is one second.
    # 0 would produce the process to sleep forever.
-    
+
    if nwIntSeconds > 0 then
       return nwIntSeconds
    else
       return 1
    end
-   
+
 end
 ## ---------------------------------------------------------
 ##
@@ -358,14 +362,14 @@ end
 ## It is required to provide a method to trigger and restart
 ## all I/Fs Listeners on demand.
 def restartListeners
-   
+
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
    arrPIDs      = Array.new
-   
+
    arrEntities.each{|x|
        if ftReadConf.isEnabled4Receiving?(x) == true then
-	       checker = CUC::CheckerProcessUniqueness.new(File.basename($0), x, true)
+	      checker = CUC::CheckerProcessUniqueness.new(File.basename($0), x, true)
          if checker.getRunningPID == false then
             @logger.warn("[DEC_603] I/F #{mnemonic}: Listener was not running")
             launchListener(x)
@@ -375,10 +379,10 @@ def restartListeners
                @logger.debug("Sending signal 1 to Process #{pid} for restarting #{x} I/F")
             end
             Process.kill(1, pid.to_i)
-         end     
+         end
        end
-   }   
-   
+   }
+
 end
 ## ---------------------------------------------------------
 
@@ -392,7 +396,7 @@ def stopListeners
       if ftReadConf.isEnabled4Receiving?(x) == true then
          stopListener(x)
       end
-   }   
+   }
    stopGetFromEntities
 end
 ##----------------------------------------------------------
@@ -431,17 +435,17 @@ def checkListeners
        if @isDebugMode == true then
           checker.setDebugMode
        end
-       
+
        if ftReadConf.isEnabled4Receiving?(x) == false then
           next
        end
-      
+
        ret     = checker.isRunning
        if ret == false then
           if ftReadConf.isEnabled4Receiving?(x) == true then
              @logger.info("[DEC_007] I/F #{x}: Listener is switched-off")
              bAll = false
-          end  
+          end
        else
           @logger.info("[DEC_006] I/F #{x}: Listener is switched-on")
           bNone = false
@@ -461,31 +465,31 @@ end
 ##
 ## By requirements it is needed one listener per I/F with an
 ## independent PollingInterval for each one.
-def launchListeners      
+def launchListeners
    ftReadConf   = ReadInterfaceConfig.instance
    arrEntities  = ftReadConf.getAllExternalMnemonics
-      
-   if @isDebugMode == true then 
+
+   if @isDebugMode == true then
       @logger.debug("Polling #{@projectName} Interfaces ...")
       @logger.debug("Starting all Listeners ...")
    end
-   
+
    startTime = Time.new
    startTime.utc
-        
+
    # Create a process for sending the Files to each entity
 	arrEntities.each{|entity|
       if ftReadConf.isEnabled4Receiving?(entity) == true then
 	      launchListener(entity)
       end
 	}
-   return 0   
+   return 0
 end
 ## ---------------------------------------------------------
 ##
 ## It creates a new process Listener for the I/F.
 def launchListener(entity)
-   ftReadConf   = ReadInterfaceConfig.instance      
+   ftReadConf   = ReadInterfaceConfig.instance
    pI = ftReadConf.getPollingInterval(entity)
    if @isDebugMode == true then
       command  = %Q{decListener --mnemonic #{entity} --interval #{pI} -D}
@@ -503,7 +507,7 @@ def launchListener(entity)
    if @isDebugMode == true then
       @logger.debug(command)
    end
-   
+
    @logger.info("[DEC_GEN] I/F #{entity}: Starting Listener")
    # ---------------------------------------------
    # Create a new process for each Entity
@@ -518,7 +522,7 @@ def launchListener(entity)
       else
          @logger.info("[DEC_799] I/F #{entity}: Error when launching Listener")
          exit(99)
-      end            
+      end
    }
    # ---------------------------------------------
 end
@@ -531,12 +535,12 @@ def stopGetFromEntities
    arrPIDs      = Array.new
 
 #   @logger.info("Abort current polling Operations ...")
-   
+
    arrEntities.each{|x|
       if ftReadConf.isEnabled4Receiving?(x) == true then
          stopGetFromEntity(x)
       end
-   } 
+   }
 end
 ## ---------------------------------------------------------
 
@@ -565,20 +569,20 @@ end
 
 ## It exists?
 def existEntity?(mnemonic)
-   ftReadConf   = ReadInterfaceConfig.instance   
+   ftReadConf   = ReadInterfaceConfig.instance
    return ftReadConf.exists?(mnemonic)
 end
 ## ---------------------------------------------------------
 
 ## Check that everything needed by the class is present.
 def checkModuleIntegrity
-   
+
    bDefined = checkEnvironmentEssential
 
    if bDefined == false then
       puts "\nError in decListener::checkModuleIntegrity :-(\n\n"
       exit(99)
-   end                             
+   end
 end
 ## ---------------------------------------------------------
 
@@ -586,10 +590,10 @@ end
 ##
 ## Print command line help
 def usage
-   fullpathFile = File.expand_path(__FILE__)   
-   
+   fullpathFile = File.expand_path(__FILE__)
+
    value = `#{"head -36 #{fullpathFile}"}`
-      
+
    value.lines.drop(1).each{
       |line|
       len = line.length - 1

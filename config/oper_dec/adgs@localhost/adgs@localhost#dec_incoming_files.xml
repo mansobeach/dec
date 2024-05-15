@@ -8,7 +8,7 @@
 
       <Interface>
          <Name>NASA_EOSDIS_IERS</Name>
-         <LocalInbox>/tmp/adgs/in_basket_if_nasa_eosdis_iers</LocalInbox>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_iers</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/products/iers/</Directory>
          </DownloadDirs>
@@ -25,7 +25,7 @@
 
       <Interface>
          <Name>NOAA_IMS</Name>
-         <LocalInbox>/tmp/adgs/in_basket_if_noaa_ims</LocalInbox>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_noaa_ims</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/pub/DATASETS/NOAA/G02156/netcdf/4km/2024/</Directory>
          </DownloadDirs>
@@ -72,12 +72,20 @@
 
          <Intray>
             <Name>S2_IN</Name>
-            <Directory>/tmp/adgs/received/s2/</Directory>
+            <Directory>/data/adgs/dec/s2_aux</Directory>
          </Intray>
 
          <Intray>
             <Name>S3_IN</Name>
-            <Directory>/tmp/dec_local_dissemination/s3/</Directory>
+            <Directory>/data/adgs/dec/s3_aux</Directory>
+            <!--
+            <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
+            -->
+         </Intray>
+
+         <Intray>
+            <Name>S3RAW_IN</Name>
+            <Directory>/data/adgs/dec/s3_aux_raw</Directory>
             <!--
             <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
             -->
@@ -112,7 +120,7 @@
          <File Type="ims*_*4km*.nc*">
             <HardLink>false</HardLink>
             <ToList>
-               <Intray>S3_IN</Intray>
+               <Intray>S3RAW_IN</Intray>
             </ToList>
          </File>  
 

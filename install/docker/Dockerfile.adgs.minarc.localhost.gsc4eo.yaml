@@ -1,0 +1,65 @@
+#########################################################################
+#
+#     Dockerfile.adgs.minarc.localhost
+#
+#########################################################################
+#
+# Dockerfile for minARC @ ADGS
+# 
+# ALPINE
+# https://pkgs.alpinelinux.org/packages
+#
+FROM ruby:3.1.4-alpine
+# ================================================
+RUN apk update && apk add --no-cache build-base
+RUN apk --no-cache add procps
+RUN apk --no-cache add curl
+RUN apk --no-cache add openssl curl-dev
+RUN apk --no-cache add bash
+RUN apk --no-cache add jq
+RUN apk --no-cache add ncftp
+RUN apk --no-cache add openssh
+RUN apk --no-cache add sshpass
+RUN apk --no-cache add libxml2 libxml2-utils
+RUN apk --no-cache add p7zip
+RUN apk --no-cache add postgresql-client
+RUN apk --no-cache add postgresql-dev
+
+#RUN apk --no-cache add ruby
+# change default shell from ash to bash
+RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
+
+# https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
+# https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
+#
+RUN addgroup -g 2020 -S gsc4eo && adduser -u 2020 -S gsc4eo -G gsc4eo -s /bin/bash
+# DEBIAN user management:
+#RUN groupadd -g 2020 gsc4eo && \
+#    useradd -u 2020 -ms /bin/bash -g gsc4eo -d /home/gsc4eo gsc4eo
+# ------------------------------------------------
+COPY ./install/scripts/entrypoint_adgs_minarc_localhost.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_adgs_minarc_localhost.sh /    
+# ------------------------------------------------
+RUN gem update
+# ------------------------------------------------
+# MINARC GEM
+COPY ./install/gems/minarc_latest.gem .
+RUN gem install minarc_latest.gem
+# ------------------------------------------------
+# Patch log4r
+COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10/lib/log4r/outputter/
+# ------------------------------------------------
+# MKDIR p /volumes/dec
+RUN mkdir -p /volumes/dec/log && \
+    chown -R 2020:2020 /volumes/dec
+# ------------------------------------------------
+USER gsc4eo
+RUN   mkdir -p /home/gsc4eo/.ssh
+COPY --chown=2020:2020 ./config/ssh/* /home/gsc4eo/.ssh/
+COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/gsc4eo/.ssh/id_rsa
+# COPY --chown=2020:2020 ./config/ssh/known_hosts /home/gsc4eo/.ssh/known_hosts
+ENV USER=gsc4eo HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
+# "------------------------------------------------
+# CMD [ "/bin/bash" ]
+# ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT ["/usr/bin/entrypoint_adgs_minarc_localhost.sh"]

@@ -7,7 +7,7 @@
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Data Exchange Component (DEC)
-### 
+###
 ### Git: DEC_Environment,v $Id$ $Date$
 ###
 ### module DEC
@@ -22,13 +22,13 @@ require 'cuc/Log4rLoggerFactory'
 require 'dec/ReadConfigDEC'
 
 module DEC
-   
+
    include CUC::DirUtils
-   
-   @@version = "1.0.40.6"
-   
+
+   @@version = "1.0.40.7"
+
    ## -----------------------------------------------------------------
-   
+
    @@change_record = { \
       "1.0.40" =>    "MD5 config flag for pull to manage duplications (HTTP/FTPS)\n\
           HTTP handler treats html navigation pages as directories for pull",
@@ -136,7 +136,7 @@ module DEC
       "1.0.0"  =>    "first version of the dec installer created" \
    }
    ## -----------------------------------------------------------------
-   
+
    def load_config_development
       load_config
       ENV['DEC_VERSION']                  = DEC.class_variable_get(:@@version)
@@ -145,16 +145,16 @@ module DEC
       ENV.delete('DCC_CONFIG')
       ENV.delete('DCC_TMP')
    end
-   
+
    ## -----------------------------------------------------------------
 
-   ## extract DEC configuration from installation directory 
+   ## extract DEC configuration from installation directory
    def copy_installed_config(destination, nodename = "")
-      
+
       checkDirectory(destination)
       ## -----------------------------
       ## DEC Config files
-   
+
       arrConfigFiles = [\
          "dec_interfaces.xml",\
          "dec_incoming_files.xml",\
@@ -165,26 +165,26 @@ module DEC
       ## -----------------------------
 
       path = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
-      
+
       arrConfigFiles.each{|config|
-      
+
          if File.exist?("#{destination}/#{config}") == true then
             puts "File #{destination}/#{config} exists already / please backup first #{'1F47A'.hex.chr('UTF-8')}"
             next
          end
-      
+
          if File.exist?("#{path}/#{config}") == true then
             FileUtils.cp("#{path}/#{config}", "#{destination}/#{nodename}##{config}")
             FileUtils.ln_s("#{destination}/#{nodename}##{config}","#{destination}/#{config}")
          end
       }
-      
+
    end
-   
+
    ## -----------------------------------------------------------------
 
    def load_config
-   
+
       # --------------------------------
       if !ENV['DEC_CONFIG'] then
          ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
@@ -201,7 +201,7 @@ module DEC
 
       decConfig   = DEC::ReadConfigDEC.instance
       inventory   = decConfig.getInventory
-         
+
       if !ENV['DEC_DB_ADAPTER'] then
          ENV['DEC_DB_ADAPTER'] = inventory[:db_adapter]
       end
@@ -213,36 +213,36 @@ module DEC
       if !ENV['DEC_DATABASE_PORT'] then
          ENV['DEC_DATABASE_PORT'] = inventory[:db_port]
       end
-   
+
       if !ENV['DEC_DATABASE_NAME'] then
          ENV['DEC_DATABASE_NAME'] = inventory[:db_name]
       end
-   
+
       if !ENV['DEC_DATABASE_USER'] then
          ENV['DEC_DATABASE_USER'] = inventory[:db_username]
-      end   
+      end
 
       if !ENV['DEC_DATABASE_PASSWORD'] then
          ENV['DEC_DATABASE_PASSWORD'] = inventory[:db_password]
       end
-      
+
       if !ENV['DEC_TMP'] then
          ENV['DEC_TMP'] = decConfig.getTempDir
-      end   
-      
+      end
+
    end
-   
+
    ## -----------------------------------------------------------------
 
    def load_logger(label)
        # initialize logger
       loggerFactory = CUC::Log4rLoggerFactory.new(label, "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-      
+
       @logger = loggerFactory.getLogger
-   
+
       if @logger == nil then
 		   puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\""
 		   puts
 		   puts
 		   exit(99)
@@ -273,7 +273,7 @@ module DEC
    end
 
    ## -----------------------------------------------------------------
-   
+
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
       puts "DEC_CONFIG                    => #{ENV['DEC_CONFIG']}"
@@ -287,7 +287,7 @@ module DEC
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------
-   
+
    def print_environmentRPF
       puts "RPFBIN                        => #{ENV['RPFBIN']}"
       puts "RPF_ARCHIVE_ROOT              => #{ENV['RPF_ARCHIVE_ROOT']}"
@@ -300,7 +300,7 @@ module DEC
    end
 
    ## -----------------------------------------------------------------
-   
+
    def check_environment_dirs_push
       checkDirectory(DEC::ReadConfigDEC.instance.getSourceDir)
    end
@@ -320,19 +320,19 @@ module DEC
    ## -----------------------------------------------------------------
 
    def checkEnvironmentEssential
-   
+
       load_config
-   
+
       bCheck = true
-      
+
       # --------------------------------
-      # DEC_CONFIG can be defined by the customer to override 
+      # DEC_CONFIG can be defined by the customer to override
       # the configuration shipped with the gem
       if !ENV['DEC_CONFIG'] then
          ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
       # --------------------------------
-      
+
       if !ENV['DEC_TMP'] then
          bCheck = false
          puts "DEC_TMP environment variable is not defined !\n"
@@ -340,7 +340,7 @@ module DEC
       else
          checkDirectory(ENV['DEC_TMP'])
       end
-      
+
       if bCheck == false then
          puts "DEC Essential environment variables configuration not complete"
          puts
@@ -352,26 +352,26 @@ module DEC
 
    def checkEnvironmentPUSH
       bCheck = true
-      
+
       if bCheck == false then
          puts "DEC PUSH environment variables configuration not complete"
          puts
          return false
       end
-      return true      
+      return true
    end
    ## -----------------------------------------------------------------
 
    def checkEnvironmentMail
       bCheck = true
-      
+
       if !ENV['HOSTNAME'] then
          bCheck = false
          puts
          puts "HOSTNAME environment variable is not defined !\n"
          puts
       end
-      
+
       if bCheck == false then
          puts "DEC environment variables configuration not complete"
          puts
@@ -449,7 +449,7 @@ module DEC
          return false
       end
       return true
-   
+
    end
    ## -----------------------------------------------------------------
 
@@ -457,26 +457,26 @@ module DEC
       puts "Execution environment not suited for DEC"
    end
    ## -----------------------------------------------------------------
-   
+
    def createEnvironmentDirs
       checkDirectory(ENV['DEC_TMP'])
-      
+
       if ENV['DEC_DATABASE_NAME'][0,1] == '/' then
          checkDirectory(File.dirname(ENV['DEC_DATABASE_NAME']))
       end
 
       # cf. $DEC_CONFIG/dec_log_config.xml
       checkDirectory("/tmp/dec/log")
-     
+
    end
    ## -----------------------------------------------------------------
 
    def createEnvironmentDirsRPF
-      checkDirectory(ENV['RPF_ARCHIVE_ROOT'])      
+      checkDirectory(ENV['RPF_ARCHIVE_ROOT'])
       checkDirectory(ENV['FTPROOT'])
    end
    ## -----------------------------------------------------------------
-   
+
    def checkConfigFilesIncoming
       arrFiles = [ \
                   "dec_interfaces.xml", \
@@ -492,7 +492,7 @@ module DEC
       return bRet
    end
 
-   ## -----------------------------------------------------------------  
+   ## -----------------------------------------------------------------
 
    def checkConfigFilesOutgoing
       arrFiles = [ \
@@ -506,10 +506,10 @@ module DEC
             puts "#{ENV['DEC_CONFIG']}/#{file} not found !"
          end
       }
-      return bRet   
+      return bRet
    end
-   
-   ## -----------------------------------------------------------------   
+
+   ## -----------------------------------------------------------------
    ##
    ## check command line tool dependencies
    ##
@@ -517,7 +517,7 @@ module DEC
 
       bDefined = true
       bCheckOK = true
-      
+
       arrTools = [ \
                   "7za", \
                   "jq", \
@@ -530,10 +530,10 @@ module DEC
                   "sshpass", \
                   "sftp" \
                   ]
-      
+
       arrTools.each{|tool|
          isToolPresent = `which #{tool}`
-               
+
          if isToolPresent[0,1] != '/' then
             if logger != nil then
                logger.error("[DEC_799] Fatal Error:  #{tool} not present in $PATH")
@@ -544,28 +544,28 @@ module DEC
          end
 
       }
-                         
+
 #      if bCheckOK == false then
 #         puts "\nDEC_Environment::checkToolDependencies FAILED !\n\n"
-#      end      
-   
+#      end
+
       return bCheckOK
    end
    ## -----------------------------------------------------------------
-   
+
    def checkToolDependenciesRPF
       bCheckOK = true
-      
+
       arrTools = [ \
                   "removeSchema.bin", \
                   "write2Log.bin", \
                   "put_report.bin" \
                   ]
-   
+
       rootDir = ENV['RPFBIN']
-      
+
       arrTools.each{|tool|
-                     
+
          if File.exist?("#{rootDir}/#{tool}") == false then
             puts "\n\nDEC_Environment::checkToolDependenciesRPF\n"
             puts "Fatal Error: #{tool} not present in RPFBIN #{rootDir}   :-(\n\n\n"
@@ -573,17 +573,17 @@ module DEC
          end
 
       }
-      
+
       #check the commands needed
-                   
+
       if bCheckOK == false then
          puts "\nnDEC_Environment::checkToolDependencies for RPF FAILED !\n\n"
-      end      
-   
+      end
+
       return bCheckOK
    end
    ## -----------------------------------------------------------------
-   
+
 end # module
 
 ## ==============================================================================
@@ -591,13 +591,13 @@ end # module
 ## Wrapper to make use within unit tests since it is not possible inherit mixins
 
 class DEC_Environment
-   
+
    include DEC
-   
+
    def wrapper_load_config
       load_config
    end
-      
+
    def wrapper_load_config_development
       load_config_development
    end
@@ -633,7 +633,7 @@ class DEC_Environment
    def wrapper_print_environmentRPF
       print_environmentRPF
    end
-   
+
 end
 
 ## ==============================================================================

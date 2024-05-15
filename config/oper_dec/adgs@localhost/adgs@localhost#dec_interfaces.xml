@@ -89,7 +89,7 @@
     </To>
   </Notify>
   <Events>
-    <Event Name="OnReceiveNewFile"      executeCmd="auxConverter -m S2 -f &quot;%F&quot; -d /tmp/adgs/in_basket_if_nasa_eosdis_iers"/>
+    <Event Name="OnReceiveNewFile"      executeCmd="auxConverter -m S2 -f &quot;%F&quot; -d /data/adgs/dec/s2_aux"/>
     <Event Name="NewFile2Intray"        executeCmd="echo $PWD " />
   </Events>
   <ContactInfo>

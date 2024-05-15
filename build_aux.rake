@@ -7,7 +7,7 @@
 # === Written by DEIMOS Space S.L. (bolf)
 #
 # === Data Exchange Component (DEC) repository
-# 
+#
 # Git: rakefile,v $Id$ $Date$
 #
 # module AUX
@@ -24,12 +24,12 @@ require 'rake'
 namespace :aux do
 
    ## ----------------------------------------------------------------
-   
+
    desc "build aux gem"
 
    task :build do
       puts "building gem aux"
-      
+
       cmd = "gem build gem_aux.gemspec"
       puts cmd
       ret = `#{cmd}`
@@ -39,7 +39,7 @@ namespace :aux do
       end
       filename = ret.split("File: ")[1].chop
       name     = File.basename(filename, ".*")
-      
+
       begin
          rm "install/gems/aux_latest.gem"
       rescue Exception => e
@@ -50,9 +50,9 @@ namespace :aux do
       rescue Exception => e
       end
 
-      ln filename, "install/gems/aux_latest.gem"
+      cp filename, "install/gems/aux_latest.gem"
       cp filename, "aux.gem"
-     
+
       cmd = "md5sum #{filename}"
       ret = `#{cmd}`
       cmd = "echo #{ret.split(" ")[0]} > #{filename}.md5"
@@ -70,11 +70,11 @@ namespace :aux do
    ## ----------------------------------------------------------------
 
    desc "uninstall aux gem"
-   
+
    task :uninstall do
       cmd = "gem uninstall -x aux"
       puts cmd
-      system(cmd)      
+      system(cmd)
    end
    ## ----------------------------------------------------------------
 
@@ -82,11 +82,11 @@ namespace :aux do
    ## --------------------------------------------------------------------
 
    task :install do
-      
+
       Rake::Task["aux:build"].invoke
-      
+
       Rake::Task["aux:uninstall"].invoke
-      
+
       cmd = "gem install install/gems/aux.gem"
       puts cmd
       system(cmd)
@@ -95,7 +95,7 @@ namespace :aux do
 
 #   # to verify the installation and gem dependencies installation without gemfile
 #   task :test_install
-#   
+#
 #   end
    ## --------------------------------------------------------------------
 
@@ -111,4 +111,3 @@ task :default do
 end
 
 ## ==============================================================================
-

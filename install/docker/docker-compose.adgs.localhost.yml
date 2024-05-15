@@ -18,10 +18,39 @@
 
 # rm -rf ~/Library/Containers/com.docker.*
 
+# <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k localhost:4567/dec/arc/requestArchive/* &amp; "/>
+# <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k -u dec:dec https://185.52.193.141:4567/dec/arc/requestArchive/*"/>
+
+# PODMAN scripts in MOC-UAP @ NDC
+
+# =============================================================================
+# CREATE GSC4EO USER
+# sudo useradd -u 2020 gsc4eo -g gsc4eo
+
+# =============================================================================
+# DISABLE HOST POSTGRESQL
+# sudo service postgresql stop
+# sudo lsof -i -P | grep LISTEN | grep :5432
+# =============================================================================
+
+# =============================================================================
+# BUILD DEC IMAGE
+# rake -f build_aux.rake aux:install
 # rake -f build_dec.rake dec:build[adgs,localhost,adgs_test_pg]
 # rake -f build_dec.rake dec:install[adgs,localhost,adgs_test_pg]
 # rake -f build_dec.rake dec:image_build[gsc4eo,localhost,adgs]
+# => naming to docker.io/library/app_adgs_dec:latest
+# =============================================================================
 
+# =============================================================================
+# BUILD MINARC IMAGE
+# rake -f build_minarc.rake minarc:build[adgs,localhost,adgs_test_pg]
+# rake -f build_minarc.rake minarc:install[adgs,localhost,adgs_test_pg]
+# rake -f build_minarc.rake minarc:image_build[gsc4eo,localhost,adgs]
+# => naming to docker.io/library/app_adgs_minarc:latest
+# =============================================================================
+
+# docker run --name app_adgs_dec -v /data:/data  app_adgs_dec
 
 ## 2/ start only adgs_db_postgres
 ## > docker-compose -f install/docker/docker-compose.adgs.localhost.yml up -d adgs_db_postgres
@@ -33,16 +62,13 @@
 
 # lsof -n -i:5432 | grep LISTEN
 
-
 # docker inspect --format='{{json .NetworkSettings.Networks}}' app_adgs_dec | jq .
-
 
 ## 0/ build minarc_s2_pg.gem
 ### rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]
 
 # Assign network hostnames
 # https://stackoverflow.com/questions/29924843/how-do-i-set-hostname-in-docker-compose
-
 
 ## 1/ build app_minarc_s2
 ### sudo docker image build --rm=false -t app_minarc_s2 . -f install/docker/Dockerfile.decservice.minarc.s2.cloudferro
@@ -83,24 +109,26 @@
 ## - rake -f build_minarc.rake minarc:install[s2decservice,e2espm-inputhub]
 ##
 ##
-version: '3'
+# version: '3'
 
 services:
-  adgs_db_postgres:
-     image: "postgres:11"
-     container_name: adgs_db_postgres
-     hostname: adgs_db_postgres
-     restart: always
-     environment:
-        POSTGRES_DB                 : "adgs_db"
-        POSTGRES_USER               : "adgs"
-        POSTGRES_PASSWORD           : "adg$"
-        POSTGRES_HOST_AUTH_METHOD   : "trust"
-     ports:
-      - "5432:5432"
-     volumes:
-         - volume-db-postgres-adgs:/var/lib/postgresql/data
-  adgs_dec:
+
+   adgs_db_postgres:
+      image: "postgres:11"
+      container_name: adgs_db_postgres
+      hostname: adgs_db_postgres
+      restart: always
+      environment:
+         POSTGRES_DB: "adgs_db"
+         POSTGRES_USER: "adgs"
+         POSTGRES_PASSWORD: "adg$"
+         POSTGRES_HOST_AUTH_METHOD: "trust"
+      ports:
+         - "5432:5432"
+      volumes:
+         - /data/adgs/db:/var/lib/postgresql/data
+
+   app_adgs_dec:
       depends_on:
          - "adgs_db_postgres"
       image: app_adgs_dec
@@ -108,11 +136,12 @@ services:
       hostname: app_adgs_dec
       restart: always
       volumes:
-        - /Volumes/dec:/data/dec
+         - volume_dec:/data
 
 volumes:
-  volume-db-postgres-adgs:
+   volume_dec:
+      driver: local
       driver_opts:
          type: none
          o: bind
-         device: /Volumes/adgs/db
+         device: /data
