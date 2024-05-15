@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Project>
+      <Name>Data Exchange Component</Name>
+      <Id>DEC</Id>
+      <Mission>Auiliary Data Gathering Service</Mission>
+      <SatPrefix>S_</SatPrefix>
+   </Project>
+   <Filters>
+         <IncomingFilters>
+            <Filter>*</Filter>
+         </IncomingFilters>
+      <OutgoingFilters>
+         <Filter>*</Filter>
+      </OutgoingFilters>
+   </Filters>
+   <Options>
+      <Upload>
+         <DeleteSourceFiles>true</DeleteSourceFiles>
+         <UploadFilePrefix>false</UploadFilePrefix>
+         <UploadDirs>false</UploadDirs>
+      </Upload>
+      <Download>
+         <DownloadDirs>false</DownloadDirs>
+         <DeleteUnknownFiles>false</DeleteUnknownFiles>
+         <!-- DeleteDuplicatedFiles item should be deprecated -->
+         <DeleteDuplicatedFiles>false</DeleteDuplicatedFiles>
+         <!--
+         <LogUnknownFiles>false</LogUnknownFiles>
+         <LogDuplicatedFiles>false</LogDuplicatedFiles>     
+         -->    
+      </Download>
+   </Options>
+   
+   
+   <Reports>
+            
+       <!-- DEC push / delivery reports / push (decSend2Interface) -->      
+            
+      <Report Name="DeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_SENT</FileType>
+      </Report>
+
+      <Report Name="EmergencyDeliveredFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Delivered in Emergency Mode</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEMERGENCY</FileType>
+      </Report>
+
+      <!-- DEC pull / retrieval reports (decGetFromInterface) -->
+
+      <Report Name="RetrievedFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of Files Retrieved</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DEC_F_RECV</FileType>
+      </Report>
+
+      <Report Name="UnknownFiles">
+         <Enabled>false</Enabled>
+         <Desc>List of unknown Files present</Desc>
+         <FileClass>OPER</FileClass>
+         <FileType>DECUNKNOWN</FileType>
+      </Report>
+
+   </Reports>
+
+   <Workflow>
+      <SourceDir>/data/adgs/adgs_delivery_root</SourceDir>
+      <GlobalOutbox>/data/adgs/outbox</GlobalOutbox>
+      <ReportDir>/data/adgs/in_basket_if_localhost_notsecure</ReportDir>
+      <TempDir>/data/adgs/tmp</TempDir>
+   </Workflow>
+
+   <Inventory>
+      <Database_Adapter>postgresql</Database_Adapter>
+      <Database_Host>adgs_db_postgres</Database_Host>
+      <Database_Port>5432</Database_Port>
+      <Database_Name>adgs_db</Database_Name>
+      <Database_User>adgs</Database_User>
+      <Database_Password>adg$</Database_Password>
+   </Inventory>
+
+
+</Configuration>

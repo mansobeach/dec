@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+
+   <!-- =========================================================== -->
+
+   <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+      <Interface>
+         <Name>NASA_EOSDIS_IERS</Name>
+         <LocalInbox>/tmp/adgs/in_basket_if_nasa_eosdis_iers</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/products/iers/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>NOAA_IMS</Name>
+         <LocalInbox>/tmp/adgs/in_basket_if_noaa_ims</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/pub/DATASETS/NOAA/G02156/netcdf/4km/2024/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+ 
+ 
+   </ListInterfaces>
+
+
+   <!-- =========================================================== -->
+
+   <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+      <File Type="tai-utc.dat">
+         <Description>NASA IERS bulletin C</Description>
+         <FromList>
+            <Interface>NASA_EOSDIS_IERS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ims*_*4km*.nc*">
+         <Description>NOAA Ice Mapping System 4Km resolution</Description>
+         <FromList>
+            <Interface>NOAA_IMS</Interface>
+         </FromList>
+      </File>
+
+   </DownloadRules>
+
+   <!-- =========================================================== -->
+
+   <DisseminationRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   
+      <ListIntrays>
+
+         <Intray>
+            <Name>S2_IN</Name>
+            <Directory>/tmp/adgs/received/s2/</Directory>
+         </Intray>
+
+         <Intray>
+            <Name>S3_IN</Name>
+            <Directory>/tmp/dec_local_dissemination/s3/</Directory>
+            <!--
+            <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
+            -->
+         </Intray>
+
+         <Intray>
+            <Name>S1_IN</Name>
+            <Directory>/tmp/dec_local_dissemination/s1/</Directory>
+            <!--
+            <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
+            -->
+         </Intray>
+                
+      </ListIntrays>
+
+      <!-- =============================================== -->
+
+      <ListFilesDisseminated>
+    
+      <!--
+            SORT Rules ranking from more restrictive ones    
+            Only the first rule matching the file pattern is applied     
+      -->
+
+         <File Type="tai-utc.dat">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S2_IN</Intray>
+            </ToList>
+         </File>
+
+         <File Type="ims*_*4km*.nc*">
+            <HardLink>false</HardLink>
+            <ToList>
+               <Intray>S3_IN</Intray>
+            </ToList>
+         </File>  
+
+
+      </ListFilesDisseminated>
+   </DisseminationRules>
+
+   <!-- =========================================================== -->
+
+
+</Config>

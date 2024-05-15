@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- ================================================================ -->
+
+<Interface Name="NOAA_IMS">
+  <Desc>NOAA Ice Mapping System (IMS)</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>sidads.colorado.edu</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
+
+
+ <!-- ================================================================ -->
+
+ 
+ <Interface Name="NASA_EOSDIS_IERS">
+  <Desc>NASA EOSDIS IERS bulletins</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTPS</Protocol>
+    <Hostname>gdc.cddis.eosdis.nasa.gov</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"      executeCmd="auxConverter -m S2 -f &quot;%F&quot; -d /tmp/adgs/in_basket_if_nasa_eosdis_iers"/>
+    <Event Name="NewFile2Intray"        executeCmd="echo $PWD " />
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface>
+
+
+
+  <!-- ================================================================ -->
+
+
+  <!-- ================================================================ -->
+
+  <Interface Name="PUBLISH_S3">
+    <Desc>Auxiliary Data Gathering Service 4 Sentinel-3</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>LOCAL</Protocol>
+      <Hostname>localhost</Hostname>
+	   <Port>0</Port>
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>false</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address></Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address></Address>
+      </To>
+    </Notify>
+    <Events>
+         <!--
+                  <Event Name="OnReceiveNewFile"        executeCmd="auxConverter -f %F" />
+         <Event Name="ONRECEIVENEWFILESOK"     executeCmd="echo %f RECEIVED"/>         
+
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo OnReceiveNewFilesOK \':-\)\'"/>
+         -->
+    
+    </Events>
+    <ContactInfo>
+      <Name>Mr Brosnan</Name>
+      <EMail>daniel.brosnan@deimos-space.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>Citta Uova</Address>
+    </ContactInfo>
+  </Interface>
+
+<!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+  <Interface Name="POD_PUSH">
+    <Desc>POD PUSH</Desc>
+    <TXRXParams>
+      <Enabled4Sending>true</Enabled4Sending>
+      <!-- Miss configuration to raise DEC_605 -->
+      <Enabled4Receiving>false</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>1</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>HTTP</Protocol>
+      <Hostname>localhost</Hostname>
+      <Port>8080</Port>      
+      <User></User>
+      <Pass></Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+      <Address></Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+        <Address></Address>
+      </To>
+    </Notify>
+    <Events>
+    <!--
+         <Event Name="OnReceiveNewFilesOK"     executeCmd="echo hola"/>
+         <Event Name="OnReceiveError"          executeCmd="echo Error on receiving file..."/>         
+         <Event Name="NewFile2Intray"          executeCmd="echo $PWD " />
+    -->
+    </Events>
+
+    <ContactInfo>
+      <Name>Mr BeetleJuice</Name>
+      <EMail>adgs@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>who cares</Address>
+    </ContactInfo>
+  </Interface>
+
+   <!-- ================================================================ -->
+
+   
+   <!-- ================================================================ -->
+
+  <!-- ================================================================ -->
+
+ 
+
+   <!-- ================================================================ -->
+
+  
+
+   <!-- ================================================================ -->
+
+
+</Interfaces>
