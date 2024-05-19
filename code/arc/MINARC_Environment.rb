@@ -4,10 +4,10 @@
 ###
 ### === Ruby source for #FileArchiver class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Mini Archive Component (MinArc)
-### 
+###
 ### Git: $Id: MINARC_Environment.rb $Date$
 ###
 ### module MINARC
@@ -23,14 +23,15 @@ rescue Exception
 end
 
 module ARC
-   
+
    include CUC::DirUtils
-   
-   VERSION   = "1.3.2.7"
+
+   VERSION   = "1.3.2.8"
    ## ----------------------------------------------------------------
-   
+
    CHANGE_RECORD = { \
       "1.3.2"  =>      "Fixed Handler_DUMMY to decode any filename\n\
+         MINARC_PLUGIN environment variable is required\n\
          Handler_NAOS updated for TLE\n\
          Fixed the gem installation warning regarding ASCII-8BIT to UTF-8 encoding\n\
          exiftool dependency constrained with version 1.2.4 for compatibility with ruby 2\n", \
@@ -121,13 +122,14 @@ module ARC
       "1.0.1"  =>    "Handler for m2ts files of Sony Camcorders", \
       "1.0.0"  =>    "First version of the minarc installer created" \
    }
-   
+
    ## ----------------------------------------------------------------
-   
+
    @@arrENV = [ \
                   "MINARC_TMP", \
                   "MINARC_ARCHIVE_ROOT", \
                   "MINARC_DB_ADAPTER", \
+                  "MINARC_PLUGIN", \
                   "MINARC_ARCHIVE_ERROR", \
                   "MINARC_DATABASE_HOST", \
                   "MINARC_DATABASE_PORT", \
@@ -153,7 +155,7 @@ module ARC
    ## -----------------------------------------------------------------
 
    def load_config
-   
+
       # --------------------------------
       if !ENV['MINARC_CONFIG'] then
          ENV['MINARC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
@@ -162,7 +164,7 @@ module ARC
 
       minArcConfig   = ARC::ReadMinarcConfig.instance
       inventory      = minArcConfig.getInventory
-         
+
       if !ENV['MINARC_DB_ADAPTER'] then
          ENV['MINARC_DB_ADAPTER'] = inventory[:db_adapter]
       end
@@ -174,41 +176,46 @@ module ARC
       if !ENV['MINARC_DATABASE_PORT'] then
          ENV['MINARC_DATABASE_PORT'] = inventory[:db_port]
       end
-   
+
       if !ENV['MINARC_DATABASE_NAME'] then
          ENV['MINARC_DATABASE_NAME'] = inventory[:db_name]
       end
-   
+
       if !ENV['MINARC_DATABASE_USER'] then
          ENV['MINARC_DATABASE_USER'] = inventory[:db_username]
-      end   
+      end
 
       if !ENV['MINARC_DATABASE_PASSWORD'] then
          ENV['MINARC_DATABASE_PASSWORD'] = inventory[:db_password]
       end
-      
+
       if !ENV['MINARC_SERVER'] and minArcConfig.getArchiveServer != "" then
          ENV['MINARC_SERVER'] = minArcConfig.getArchiveServer
-      end   
-      
+      end
+
+      if !ENV['MINARC_PLUGIN'] then
+         raise "MINARC_PLUGIN env variable is missing"
+      end
+
       if !ENV['MINARC_ARCHIVE_ROOT'] then
          ENV['MINARC_ARCHIVE_ROOT'] = minArcConfig.getArchiveRoot
-      end   
- 
+      end
+
       if !ENV['MINARC_ARCHIVE_ERROR'] then
          ENV['MINARC_ARCHIVE_ERROR'] = minArcConfig.getArchiveError
-      end   
- 
+      end
+
       if !ENV['MINARC_TMP'] then
          ENV['MINARC_TMP'] = minArcConfig.getTempDir
       end
 
    end
 
-   ## -----------------------------------------------------------------   
+   ## -----------------------------------------------------------------
    def load_config_development
       ENV['MINARC_DB_ADAPTER']            = "sqlite3"
       ENV['MINARC_SERVER']                = "http://localhost:4567"
+      ENV['MINARC_PLUGIN']                = "S2PDGS"
       ENV['MINARC_ARCHIVE_ROOT']          = "/tmp/minarc/archive_root"
       ENV['MINARC_ARCHIVE_ERROR']         = "/tmp/minarc/error"
       ENV['MINARC_TMP']                   = "/tmp/minarc/tmp"
@@ -220,14 +227,15 @@ module ARC
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
       ENV['RACK_ENV']                     = "production"
    end
-   
+
    ## ----------------------------------------------------------------
-      
+
    ## ----------------------------------------------------------------
-   
+
    def unset_config
       ENV.delete('MINARC_DB_ADAPTER')
       ENV.delete('MINARC_SERVER')
+      ENV.delete('MINARC_PLUGIN')
       ENV.delete('MINARC_ARCHIVE_ROOT')
       ENV.delete('MINARC_ARCHIVE_ERROR')
       ENV.delete('MINARC_DATABASE_HOST')
@@ -238,18 +246,19 @@ module ARC
       ENV.delete('MINARC_TMP')
    end
    ## ----------------------------------------------------------------
-   
+
    def load_config_production
       ENV['RACK_ENV']                     = "production"
-   end 
+   end
    ## ----------------------------------------------------------------
-   
+
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
       puts "RACK_ENV                      => #{ENV['RACK_ENV']}"
       puts "TMPDIR                        => #{ENV['TMPDIR']}"
       puts "MINARC_DB_ADAPTER             => #{ENV['MINARC_DB_ADAPTER']}"
       puts "MINARC_SERVER                 => #{ENV['MINARC_SERVER']}"
+      puts "MINARC_PLUGIN                 => #{ENV['MINARC_PLUGIN']}"
       puts "MINARC_TMP                    => #{ENV['MINARC_TMP']}"
       puts "MINARC_DATABASE_NAME          => #{ENV['MINARC_DATABASE_NAME']}"
       puts "MINARC_DATABASE_HOST          => #{ENV['MINARC_DATABASE_HOST']}"
@@ -265,6 +274,7 @@ module ARC
    def log_environment(logger)
       logger.info("MINARC_DB_ADAPTER          => #{ENV['MINARC_DB_ADAPTER']}")
       logger.info("MINARC_SERVER              => #{ENV['MINARC_SERVER']}")
+      logger.info("MINARC_PLUGIN              => #{ENV['MINARC_PLUGIN']}")
       logger.info("MINARC_DATABASE_NAME       => #{ENV['MINARC_DATABASE_NAME']}")
       logger.info("MINARC_DATABASE_HOST       => #{ENV['MINARC_DATABASE_HOST']}")
       logger.info("MINARC_DATABASE_PORT       => #{ENV['MINARC_DATABASE_PORT']}")
@@ -294,23 +304,23 @@ module ARC
       ENV.delete('MINARC_DATABASE_PASSWORD')
    end
    ## ----------------------------------------------------------------
-   
+
    def setLocalModeOnly
       ENV.delete('MINARC_SERVER')
    end
    ## ----------------------------------------------------------------
-   
+
    def load_environment_test
       env_file = File.join(File.dirname(File.expand_path(__FILE__)), '../../install', 'minarc_test.env')
       Dotenv.overload(env_file)
    end
-   
+
    ## ----------------------------------------------------------------
-   
+
    def check_environment
-   
+
       load_config
-      
+
       check_environment_dirs
       retVal = checkEnvironmentEssential
       if retVal == true then
@@ -320,12 +330,12 @@ module ARC
       end
    end
    ## ----------------------------------------------------------------
-   
+
    def checkEnvironmentEssential
       load_config
-      
+
       bCheck = true
-      
+
       @@arrENV.each{|vble|
          if !ENV.include?(vble) then
             bCheck = false
@@ -333,25 +343,25 @@ module ARC
             puts
          end
       }
-      
+
       if bCheck == false then
          puts "MINARC environment / configuration not complete"
          puts
          return false
       end
       return true
-      
+
    end
    ## ----------------------------------------------------------------
-   
+
    def checkToolDependencies
-      
+
       bCheck = true
       bCheckOK = true
-      
+
       @@arrTools.each{|tool|
          isToolPresent = `which #{tool}`
-               
+
          if isToolPresent[0,1] != '/' then
             puts "\n\nMINARC_Environment::checkToolDependencies\n"
             puts
@@ -368,9 +378,9 @@ module ARC
       end
 
       return true
-      
+
    end
-   
+
    ## ----------------------------------------------------------------
 
    def printEnvironmentError
@@ -378,7 +388,7 @@ module ARC
    end
    ## ----------------------------------------------------------------
 
-   
+
 end # module
 
 ## ==============================================================================
@@ -387,7 +397,7 @@ end # module
 ##
 
 class MINARC_Environment
-   
+
    include ARC
 
    def wrapper_load_config
@@ -397,7 +407,7 @@ class MINARC_Environment
    def wrapper_load_environment_test
       load_environment_test
    end
-   
+
    def wrapper_load_config_development
       load_config_development
    end
@@ -413,19 +423,19 @@ class MINARC_Environment
    def wrapper_unset_config
       unset_config
    end
-   
+
    def wrapper_setRemoteModeOnly
       setRemoteModeOnly
    end
-   
+
    def wrapper_setLocalModeOnly
       setLocalModeOnly
    end
-   
+
    def wrapper_createEnvironmentDirs
       check_environment_dirs
    end
-   
+
 end
 
 ## ==============================================================================

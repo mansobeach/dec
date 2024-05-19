@@ -1,18 +1,21 @@
 #!/bin/bash
-set -e
+set +e
 
 [ "$DEBUG" == 'true' ] && set -x
 
 
-echo "entrypoint minarc"
+echo "entrypoint adgs minarc / waiting 30s for db"
+sleep 30
 
-# echo "minArcDB -c"
-# minArcDB -c
+echo "minArcDB -c"
+minArcDB -c
 
 echo "minArcServer -s"
 minArcServer -s
 
 ## Infinite loop tailing foo
 
-touch /tmp/foo.txt
-tail -f /tmp/foo.txt
+echo "container entrypoint started adgs minarc"
+
+touch /tmp/foo2.txt
+tail -f /tmp/foo2.txt

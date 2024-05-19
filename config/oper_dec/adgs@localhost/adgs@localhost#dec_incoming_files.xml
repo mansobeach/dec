@@ -84,8 +84,8 @@
          </Intray>
 
          <Intray>
-            <Name>S3RAW_IN</Name>
-            <Directory>/data/adgs/dec/s3_aux_raw</Directory>
+            <Name>MINARC_IN</Name>
+            <Directory>/data/adgs/arc/intray</Directory>
             <!--
             <Execute>auxConverter -f %F -d /tmp/aux_tmp</Execute>
             -->
@@ -110,6 +110,10 @@
             Only the first rule matching the file pattern is applied     
       -->
 
+<!--
+
+
+
          <File Type="tai-utc.dat">
             <HardLink>false</HardLink>
             <ToList>
@@ -117,10 +121,13 @@
             </ToList>
          </File>
 
+
+-->
+
          <File Type="ims*_*4km*.nc*">
             <HardLink>false</HardLink>
             <ToList>
-               <Intray>S3RAW_IN</Intray>
+               <Intray>MINARC_IN</Intray>
             </ToList>
          </File>  
 

@@ -1,10 +1,10 @@
 #########################################################################
 #
-#     Dockerfile.adgs.minarc.localhost
+#     Dockerfile.adgs.dec.localhost
 #
 #########################################################################
 #
-# Dockerfile for minARC @ ADGS
+# Dockerfile for DEC @ ADGS
 # 
 # ALPINE
 # https://pkgs.alpinelinux.org/packages
@@ -32,19 +32,23 @@ RUN sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
 # https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
 # https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
 #
-RUN addgroup -g 2020 -S gsc4eo && adduser -u 2020 -S gsc4eo -G gsc4eo -s /bin/bash
+RUN addgroup -g 2020 -S adgs && adduser -u 2020 -S adgs -G adgs -s /bin/bash
 # DEBIAN user management:
-#RUN groupadd -g 2020 gsc4eo && \
-#    useradd -u 2020 -ms /bin/bash -g gsc4eo -d /home/gsc4eo gsc4eo
+#RUN groupadd -g 2020 adgs && \
+#    useradd -u 2020 -ms /bin/bash -g adgs -d /home/adgs adgs
 # ------------------------------------------------
-COPY ./install/scripts/entrypoint_adgs_minarc_localhost.sh /usr/bin/
-RUN ln -s /usr/bin/entrypoint_adgs_minarc_localhost.sh /    
+COPY ./install/scripts/entrypoint_adgs_dec_localhost.sh /usr/bin/
+RUN ln -s /usr/bin/entrypoint_adgs_dec_localhost.sh /    
 # ------------------------------------------------
 RUN gem update
 # ------------------------------------------------
-# MINARC GEM
-COPY ./install/gems/minarc_latest.gem .
-RUN gem install minarc_latest.gem
+# DEC GEM
+COPY ./install/gems/dec_latest.gem .
+RUN gem install dec_latest.gem
+# ------------------------------------------------
+# AUX GEM
+COPY ./install/gems/aux_latest.gem .
+RUN gem install aux_latest.gem
 # ------------------------------------------------
 # Patch log4r
 COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10/lib/log4r/outputter/
@@ -53,13 +57,13 @@ COPY ./install/patch/rollingfileoutputter.rb /usr/local/bundle/gems/log4r-1.1.10
 RUN mkdir -p /volumes/dec/log && \
     chown -R 2020:2020 /volumes/dec
 # ------------------------------------------------
-USER gsc4eo
-RUN   mkdir -p /home/gsc4eo/.ssh
-COPY --chown=2020:2020 ./config/ssh/* /home/gsc4eo/.ssh/
-COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/gsc4eo/.ssh/id_rsa
-# COPY --chown=2020:2020 ./config/ssh/known_hosts /home/gsc4eo/.ssh/known_hosts
-ENV USER=gsc4eo HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
+USER adgs
+RUN   mkdir -p /home/adgs/.ssh
+COPY --chown=2020:2020 ./config/ssh/* /home/adgs/.ssh/
+COPY --chown=2020:2020 ./config/ssh/naos-aiv.id_rsa /home/adgs/.ssh/id_rsa
+# COPY --chown=2020:2020 ./config/ssh/known_hosts /home/adgs/.ssh/known_hosts
+ENV USER=adgs HOSTNAME=dec GEM_HOME=/usr/local/bundle PATH="/usr/local/bundle/bin:${PATH}"
 # "------------------------------------------------
 # CMD [ "/bin/bash" ]
 # ENTRYPOINT [ "/bin/bash" ]
-ENTRYPOINT ["/usr/bin/entrypoint_adgs_minarc_localhost.sh"]
+ENTRYPOINT ["/usr/bin/entrypoint_adgs_dec_localhost.sh"]

@@ -47,7 +47,7 @@ class MINARC_Server < Sinatra::Base
    helpers ARC::ApplicationHelper
 
    configure do
- 
+
       if ENV.include?('MINARC_DEBUG') == true then
          @@isDebugMode = true
       else
@@ -63,54 +63,54 @@ class MINARC_Server < Sinatra::Base
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :isDebugMode,       false
       set :environment, :production
-      
+
       # set :logger, Logger.new(STDOUT)
-   
-   
+
+
       ## ------------------------------------------------------
       ##
       ## Log configuration
-      
+
       @minArcConfigDir       = ENV['MINARC_CONFIG']
 
       ## initialise the logger
       loggerFactory = CUC::Log4rLoggerFactory.new("ArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
-   
+
       if settings.isDebugMode then
          loggerFactory.setDebugMode
       end
-      
-      @@logger = loggerFactory.getLogger   
+
+      @@logger = loggerFactory.getLogger
       # @logger = Logger.new(STDOUT)
-   
+
       if @@logger == nil then
          puts
 		   puts "Could not initialize logging system !  :-("
-         puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+         puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\""
 		   exit(99)
       end
 
       ## ------------------------------------------------------
-      
+
       @@inTray = ARC::ReadMinarcConfig.instance.getArchiveIntray
       @@tmpDir = ARC::ReadMinarcConfig.instance.getTempDir
       @@node   = ARC::ReadMinarcConfig.instance.getNode
-      
+
       @@logger.debug("Intray: #{@@inTray}")
       @@logger.debug("TmpDir: #{@@tmpDir}")
       ## ------------------------------------------------------
-      
+
       # Racks environment variable
       if !ENV['TMPDIR'] then
          ENV['TMPDIR'] = "#{ENV['MINARC_TMP']}"
       end
-   
+
       if settings.isDebugMode then
          puts "CONFIGURE ENV['HOME']                  => #{ENV['HOME']}"
          puts "CONFIGURE :root                        => #{settings.root}"
          puts "CONFIGURE :public_folder               => #{settings.public_folder}"
          puts "CONFIGURE :isDebugMode                 => #{settings.isDebugMode}"
-         puts "CONFIGURE ENV['TMPDIR']                => #{ENV['TMPDIR']}" 
+         puts "CONFIGURE ENV['TMPDIR']                => #{ENV['TMPDIR']}"
       end
    end
 
@@ -129,21 +129,21 @@ class MINARC_Server < Sinatra::Base
       end
       @@logger.debug("checking directories")
       check_environment_dirs
-    
-    @@logger.debug("require rack/ssl-enforcer")  
+
+    @@logger.debug("require rack/ssl-enforcer")
     require 'rack/ssl-enforcer'
     use Rack::SslEnforcer
-      
-         
+
+
    end
    ## ----------------------------------------------------------
 
    configure :development do
       @@logger.debug("Loading development configuration")
-      
+
       load_config_development
 
-      if settings.isDebugMode == true then               
+      if settings.isDebugMode == true then
          puts "========================================"
          puts "Development Environment:"
          print_environment
@@ -151,9 +151,9 @@ class MINARC_Server < Sinatra::Base
          puts
          puts
       end
-      
+
       check_environment_dirs
-      
+
       Dir.chdir(ENV['TMPDIR'])
    end
    ## ----------------------------------------------------------
@@ -166,9 +166,9 @@ class MINARC_Server < Sinatra::Base
    ## =================================================================
 
    ## Enforce basic authentication for the complete API
-   ## 
+   ##
    ## Need to log the failures
-   
+
 #   use Rack::Auth::Basic, "Check User credentials" do |username, password|
 #      User.find_by name: username and User.find_by(name: username).authenticate(password)
 #   end
@@ -178,9 +178,9 @@ class MINARC_Server < Sinatra::Base
    ### ODATA API START
 
    ## =================================================================
-   
+
    ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
-   
+
    get ARC_ODATA::API_URL_PRODUCT_QUERY_COUNT do
       if authenticate() == false then
          @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
@@ -194,22 +194,22 @@ class MINARC_Server < Sinatra::Base
       ret = ARC_ODATA::ControllerODataProductQuery.new(self, \
                         @@logger, \
                         settings.isDebugMode).query
-      content_type :json 
-      body ret            
+      content_type :json
+      body ret
    end
 
    ## =================================================================
 
    ## =================================================================
-   
+
    ## https://<service-root-uri>/odata/v1/Products?$filter=startswith(Name,'S2')
-   
+
    get ARC_ODATA::API_URL_PRODUCT_QUERY do
       if authenticate() == false then
          @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
          halt 401
       end
-      
+
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY}")
       end
@@ -217,8 +217,8 @@ class MINARC_Server < Sinatra::Base
       ret = ARC_ODATA::ControllerODataProductQuery.new(self, \
                         @@logger, \
                         settings.isDebugMode).query
-      content_type :json 
-      body ret            
+      content_type :json
+      body ret
    end
 
    ## =================================================================
@@ -241,7 +241,7 @@ class MINARC_Server < Sinatra::Base
    end
    ## =================================================================
 
-  
+
    ### ODATA API END
 
    ### =================================================================
@@ -255,13 +255,13 @@ class MINARC_Server < Sinatra::Base
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}")
       end
-      
+
       aFile = nil
       aFile = ArchivedFile.where(name: filename)
-                  
+
       if aFile.size != 0 then
          theFile = aFile.to_a[0]
-         
+
          if @@isDebugMode == true
             @@logger.info("found #{theFile.filename}")
             puts "---------------------------------------------"
@@ -270,7 +270,7 @@ class MINARC_Server < Sinatra::Base
             puts "Reading file #{theFile.path}/#{theFile.filename}"
             puts
          end
-                  
+
          if File.extname(theFile.filename) == ".7z" then
             prevDir = Dir.pwd
             Dir.chdir(@@tmpDir)
@@ -289,19 +289,19 @@ class MINARC_Server < Sinatra::Base
             send_file(arr[0])
             Dir.chdir(prevDir)
          end
-         
+
          send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
-         
-#         content = File.read("#{theFile.path}/#{theFile.filename}")             
+
+#         content = File.read("#{theFile.path}/#{theFile.filename}")
 #         response.headers['filename']     = theFile.filename
 #         response.headers['Content-Type'] = "application/octet-stream"
 #         attachment(theFile.filename)
       else
          @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
-         status API_RESOURCE_NOT_FOUND      
-      end      
+         status API_RESOURCE_NOT_FOUND
+      end
    end
-   
+
    ## =================================================================
    ##
    get "#{API_URL_RETRIEVE}/:filename" do |filename|
@@ -311,13 +311,13 @@ class MINARC_Server < Sinatra::Base
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}")
       end
-      
+
       aFile = nil
       aFile = ArchivedFile.where(name: filename)
-                  
+
       if aFile.size != 0 then
          theFile = aFile.to_a[0]
-         
+
          if settings.isDebugMode == true
             @@logger.info("found #{theFile.filename}")
             puts "---------------------------------------------"
@@ -326,13 +326,13 @@ class MINARC_Server < Sinatra::Base
             puts "Reading file #{theFile.path}/#{theFile.filename}"
             puts
          end
-           
+
          @@logger.info("[ARC_201] Served: #{theFile.filename}")
-         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)         
+         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
       else
          @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
-         status API_RESOURCE_NOT_FOUND      
-      end      
+         status API_RESOURCE_NOT_FOUND
+      end
    end
 
    ## =================================================================
@@ -346,7 +346,8 @@ class MINARC_Server < Sinatra::Base
 #      sleep(3.0)
 #      @@logger.info("sleep stop")
       wildcard = params['name']
-      cmd      = "minArcStore -t AUXIP -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
+      plugin   = ENV['MINARC_PLUGIN']
+      cmd      = "minArcStore -t #{plugin} -f \"#{@@inTray}/#{wildcard}\" --noserver -m -M"
       if settings.isDebugMode == true then
          @@logger.debug(request.url)
          @@logger.debug(cmd)
@@ -360,19 +361,19 @@ class MINARC_Server < Sinatra::Base
    ## =================================================================
    ##
    ## Get all filetypes archived
-   
+
    get ARC::API_URL_GET_FILETYPES do
       msg = "GET #{ARC::API_URL_GET_FILETYPES} : get archived filetypes"
       logger.info msg
-      
+
       "#{ARC::VERSION}"
-      
+
       cmd = "minArcRetrieve -T --noserver"
-      
+
       if settings.isDebugMode == true then
          logger.debug cmd
       end
-      
+
       listTypes = `#{cmd}`
 
       if $?.exitstatus == 0 then
@@ -382,7 +383,7 @@ class MINARC_Server < Sinatra::Base
          status API_RESOURCE_NOT_FOUND
       end
    end
-       
+
    ## =================================================================
    ##
    ## GET version
@@ -394,18 +395,18 @@ class MINARC_Server < Sinatra::Base
       @@logger.info(msg)
       "#{@@node} : #{ARC::VERSION}"
    end
-   
+
    ## =================================================================
    ##
    ## minArcRetrieve_LIST FILENAMES
    ##
    get "#{API_URL_LIST_FILENAME}/:filename" do |filename|
-      msg = "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"      
+      msg = "GET #{API_URL_LIST_FILENAME}/#{params[:filename]}"
       @@logger.info("[ARC_205] Search: #{params[:filename]}")
-      
+
       cmd = "minArcRetrieve -f \'#{params[:filename]}\' --noserver -l"
-            
-      if settings.isDebugMode == true then 
+
+      if settings.isDebugMode == true then
          msg = "MINARC_Server::#{cmd}"
          @@logger.debug(msg)
       end
@@ -419,7 +420,7 @@ class MINARC_Server < Sinatra::Base
       if settings.isDebugMode == true then
          logger.debug listFiles
       end
-      
+
       if $?.exitstatus == 0 then
          "#{listFiles}"
       else
@@ -427,7 +428,7 @@ class MINARC_Server < Sinatra::Base
          status API_RESOURCE_NOT_FOUND
       end
    end
-   
+
    ## =================================================================
    ##
    ## minArcStatus by filename
@@ -437,15 +438,15 @@ class MINARC_Server < Sinatra::Base
          msg = "GET #{API_URL_STAT_FILENAME} : get #{params[:filename]}"
          @@logger.debug(msg)
       end
-   
+
       fileStatus = ARC::FileStatus.new(params[:filename], true)
 
       if settings.isDebugMode == true then
          fileStatus.setDebugMode
       end
-     
+
       ret = fileStatus.statusFileName("#{params[:filename]}")
-      
+
       if settings.isDebugMode == true then
          puts "----------------------------------"
          puts ret
@@ -454,7 +455,7 @@ class MINARC_Server < Sinatra::Base
 
       @@logger.info("[ARC_204] Status: #{params[:filename]}")
 
-      content_type :json 
+      content_type :json
       ret
    end
 
@@ -464,14 +465,14 @@ class MINARC_Server < Sinatra::Base
    ##
    get "#{API_URL_LIST_FILETYPE}/:filetype" do |filetype|
       cmd = "minArcRetrieve -t #{params[:filetype]} --noserver -l"
-            
-      if settings.isDebugMode == true then 
+
+      if settings.isDebugMode == true then
          puts "GET #{API_URL_LIST_FILETYPE}/#{params[:filetype]}"
          puts "MINARC_Server::#{cmd}"
       end
 
       listFiles = `#{cmd}`
-      
+
       if $?.exitstatus == 0 then
          "#{listFiles}"
       else
@@ -487,50 +488,50 @@ class MINARC_Server < Sinatra::Base
    ## curl -X POST -F 'field1=value1' -F 'field2=value2' -F file=@/tmp/1.plist http://localhost:4567/dec/arc/minArcStore
    ##
    post ARC::API_URL_STORE do
-   
+
       @@logger.info "POST #{ARC::API_URL_STORE}/#{params[:file][:filename]}"
-   
+
    #   if true then
    #      puts JSON.pretty_generate(request.env)
    #      puts request.port
    #      puts request.request_method
    #      puts request.query_string
    #   end
-   
+
       prevDir  = Dir.pwd
-      reqDir   = "minArcStore_#{Time.now.to_f}.#{Random.new.rand(1.5)}"   
+      reqDir   = "minArcStore_#{Time.now.to_f}.#{Random.new.rand(1.5)}"
       FileUtils.mkdir(reqDir)
       Dir.chdir(reqDir)
 
       if request.form_data? == false then
          logger.error("Missing form parameters for request")
       end
-   
+
       # ---------------------------------------------
       # rename file into the original name
-      filename = params[:file][:filename] 
+      filename = params[:file][:filename]
       tempfile = params[:file][:tempfile]
-      FileUtils.mv(tempfile.path, filename)   
-      
+      FileUtils.mv(tempfile.path, filename)
+
       # ---------------------------------------------
       #
       # Process the form parameters
-         
+
       cmd = "minArcStore"
-   
+
       cmd = "#{cmd} -f #{Dir.pwd}/#{filename} --noserver"
-   
+
       params.each{|param|
          if param[0].slice(0,1) != "-" then
             next
          end
-         cmd = "#{cmd} #{param[0]} #{param[1]} "   
+         cmd = "#{cmd} #{param[0]} #{param[1]} "
       }
-   
+
       if settings.isDebugMode == true then
          @@logger.debug("MINARC_Server::API_URL_STORE => #{cmd}")
       end
-   
+
       retStr = `#{cmd}`
 
       if $?.exitstatus != 0 then
@@ -542,13 +543,13 @@ class MINARC_Server < Sinatra::Base
          response.headers['filename'] = retStr.split("Archived: ")[1]
          status API_RESOURCE_CREATED
       end
-      
+
       #
       # ---------------------------------------------
 
       Dir.chdir(prevDir)
       FileUtils.rm_rf(reqDir)
-   
+
    end
 
    ## ================================================================
@@ -557,12 +558,12 @@ class MINARC_Server < Sinatra::Base
    ## minArcDelete
    ##
    get "#{API_URL_DELETE}/:filename" do |filename|
-   
+
       if settings.isDebugMode == true then
          msg = "GET #{API_URL_DELETE} : get #{params[:filename]}"
          @@logger.debug(msg)
       end
-   
+
       cmd = "minArcDelete -f #{params[:filename]} --noserver"
 
       if settings.isDebugMode == true then
@@ -570,7 +571,7 @@ class MINARC_Server < Sinatra::Base
       end
 
       ret = system(cmd)
-   
+
       if ret == false then
          @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
          status API_RESOURCE_NOT_FOUND
@@ -587,47 +588,47 @@ class MINARC_Server < Sinatra::Base
    # minArcRetrieve
    #
    get "/kaka/#{API_URL_RETRIEVE}/:filename" do |filename|
-   
+
 =begin
-      puts "==================================================="  
+      puts "==================================================="
       puts
       puts "MINARC_Server #{API_URL_RETRIEVE} => #{params[:filename]}"
       puts
       puts
-=end   
-      reqDir   = "retrieve_#{Time.now.to_f}.#{Random.new.rand(1.9)}.#{self.object_id}"      
+=end
+      reqDir   = "retrieve_#{Time.now.to_f}.#{Random.new.rand(1.9)}.#{self.object_id}"
       Dir.chdir(settings.public_folder)
       FileUtils.mkdir(reqDir)
       Dir.chdir(reqDir)
-   
+
 #       puts "xxxxxxxxxxxxxxx"
 #       puts "MINARC_Server::RETRIEVE_DIR(#{Process.pid}/#{self.object_id}) => #{Dir.pwd} / #{reqDir}"
 #       puts "xxxxxxxxxxxxxxx"
-   
+
       # Retrieval from archive is a hard-link
       cmd      = "minArcRetrieve -f #{params[:filename]} --noserver -H"
-   
-      if settings.isDebugMode == true then 
+
+      if settings.isDebugMode == true then
          puts "MINARC_Server::#{cmd}"
       end
-   
+
       ret      = system(cmd)
-   
+
       if ret == true then
          Dir.chdir(settings.public_folder)
          Dir.chdir(reqDir)
-      
+
          theFile = Dir["#{params[:filename]}*"]
-         
+
          if theFile.empty? then
             puts "Problems come to me ! :-("
             puts Dir.pwd
             puts "#{params[:filename]}*"
             puts
          end
-         
-         content = File.read(theFile[0])         
-                  
+
+         content = File.read(theFile[0])
+
          response.headers['filename']     = theFile[0]
          response.headers['Content-Type'] = "application/octet-stream"
          # response.headers['Content-Disposition']   = "attachment;filename=#{theFile[0]}"
@@ -636,7 +637,7 @@ class MINARC_Server < Sinatra::Base
          # puts "BEFORE SEND_FILE"
          # send_file(theFile[0], :filename => theFile[0]) ########, :disposition => :attachment)
          # puts "AFTER SEND_FILE"
-         
+
          rm(theFile[0])
          Dir.chdir(settings.public_folder)
          FileUtils.rm_rf(reqDir)
@@ -649,18 +650,18 @@ class MINARC_Server < Sinatra::Base
          FileUtils.rm_rf(reqDir)
          status API_RESOURCE_NOT_FOUND
       end
-            
+
 =begin
       puts
       puts "MINARC_Server::#{API_URL_RETRIEVE} EXIT"
-      puts 
+      puts
       puts "==========================================="
 
-=end      
+=end
    end
 
    # =================================================================
-   
+
    #
    # minArcStatus by file-type
    #
@@ -670,16 +671,16 @@ class MINARC_Server < Sinatra::Base
       if settings.isDebugMode == true then
          fileStatus.setDebugMode
       end
-     
+
       ret = fileStatus.statusType("#{params[:filetype]}")
-      
+
       if settings.isDebugMode == true then
          puts "----------------------------------"
          puts ret
          puts "----------------------------------"
       end
 
-      content_type :json 
+      content_type :json
       ret.to_json
    end
 
@@ -712,20 +713,20 @@ class MINARC_Server < Sinatra::Base
    end
 
    ## -----------------------------------------------------------
-   
+
    get '/' do
       user = request.env["REMOTE_USER"]
       puts
-      puts user 
+      puts user
       puts
       puts params[:name]
       puts
       code = "<%= Time.now %>"
       erb code
    end
-   
+
    ## -----------------------------------------------------------
-   
+
    get '/hello' do
       "Hello Blimey !"
    end
@@ -747,7 +748,7 @@ class MINARC_Server < Sinatra::Base
    # curl --upload-file /tmp/1.plist http://localhost:4567/uploadFile/
 
    put '/uploadFile/:filename' do
-   
+
       logger.info "PUT /uploadFile/#{params[:filename]}"
 
       if true then
@@ -755,21 +756,21 @@ class MINARC_Server < Sinatra::Base
          puts JSON.pretty_generate(request.env)
          puts
       end
-   
+
       File.open(params[:filename], 'w+') do |file|
          request.body.rewind
          file.write(request.body.read)
       end
-   
+
    end
 
    ## -----------------------------------------------------------
-   
+
 
    ## -----------------------------------------------------------
    ##
    ## Release the activerecord connection upon every request
-   
+
    after do
       ActiveRecord::Base.connection.close
    end
@@ -777,7 +778,7 @@ class MINARC_Server < Sinatra::Base
    ## -----------------------------------------------------------
 
    ## ================================================================
-  
+
    def self.run!
       puts
       puts "MINARC_Server::run!"

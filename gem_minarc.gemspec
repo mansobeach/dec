@@ -5,7 +5,7 @@
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Data Exchange Component (DEC)
-### 
+###
 ### Git: gem_minarc.gemspec,v $Id$ $Date$
 ###
 ### System Component DEC / MINARC
@@ -23,9 +23,9 @@ Gem::Specification.new do |s|
   s.description = "Minimum Archive"
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
-  
+
   s.required_ruby_version = '>= 2.7'
-  
+
   s.files       = Dir['code/arc/File*.rb'] + \
                   Dir['code/arc/Inventory2Excel*.rb'] + \
                   Dir['code/arc/MINARC_*.rb'] + \
@@ -61,7 +61,7 @@ Gem::Specification.new do |s|
 
   # s.datadir       = ['code/arc/plugins/test']
 
-  s.executables   = [ 
+  s.executables   = [
                      'minArcStore', \
                      'minArcDB', \
                      'minArcFile', \
@@ -91,9 +91,9 @@ Gem::Specification.new do |s|
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://bitbucket.org/borja_lopez_fernandez/dec.git" }
-  
+
   ## ----------------------------------------------
-  
+
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('activerecord-import', '~> 1.0')
   s.add_dependency('addressable', '~> 2.7')
@@ -113,12 +113,12 @@ Gem::Specification.new do |s|
   s.add_dependency('sinatra-reloader', '~> 1.0')
   s.add_dependency('thin', '~> 1.7')
   s.add_dependency('writeexcel', '~> 1.0')
-  
+
   ## --------------------------------------------
   ##
   ## Tailored installer to include Postgresql
   if ENV.include?("MINARC_PG") == true then
-     # s.add_dependency('pg', '~> 1.2.3')
+     s.add_dependency('pg', '~> 1.2.3')
   end
   ## --------------------------------------------
 
@@ -131,17 +131,17 @@ Gem::Specification.new do |s|
   ## --------------------------------------------
 
   ## ----------------------------------------------
-  
+
   # s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('simplecov', '~> 0.21')
   s.add_development_dependency('test-unit', '~> 3.0')
 
   ## ----------------------------------------------
-  
+
   ## ----------------------------------------------
 
   s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed #{ARC::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
-    
+
   ## ----------------------------------------------
-  
+
 end

@@ -3,42 +3,24 @@
 ##
 ##
 
-# rm -rf Library/Group\ Containers/group.com.docker
-# rm -rf Library/Containers/com.docker.docker
-# rm -rf Library/Application\ Support/Docker\ Desktop 
-# ~/Library/Group\ Containers/group.com.docker/settings.json
-
-# "filesharingDirectories": [
-#   "/Users",
-#    "/Volumes",
-#    "/private",
-#    "/tmp",
-#    "/var/folders"
-#  ],
-
-# rm -rf ~/Library/Containers/com.docker.*
-
-# <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k localhost:4567/dec/arc/requestArchive/* &amp; "/>
-# <Event Name="OnReceiveNewFilesOK"     executeCmd="curl -k -u dec:dec https://185.52.193.141:4567/dec/arc/requestArchive/*"/>
-
-# PODMAN scripts in MOC-UAP @ NDC
 
 # =============================================================================
-# CREATE GSC4EO USER
-# sudo useradd -u 2020 gsc4eo -g gsc4eo
+# CREATE adgs USER in LOCALHOST
+# sudo useradd -u 2020 adgs -g adgs
 
 # =============================================================================
-# DISABLE HOST POSTGRESQL
+# DISABLE LOCALHOST POSTGRESQL
 # sudo service postgresql stop
 # sudo lsof -i -P | grep LISTEN | grep :5432
 # =============================================================================
+
 
 # =============================================================================
 # BUILD DEC IMAGE
 # rake -f build_aux.rake aux:install
 # rake -f build_dec.rake dec:build[adgs,localhost,adgs_test_pg]
 # rake -f build_dec.rake dec:install[adgs,localhost,adgs_test_pg]
-# rake -f build_dec.rake dec:image_build[gsc4eo,localhost,adgs]
+# rake -f build_dec.rake dec:image_build[adgs,localhost,adgs]
 # => naming to docker.io/library/app_adgs_dec:latest
 # =============================================================================
 
@@ -46,70 +28,55 @@
 # BUILD MINARC IMAGE
 # rake -f build_minarc.rake minarc:build[adgs,localhost,adgs_test_pg]
 # rake -f build_minarc.rake minarc:install[adgs,localhost,adgs_test_pg]
-# rake -f build_minarc.rake minarc:image_build[gsc4eo,localhost,adgs]
+# rake -f build_minarc.rake minarc:image_build[adgs,localhost,adgs]
 # => naming to docker.io/library/app_adgs_minarc:latest
 # =============================================================================
 
-# docker run --name app_adgs_dec -v /data:/data  app_adgs_dec
+# =============================================================================
+# SERVICE START / STOP / STATS / PS :
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml up
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml down --volumes --remove-orphans
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml stats
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml ps
+# =============================================================================
 
-## 2/ start only adgs_db_postgres
-## > docker-compose -f install/docker/docker-compose.adgs.localhost.yml up -d adgs_db_postgres
-## > docker-compose -f install/docker/docker-compose.adgs.localhost.yml exec adgs_db_postgres env
-## > docker inspect --format='{{json .NetworkSettings.Networks}}' adgs_db_postgres | jq
+# =============================================================================
+# TROUBLESHOOT:
+# docker exec -it app_adgs_minarc /bin/bash
+# docker run -ti -v /data/adgs:/data/adgs  --entrypoint=bash app_adgs_minarc
+# docker run -ti --entrypoint=bash app_adgs_dec
+# docker run -ti -v /data/adgs:/data/adgs  --entrypoint=bash app_adgs_dec 
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml up -d adgs_db_postgres
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml exec adgs_db_postgres env
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml up -d adgs_db_postgres app_adgs_dec
+# docker compose -f install/docker/docker-compose.adgs.localhost.yml down --volumes --remove-orphans
+# docker inspect --format='{{json .NetworkSettings.Networks}}' adgs_db_postgres | jq
+# =============================================================================
 
-## 3/ create database in the container
-### docker exec -it adgs_db_postgres psql -U adgs -c "create database adgs"
+# =============================================================================
+# CREATE DATABASE
+# docker exec -it adgs_db_postgres psql -U adgs -c "create database adgs"
 
-# lsof -n -i:5432 | grep LISTEN
+# /etc/hosts : 127.0.0.1	localhost app_adgs_minarc
 
-# docker inspect --format='{{json .NetworkSettings.Networks}}' app_adgs_dec | jq .
+# MINARC
+# curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://app_adgs_minarc:4567/dec/arc/minArcStatGlobal.json
+# sinatra is adding backslashes to json
 
-## 0/ build minarc_s2_pg.gem
-### rake -f build_minarc.rake minarc:build[s2decservice,cloudferro,s2_pg]
 
-# Assign network hostnames
-# https://stackoverflow.com/questions/29924843/how-do-i-set-hostname-in-docker-compose
+# curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://app_adgs_minarc:4567/dec/arc/requestArchive/* | jq
+# "{\"total_size\":\"66.18 MiB\",\"total_size_in_disk\":\"66.45 MiB\",\"total_size_original\":\"66.19 MiB\",\"num_total_files\":140,\"num_files_last_hour\":0,\"num_file_types\":2,\"last_date_archive\":\"2024-05-18T18:25:43.773Z\",\"last_archive_filename\":\"ims2024139_4km_v1.3.nc.gz\",\"last_hour_size_original\":\"0.00 B\",\"last_hour_size\":\"0.00 B\",\"last_hour_size_in_disk\":\"0.00 B\"}\n"
 
-## 1/ build app_minarc_s2
-### sudo docker image build --rm=false -t app_minarc_s2 . -f install/docker/Dockerfile.decservice.minarc.s2.cloudferro
-## 2/ start only minarc_db_s2 service
-### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2boa.cloudferro.yml up -d minarc_db_s2
-## 3/ create database in the container
-### docker exec -it minarc_db_s2 psql -U s2minarc -c "create database s2minarc"
-## 4/ start-up all the services
-### sudo docker-compose -f install/docker/docker-compose.minarcservice.s2boa.cloudferro.yml up
-## Docker POSTGRES reference environment variables & initdb reference
-### https://hub.docker.com/_/postgres
-##
-## https://www.postgresql.org/docs/9.2/auth-pg-hba-conf.html
-## https://github.com/docker-library/postgres/issues/482
-## host all all 0.0.0.0/0 trust
-## 
-## Docker Networking
-## https://docs.docker.com/compose/networking/
-##
-## Docker Volumes
-## https://docs.docker.com/compose/compose-file/#volumes
-##
-## Create a named volume beforehand
-## https://stackoverflow.com/questions/52152231/how-to-mount-docker-directory-into-host-directory-with-docker-compose
-## https://stackoverflow.com/questions/45122459/mounts-denied-the-paths-are-not-shared-from-os-x-and-are-not-known-to-docke
-## https://github.com/docker/for-mac/issues/7012
-## 
-##
-## network mode host for FTP
-## https://docs.docker.com/compose/compose-file/#network_mode
-##
-## network_mode: "host"
-##
-## https://docs.docker.com/compose/compose-file/#network-configuration-reference
-##
-##
-## > s2decservices
-## - rake -f build_minarc.rake minarc:install[s2decservice,e2espm-inputhub]
-##
-##
-# version: '3'
+
+
+
+volumes:
+   volume_adgs:
+      driver: local
+      driver_opts:
+         type: none
+         o: bind
+         device: /data
 
 services:
 
@@ -119,29 +86,36 @@ services:
       hostname: adgs_db_postgres
       restart: always
       environment:
-         POSTGRES_DB: "adgs_db"
-         POSTGRES_USER: "adgs"
-         POSTGRES_PASSWORD: "adg$"
-         POSTGRES_HOST_AUTH_METHOD: "trust"
+         POSTGRES_DB                : "adgs_db"
+         POSTGRES_USER              : "adgs"
+         POSTGRES_PASSWORD          : "adg$"
+         POSTGRES_HOST_AUTH_METHOD  : "trust"
       ports:
          - "5432:5432"
       volumes:
          - /data/adgs/db:/var/lib/postgresql/data
 
+   app_adgs_minarc:
+      depends_on:
+         - "adgs_db_postgres"
+      image          : app_adgs_minarc
+      container_name : app_adgs_minarc
+      hostname       : app_adgs_minarc
+      ports:
+         - 4567:4567
+      environment    :
+         - MINARC_PLUGIN="ADGS"
+         - TMPDIR="/tmp"
+      # restart        : always
+      volumes:
+         - /data:/data
+
    app_adgs_dec:
       depends_on:
          - "adgs_db_postgres"
-      image: app_adgs_dec
-      container_name: app_adgs_dec
-      hostname: app_adgs_dec
-      restart: always
+      image          : app_adgs_dec
+      container_name : app_adgs_dec
+      hostname       : app_adgs_dec
+      # restart: always
       volumes:
-         - volume_dec:/data
-
-volumes:
-   volume_dec:
-      driver: local
-      driver_opts:
-         type: none
-         o: bind
-         device: /data
+         - /data:/data

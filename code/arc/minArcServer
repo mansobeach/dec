@@ -3,7 +3,7 @@
 # == Synopsis
 #
 # This is a MINARC server
-# 
+#
 # == Usage
 # minArcServer --start | --kill | --check  [--devel]
 #     --start                    it starts the server
@@ -56,7 +56,7 @@ def main
    @bDevelopment           = false
    @bShowUsage             = false
    @bHappy                 = false
-   
+
    opts = GetoptLong.new(
      ["--file", "-f",            GetoptLong::REQUIRED_ARGUMENT],
      ["--type", "-t",            GetoptLong::REQUIRED_ARGUMENT],
@@ -71,10 +71,10 @@ def main
      ["--Happy",   "-H",         GetoptLong::NO_ARGUMENT],
      ["--help", "-h",            GetoptLong::NO_ARGUMENT]
      )
-      
+
    begin
       opts.each do |opt, arg|
-         case opt      
+         case opt
             when "--Debug"             then @isDebugMode          = true
             when "--devel"             then @bDevelopment         = true
             when "--version"           then @bShowVersion         = true
@@ -137,17 +137,17 @@ def main
 
    ## initialise the logger
    loggerFactory = CUC::Log4rLoggerFactory.new("minArcServer", "#{@minArcConfigDir}/minarc_log_config.xml")
-   
+
    if @isDebugMode then
       loggerFactory.setDebugMode
    end
-      
+
    @logger = loggerFactory.getLogger
-   
+
    if @logger == nil then
       puts
 		puts "Could not initialize logging system !  :-("
-      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\"" 
+      puts "Check minARC logs configuration under \"#{@minArcConfigDir}/minarc_log_config.xml\""
 		exit(99)
    end
 
@@ -166,7 +166,7 @@ def main
    if @bStartServer == true then
       startServer
    end
-   
+
    exit(0)
 
    # -------------------------------------------------------
@@ -181,7 +181,7 @@ end
 ## * 1 -> server is not running
 ##
 def checkStatus
-   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "SET_MINARC_PLUGIN_NAME", true, ENV['MINARC_TMP'])
    if @isDebugMode == true then
       checker.setDebugMode
    end
@@ -197,20 +197,22 @@ end
 ## -------------------------------------------------------------
 
 def startServer
-   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP']) 
+   @locker = CUC::CheckerProcessUniqueness.new(File.basename($0), "SET_MINARC_PLUGIN_NAME", true, ENV['MINARC_TMP'])
    if @locker.isRunning == true then
       @logger.warn("[ARC_310] minArcServer is already running with PID #{@locker.getRunningPID}")
       if @bHappy == true then
          @logger.info("[ARC_XXX] minArcServer is still happy")
          exit(0)
       else
+         @logger.info("[ARC_XXX] minArcServer is not happy")
          exit(99)
       end
-   end  
-   
-   @locker.setRunning
-   
+   end
+
    @logger.info("[ARC_005] Starting minArcServer")
+
+   @locker.setRunning
+
 
    require 'arc/MINARC_Server'
 
@@ -227,7 +229,7 @@ def startServer
       @logger.error("[ARC_666] Cannot start server: #{e.to_s}")
    end
    exit(0)
-   
+
 end
 ## -------------------------------------------------------------
 
@@ -235,7 +237,7 @@ end
 
 ## It stops the server for the given I/F
 def stopServer
-   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "", true, ENV['MINARC_TMP'])
+   checker = CUC::CheckerProcessUniqueness.new(File.basename($0), "SET_MINARC_PLUGIN_NAME", true, ENV['MINARC_TMP'])
    pid = checker.isRunning
    if pid == false then
       @logger.warn("[ARC_312] minArcServer was not running")
@@ -260,14 +262,14 @@ end
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
-      
+
    value = `#{"head -24 #{fullpathFile}"}`
-      
+
    value.lines.drop(1).each{
       |line|
       len = line.length - 1
       puts line[2, len]
-   }  
+   }
 end
 
 # -------------------------------------------------------------
