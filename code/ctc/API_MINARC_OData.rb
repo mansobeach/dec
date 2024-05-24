@@ -7,7 +7,7 @@
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Mini Archive Component (MinArc)
-### 
+###
 ### Git: MINARC_API_OData.rb,v $Id$
 ###
 ### module MINARC
@@ -58,7 +58,7 @@
 
 ### Section 3.3.1.5 Additional Options => PARTIAL
 
-### $orderby 
+### $orderby
 ## If asc or desc not specified, then the resources will be ordered in ascending order
 
 ## https://<service-root-uri>/odata/v1/Products?$orderby=PublicationDate desc
@@ -103,11 +103,11 @@
 
 ### The AUXIP supports single unit downloads only. No component downloads of, for example, metadata, are assumed
 
-### In the case where the query is accepted but no products are found 
-### (for example if nothing is found in the date range of the query) 
+### In the case where the query is accepted but no products are found
+### (for example if nothing is found in the date range of the query)
 ### then the 200 OK code is returned with an empty response body, instead of returning the 404 Not Found code.
 
-###$top and $skip are often applied together; 
+###$top and $skip are often applied together;
 ### in this case $skip is always applied first regardless of the order in which they appear in the query.
 
 ### $expand
@@ -129,9 +129,9 @@ module ARC_ODATA
    API_RESOURCE_FOUND                  = 200
    API_BAD_REQUEST                     = 400
    API_RESOURCE_NOT_FOUND              = 404
-   
+
    ## ------------------------------------------------------
-   
+
    EDM_AUXIP_PRODUCT_PROPERTY = [ "Id", \
                               "Name", \
                               "ContentType", \
@@ -144,16 +144,16 @@ module ARC_ODATA
                               "ContentDate/Start", \
                               "ContentDate/End" \
                               ]
-   
+
    ## ------------------------------------------------------
-   
-   
+
+
    ## ------------------------------------------------------
-   
+
    EDM_AUXIP_ATTRIBUTE_PROPERTY = []
-   
+
    ## ------------------------------------------------------
-   
+
    ## option can be : count
    def oDataQueryResponse(arrFiles, option, skip = 0, top = 0, total = 0)
       hProducts   = Hash.new
@@ -171,20 +171,23 @@ module ARC_ODATA
          count += 1
       }
       hResponse = Hash.new
-      
-      hResponse["@odata.context"]   = "$metadata#Products"      
-      
+
+      hResponse["@odata.context"]   = "$metadata#Products"
+
       if option == 'count' then
          # hResponse["count"]  = "#{count}"
          hResponse["count"]  = "#{arrFiles.length - skip}"
       end
-      
+
       hResponse["value"]            = arrProducts
-      
+
       return hResponse.to_json
    end
+
    ## ------------------------------------------------------
-   
+
+   ## ------------------------------------------------------
+
    def oDataAUXIP_ArchivedFile(aFile)
       hFile    = Hash.new
       hFile["@odata.mediaContentType"] = "application/octet-stream"
@@ -199,7 +202,7 @@ module ARC_ODATA
       return hFile
    end
    ## ------------------------------------------------------
-   
+
    def oData2Model(property)
 
       if property == "ContentLength" then
@@ -217,25 +220,25 @@ module ARC_ODATA
       if property == "ChecksumDate" then
          return "archive_date"
       end
-      
+
       if property == "Start" or property.include?("Start") == true then
          return "validity_start"
       end
-      
+
       if property == "End" or property.include?("End") == true then
          return "validity_stop"
       end
-      
+
       return false
-      
+
    end
-   ## ------------------------------------------------------   
-   
+   ## ------------------------------------------------------
+
    ## Built-in filter operations
    ## https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_BuiltinFilterOperations
-   
+
    def filterOperations2Model(operation)
-      
+
       if operation == "eq" then
          return "=="
       end
@@ -255,14 +258,14 @@ module ARC_ODATA
       if operation == "le" then
          return "<="
       end
-      
+
 #      if operation == "ne" then
 #         return "=="
 #      end
-      
+
       return false
-      
+
    end
-   ## ------------------------------------------------------   
-   
+   ## ------------------------------------------------------
+
 end

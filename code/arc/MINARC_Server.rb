@@ -48,20 +48,15 @@ class MINARC_Server < Sinatra::Base
 
    configure do
 
-      if ENV.include?('MINARC_DEBUG') == true then
-         @@isDebugMode = true
-      else
-         @@isDebugMode = false
-      end
-
-      puts "MINARC_Server: Loading general configuration / debug = #{@@isDebugMode}"
       # set :bind, '0.0.0.0'
       set :server, :thin
       # set :server, :puma
       set :threaded, false
       set :root,              "#{ENV['MINARC_ARCHIVE_ROOT']}"
       set :public_folder,     "#{ENV['MINARC_ARCHIVE_ROOT']}"
-      set :isDebugMode,       false
+      set :isDebugMode,       true
+      @isDebugMode   = true
+      @@isDebugMode  = true
       set :environment, :production
 
       # set :logger, Logger.new(STDOUT)
@@ -90,6 +85,8 @@ class MINARC_Server < Sinatra::Base
 		   exit(99)
       end
 
+      @@logger.info("MINARC_Server: Loading general configuration / debug = #{@@isDebugMode}")
+
       ## ------------------------------------------------------
 
       @@inTray = ARC::ReadMinarcConfig.instance.getArchiveIntray
@@ -101,8 +98,8 @@ class MINARC_Server < Sinatra::Base
       ## ------------------------------------------------------
 
       # Racks environment variable
-      if !ENV['TMPDIR'] then
-         ENV['TMPDIR'] = "#{ENV['MINARC_TMP']}"
+      if !ENV['MINARC_TMP'] then
+         raise "MINARC_TMP environment variable is needed"
       end
 
       if settings.isDebugMode then
@@ -110,7 +107,7 @@ class MINARC_Server < Sinatra::Base
          puts "CONFIGURE :root                        => #{settings.root}"
          puts "CONFIGURE :public_folder               => #{settings.public_folder}"
          puts "CONFIGURE :isDebugMode                 => #{settings.isDebugMode}"
-         puts "CONFIGURE ENV['TMPDIR']                => #{ENV['TMPDIR']}"
+         puts "CONFIGURE ENV['MINARC_TMP']            => #{ENV['MINARC_TMP']}"
       end
    end
 
@@ -154,7 +151,7 @@ class MINARC_Server < Sinatra::Base
 
       check_environment_dirs
 
-      Dir.chdir(ENV['TMPDIR'])
+      Dir.chdir(ENV['MINARC_TMP'])
    end
    ## ----------------------------------------------------------
 
@@ -214,11 +211,24 @@ class MINARC_Server < Sinatra::Base
          @@logger.debug("MINARC_Server route #{ARC_ODATA::API_URL_PRODUCT_QUERY}")
       end
 
-      ret = ARC_ODATA::ControllerODataProductQuery.new(self, \
+      before   = DateTime.now
+      ret      = ARC_ODATA::ControllerODataProductQuery.new(self, \
                         @@logger, \
                         settings.isDebugMode).query
+
+      after    = DateTime.now
+      elapsed  = ((after - before) * 24 * 60 * 60).to_f
+
+      ARC_ODATA::ControllerODataProductQuery.new(self, @@logger, settings.isDebugMode).generateReport(ret, elapsed)
+
       content_type :json
       body ret
+   end
+
+   ## =================================================================
+
+   after ARC_ODATA::API_URL_PRODUCT_QUERY do
+      @@logger.info("SINATRA::AFTER BLOCK ARC_ODATA::API_URL_PRODUCT_QUERY")
    end
 
    ## =================================================================
@@ -226,6 +236,8 @@ class MINARC_Server < Sinatra::Base
    ## https://<service-root-uri>/odata/v1/Products(Id)/$value
 
    get ARC_ODATA::API_URL_PRODUCT_DOWNLOAD do
+      @@logger.info("START ARC_ODATA::API_URL_PRODUCT_DOWNLOAD")
+
       if authenticate() == false then
          @@logger.error("[ARC_600] User #{request.env["REMOTE_USER"]} [#{request.ip}]: Authentication failed")
          halt 401
@@ -238,8 +250,14 @@ class MINARC_Server < Sinatra::Base
       ARC_ODATA::ControllerODataProductDownload.new(self, \
                         @@logger, \
                         settings.isDebugMode).download
+      puts "never arrives here"
+      @@logger.info("END ARC_ODATA::API_URL_PRODUCT_DOWNLOAD")
    end
    ## =================================================================
+
+   after ARC_ODATA::API_URL_PRODUCT_DOWNLOAD do
+      @@logger.info("SINATRA::AFTER BLOCK ARC_ODATA::API_URL_PRODUCT_DOWNLOAD")
+   end
 
 
    ### ODATA API END
@@ -328,7 +346,9 @@ class MINARC_Server < Sinatra::Base
          end
 
          @@logger.info("[ARC_201] Served: #{theFile.filename}")
-         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename) ########, :disposition => :attachment)
+         ########, :disposition => :attachment)
+         send_file("#{theFile.path}/#{theFile.filename}", :filename => theFile.filename)
+         @@logger.info("[ARC_202] Served: #{theFile.filename}")
       else
          @@logger.error("[ARC_610] #{params[:filename]} not present in the archive")
          status API_RESOURCE_NOT_FOUND
@@ -772,6 +792,7 @@ class MINARC_Server < Sinatra::Base
    ## Release the activerecord connection upon every request
 
    after do
+      @@logger.info("SINATRA::AFTER BLOCK")
       ActiveRecord::Base.connection.close
    end
 

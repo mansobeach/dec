@@ -79,6 +79,7 @@ Gem::Specification.new do |s|
   if ENV.include?("MINARC_TEST") == true then
      s.executables   << 'minArcUnitTests'
      s.executables   << 'minArcUnitTests_ADGS'
+     s.executables   << 'minArcUnitTests_ADGS_AUXIP'
      s.executables   << 'minArcUnitTests_DUMMY'
      s.executables   << 'minArcUnitTests_NAOS'
      s.executables   << 'minArcUnitTestsOData'

@@ -26,10 +26,13 @@ module ARC
 
    include CUC::DirUtils
 
-   VERSION   = "1.3.2.8"
+   VERSION   = "1.3.3.0"
    ## ----------------------------------------------------------------
 
    CHANGE_RECORD = { \
+      "1.3.3"  =>      "Server to generate OData reports:\n\
+         > auxip_query_report\n\
+         > auxip_download_report",\
       "1.3.2"  =>      "Fixed Handler_DUMMY to decode any filename\n\
          MINARC_PLUGIN environment variable is required\n\
          Handler_NAOS updated for TLE\n\
@@ -219,7 +222,6 @@ module ARC
       ENV['MINARC_ARCHIVE_ROOT']          = "/tmp/minarc/archive_root"
       ENV['MINARC_ARCHIVE_ERROR']         = "/tmp/minarc/error"
       ENV['MINARC_TMP']                   = "/tmp/minarc/tmp"
-      ENV['TMPDIR']                       = "/tmp/minarc/tmp"
       ENV['MINARC_DATABASE_HOST']         = "localhost"
       ENV['MINARC_DATABASE_PORT']         = ""
       ENV['MINARC_DATABASE_NAME']         = "#{ENV['HOME']}/Sandbox/inventory/minarc_inventory"
@@ -243,7 +245,7 @@ module ARC
       ENV.delete('MINARC_DATABASE_NAME')
       ENV.delete('MINARC_DATABASE_USER')
       ENV.delete('MINARC_DATABASE_PASSWORD')
-      ENV.delete('MINARC_TMP')
+      ENV.delete('MINARC_DEBUG')
    end
    ## ----------------------------------------------------------------
 
@@ -255,7 +257,6 @@ module ARC
    def print_environment
       puts "HOME                          => #{ENV['HOME']}"
       puts "RACK_ENV                      => #{ENV['RACK_ENV']}"
-      puts "TMPDIR                        => #{ENV['TMPDIR']}"
       puts "MINARC_DB_ADAPTER             => #{ENV['MINARC_DB_ADAPTER']}"
       puts "MINARC_SERVER                 => #{ENV['MINARC_SERVER']}"
       puts "MINARC_PLUGIN                 => #{ENV['MINARC_PLUGIN']}"
@@ -267,6 +268,7 @@ module ARC
       puts "MINARC_DATABASE_PASSWORD      => #{ENV['MINARC_DATABASE_PASSWORD']}"
       puts "MINARC_ARCHIVE_ROOT           => #{ENV['MINARC_ARCHIVE_ROOT']}"
       puts "MINARC_ARCHIVE_ERROR          => #{ENV['MINARC_ARCHIVE_ERROR']}"
+      puts "MINARC_DEBUG                  => #{ENV['MINARC_DEBUG']}"
       puts "Workflow/ArchiveIntray        => #{ARC::ReadMinarcConfig.instance.getArchiveIntray}"
    end
    ## ----------------------------------------------------------------
@@ -282,11 +284,11 @@ module ARC
       logger.info("MINARC_DATABASE_PASSWORD   => #{ENV['MINARC_DATABASE_PASSWORD']}")
       logger.info("MINARC_ARCHIVE_ROOT        => #{ENV['MINARC_ARCHIVE_ROOT']}")
       logger.info("MINARC_ARCHIVE_ERROR       => #{ENV['MINARC_ARCHIVE_ERROR']}")
+      logger.info("MINARC_DEBUG               => #{ENV['MINARC_DEBUG']}")
    end
    ## ----------------------------------------------------------------
 
    def check_environment_dirs
-      checkDirectory(ENV['TMPDIR'])
       checkDirectory(ENV['MINARC_TMP'])
       checkDirectory(ENV['MINARC_ARCHIVE_ROOT'])
       checkDirectory(ENV['MINARC_ARCHIVE_ERROR'])
@@ -318,9 +320,7 @@ module ARC
    ## ----------------------------------------------------------------
 
    def check_environment
-
       load_config
-
       check_environment_dirs
       retVal = checkEnvironmentEssential
       if retVal == true then

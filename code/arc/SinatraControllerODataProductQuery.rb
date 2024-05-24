@@ -4,11 +4,11 @@
 ###
 ### === Ruby source for #SinatraControllerOData class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Mini Archive Component (MinArc)
-### 
-### Git: $Id: SinatraControllerODataProductQuery, bolf Exp $
+###
+### Git: $Id: SinatraControllerODataProductQuery, Exp $
 ###
 ### module ARC_ODATA
 ###
@@ -41,22 +41,22 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
   ## -------------------------------------------------------
   ##
   def query
-  
+
      ret = true
-   
+
      if @logger != nil and @isDebugMode == true then
-        @logger.debug("ControllerODataProductQuery::query")
+        @logger.debug("ControllerODataProductQuery::query by #{@user}")
         @logger.debug("path_info    :   #{@request.path_info}")
         @logger.debug("query_string :   #{Addressable::URI.unencode(@request.query_string)}")
         @logger.debug("url          :   #{Addressable::URI.unencode(@request.url)}")
         @logger.debug("path         :   #{@request.path}")
      end
-     
+
 #     @logger.debug("xxxxxxxxxxxxxxxxx")
 #     @logger.debug(@request.query_string)
 #     @logger.debug(@request.path)
 #     @logger.debug("xxxxxxxxxxxxxxxxx")
-     
+
      ## ----------------------------------------------------
      ##
      ## This case is for the pure $count without query
@@ -72,7 +72,7 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
         return val.to_s
      end
      ## ----------------------------------------------------
-     
+
      ## query is currently mainly understood as $filter
      begin
         ret = parseQuery(Addressable::URI.unencode(@request.query_string))
@@ -81,31 +81,31 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
         @logger.error("[ARC_777] Query #{Addressable::URI.unencode(@request.query_string)}: not valid / or badly managed")
         @response.status = ARC_ODATA::API_BAD_REQUEST
         @response.headers['Message'] = e.to_s
-        return  
+        return
      end
-     
+
      if ret == false then
         @logger.error("[ARC_777.7] Query #{Addressable::URI.unencode(@request.query_string)}: not valid / or badly managed: #{@request.query_string}")
         @response.status = ARC_ODATA::API_BAD_REQUEST
-        
+
         if @filterParam != nil then
            @response.headers['Message'] = "FilterParam #{@filterParam} not supported"
         end
-        
+
         if @expandEntity != nil then
            @response.headers['Message'] = "EDM #{@expandEntity} not supported for $expand"
         end
-        
+
         return
      end
-          
-     
+
+
      aFile = nil
-     
+
      if @isDebugMode == true then
         @logger.debug(@property)
      end
-     
+
      ## ------------------------------------------
      ## Query all when no property
      if @property == nil then
@@ -114,7 +114,7 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
         aFile = ArchivedFile.limit(@top)
      end
      ## ------------------------------------------
-     
+
      ## ------------------------------------------
      ## Query by property Name
      if @property == 'Name' then
@@ -124,8 +124,8 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
         aFile = ArchivedFile.where("name LIKE ?", @queryValue)
      end
      ## ------------------------------------------
-     
-     ## ------------------------------------------          
+
+     ## ------------------------------------------
      ## Query by any date property PublicationDate
      if @property == 'PublicationDate' or @property == 'ContentDate/Start' or @property == 'ContentDate/End' then
         if @isDebugMode == true then
@@ -133,14 +133,14 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
            @logger.debug(self.str2date(@queryValue))
            @logger.debug(ARC_ODATA::filterOperations2Model(@function))
         end
-        
+
         aFile = ArchivedFile.where("#{ARC_ODATA::oData2Model(@property)} #{ARC_ODATA::filterOperations2Model(@function)} ?", self.str2date(@queryValue))
      end
      ## ------------------------------------------
-     
-#     ## ------------------------------------------    
+
+#     ## ------------------------------------------
 #     ## Query is an array of properties
-#     
+#
 #     if @property.class.to_s.include?("Array") == true then
 #        if @isDebugMode == true then
 #           @logger.debug("Array of properties #{@property}")
@@ -155,42 +155,42 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
 #           end
 #           idx += 1
 #        }
-#        
+#
 #        query = Array.new
 #        query << strQuery
 #        query << @queryValue
 #        query = query.dup.flatten
-#        
+#
 #        if @isDebugMode == true then
 #           @logger.debug("Composed query => #{strQuery}")
 #           @logger.debug("Composed query => #{query}")
 #        end
-#        
+#
 #        aFile = ArchivedFile.where(query)
-#        
-#     end    
+#
+#     end
      ## ------------------------------------------
 
      ## $filter with multiple attributes
      if @request.query_string.include?("$filter") == true and @request.query_string.include?("and") == true then
         aFile = execQueryComplex(Addressable::URI.unencode(@request.query_string))
      end
-      
+
      ## -------------------------------
 
-                  
+
      if aFile == nil then
-        @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@property} #{@function} #{@queryValue} / products not found") 
+        @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@property} #{@function} #{@queryValue} / products not found")
         @response.status = ARC_ODATA::API_RESOURCE_NOT_FOUND
         @response.headers['Message']  = "#{@queryValue} / products not found"
      else
-          
+
         if @property != nil then
            @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@property} #{@function} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
         else
            @logger.info("[ARC_210] User #{@user} [#{@request.ip}]: Query #{Addressable::URI.unencode(@request.query_string)}: #{@option} #{@queryValue} $skip = #{@skip} $top = #{@top} / #{aFile.to_a.length - @skip} product(s) found")
-        end 
-        
+        end
+
         if @orderby != nil then
            if ARC_ODATA::oData2Model(@orderby) == false then
               @logger.warn("$orderby #{@orderby} not supported")
@@ -209,33 +209,70 @@ class ControllerODataProductQuery < ARC::SinatraControllerBase
               @logger.debug("skip      => #{@skip}")
               @logger.debug("top       => #{@top}")
            end
-           response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)  
+           response = ARC_ODATA::oDataQueryResponse(aFile.to_a, @option, @skip, @top)
         end
 
-        
-              
         #@response.body           = response
         @response.content_type   = :json
         @response.status         = ARC_ODATA::API_RESOURCE_FOUND
-        
+
         if @property == nil and @option == 'count' then
            @response.headers['Message']  = "Hey girls ; Hey boys ; Superstar DJ's ; Here we go ..."
         else
            @response.headers['Message']  = "We're flying high ; We're watching the world pass us by ; Never want to come down ; Never want to put my feet back down on the ground "
         end
-        
+
         return response
-     end    
-     
+     end
+
      ## ------------------------------------------
-       
-  end
-  ## -------------------------------------------------------
-  
+
+   end
+
+## -------------------------------------------------------
+
+def generateReport(result, elapsedTime)
+
+   json     = nil
+   bSuccess = nil
+   nResults = nil
+
+   begin
+      json     = JSON.parse(result)
+      nResults = json["value"].length
+      bSuccess = true
+   rescue Exception => e
+      nResults = 0
+      bSuccess = false
+   end
+
+   # JSON snake convention
+   hRequest = Hash.new
+   hRequest["username"]                 = @user
+   hRequest["ip"]                       = @request.ip
+   hRequest["url"]                      = Addressable::URI.unencode(@request.url)
+   hRequest["query"]                    = Addressable::URI.unencode(@request.query_string)
+   hRequest["query_date"]               = DateTime.now
+   hRequest["query_elapsed_time"]       = elapsedTime
+   hRequest["result_values"]            = nResults
+   hRequest["success"]                  = bSuccess
+
+   reportName = "/data/adgs/auxip/report/auxip_query_report_#{Time.now.strftime("%Y%m%dT%H%M%S.%L")}_#{Thread.current.object_id}.json"
+
+   begin
+      File.write(reportName, hRequest.to_json)
+      @logger.info("[ARC_XXX] User #{@user} [#{@request.ip}]: Generated query report #{reportName}")
+   rescue Exception => e
+      @logger.error("[ARC_XXX] User #{@user} [#{@request.ip}]: Cannot generate query report #{reportName}" )
+   end
+
+end
+## -------------------------------------------------------
+
 private
 
    ## -------------------------------------------------------
-   
+
    ##  $orderby=PublicationDate asc&$format=json&
    ## $select=Name,Id,IngestionDate,PublicationDate,Online,ContentLength,EvictionDate,ContentDate&
    ## $filter=contains(Name,'S2A') and PublicationDate ge 2021-06-29T15:00:00.000
@@ -297,15 +334,15 @@ private
             @order   = @orderby.dup.split(" ")[1]
             @orderby = @orderby.dup.split(" ")[0]
          end
-         
+
          if @isDebugMode == true then
             @logger.debug("$orderby => #{@orderby} #{@order}")
          end
-         
+
          if ARC_ODATA::EDM_AUXIP_PRODUCT_PROPERTY.include?(@orderby) == false then
             raise "$orderby property #{@orderby} not supported"
          end
-         
+
          if @order.downcase != "desc" and @order.downcase != "asc" then
             raise "$orderby property #{@orderby} with sorting #{@order} not supported"
          end
@@ -314,7 +351,7 @@ private
       ## $count
       if query_string.include?("$count") == true then
          @option    = 'count'
-         
+
          if @isDebugMode == true then
             @logger.debug("$count => true")
          end
@@ -325,14 +362,14 @@ private
       ## -------------------------------
       ##
       ## Process the query
-   
+
       ## From most restrictive conditions to simpler ones
-      
+
       ## query by expand alone
       if query_string.include?("$expand") == true and query_string.include?("&") == false then
          return parseQueryExpand(query_string)
       end
-      
+
       ## query by count alone
       if query_string.include?("$count") == true and query_string.include?("&") == false then
          return parseQueryCount(query_string)
@@ -349,40 +386,40 @@ private
 #      if query_string.include?("$count") == true and query_string.include?("&") == true then
 #         return parseQueryCountFilter(query_string)
 #      end
-      
+
       ## no $filter choice
       if query_string.include?("$filter") == false then
          return true
       end
-   
+
       ## -------------------------------
 
-   
+
       @filterParam   = "#{query_string.split("$filter=")[1]}"
       @queryValue    = @filterParam.split(",")[1].split(")")[0]
       @property      = @filterParam.split("(")[1].split(",")[0]
-      
-      if @filterParam.include?("startswith") == true then 
+
+      if @filterParam.include?("startswith") == true then
          @function   = "startswith"
          @queryValue = "#{@queryValue.dup.gsub!("'","")}%"
          return true
       end
-      
+
       if @filterParam.include?("endswith") == true then
          @function   = "endswith"
          @queryValue = "#{@queryValue.dup.gsub!("'","")}%"
          return true
       end
-      
+
       if @filterParam.include?("contains") == true or @filterParam.include?("substringof") == true then
          @function   = "contains"
          @queryValue = "#{@queryValue.dup.gsub!("'","")}%"
          return true
       end
       @logger.error("[ARC_XXX] FilterParam #{@filterParam} not supported")
-      return false      
+      return false
    end
-  
+
    ## -------------------------------------------------------
 
    ## $filter=contains(Name,'S2A') and PublicationDate ge 2021-06-29T15:00:00.000
@@ -393,9 +430,9 @@ private
       query    = query_string.split("$filter=")[1]
       query    = query.dup.split(" and ")
       results  = nil
-      
+
       query.each{|condition|
-      
+
          if condition.include?("Name") == true then
             value   = getQueryValueName(condition)
             if results == nil then
@@ -405,7 +442,7 @@ private
             end
             puts "#{condition} => #{results}"
          end
-         
+
          if condition.include?('PublicationDate') == true or condition.include?('ContentDate/Start') == true or \
             condition.include?('ContentDate/End') == true then
             value    = getQueryValueDate(condition)
@@ -422,16 +459,16 @@ private
             else
                results = results.where("#{ARC_ODATA::oData2Model(property)} #{ARC_ODATA::filterOperations2Model(operator)} ?", self.str2date(value))
             end
-            
+
             if @isDebugMode == true then
                @logger.debug("#{condition} => #{results}")
             end
          end
       }
       return results
-   end  
+   end
    ## -------------------------------------------------------
-  
+
    ## /odata/v1/Products?$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z
    ## /odata/v1/Products?$count=true&$filter=PublicationDate%20gt%202020-05-15T00:00:00.000Z
    ## /odata/v1/Products?$filter=ContentDate/Start gt 2019-05-15T00:00:00.000Z
@@ -440,11 +477,11 @@ private
       if @isDebugMode == true then
          @logger.debug("parseQueryDate #{query_string}")
       end
-           
+
       bRet = false
-      
+
       @filterParam   = "#{Addressable::URI.unencode(query_string).split("$filter=")[1]}"
-      
+
       if @filterParam.include?("PublicationDate") == true then
          @property   = "PublicationDate"
          @function   = @filterParam.split(" ")[1]
@@ -480,78 +517,75 @@ private
 ##          @property   = Array.new
 ##          @function   = Array.new
 ##          @queryValue = Array.new
-##          
+##
 ##          @property   << "ContentDate/Start"
 ##          @function   << @filterParam.split("ContentDate/Start ")[1].split(" ")[0]
 ##          @queryValue << @filterParam.split("ContentDate/Start ")[1].split(" ")[1]
-##                   
+##
 ##          @property   << "ContentDate/End"
 ##          @function   << @filterParam.split("ContentDate/End ")[1].split(" ")[0]
 ##          @queryValue << @filterParam.split("ContentDate/End ")[1].split(" ")[1]
-## 
-##       end 
+##
+##       end
 
       if @isDebugMode == true then
          @logger.debug("parseQueryDate #{@property} #{@function} #{@queryValue}")
       end
-      
+
       return bRet
-      
+
    end
-   ## -------------------------------------------------------  
+   ## -------------------------------------------------------
 
    ## System query $count alone
    ## https://<service-root-uri>/odata/v1/Products?$count=true
    def parseQueryCount(query_string)
       bRet = false
-      
+
       @option        = 'count'
       @queryValue    = "#{Addressable::URI.unencode(query_string).split("$count")[1]}"
-      
+
       if @isDebugMode == true then
          @logger.debug("parseQueryCount #{@option} #{@queryValue}")
       end
 
       return true
-      
+
    end
-   ## -------------------------------------------------------  
+   ## -------------------------------------------------------
 
 
-   ## -------------------------------------------------------  
-  
+   ## -------------------------------------------------------
+
    ## {{service-root-uri}}/odata/v1/Products?$expand=Attributes&$format=json
    ## {{service-root-uri}}/odata/v1/Products?$expand=Attributes&$top=1
 
    def parseQueryExpand(query_string)
       bRet = true
-      
+
       @expandEntity = "#{query_string.split("$expand=")[1]}"
-      
+
       if @expandEntity.include?("&") == true then
          @expandEntity = @expandEntity.dup.split("&")[0]
       end
-      
+
       if @expandEntity != "Attributes" then
          if @isDebugMode == true then
             @logger.debug("parseQueryExpand => expand => #{@expandEntity} not supported")
          end
          return false
       end
-      
+
       if @isDebugMode == true then
          @logger.debug("parseQueryExpand => expand => #{@expandEntity}")
       end
       return bRet
    end
    ## -------------------------------------------------------
-  
+
 end ## class
 
 ## ===================================================================
 
 
 end ## module
-
-
-
