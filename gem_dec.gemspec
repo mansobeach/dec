@@ -5,7 +5,7 @@
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Data Exchange Component (DEC)
-### 
+###
 ### Git: gem_dec.gemspec,v $Id$ $Date$
 ###
 ### System Component DEC
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.description = "Data Exchange Component"
   s.authors     = ["Elecnor Deimos"]
   s.email       = 'borja.lopez@deimos-space.com'
- 
+
   s.files       = Dir['code/dec/*.rb'] + \
                   Dir['code/dcc/*.rb'] + \
                   Dir['code/ddc/*.rb'] + \
@@ -75,13 +75,13 @@ Gem::Specification.new do |s|
                      'decSmokeTests', \
                      'decStats'\
                      ]
-  
+
    if ENV.include?("DEC_NAOS") == true then
       s.executables   << 'dec_script_NAOS_NASA_RFM'
    end
 
    if ENV.include?("DEC_ADGS") == true then
-      s.executables   << 'dec_script_ADGS_S1_MPC'
+      s.executables   << 'dec_script_ADGS_S1MPC'
    end
 
    ## --------------------------------------------
@@ -96,7 +96,7 @@ Gem::Specification.new do |s|
    ##
    ## Tailored installer to include only the OData client
    if ENV.include?("DEC_TEST") == true then
-      
+
       puts
       puts "Adding unit tests"
       puts
@@ -145,13 +145,13 @@ Gem::Specification.new do |s|
 
   s.homepage    = 'http://www.deimos-space.com'
   s.metadata    = { "source_code_uri" => "https://confluence.elecnor-deimos.com/display/DEC" }
-    
+
   ## ----------------------------------------------
-  
+
   s.required_ruby_version = '> 3.0'
-  
+
   ## ----------------------------------------------
-  
+
   s.add_dependency('activerecord', '~> 6.0')
   s.add_dependency('bcrypt', '~> 3.1')
   s.add_dependency('bcrypt_pbkdf', '~> 1.1')
@@ -176,7 +176,7 @@ Gem::Specification.new do |s|
   s.add_dependency('ed25519', '~> 1.3')
   s.add_dependency('nokogiri', '~> 1.1')
   s.add_dependency('shell', '~> 0.8')
-  
+
   if ENV.include?("DEC_TEST") == true then
      s.add_dependency('minitest', '~> 5.15')
      s.add_dependency('test-unit', '~> 3.5')
@@ -200,21 +200,21 @@ Gem::Specification.new do |s|
 
   s.add_dependency('sqlite3', '~> 1.4')
   s.add_dependency('sys-filesystem', '~> 1.3')
-  
+
   ## ----------------------------------------------
- 
+
   s.add_development_dependency('coderay', '~> 1.1')
-  s.add_development_dependency('rspec', '~> 3.9') 
+  s.add_development_dependency('rspec', '~> 3.9')
   s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('test-unit', '~> 3.0')
- 
-  
+
+
   ## ----------------------------------------------
 
   s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} Data Exchange Component installed #{DEC.class_variable_get(:@@version)} \360\237\215\200 \360\237\215\200 \360\237\215\200"
-    
+
   ## ----------------------------------------------
-     
+
 end
 
 ### ============================================================================

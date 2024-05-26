@@ -4,7 +4,7 @@
 ###
 ### === Ruby source for #DEC_Environment class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Data Exchange Component (DEC)
 ###
@@ -25,11 +25,12 @@ module DEC
 
    include CUC::DirUtils
 
-   @@version = "1.0.40.7"
+   @@version = "1.0.41.0"
 
    ## -----------------------------------------------------------------
 
    @@change_record = { \
+      "1.0.41" =>    "Support to interfaces with custom scripts", \
       "1.0.40" =>    "MD5 config flag for pull to manage duplications (HTTP/FTPS)\n\
           HTTP handler treats html navigation pages as directories for pull",
       "1.0.39" =>    "Support of SSH commands\n\
@@ -260,6 +261,8 @@ module DEC
 
    ## -----------------------------------------------------------------
 
+   ## DEC variables for communication amongst process must never be deleted
+
    def unset_config
       ENV.delete('DEC_VERSION')
       ENV.delete('DEC_DB_ADAPTER')
@@ -284,6 +287,7 @@ module DEC
       puts "DEC_DATABASE_NAME             => #{ENV['DEC_DATABASE_NAME']}"
       puts "DEC_DATABASE_USER             => #{ENV['DEC_DATABASE_USER']}"
       puts "DEC_DATABASE_PASSWORD         => #{ENV['DEC_DATABASE_PASSWORD']}"
+      puts "DEC_DEBUG_MODE                => #{ENV['DEC_DEBUG_MODE']}"
       puts "HOSTNAME                      => #{ENV['HOSTNAME']}"
    end
    ## -----------------------------------------------------------------

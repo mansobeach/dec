@@ -7,7 +7,7 @@
 ## === Written by DEIMOS Space S.L. (bolf)
 ##
 ## === Data Exchange Component -> Common Transfer Component
-## 
+##
 ## Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
 ##
 ## === Module: Data Exchange Component // Class EventManager
@@ -31,14 +31,14 @@ Events = [
             "ONRECEIVENEWFILE",
             "ONRECEIVEERROR",
             "ONTRACKOK",
-            "NEWFILE2INTRAY" 
+            "NEWFILE2INTRAY"
             ]
 
 class EventManager
-   
+
    include CTC
    include FTPClientCommands
-    
+
    ## -----------------------------------------------------------
 
    ## Class constructor.
@@ -50,13 +50,13 @@ class EventManager
    end
 
    ## -----------------------------------------------------------
-   
+
    ## Set debug mode on
    def setDebugMode
       @isDebugMode = true
    end
    ## -----------------------------------------------------------
-   
+
    ##
    ## %f => filename
    ## %F => full path filename
@@ -87,11 +87,11 @@ class EventManager
          end
          return
       end
-            
+
       events = eventMgr[:arrEvents]
-            
+
       events.each{|event|
-         
+
          if @isDebugMode == true and log != nil then
             log.debug("EVENT #{event}")
          end
@@ -109,21 +109,21 @@ class EventManager
             # Escape special XML characters.
             # At least '&' required for background execution
             exec_command = cmd.gsub("&amp;", "&")
-            
+
             if @isDebugMode == true and log != nil then
                log.debug(exec_command)
             end
 
             bBackground = false
-            
+
             if exec_command.include?("&") then
                bBackground = true
             end
             # --------------------------
-            
-            if params != nil then            
+
+            if params != nil then
                exec_command = exec_command.dup.sub("%F", pathfile)
-               
+
                if @isDebugMode == true and log != nil then
                   log.debug(exec_command)
                end
@@ -135,22 +135,22 @@ class EventManager
                end
 
                exec_command = exec_command.dup.sub("%d", directory)
-               
+
                if @isDebugMode == true and log != nil then
                   log.debug(exec_command)
                end
 
             end
             # --------------------------
-            
+
             if @isDebugMode == true and log != nil then
                log.debug("I/F #{interface}: Executing command #{exec_command}")
             end
-            
+
             if log != nil then
                log.info("[DEC_130] I/F #{interface}: event triggered #{eventName.downcase} => #{exec_command}")
             end
-            
+
             ## -----------------------------------
             if bBackground == true then
                spawn(exec_command)
@@ -158,9 +158,9 @@ class EventManager
                next
             end
             ## -----------------------------------
-            
+
             exit_status = nil
-            
+
             begin
                Open3.popen3(exec_command) do |stdin, stdout, stderr, wait_thr|
                   while line = stdout.gets
@@ -171,16 +171,16 @@ class EventManager
             rescue Exception => e
                log.error("[DEC_750] I/F #{interface}: EventManager failed execution of #{exec_command} / #{e.to_s}")
                next
-            end           
-            
+            end
+
 #            output = `#{cmd}`
-            # retVal = system(cmd)                        
+            # retVal = system(cmd)
             # if $?.exitstatus == 0 then
-            
+
             if @isDebugMode == true and log != nil then
                log.debug("EventManager #{exit_status} / #{exit_status.exitstatus}")
             end
-            
+
             if exit_status.exitstatus == 0 then
                if log != nil then
                   log.info("[DEC_130] I/F #{interface}: event completed #{eventName.downcase} => #{exec_command}")
@@ -192,7 +192,7 @@ class EventManager
                end
             else
                if log != nil then
-                  log.error("[DEC_750] I/F #{interface}: EventManager failed execution of #{exec_command} / #{$?.exitstatus}")
+                  log.error("[DEC_750] I/F #{interface}: EventManager failed execution of #{exec_command} / exit code: #{exit_status.exitstatus}")
                end
             end
          else
@@ -224,21 +224,21 @@ class EventManager
       end
 
       # --------------------------
-            
+
       # Escape special XML characters.
       # At least '&' required for background execution
-            
+
       anewCmd = cmd.sub!("&amp;", "&")
-            
+
       if anewCmd != nil then
          cmd = anewCmd
       end
-            
+
       # --------------------------
-            
-      if params != nil then            
-      
-         anewCmd = cmd.sub!("%F", pathfile)   
+
+      if params != nil then
+
+         anewCmd = cmd.sub!("%F", pathfile)
          if anewCmd != nil then
             cmd = anewCmd
          end
@@ -253,23 +253,23 @@ class EventManager
             cmd = anewCmd
          end
       end
-            
+
       # --------------------------
-            
+
       if @isDebugMode == true and log != nil then
          log.debug("Event #{eventName} Triggered for #{intray}")
          log.debug("Executing command #{cmd}")
       end
-            
+
       output = `#{cmd}`
-            
-                        
+
+
       if $?.exitstatus == 0 then
-      
+
          if log != nil then
-                  
+
             msg = "[DEC_131] Intray #{intray}: event #{eventName.downcase} => #{cmd}"
-                  
+
 #            if output != "" then
 #               log.info("#{msg} => #{output.chop}")
 #            else
@@ -286,7 +286,7 @@ class EventManager
 
    end
    ## -----------------------------------------------------------
-   
+
 
 private
 
@@ -301,4 +301,3 @@ private
 end # class
 
 end # module
-

@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+
+require 'date'
+require 'json'
+
+require 'dec/DEC_Environment'
+require 'dec/ReadInterfaceConfig'
+require 'dec/ReadConfigIncoming'
+
+include DEC
+
+## TO-DO LIST MODE
+
+@entity         = "S1MPC"
+@listOnly       = nil
+@isDebugMode    = nil
+@queryDate      = Date.today.prev_day.to_s
+
+
+if ENV.include?('DEC_DEBUG_MODE') == true then
+    @isDebugMode = true
+else
+    @isDebugMode = false
+end
+
+if ENV.include?("DEC_LIST_MODE_#{@entity}") == false then
+    raise "missing environment variable DEC_LIST_MODE_#{@entity}"
+end
+
+if ENV["DEC_LIST_MODE_#{@entity}"].downcase == "true" then
+    @listOnly = true
+else
+    @listOnly = false
+end
+
+if ENV.include?("DEC_#{@entity}_QUERY_DATE") == true then
+    @queryDate = ENV["DEC_#{@entity}_QUERY_DATE"]
+end
+
+self.load_config
+
+@logger     = self.load_logger("script_S1MPC")
+
+@logger.info("[DEC_005] I/F #{@entity}: Polling Started - List mode is #{@listOnly}")
+
+cmd             = "curl -s -k https://sar-mpc.eu/api/v1/?metadata_date__gt=#{@queryDate}"
+result          = `#{cmd}`
+json_reply      = JSON.parse(result)
+num_products    = json_reply['count']
+arr_products    = json_reply['results']
+
+if @isDebugMode == true then
+    @logger.debug(cmd)
+    @logger.debug("Found #{num_products} products")
+end
+
+listOfFiles = Array.new
+listOfURL   = Array.new
+
+arr_products.each{
+    |item|
+
+    if @isDebugMode == true then
+        @logger.debug(item)
+    end
+
+    listOfFiles << item['physical_name']
+    listOfURL   << item['remote_url']
+
+    if @listOnly == true then
+        @logger.info("[DEC_105] I/F #{@entity}: File #{item['physical_name']} is available")
+        next
+    end
+
+    # cmd  = "curl --progress-bar -k -L #{item['remote_url']} --output /tmp/#{item['physical_name']}"
+    cmd  = "curl -s -k -L #{item['remote_url']} --output /tmp/#{item['physical_name']}"
+
+    if@isDebugMode == true then
+        @logger.debug(cmd)
+    end
+
+    ret = system(cmd)
+
+    if ret == true then
+        size = File.size("/tmp/#{item['physical_name']}")
+        @logger.info("[DEC_110] I/F #{@entity}: #{item['physical_name']} downloaded with size #{size} bytes")
+    else
+        @logger.error("[DEC_666] #{@entity} I/F: Could not download #{item['physical_name']}")
+    end
+
+}
+
+if @listOnly == true then
+    @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) #{listOfFiles.length} available for pull")
+end
+
+@logger.info("[DEC_100] I/F #{@entity}: Pull iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
+
+exit(0)
