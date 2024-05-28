@@ -6,6 +6,7 @@
 
   <xs:simpleType name="protocolType">
     <xs:restriction base="xs:string">
+      <xs:enumeration value="CUSTOM"/>
       <xs:enumeration value="FTP"/>
       <xs:enumeration value="SFTP"/>
       <xs:enumeration value="FTPS"/>

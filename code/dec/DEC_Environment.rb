@@ -25,12 +25,13 @@ module DEC
 
    include CUC::DirUtils
 
-   @@version = "1.0.41.0"
+   @@version = "1.0.41.2"
 
    ## -----------------------------------------------------------------
 
    @@change_record = { \
-      "1.0.41" =>    "Support to interfaces with custom scripts", \
+      "1.0.41" =>    "Support to interfaces with custom scripts\n\
+          DEC env variables override the configuration attributes shipped with the installer",
       "1.0.40" =>    "MD5 config flag for pull to manage duplications (HTTP/FTPS)\n\
           HTTP handler treats html navigation pages as directories for pull",
       "1.0.39" =>    "Support of SSH commands\n\
@@ -191,8 +192,6 @@ module DEC
          ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
       # --------------------------------
-
-      unset_config
 
       # --------------------------------
       if !ENV['HOSTNAME'] then

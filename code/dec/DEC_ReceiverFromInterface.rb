@@ -7,7 +7,7 @@
 ### === Written by DEIMOS Space S.L. (bolf)
 ###
 ### === Data Exchange Component
-### 
+###
 ### Git: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
 ###
 ### Module Data Exchange Component
@@ -65,11 +65,11 @@ class DEC_ReceiverFromInterface
 
    include Benchmark
    include Process
-   
+
    include CUC::DirUtils
    include CTC::FTPClientCommands
    include CUC::CommandLauncher
-   
+
    attr_accessor :isBenchmarkMode
 
    ## -------------------------------------------------------------
@@ -101,18 +101,18 @@ class DEC_ReceiverFromInterface
          puts
 			puts "Error in DEC_ReceiverFromInterface::initialize"
 			puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{@@configDirectory}/dec_log_config.xml\""
 			puts
 			puts
 			exit(99)
       end
 
       checker     = CheckerInterfaceConfig.new(entity, true, false, @logger)
-      
+
       if @isDebugMode == true then
          checker.setDebugMode
       end
-      
+
      # retVal      = checker.check
 
       retVal = true
@@ -125,7 +125,7 @@ class DEC_ReceiverFromInterface
          @logger.error("#{entity} I/F is not configured correctly")
          raise "\nError in DEC_ReceiverFromInterface::initialize :-(\n\n" + "\n\n#{entity} I/F is not configured correctly\n\n"
       end
-     
+
       @entityConfig     = ReadInterfaceConfig.instance
       @protocol         = @entityConfig.getProtocol(@entity)
       @ftpserver        = @entityConfig.getFTPServer4Receive(@entity)
@@ -133,15 +133,15 @@ class DEC_ReceiverFromInterface
       @passive          = @ftpserver[:isPassive]
       @ftpserver[:arrDownloadDirs] = ReadConfigIncoming.instance.getDownloadDirs(@entity)
       @pollingSize      = @entityConfig.getTXRXParams(@entity)[:pollingSize]
-      
+
       ## -------------------------------------
-      
+
       @dimConfig        = ReadConfigIncoming.instance
       @finalDir         = @dimConfig.getIncomingDir(@entity)
       checkDirectory(@finalDir)
       ## @finalDir         = @entityConfig.getIncomingDir(@entity)
       ## -------------------------------------
-      
+
       ## 2016 currently hardcoded number of files handled on each iteration in case
       ## it is not defined in the configuration
       if @pollingSize == nil then
@@ -149,11 +149,11 @@ class DEC_ReceiverFromInterface
       else
          @pollingSize = @pollingSize.to_i
       end
-      ## -------------------------------------      
-            
-      @parallelDownload = @entityConfig.getTXRXParams(@entity)[:parallelDownload]      
-      
-      @fileSource       = ReadConfigIncoming.instance                  
+      ## -------------------------------------
+
+      @parallelDownload = @entityConfig.getTXRXParams(@entity)[:parallelDownload]
+
+      @fileSource       = ReadConfigIncoming.instance
       ##@fileSource       = CTC::ReadFileSource.instance
 
       if @isNoDB == false then
@@ -175,16 +175,16 @@ class DEC_ReceiverFromInterface
       @prjID       = ReadConfigDEC.instance.getProjectID
       @mission     = ReadConfigDEC.instance.getMission
       checkDirectory(ReadConfigDEC.instance.getReportDir)
-   end   
+   end
    ## -------------------------------------------------------------
-   
+
    # Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
       @logger.debug("DEC_ReceiverFromInterface debug mode is on")
    end
    ## -------------------------------------------------------------
-   
+
    ## this method overrides the configuration item in the file
    def overrideParallelDownloads(nSlots)
       if (nSlots.to_i < 1) then
@@ -193,7 +193,7 @@ class DEC_ReceiverFromInterface
       @parallelDownload = nSlots.to_i
    end
    ## -------------------------------------------------------------
-   
+
    ## Check whether there are new files waiting.
    ## * Returns true if there are new files availables.
    ## * Otherwise returns false.
@@ -201,18 +201,18 @@ class DEC_ReceiverFromInterface
       cmd   = ""
       perf  = ""
       list  = nil
-      
+
       if @isDebugMode == true then
          @logger.debug("I/F #{@entity}: DEC_ReceiverFromInterface::check4NewFiles")
          @logger.debug("I/F #{@entity} uses #{@protocol} protocol")
       end
-   
+
       case @protocol
-         
+
          # ---------------------------------------
-         
+
          when "FTP"
-               
+
             if @isDebugMode == true then
                @logger.debug("I/F #{@entity} is non secure mode / #{@protocol}")
             end
@@ -222,108 +222,108 @@ class DEC_ReceiverFromInterface
          # ---------------------------------------
 
          when "SFTP"
-            
+
             if @isDebugMode == true then
                @logger.debug("I/F #{@entity} requires secure mode / #{@protocol}")
             end
 
             perf = measure { list = getSecureFileList }
-            
+
          # ---------------------------------------
-         
+
          when "FTPS"
-         
+
             begin
                @ftps = nil
-               
+
                if @port.to_i == 990 then
                   @ftps = DEC::InterfaceHandlerFTPS_Implicit.new(@entity, @logger, true, false, false)
                else
                   @ftps = DEC::InterfaceHandlerFTPS.new(@entity, @logger, true, false, @decConfig.getDownloadDirs)
                end
-               
-               if @isDebugMode then 
+
+               if @isDebugMode then
                   @ftps.setDebugMode
                end
-                  
-               perf = measure { list = @ftps.getList }      
-            
+
+               perf = measure { list = @ftps.getList }
+
             rescue Exception => e
-            
+
                @logger.error(e.to_s.chop)
-               
+
                if @isDebugMode == true then
                   @logger.debug(e.backtrace)
                end
-               
+
                @logger.error("[DEC_600] I/F #{@entity}: Could not perform polling")
-               
+
                exit(99)
-            end     
-                  
-         # ---------------------------------------   
-            
+            end
+
+         # ---------------------------------------
+
          when "LOCAL"
-         
+
             begin
-               
+
                @local = DEC::InterfaceHandlerLocal.new(@entity, @logger, true, false, false, @isDebugMode)
-               
-               if @isDebugMode == true then 
+
+               if @isDebugMode == true then
                   @local.setDebugMode
                end
-                  
-               perf = measure { list = @local.getPullList }      
-            
+
+               perf = measure { list = @local.getPullList }
+
             rescue Exception => e
                   @logger.error(e.to_s)
                   if @isDebugMode == true then
                      @logger.debug(e.backtrace)
                   end
                   exit (99)
-            end     
-         
+            end
+
          # ---------------------------------------
-         
+
          when "WEBDAV"
-                        
-            perf = measure { 
-            
-               handler = InterfaceHandlerWebDAV.new(@entity, @logger, true, false, false, @isDebugMode)   
-   
+
+            perf = measure {
+
+               handler = InterfaceHandlerWebDAV.new(@entity, @logger, true, false, false, @isDebugMode)
+
                list = handler.getPullList
-            
+
                if @isDebugMode == true then
                   @logger.debug("Found #{list.length} files")
                end
 
-            }            
-                     
+            }
+
          # ---------------------------------------
-         
+
          when "HTTP"
-            
+
             @handler = DEC::InterfaceHandlerHTTP.new(@entity, @logger, true, false, false)
-               
-            if @isDebugMode == true then 
+
+            if @isDebugMode == true then
                @handler.setDebugMode
             end
 
-                        
+
             perf = measure {
                list = @handler.getPullList(false)
-  
+
                if @isDebugMode == true then
                   @logger.debug("Found #{list.length} files")
                end
-            }                     
+            }
          # ---------------------------------------
 
          when "HTTP_SPCS"
-            
+
          @handler = DEC::InterfaceHandlerHTTP_SPCS.new(@entity, @logger, true, false, false)
-            
-         if @isDebugMode == true then 
+
+         if @isDebugMode == true then
             @handler.setDebugMode
          end
 
@@ -333,14 +333,14 @@ class DEC_ReceiverFromInterface
             if @isDebugMode == true then
                @logger.debug("Found #{list.length} files")
             end
-         }                     
-         # ---------------------------------------         
+         }
+         # ---------------------------------------
 
          else
             raise "DEC_ReceiverFromInterface::check4NewFiles #{@protocol} protocol not supported"
-         
+
       end
-      
+
 
       if @isBenchmarkMode == true then
          @logger.info("File-Tree from #{@entity}: #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
@@ -348,7 +348,7 @@ class DEC_ReceiverFromInterface
       end
 
       perf = measure { @fileList = filterFullPathFileList(list, forCheck) }
-            
+
       n = @fileList.length
 
       if @isBenchmarkMode == true then
@@ -363,21 +363,21 @@ class DEC_ReceiverFromInterface
 
    end
    ## -----------------------------------------------------------
-   
+
    def getWildNonSecureList(path)
 
       if @isDebugMode == true then
          @logger.debug("Wild-search enabled for #{path}")
          @ftp.debug_mode = true
       end
-         
+
       begin
          @ftp.chdir(path)
       rescue Exception => e
          @ftp.chdir("/")
          return
       end
-   
+
 #      entries = @ftp.nlst("-R")
       entries = @ftp.list("-R")
 
@@ -396,9 +396,9 @@ class DEC_ReceiverFromInterface
          if type != "-" then
             next
          end
-                  
+
          newFile = currentDir + "/" + element.split(" ").at(-1)
-         
+
          if @isDebugMode == true then
             @logger.debug("Found #{newFile}")
          end
@@ -412,7 +412,7 @@ class DEC_ReceiverFromInterface
    def getNonSecureFileList(bPassive)
       @newArrFile    = Array.new
       @ftp           = nil
-      host           = @ftpserver[:hostname]      
+      host           = @ftpserver[:hostname]
       port           = @ftpserver[:port].to_i
       user           = @ftpserver[:user]
       pass           = @ftpserver[:password]
@@ -436,11 +436,11 @@ class DEC_ReceiverFromInterface
       arrElements = @ftpserver[:arrDownloadDirs]
 
       arrElements.each{|element|
-                  
+
          @remotePath = element[:directory]
          @maxDepth   = element[:depthSearch]
 
-         # If it is desired recursive "wild" mode 
+         # If it is desired recursive "wild" mode
          if @maxDepth == 666 then
             getWildNonSecureList(@remotePath)
             next
@@ -449,13 +449,13 @@ class DEC_ReceiverFromInterface
          if @isDebugMode == true then
             @logger.debug("Polling directory => #{@remotePath} for #{@entity}")
          end
-         
+
          begin
             @ftp.chdir(@remotePath)
          rescue Exception => e
             @ftp.chdir("/")
             @logger.error("[DEC_612] I/F #{@entity}: Cannot reach #{@remotePath} directory")
-            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s.chop}")               
+            @logger.error("[DEC_613] I/F #{@entity}: #{e.to_s.chop}")
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
             end
@@ -466,10 +466,10 @@ class DEC_ReceiverFromInterface
          end
 
          @pwd = @ftp.pwd
-         
+
          # @logger.debug("#{@pwd}")
-         
-         begin         
+
+         begin
             entries = @ftp.list
          rescue Exception => e
             @logger.error("[DEC_615] I/F #{@entity}: Failed to get list of files / FTP passive mode is #{@ftp.passive}")
@@ -505,7 +505,7 @@ class DEC_ReceiverFromInterface
          @newArrFile << %Q{#{@pwd}/#{element}}
          return
       end
-      
+
       if @depthLevel >= @maxDepth then
          return
       end
@@ -531,7 +531,7 @@ class DEC_ReceiverFromInterface
          end
       end
 
-      @depthLevel = @depthLevel + 1 
+      @depthLevel = @depthLevel + 1
 
       entries = @ftp.list
       entries.each{|element|
@@ -547,11 +547,11 @@ class DEC_ReceiverFromInterface
             @logger.debug(e.backtrace)
          end
       end
-      @depthLevel = @depthLevel - 1   
+      @depthLevel = @depthLevel - 1
    end
-   
+
    ## -----------------------------------------------------------
-   
+
    ## -----------------------------------------------------------
 
    ## -----------------------------------------------------------
@@ -599,10 +599,10 @@ class DEC_ReceiverFromInterface
          rescue Exception => e
             @logger.error("#{e.class.to_s.upcase} : Unable to explore directory tree from : #{@remotePath}")
             @logger.error(e.to_s)
-         
+
             if @isDebugMode == true then
                @logger.debug(e.backtrace)
-            end            
+            end
             next
          end
       }
@@ -642,11 +642,11 @@ class DEC_ReceiverFromInterface
          return
       end
 
-      req.each{|item| 
+      req.each{|item|
          # Discard folders "." and ".."
          if item.name == "." or item.name == ".." then
             next
-         end       
+         end
 
          # Add item to list if it is a regular file
          if item.file? then
@@ -655,14 +655,14 @@ class DEC_ReceiverFromInterface
                @logger.debug("Found #{fullFile}")
             end
             @newArrFile << fullFile
-            next         
-         end 
+            next
+         end
 
          # Make recursive call if the item is a directory
          if item.directory? and depth < @maxDepth then
             exploreSecureTree("#{path}/#{item.name}", depth+1)
          end
-  
+
       }
 
    end
@@ -678,16 +678,16 @@ class DEC_ReceiverFromInterface
       listFiles               = Array.new(@fileList)
       hProcessFiles           = Hash.new
       @arrFilesReceived       = Array.new
-      
-      i = 0      
+
+      i = 0
       loop do
          break if listFiles.empty?
-         
+
          while !listFiles.empty? and i < @parallelDownload do
-         
+
             file = listFiles.shift
             i    = i + 1
-            
+
             newpid = fork{
                if @isDebugMode == true then
                   @logger.debug("Child process #{Process.pid} => #{i}/#{@parallelDownload} created to download #{File.basename(file)}")
@@ -702,9 +702,9 @@ class DEC_ReceiverFromInterface
                else
                   @atLeast1FileReceived = true
                   exit(0)
-               end 
+               end
             }
-            
+
             hProcessFiles[":#{newpid}"] = File.basename(file)
             if @isDebugMode == true then
                @logger.debug("From parent #{newpid} => #{File.basename(file)}")
@@ -721,19 +721,19 @@ class DEC_ReceiverFromInterface
 
          if $?.exitstatus == 0 then
             @arrFilesReceived << hProcessFiles[":#{pid}"]
-            if @isDebugMode == true then 
+            if @isDebugMode == true then
                @logger.debug("Child process #{pid} successful downloaded #{hProcessFiles[":#{pid}"]}") #"
             end
             @atLeast1FileReceived = true
          else
-            if @isDebugMode == true then 
+            if @isDebugMode == true then
                @logger.debug("Child process #{pid} ERROR")
             end
             @retValFilesReceived = false
          end
 
          i = i - 1
-         
+
       end
 
       ## -------------------------------
@@ -743,27 +743,27 @@ class DEC_ReceiverFromInterface
          arr.each{|child|
             if child[1].exitstatus == 0 then
                @arrFilesReceived << hProcessFiles[":#{child[0]}"]
-               if @isDebugMode == true then 
+               if @isDebugMode == true then
                   @logger.debug("Child process #{child[0]} successful downloaded #{hProcessFiles[":#{child[0]}"]}") #"
                end
 
                @atLeast1FileReceived = true
             else
-               if @isDebugMode == true then 
+               if @isDebugMode == true then
                   @logger.debug("Child process #{child[0]} ERROR")
                end
 
                @retValFilesReceived = false
             end
-         }    
+         }
      rescue Exception => e
          ## no pending children
          @logger.debug(e.to_s)
      end
      ## -------------------------------
-            
+
      ## -------------------------------
-      
+
 #		createContentFile(@finalDir)
 
       # Create new files received lock file
@@ -772,7 +772,7 @@ class DEC_ReceiverFromInterface
       end
 
       Dir.chdir(currentDir)
-       
+
       deleteTempDir
 
       if @isDebugMode == true then
@@ -780,7 +780,7 @@ class DEC_ReceiverFromInterface
       end
 
       #return @retValFilesReceived
-      return @atLeast1FileReceived   
+      return @atLeast1FileReceived
    end
    ## -----------------------------------------------------------
 
@@ -796,13 +796,13 @@ class DEC_ReceiverFromInterface
       @retValFilesReceived    = true
       @atLeast1FileReceived   = false
       listFiles               = Array.new(@fileList)
-            
+
       loop do
          break if listFiles.empty?
          1.upto(@parallelDownload) {|i|
             break if listFiles.empty?
             file = listFiles.shift
-            
+
             fork{
                if @isDebugMode == true then
                   @logger.debug("Child process #{i} created to download #{File.basename(file)}")
@@ -818,7 +818,7 @@ class DEC_ReceiverFromInterface
                   #@logger.info("Forking Success #{File.basename(file)}")
                   @atLeast1FileReceived = true
                   exit(0)
-               end 
+               end
             }
          }
          arr = Process.waitall
@@ -830,11 +830,11 @@ class DEC_ReceiverFromInterface
                @retValFilesReceived = false
             end
          }
-         
+
       end
-            
+
       deleteTempDir
-      
+
 #		createContentFile(@finalDir)
 
       # Create new files received lock file
@@ -844,14 +844,14 @@ class DEC_ReceiverFromInterface
 
       Dir.chdir(currentDir)
       #return @retValFilesReceived
-      return @atLeast1FileReceived   
+      return @atLeast1FileReceived
    end
    ## -----------------------------------------------------------
 
    def receiveAllFiles
       ret = false
       perf = measure{ ret = receiveAllFiles_forReal }
-      
+
       if @isBenchmarkMode == true then
          @logger.info("Complete download from #{@entity} in #{perf.format("Real Time %r | Total CPU: %t | User CPU: %u | System CPU: %y")}")
       end
@@ -859,40 +859,40 @@ class DEC_ReceiverFromInterface
       return ret
    end
    ## -----------------------------------------------------------
-   
+
    ## Get all Files found in the previous polling to the I/F.
    ## All files are left in a temp local directory
    ## $DEC_TMP/<current_time>_entity
    def receiveAllFiles_forReal
-   
+
       if @parallelDownload > 1 then
          return receiveAllFilesParallel
       end
-   
+
       currentDir = Dir.pwd
       checkDirectory(@localDir)
       Dir.chdir(@localDir)
 
       @retValFilesReceived  = true
       @atLeast1FileReceived = false
-		
+
       @arrFilesReceived     = Array.new
-      
+
       @fileList.each{|file|
-                      
+
 			      ret = downloadFile(file)
-            
+
                if ret == false then
                   @retValFilesReceived  = false
                else
                   @arrFilesReceived << File.basename(file)
                   @atLeast1FileReceived = true
                end
-      
+
       }
-      
+
       deleteTempDir
-      
+
 #		createContentFile(@finalDir)
 
       # Create new files received lock file
@@ -905,13 +905,13 @@ class DEC_ReceiverFromInterface
       return @atLeast1FileReceived
    end
    ## -------------------------------------------------------------
-   
+
 	# createListFile
 	def createListFile(directory, bDeliver = true)
 	   createContentFile(directory, bDeliver)
 	end
 	## -------------------------------------------------------------
-	
+
    def createReportFile(directory, bDeliver = true, bForceCreation = false)
 	   bFound      = false
       bIsEnabled  = false
@@ -920,7 +920,7 @@ class DEC_ReceiverFromInterface
       desc        = ""
       time        = Time.now
       now         = time.strftime("%Y%m%dT%H%M%S")
-               
+
       arrReports = @decConfig.getReports
 
       bIsEnabled = false
@@ -960,24 +960,24 @@ class DEC_ReceiverFromInterface
             writer.setup(@satPrefix, @prjName, @prjID, @mission)
             #writer.writeData(@entity, time, @fileList)
             writer.writeData(@entity, time, @arrFilesReceived)
-      
+
             filename = writer.getFilename
-         
+
             @logger.info("[DEC_135] I/F #{@entity}: #{filename} pull report created")
-         
+
             if @isDebugMode == true then
                @logger.debug("Created Report RETRIEVEDFILES named #{filename}")
             end
-   
+
             if filename == "" then
                @logger.error("Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O \n\n")
                exit(99)
             end
 
-## Report files are not disseminated but placed in the directory <ReportDir> defined in dec_config.xml         
+## Report files are not disseminated but placed in the directory <ReportDir> defined in dec_config.xml
 #            if bDeliver == true then
 #               deliverer = FileDeliverer2InTrays.new
-#   
+#
 #               if @isDebugMode == true then
 #                  deliverer.setDebugMode
 #               end
@@ -1030,21 +1030,21 @@ class DEC_ReceiverFromInterface
 
             writer.setup(@satPrefix, @prjName, @prjID, @mission)
             writer.writeData(@entity, time, @fileListError)
-      
+
             filename = writer.getFilename
-         
+
             if @isDebugMode == true then
                @logger.debug("Created Report File #{filename}")
             end
-   
+
             if filename == "" then
                @logger.error("Error in DEC_ReceiverFromInterface::createReportFile !!!! =:-O")
                exit(99)
             end
-         
+
 #            if bDeliver == true then
 #               deliverer = FileDeliverer2InTrays.new
-#   
+#
 #               if @isDebugMode == true then
 #                  deliverer.setDebugMode
 #                  @logger.debug("Creating and Deliver Report File")
@@ -1057,7 +1057,7 @@ class DEC_ReceiverFromInterface
 
    end
    ## -----------------------------------------------------------
-   
+
    ## Get new files availables from the I/F
    def getAvailablesFiles
       return @fileList
@@ -1077,43 +1077,43 @@ private
    @finalDir      = ""
    @fileList      = nil
    @fileListErr   = nil
-   
+
    ## -------------------------------------------------------------
-   
+
    # Check that everything needed by the class is present.
    def checkModuleIntegrity
       bDefined = true
-      
+
       if !ENV['DEC_TMP'] then
          puts "\nDEC_TMP environment variable not defined !\n"
          bDefined = false
       end
-      
+
       if ENV['DEC_TMP'] then
-         @tmpDir         = %Q{#{ENV['DEC_TMP']}}  
-      end        
-      
+         @tmpDir         = %Q{#{ENV['DEC_TMP']}}
+      end
+
       configDir = nil
-         
+
       if ENV['DEC_CONFIG'] then
          configDir         = %Q{#{ENV['DEC_CONFIG']}}
       else
          puts "Fatal ERROR ::DEC_ReceiverFromInterface::checkModuleIntegrity DEC_CONFIG not defined"
          exit(99)
-      end        
-            
+      end
+
       @@configDirectory = configDir
-     
+
       if bDefined == false then
          puts "\nError in DEC_ReceiverFromInterface::checkModuleIntegrity :-(\n\n"
          exit(99)
       end
-                        
+
       time = Time.new
       time.utc
       str  = time.strftime("%Y%m%d_%H%M%S")
-                                      
-      @localDir        = %Q{#{@tmpDir}/.#{str}_#{@entity}}  
+
+      @localDir        = %Q{#{@tmpDir}/.#{str}_#{@entity}}
       @ftBatchFilename = %Q{#{@tmpDir}/.FTBatchReceiveFrom#{@entity}}
       if FileTest.exist?(@ftBatchFilename) == true then
          File.delete(@ftBatchFilename)
@@ -1135,34 +1135,34 @@ private
 
    end
    ## -----------------------------------------------------------
-   
+
    def downloadFileLocal(filename)
       retVal = @local.downloadFile(filename)
-      
+
        if retVal == false then
          @logger.error("[DEC_666] #{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination
-         
+
          size = File.size("#{@localDir}/#{File.basename(filename)}")
-         
+
          # @logger.debug("#{File.basename(filename)} received with size #{size} bytes")
          # @logger.info("#{File.basename(filename)} received with size #{size} bytes")
-			
+
          copyFileToInBox(File.basename(filename), size)
-			         
+
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
-			
+
          @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
-         
+
          ## ------------------------------------------------
          ##
-         ## if delete flag is enabled  
+         ## if delete flag is enabled
          if @bDeleteDownloaded == true then
    	      retVal = deleteFromEntity(filename)
-         
+
             if retVal == true then
                @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
             else
@@ -1171,17 +1171,17 @@ private
          end
          ##
          ## ------------------------------------------------
-        
+
          event  = DEC::EventManager.new
-         
+
          if @isDebugMode == true then
             event.setDebugMode
          end
 
          hParams              = Hash.new
          hParams["filename"]  = File.basename(filename)
-         hParams["directory"] = @finalDir 
-               
+         hParams["directory"] = @finalDir
+
          if @isDebugMode == true then
             @logger.debug("[LINE 1179] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
             @logger.debug(hParams)
@@ -1206,38 +1206,38 @@ private
 
          if @isNoInTray == false then
             disseminateFile(filename)
-         end     
+         end
 
          return true
-      end     
-      
+      end
+
    end
 
    ## -------------------------------------------------------------
    ##
-   ## download file using HTTP protocol verb GET 
+   ## download file using HTTP protocol verb GET
    ##
    def downloadFile_WebDAV(url)
       if @isDebugMode == true then
          @logger.debug("Downloading #{url} using HTTP(S)")
       end
-      
+
       # http = Curl.get(url)
       http = Curl::Easy.new(url)
-      
+
       # HTTP "insecure" SSL connections (like curl -k, --insecure) to avoid Curl::Err::SSLCACertificateError
-      
+
       http.ssl_verify_peer = false
-      
+
       # Curl::Err::SSLPeerCertificateError ?????
       http.ssl_verify_host = false
-      
+
       http.http_auth_types = :basic
 
       if @ftpserver[:user] != "" and @ftpserver[:user] != nil then
          http.username = @ftpserver[:user]
       end
-      
+
       if @ftpserver[:password] != "" and @ftpserver[:password] != nil then
          http.password = @ftpserver[:password]
       end
@@ -1247,37 +1247,37 @@ private
 #      uri = URI.parse(url)
 #      http = Net::HTTP.get_response(uri)
 
-      ## TO DO : replace in memory file with 
+      ## TO DO : replace in memory file with
       ## https://www.rubydoc.info/github/taf2/curb/Curl/Easy#download-class_method
 
       # @logger.debug(http.code)
 
       # puts url
       # filename = getFilenameFromFullPath(url)
-      
+
       filename = File.basename(url)
-      
+
       aFile = File.new(filename, "wb")
       # aFile.write(http.body)
       aFile.write(http.body_str)
       aFile.flush
       aFile.close
- 
+
       size = File.size("#{@localDir}/#{File.basename(filename)}")
-         
+
       @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
-		
-      # File is made available at the interface inbox	
+
+      # File is made available at the interface inbox
       copyFileToInBox(File.basename(filename), size)
-			         
+
 		# Update DEC Inventory
 	   setReceivedFromEntity(File.basename(filename), size)
-	
+
       # if deleteFlag is enable delete it from remote directory
       ret = deleteFromEntity(url)
 
       return true
-      
+
 #require 'net/http'
 #require 'uri'
 #
@@ -1295,15 +1295,15 @@ private
 #
 ## response.code
 ## response.body
-      
-      
+
+
    end
-      
+
    ## -------------------------------------------------------------
    ##
    ## Download a file from the I/F and local dissemination
    ##
-   ## It also deletes the file downloaded from the server 
+   ## It also deletes the file downloaded from the server
    ##
    ## This method requires heavy refactoring to really delegate to the protocol handlers
    ## whislt nowadays the file download is performed within in most of the cases
@@ -1329,17 +1329,17 @@ private
          full_path = arr[0]
 
          size = File.size("#{@localDir}/#{File.basename(full_path)}")
-         
+
          @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(full_path, "*")} downloaded with size #{size} bytes")
-		
-         # File is made available at the interface inbox	
+
+         # File is made available at the interface inbox
          copyFileToInBox(File.basename(full_path), size)
 
          setReceivedFromEntity(File.basename(full_path), size)
 
          if @isNoInTray == false then
             disseminateFile(File.basename(full_path))
-         end 
+         end
 
          return ret
       end
@@ -1352,7 +1352,7 @@ private
             @logger.error("[DEC_666] I/F #{@entity}: Could not download #{File.basename(filename)}")
             return false
          end
-         
+
          # File is made available at the interface inbox
          md5 = CUC::WrapperMD5SUM.new(File.basename(filename)).md5
 
@@ -1383,7 +1383,7 @@ private
                return false
             end
          end
-                 
+
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size, md5)
 
@@ -1397,15 +1397,15 @@ private
             @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
             @logger.debug(hParams)
          end
-         
+
          event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
 
          ## --------------------------------------
          ##
-         ## if delete flag is enabled  
+         ## if delete flag is enabled
          if @bDeleteDownloaded == true then
    	      retVal2 = deleteFromEntity(filename)
-         
+
             if retVal2 == true then
                @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
             else
@@ -1414,28 +1414,28 @@ private
          end
          ##
          ## --------------------------------------
-         
+
          return retVal
-         
+
       end
 
       ## --------------------------------------------------------
 
       if @protocol == "LOCAL" then
          return downloadFileLocal(filename)
-      end      
+      end
       # ------------------------------------------
       if @protocol == "WEBDAV" then
          downloadFile_WebDAV(filename)
-         
+
          if @isNoInTray == false then
             disseminateFile(getFilenameFromFullPath(filename))
-         end     
-         
+         end
+
          return true
       end
       # ------------------------------------------
-      
+
       ## HTTP PROTOCOL HANDLER
 
       if @protocol == "HTTP" then
@@ -1470,32 +1470,32 @@ private
 
          setReceivedFromEntity(File.basename(filename), size, md5)
 
-         
+
          if @isDebugMode == true then
             event.setDebugMode
          end
 
          hParams              = Hash.new
          hParams["filename"]  = File.basename(filename)
-         hParams["directory"] = @finalDir 
-               
+         hParams["directory"] = @finalDir
+
          if @isDebugMode == true then
             @logger.debug("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
             @logger.debug(hParams)
          end
-         
+
          event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
 
          if @isNoInTray == false then
             disseminateFile(getFilenameFromFullPath(filename))
          end
-         
+
          return true
 
       end
-      
+
       # ------------------------------------------
-      
+
       # If secure create the sftp client.
       if @ftpserver[:isSecure] == true then
          sftpClient = CTC::SFTPBatchClient.new(@ftpserver[:hostname],
@@ -1509,31 +1509,31 @@ private
             sftpClient.setDebugMode
          end
       end
-      
+
       if isSecureMode == true then
 
          # Right now filenames are specified in full_path
-      
+
 #          sftpClient.addCommand("cd #{@ftpserver[:downloadDir]}",
 #                                   nil,
 #                                   nil)
-                                  
+
          sftpClient.addCommand("get",
                                 filename,
                                 nil)
-         
+
          ### ---------------------------
          ### QUARANTINE THIS SOMETIME
          # If registered in database we do not delete the file
          # after retrieving it
-         if @drivenByDB == false then                       
+         if @drivenByDB == false then
             sftpClient.addCommand("rm",
                                    filename,
                                    nil)
-         end      
+         end
          ### ---------------------------
-      
-      
+
+
       else
          cmd = self.createNcFtpGet(@ftpserver[:hostname],
                                    @ftpserver[:port],
@@ -1541,15 +1541,15 @@ private
                                    @ftpserver[:password],
                                    "",
                                    filename,
-                                   @bDeleteDownloaded, 
+                                   @bDeleteDownloaded,
                                    @isDebugMode,
                                    @ftpserver[:isPassive])
       end
-      
+
       if @isDebugMode == true and @ftpserver[:isSecure] == false then
          @logger.debug(cmd)
       end
-      
+
       if @ftpserver[:isSecure] == false then
          #output = `#{cmd}`
          retVal = execute(cmd, "DEC_Puller")
@@ -1562,7 +1562,7 @@ private
          retVal = sftpClient.executeAll
          output = sftpClient.output
       end
-      
+
 #      if @isDebugMode == true and @ftpserver[:isSecure] == true then
 #         puts
 #         puts "------------------------------------------"
@@ -1571,28 +1571,28 @@ private
 #         puts "------------------------------------------"
 #         puts
 #      end
-            
+
       if retVal == false then
          @logger.error("[DEC_666] #{@entity} I/F: Could not download #{filename}")
          return false
       else
 		   # copy it to the final destination
-         
+
          size = File.size("#{@localDir}/#{File.basename(filename)}")
-         
+
 			copyFileToInBox(File.basename(filename), size)
-			         
+
 			# update DEC Inventory
 			setReceivedFromEntity(File.basename(filename), size)
 
          @logger.info("[DEC_110] I/F #{@entity}: #{File.basename(filename)} downloaded with size #{size} bytes")
-			
+
          ## ------------------------------------------------
          ##
-         ## if delete flag is enabled  
+         ## if delete flag is enabled
          if @bDeleteDownloaded == true then
    	      retVal = deleteFromEntity(filename)
-         
+
             if retVal == true then
                @logger.info("[DEC_126] I/F #{@entity}: #{File.basename(filename)} deleted")
             else
@@ -1601,30 +1601,30 @@ private
          end
          ##
          ## ------------------------------------------------
-                  
+
          if size.to_i == 0 then
             return true
          end
 
          event  = DEC::EventManager.new
-         
+
          if @isDebugMode == true then
             event.setDebugMode
          end
 
          hParams              = Hash.new
          hParams["filename"]  = File.basename(filename)
-         hParams["directory"] = @finalDir 
-         
-         if @isDebugMode == true then      
+         hParams["directory"] = @finalDir
+
+         if @isDebugMode == true then
             @logger.debug("[LINE 1557] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
          end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
 
          event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
-         
+
          disFile = File.basename(filename)
-         
+
          ## ------------------------------------------------
          ##
          ## rename the file if AddMnemonic2Name enabled
@@ -1642,13 +1642,13 @@ private
 
          if @isNoInTray == false then
             disseminateFile(disFile)
-         end     
+         end
 
          return true
       end
-   end	
+   end
 	## -------------------------------------------------------------
-	## 
+	##
    ## method not used for the time being / configuration addMnemonic not supported
    ##
    def renameFile(file)
@@ -1667,12 +1667,12 @@ private
       end
 
       if bRename == true or bRename2 == true then
-         
+
          cmd  = "\\mv -f #{@finalDir}/#{file} #{@finalDir}/#{@entity}_#{file}"
    		if @isDebugMode == true then
             @logger.debug(cmd)
 		   end
-         
+
          bRet = execute(cmd, "DEC_Puller")
 
          if bRet == false then
@@ -1696,7 +1696,7 @@ private
 	   if @isDebugMode == true then
 	      deliverer.setDebugMode
 	   end
-      deliverer.deliverFile(@entity, @finalDir, file)          
+      deliverer.deliverFile(@entity, @finalDir, file)
    end
    ## -------------------------------------------------------------
    ##
@@ -1714,40 +1714,40 @@ private
       else
          host        = "https://#{@ftpserver[:hostname]}:#{@ftpserver[:port]}/"
       end
-         
+
       port        = @ftpserver[:port].to_i
       user        = @ftpserver[:user]
       pass        = @ftpserver[:password]
       dav         = Net::DAV.new(host, :curl => false)
-      
+
       ## -------------------------------
       ## new configuration item VerifyPeerSSL is needed
       ##
       # dav.verify_server = true
       dav.verify_server = false
       ## -------------------------------
- 
+
       ## -------------------------------
       ## if credentials are not empty in the configuration file
       if user != "" or (pass != "" and pass != nil) then
          if @isDebugMode == true then
             @logger.debug("Passing Credentials to WebDAV server")
          end
-         
+
          dav.credentials(user, pass)
       end
-      ## -------------------------------         
-         
-         
-         dav.delete(filename)   
-                  
-#         c = Curl::Easy.http_delete(filename) 
+      ## -------------------------------
+
+
+         dav.delete(filename)
+
+#         c = Curl::Easy.http_delete(filename)
 #         c.http_auth_types = :basic
 #         c.username = @ftpserver[:user]
 #         c.password = @ftpserver[:password]
-#         c.perform         
+#         c.perform
 #         @logger.debug(c.body_str)
-         
+
          # http = Curl.delete(filename)
       rescue Exception => e
          @logger.error("Could not delete #{filename}")
@@ -1767,13 +1767,13 @@ private
 	## directory. It deletes the file in the remote Entity if the Config
 	## flag DeleteFlag is enable.
 	def deleteFromEntity(filename, bForce = false)
-	   
+
       if @isDebugMode == true then
          @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity => DeleteFlag is #{@bDeleteDownloaded} | ForceFlag is #{bForce} for #{@entity} I/F ")
 		end
-      
+
 		# if true proceed to remove the files from the remote I/F
-		
+
       if @bDeleteDownloaded == true or bForce == true then
 		   if @isDebugMode == true then
 			   @logger.debug("DeleteFlag is #{@bDeleteDownloaded} | ForceFlag is #{bForce} for #{@entity} I/F ")
@@ -1788,11 +1788,11 @@ private
          if @protocol == "FTPS" and @port != 990 then
             return @ftps.deleteFromEntity(filename)
          end
-         
+
          if @protocol == "LOCAL" then
             return @local.deleteFromEntity(filename)
-         end         
-         
+         end
+
          if @protocol == "WEBDAV" then
             return deleteFromEntity_HTTP(filename)
          end
@@ -1808,7 +1808,7 @@ private
             if @isDebugMode == true then
                sftpClient.setDebugMode
             end
-				
+
 # 				sftpClient.addCommand("cd #{@ftpserver[:downloadDir]}",
 #                                   nil,
 #                                   nil)
@@ -1816,10 +1816,10 @@ private
 				sftpClient.addCommand("rm #{filename}",
                                      nil,
                                      nil)
-				
+
 			   retVal = sftpClient.executeAll
             output = sftpClient.output
-      
+
             return retVal
 #            if @isDebugMode == true then
 #               puts
@@ -1836,23 +1836,23 @@ private
               @logger.debug("DEC_ReceiverFromInterface::deleteFromEntity fake deletion for plain ftp since ncftpget already did it with flag -DD")
            end
            return true
-			end      
+			end
 		end
 	end
    ## -------------------------------------------------------------
    ##
-   
+
    ## Returns true if server configuration is secure
    def isSecureMode
       return @ftpserver[:isSecure]
    end
    ## -------------------------------------------------------------
-   
+
    ###
-   ### forTracking concept is in QUARANTINE 
+   ### forTracking concept is in QUARANTINE
    ###
    def filterFullPathFileList(list, forTracking)
-            
+
       arrTemp        = Array.new
       arrFiles       = Array.new
       tmpList        = Array.new(list)
@@ -1864,12 +1864,12 @@ private
 
 #===============================================================================
 # 20170411 - temporal patch for massive ingestion of archives 2015 and 2016
-#      
+#
 #       # Remove Repeated files found in different directories
 #       # and extract filename from the full path
-# 
+#
 #       perf = measure {
-#     
+#
 #       tmpList.each{|fullpath|
 #          puts fullpath
 #          filename = File.basename(fullpath)
@@ -1879,7 +1879,7 @@ private
 #          end
 #          arrFiles << filename
 #       }
-# 
+#
 #       } # end of measure
 #
 #      # ------------------------------------------
@@ -1892,16 +1892,16 @@ private
 #         puts "Retrieved #{nStart} files"
 #         puts
 #      end
-#=============================================================================== 
+#===============================================================================
 
       # ------------------------------------------
 
       # - Remove files which do not match with filters defined in dcc_config.xml
       # - Remove files which file-type are not defined in the dec_incoming_files.xml
-      
+
       arrDelete = Array.new
       tmpList   = list
-      
+
       nStart    = list.length
 
       if @isDebugMode == true then
@@ -1910,7 +1910,7 @@ private
 
       perf = measure{
 
-      tmpList.each{|fullpath|      
+      tmpList.each{|fullpath|
          if @isDebugMode == true then
             @logger.debug("Filtering List : #{fullpath}")
          end
@@ -1922,7 +1922,7 @@ private
                if @isDebugMode == true then
                   @logger.debug("#{filename} matched filter #{ext}")
                end
-               # Here it is checked the file vs dec_incoming_files.xml 
+               # Here it is checked the file vs dec_incoming_files.xml
                # file-types and filenames (wildcards)
                if checkFileSource(filename) == false then
                   if @isDebugMode == true then
@@ -1949,60 +1949,60 @@ private
          	break
          end
       }
-                  
+
       # ------------------------------------------
-      
+
       # ------------------------------------------
       #
       # delete undesired files
       #
       # 2016 patch
-             
-      
+
+
       if arrDelete.uniq.length > 0 then
-         
+
          if @isDebugMode == true then
             @logger.debug("Discarding #{arrDelete.uniq.length} files")
          end
-            
+
          arrDelete.uniq.each{|aFile|
-         
+
             # ----------------------------------------------
             # 20160927
             # Avoid "strange" case of temporal files which in principle should not be listed
             # [ INFO] deleting .S2A_OPER_REP_METARC_PDMC_20160922T140422_V20160922T085940_20160922T091131.xml
-            
+
             if File.basename(aFile).to_s.slice(0,1) == "." then
                if @isDebugMode == true then
                   @logger.warn("detected temporal file #{File.basename(aFile)} ?!")
                end
                next
             end
-         
+
             # ----------------------------------------------
-            
+
             if @bLogUnknown == true then
                @logger.warn("[DEC_320] I/F #{@entity}: #{File.basename(aFile)} detected is unknown")
             end
-            
+
             if @bDeleteUnknown == true and forTracking == false then
                @logger.info("[DEC_120] I/F #{@entity}: Deleting unknown file #{File.basename(aFile)}")
                ret = deleteFromEntity(aFile)
-               
+
                if ret == false then
                   @logger.error("[DEC_671] I/F #{@entity}: Failed to delete unknown file #{File.basename(aFile)}")
                end
 
             end
-            
+
             # ----------------------------------------------
          }
       end
 
       # exit
-      
+
       arrDelete.each{|element| list.delete(element)}
-      
+
       @fileListError = arrDelete
 
       } # end of measure
@@ -2026,17 +2026,17 @@ private
       tmpList   = list
       nStart    = list.length
       numFilesToBeRetrieved = 0
-      
+
       tmpList.each{|fullpath|
-      
+
          filename = File.basename(fullpath)
-         
+
          if @isDebugMode == true then
             @logger.debug("[DEC_913] I/F #{@entity}: Filtering file vs database => #{filename}")
          end
-         
+
          if forTracking == false or forTracking == true then
-         
+
             if @isDebugMode == true then
                @logger.debug("[DEC_XXX] I/F #{@entity}: hasBeenAlreadyReceived? => #{filename}")
             end
@@ -2046,21 +2046,21 @@ private
                   @logger.warn("[DEC_301] I/F #{@entity}: #{filename} detected is duplicated")
                end
                arrDelete << fullpath
-               
+
                ## --------------------------------
                ##
                ## dec_incoming_files.xml <DeleteDuplicated>
                ##
                if @bDeleteDuplicated == true and forTracking == false then
                   @logger.info("[DEC_125] I/F #{@entity}: #{File.basename(filename)} previously received being deleted")
-                  
+
                   ret = deleteFromEntity(fullpath, false)
 
                   if ret == false then
                      @logger.error("[DEC_672] I/F #{@entity}: Failed to delete duplicated file #{File.basename(filename)}")
                   end
-                  
-                  
+
+
                else
                   if @isDebugMode == true then
                      @logger.debug("Duplicated files removal is #{@bDeleteDuplicated} / #{File.basename(filename)} ")
@@ -2084,18 +2084,18 @@ private
 #            else
 #               numFilesToBeRetrieved += 1
 #               arrPolled << fullpath
-#            end                     
+#            end
          end
-      
+
          if @pollingSize != nil and numFilesToBeRetrieved >= @pollingSize.to_i then
          	break
-         end         
+         end
       }
-      
+
    #   exit
-      
+
       arrDelete.each{|element| list.delete(element)}
-      
+
       @fileListError << arrDelete
 
       list.replace(arrPolled)
@@ -2120,7 +2120,7 @@ private
       return list
    end
    ## -----------------------------------------------------------
-      
+
    # It process the output of ncftpls or sftp "ls" in order to
    # delete rubbish which does not correspond to a file
    # * Returns an array of Filenames
@@ -2129,9 +2129,9 @@ private
       arrTemp = Array.new
       output  = output.split(/\n/)
       output  = output.uniq
-      
+
       numFilesToBeRetrieved = 0
-      
+
       output.each{|element|
             # Check dcc_config.xml filters
             @arrFilters.each {|ext|
@@ -2145,11 +2145,11 @@ private
                   end
                end
 				}
-			
+
       }
       arrTemp = arrTemp.flatten
       arrTemp = arrTemp.uniq
-      
+
       arrTemp.each{|fileName|
          if forTracking == false then
             if hasBeenAlreadyReceived(fileName) == false then
@@ -2163,11 +2163,11 @@ private
                @logger.info("[DEC_125] I/F #{@entity}: Deleting duplicated file #{File.basename(filename)} previously received")
 
                ret = deleteFromEntity(fileName, false)
-               
+
                if ret == false then
                   @logger.error("[DEC_672] I/F #{@entity}: Failed to delete duplicated file #{File.basename(filename)}")
                end
-               
+
             end
          else
             if hasBeenAlreadyTracked(fileName) == false then
@@ -2176,14 +2176,14 @@ private
                if @isDebugMode == true then
                   @logger.debug("#{getFilenameFromFullPath(fileName)} already tracked from #{@entity}")
                end
-            end                     
+            end
          end
-                  
+
          if @pollingSize != nil and num_filesToRetrieve >= @pollingSize.to_i then
          	break
-         end         
+         end
 
-         
+
       }
       arrFile = arrFile.uniq
       return arrFile
@@ -2198,7 +2198,7 @@ private
    ## - true if source in dec_incoming_files.xml is current entity
    ## - false otherwise
    def checkFileSource(fileName)
-   
+
       sources  = @fileSource.getEntitiesSendingIncomingFileName(fileName)
 
       if @isDebugMode == true then
@@ -2206,7 +2206,7 @@ private
          # @logger.debug(sources)
       end
 
-      
+
 
       if sources == nil then
          if @isDebugMode == true then
@@ -2222,8 +2222,8 @@ private
 
    end
    ## -------------------------------------------------------------
-   
-	##  
+
+	##
    def hasBeenAlreadyReceived(filename, md5 = false)
       if @isDebugMode == true then
          @logger.debug("checking previous reception of #{filename} from #{@entity} => | md5 flag #{md5}")
@@ -2245,13 +2245,13 @@ private
          end
 
          if file.interface_id == @interface.id then
-            
+
             if md5 == false and @bMD5 == true then
                if @isDebugMode == true then
                   @logger.debug("#{filename} with md5 #{file.md5} / download is required")
                end
                next
-            end 
+            end
 
             if md5 != false and md5 != true and @bMD5 == true then
                if file.md5 == md5 then
@@ -2272,14 +2272,14 @@ private
    end
    ## -----------------------------------------------------------
 
-   
-   #-------------------------------------------------------------
-   
+
    #-------------------------------------------------------------
 
-	# It invokes the method DCC_InventoryInfo::isFileChecked? 
+   #-------------------------------------------------------------
+
+	# It invokes the method DCC_InventoryInfo::isFileChecked?
    def hasBeenAlreadyTracked(filename)
-      arrFiles = TrackedFile.find_by filename: filename 
+      arrFiles = TrackedFile.find_by filename: filename
       if arrFiles == nil then
          return false
       end
@@ -2297,23 +2297,23 @@ private
       if @isNoDB == true then
          return
       end
-      
+
       # ------------------------------------------
       # 20170917 patch to avoid updating the database when received file is empty
-      # to allow retransfer from originator 
+      # to allow retransfer from originator
       if size.to_i == 0 then
          @logger.info("abort setReceivedFromEntity for #{filename} with size #{size} bytes")
-         return 
+         return
       end
       # ------------------------------------------
-            
+
       receivedFile                = ReceivedFile.new
       receivedFile.filename       = filename
       receivedFile.size           = size
       receivedFile.interface      = @interface
       receivedFile.protocol       = @protocol
       receivedFile.reception_date = Time.now
-      
+
       if md5 != nil then
          receivedFile.md5 = md5
       end
@@ -2331,10 +2331,10 @@ private
       end
    end
    #-------------------------------------------------------------
-   
+
 	# It copies the downloaded file into the Entity Local InBox
 	def copyFileToInBox(filename, size)
-	   
+
       # -------------------------------
       # If File retrieved is null size
       if size.to_i == 0 then
@@ -2343,9 +2343,9 @@ private
          if @isDebugMode == true then
             @logger.debug("Removing #{filename} empty with size 0 received from #{@entity}")
          end
-      
+
          retVal = execute(cmd, "DEC_Puller")
-      
+
          if retVal == false then
             if @isDebugMode == true then
                @logger.debug("#{cmd} Failed !")
@@ -2367,9 +2367,9 @@ private
          @logger.debug("MOVING #{filename} received from #{@entity} to #{@finalDir}")
          @logger.debug(cmd)
       end
-      
+
       retVal = execute(cmd, "DEC_Puller")
-      
+
       if retVal == false then
          if @isDebugMode == true then
             @logger.debug("#{cmd} Failed ")
@@ -2382,17 +2382,17 @@ private
       end
 	end
 	# -------------------------------------------------------------
-	
+
 	# It removes the file from the temporary directory.
 	def deleteFileFromTemp(filename)
 	   cmd = %Q{\\rm -f #{@localDir}/#{filename}}
-      
+
       if @isDebugMode == true then
          @logger.debug("Deleting temporary file #{@localDir}/#{filename}")
       end
-      
+
       retVal = execute(cmd, "DEC_Puller")
-      
+
       if retVal == false then
          if @isDebugMode == true then
             @logger.debug("#{cmd} Failed !")
@@ -2402,55 +2402,55 @@ private
 	end
 
    # -------------------------------------------------------------
-   
-	# It creates a file with the list of files of the remote I/F 
+
+	# It creates a file with the list of files of the remote I/F
 	def createContentFile(directory, bDeliver = true)
 	   time = Time.now
       now  = time.strftime("%Y%m%dT%H%M%S")
-		
+
 #		bRegisterDirContent = @entityConfig.registerDirContent?(@entity)
-		
+
 #		if bRegisterDirContent == true then
          @fileList = filterAlreadyCheckedFiles(@fileList, bDeliver)
 		   writer    = EntityContentWriter.new(directory)
          if @isDebugMode == true then
 		      writer.setDebugMode
          end
-         
+
          writer.writeData(@entity, time, @fileList)
          filename = writer.getFilename
-         
+
          if @isDebugMode == true then
             @logger.debug("Created Content File #{filename}")
          end
-   
+
          if filename == "" then
             @logger.error("Error in DEC_ReceiverFromInterface::createContentFile !!!! =:-O")
             exit(99)
          end
-         
+
          if bDeliver == true then
             deliverer = FileDeliverer2InTrays.new
-   
+
             if @isDebugMode == true then
                deliverer.setDebugMode
                @logger.debug("Creating and Deliver Content File")
             end
-            
+
             deliverer.deliverFile(@entity, directory, filename)
-            
+
          end
 #		end
 	end
 	#-------------------------------------------------------------
-   
+
    # Filter the files already received from I/F
    def filterAlreadyCheckedFiles(arrFiles, bTrack = true)
-   
+
       if @isDebugMode == true and arrFiles.length > 0 then
          @logger.debug("Filtering the Files")
       end
-   
+
       if @isDebugMode == true and arrFiles.length == 0 then
          @logger.debug("No newer Files to be filtered")
       end
@@ -2494,19 +2494,19 @@ private
       return filteredFiles
    end
    #-------------------------------------------------------------
-   
+
    ## -----------------------------------------------------------
-   
-   ## It removes temp directory created with the files. 
+
+   ## It removes temp directory created with the files.
    def deleteTempDir
       return
       Dir.chdir("..")
       cmd = %Q{\\rm -rf #{@localDir} }
-      
+
       if @isDebugMode == true then
          @logger.debug("Removing #{@localDir} ...")
       end
-      
+
       retVal = execute(cmd, "DEC_Puller")
 
       if retVal == false then
@@ -2515,14 +2515,14 @@ private
       end
    end
    ## -----------------------------------------------------------
-   
+
    # It creates a dummy file just to inform new files have been received
    # This method is only invoked if FTPROOT is defined.
    # Mainly this feature is required by RPF/MMPF systems but any Client Project
    # may use it.
    def notifyNewFilesReceived
       system(%Q{touch #{@DCC_NEW_FILES_LOCK}})
-   end 
+   end
    ## -------------------------------------------------------------
 
    ## Check if there are some temp dirs for this entity that stayed unremoved from a previous execution
@@ -2533,7 +2533,7 @@ private
       if @isDebugMode == true then
          @logger.debug("Removing old tmps for #{@entity}: #{cmd}")
       end
-      
+
       execute(cmd, "getFromInterface", false, false, false, false)
 
    end

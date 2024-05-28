@@ -40,7 +40,23 @@
          </Switches>
       </Interface>
  
- 
+      <Interface>
+         <Name>S1MPC</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s1mpc</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0"></Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>true</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
    </ListInterfaces>
 
 

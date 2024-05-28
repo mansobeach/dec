@@ -7,7 +7,7 @@
 ## === Written by DEIMOS Space S.L. (bolf)
 ##
 ## === Data Exchange Component
-## 
+##
 ## module DEC
 ##
 #########################################################################
@@ -37,12 +37,12 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
-   
+
    @my_argv = ARGV.dup
-   
+
    ## ------------------------------------------------------
-   
-   Test::Unit.at_start do      
+
+   Test::Unit.at_start do
       puts
       puts "======================================"
       puts "DEC Interface Test Cases for ADGS External Data Retrieval"
@@ -55,12 +55,12 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       puts
       puts "THINK CAREFULLY !!! "
       puts
-      puts "do you want to continue Y/n" 
+      puts "do you want to continue Y/n"
       puts
       puts
-      
+
       bBatchmode = false
-            
+
       @my_argv.each{|arg|
          if arg == "batchmode" then
             puts "batch mode execution on"
@@ -68,73 +68,73 @@ class DECTestCase_ADGS < Test::Unit::TestCase
             break
          end
       }
-       
+
       if bBatchmode == false then
          c = STDIN.getc
          if c != 'Y' then
             exit(99)
          end
-      end   
-      
+      end
+
       @@conf = DEC_Environment.new
-      
+
       @@conf.wrapper_load_config
-                             
+
       @@conf.wrapper_print_environment
-                           
+
       @@conf.createEnvironmentDirs
-                                    
+
       if @@conf.wrapper_check_environment == false then
          puts "DEC environment not suited for unit tests"
          puts
          exit(99)
       end
-                     
-                     
+
+
       # initialize logger
-                           
+
       loggerFactory = CUC::Log4rLoggerFactory.new("adgs_tests", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
-                           
+
       if @isDebugMode then
          loggerFactory.setDebugMode
       end
-      
+
       @@logger = loggerFactory.getLogger
-                           
+
       if @@logger == nil then
          puts
          puts "Error in decUnitTests::main"
          puts "Could not set up logging system !  :-("
-         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+         puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\""
          puts
          puts
          exit(99)
       end
    end
-   
+
    ## ------------------------------------------------------
-   
+
    Test::Unit.at_exit do
       @@logger.info("End of DEC test ADGDS")
    end
-   
+
    ## ------------------------------------------------------
-   
+
    ## Setup before every test-case
    ##
    def setup
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
-                  
+
       decConfig   = DEC::ReadConfigDEC.instance
       reportDir   = decConfig.getReportDir
 
       system("\\rm -rf #{reportDir}")
       # system("\\rm -rf /tmp/dec*")
-      system("\\rm -rf /tmp/ADGS_DEC*")
-      cmd = "\\rm -rf /tmp/ADGS_DEC*"
+      system("\\rm -rf /data/adgs/dec/log/ADGS_DEC*.log")
+      cmd = "\\rm -rf /data/adgs/dec/log/ADGS_DEC*.log*"
       @@logger.debug(cmd)
       system(cmd)
-      
+
       cmd = "\\rm -rf /tmp/adgs/received/s2/*"
       @@logger.debug(cmd)
       system(cmd)
@@ -146,11 +146,11 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decManageDB -c"
       @@logger.debug(cmd)
       ret = system(cmd)
-      
+
       cmd = "decValidateConfig -a"
       @@logger.debug(cmd)
-      ret = system(cmd)      
-      
+      ret = system(cmd)
+
       cmd = "decConfigInterface2DB -p EXTERNAL"
       @@logger.debug(cmd)
       ret = system(cmd)
@@ -163,7 +163,7 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       @@logger.debug("#{self.class.name.split('::').last}::#{__method__.to_s}")
    end
    ## ------------------------------------------------------
- 
+
    ## -----------------------------------------------------------
 
    # S2__OPER_AUX_UT1UTC_PDMC_20240513T000000_V20170101T000000_21000101T000000.txt
@@ -174,15 +174,15 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decCheckConfig -e NASA_EOSDIS_IERS"
       @@logger.info(cmd)
       assert(system(cmd), "list from NASA_EOSDIS_IERS")
-   
+
       cmd = "decGetFromInterface -m NASA_EOSDIS_IERS -l"
       @@logger.info(cmd)
       assert(system(cmd), "list from NASA_EOSDIS_IERS")
-   
+
       cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
       @@logger.info(cmd)
       assert(system(cmd), "pull from NASA_EOSDIS_IERS")
-      
+
       # New iteration should not drive to a new file
       # A duplication should be detected.
       cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
@@ -192,31 +192,31 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
-   
-      arr = Dir["/tmp/ADGS_DEC*.log"]
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
 
       @@logger.debug("Verification of log trace: File Download")
       cmd = "grep DEC\_110 #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
       @@logger.debug("Verification of log trace: Duplication detection")
       cmd = "grep DEC\_111 #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}")
 
       @@logger.debug("Verification of log trace: file conversion to NAOS mission")
       cmd = "grep AUX\_001 #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}")
 
       cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
-      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
-   
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end   
-   
+   end
+
 
    ## -----------------------------------------------------------
 
@@ -229,15 +229,15 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decCheckConfig -e NOAA_IMS"
       @@logger.info(cmd)
       assert(system(cmd), "list from NOAA_IMS")
-   
+
       cmd = "decGetFromInterface -m NOAA_IMS -l"
       @@logger.info(cmd)
       assert(system(cmd), "list from NOAA_IMS")
-   
+
       cmd = "decGetFromInterface -m NOAA_IMS --no-intray"
       @@logger.info(cmd)
       assert(system(cmd), "pull from NOAA_IMS")
-      
+
       # New iteration should not drive to a new file
       # A duplication should be detected.
       cmd = "decGetFromInterface -m NOAA_IMS --no-intray"
@@ -247,23 +247,70 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decStats"
       @@logger.info(cmd)
       assert(system(cmd), "pull statistics")
-   
-      arr = Dir["/tmp/ADGS_DEC*.log"]
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
 
       @@logger.debug("Verification of log trace: File Download")
       cmd = "grep DEC\_110 #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}") 
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
       cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
-      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}") 
-   
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end   
+   end
 
    ## -----------------------------------------------------------
 
+   # Copernicus S1 Mission Performance Centre
+
+   def test_s1mpc
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "DEC_LIST_MODE_S1MPC=true DEC_QUERY_DATE_S1MPC=\"2024-04-29\" dec_script_ADGS_S1MPC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S1MPC")
+
+      cmd = "DEC_LIST_MODE_S1MPC=false DEC_QUERY_DATE_S1MPC=\"2024-04-29\" dec_script_ADGS_S1MPC"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S1MPC")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      cmd = "DEC_LIST_MODE_S1MPC=true DEC_QUERY_DATE_S1MPC=\"2024-04-29\" dec_script_ADGS_S1MPC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S1MPC")
+
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: File Dusplications")
+      cmd = "grep DEC\_301 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: Pull iterations")
+      cmd = "grep DEC\_100 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
 
 
 
@@ -273,4 +320,3 @@ end
 
 
 ## ===================================================================
-

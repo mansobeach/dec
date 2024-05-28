@@ -7,10 +7,10 @@
 ## === Written by DEIMOS Space S.L. (bolf)
 ##
 ## === Data Exchange Component
-## 
+##
 ## Git: $Id: ReadInterfaceConfig.rb,v 1.7 2008/03/27 15:52:13 decdev Exp $
 ##
-## This class reads and decodes the interfaces configuration file 
+## This class reads and decodes the interfaces configuration file
 ## dec_interfaces.xml.
 ##
 #########################################################################
@@ -27,83 +27,75 @@ class ReadInterfaceConfig
 
    include Singleton
    include REXML
-   
+
    include CUC::CryptHelper
    include CUC::DirUtils
-   ## -------------------------------------------------------------   
-   
+   ## -------------------------------------------------------------
+
    ## Class contructor
    def initialize
       @@isModuleOK        = false
       @@isModuleChecked   = false
       @isDebugMode        = false
-      @protocolArray      = [ "FTP",   \
-                              "SFTP",  \
-                              "FTPS",  \
-                              "FTPES", \
-                              "LOCAL", \
-                              "HTTP",  \
-                              "NATS",  \
-                              "HTTP_SPCS", "WEBDAV"]
       checkModuleIntegrity
 	   defineStructs
       loadData
    end
    ## -------------------------------------------------------------
-   
+
    ## Set the flag for debugging on.
    def setDebugMode
       @isDebugMode = true
       puts "ReadEntityConfig debug mode is on"
    end
    ## -------------------------------------------------------------
-   
+
    ## Reload data from configuration file
    ##
    ## This is the method called by the Observer when the config files are modified.
    def update
-      if @isDebugMode then 
+      if @isDebugMode then
          print("\nReceived Notification that the config files have changed\n")
       end
       # puts "updating ..."
       loadData
    end
    ## -------------------------------------------------------------
-   
+
    ## Returns the number of entities found in interfaces.xml file.
    def getNumExternalEntities
       return @@arrExtEntities.length
    end
 #   #-------------------------------------------------------------
-#   
-#   # Reads IncomingDir from interfaces.xml 
-#   # where FT leaves the files received. 
+#
+#   # Reads IncomingDir from interfaces.xml
+#   # where FT leaves the files received.
 #   def getIncomingDir(mnemonic)
 #      return searchEntityValue(mnemonic, @@arrExtEntities, "incomingDir")
 #   end
-#   #-------------------------------------------------------------  
-#   
+#   #-------------------------------------------------------------
+#
 #   # It Reads OutgoingDir parameter for a given Entity from interfaces.xml.
 #   #
 #   # This directory is where #FT_PrepareDirectories shall leave the files
 #   # which are going to be sent to a given Entity.
 #   def getOutgoingDir(mnemonic)
 #      return searchEntityValue(mnemonic, @@arrExtEntities, "outgoingDir")
-#   end      
+#   end
 #   #-------------------------------------------------------------
 
    # It Reads description parameter for a given Entity from interfaces.xml
    def getDescription(mnemonic)
       return searchEntityValue(mnemonic, @@arrExtEntities, "description")
-   end      
+   end
    #-------------------------------------------------------------
-   
+
    # Get the mnemonics of all I/F entities.
    def getAllMnemonics
       return getAllExternalMnemonics
    end
    #-------------------------------------------------------------
-   
+
    # Get the mnemonics of all I/F entities.
    def getAllExternalMnemonics
       nMnemonics = @@arrExtEntities.length
@@ -114,14 +106,14 @@ class ReadInterfaceConfig
       return arrEnt
    end
    #-------------------------------------------------------------
-   
+
    # Get the TXRX Parameters for an entity.
    # - mnemonic (IN): Entity name
    def getTXRXParams(mnemonic)
-      return searchEntityValue(mnemonic, @@arrExtEntities, "TXRXParams")      
+      return searchEntityValue(mnemonic, @@arrExtEntities, "TXRXParams")
    end
    #-------------------------------------------------------------
-   
+
    # DEPRECATED
    # Get the Mail Parameters for an entity.
    # - mnemonic (IN): Entity name
@@ -129,7 +121,7 @@ class ReadInterfaceConfig
      return getNotifyParams(mnemonic)
    end
    #-------------------------------------------------------------
-   
+
    # Get the Mail Parameters for an entity.
    # - mnemonic (IN): Entity name
    def getNotifyParams(mnemonic)
@@ -149,44 +141,44 @@ class ReadInterfaceConfig
    def getContactInfo(mnemonic)
      return searchEntityValue(mnemonic, @@arrExtEntities, "ContactInfo")
    end
-   #-------------------------------------------------------------   
-   
+   #-------------------------------------------------------------
+
    # Get the Email of the Contact Info
    # - mnemonic (IN): Entity name
    def getContactEMail(mnemonic)
      contactInfo = getContactInfo(mnemonic)
      return contactInfo[:email]
    end
-   #-------------------------------------------------------------   
-   
+   #-------------------------------------------------------------
+
    # Get TXRX Immediate Retries params.
    # - mnemonic (IN): Entity name
    def getImmediateRetries(mnemonic)
      return decodeTXRXParams(getTXRXParams(mnemonic),"immediateRetries")
    end
    #-------------------------------------------------------------
-   
+
    # Get TXRX Loop Retries params.
    # - mnemonic (IN): Entity name
    def getLoopRetries(mnemonic)
      return decodeTXRXParams(getTXRXParams(mnemonic),"loopRetries")
    end
    #-------------------------------------------------------------
-   
+
    # Get Delay among each loop Retry expressed in seconds.
    # - mnemonic (IN): Entity name
    def getLoopDelay(mnemonic)
      return decodeTXRXParams(getTXRXParams(mnemonic),"loopDelay")
    end
    #-------------------------------------------------------------
-   
+
    # Get Interval time among each Polling.
    # - mnemonic (IN): Entity name
    def getPollingInterval(mnemonic)
      return decodeTXRXParams(getTXRXParams(mnemonic),"pollingInterval")
    end
-   #-------------------------------------------------------------      
-   
+   #-------------------------------------------------------------
+
    # Get the configuration FTP Config info for sending files.
    # - mnemonic (IN): Entity name
    def getFTPServer4Send(mnemonic)
@@ -207,38 +199,38 @@ class ReadInterfaceConfig
       return getServer(mnemonic)
    end
    ## -----------------------------------------------------------
-   
+
    # Get the configuration FTP Config info for receiving files.
    # - mnemonic (IN): Entity name
    def getFTPServer4Receive(mnemonic)
       return searchEntityValue(mnemonic, @@arrExtEntities, "Server")
    end
    #-------------------------------------------------------------
-   
+
 #   def getAllDownloadDirs(mnemonic)
 #      ftpStruct = getFTPServer(mnemonic)
 #      return ftpStruct[:arrDownloadDirs]
 #   end
-#   #-------------------------------------------------------------   
-#   
+#   #-------------------------------------------------------------
+#
 #   # Get the Download Dir <Entity><DownloadDir>
 #   # - mnemonic (IN): Entity name
 #   def getDownloadDir(mnemonic)
 #      puts
 #      puts "DEPRECATED METHOD - ReadInterfaceConfig::getDownloadDir !!!!"
-#      puts 
+#      puts
 #      exit(99)
 #      ftpStrct = getFTPServer4Receive(mnemonic)
 #      return ftpStrct[:downloadDir]
 #   end
 #   #-------------------------------------------------------------
-   	
+
    # Get List of Mail addresses for diseminating the files to
    def getMailList(mnemonic)
       return searchEntityValue(mnemonic, @@arrExtEntities, "DeliverByMailTo")
    end
    #-------------------------------------------------------------
-   
+
    # Get the configuration FTP config flag <RegisterContentFlag>
    # - mnemonic (IN): Entity name
 	def registerDirContent?(mnemonic)
@@ -253,15 +245,15 @@ class ReadInterfaceConfig
 	   ftp = getFTPServer4Receive(mnemonic)
 		return ftp[:isRetrieved]
 	end
-	## ----------------------------------------------------------- 
-	   
+	## -----------------------------------------------------------
+
 	## Get the configuration FTP config flag <DeleteFlag>
-   ## - mnemonic (IN): Entity name	
+   ## - mnemonic (IN): Entity name
 	def deleteAfterDownload?(mnemonic)
       puts "DEPRECATED METHOD ! #{'1F480'.hex.chr('UTF-8')}"
       exit(99)
 	   ftp = getFTPServer4Receive(mnemonic)
-		return ftp[:isDeleted]	
+		return ftp[:isDeleted]
 	end
 
    ## -----------------------------------------------------------
@@ -273,7 +265,7 @@ class ReadInterfaceConfig
 		return ftp[:isCompressed]
 	end
    ## -----------------------------------------------------------
-	
+
    ## Get the configuration FTP config flag <SecureFlag>
    ## - mnemonic (IN): Entity name
 	def isSecure?(mnemonic)
@@ -297,7 +289,7 @@ class ReadInterfaceConfig
 		return ftp[:cleanUpFreq]
 	end
 	#-------------------------------------------------------------
-	 
+
    def getNotifyTo(mnemonic)
       notifyParams = getNotifyParams(mnemonic)
       return notifyParams[:arrNotifyTo]
@@ -312,7 +304,7 @@ class ReadInterfaceConfig
    #-------------------------------------------------------------
 
    # Checks whether it is an Entity configured with that name.
-   # - mnemonic (IN): Entity name   
+   # - mnemonic (IN): Entity name
    # * It returns true if exists.
    # * Otherwise It returns false.
    def exists?(mnemonic)
@@ -322,7 +314,7 @@ class ReadInterfaceConfig
       return false
    end
    #-------------------------------------------------------------
-   
+
    def isEnabled4Sending?(mnemonic)
       return decodeTXRXParams(getTXRXParams(mnemonic),"enabled4Send")
    end
@@ -335,7 +327,7 @@ class ReadInterfaceConfig
    ##
    ## Get the Server network protocol configured for circulations
    ## - mnemonic (IN): Entity name
-   def getProtocol(mnemonic)  
+   def getProtocol(mnemonic)
       return searchEntityValue(mnemonic, @@arrExtEntities, "Server").protocol
    end
    ## -----------------------------------------------------------
@@ -345,31 +337,31 @@ private
    @@isModuleOK        = false
    @@isModuleChecked   = false
    @isDebugMode        = false
-   @@configDirectory   = ""  
+   @@configDirectory   = ""
    @@monitorCfgFiles   = nil
    @@arrExtEntities    = nil
 
 
    ## -----------------------------------------------------------
-   
+
    ## Check that everything needed by the class is present.
    def checkModuleIntegrity
-      
+
       bDefined = true
       bCheckOK = true
 
       ## -----------------------------------------
       ##
-       
+
       ## If not previosly defined,
-      ## the configuration directory is the one of the gem installation 
-       
+      ## the configuration directory is the one of the gem installation
+
       if !ENV['DEC_CONFIG'] then
          ENV['DEC_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
       end
-  
+
       ## -----------------------------------------
-  
+
       if !ENV['DEC_CONFIG'] then
          puts "\nDEC_CONFIG environment variable not defined !  :-(\n\n"
          bCheckOK = false
@@ -378,34 +370,34 @@ private
 
       # if environment variables are defined check for config files
       # interfaces.xml
-      
+
       if bDefined == true then
          configDir = nil
          if ENV['DEC_CONFIG'] then
-            configDir         = %Q{#{ENV['DEC_CONFIG']}}  
+            configDir         = %Q{#{ENV['DEC_CONFIG']}}
          end
-               
+
          @@configDirectory = configDir
-        
-         @configFile = %Q{#{configDir}/dec_interfaces.xml}        
+
+         @configFile = %Q{#{configDir}/dec_interfaces.xml}
          if !FileTest.exist?(@configFile) then
            bCheckOK = false
            print("\n\n", @configFile, " does not exist !  :-(\n\n" )
-         end        
+         end
       end
-            
+
       if bCheckOK == false then
          raise "ReadInterfaceConfig::checkModuleIntegrity FAILED"
-      end      
+      end
    end
    ## -------------------------------------------------------------
-   
+
 	## This method defines all the structs used
 	def defineStructs
 	   Struct.new("Entity", :mnemonic, :description, :incomingDir,
                       :outgoingDir, :Server, :TXRXParams,
 	                   :Notify, :DeliverByMailTo, :Events, :ContactInfo)
-                      
+
 		Struct.new("Server", :mnemonic, \
                            :protocol, \
                            :hostname, \
@@ -424,24 +416,24 @@ private
                            :uploadTemp, \
                            :arrDownloadDirs \
                            )
-                           
+
 #		Struct.new("FTPServer", :mnemonic, :protocol, :hostname, :port,
-#                   :user, :password, :ServerMirror, :isTracked, :isRetrieved, 
+#                   :user, :password, :ServerMirror, :isTracked, :isRetrieved,
 #                   :isSecure, :isCompressed, :isDeleted, :isPassive, :cleanUpFreq, :uploadDir,
 #                   :uploadTemp, :arrDownloadDirs)
       Struct.new("FTPServerMirror", :mnemonic,:protocol, :hostname, :port, :user, :password)
 #      Struct.new("DownloadDir", :mnemonic, :directory, :depthSearch)
 		Struct.new("TXRXParams", :mnemonic, :enabled4Send, :enabled4Receive,
                  :immediateRetries, :loopRetries, :loopDelay, :pollingInterval, :pollingSize, :parallelDownload)
-		Struct.new("NotifyTo", :mnemonic, :sendNotification, :arrNotifyTo)		            
-      Struct.new("GetMailParams", :mnemonic, :hostname, :port, 
+		Struct.new("NotifyTo", :mnemonic, :sendNotification, :arrNotifyTo)
+      Struct.new("GetMailParams", :mnemonic, :hostname, :port,
                              :user, :password, :pollingInterval)
-      Struct.new("Events", :mnemonic, :arrEvents) 
-      Struct.new("ContactInfo", :mnemonic, :name, :email, 
+      Struct.new("Events", :mnemonic, :arrEvents)
+      Struct.new("ContactInfo", :mnemonic, :name, :email,
                              :tlf, :fax, :address)
 	end
 	## -------------------------------------------------------------
-	
+
    ## Load the file into the an internal struct.
    ##
    ## The struct is defined in the class Constructor. See #initialize.
@@ -453,9 +445,9 @@ private
          puts "\nProcessing Interfaces configuration"
       end
       processEntities(xmlExternal, @@arrExtEntities)
-   end   
+   end
    ## -------------------------------------------------------------
-   
+
    ## Process the xml file decoding all the Entities
    ## - xmlFile (IN): XML configuration file
    ## - arrEmtities (OUT): Array of entity objects
@@ -469,19 +461,19 @@ private
       txrx     = nil
       notify   = nil
       events   = nil
-      mailto   = nil   
+      mailto   = nil
       contact  = nil
       arrsendTo= nil
 
       path = "Interfaces/Interface"
-      
+
       entity  = XPath.each(xmlFile, path){
           |entity|
           events = nil
           XPath.each(entity, "Desc"){
              |descr|
              description = descr.text
-          }          
+          }
 #          XPath.each(entity, "IncomingDir"){
 #             |dir|
 #             inDir  = expandPathValue(dir.text)
@@ -508,20 +500,20 @@ private
                end
              }
              mailto = arrSendTo
-          }                    
+          }
           XPath.each(entity, "Notify"){
-             |nnotify|      
+             |nnotify|
              notify = fillNotify2Struct(entity.attributes["Name"], nnotify)
           }
           XPath.each(entity, "Events"){
-             |eevents|      
+             |eevents|
              events = fillEventsStruct(entity.attributes["Name"], eevents)
           }
           XPath.each(entity, "ContactInfo"){
              |contactinfo|
              contact = fillContactInfoStruct(entity.attributes["Name"], contactinfo)
-          }     
-          
+          }
+
           arrEntities << fillEntityStruct(entity.attributes["Name"],
                                           description,
                                           inDir,
@@ -539,7 +531,7 @@ private
       end
    end
    ## -------------------------------------------------------------
-   
+
    # Fill an entity struct
    # - mnemonic (IN): entity names
    # - description (IN): description of the Interface
@@ -550,9 +542,9 @@ private
    # - txrxparams (IN):
    # - notifyBymail (IN):
    # - deliverByMail (IN):
-   # There is only one point in the class where all dynamic structs 
+   # There is only one point in the class where all dynamic structs
    # are filled so that it is easier to update/modify the I/F.
-   def fillEntityStruct(mnemonic, description, indir, outdir, ftpserver, txrxparams, notify, mailTo, events, contact)                      
+   def fillEntityStruct(mnemonic, description, indir, outdir, ftpserver, txrxparams, notify, mailTo, events, contact)
       entity = Struct::Entity.new(
                          mnemonic,
                          description,
@@ -565,11 +557,11 @@ private
                          events,
 			                contact
                          )
-                         
-      return entity              
+
+      return entity
    end
    ## -----------------------------------------------------------
-   
+
    # Fill an Server Struct
    # - mnemonic (IN):
    # - hostname (IN):
@@ -583,7 +575,7 @@ private
    # - downloadDir (IN):
    # - uploadTemp (IN):
    # - downloadTemp (IN):
-   # There is only one point in the class where all Dynamic structs 
+   # There is only one point in the class where all Dynamic structs
    # are filled so that it is easier to update/modify the I/Fs.
    def fillServerStruct(mnemonic, xmlstruct)
       bTracked       = false
@@ -591,7 +583,7 @@ private
       bSecure        = false
       bVerifyPeerSSL = false
 		bCompress      = false
-		bDelete        = false      
+		bDelete        = false
       bErrorValue    = false
       bPassive       = true
       protocol       = ""
@@ -600,15 +592,15 @@ private
       user           = ""
       pass           = ""
       nCleanUpFreq   = 0
-      
+
       if !xmlstruct.elements["Hostname"].nil? then
          hostname    = xmlstruct.elements["Hostname"].text
       end
-      
+
       if !xmlstruct.elements["Port"].nil? then
          port    = xmlstruct.elements["Port"].text.to_i
       end
-      
+
       ## Esr!@$Pm
       if !xmlstruct.elements["User"].nil? then
          if !xmlstruct.elements["User"].text.nil? then
@@ -626,7 +618,7 @@ private
          if !xmlstruct.elements["Pass"].text.nil? then
             if xmlstruct.elements["Pass"].attributes["encrypted"] \
                and xmlstruct.elements["Pass"].attributes["encrypted"].to_s.downcase == 'true' then
-               
+
                # pass = cmdDecrypt(xmlstruct.elements["Pass"].text, getMagikGuord('DEC'))
                pass = cmdDecryptStr(xmlstruct.elements["Pass"].text)
             else
@@ -658,7 +650,7 @@ private
       if !xmlstruct.elements["CleanUpFreq"].nil? and !xmlstruct.elements["CleanUpFreq"].text.nil? then
 
          if !xmlstruct.elements["CleanUpFreq"].text.empty? then
-         
+
             if xmlstruct.elements["CleanUpFreq"].text.upcase == "NEVER" then
                nCleanUpFreq = 0
             else
@@ -674,16 +666,15 @@ private
                   end
                end
             end
-            
+
          end
       end
-      
+
       arrDownloadDirs = Array.new
 
       if !xmlstruct.elements["Protocol"].nil?
-           if (xmlstruct.elements["Protocol"].text != nil) and \
-               (@protocolArray.include?(xmlstruct.elements["Protocol"].text.upcase)) then
-              protocol = xmlstruct.elements["Protocol"].text.upcase    
+           if (xmlstruct.elements["Protocol"].text != nil) then
+              protocol = xmlstruct.elements["Protocol"].text.upcase
            else
               puts "Error in ReadInterfaceConfig::fillServerStruct"
               puts "Protocol #{xmlstruct.elements["Protocol"].text.upcase} is not valid"
@@ -703,14 +694,14 @@ private
             bErrorValue = true
          end
       end
-     
+
       if xmlstruct.elements["RetrieveContentFlag"].text.upcase == "TRUE" then
          bRetrieved = true
       else
          if xmlstruct.elements["RetrieveContentFlag"].text.upcase != "FALSE" then
             puts "Error[#{mnemonic}] RetrieveContentFlag field only accepts true|false value"
             bErrorValue = true
-         end         
+         end
       end
 
 
@@ -737,15 +728,15 @@ private
 
       # ----------------------
       # new flag for ftp passive or not (passive is by default)
-      
+
       if !xmlstruct.elements["PassiveFlag"].nil? and !xmlstruct.elements["PassiveFlag"].text.nil? then
          if xmlstruct.elements["PassiveFlag"].text.upcase == "TRUE" then
             bPassive = true
          else
-            bPassive = false  
+            bPassive = false
          end
       else
-         bPassive = false  
+         bPassive = false
       end
       # ----------------------
 
@@ -783,12 +774,12 @@ private
 #                         expandPathValue(xmlstruct.elements["UploadDir"].text),
 #                         expandPathValue(xmlstruct.elements["UploadTemp"].text),
                          arrDownloadDirs
-                         ) 
-                                                      
-      return ftpstruct      
+                         )
+
+      return ftpstruct
    end
    #-------------------------------------------------------------
-   
+
    # TXRXParamsStruct is filled in this method.
    # mnemonic,
    # - getMode (IN):
@@ -798,14 +789,14 @@ private
    # - loopRetries (IN):
    # - loopDelay (IN):
    # - pollingInterval (IN):
-   # There is only one point in the class where all Dynamic structs 
-   # are filled so that it is easier to update/modify the I/Fs   
+   # There is only one point in the class where all Dynamic structs
+   # are filled so that it is easier to update/modify the I/Fs
    def fillTXRXParamsStruct(mnemonic, xmlstruct)
       @b4Send  = false
       @b4Rcv   = false
       strSend = xmlstruct.elements["Enabled4Sending"].text.downcase
       strRcv  = xmlstruct.elements["Enabled4Receiving"].text.downcase
-      
+
       if strSend == "true"
          @b4Send = true
       end
@@ -816,7 +807,7 @@ private
 
       pollingSize       = nil
       parallelDownload  = 1
-      
+
       if !xmlstruct.elements["PollingSize"].nil? then
          pollingSize = xmlstruct.elements["PollingSize"].text
       end
@@ -840,9 +831,9 @@ private
    end
    ## -----------------------------------------------------------
 
-   ## There is only one point in the class where all Dynamic structs 
-   ## are filled so that it is easier to update/modify the I/Fs   
-   def fillNotify2Struct(entity, xmlstruct)              
+   ## There is only one point in the class where all Dynamic structs
+   ## are filled so that it is easier to update/modify the I/Fs
+   def fillNotify2Struct(entity, xmlstruct)
       arrNotifyTo = Array.new
 
       sendNotification = xmlstruct.elements["SendNotification"].text.to_s.downcase
@@ -853,7 +844,7 @@ private
          puts "<Notify><SendNotification> only accepts true | false values"
          puts sendNotification
          puts
-         exit(99)         
+         exit(99)
       end
 
       if sendNotification == "true" then
@@ -865,17 +856,17 @@ private
       XPath.each(xmlstruct,"To"){
          |to|
          XPath.each(to, "Address"){
-             |nnotify|      
+             |nnotify|
              arrNotifyTo << nnotify.text.to_s
-         }    
+         }
       }
 
       notify2  = Struct::NotifyTo.new(
                           entity.to_s,
                           sendNotification,
-                          arrNotifyTo                  
+                          arrNotifyTo
                          )
-      return notify2     
+      return notify2
    end
    ## -----------------------------------------------------------
 
@@ -907,18 +898,18 @@ private
          hEvent["cmd"]  = eventCmd
          if eventCmd != nil and eventCmd != "" then
             arrEvents << hEvent
-         end         
+         end
       }
 
       return Struct::Events.new(interface, arrEvents)
 
    end
-   ## -----------------------------------------------------------      
-   
+   ## -----------------------------------------------------------
+
    ## ContactInfoStruct is filled in this method.
    ## mnemonic,
-   ## There is only one point in the class where all Dynamic structs 
-   ## are filled so that it is easier to update/modify the I/Fs   
+   ## There is only one point in the class where all Dynamic structs
+   ## are filled so that it is easier to update/modify the I/Fs
    def fillContactInfoStruct(mnemonic, xmlstruct)
       contactInfo  = Struct::ContactInfo.new(
                           mnemonic,
@@ -928,11 +919,11 @@ private
                           xmlstruct.elements["Fax"].text,
                           xmlstruct.elements["Address"].text
                          )
-   
+
       return contactInfo
    end
-   ## -------------------------------------------------------------     
-   
+   ## -------------------------------------------------------------
+
    ## Decode TXRXParams struct.
    ## - txrx (IN): TXRXParams struct
    ## - field (IN): Field name
@@ -940,7 +931,7 @@ private
       return txrx[field]
    end
    ## -------------------------------------------------------------
-   
+
    ## Search in the array an Entity the given mnemonic.
    ## - mnemonic (IN): Entity name
    ## - arrEntities (IN): Array of Entity structs
@@ -955,7 +946,7 @@ private
       return nil
    end
    ## -------------------------------------------------------------
-   
+
 end # class
 
 end # module

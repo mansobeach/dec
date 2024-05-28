@@ -6,40 +6,33 @@ require 'json'
 require 'dec/DEC_Environment'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
+require 'dec/InterfaceHandlerCustom_S1MPC'
 
 include DEC
 
-## TO-DO LIST MODE
-
 @entity         = "S1MPC"
-@listOnly       = nil
-@isDebugMode    = nil
-@queryDate      = Date.today.prev_day.to_s
-
-
-if ENV.include?('DEC_DEBUG_MODE') == true then
-    @isDebugMode = true
-else
-    @isDebugMode = false
-end
-
-if ENV.include?("DEC_LIST_MODE_#{@entity}") == false then
-    raise "missing environment variable DEC_LIST_MODE_#{@entity}"
-end
-
-if ENV["DEC_LIST_MODE_#{@entity}"].downcase == "true" then
-    @listOnly = true
-else
-    @listOnly = false
-end
-
-if ENV.include?("DEC_#{@entity}_QUERY_DATE") == true then
-    @queryDate = ENV["DEC_#{@entity}_QUERY_DATE"]
-end
 
 self.load_config
-
 @logger     = self.load_logger("script_S1MPC")
+
+handler = nil
+
+begin
+    handler = InterfaceHandlerCustom_S1MPC.new(@entity, @logger)
+rescue Exception => e
+    @logger.error("[DEC_799] Fatal Error: #{e.to_s} #{'1F480'.hex.chr('UTF-8')}")
+    exit(99)
+end
+
+if handler.usage == true then
+    handler.print_usage
+    exit(0)
+end
+
+@listOnly       = handler.listOnly
+@isDebugMode    = handler.isDebugMode
+@queryDate      = handler.queryDate
+
 
 @logger.info("[DEC_005] I/F #{@entity}: Polling Started - List mode is #{@listOnly}")
 
@@ -56,6 +49,7 @@ end
 
 listOfFiles = Array.new
 listOfURL   = Array.new
+numFiles    = 0
 
 arr_products.each{
     |item|
@@ -67,31 +61,23 @@ arr_products.each{
     listOfFiles << item['physical_name']
     listOfURL   << item['remote_url']
 
-    if @listOnly == true then
-        @logger.info("[DEC_105] I/F #{@entity}: File #{item['physical_name']} is available")
+    if handler.previouslyReceived?(item['physical_name']) == true then
+        @logger.warn("[DEC_301] I/F #{@entity}: #{item['physical_name']} has been previously received")
         next
     end
 
-    # cmd  = "curl --progress-bar -k -L #{item['remote_url']} --output /tmp/#{item['physical_name']}"
-    cmd  = "curl -s -k -L #{item['remote_url']} --output /tmp/#{item['physical_name']}"
-
-    if@isDebugMode == true then
-        @logger.debug(cmd)
+    if @listOnly == true then
+        @logger.info("[DEC_105] I/F #{@entity}: File #{item['physical_name']} is available")
+        numFiles=numFiles+1
+        next
     end
 
-    ret = system(cmd)
-
-    if ret == true then
-        size = File.size("/tmp/#{item['physical_name']}")
-        @logger.info("[DEC_110] I/F #{@entity}: #{item['physical_name']} downloaded with size #{size} bytes")
-    else
-        @logger.error("[DEC_666] #{@entity} I/F: Could not download #{item['physical_name']}")
-    end
+    handler.downloadFile(item['physical_name'], item['remote_url'])
 
 }
 
 if @listOnly == true then
-    @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) #{listOfFiles.length} available for pull")
+    @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) #{numFiles} available for pull")
 end
 
 @logger.info("[DEC_100] I/F #{@entity}: Pull iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")
