@@ -1183,7 +1183,7 @@ private
          hParams["directory"] = @finalDir
 
          if @isDebugMode == true then
-            @logger.debug("[LINE 1179] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
+            @logger.debug("[DEC_XXX] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")
             @logger.debug(hParams)
          end
          #@logger.info("Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@finalDir}")

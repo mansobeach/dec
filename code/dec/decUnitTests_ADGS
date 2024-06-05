@@ -312,6 +312,23 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
+   # verify pull with no new files
+   def test_s1mpc_now
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "DEC_LIST_MODE_S1MPC=true DEC_QUERY_DATE_S1MPC=\"#{Time.now.strftime("%Y-%m-%d")}\" dec_script_ADGS_S1MPC"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S1MPC")
+
+      cmd = "DEC_LIST_MODE_S1MPC=false DEC_QUERY_DATE_S1MPC=\"#{Time.now.strftime("%Y-%m-%d")}\" dec_script_ADGS_S1MPC"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S1MPC")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
 
 
 end

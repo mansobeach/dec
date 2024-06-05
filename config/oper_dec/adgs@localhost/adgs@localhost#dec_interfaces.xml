@@ -141,6 +141,9 @@
     </To>
   </Notify>
   <Events>
+    <Event Name="OnReceiveNewFile"      executeCmd="echo -f &quot;%F&quot; "/>
+    <Event Name="ONRECEIVENEWFILESOK"   executeCmd="echo 'pull completed / new files retrieved' "/>
+    <Event Name="ONRECEIVEOK"           executeCmd="echo 'pull completed / no new files' "/>
   </Events>
   <ContactInfo>
     <Name>Dr Who</Name>

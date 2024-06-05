@@ -78,6 +78,12 @@ arr_products.each{
 
 if @listOnly == true then
     @logger.info("[DEC_060] I/F #{@entity}: Polling Completed / New file(s) #{numFiles} available for pull")
+else
+    if numFiles == 0 then
+        handler.triggerEventPullOK
+    else
+        handler.triggerEventPullOKNewFiles
+    end
 end
 
 @logger.info("[DEC_100] I/F #{@entity}: Pull iteration completed successfully #{'1F57A'.hex.chr('UTF-8')}")

@@ -72,6 +72,7 @@ class InterfaceHandlerCustom_S1MPC < InterfaceHandlerCustom
          @logger.info("[DEC_110] I/F #{@entity}: #{filename} downloaded with size #{size} bytes")
 
          self.setReceivedFromEntity(filename, size)
+         self.triggerEventNewFile(filename)
 
          return true
 
@@ -83,6 +84,8 @@ class InterfaceHandlerCustom_S1MPC < InterfaceHandlerCustom
    end
 
    ## -----------------------------------------------------------
+
+
 
 
 end # class

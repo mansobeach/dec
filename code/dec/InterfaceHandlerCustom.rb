@@ -4,11 +4,11 @@
 ###
 ### === Ruby source for #InterfaceHandlerAbstract class
 ###
-### === Written by DEIMOS Space S.L. (bolf)
+### === Written by DEIMOS Space S.L.
 ###
 ### === Data Exchange Component -> Data Collector Component
 ###
-### Git: $Id: InterfaceHandlerAbstract.rb,v 1.12 2014/05/16 00:14:38 bolf Exp $
+### Git: $Id: InterfaceHandlerAbstract.rb,v
 ###
 ### Module Interface
 ### This is an abstract class that defines the interface handler methods
@@ -23,6 +23,7 @@ require 'cuc/DirUtils'
 require 'dec/ReadConfigDEC'
 require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
+require 'dec/EventManager'
 
 class InterfaceHandlerCustom
 
@@ -80,6 +81,11 @@ class InterfaceHandlerCustom
       @bMD5                = DEC::ReadConfigIncoming.instance.md5?(@entity)
 
       checkDirectory(@dirIncoming)
+
+      @dimConfig        = ReadConfigIncoming.instance
+      @finalDir         = @dimConfig.getIncomingDir(@entity)
+      checkDirectory(@finalDir)
+
    end
    ## -----------------------------------------------------------
    ##
@@ -179,6 +185,46 @@ class InterfaceHandlerCustom
          exit(99)
       end
    end
+   #-------------------------------------------------------------
+
+   def triggerEventPullOK
+      event  = DEC::EventManager.new
+      if @isDebugMode == true then
+         event.setDebugMode
+      end
+      event.trigger(@entity, "ONRECEIVEOK", nil, @logger)
+   end
+
+   #-------------------------------------------------------------
+
+   def triggerEventPullOKNewFiles
+      event  = DEC::EventManager.new
+      if @isDebugMode == true then
+         event.setDebugMode
+      end
+      event.trigger(@entity, "ONRECEIVENEWFILESOK", nil, @logger)
+   end
+
+   #-------------------------------------------------------------
+
+   def triggerEventNewFile(filename)
+      event  = DEC::EventManager.new
+
+      if @isDebugMode == true then
+         event.setDebugMode
+      end
+
+      hParams              = Hash.new
+      hParams["filename"]  = File.basename(filename)
+      hParams["directory"] = @finalDir
+
+      if @isDebugMode == true then
+         @logger.debug("[DEC_XXX] Event ONRECEIVENEWFILE #{File.basename(filename)} => #{@dirIncoming}")
+         @logger.debug(hParams)
+      end
+      event.trigger(@entity, "ONRECEIVENEWFILE", hParams, @logger)
+   end
+
    #-------------------------------------------------------------
 
    ## DEC - Pull

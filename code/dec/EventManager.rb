@@ -36,9 +36,6 @@ Events = [
 
 class EventManager
 
-   include CTC
-   include FTPClientCommands
-
    ## -----------------------------------------------------------
 
    ## Class constructor.
