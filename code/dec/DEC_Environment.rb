@@ -18,8 +18,19 @@ require 'rubygems'
 require 'fileutils'
 
 require 'cuc/DirUtils'
-require 'cuc/Log4rLoggerFactory'
-require 'dec/ReadConfigDEC'
+
+begin
+   require 'cuc/Log4rLoggerFactory'
+rescue Exception
+   require_relative '../cuc/Log4rLoggerFactory'
+end
+
+begin
+   require 'dec/ReadConfigDEC'
+rescue Exception
+   require_relative 'ReadConfigDEC'
+end
+
 
 module DEC
 
