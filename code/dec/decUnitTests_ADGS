@@ -220,6 +220,47 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
+   def test_ifremer
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e IFREMER"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IFREMER")
+
+      cmd = "decGetFromInterface -m IFREMER -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from IFREMER")
+
+      cmd = "decGetFromInterface -m IFREMER --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IFREMER")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m IFREMER --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from IFREMER")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+
    ## -----------------------------------------------------------
 
    # TBD
