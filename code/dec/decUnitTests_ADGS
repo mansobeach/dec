@@ -220,6 +220,63 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
+   ## -----------------------------------------------------------
+
+   # TBD
+
+   def test_nasa_igs
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_EOSDIS_IGS"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_EOSDIS_IGS")
+
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_EOSDIS_IGS")
+
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_EOSDIS_IGS")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_EOSDIS_IGS")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: Duplication detection")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+
+   ## -----------------------------------------------------------
+
+
    # NOAA Ice Mapping System
    # ims2024133_4km_v1.3.nc.gz
 
