@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Interfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+
+<!-- ================================================================ -->
+
+<Interface Name="IFREMER">
+  <Desc>IFREMER / for S1</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>8</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>ftp.ifremer.fr</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
+
+
+ <!-- ================================================================ -->
+
 <!-- ================================================================ -->
 
 <Interface Name="NOAA_IMS">
@@ -104,6 +156,54 @@
 </Interface>
 
   <!-- ================================================================ -->
+
+  <Interface Name="NASA_EOSDIS_IGS">
+    <Desc>NASA EOSDIS IGS</Desc>
+    <TXRXParams>
+      <Enabled4Sending>false</Enabled4Sending>
+      <Enabled4Receiving>true</Enabled4Receiving>
+      <ImmediateRetries>3</ImmediateRetries>
+      <LoopRetries>2</LoopRetries>
+      <LoopDelay unit="s">300</LoopDelay>
+      <PollingInterval unit="s">20</PollingInterval>
+      <PollingSize>470</PollingSize>
+      <ParallelDownload>3</ParallelDownload>
+    </TXRXParams>    
+    <Server>
+      <Protocol>FTPS</Protocol>
+      <Hostname>gdc.cddis.eosdis.nasa.gov</Hostname>
+      <Port>21</Port>
+      <User>anonymous</User>
+      <Pass>guest</Pass>
+      <RegisterContentFlag>false</RegisterContentFlag>
+      <RetrieveContentFlag>true</RetrieveContentFlag>
+      <SecureFlag>false</SecureFlag>
+      <VerifyPeerSSL>false</VerifyPeerSSL>
+      <CompressFlag>false</CompressFlag>
+      <PassiveFlag>true</PassiveFlag>
+      <CleanUpFreq Unit="s">5</CleanUpFreq>
+    </Server>
+    <DeliverByMailTo>
+       <Address></Address>
+    </DeliverByMailTo>
+    <Notify>
+      <SendNotification>false</SendNotification>
+      <To>
+       <Address></Address>
+      </To>
+    </Notify>
+    <Events>
+      <Event Name="NewFile2Intray"        executeCmd="echo $PWD " />
+    </Events>
+    <ContactInfo>
+      <Name>Dr Who</Name>
+      <EMail>adgs@gmail.com</EMail>
+      <Tel>0039-800 454 432</Tel>
+      <Fax>0039-800 454 433</Fax>
+      <Address>not your business</Address>
+    </ContactInfo>
+  </Interface>
+
 
 <Interface Name="S1MPC">
   <Desc>S1 Mission Performance Centre</Desc>

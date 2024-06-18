@@ -24,6 +24,42 @@
       </Interface>
 
       <Interface>
+         <Name>IFREMER</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_ifremer</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">ifremer/cersat/projects/sentinel1/stokes_drift/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+
+      <Interface>
+         <Name>NASA_EOSDIS_IGS</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_igs</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="1">"/pub/gps/products/ionex/2024/#{require 'date' ; Date.today.yday()}"</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>yes</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+
+      <Interface>
          <Name>NOAA_IMS</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_noaa_ims</LocalInbox>
          <DownloadDirs>
@@ -68,6 +104,21 @@
          <Description>NASA IERS bulletin C</Description>
          <FromList>
             <Interface>NASA_EOSDIS_IERS</Interface>
+         </FromList>
+      </File>
+
+
+      <File Type="c1*i.Z">
+         <Description>IGS ionex</Description>
+         <FromList>
+            <Interface>NASA_EOSDIS_IGS</Interface>
+         </FromList>
+      </File>
+
+      <File Type="IFR_WW3-GLOBAL-30MIN*">
+         <Description>WAVEWATCH III STOKES DRIFT</Description>
+         <FromList>
+            <Interface>IFREMER</Interface>
          </FromList>
       </File>
 
