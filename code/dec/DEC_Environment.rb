@@ -1,23 +1,13 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #DEC_Environment class
-###
-### === Written by DEIMOS Space S.L.
-###
-### === Data Exchange Component (DEC)
-###
-### Git: DEC_Environment,v $Id$ $Date$
-###
-### module DEC
-###
-#########################################################################
-
 require 'rubygems'
 require 'fileutils'
 
-require 'cuc/DirUtils'
+begin
+   require 'cuc/DirUtils'
+rescue Exception
+   require_relative '../cuc/DirUtils'
+end
 
 begin
    require 'cuc/Log4rLoggerFactory'
@@ -36,7 +26,7 @@ module DEC
 
    include CUC::DirUtils
 
-   @@version = "1.0.41.3"
+   @@version = "1.0.41.4"
 
    ## -----------------------------------------------------------------
 

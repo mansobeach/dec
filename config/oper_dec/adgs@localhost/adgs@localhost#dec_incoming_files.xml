@@ -7,10 +7,10 @@
    <ListInterfaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
       <Interface>
-         <Name>NASA_EOSDIS_IERS</Name>
-         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_iers</LocalInbox>
+         <Name>S1_OSI_SAF_4_AUX_ICE</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s1_osi_saf_4_aux_ice</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/products/iers/</Directory>
+            <Directory DepthSearch="0">/prod/ice/edge/</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -19,13 +19,13 @@
             <LocalDissemination>false</LocalDissemination>
             <LogDuplicated>false</LogDuplicated>
             <LogUnknown>false</LogUnknown>
-            <MD5>true</MD5>
+            <MD5>false</MD5>
          </Switches>
       </Interface>
 
       <Interface>
-         <Name>IFREMER</Name>
-         <LocalInbox>/data/adgs/tmp/in_basket_if_ifremer</LocalInbox>
+         <Name>S1_IFREMER_4_AUX_WAV</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s1_ifremer_4_aux_wav</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">ifremer/cersat/projects/sentinel1/stokes_drift/</Directory>
          </DownloadDirs>
@@ -40,9 +40,8 @@
          </Switches>
       </Interface>
 
-
       <Interface>
-         <Name>NASA_EOSDIS_IGS</Name>
+         <Name>S1_CDDIS_4_AUX_TEC</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_igs</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="1">"/pub/gps/products/ionex/2024/#{require 'date' ; Date.today.yday()}"</Directory>
@@ -52,7 +51,7 @@
             <DeleteDuplicated>false</DeleteDuplicated>
             <DeleteUnknown>false</DeleteUnknown>
             <LocalDissemination>false</LocalDissemination>
-            <LogDuplicated>yes</LogDuplicated>
+            <LogDuplicated>true</LogDuplicated>
             <LogUnknown>false</LogUnknown>
             <MD5>false</MD5>
          </Switches>
@@ -60,10 +59,10 @@
 
 
       <Interface>
-         <Name>NOAA_IMS</Name>
+         <Name>S3_NOAA_4_SL_2_DIMSAX</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_noaa_ims</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0">/pub/DATASETS/NOAA/G02156/netcdf/4km/2024/</Directory>
+            <Directory DepthSearch="0">/pub/DATASETS/NOAA/G02156/netcdf/1km/2024/</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -93,6 +92,25 @@
          </Switches>
       </Interface>
 
+   <Interface>
+         <Name>NASA_EOSDIS_IERS</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_iers</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">/products/iers/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>true</MD5>
+         </Switches>
+      </Interface>
+
+
+
    </ListInterfaces>
 
 
@@ -111,21 +129,29 @@
       <File Type="c1*i.Z">
          <Description>IGS ionex</Description>
          <FromList>
-            <Interface>NASA_EOSDIS_IGS</Interface>
+            <Interface>S1_CDDIS_4_AUX_TEC</Interface>
          </FromList>
       </File>
 
       <File Type="IFR_WW3-GLOBAL-30MIN*">
          <Description>WAVEWATCH III STOKES DRIFT</Description>
          <FromList>
-            <Interface>IFREMER</Interface>
+            <Interface>S1_IFREMER_4_AUX_WAV</Interface>
          </FromList>
       </File>
 
-      <File Type="ims*_*4km*.nc*">
-         <Description>NOAA Ice Mapping System 4Km resolution</Description>
+      <!-- 2 daily files for north & south hemisphere -->
+      <File Type="ice_edge_?h_polstere-100_multi_*.nc*">
+         <Description>OSI SAF ICE coverage files</Description>
          <FromList>
-            <Interface>NOAA_IMS</Interface>
+            <Interface>S1_OSI_SAF_4_AUX_ICE</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ims*_*1km*.nc*">
+         <Description>NOAA Ice Mapping System 1Km resolution</Description>
+         <FromList>
+            <Interface>S3_NOAA_4_SL_2_DIMSAX</Interface>
          </FromList>
       </File>
 

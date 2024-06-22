@@ -1,16 +1,5 @@
 #!/usr/bin/env ruby -W0
 
-#########################################################################
-##
-## === Ruby source for #DEC_TestCases class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Data Exchange Component
-##
-## module DEC
-##
-#########################################################################
 
 require 'rubygems'
 require 'test/unit'
@@ -164,30 +153,29 @@ class DECTestCase_ADGS < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-   ## -----------------------------------------------------------
+   # NOAA Ice Mapping System
+   # ims2024133_1km_v1.3.nc.gz
 
-   # S2__OPER_AUX_UT1UTC_PDMC_20240513T000000_V20170101T000000_21000101T000000.txt
-
-   def test_nasa_bulc
+   def test_s3_noaa_4_sl_2_dimsax
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e NASA_EOSDIS_IERS"
+      cmd = "decCheckConfig -e S3_NOAA_4_SL_2_DIMSAX"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_EOSDIS_IERS")
+      assert(system(cmd), "list from S3_NOAA_4_SL_2_DIMSAX")
 
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS -l"
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_EOSDIS_IERS")
+      assert(system(cmd), "list from S3_NOAA_4_SL_2_DIMSAX")
 
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_EOSDIS_IERS")
+      assert(system(cmd), "pull from S3_NOAA_4_SL_2_DIMSAX")
 
       # New iteration should not drive to a new file
       # A duplication should be detected.
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_EOSDIS_IERS")
+      assert(system(cmd), "pull from S3_NOAA_4_SL_2_DIMSAX")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -200,15 +188,49 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
-      @@logger.debug("Verification of log trace: Duplication detection")
-      cmd = "grep DEC\_111 #{arr[0]}"
+      cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}")
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
 
-      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
-      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
+
+   ## -----------------------------------------------------------
+
+   def test_s1_osi_saf_4_aux_ice
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e S1_OSI_SAF_4_AUX_ICE"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S1_OSI_SAF_4_AUX_ICE")
+
+      cmd = "decGetFromInterface -m S1_OSI_SAF_4_AUX_ICE -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S1_OSI_SAF_4_AUX_ICE")
+
+      cmd = "decGetFromInterface -m S1_OSI_SAF_4_AUX_ICE --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S1_OSI_SAF_4_AUX_ICE")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m S1_OSI_SAF_4_AUX_ICE --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S1_OSI_SAF_4_AUX_ICE")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
       @@logger.debug(cmd)
-      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}")
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
       cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
@@ -220,26 +242,28 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
-   def test_ifremer
+   ## -----------------------------------------------------------
+
+   def test_s1_ifremer_4_aux_wav
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e IFREMER"
+      cmd = "decCheckConfig -e S1_IFREMER_4_AUX_WAV"
       @@logger.info(cmd)
-      assert(system(cmd), "list from IFREMER")
+      assert(system(cmd), "list from S1_IFREMER_4_AUX_WAV")
 
-      cmd = "decGetFromInterface -m IFREMER -l"
+      cmd = "decGetFromInterface -m S1_IFREMER_4_AUX_WAV -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from IFREMER")
+      assert(system(cmd), "list from S1_IFREMER_4_AUX_WAV")
 
-      cmd = "decGetFromInterface -m IFREMER --no-intray"
+      cmd = "decGetFromInterface -m S1_IFREMER_4_AUX_WAV --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from IFREMER")
+      assert(system(cmd), "pull from S1_IFREMER_4_AUX_WAV")
 
       # New iteration should not drive to a new file
       # A duplication should be detected.
-      cmd = "decGetFromInterface -m IFREMER --no-intray"
+      cmd = "decGetFromInterface -m S1_IFREMER_4_AUX_WAV --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from IFREMER")
+      assert(system(cmd), "pull from S1_IFREMER_4_AUX_WAV")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -252,7 +276,7 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
-      
+   
       cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
@@ -268,23 +292,23 @@ class DECTestCase_ADGS < Test::Unit::TestCase
    def test_nasa_igs
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e NASA_EOSDIS_IGS"
+      cmd = "decCheckConfig -e S1_CDDIS_4_AUX_TEC"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_EOSDIS_IGS")
+      assert(system(cmd), "list from S1_CDDIS_4_AUX_TEC")
 
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS -l"
+      cmd = "decGetFromInterface -m S1_CDDIS_4_AUX_TEC -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from NASA_EOSDIS_IGS")
+      assert(system(cmd), "list from S1_CDDIS_4_AUX_TEC")
 
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS --no-intray"
+      cmd = "decGetFromInterface -m S1_CDDIS_4_AUX_TEC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_EOSDIS_IGS")
+      assert(system(cmd), "pull from S1_CDDIS_4_AUX_TEC")
 
       # New iteration should not drive to a new file
       # A duplication should be detected.
-      cmd = "decGetFromInterface -m NASA_EOSDIS_IGS --no-intray"
+      cmd = "decGetFromInterface -m S1_CDDIS_4_AUX_TEC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from NASA_EOSDIS_IGS")
+      assert(system(cmd), "pull from S1_CDDIS_4_AUX_TEC")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -298,15 +322,10 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
 
       @@logger.debug("Verification of log trace: Duplication detection")
-      cmd = "grep DEC\_111 #{arr[0]}"
+      cmd = "grep DEC\_301 #{arr[0]}"
       @@logger.debug(cmd)
       assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}")
 
-      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
-      cmd = "grep AUX\_001 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}")
-
       cmd = "grep ERROR #{arr[0]}"
       @@logger.debug(cmd)
       assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
@@ -314,51 +333,6 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
 
-
-   ## -----------------------------------------------------------
-
-
-   # NOAA Ice Mapping System
-   # ims2024133_4km_v1.3.nc.gz
-
-   def test_aux_noaa_ims
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-
-      cmd = "decCheckConfig -e NOAA_IMS"
-      @@logger.info(cmd)
-      assert(system(cmd), "list from NOAA_IMS")
-
-      cmd = "decGetFromInterface -m NOAA_IMS -l"
-      @@logger.info(cmd)
-      assert(system(cmd), "list from NOAA_IMS")
-
-      cmd = "decGetFromInterface -m NOAA_IMS --no-intray"
-      @@logger.info(cmd)
-      assert(system(cmd), "pull from NOAA_IMS")
-
-      # New iteration should not drive to a new file
-      # A duplication should be detected.
-      cmd = "decGetFromInterface -m NOAA_IMS --no-intray"
-      @@logger.info(cmd)
-      assert(system(cmd), "pull from NOAA_IMS")
-
-      cmd = "decStats"
-      @@logger.info(cmd)
-      assert(system(cmd), "pull statistics")
-
-      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
-
-      @@logger.debug("Verification of log trace: File Download")
-      cmd = "grep DEC\_110 #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
-
-      cmd = "grep ERROR #{arr[0]}"
-      @@logger.debug(cmd)
-      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
-
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end
 
    ## -----------------------------------------------------------
 
@@ -427,6 +401,161 @@ class DECTestCase_ADGS < Test::Unit::TestCase
 
    ## -----------------------------------------------------------
 
+    ## -----------------------------------------------------------
+
+   # S2__OPER_AUX_UT1UTC_PDMC_20240513T000000_V20170101T000000_21000101T000000.txt
+
+   def test_nasa_bulc
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e NASA_EOSDIS_IERS"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_EOSDIS_IERS")
+
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from NASA_EOSDIS_IERS")
+
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_EOSDIS_IERS")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m NASA_EOSDIS_IERS --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from NASA_EOSDIS_IERS")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: Duplication detection")
+      cmd = "grep DEC\_111 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "duplication traced in DEC logs in #{__method__.to_s}")
+
+      @@logger.debug("Verification of log trace: file conversion to NAOS mission")
+      cmd = "grep AUX\_001 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File conversion to Sentinel-2 mission traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+    ## ------------------------------------------------------
+
+   # NOAA Ice Mapping System
+   # ims2024133_1km_v1.3.nc.gz
+
+   def test_s3_noaa_4_sl_2_dimsax
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e S3_NOAA_4_SL_2_DIMSAX"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_NOAA_4_SL_2_DIMSAX")
+
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_NOAA_4_SL_2_DIMSAX")
+
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_NOAA_4_SL_2_DIMSAX")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m S3_NOAA_4_SL_2_DIMSAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_NOAA_4_SL_2_DIMSAX")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
+
+   ## -----------------------------------------------------------
+
+   def test_all_mandanga
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decListener -m S1_IFREMER_4_AUX_WAV -i 60"
+      @@logger.info(cmd)
+      assert(system(cmd), "listening to S1_IFREMER_4_AUX_WAV")
+
+      cmd = "decListener -m S1_OSI_SAF_4_AUX_ICE -i 60"
+      @@logger.info(cmd)
+      assert(system(cmd), "listening to S1_OSI_SAF_4_AUX_ICE")
+
+      cmd = "decListener -m S1_CDDIS_4_AUX_TEC -i 60"
+      @@logger.info(cmd)
+      assert(system(cmd), "listening to S1_CDDIS_4_AUX_TEC")
+
+      cmd = "decListener -m S3_NOAA_4_SL_2_DIMSAX -i 60"
+      @@logger.info(cmd)
+      assert(system(cmd), "listening to S3_NOAA_4_SL_2_DIMSAX")
+
+      sleep 10
+
+      cmd = "decListener -c"
+      @@logger.info(cmd)
+      assert(system(cmd), "listening to S3_NOAA_4_SL_2_DIMSAX")
+
+      sleep 30
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      sleep 1800
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+
+   ## -----------------------------------------------------------
 
 
 end
