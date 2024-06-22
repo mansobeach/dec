@@ -2,7 +2,7 @@
 
 #########################################################################
 ##
-## === Ruby source for #DEC_TestCases class
+## === Ruby source for #AUX_TestCases class
 ##
 ## === Written by DEIMOS Space S.L.
 ##
@@ -20,8 +20,6 @@ require 'fileutils'
 
 require 'cuc/DirUtils'
 require 'cuc/Log4rLoggerFactory'
-
-require 'dec/DEC_Environment'
 
 require 'aux/AUX_Environment'
 require 'aux/AUX_Handler_IERS_Leap_Second'
@@ -42,7 +40,6 @@ class AUXTestCase < Test::Unit::TestCase
    include CUC::DirUtils
    include Test::Unit::Data
    include AUX
-   include DEC
       
    # Order of the test cases execution according to defintion within code
    self.test_order = :defined
@@ -54,28 +51,15 @@ class AUXTestCase < Test::Unit::TestCase
       @@conf      = AUX_Environment.new
       @@testDir   = "/tmp/aux"
 
-      @@conf = DEC_Environment.new
+      @@conf = AUX_Environment.new
 
       @@conf.wrapper_load_config
+      @@logger = @@conf.wrapper_load_logger("AUXTEST")
 
-      @decConfigDir = ENV['DEC_CONFIG']
+      @auxConfigDir = ENV['AUX_CONFIG']
  
       ## ----------------------------------
-      ## initialize logger
-      loggerFactory = CUC::Log4rLoggerFactory.new("AUXTEST", "#{@decConfigDir}/dec_log_config.xml")
-   
-      @@logger = loggerFactory.getLogger   
-      if @@logger == nil then
-         puts
-		   puts "Error in #{File.basename(__FILE__)}"
-     	   puts "Could not initialize logging system !  :-("
-         puts "Check DEC logs configuration under \"#{@decConfigDir}/dec_log_config.xml\"" 
- 	      puts
-   	   exit(99)
-      end
-
-      ## ----------------------------------
-      @@conf.wrapper_unset_config
+      # @@conf.wrapper_unset_config
             
    end
    
@@ -301,59 +285,8 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
-   def test_NAOS_NASA_SRTMDEM
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      file_srtmgl1 = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/SRTMDEM/N42W006.hgt"
 
-      cmd      = "auxConverter -m NAOS -f #{file_srtmgl1} -d /tmp/"
-      @@logger.info(cmd)
-      assert(system(cmd), "convert NASA SRTMGL1 V3 to NAOS mission DEM")
-
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end
-
-   ## --------------------------------------------------------
-
-   def test_NAOS_USGS_SRTMDEM
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-
-      file_srtmgl1 = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/SRTMDEM/n42_w006_1arc_v3.tif"
-
-      cmd      = "auxConverter -m NAOS -f #{file_srtmgl1} -d /tmp/ -D"
-      @@logger.info(cmd)
-      assert(system(cmd), "convert USGS SRTMGL1 V3 geotiff to NAOS mission DEM")
-
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end
-
-   ## --------------------------------------------------------
-
-   def test_NAOS_NASA_ASTGTM
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-
-      dir_astgtm = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/TEST_ASTERV3DEM"
-
-      cmd      = "auxConverter -m NAOS -f #{dir_astgtm} -d /tmp/"
-      @@logger.info(cmd)
-      assert(system(cmd), "convert NASA ASTGTM V3 to NAOS mission DEM")
-
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end
-
-   ## --------------------------------------------------------
-
-   def test_NAOS_NASA_RFM
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
-
-      dir_modis = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/MOD09A1"
-
-      cmd      = "auxConverter -m NAOS -f #{dir_modis} -d /tmp/"
-      @@logger.info(cmd)
-      assert(system(cmd), "convert NASA MODIS V6.1 to NAOS mission packaging")
-
-      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
-   end
    ## --------------------------------------------------------
 
    def test_NAOS_NASA_SFL
@@ -479,7 +412,65 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
+=begin
+   def test_NAOS_NASA_SRTMDEM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      file_srtmgl1 = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/SRTMDEM/N42W006.hgt"
+
+      cmd      = "auxConverter -m NAOS -f #{file_srtmgl1} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA SRTMGL1 V3 to NAOS mission DEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_USGS_SRTMDEM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      file_srtmgl1 = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/SRTMDEM/n42_w006_1arc_v3.tif"
+
+      cmd      = "auxConverter -m NAOS -f #{file_srtmgl1} -d /tmp/ -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert USGS SRTMGL1 V3 geotiff to NAOS mission DEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_NASA_ASTGTM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      dir_astgtm = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/TEST_ASTERV3DEM"
+
+      cmd      = "auxConverter -m NAOS -f #{dir_astgtm} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA ASTGTM V3 to NAOS mission DEM")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+   def test_NAOS_NASA_RFM
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      dir_modis = "/Users/borja/Projects/dec/code/aux/examples/nasa_eosdis/MOD09A1"
+
+      cmd      = "auxConverter -m NAOS -f #{dir_modis} -d /tmp/"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA MODIS V6.1 to NAOS mission packaging")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+=end
    
+
+
 
 =begin
    def test_auxConverter
@@ -536,13 +527,6 @@ class AUXTestCase < Test::Unit::TestCase
    
    ## --------------------------------------------------------
    
-   def test_1
-      puts
-      puts "================================================"
-      puts "AUX_UnitTests::#{__method__.to_s}"
-      puts
-   
-   end
    
    ## --------------------------------------------------------
 

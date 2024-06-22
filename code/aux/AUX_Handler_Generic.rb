@@ -4,12 +4,6 @@
 #
 # === Ruby source for #AUX_Handler_Generic class
 #
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Data Exchange Component
-# 
-# Git: $Id: AUX_Handler_Generic $
-#
 # Module AUX management
 # 
 #
@@ -19,10 +13,14 @@ require 'cuc/DirUtils'
 require 'cuc/Converters'
 require 'cuc/FT_PackageUtils'
 
+require 'aux/AUX_Environment'
+
+
 module AUX
 
 class AUX_Handler_Generic
 
+   include AUX
    include CUC::Converters
    include CUC::DirUtils
 

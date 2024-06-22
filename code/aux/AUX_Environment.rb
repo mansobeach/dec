@@ -1,30 +1,20 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-#
-# === Ruby source for AUX_Environment class
-#
-# === Written by DEIMOS Space S.L.
-#
-# === Data Exchange Component (DEC)
-# 
-# Git: AUX_Environment,v $Id$ $Date$
-#
-# module AUX
-#
-#########################################################################
-
 require 'rubygems'
 require 'fileutils'
 
+require 'dotenv'
 
 module AUX
    
-   VERSION   = "0.0.8.5"
-   
+   VERSION   = "0.0.9.3"
+      
    ## -----------------------------------------------------------------
    
    CHANGE_RECORD = { \
+      "0.0.9"  =>    "ESA Sentinels SAFE format support\n\
+         Dynamic configuration parameters from env files\n\
+         Independent installation removing dependencies",
       "0.0.8"  =>    "NASA ASTER Global DEM: ASTGTM\n\
          NASA SRTMGL1 is supported\n\
          USGS SRTMGL1 (geotiff) is supported / requires GDAL\n\
@@ -46,6 +36,66 @@ module AUX
    }
    ## -----------------------------------------------------------------
    
+   # load config
+
+   def load_config
+      # --------------------------------
+      if !ENV['AUX_CONFIG'] then
+         ENV['AUX_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+   end
+
+   ## -----------------------------------------------------------------
+
+   def checkEnvironmentEssential
+
+      load_config
+
+      bCheck = true
+
+      # --------------------------------
+      if !ENV['AUX_CONFIG'] then
+         ENV['AUX_CONFIG'] = File.join(File.dirname(File.expand_path(__FILE__)), "../../config")
+      end
+      # --------------------------------
+      if bCheck == false then
+         puts "AUX Essential environment variables configuration not complete"
+         puts
+         return false
+      end
+      return true
+   end
+   ## -----------------------------------------------------------------
+
+   def load_logger(label = "aux_converter")
+
+      require 'cuc/Log4rLoggerFactory'
+
+      # initialize logger
+      loggerFactory = CUC::Log4rLoggerFactory.new(label, "#{ENV['AUX_CONFIG']}/aux_log_config.xml")
+
+      @logger = loggerFactory.getLogger
+
+      if @logger == nil then
+         puts "Could not set up logging system !  :-("
+         puts "Check AUX logs configuration under \"#{ENV['AUX_CONFIG']}/aux_log_config.xml\""
+         puts
+         puts
+         exit(99)
+      end
+
+      return @logger
+   end
+   ## -----------------------------------------------------------------
+
+   def load_environment(target)
+      environment = "env/#{target}.env"
+      begin
+         Dotenv.load(environment)
+      rescue Exception
+      end
+   end
+
    ## -----------------------------------------------------------------
    
    def print_environment
@@ -71,6 +121,14 @@ class AUX_Environment
    
    include AUX
    
+   def wrapper_load_config
+      load_config
+   end
+
+   def wrapper_load_logger(label)
+      load_logger(label)
+   end
+
    def wrapper_load_config_development
       load_config_development
    end

@@ -81,13 +81,15 @@ namespace :aux do
 
    ## --------------------------------------------------------------------
 
+   desc "install aux gem"
+
    task :install do
 
       Rake::Task["aux:build"].invoke
 
       Rake::Task["aux:uninstall"].invoke
 
-      cmd = "gem install install/gems/aux.gem"
+      cmd = "gem install install/gems/aux_latest.gem"
       puts cmd
       system(cmd)
    end

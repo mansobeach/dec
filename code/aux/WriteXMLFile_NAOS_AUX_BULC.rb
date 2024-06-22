@@ -1,22 +1,8 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-#
-# ===       
-#
-# === Written by Borja Lopez Fernandez
-#
-# === Elecnor Deimos
-# 
-#
-#
-#########################################################################
-
 require 'rexml/document'
 
 require 'cuc/Converters'
-
-require 'dec/DEC_Environment'
 require 'aux/AUX_Environment'
 
 module AUX
@@ -91,10 +77,10 @@ class WriteXMLFile_NAOS_AUX_BULC
       xmlSystem.text          = "MOC"
       
       xmlCreator              = xmlSource.add_element("Creator")
-      xmlCreator.text         = "DEC/AUX"
+      xmlCreator.text         = "AUX"
 
       xmlCreatorVersion       = xmlSource.add_element("Creator_Version")
-      xmlCreatorVersion.text  = "#{DEC.class_variable_get(:@@version)}/#{AUX::VERSION}"
+      xmlCreatorVersion.text  = "#{AUX::VERSION}"
 
       xmlCreationDate         = xmlSource.add_element("Creation_Date")
       xmlCreationDate.text    = Time.now.utc.strftime("UTC=%Y-%m-%dT%H:%M:%S")

@@ -28,6 +28,7 @@ require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NASA_CDDIS_BULA'
 require 'aux/AUX_Handler_NASA_CDDIS_BULC'
+require 'aux/AUX_Handler_NASA_CDDIS_IONEX'
 require 'aux/AUX_Handler_NASA_EOSDIS_ASTGTM'
 require 'aux/AUX_Handler_NASA_EOSDIS_MOD09A1'
 require 'aux/AUX_Handler_NASA_EOSDIS_SRTMGL1_Tile'
@@ -101,6 +102,11 @@ private
    def loadHandler
       
       filename = File.basename(@full_path)
+
+      if File.fnmatch(AUX_Pattern_NASA_CDDIS_IONEX, filename) == true then
+         @handler = AUX_Handler_NASA_CDDIS_IONEX.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
 
       if File.fnmatch(AUX_Pattern_CCSDS_OEM, filename) == true then
          @handler = AUX_Handler_CCSDS_OEM.new(@full_path, @target, @targetDir, @logger, @isDebugMode)

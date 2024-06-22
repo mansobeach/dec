@@ -1,20 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #AUX_Handler_NASA_CDDIS_BULA class
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Data Exchange Component
-### 
-### Git: $Id: AUX_Handler_NASA_CDDIS_BULA.rb
-###
-### Module AUX management
-### 
-###
-#########################################################################
-
 ### NASA CDDIS Bulletin A
 ### https://cddis.nasa.gov//archive/products/iers/finals2000A.data
 

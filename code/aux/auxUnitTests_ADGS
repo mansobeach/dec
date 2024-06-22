@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby -W0
+
+#########################################################################
+##
+## === Ruby source for #AUX_TestCases class foor ADGS
+##
+## === Written by DEIMOS Space S.L.
+##
+## === AUX Module
+## 
+##
+#########################################################################
+
+require 'rubygems'
+require 'test/unit'
+require 'fileutils'
+
+require 'cuc/DirUtils'
+require 'cuc/Log4rLoggerFactory'
+
+require 'aux/AUX_Environment'
+require 'aux/AUX_Handler_IERS_Leap_Second'
+require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
+require 'aux/AUX_Handler_NOAA_RSGA_Daily'
+require 'aux/AUX_Handler_IERS_EOP_Daily'
+
+# Select a single test of the suite
+
+# ruby auxUnitTests_ADGS -n test_my_method 
+
+
+class AUXTestCase < Test::Unit::TestCase
+
+   include CUC::DirUtils
+   include Test::Unit::Data
+   include AUX
+      
+   # Order of the test cases execution according to defintion within code
+   self.test_order = :defined
+   
+   ## ------------------------------------------------------
+   
+   Test::Unit.at_start do
+      @@conf      = AUX_Environment.new
+      @@testDir   = "/tmp/aux"
+      @@conf.wrapper_load_config
+      @@logger    = @@conf.wrapper_load_logger("ADGS_TEST")
+      @auxConfigDir = ENV['AUX_CONFIG']
+   end
+   
+   ## --------------------------------------------------------
+   
+   Test::Unit.at_exit do
+      @@logger.info("End of AUX tests #{File.basename(__FILE__)}")
+   end
+   ## --------------------------------------------------------   
+   
+   ## Setup before every test-case
+   ##
+   def setup
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+      checkDirectory(@@testDir)
+   end
+   ## --------------------------------------------------------
+   ## After every test case
+
+   def teardown
+      @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
+   end
+   ## --------------------------------------------------------
+
+   # Convert into SAFE format
+   def test_CDDIS_IONEX_S1
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/ionex/c1pg1700.24i.Z #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/ionex/c1pg1700.24i.Z",     @@testDir)
+
+      cmd = "rm -rf /tmp/aux_out2/S1*.SAFE"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_NASA_IONEX = "#{@@testDir}/c1pg1700.24i.Z"
+      cmd = "auxConverter -m S1A -f #{file_NASA_IONEX} -d /tmp/aux_out2 -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert NASA CDDIS ionospheric model to S1")
+
+      arr = Dir["/tmp/aux_out2/S1*AUX_TEC_*_G*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
+
+end
+
+## =====================================================================

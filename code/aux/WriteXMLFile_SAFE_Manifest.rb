@@ -7,7 +7,7 @@ require 'aux/AUX_Environment'
 
 module AUX
 
-class WriteXMLFile_EOCFI_AUX_ORBRES
+class WriteXMLFile_SAFE_Manifest
 
    include CUC::Converters
 

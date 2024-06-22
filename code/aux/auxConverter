@@ -2,12 +2,9 @@
 #
 # == Synopsis
 #
-# This is a Data Exchange Component (DEC) command line tool that manages the
-# file conversions / harmonisation according to every mission standard and 
+# This is a command line tool that performs the file conversions / harmonisation according to every mission standard and 
 # mission service providers such as ground stations.
 #
-# This tool can be used manually from the command line or included in the DEC
-# configuration as part of any pull or push workflow.
 # 
 # For reference to the current file formant conversions and the auxiliary data
 # files supported, please execute the tool with the --version flag.
@@ -15,39 +12,22 @@
 # == Usage
 # auxConverter -m S3 -f <full_path_file> -d <dir>
 #     --mission <id>    mission identifier
-#       POD    - Copernicus Precise Orbit Determination
-#       S2     - Copernicus Sentinel-2
-#       S3     - Copernicus Sentinel-3
-#       NAOS   - NAOS mission
-#       KSAT   - Kongsberg Satellite Services
+#       POD             - Copernicus Precise Orbit Determination
+#       S1/S1A/S1B      - Copernicus Sentinel-1
+#       S2              - Copernicus Sentinel-2
+#       S3              - Copernicus Sentinel-3
+#       NAOS            - NAOS mission
+#       KSAT            - Kongsberg Satellite Services
 #     --version         shows the version number / supported conversions
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
 # 
-# == Author
-# Elecnor Deimos-Space
 #
-# == Copyright
-# Copyright (c) 2021 Elecnor Deimos-Space
-#
-#########################################################################
-#
-# Ruby source for #auxConverter
-#
-# Written by DEIMOS Space S.L.
-#
-# Data Exchange Component -> 
-# 
-# git:
-#   auxConverter,v $Date$ $Id$ 
-#
-#########################################################################
+
 
 require 'rubygems'
 require 'getoptlong'
 
-require 'cuc/Log4rLoggerFactory'
-require 'dec/DEC_Environment'
 require 'aux/AUX_Environment'
 require 'aux/AUX_Handler'
 
@@ -56,7 +36,6 @@ require 'aux/AUX_Handler'
 def main
 
    include AUX
-   include DEC
 
    @bUsage           = false
    @isDebugMode      = false
@@ -127,20 +106,21 @@ def main
 
    ## ----------------------------------
    ## initialize logger
-   loggerFactory = CUC::Log4rLoggerFactory.new("auxc", "#{ENV['DEC_CONFIG']}/dec_log_config.xml")
    
-   @logger = loggerFactory.getLogger   
+   @logger = self.load_logger
    if @logger == nil then
       puts
 		puts "Error in #{File.basename(__FILE__)}"
      	puts "Could not initialize logging system !  :-("
-      puts "Check DEC logs configuration under \"#{ENV['DEC_CONFIG']}/dec_log_config.xml\"" 
+      puts "Check AUX logs configuration under \"#{ENV['AUX_CONFIG']}/aux_log_config.xml\"" 
  	   puts
    	exit(99)
    end
    ## ----------------------------------
 
-   if File.exist?(@full_path_file) == false and Dir.exist?(@full_path_file) then
+   self.load_environment(@mission)
+
+   if File.exist?(@full_path_file) == false and Dir.exist?(@full_path_file) == false then
       @logger.error("[AUX_600] cannot access to #{@full_path_file}")
       exit(99)
    end
@@ -154,6 +134,7 @@ def main
          @logger.debug(e.backtrace)
       end
       @logger.error("[AUX_666] SW Problem #{e.to_s}")
+      puts e.to_s
       exit(99)
    end
    exit(0)
@@ -175,7 +156,6 @@ def usage
    }
 end
 # -------------------------------------------------------------
-
 
 
 ## ===================================================================
