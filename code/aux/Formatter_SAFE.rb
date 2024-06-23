@@ -15,16 +15,20 @@ class Formatter_SAFE
    ## Class constructor.
    ## * entity (IN):  full_path_filename
    def initialize(full_path, new_name, target, dir = "", logger = nil, isDebug = false)
-      @full_path  = full_path
-      @target     = target
-      @dir        = dir
-      @logger     = logger
-      @new_name   = new_name
-      @logger.debug("Formatter_SAFE::initialize conversion start")
-      @logger.debug(full_path)
-      @logger.debug(new_name)
-      @logger.debug(dir)
-      @logger.debug(target)
+      @full_path     = full_path
+      @target        = target
+      @dir           = dir
+      @logger        = logger
+      @new_name      = new_name
+      @isDebugMode   = isDebug
+
+      if @isDebugMode == true then
+         @logger.debug("Formatter_SAFE::initialize conversion start")
+         @logger.debug(full_path)
+         @logger.debug(new_name)
+         @logger.debug(dir)
+         @logger.debug(target)
+      end
 
       if @target.length == 2 then
          @unit = "A"
@@ -48,7 +52,11 @@ class Formatter_SAFE
 
       closeSAFE
 
-      @logger.debug("Formatter_SAFE::initialize conversion completed")
+      @logger.info("[AUX_001] #{@new_name} generated from #{File.basename(full_path)}")
+
+      if @isDebugMode == true then
+         @logger.debug("Formatter_SAFE::initialize conversion completed")
+      end
    end   
    ## -------------------------------------------------------------
    
@@ -61,38 +69,40 @@ class Formatter_SAFE
    
    def createStructure
       Dir.chdir(@dir)
-      @logger.debug("Create structure: start #{@dir}")
+      # @logger.debug("Create structure: start #{@dir}")
       prevDir = Dir.pwd
       FileUtils.mkdir_p(".#{@new_name}")
       Dir.chdir(".#{@new_name}")
       FileUtils.mkdir_p("data")
-      FileUtils.mkdir_p("support")
+      # FileUtils.mkdir_p("support")
       @safe_dir_root    = Dir.pwd
       @safe_dir_data    = "#{Dir.pwd}/data"
       @safe_dir_support = "#{Dir.pwd}/support"
       Dir.chdir(prevDir)
-      @logger.debug("Create structure: end")
+      # @logger.debug("Create structure: end")
    end
    ## -------------------------------------------------------------
 
    def closeSAFE
       Dir.chdir(@dir)
-      @logger.debug("Close SAFE dir structure: start #{Dir.pwd}")
+      # @logger.debug("Close SAFE dir structure: start #{Dir.pwd}")
       FileUtils.mv(".#{@new_name}", @new_name, force: true, verbose: false)
       FileUtils.chmod_R(0755, @new_name, force: true, verbose: false)
-      @logger.debug("Close SAFE dir structure: end")
+      # @logger.debug("Close SAFE dir structure: end")
    end
    ## -------------------------------------------------------------
 
    def copyData
-      @logger.debug("Copy data: start")
+      # @logger.debug("Copy data: start")
       FileUtils.cp_lr(@full_path, @safe_dir_data)
-      @logger.debug("Copy data: end")
+      # @logger.debug("Copy data: end")
    end
    ## -------------------------------------------------------------
 
    def createManifestS1
-      @logger.debug("createManifestS1: start #{Dir.pwd}")
+      if @isDebugMode == true then
+         @logger.debug("createManifestS1: start #{Dir.pwd}")
+      end
       type        = @new_name.slice(4,7)
       prevDir     = Dir.pwd
       str_now     = Time.now.strftime("%Y-%m-%dT%H:%M:%S.000000")
@@ -116,6 +126,7 @@ class Formatter_SAFE
          when "AUX_TEC" then rootData.add_attribute('textinfo', "Sentinel-1 iononpheric model prediction")
          when "AUX_TRO" then rootData.add_attribute('textinfo', "Sentinel-1 troposheric model prediction")
          when "AUX_WND" then rootData.add_attribute('textinfo', "Sentinel-1 wind speed and direction prediction")
+         when "AUX_WAV" then rootData.add_attribute('textinfo', "Sentinel-1 wavewatch III model stokes drift")
          when "AUX_ICE" then rootData.add_attribute('textinfo', "Sentinel-1 ice model prediction")
          else
             raise "#{type} not covered by Formatter_SAFE::createManifestS1 "
@@ -219,7 +230,9 @@ class Formatter_SAFE
 
       writeFileManifest
 
-      @logger.debug("createManifestS1: end")
+      if @isDebugMode == true then
+         @logger.debug("createManifestS1: end")
+      end
    end
    ## -------------------------------------------------------------
 
@@ -228,26 +241,21 @@ private
    def writeFileManifest
       Dir.chdir(@dir)
       Dir.chdir(".#{@new_name}")
-      @logger.debug("writeManifest: start #{Dir.pwd}")
+      if @isDebugMode == true then
+         @logger.debug("writeManifest: start #{Dir.pwd}")
+      end
       formatter = REXML::Formatters::Pretty.new(4)
       formatter.compact = true
       fh = File.new("manifest.safe","w")
       fh.puts formatter.write(@xmlFile.root, "")
       fh.close
       
-      # cmd = "xmllint --format #{@new_name} > #{tmp_file}"
-      # @logger.debug(cmd)
-      # system(cmd)
-      
-      # cmd = "mv #{tmp_file} #{@new_name}"
-      # @logger.debug(cmd)
-      # system(cmd)
-      @logger.debug("writeManifest: end")
+      if @isDebugMode == true then
+         @logger.debug("writeManifest: end")
+      end
    end
    ## -------------------------------------------------------------
       
-
-
 end # class
 
 end # module

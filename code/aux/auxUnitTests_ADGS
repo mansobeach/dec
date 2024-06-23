@@ -69,8 +69,8 @@ class AUXTestCase < Test::Unit::TestCase
    end
    ## --------------------------------------------------------
 
-   # Convert into SAFE format
-   def test_CDDIS_IONEX_S1
+   # Convert CDDIS IGS ionospheric model into SAFE format
+   def test_s1_cddis_4_aux_tec
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
       @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/ionex/c1pg1700.24i.Z #{@@testDir}")
@@ -81,11 +81,11 @@ class AUXTestCase < Test::Unit::TestCase
       system(cmd)
 
       file_NASA_IONEX = "#{@@testDir}/c1pg1700.24i.Z"
-      cmd = "auxConverter -m S1A -f #{file_NASA_IONEX} -d /tmp/aux_out2 -D"
+      cmd = "auxConverter -m S1 -f #{file_NASA_IONEX} -d /tmp/aux_out2 -D"
       @@logger.info(cmd)
       assert(system(cmd), "convert NASA CDDIS ionospheric model to S1")
 
-      arr = Dir["/tmp/aux_out2/S1*AUX_TEC_*_G*"]
+      arr = Dir["/tmp/aux_out2/S1__*AUX_TEC_*_G*"]
       @@logger.info("#{arr.length} file converted")
       assert_operator arr.length, :>, 0
 
@@ -93,6 +93,33 @@ class AUXTestCase < Test::Unit::TestCase
    end
 
    ## --------------------------------------------------------
+
+   # Convert IFREMER Wavewatch III model
+   # with surface stockes drift velocity and direction model into SAFE format
+   def test_s1_ifremer_4_aux_wav
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/ifremer/IFR_WW3-GLOBAL-30MIN_20240117T18_G2024-01-16T02.nc #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/ifremer/IFR_WW3-GLOBAL-30MIN_20240117T18_G2024-01-16T02.nc", @@testDir)
+
+      cmd = "rm -rf /tmp/aux_out2/S1*.SAFE"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_IFREMER = "#{@@testDir}/IFR_WW3-GLOBAL-30MIN_20240117T18_G2024-01-16T02.nc"
+      cmd = "auxConverter -m S1 -f #{file_IFREMER} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert IFREMER Wavewatch III model to S1")
+
+      arr = Dir["/tmp/aux_out2/S1__*AUX_WAV_*_G*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+## --------------------------------------------------------
+
 
 
 end

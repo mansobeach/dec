@@ -365,7 +365,7 @@ namespace :dec do
          ENV['DEC_NAOS']       = "true"
       end
 
-      if args[:suffix].downcase.include?("adgs") == true then
+      if args[:suffix].downcase.include?("adgs") == true or args[:user].downcase.include?("adgs") == true then
          puts "building gem dec #{args[:suffix]} with flag DEC_ODATA"
          ENV['DEC_ADGS']       = "true"
       end

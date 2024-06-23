@@ -25,6 +25,7 @@ require 'aux/AUX_Handler_IERS_BULA_ASCII'
 require 'aux/AUX_Handler_IERS_BULA_XML'
 require 'aux/AUX_Handler_IERS_EOP_Daily'
 require 'aux/AUX_Handler_IERS_Leap_Second'
+require 'aux/AUX_Handler_IFREMER_WAVEWATCH_III'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NASA_CDDIS_BULA'
 require 'aux/AUX_Handler_NASA_CDDIS_BULC'
@@ -61,7 +62,8 @@ class AUX_Handler
       
       checkModuleIntegrity
       
-      uncompress
+      # DO NOT DO IT
+      # uncompress
       
       loadHandler
       
@@ -102,6 +104,11 @@ private
    def loadHandler
       
       filename = File.basename(@full_path)
+
+      if File.fnmatch(AUX_Pattern_IFREMER_WAVEWATCH_III, filename) == true then
+         @handler = AUX_Handler_IFREMER_WAVEWATCH_III.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end      
 
       if File.fnmatch(AUX_Pattern_NASA_CDDIS_IONEX, filename) == true then
          @handler = AUX_Handler_NASA_CDDIS_IONEX.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
@@ -198,11 +205,12 @@ private
    ## -----------------------------------------------------------
 
    def uncompress
-      
+      @logger.debug("AUX_Handler::uncompress start")
       # --------------------------------
       # compress tool .Z
       
       if File.extname(@filename) == ".Z" then
+         @logger.debug("AUX_Handler::uncompress #{@filename}")
          cmd = "uncompress -f #{@full_path}"
          retVal = system(cmd)         
          if retVal == false then
@@ -212,7 +220,7 @@ private
       end
       
       # --------------------------------
-      
+      @logger.debug("AUX_Handler::uncompress end")
    end
    ## -----------------------------------------------------------
 

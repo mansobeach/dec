@@ -1,19 +1,12 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for # class
-###
-### Module AUX management
-### 
-###
-#########################################################################
-
-### NASA IONEX global ionospheric model / predicted ionospheric maps
-###  ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/ionex/<YYYY>/<DOY>
-##   /pub/gps/products/ionex/2024/169/c2pg1690.24i.Z
+###  IFREMER WAVEWATCH III model
+##   ftp://ftp.ifremer.fr/ifremer/cersat/products/gridded/wavewatch3/HINDCAST/README
+##   https://polar.ncep.noaa.gov/waves/wavewatch/
+##   https://polar.ncep.noaa.gov/waves/products2.shtml?
 
 require 'date'
+require 'time'
 
 require 'aux/AUX_Handler_Generic'
 require 'aux/Formatter_SAFE'
@@ -21,9 +14,10 @@ require 'aux/Formatter_SAFE'
 module AUX
 
 ## pattern is without the compression
-AUX_Pattern_NASA_CDDIS_IONEX = "c?pg????.??i.Z"
+# IFR_WW3-GLOBAL-30MIN_20240623T09_G2024-06-17T13.nc
+AUX_Pattern_IFREMER_WAVEWATCH_III = "IFR_WW3-GLOBAL-30MIN_*_G*.nc"
 
-class AUX_Handler_NASA_CDDIS_IONEX < AUX_Handler_Generic
+class AUX_Handler_IFREMER_WAVEWATCH_III < AUX_Handler_Generic
    
    ## -------------------------------------------------------------
       
@@ -31,9 +25,8 @@ class AUX_Handler_NASA_CDDIS_IONEX < AUX_Handler_Generic
    ## * entity (IN):  full_path_filename
    def initialize(full_path, target, dir = "", logger = nil, isDebug = false)
       super(full_path, dir, logger, isDebug)
-
       if isDebug == true then
-         @logger.debug("AUX_Handler_NASA_CDDIS_IONEX::initialize")
+         @logger.debug("AUX_Handler_IFREMER_WAVEWATCH_III::initialize")
       end
 
       extractMetadata
@@ -41,7 +34,7 @@ class AUX_Handler_NASA_CDDIS_IONEX < AUX_Handler_Generic
       @safe  = Formatter_SAFE.new(full_path, @newName, target, dir, logger, isDebug)
       
       if isDebug == true then
-         @logger.debug("AUX_Handler_NASA_CDDIS_IONEX::initialize completed")
+         @logger.debug("AUX_Handler_IFREMER_WAVEWATCH_III::initialize completed")
       end
 
    end   
@@ -50,12 +43,12 @@ class AUX_Handler_NASA_CDDIS_IONEX < AUX_Handler_Generic
    ## Set the flag for debugging on
    def setDebugMode
       @isDebugMode = true
-      @logger.debug("AUX_Handler_NASA_CDDIS_IONEX debug mode is on")
+      @logger.debug("AUX_Handler_IFREMER_WAVEWATCH_III debug mode is on")
    end
    ## -------------------------------------------------------------
    
    def rename
-      @newName          = "#{@mission}_#{@fileType}_V#{@strValidityStart}_G#{@strGenerationDate}.#{@extension}"
+      @newName    = "#{@mission}_#{@fileType}_V#{@strValidityStart}_G#{@strGenerationDate}.#{@extension}"
       return
    end
    ## -------------------------------------------------------------
@@ -87,21 +80,21 @@ private
    end
    ## -------------------------------------------------------------
 
-   # "c?pg????.??i.Z"
+   # IFR_WW3-GLOBAL-30MIN_20240302T00_G2024-02-27T01.nc
    def extractMetadata
       @mission             = "S1_"
-      valStart             = Date.strptime("#{@filename.slice(9, 2)}#{@filename.slice(4, 3)}", "%y%j")
-      valStop              = valStart.next_day(1)
-      @fileType            = "AUX_TEC"
+      valStart             = Time.strptime("#{@filename.slice(21, 11)}", "%Y%m%dT%H")
+      valStop              = valStart
+      @fileType            = "AUX_WAV"
       @extension           = "SAFE"
       @strValidityStart    = valStart.strftime("%Y%m%dT%H%M%S")
-      @strGenerationDate   = Time.now.strftime("%Y%m%dT%H%M%S")
+      @strGenerationDate   = Time.strptime("#{@filename.slice(34, 13)}", "%Y-%m-%dT%H").strftime("%Y%m%dT%H%M%S")
       @newName             = "#{@mission}_#{@fileType}_V#{@strValidityStart}_G#{@strGenerationDate}.#{@extension}"
    end
    ## -------------------------------------------------------------
    def parse
       if @isDebugMode == true then
-         @logger.debug("AUX_Handler_NASA_CDDIS_IONEX::parse")
+         @logger.debug("AUX_Handler_IFREMER_WAVEWATCH_III::parse")
       end
    end
    ## -------------------------------------------------------------
