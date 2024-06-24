@@ -90,6 +90,7 @@
     </To>
   </Notify>
   <Events>
+    <Event Name="OnReceiveNewFile" executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
   </Events>
   <ContactInfo>
     <Name>Dr Who</Name>
@@ -99,7 +100,6 @@
     <Address>not your business</Address>
   </ContactInfo>
 </Interface> 
-
 
  <!-- ================================================================ -->
 
@@ -139,7 +139,7 @@
       </To>
     </Notify>
     <Events>
-      <Event Name="NewFile2Intray"        executeCmd="echo $PWD " />
+      <Event Name="NewFile2Intray" executeCmd="echo %f %F" />
     </Events>
     <ContactInfo>
       <Name>Dr Who</Name>
@@ -166,14 +166,14 @@
     <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
   <Server>
-    <Protocol>CUSTOM</Protocol>
+    <Protocol>HTTP</Protocol>
     <Hostname>sar-mpc.eu</Hostname>
     <Port>443</Port>
     <User></User>
     <Pass></Pass>
     <RegisterContentFlag>false</RegisterContentFlag>
     <RetrieveContentFlag>true</RetrieveContentFlag>
-    <SecureFlag>false</SecureFlag>
+    <SecureFlag>true</SecureFlag>
     <VerifyPeerSSL>false</VerifyPeerSSL>
     <CompressFlag>false</CompressFlag>
     <PassiveFlag>true</PassiveFlag>
@@ -203,6 +203,55 @@
 </Interface>
 
 <!-- ================================================================ -->
+
+<!-- ================================================================ -->
+ 
+ <Interface Name="S2_IERS_CDDIS_4_AUX_UT1UTC">
+    <Desc>NASA EOSDIS IERS bulletins</Desc>
+    <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>470</PollingSize>
+    <ParallelDownload>3</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTPS</Protocol>
+    <Hostname>gdc.cddis.eosdis.nasa.gov</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+    </ContactInfo>
+  </Interface>
+
 
 <!-- ================================================================ -->
 
@@ -254,24 +303,21 @@
 
   <!-- ================================================================ -->
 
-
-<!-- ================================================================ -->
- 
- <Interface Name="NASA_EOSDIS_IERS">
-    <Desc>NASA EOSDIS IERS bulletins</Desc>
-    <TXRXParams>
+<Interface Name="S3_OSI_SAF_4_SR_2_SIFNAX">
+  <Desc>OSISAF Sea Ice Concentration for Northern hemisphere / for S3</Desc>
+  <TXRXParams>
     <Enabled4Sending>false</Enabled4Sending>
     <Enabled4Receiving>true</Enabled4Receiving>
     <ImmediateRetries>3</ImmediateRetries>
     <LoopRetries>2</LoopRetries>
     <LoopDelay unit="s">300</LoopDelay>
     <PollingInterval unit="s">20</PollingInterval>
-    <PollingSize>470</PollingSize>
-    <ParallelDownload>3</ParallelDownload>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>8</ParallelDownload>
   </TXRXParams>    
   <Server>
-    <Protocol>FTPS</Protocol>
-    <Hostname>gdc.cddis.eosdis.nasa.gov</Hostname>
+    <Protocol>FTP</Protocol>
+    <Hostname>osisaf.met.no</Hostname>
     <Port>21</Port>
     <User>anonymous</User>
     <Pass>guest</Pass>
@@ -293,9 +339,6 @@
     </To>
   </Notify>
   <Events>
-    <Event Name="OnReceiveNewFile"      executeCmd="auxConverter -m S2 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
-    <Event Name="OnReceiveNewFilesOK"   executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
-    <Event Name="NewFile2Intray"        executeCmd="echo $PWD " />
   </Events>
   <ContactInfo>
     <Name>Dr Who</Name>
@@ -303,16 +346,161 @@
     <Tel>0039-800 454 432</Tel>
     <Fax>0039-800 454 433</Fax>
     <Address>not your business</Address>
-    </ContactInfo>
-  </Interface>
+  </ContactInfo>
+</Interface> 
+
+
+ <!-- ================================================================ -->
+
+<Interface Name="S3_OSI_SAF_4_SR_2_SIFSAX">
+  <Desc>OSISAF Sea Ice Concentration for Southern hemisphere / for S3</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>8</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>osisaf.met.no</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
 
  
    
    <!-- ================================================================ -->
 
+<!-- ================================================================ -->
+
+<Interface Name="S3_OSI_SAF_4_SR_2_SICNAX">
+  <Desc>OSISAF Sea Ice Concentration REPROCESSING for Northern hemisphere / for S3</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>4</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>osisaf.met.no</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
+
+
+
   <!-- ================================================================ -->
 
- 
+ <!-- ================================================================ -->
+
+<Interface Name="S3_OSI_SAF_4_SR_2_SICSAX">
+  <Desc>OSISAF Sea Ice Concentration REPROCESSING for Southern hemisphere / for S3</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>4</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>osisaf.met.no</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
 
    <!-- ================================================================ -->
 

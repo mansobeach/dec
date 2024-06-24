@@ -47,6 +47,7 @@ class InterfaceHandlerCustom
       end
 
       if ENV.include?("DEC_LIST_MODE_#{@entity}") == false then
+         print_usage
          raise "missing environment variable DEC_LIST_MODE_#{@entity}"
       end
 
@@ -71,7 +72,6 @@ class InterfaceHandlerCustom
       end
 
       @protocol            = DEC::ReadInterfaceConfig.instance.getProtocol(@entity)
-
       @dirIncoming         = DEC::ReadConfigIncoming.instance.getIncomingDir(@entity)
       @bDeleteUnknown      = DEC::ReadConfigIncoming.instance.deleteUnknown?(@entity)
       @bDeleteDuplicated   = DEC::ReadConfigIncoming.instance.deleteDuplicated?(@entity)
@@ -97,8 +97,9 @@ class InterfaceHandlerCustom
 
    ##
    def print_usage
-      @logger.info("[DEC_XXX] I/F #{@entity}: env variable DEC_LIST_MODE_#{@entity}=true|false")
-      @logger.info("[DEC_XXX] I/F #{@entity}: env variable DEC_DEBUG_MODE=true|false")
+      @logger.info("[DEC_A00] I/F #{@entity}: usage")
+      @logger.info("[DEC_A00] I/F #{@entity}: env variable DEC_LIST_MODE_#{@entity}=true|false")
+      @logger.info("[DEC_A00] I/F #{@entity}: env variable DEC_DEBUG_MODE=true|false")
    end
    ## -----------------------------------------------
 

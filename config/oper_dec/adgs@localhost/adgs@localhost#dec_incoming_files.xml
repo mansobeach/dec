@@ -42,7 +42,7 @@
 
       <Interface>
          <Name>S1_CDDIS_4_AUX_TEC</Name>
-         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_igs</LocalInbox>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s1_cddis_4_aux_tec</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="1">"/pub/gps/products/ionex/2024/#{require 'date' ; Date.today.yday()}"</Directory>
          </DownloadDirs>
@@ -57,10 +57,9 @@
          </Switches>
       </Interface>
 
-
       <Interface>
          <Name>S3_NOAA_4_SL_2_DIMSAX</Name>
-         <LocalInbox>/data/adgs/tmp/in_basket_if_noaa_ims</LocalInbox>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s3_noaa_4_sl_2_dimsax</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/pub/DATASETS/NOAA/G02156/netcdf/1km/2024/</Directory>
          </DownloadDirs>
@@ -74,12 +73,84 @@
             <MD5>false</MD5>
          </Switches>
       </Interface>
- 
+
+      <Interface>
+         <Name>S3_OSI_SAF_4_SR_2_SIFNAX</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s3_osi_saf_4_sr_2_sifnax</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">"/reprocessed/ice/conc-cont-reproc/v3p0/#{require 'date' ; Date.today.year()}/#{require 'time' ; Time.now.strftime("%m")}"</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>S3_OSI_SAF_4_SR_2_SIFSAX</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s3_osi_saf_4_sr_2_sifsax</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">"/reprocessed/ice/conc-cont-reproc/v3p0/#{require 'date' ; Date.today.year()}/#{require 'time' ; Time.now.strftime("%m")}"</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>S3_OSI_SAF_4_SR_2_SICNAX</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s3_osi_saf_4_sr_2_sicnax</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2021</Directory>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2022</Directory>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2023</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+      <Interface>
+         <Name>S3_OSI_SAF_4_SR_2_SICSAX</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s3_osi_saf_4_sr_2_sicsax</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2021</Directory>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2022</Directory>
+            <Directory DepthSearch="1">/reprocessed/ice/conc-cont-reproc/v3p0/2023</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
       <Interface>
          <Name>S1MPC</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_s1mpc</LocalInbox>
          <DownloadDirs>
-            <Directory DepthSearch="0"></Directory>
+            <Directory DepthSearch="0">%Q{api/v1/?product_type=AUX_PP1&amp;adf__active=1&amp;metadata_date__gte=#{require 'date' ; Date.today}}</Directory>
          </DownloadDirs>
          <Switches>
             <DeleteDownloaded>false</DeleteDownloaded>
@@ -93,8 +164,8 @@
       </Interface>
 
    <Interface>
-         <Name>NASA_EOSDIS_IERS</Name>
-         <LocalInbox>/data/adgs/tmp/in_basket_if_nasa_eosdis_iers</LocalInbox>
+         <Name>S2_IERS_CDDIS_4_AUX_UT1UTC</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s2_iers_cddis_4_aux_ut1utc</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/products/iers/</Directory>
          </DownloadDirs>
@@ -109,22 +180,19 @@
          </Switches>
       </Interface>
 
-
-
    </ListInterfaces>
-
 
    <!-- =========================================================== -->
 
    <DownloadRules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  
-      <File Type="tai-utc.dat">
+
+      <File Type="ser7.dat">
          <Description>NASA IERS bulletin C</Description>
          <FromList>
-            <Interface>NASA_EOSDIS_IERS</Interface>
+            <Interface>S2_IERS_CDDIS_4_AUX_UT1UTC</Interface>
          </FromList>
       </File>
-
 
       <File Type="c1*i.Z">
          <Description>IGS ionex</Description>
@@ -155,6 +223,34 @@
          </FromList>
       </File>
 
+      <File Type="ice_conc_nh_*_icdrft*.nc">
+         <Description>OSI SAF ICE North Hemisphere STC / NRT</Description>
+         <FromList>
+            <Interface>S3_OSI_SAF_4_SR_2_SIFNAX</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ice_conc_sh_*_icdrft*.nc">
+         <Description>OSI SAF ICE North Hemisphere STC / NRT</Description>
+         <FromList>
+            <Interface>S3_OSI_SAF_4_SR_2_SIFSAX</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ice_conc_nh_*_icdr-v3*.nc">
+         <Description>OSI SAF ICE North Hemisphere REPROCESSING</Description>
+         <FromList>
+            <Interface>S3_OSI_SAF_4_SR_2_SICNAX</Interface>
+         </FromList>
+      </File>
+
+      <File Type="ice_conc_sh_*_icdr-v3*.nc">
+         <Description>OSI SAF ICE South Hemisphere REPROCESSING</Description>
+         <FromList>
+            <Interface>S3_OSI_SAF_4_SR_2_SICSAX</Interface>
+         </FromList>
+      </File>
+
    </DownloadRules>
 
    <!-- =========================================================== -->
@@ -164,8 +260,9 @@
       <ListIntrays>
 
          <Intray>
-            <Name>S2_IN</Name>
-            <Directory>/data/adgs/dec/s2_aux</Directory>
+            <Name>S1X_IN_4_AUX_TEC</Name>
+            <Directory>/data/adgs/tmp/in_basket_if_s1_cddis_4_aux_tec/s1x</Directory>
+            <Execute>auxConverter -m S1 -f %F -d /data/adgs/arc/intray</Execute>
          </Intray>
 
          <Intray>
@@ -202,6 +299,13 @@
             SORT Rules ranking from more restrictive ones    
             Only the first rule matching the file pattern is applied     
       -->
+
+      <File Type="c1*i.Z">
+         <HardLink>true</HardLink>
+         <ToList>
+            <Intray>S1X_IN_4_AUX_TEC</Intray>
+         </ToList>
+      </File>
 
 <!--
 

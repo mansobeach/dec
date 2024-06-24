@@ -560,9 +560,13 @@ def stopGetFromEntity(mnemonic)
       if @isDebugMode == true then
          @logger.debug("[DEC_XXX] I/F #{mnemonic}: Aborting on-going pull iteration ...")
       end
-      Process.kill(9, pid.to_i)
+      begin
+         Process.kill(9, pid.to_i)
+         @logger.info("[DEC_XXX] I/F #{mnemonic}: Pull on-going iteration has been aborted")
+      rescue Exception
+      end
 	   checker.release
-      @logger.info("[DEC_XXX] I/F #{mnemonic}: Pull on-going iteration has been aborted")
+      
    end
 end
 ## ---------------------------------------------------------

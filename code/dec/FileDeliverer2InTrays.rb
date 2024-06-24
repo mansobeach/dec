@@ -426,8 +426,8 @@ private
 
       arrToIntray.each{|intray|
          ## ------------------------------------------------
-         targetDir = @dimConfig.getInTrayDir(intray)
-         exec      = @dimConfig.getInTrayExecution(intray)
+         targetDir      = @dimConfig.getInTrayDir(intray)
+         exec           = @dimConfig.getInTrayExecution(intray)
          checkDirectory(targetDir)
          compress  = @dimConfig.getInTrayCompress(intray)
          ## ------------------------------------------------
@@ -444,7 +444,6 @@ private
 
             ## -----------------------------------
             ## Place the file in the @tmpDir
-
 =begin
             if file.include?("?") == true then
                cmd  = "\\ln -f \"#{file}\" \"#{@tmpDir}/#{file}\""
@@ -575,7 +574,12 @@ private
 
                event  = EventManager.new
 
+               # Execution before the event
+
                if exec != "" and exec != nil then
+                  if @isDebugMode == true then
+                     @logger.debug("#{intray} EVENT: #{exec}")
+                  end
                   event.exec_trigger(intray, "NewFile2Intray", exec, hParams, @logger)
                end
 

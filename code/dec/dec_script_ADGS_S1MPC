@@ -8,9 +8,20 @@ require 'dec/ReadInterfaceConfig'
 require 'dec/ReadConfigIncoming'
 require 'dec/InterfaceHandlerCustom_S1MPC'
 
+# https://sar-mpc.eu/doc/api/
+
+# ?product_type=AUX_PP1
+
+# curl -k https://sar-mpc.eu/api/v1/?metadata_date__gt=2024-06-20
+# curl -k https://sar-mpc.eu/api/v1/?metadata_date__gt=2024-06-20 | jq
+# curl -s -k https://sar-mpc.eu/api/v1/?metadata_date__gt=2024-06-10 | jq .count
+# curl -k https://sar-mpc.eu/api/v1/?product_type=AUX_PP1&metadata_date__gt=2024-06-20
+# curl -k https://sar-mpc.eu/api/v1/?product_type=AUX_ITC&metadata_date__gte=2024-06-20
+
+
 include DEC
 
-@entity         = "S1MPC"
+@entity = "S1MPC"
 
 self.load_config
 @logger     = self.load_logger("script_S1MPC")
@@ -36,7 +47,7 @@ end
 
 @logger.info("[DEC_005] I/F #{@entity}: Polling Started - List mode is #{@listOnly}")
 
-cmd             = "curl -s -k https://sar-mpc.eu/api/v1/?metadata_date__gt=#{@queryDate}"
+cmd             = "curl -s -k https://sar-mpc.eu/api/v1/?metadata_date__gt=#{@queryDate}" # &adf__active=1"
 result          = `#{cmd}`
 json_reply      = JSON.parse(result)
 num_products    = json_reply['count']

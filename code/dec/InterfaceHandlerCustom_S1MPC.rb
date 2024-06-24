@@ -41,14 +41,13 @@ class InterfaceHandlerCustom_S1MPC < InterfaceHandlerCustom
       else
          @queryDate = Date.today.prev_day.to_s
       end
-
    end
    ## -----------------------------------------------------------
    ##
    ##
    def print_usage
       super()
-      @logger.info("[DEC_XXX] I/F #{@entity}: env variable DEC_QUERY_DATE_#{@entity}=YYYY-MM-DD")
+      @logger.info("[DEC_A00] I/F #{@entity}: env variable DEC_QUERY_DATE_#{@entity}=YYYY-MM-DD")
    end
    ## -------------------------------------------------------------
 
@@ -70,23 +69,16 @@ class InterfaceHandlerCustom_S1MPC < InterfaceHandlerCustom
             raise "#{cmd} failed"
          end
          @logger.info("[DEC_110] I/F #{@entity}: #{filename} downloaded with size #{size} bytes")
-
          self.setReceivedFromEntity(filename, size)
          self.triggerEventNewFile(filename)
-
          return true
-
       else
           @logger.error("[DEC_666] #{@entity} I/F: Could not download #{filename}")
           return false
       end
-
    end
 
    ## -----------------------------------------------------------
-
-
-
 
 end # class
 
