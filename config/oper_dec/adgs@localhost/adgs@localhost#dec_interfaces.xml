@@ -206,7 +206,7 @@
 
 <!-- ================================================================ -->
  
- <Interface Name="S2_IERS_CDDIS_4_AUX_UT1UTC">
+ <Interface Name="S2_CDDIS_IERS_4_AUX_UT1UTC">
     <Desc>NASA EOSDIS IERS bulletins</Desc>
     <TXRXParams>
     <Enabled4Sending>false</Enabled4Sending>

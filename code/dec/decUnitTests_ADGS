@@ -185,23 +185,23 @@ class DECTestCase_ADGS < Test::Unit::TestCase
    def test_s2_iers_cddis_4_aux_ut1utc
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
 
-      cmd = "decCheckConfig -e S2_IERS_CDDIS_4_AUX_UT1UTC"
+      cmd = "decCheckConfig -e S2_CDDIS_IERS_4_AUX_UT1UTC"
       @@logger.info(cmd)
-      assert(system(cmd), "list from S2_IERS_CDDIS_4_AUX_UT1UTC")
+      assert(system(cmd), "list from S2_CDDIS_IERS_4_AUX_UT1UTC")
 
-      cmd = "decGetFromInterface -m S2_IERS_CDDIS_4_AUX_UT1UTC -l"
+      cmd = "decGetFromInterface -m S2_CDDIS_IERS_4_AUX_UT1UTC -l"
       @@logger.info(cmd)
-      assert(system(cmd), "list from S2_IERS_CDDIS_4_AUX_UT1UTC")
+      assert(system(cmd), "list from S2_CDDIS_IERS_4_AUX_UT1UTC")
 
-      cmd = "decGetFromInterface -m S2_IERS_CDDIS_4_AUX_UT1UTC --no-intray"
+      cmd = "decGetFromInterface -m S2_CDDIS_IERS_4_AUX_UT1UTC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from S2_IERS_CDDIS_4_AUX_UT1UTC")
+      assert(system(cmd), "pull from S2_CDDIS_IERS_4_AUX_UT1UTC")
 
       # New iteration should not drive to a new file
       # A duplication should be detected.
-      cmd = "decGetFromInterface -m S2_IERS_CDDIS_4_AUX_UT1UTC --no-intray"
+      cmd = "decGetFromInterface -m S2_CDDIS_IERS_4_AUX_UT1UTC --no-intray"
       @@logger.info(cmd)
-      assert(system(cmd), "pull from S2_IERS_CDDIS_4_AUX_UT1UTC")
+      assert(system(cmd), "pull from S2_CDDIS_IERS_4_AUX_UT1UTC")
 
       cmd = "decStats"
       @@logger.info(cmd)
@@ -676,9 +676,9 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       @@logger.info(cmd)
       assert(system(cmd), "listening to S1_CDDIS_4_AUX_TEC")
 
-      cmd = "decListener -m S2_IERS_CDDIS_4_AUX_UT1UTC -i 600"
+      cmd = "decListener -m S2_CDDIS_IERS_4_AUX_UT1UTC -i 600"
       @@logger.info(cmd)
-      assert(system(cmd), "listening to S2_IERS_CDDIS_4_AUX_UT1UTC")
+      assert(system(cmd), "listening to S2_CDDIS_IERS_4_AUX_UT1UTC")
       
       cmd = "decListener -m S3_NOAA_4_SL_2_DIMSAX -i 60"
       @@logger.info(cmd)

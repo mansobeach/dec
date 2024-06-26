@@ -164,7 +164,7 @@
       </Interface>
 
    <Interface>
-         <Name>S2_IERS_CDDIS_4_AUX_UT1UTC</Name>
+         <Name>S2_CDDIS_IERS_4_AUX_UT1UTC</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_s2_iers_cddis_4_aux_ut1utc</LocalInbox>
          <DownloadDirs>
             <Directory DepthSearch="0">/products/iers/</Directory>
@@ -190,7 +190,7 @@
       <File Type="ser7.dat">
          <Description>NASA IERS bulletin C</Description>
          <FromList>
-            <Interface>S2_IERS_CDDIS_4_AUX_UT1UTC</Interface>
+            <Interface>S2_CDDIS_IERS_4_AUX_UT1UTC</Interface>
          </FromList>
       </File>
 
