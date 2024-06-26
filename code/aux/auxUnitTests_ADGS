@@ -81,7 +81,7 @@ class AUXTestCase < Test::Unit::TestCase
       system(cmd)
 
       file_NASA_IONEX = "#{@@testDir}/c1pg1700.24i.Z"
-      cmd = "auxConverter -m S1 -f #{file_NASA_IONEX} -d /tmp/aux_out2 -D"
+      cmd = "auxConverter -m S1 -f #{file_NASA_IONEX} -d /tmp/aux_out2"
       @@logger.info(cmd)
       assert(system(cmd), "convert NASA CDDIS ionospheric model to S1")
 
@@ -118,8 +118,32 @@ class AUXTestCase < Test::Unit::TestCase
       @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
    end
 
-## --------------------------------------------------------
+   ## --------------------------------------------------------
 
+   # Convert CDDIS IERS BULA ASCII ser7.dat
+   def test_s2_cddis_iers_4_aux_ut1_utc
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/ser7.dat #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/nasa_cddis/ser7.dat", @@testDir)
+
+      cmd = "rm -rf /tmp/aux_out2/S2*.TGZ"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_BULA = "#{@@testDir}/ser7.dat"
+      cmd = "auxConverter -m S2 -f #{file_BULA} -d /tmp/aux_out2"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert BULA ASCII to S2")
+
+      arr = Dir["/tmp/aux_out2/S2__*AUX_UT1UTC*.TGZ"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
 
 
 end

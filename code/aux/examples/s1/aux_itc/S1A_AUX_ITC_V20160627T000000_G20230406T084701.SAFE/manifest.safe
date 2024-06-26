@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xfdu:XFDU xmlns:s1auxsar="http://www.esa.int/safe/sentinel-1.0/sentinel-1/auxiliary/sar" xmlns:safe="http://www.esa.int/safe/sentinel-1.0" xmlns:xfdu="urn:ccsds:schema:xfdu:1" version="esa/safe/sentinel-1.0/sentinel-1/auxiliary/sar/itc">
+  <informationPackageMap>
+    <xfdu:contentUnit dmdID="platform" pdiID="processing" textInfo="SENTINEL-1A SETAP Instrument Timing Calibration" unitType="SAFE Archive Information Package">
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="auxData" />
+      </xfdu:contentUnit>
+    </xfdu:contentUnit>
+  </informationPackageMap>
+  <metadataSection>
+    <metadataObject ID="processing" category="PDI" classification="PROVENANCE">
+      <metadataWrap mimeType="text/xml" textInfo="Processing" vocabularyName="SAFE">
+        <xmlData>
+          <safe:processing name="AUX_ITC Generation" start="2023-04-06T08:47:01.000000" stop="2023-04-06T08:47:01.000000">
+            <safe:facility country="Germany" name="MF-SAR" organisation="DLR" site="Remote Sensing Technology Institute - MF-SAR" />
+          </safe:processing>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="platform" category="DMD" classification="DESCRIPTION">
+      <metadataWrap mimeType="text/xml" textInfo="Platform Description" vocabularyName="SAFE">
+        <xmlData>
+          <safe:platform>
+            <safe:nssdcIdentifier>2014-016A</safe:nssdcIdentifier>
+            <safe:familyName>SENTINEL-1</safe:familyName>
+            <safe:number>A</safe:number>
+            <safe:instrument>
+              <safe:familyName abbreviation="SAR">Synthetic Aperture Radar</safe:familyName>
+            </safe:instrument>
+          </safe:platform>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="standAloneProductInformation" category="DMD" classification="DESCRIPTION">
+      <metadataWrap mimeType="text/xml" textInfo="Stand Alone Product Information" vocabularyName="SAFE">
+        <xmlData>
+          <s1auxsar:standAloneProductInformation>
+            <s1auxsar:auxProductType>AUX_ITC</s1auxsar:auxProductType>
+            <s1auxsar:validity>2016-06-27T00:00:00.000000</s1auxsar:validity>
+            <s1auxsar:generation>2023-04-06T08:47:01.000000</s1auxsar:generation>
+            <s1auxsar:instrumentConfigurationId>0</s1auxsar:instrumentConfigurationId>
+            <s1auxsar:changeDescription><![CDATA[Operational S-1A AUX ITC prepared by SAR-MPC for SETAP-IPF. 
+This calibration product provides updated Sentinel-1A specific range and azimuth reference timing correction values for the generation of S-1 ETAD products. 
+The value in <instrumentTimingCalibrationReference>/<rangeCalibration> was changed from 1.1281e-09 to 7.4103e-10 seconds. 
+The value in <instrumentTimingCalibrationReference>/<azimuthCalibration> was changed from 1.2873e-05 to 6.3522e-06 seconds.]]></s1auxsar:changeDescription>
+          </s1auxsar:standAloneProductInformation>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="s1ObjectTypesSchema" category="REP" classification="SYNTAX">
+      <metadataReference href="./support/s1-object-types.xsd" locatorType="URL" mimeType="text/xml" />
+    </metadataObject>
+    <metadataObject ID="auxSchema" category="REP" classification="SYNTAX">
+      <metadataReference href="./support/s1-aux-itc.xsd" locatorType="URL" mimeType="text/xml" />
+    </metadataObject>
+  </metadataSection>
+  <dataObjectSection>
+    <dataObject ID="auxData" repID="auxSchema">
+      <byteStream mimeType="text/xml" size="13927">
+        <fileLocation href="./data/s1a-aux-itc.xml" locatorType="URL" />
+        <checksum checksumName="MD5">f28929678ee6a75cf353dae2b9266c7f</checksum>
+      </byteStream>
+    </dataObject>
+  </dataObjectSection>
+</xfdu:XFDU>

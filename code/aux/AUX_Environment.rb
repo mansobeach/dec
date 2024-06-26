@@ -7,12 +7,14 @@ require 'dotenv'
 
 module AUX
    
-   VERSION   = "0.0.9.5"
+   VERSION   = "0.0.9.8"
       
    ## -----------------------------------------------------------------
    
    CHANGE_RECORD = { \
       "0.0.9"  =>    "ESA Sentinels SAFE format support\n\
+         ESA EOFFS format support\n\
+         NASA CDDIS IERS Bulletin A ASCII ser7.dat is supported\n\
          Dynamic configuration parameters from env files\n\
          Independent installation removing dependencies",
       "0.0.8"  =>    "NASA ASTER Global DEM: ASTGTM\n\
@@ -89,10 +91,14 @@ module AUX
    ## -----------------------------------------------------------------
 
    def load_environment(target)
-      environment = "env/#{target}.env"
-      begin
-         Dotenv.load(environment)
-      rescue Exception
+      environment = File.join(File.dirname(File.expand_path(__FILE__)), "./env/#{target}.env")
+      if File.exist?(environment) == true then
+         begin
+            Dotenv.load(environment)
+         rescue Exception => e
+            puts "Error loading env #{environment}"
+            puts e.to_s
+         end
       end
    end
 

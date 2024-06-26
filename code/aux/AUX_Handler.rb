@@ -28,6 +28,7 @@ require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IFREMER_WAVEWATCH_III'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NASA_CDDIS_BULA'
+require 'aux/AUX_Handler_NASA_CDDIS_BULA_ASCII'
 require 'aux/AUX_Handler_NASA_CDDIS_BULC'
 require 'aux/AUX_Handler_NASA_CDDIS_IONEX'
 require 'aux/AUX_Handler_NASA_EOSDIS_ASTGTM'
@@ -152,6 +153,11 @@ private
 
       if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULA, filename) == true then
          @handler = AUX_Handler_NASA_CDDIS_BULA.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
+      if File.fnmatch(AUX_Pattern_NASA_CDDIS_BULA_ASCII, filename) == true then
+         @handler = AUX_Handler_NASA_CDDIS_BULA_ASCII.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
       end
 

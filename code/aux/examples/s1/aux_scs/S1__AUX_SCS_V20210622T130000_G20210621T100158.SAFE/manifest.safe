@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xfdu:XFDU xmlns:s1auxsar="http://www.esa.int/safe/sentinel-1.0/sentinel-1/auxiliary/sar" xmlns:safe="http://www.esa.int/safe/sentinel-1.0" xmlns:xfdu="urn:ccsds:schema:xfdu:1" version="esa/safe/sentinel-1.0/sentinel-1/auxiliary/sar/scs">
+  <informationPackageMap>
+    <xfdu:contentUnit dmdID="platform generalProductInformation" pdiID="processing" textInfo="Sentinel-1 L2 Auxilary Simulated Cross Spectra" unitType="SAFE Archive Information Package Map">
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is1-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is1-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is1-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is1-vv-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is2-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is2-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is2-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is2-vv-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is3-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is3-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is3-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is3-vv-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is4-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is4-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is4-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is4-vv-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is5-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is5-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is5-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is5-vv-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is6-hh-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is6-hh-n" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is6-vv-i" />
+      </xfdu:contentUnit>
+      <xfdu:contentUnit repID="auxSchema" unitType="Measurement Data Unit">
+        <dataObjectPointer dataObjectID="s1--is6-vv-n" />
+      </xfdu:contentUnit>
+    </xfdu:contentUnit>
+  </informationPackageMap>
+  <metadataSection>
+    <metadataObject ID="processing" category="PDI" classification="PROVENANCE">
+      <metadataWrap mimeType="text/xml" textInfo="Processing" vocabularyName="SAFE">
+        <xmlData>
+          <safe:processing name="AUX_SCS Generation" start="2021-06-21T10:01:58.000000" stop="2021-06-21T10:01:58.000000">
+            <safe:facility country="France" name="Copernicus S1 Core Ground Segment - MPC" organisation="ESA" site="CLS-Brest" />
+          </safe:processing>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="platform" category="DMD" classification="DESCRIPTION">
+      <metadataWrap mimeType="text/xml" textInfo="Platform Description" vocabularyName="SAFE">
+        <xmlData>
+          <safe:platform>
+            <safe:nssdcIdentifier>2014-016A</safe:nssdcIdentifier>
+            <safe:familyName>SENTINEL-1</safe:familyName>
+            <safe:number>A</safe:number>
+            <safe:instrument>
+              <safe:familyName abbreviation="SAR">Synthetic Aperture Radar</safe:familyName>
+            </safe:instrument>
+          </safe:platform>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="standAloneProductInformation" category="DMD" classification="DESCRIPTION">
+      <metadataWrap mimeType="text/xml" textInfo="Stand Alone Product Information" vocabularyName="SAFE">
+        <xmlData>
+          <s1auxsar:standAloneProductInformation>
+            <s1auxsar:auxProductType>AUX_SCS</s1auxsar:auxProductType>
+            <s1auxsar:validity>2021-06-22T13:00:00.000000</s1auxsar:validity>
+            <s1auxsar:generation>2021-06-21T10:01:58.000000</s1auxsar:generation>
+            <s1auxsar:instrumentConfigurationId>0</s1auxsar:instrumentConfigurationId>
+            <s1auxsar:changeDescription><![CDATA[Description:
+
+This version of the AUX_SCS embeds a new tunned version of the Real Aperture Radar Modulation Transfer Function (RAR MTF), specific to the optimised WV2 antenna configuration. This AUX_SCS impacts only WV2, and support the upgrade of RDB configuration (S1A RDB#7, S1B RDB#2).
+
+References:
+RDBADF: RDBADF-122
+MPCS: MPCS-2100
+IPF: IPF-422
+]]></s1auxsar:changeDescription>
+          </s1auxsar:standAloneProductInformation>
+        </xmlData>
+      </metadataWrap>
+    </metadataObject>
+    <metadataObject ID="auxSchema" category="REP" classification="SYNTAX">
+      <metadataReference href="./support/s1-aux-scs.xsd" locatorType="URL" mimeType="text/xml" />
+    </metadataObject>
+  </metadataSection>
+  <dataObjectSection>
+    <dataObject ID="s1--is1-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is1-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">100535e307d3f0d2568dabd7d5cf2034</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is1-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is1-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">780af4cc6aafc2285a6ea70d1a7802df</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is1-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is1-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">679e6679c006967a959e616c1db6bdc4</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is1-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is1-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">780af4cc6aafc2285a6ea70d1a7802df</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is2-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133358">
+        <fileLocation href="./data/s1--aux-scs-is2-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">f0d28540fef94cef0ec50582d25f5602</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is2-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is2-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">1071487336802eb1852a31c6c374a0d5</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is2-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133389">
+        <fileLocation href="./data/s1--aux-scs-is2-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">c94b4c368d00e35af31d377871d4329d</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is2-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is2-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">4e7cbfbd2b942e9fcd5a15beb48dc1b0</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is3-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is3-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">53ceb67d07a3b962b188909cb625e5c4</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is3-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is3-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">12f7315eda52fd455eee45b217ba596d</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is3-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is3-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">6d7b8d6af6fe637432a00de5f9836254</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is3-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is3-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">12f7315eda52fd455eee45b217ba596d</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is4-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133358">
+        <fileLocation href="./data/s1--aux-scs-is4-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">ed8aa74a68f046e15ce7cdd99d28cdb2</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is4-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is4-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">38638ff19a5fbb1961fe4c11701e9052</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is4-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133389">
+        <fileLocation href="./data/s1--aux-scs-is4-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">21b6cdf45401b71f53f9f9c27f9760fa</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is4-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is4-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">d41db56fe0b1f2c1d78de55fb24bf1d4</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is5-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is5-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">d8882379392206146fbfdf401abde8fa</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is5-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is5-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">342d69add9fa79c035a823a08aabb749</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is5-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is5-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">6584e2036efa86c888a2ff143ca3db25</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is5-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is5-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">342d69add9fa79c035a823a08aabb749</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is6-hh-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is6-hh.info" locatorType="URL" />
+        <checksum checksumName="MD5">630e5c3f480aa2eb8334fb53794edf6d</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is6-hh-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is6-hh.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">47356ac01239f78509c7731218b84fd1</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is6-vv-i" repID="auxSchema">
+      <byteStream mimeType="text/plain" size="133366">
+        <fileLocation href="./data/s1--aux-scs-is6-vv.info" locatorType="URL" />
+        <checksum checksumName="MD5">3068b1be932d198580819cd01b032e37</checksum>
+      </byteStream>
+    </dataObject>
+    <dataObject ID="s1--is6-vv-n" repID="auxSchema">
+      <byteStream mimeType="application/octetstream" size="84520800">
+        <fileLocation href="./data/s1--aux-scs-is6-vv.nlin" locatorType="URL" />
+        <checksum checksumName="MD5">47356ac01239f78509c7731218b84fd1</checksum>
+      </byteStream>
+    </dataObject>
+  </dataObjectSection>
+</xfdu:XFDU>
