@@ -26,7 +26,7 @@ module DEC
 
    include CUC::DirUtils
 
-   @@version = "1.0.41.5"
+   @@version = "1.0.41.6"
 
    ## -----------------------------------------------------------------
 
@@ -136,7 +136,7 @@ module DEC
       "1.0.3"  =>    "upgrade of rpf module to support ruby 2.x series", \
       "1.0.2"  =>    "commands triggered by reception events are now logged", \
       "1.0.1"  =>    "decStats -H <hours> has been integrated", \
-      "1.0.0"  =>    "first version of the dec installer created" \
+      "1.0.0"  =>    "first version of the dec gem installer created" \
    }
    ## -----------------------------------------------------------------
 

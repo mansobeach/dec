@@ -104,7 +104,7 @@ class DECTestCase_ADGS < Test::Unit::TestCase
    ## ------------------------------------------------------
 
    Test::Unit.at_exit do
-      @@logger.info("End of DEC test ADGDS")
+      @@logger.info("End of DEC test ADGS")
    end
 
    ## ------------------------------------------------------
@@ -334,6 +334,93 @@ class DECTestCase_ADGS < Test::Unit::TestCase
       cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SIFSAX --no-intray"
       @@logger.info(cmd)
       assert(system(cmd), "pull from S3_OSI_SAF_4_SR_2_SIFSAX")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
+   ## -----------------------------------------------------------
+
+   def test_s3_osi_saf_4_sr_2_sicnax
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e S3_OSI_SAF_4_SR_2_SICNAX"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_OSI_SAF_4_SR_2_SICNAX")
+
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICNAX -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_OSI_SAF_4_SR_2_SICNAX")
+
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICNAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_OSI_SAF_4_SR_2_SICNAX")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICNAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_OSI_SAF_4_SR_2_SICNAX")
+
+      cmd = "decStats"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull statistics")
+
+      arr = Dir["/data/adgs/dec/log/ADGS_DEC*.log"]
+
+      @@logger.debug("Verification of log trace: File Download")
+      cmd = "grep DEC\_110 #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(system(cmd), "File download traced in DEC logs in #{__method__.to_s}")
+
+      cmd = "grep ERROR #{arr[0]}"
+      @@logger.debug(cmd)
+      assert(!system(cmd), "ERROR found in DEC logs in #{__method__.to_s}")
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## -----------------------------------------------------------
+
+
+   ## -----------------------------------------------------------
+
+   def test_s3_osi_saf_4_sr_2_sicsax
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      cmd = "decCheckConfig -e S3_OSI_SAF_4_SR_2_SICSAX"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_OSI_SAF_4_SR_2_SICSAX")
+
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICSAX -l"
+      @@logger.info(cmd)
+      assert(system(cmd), "list from S3_OSI_SAF_4_SR_2_SICSAX")
+
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICSAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_OSI_SAF_4_SR_2_SICSAX")
+
+      # New iteration should not drive to a new file
+      # A duplication should be detected.
+      cmd = "decGetFromInterface -m S3_OSI_SAF_4_SR_2_SICSAX --no-intray"
+      @@logger.info(cmd)
+      assert(system(cmd), "pull from S3_OSI_SAF_4_SR_2_SICSAX")
 
       cmd = "decStats"
       @@logger.info(cmd)
