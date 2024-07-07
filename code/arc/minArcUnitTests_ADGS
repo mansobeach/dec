@@ -222,7 +222,7 @@ class TestCaseMINARC_ADGS < Test::Unit::TestCase
    end
    ## ------------------------------------------------------
 
-   def testStore
+   def test_local_store_EXTERNAL
       @@logger.info("START => TestCaseMINARC_ADGS::#{__method__.to_s}")
 
       system("mkdir -p /tmp/minarc/tmp/")
@@ -243,27 +243,10 @@ class TestCaseMINARC_ADGS < Test::Unit::TestCase
 
    ## ------------------------------------------------------
 
-   def testDecodeArchivedFile
-      @@logger.info("START => TestCaseMINARC_ADGS::#{__method__.to_s}")
-
-      system("mkdir -p /tmp/minarc/tmp/")
-
-      @@arrInputFiles.each{|filename|
-         @@logger.debug("TestCaseMINARC_ADGS::#{__method__.to_s} #{filename}")
-         system("echo \'#{filename}\' > /tmp/minarc/tmp/#{filename}")
-         cmd = "minArcStore -t ADGS -f \"/tmp/minarc/tmp/#{filename}\" --noserver -D"
-         @@logger.debug(cmd)
-         assert(system(cmd), "store of #{filename}")
-         cmd = "minArcStatus -f #{filename} --noserver | jq"
-         @@logger.debug(cmd)
-         assert(system(cmd), "status of #{filename}")
-      }
-      @@logger.info("END   => TestCaseMINARC_ADGS::#{__method__.to_s}")
-   end
 
    ## ------------------------------------------------------
 
-   def test_local_store_SAFE
+   def test_local_store_SAFE_S1
       @@logger.info("START => TestCaseMINARC_NAOS::#{__method__.to_s}")
       prevDir     = Dir.pwd
       testDataDir = File.join( File.dirname(File.expand_path(__FILE__)), "plugins/test" )
@@ -276,6 +259,10 @@ class TestCaseMINARC_ADGS < Test::Unit::TestCase
       @@logger.debug(cmd)
       assert(system(cmd), cmd)
       
+      cmd = "minArcStatus -f S1B_AUX_CAL_V20190514T090000_G20210104T140612.SAFE.zip --noserver | jq"
+      @@logger.debug(cmd)
+      assert(system(cmd), cmd)
+
       Dir.chdir(prevDir)
       @@logger.info("END => TestCaseMINARC_NAOS::#{__method__.to_s}")
    end

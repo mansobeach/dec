@@ -217,7 +217,7 @@ private
 
    def compressFile(full_path_name)
       if @isDebugMode == true then
-         @logger.info("START => Handler_ADGS::#{__method__.to_s} : #{name}")
+         @logger.info("START => Handler_ADGS::#{__method__.to_s} : #{full_path_name}")
       end
 
       filename       = File.basename(full_path_name, ".*")
