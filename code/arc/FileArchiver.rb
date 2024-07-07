@@ -635,13 +635,6 @@ private
          anArchivedFile.size_in_disk      = size_in_disk
          anArchivedFile.size_original     = size_original
          anArchivedFile.json_metadata     = json_metadata
-
-         puts "CACACAKDEKAKSKAK"
-         puts json_metadata
-         puts json_metadata.to_json
-
-         puts "MORGREGERS"
-
          ## ----------------------------
          ## recover if model is still 1.0
          begin
@@ -744,31 +737,6 @@ private
 #       if bUnPack then         
 #          destDir << "/" << File.basename(full_path_filename, ".*")
 #       end
-
-
-
-      #-------------------------------------------
-
-#      if @isDebugMode == true then
-#         puts "===================================="
-#         if @bIsAlreadyArchived == false then
-#            puts "         NEW FILE ARCHIVING         "
-#         else
-#            puts "         UPDATE ARCHIVED FILE       "
-#         end
-#         puts "...................................."
-#         puts "Source File       -> #{full_path_filename}"
-#         puts "Destination       -> #{destDir}"
-#         puts "File-Type         -> #{type}"
-#         puts "Validity Start    -> #{start}"
-#         puts "Validity Stop     -> #{stop}"
-#         puts "Archiving date    -> #{archival_date}"
-#         puts "Size              -> #{size}"
-#         puts "Original Size     -> #{size_original}"
-#         puts "Disk occupation   -> #{size_in_disk}"
-#         puts "==================================="
-#      end
-
 
       # Copy / Move the source file to the archive
 
@@ -970,19 +938,12 @@ private
 
       if bDelete then
          cmd = "\\rm -rf #{full_path_filename}"
-#         Eventual problematic write to stdout
-#         if @isDebugMode == true then
-#            puts cmd
-#         end
          ret = system(cmd)
-
          if ret == false then
             puts "WARNING : Could not delete source file ! :-("
          end
       end
-
       return true
-
    end
 
    #--------------------------------------------------------
