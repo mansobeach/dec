@@ -16,20 +16,6 @@
 # minArcPurge [-Y]
 #
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-###
-### === Mini Archive Component (MinArc)
-###
-### Git: $Id: minArcPurge,v 1.1 2008/11/10 09:39:34 decdev Exp $
-###
-#########################################################################
 
 require 'getoptlong'
 require 'rdoc'
@@ -184,7 +170,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -24 #{fullpathFile}"}`
+   value = `#{"head -16 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

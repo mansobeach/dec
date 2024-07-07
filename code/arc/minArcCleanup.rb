@@ -24,25 +24,9 @@
 #     --version             shows version number      
 # 
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-#
-# == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
-#
 
 
-#########################################################################
-#
-# === MINARC -> Data Collector Component
-#
-# CVS: $Id: minArcCleanup.rb,v 1.7 2008/09/24 10:18:26 decdev Exp $
-#
-#########################################################################
-
-
- # MinArc Deamon that removes obsolete files from the archive
+# MinArc Deamon that removes obsolete files from the archive
 
 
 require 'getoptlong'
@@ -367,7 +351,7 @@ end
 
 def usage
    fullpathFile = `which #{File.basename($0)}` 
-   system("head -32 #{fullpathFile}")
+   system("head -24 #{fullpathFile}")
    exit
 end
 

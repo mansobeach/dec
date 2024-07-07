@@ -6,7 +6,7 @@
  
    <outputter name="minarc_log" level="DEBUG">
       <type>RollingFileOutputter</type>
-      <filename>/log/naosboa_orc.log</filename>
+      <filename>/data/adgs/arc/log/ADGS_MINARC.log</filename>
       <formatter type="PatternFormatter" pattern="[%5l] %d %c.#{moduleName} - %m">
          <date_pattern>%Y-%m-%d %H:%M:%S.%L</date_pattern>
       </formatter>

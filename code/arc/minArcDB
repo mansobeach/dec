@@ -12,29 +12,8 @@
 #     --Debug           shows Debug info during the execution
 #     --help            shows this help
 # 
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
 #
 
-#########################################################################
-###
-### === Ruby source for #minArcDB execytable
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Mini Archive Component (MinArc)
-### 
-### module MINARC
-###
-#########################################################################
-
-### Privilege extensions for 
-### https://gorails.com/forum/pg-insufficientprivilege-error-permission-denied-to-create-extension-pgcrypto-hint-must-be-superuser-to-create-this-extension-create-extension-if-not-exists-pgcrypto
-
-### ALTER ROLE <Database_User> SUPERUSER;
 
 require 'rubygems'
 require 'active_record'
@@ -97,7 +76,7 @@ def main
    # -------------------------------------------------------
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
+      print("\nminArc ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
       hRecord = ARC::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -126,16 +105,19 @@ def main
 
    # -------------------------------------------------------
 
-   if self.checkEnvironmentEssential == false then
-      puts
-      self.printEnvironmentError
-      puts
+   begin
+      if self.checkEnvironmentEssential == false then
+         puts
+         self.printEnvironmentError
+         puts
+         exit(99)
+      end
+   rescue Exception => e
+      puts("Fatal Error: #{e.to_s} #{'1F480'.hex.chr('UTF-8')}")
       exit(99)
    end
 
    # -------------------------------------------------------
-
-   ## ------------------------------------------------------
 
    @minArcConfigDir       = ENV['MINARC_CONFIG']
 
@@ -299,9 +281,7 @@ end
 
 def usage
    fullpathFile = File.expand_path(__FILE__)
-      
-   value = `#{"head -18 #{fullpathFile}"}`
-      
+   value        = `#{"head -15 #{fullpathFile}"}`
    value.lines.drop(1).each{
       |line|
       len = line.length - 1

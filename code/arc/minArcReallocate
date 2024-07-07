@@ -28,24 +28,6 @@
 #     --Debug                    shows Debug info during the execution
 #     --version                  shows version number
 # 
-# == Author
-# Borja Lopez Fernandez
-#
-# == Copyright
-# Copyright (c) 2014 Casale & Beach
-#
-
-#########################################################################
-#
-# ===       
-#
-# === Written by Borja Lopez Fernandez
-#
-# === Casale & Beach
-# 
-#
-#
-#########################################################################
 
 require 'rubygems'
 require 'getoptlong'
@@ -250,7 +232,7 @@ def usage
 
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -36 #{fullpathFile}"}`
+   value = `#{"head -30 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

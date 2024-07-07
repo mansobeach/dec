@@ -414,7 +414,7 @@
     <LoopDelay unit="s">300</LoopDelay>
     <PollingInterval unit="s">20</PollingInterval>
     <PollingSize>100000</PollingSize>
-    <ParallelDownload>4</ParallelDownload>
+    <ParallelDownload>3</ParallelDownload>
   </TXRXParams>    
   <Server>
     <Protocol>FTP</Protocol>

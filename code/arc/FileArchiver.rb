@@ -1,21 +1,8 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-##
-## === Ruby source for #FileArchiver class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Mini Archive Component (MinArc)
-## 
-## Git: $Id: FileArchiver.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
-##
-## module MINARC
-##
-#########################################################################
-
 require 'benchmark'
 
+require 'json'
 require 'cuc/DirUtils'
 require 'cuc/Wrapper_md5sum'
 require 'cuc/EE_ReadFileName'
@@ -52,9 +39,7 @@ class FileArchiver
          @bRemoteMode = false
          require 'arc/MINARC_DatabaseModel'
       end
-
       checkModuleIntegrity
-      
    end
    ## --------------------------------------------
    
@@ -145,46 +130,16 @@ class FileArchiver
                size_original     = nameDecoder.size_original
                newFilename       = nameDecoder.filename
                filename_original = nameDecoder.filename_original
+               json_metadata     = JSON.generate(nil)
+
+               if nameDecoder.respond_to?("json_metadata") == true then
+                  json_metadata = nameDecoder.json_metadata
+               end
+
                
                puts "Detected #{filename} for bulk import"
                               
-               # Refer to ArchivedFile.bulkImport(arrFiles) @ MINARC_DatabaseModel.rb
-               # for the order of the ddbb columns for bulk update
 
-#                the_archived_file << filename
-#                the_archived_file << fileType
-#                the_archived_file << path
-#                the_archived_file << Time.now
-#                the_archived_file << size
-#                the_archived_file << size_original
-#                the_archived_file << size_in_disk
-#                the_archived_file << Time.now
-#                the_archived_file << start
-#                the_archived_file << stop
-#                
-#                arrColumns = [ 
-#                               :filename, 
-#                               :filetype, 
-#                               :path, 
-#                               :size,
-#                               :size_original,
-#                               :size_in_disk,
-#                               :archive_date, 
-#                               :validity_start,
-#                               :validity_stop 
-#                               ]
-#                
-#                archivedFile = ArchivedFile.new(
-#                                  :filename         => filename,
-#                                  :filetype         => fileType,
-#                                  :path             => path,
-#                                  :size             => size,
-#                                  :size_original    => size_original,
-#                                  :size_in_disk     => size_in_disk,
-#                                  :archive_date     => Time.now,
-#                                  :validity_start   => start,
-#                                  :validity_stop    => stop
-#                                  )
                
                hFile = {
                                  :filename            => filename,
@@ -196,7 +151,8 @@ class FileArchiver
                                  :size_in_disk        => size_in_disk,
                                  :archive_date        => Time.now,
                                  :validity_start      => start,
-                                 :validity_stop       => stop
+                                 :validity_stop       => stop,
+                                 :json_metadata       => json_metadata
 
                }
                                                             
@@ -212,6 +168,7 @@ class FileArchiver
                                     bUnPack, 
                                     arrAddFields, 
                                     path, 
+                                    json_metadata,
                                     size, 
                                     size_in_disk, 
                                     size_original,
@@ -230,7 +187,7 @@ class FileArchiver
                if retVal == false then
                   puts "Could not archive #{File.basename(full_path_file)} ! :-("
                   # original full_path_file is added to the array needed for the roll-back.
-                  # Yes, we like dirty ! 
+
 #                   the_archived_file << full_path_file
 #                   arrFilesFailed << the_archived_file
                else
@@ -328,6 +285,7 @@ class FileArchiver
                bUnPack = false, \
                arrAddFields = nil, \
                full_path_location = nil, \
+               json_metadata = nil, \
                size = 0, \
                size_in_disk = 0, \
                size_original = 0 \
@@ -382,8 +340,6 @@ class FileArchiver
       # ----------------------------------------------------
 
       # aFile = ArchivedFile.where(filename: fileName).load
-
-
 
       if aFile != nil then
          puts "#{fileName} was already archived !"
@@ -485,6 +441,12 @@ class FileArchiver
                size_original     = nameDecoder.size_original
                newFilename       = nameDecoder.filename
                filename_original = nameDecoder.filename_original
+               json_metadata     = JSON.generate(nil)
+
+               if nameDecoder.respond_to?("json_metadata") == true then
+                  json_metadata = nameDecoder.json_metadata
+               end
+
             else
                puts
                puts "The file #{fileName} could not be identified as a valid #{fileType.upcase} file..."
@@ -510,6 +472,7 @@ class FileArchiver
                                     stop, \
                                     arrAddFields, \
                                     path, \
+                                    json_metadata, \
                                     size, \
                                     size_in_disk, \
                                     size_original, \
@@ -536,6 +499,7 @@ class FileArchiver
                               bUnPack, \
                               arrAddFields, \
                               path, \
+                              json_metadata, \
                               size, \
                               size_in_disk, \
                               size_original)
@@ -630,14 +594,8 @@ private
          end
       end
 
-
       if @bHLink == true and @bMove == true then
-         puts "\nFatal Error in FileArchiver::checkModuleIntegrity"
-         puts
-         puts "Cannot move and hard-link simultaneously"
-         puts
-         puts
-         exit(99)
+         raise "Fatal Error in FileArchiver::checkModuleIntegrity / cannot move and hard-link simultaneously"
       end
 
    end
@@ -653,6 +611,7 @@ private
                         stop, \
                         arrAddFields, \
                         path = "", \
+                        json_metadata = nil, \
                         size = 0, \
                         size_in_disk = 0, \
                         size_original = 0, \
@@ -675,6 +634,13 @@ private
          anArchivedFile.size              = size
          anArchivedFile.size_in_disk      = size_in_disk
          anArchivedFile.size_original     = size_original
+         anArchivedFile.json_metadata     = json_metadata
+
+         puts "CACACAKDEKAKSKAK"
+         puts json_metadata
+         puts json_metadata.to_json
+
+         puts "MORGREGERS"
 
          ## ----------------------------
          ## recover if model is still 1.0
@@ -713,45 +679,19 @@ private
 
          anArchivedFile.save!
          
-         
-#         if @isDebugMode == true then
-#            puts "===================================="
-#            puts "         NEW FILE ARCHIVING         "         
-#            puts "...................................."
-#            puts "Source File       -> #{full_path_filename}"
-#            puts "Destination       -> #{path}"
-#            puts "File-Type         -> #{type}"
-#            puts "Validity Start    -> #{start}"
-#            puts "Validity Stop     -> #{stop}"
-#            puts "Archiving date    -> #{archival_date}"
-#            puts "Size              -> #{size}"
-#            puts "Original Size     -> #{size_original}"
-#            puts "Disk occupation   -> #{size_in_disk}"
-#            puts "==================================="
-#         end
-      
+         if @isDebugMode == true then
+            @logger.debug("NEW FILE ARCHIVING")
+            @logger.debug("Source File       -> #{full_path_filename}")
+            @logger.debug("Path Archive      -> #{path}")
+            @logger.debug("File-Type         -> #{type}")
+            @logger.debug("Validity Start    -> #{start}")
+            @logger.debug("Validity Stop     -> #{stop}")
+            @logger.debug("Size              -> #{size}")
+            @logger.debug("Disk occupation   -> #{size_in_disk}")
+            @logger.debug("Metadata          -> #{json_metadata}")
+         end      
       rescue Exception => e
-
-         @logger.error(e.to_s)
-         
-#         ## necessary for the ORC contingency test
-#         
-#          cmd = "\\mv -f #{full_path_filename} #{@archiveError}/"
-#          ret = system(cmd)
-#          if @isDebugMode == true then
-#             @logger.debug("Move to ArchiveError: #{cmd} / #{ret}")
-#          end
-
-
-#         puts
-#         puts e.to_s
-#         puts
-#         puts "Could not inventory #{File.basename(full_path_filename)} :-("
-#         puts
-         
-         ## quarantine this
-         #raise e
-         
+         @logger.error(e.to_s)         
          return false
       end  
    
@@ -774,10 +714,11 @@ private
                bDelete, 
                bUnPack, 
                arrAddFields, 
-               path = "", 
-               size = 0, 
-               size_in_disk = 0, 
-               size_original = 0,
+               path,
+               json_metadata, 
+               size, 
+               size_in_disk, 
+               size_original,
                bInventory = true  )
       
       archival_date = Time.now
@@ -909,9 +850,6 @@ private
             return false
          end
       end
-
-
-
       
       #-------------------------------------------
       # Unpack the file
@@ -987,6 +925,7 @@ private
                                        stop, \
                                        arrAddFields, \
                                        path, \
+                                       json_metadata, \
                                        size, \
                                        size_in_disk, \
                                        size_original, \
@@ -1025,94 +964,7 @@ private
          ## -----------------------------------------------------
 
       end
-
-#       begin
-#          anArchivedFile = ArchivedFile.new
-#          
-#          if bUnPack then
-#             anArchivedFile.filename       = File.basename(full_path_filename, ".*")
-#          else
-#             anArchivedFile.filename       = File.basename(full_path_filename)
-#          end
-# 
-# #          # Patch 2016 - filenames are kept without extension
-# #          anArchivedFile.filename       = File.basename(full_path_filename, ".*")
-# 
-#          anArchivedFile.filetype       = type
-#          anArchivedFile.archive_date   = archival_date
-#          anArchivedFile.path           = path
-#          anArchivedFile.size           = size
-#          anArchivedFile.size_in_disk   = size_in_disk
-#          anArchivedFile.size_original  = size_original
-# 
-#          if start != "" and start != nil then
-#             anArchivedFile.validity_start = start
-#          end
-# 
-#          if stop != "" and stop != nil then
-#             anArchivedFile.validity_stop = stop
-#          end
-# 
-# 
-#          
-# 
-#          anArchivedFile.save!
-# 
-# #          bInventoried = false
-# # 
-# #          while not bInventoried
-# #             begin
-# #                anArchivedFile.save!
-# #                bInventoried = true
-# #             rescue
-# #                puts "ARC::FileArchiver - could not inventory #{anArchivedFile.filename}"
-# #                sleep(1)
-# #                bInventoried = true
-# #             end
-# #          end
-# 
-#          #Treat eventual additional fields
-#          if arrAddFields != nil and arrAddFields.size >= 2 then
-#             i=0
-#             while i <= (arrAddFields.size - 2)
-#                
-#                if anArchivedFile.has_attribute?(arrAddFields[i]) then
-#                   anArchivedFile.update_attribute(arrAddFields[i], arrAddFields[i+1])
-#                else
-#                   puts "Attribute '#{arrAddFields[i]}' is not present in the archived_files table !"
-#                   puts "Going on with archiving..."
-#                end
-# 
-#                i=i+2 
-#             end
-#          end
-# 
-#       rescue Exception => e
-#          puts
-#          puts e.to_s
-#          puts
-#          puts "Could not inventory #{anArchivedFile.filename}, rolling back ! :-("
-#          puts
-# 
-# # Commented 20140505 / It is not understood this snippet below
-# #
-# #          if bUnPack then
-# #             cmd = "\\rm -rf #{destDir}"
-# #          else
-# #             cmd = "\\rm -rf #{destDir}/" << File.basename(full_path_filename)
-# #          end
-# # 
-# #          ret = system(cmd)
-# # 
-# #          if ret == false then
-# #             puts
-# #             puts "Could not rollback ! Leaving MINARC in possible incoherent state :-("
-# #             puts
-# #          end        
-# 
-#          return false
-#       end
-#       
+       
       #-------------------------------------------
       # Delete Source file if requested
 

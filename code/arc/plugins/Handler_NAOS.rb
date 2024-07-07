@@ -1,17 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### ===       
-###
-### === Written by Borja Lopez Fernandez
-###
-### === Elecnor Deimos
-### 
-###
-###
-#########################################################################
-
 # This class allows minarc to handle NAOS files:
 
 =begin
@@ -36,14 +24,12 @@
 =end
 
 require 'filesize'
-
 require 'cuc/Converters'
 
 include CUC::Converters
 
 
 class Handler_NAOS
-
    @type                = ""
    @filename            = ""
    @filename_original   = nil

@@ -1,19 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #FileArchiver class
-###
-### === Written by DEIMOS Space S.L.
-###
-### === Mini Archive Component (MinArc)
-###
-### Git: $Id: MINARC_Environment.rb $Date$
-###
-### module MINARC
-###
-#########################################################################
-
 require 'dotenv'
 require 'cuc/DirUtils'
 begin
@@ -26,10 +12,11 @@ module ARC
 
    include CUC::DirUtils
 
-   VERSION   = "1.3.3.0"
+   VERSION   = "1.4.0.2"
    ## ----------------------------------------------------------------
 
    CHANGE_RECORD = { \
+      "1.4.0"  =>      "JSON metadata added to the model", \
       "1.3.3"  =>      "Server to generate OData reports:\n\
          > auxip_query_report\n\
          > auxip_download_report",\
@@ -229,7 +216,6 @@ module ARC
       ENV['MINARC_DATABASE_PASSWORD']     = "1mysql"
       ENV['RACK_ENV']                     = "production"
    end
-
    ## ----------------------------------------------------------------
 
    ## ----------------------------------------------------------------
@@ -355,8 +341,6 @@ module ARC
    ## ----------------------------------------------------------------
 
    def checkToolDependencies
-
-      bCheck = true
       bCheckOK = true
 
       @@arrTools.each{|tool|
@@ -376,9 +360,7 @@ module ARC
          puts
          return false
       end
-
       return true
-
    end
 
    ## ----------------------------------------------------------------

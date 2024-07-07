@@ -1,19 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #MINARC_API class
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Mini Archive Component (MinArc)
-### 
-### Git: MINARC_API.rb,v $Id$
-###
-### module MINARC
-###
-#########################################################################
-
 module ARC
    API_URL_VERSION               = '/dec/arc/version'
    API_URL_STORE_OLD             = '/OLD/dec/arc/minArcStore'

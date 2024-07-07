@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <Node>NAOSBOA minARC</Node>
+  <Node>minARC ADGS unit tests node</Node>
 
   <CleanUp Frequency="10" Unit="s">
   
@@ -17,19 +17,19 @@
 
    <Workflow>
       <ArchiveServer>https://localhost:4567</ArchiveServer>
-      <ArchiveRoot>/minarc_root</ArchiveRoot>
-      <ArchiveError>/minarc_root/.errors</ArchiveError>
-      <ArchiveIntray>/tmp/minarc/tmp</ArchiveIntray>
-      <TempDir>/tmp</TempDir>
+      <ArchiveRoot>/data/adgs/arc/minarc_root</ArchiveRoot>
+      <ArchiveError>/data/adgs/arc/minarc_error</ArchiveError>
+      <ArchiveIntray>/data/adgs/arc/intray</ArchiveIntray>
+      <TempDir>/data/adgs/arc/tmp</TempDir>
    </Workflow>
 
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
-      <Database_Host></Database_Host>
+      <Database_Host>adgs_db</Database_Host>
       <Database_Port>5432</Database_Port>      
-      <Database_Name>minarc_orc_db</Database_Name>
-      <Database_User>minarc_orc</Database_User>
-      <Database_Password></Database_Password>
+      <Database_Name>adgs_db</Database_Name>
+      <Database_User>adgs</Database_User>
+      <Database_Password>adg$</Database_Password>
    </Inventory>
 
    <Client>

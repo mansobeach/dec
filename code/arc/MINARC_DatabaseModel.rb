@@ -1,22 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-##
-## === Ruby source for #MINARC_DatabaseModel class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Mini Archive Component (MinArc)
-## 
-## Git: $Id$: MINARC_DatabaseModel.rb,v 1.12 2008/10/10 16:18:30 bolf
-##
-## module MINARC
-##
-#########################################################################
-
-### https://bigbinary.com/blog/application-record-in-rails-5
-### https://github.com/rails/rails/pull/22567#discussion-diff-47831156
-
 require 'rubygems'
 require 'json'
 require 'active_record'
@@ -32,8 +15,6 @@ dbName      = ENV['MINARC_DATABASE_NAME']
 dbUser      = ENV['MINARC_DATABASE_USER']
 dbPass      = ENV['MINARC_DATABASE_PASSWORD']
 
-
-
 ActiveRecord::Base.establish_connection(
                                           :adapter    => dbAdapter,
                                           :host       => dbHost, 
@@ -46,25 +27,6 @@ ActiveRecord::Base.establish_connection(
                                           :pool       => 10
                                           )
 
-#puts
-#puts @@handler.class
-#puts
-#
-#puts @@handler.methods
-#
-#connection_handle = ActiveRecord::Base.connection
-#
-#puts connection_handle.class
-#
-#
-#puts "active_connection?"
-#puts @@handler.active_connection?
-#puts
-#puts
-#puts @@handler.checkout
-#puts
-#
-## puts "MINARC_DatabaseModel::after_call_establish_connection"
 
 ## =====================================================================
 
@@ -123,20 +85,9 @@ class ArchivedFile < ActiveRecord::Base
       # require 'arc/ReadMinarcConfig'
       config   = ARC::ReadMinarcConfig.instance
       server   = config.getArchiveServer
-   
-      hFile = Hash.new
+      hFile    = Hash.new
 
-#      ## ----------------------------
-#      ## recover if model is still 1.0
-#      begin
-#         hFile['uuid']              = self.uuid
-#      rescue Exception => e
-#         puts e.to_s
-#         hFile['uuid']              = ""
-#      end
-#      ## ----------------------------
-      hFile['uuid']              = self.uuid
-      
+      hFile['uuid']              = self.uuid      
       hFile['name']              = self.name
       hFile['filename']          = self.filename
       hFile['filename_original'] = self.filename_original
@@ -151,27 +102,22 @@ class ArchivedFile < ActiveRecord::Base
       hFile['archive_date']      = self.archive_date
       hFile['last_access_date']  = self.last_access_date
       hFile['access_counter']    = self.access_counter
-      hFile['info']              = self.info
-      
+      hFile['info']              = self.info      
       hFile['md5']               = self.md5
-      
-#      ## ----------------------------
-#      ## recover if model is still 1.0
-#      begin
-#         hFile['md5']               = self.md5
-#      rescue Exception => e
-#         puts e.to_s
-#         hFile['md5']               = ""
-#      end
-#      ## ----------------------------
-      
+
+      begin
+         hFile['json_metadata']  = self.json_metadata
+      rescue Exception => e
+         puts "BADURA"
+         puts e.to_s
+      end
+
       return hFile
    end
    # --------------------------------------------------------
    
    def print_introspection
    
-      # require 'arc/ReadMinarcConfig'
       config   = ARC::ReadMinarcConfig.instance
       server   = config.getArchiveServer
    
@@ -190,6 +136,12 @@ class ArchivedFile < ActiveRecord::Base
       puts "Last Access     : #{self.last_access_date}"
       puts "Info            : #{self.info}"
       puts "Num Access      : #{self.access_counter}"
+      begin
+         puts "json_metadata   : #{self.json_metadata}"
+      rescue Exception => e
+         puts "missing json_metadata"
+         put e.to_s
+      end
    end
    # --------------------------------------------------------
 
@@ -206,15 +158,6 @@ class ArchivedFile < ActiveRecord::Base
                            )
       
       ret = db[:archived_files].multi_insert(hashRecords)
-      
-      
-#       ret = db[:archived_files].multi_insert( [ 
-# 					{ :filename => 'TEST_KAKA_1', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 },
-# 					{ :filename => 'TEST_KAKA_2', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 },
-# 					{ :filename => 'TEST_KAKA_3', :filetype => 'KAKA', :path => '/home/kaka', :size => 0 }
-#                                   ] )
-
-      # puts ret
    end
    #--------------------------------------------------------
 
@@ -225,23 +168,15 @@ class ArchivedFile < ActiveRecord::Base
    #--------------------------------------------------------
 
    def ArchivedFile.bulkImport(arrFiles, columns)
-      
-      # columns = [ :filename, :filetype, :path, :archive_date, :size ]
- 
       ret = ArchivedFile.import columns, arrFiles, :validate => false     
-      
       puts ret
-
       exit
-
    end
    #--------------------------------------------------------
 
    def ArchivedFile.searchAllWithinInterval(filetype, start, stop, bIncStart=false, bIncEnd=false)
       arrFiles    = Array.new
       arrResult   = Array.new
-
-      # Patch @ Casale Beach
 
       if start != nil and start != "" and stop != nil and stop != "" then
          arrFiles = ArchivedFile.find :all, :conditions => {:validity_start => (start..stop)}
@@ -324,7 +259,6 @@ class ArchivedFile < ActiveRecord::Base
 
    #-------------------------------------------------------------
 
-
    def ArchivedFile.getNewFiles(aDate)
       arrFiles    = Array.new
       arrResult   = Array.new
@@ -333,8 +267,6 @@ class ArchivedFile < ActiveRecord::Base
 
       arrFiles.each{|aFile|
         
-        
-            
         if aFile.archive_date == nil then
            puts "#{aFile.filename} does not have archive date !"
            next
@@ -392,7 +324,6 @@ private
    #-------------------------------------------------------------
 
    def ArchivedFile.fixDateFormat(arrFiles)
-
       arrFiles.each{|aFile|
 
          if aFile.validity_start.is_a?(Time) then
@@ -403,16 +334,10 @@ private
             aFile.validity_stop = DateTime.parse(aFile.validity_stop.strftime("%Y%m%dT%H%M%S"))
          end
       }
-
       return arrFiles
    end
    #-------------------------------------------------------------
 
-   #-------------------------------------------------------------
-
 end
 
-
 ## ===================================================================
-
-

@@ -153,20 +153,6 @@
 #     --Debug                    shows Debug info during the execution
 #     --version                  shows version number
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2014 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-###
-### === Mini Archive Component (MinArc)
-###
-### Git: $Id: minArcRetrieve.rb,v 1.16 2008/09/24 10:18:26 decdev Exp $
-###
-#########################################################################
 
 require 'getoptlong'
 
@@ -616,7 +602,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
       
-   value = `#{"head -160 #{fullpathFile}"}`
+   value = `#{"head -155 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

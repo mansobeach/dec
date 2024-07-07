@@ -1,28 +1,14 @@
-#########################################################################
-###
-### === Ruby source for #Gem Specification
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Data Exchange Component (DEC)
-###
-### Git: gem_minarc.gemspec,v $Id$ $Date$
-###
-### System Component DEC / MINARC
-###
-#########################################################################
-
 require_relative 'code/arc/MINARC_Environment'
 include ARC
 
 Gem::Specification.new do |s|
   s.name        = 'minarc'
   s.version     = "#{ARC::VERSION}"
-  s.licenses    = ['Nonstandard']
+  s.licenses    = ['MIT']
   s.summary     = "DEC/MINARC component"
   s.description = "Minimum Archive"
   s.authors     = ["Elecnor Deimos"]
-  s.email       = 'borja.lopez@deimos-space.com'
+  s.email       = 'info@elecnor-deimos.com'
 
   s.required_ruby_version = '>= 2.7'
 
@@ -44,22 +30,19 @@ Gem::Specification.new do |s|
                   Dir['install/minarc_test.env'] + \
                   Dir['install/minarc_test.bash']
 
-
   ## --------------------------------------------
   ## Tailored installer to include Postgresql
   if ENV.include?("MINARC_TEST") == true then
      s.files = s.files + Dir['code/arc/plugins/test/S2A_OPER_REP_OPDPC__SGS__21000101T000000_V21000101T000000_21000101T000001.EOF']
      s.files = s.files + Dir['code/arc/plugins/test/S1A_TEST_MPL_ORBSCT_20140403T224609_99999999T999999_0006.EOF']
-     # s.files = s.files + Dir['code/arc/plugins/test/example_1.m2ts']
-     # s.files = s.files + Dir['code/arc/plugins/test/example_1.mp4']
+     s.files = s.files + Dir['code/arc/plugins/test/S1B_AUX_CAL_V20190514T090000_G20210104T140612.SAFE/manifest.safe']
+     s.files = s.files + Dir['code/arc/plugins/test/S1B_AUX_CAL_V20190514T090000_G20210104T140612.SAFE/data/s1b-aux-cal.xml']
+     s.files = s.files + Dir['code/arc/plugins/test/S1B_AUX_CAL_V20190514T090000_G20210104T140612.SAFE/support/*.xsd']
   end
   ## --------------------------------------------
 
   s.require_paths = ['code', 'code/arc']
-
   s.bindir        = ['code/arc']
-
-  # s.datadir       = ['code/arc/plugins/test']
 
   s.executables   = [
                      'minArcStore', \
@@ -132,16 +115,14 @@ Gem::Specification.new do |s|
   ## --------------------------------------------
 
   ## ----------------------------------------------
-
   # s.add_development_dependency('sqlite3', '~> 1.4')
   s.add_development_dependency('simplecov', '~> 0.21')
   s.add_development_dependency('test-unit', '~> 3.0')
-
   ## ----------------------------------------------
 
   ## ----------------------------------------------
 
-  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} ESA / Deimos-Space #{'1F47E'.hex.chr('UTF-8')} minARC installed #{ARC::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
+  s.post_install_message = "#{'1F4E1'.hex.chr('UTF-8')} minARC #{'1F47E'.hex.chr('UTF-8')}  installed #{ARC::VERSION} \360\237\215\200 \360\237\215\200 \360\237\215\200"
 
   ## ----------------------------------------------
 

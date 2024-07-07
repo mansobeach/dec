@@ -16,20 +16,6 @@
 #     --version                  shows version number
 #
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2018 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-###
-### === Mini Archive Component (MinArc)
-###
-###  minArcServer
-###
-#########################################################################
 
 require 'getoptlong'
 require 'rdoc'
@@ -91,7 +77,7 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
+      print("\nminArc ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
       hRecord = ARC::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -263,7 +249,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
 
-   value = `#{"head -24 #{fullpathFile}"}`
+   value = `#{"head -17 #{fullpathFile}"}`
 
    value.lines.drop(1).each{
       |line|

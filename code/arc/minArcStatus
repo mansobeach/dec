@@ -20,21 +20,6 @@
 #     --version                  shows version number
 #     --Version                  shows version number of the Server
 #
-#
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-###
-### === Mini Archive Component (MinArc)
-###
-### Git: $Id: minArcStatus,v 1.10 2008/09/24 10:18:26 decdev Exp $
-###
-#########################################################################
 
 require 'getoptlong'
 require 'json'
@@ -114,7 +99,7 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
+      print("\nminArc ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
       hRecord = ARC::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -289,10 +274,7 @@ def main
       exit(0)
 
    end
-
-
    exit(0)
-
 end
 
 ## ---------------------------------------------------------

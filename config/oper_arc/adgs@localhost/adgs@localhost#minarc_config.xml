@@ -25,7 +25,7 @@
 
    <Inventory>
       <Database_Adapter>postgresql</Database_Adapter>
-      <Database_Host>adgs_db_postgres</Database_Host>
+      <Database_Host>adgs_db</Database_Host>
       <Database_Port>5432</Database_Port>      
       <Database_Name>adgs_db</Database_Name>
       <Database_User>adgs</Database_User>

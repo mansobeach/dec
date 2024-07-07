@@ -121,20 +121,6 @@
 #     --Profile                  shows execution time profiling information
 #     --version                  shows version number
 # 
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2014 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-##
-## === Mini Archive Component (MinArc)
-##
-## Git: $Id: minArcStore.rb,v 1.13 2008/09/25 11:37:23 decdev Exp $
-##
-#########################################################################
 
 require 'rubygems'
 require 'getoptlong'
@@ -228,7 +214,7 @@ def main
    ## ------------------------------------------------------
    
    if @bShowVersion == true then
-      print("\nESA - DEIMOS-Space S.L. ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
+      print("\nminArc ", File.basename($0), " Version: [#{ARC::VERSION}]", "\n")
       hRecord = ARC::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -586,10 +572,8 @@ end
 ## -------------------------------------------------------------
 
 def usage
-
-   fullpathFile = File.expand_path(__FILE__)
-      
-   value = `#{"head -129 #{fullpathFile}"}`
+   fullpathFile   = File.expand_path(__FILE__)
+   value          = `#{"head -123 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

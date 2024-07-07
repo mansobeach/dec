@@ -1,18 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-##
-## === Ruby source for #FileDeleter class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Mini Archive Component (minARC)
-## 
-## Git: $Id: FileStatus.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
-##
-## module MINARC
-##
-#########################################################################
 
 require 'filesize'
 require 'json'
@@ -26,8 +13,9 @@ class FileStatus
    ## -----------------------------------------------------------  
    
    ## Class contructor
-   def initialize(filename = nil, bNoServer = false, logger = nil)      
-      @filename     = filename
+   def initialize(filename = nil, bNoServer = true, logger = nil)
+      @bRemoteMode = !bNoServer
+      @filename    = filename
       
       if ENV['MINARC_SERVER'] and bNoServer == false then
          @bRemoteMode = true
@@ -46,16 +34,13 @@ class FileStatus
       @isDebugMode = true
       if @logger != nil then
          @logger.debug("FileStatus debug mode is on")
+         @logger.debug("Remote mode is #{@bRemoteMode}")
       end
    end
    ## -----------------------------------------------------------
 
    def statusFileName(filename)
       if @bRemoteMode == true then
-      
-         if @isDebugMode == true then
-            @logger.debug("Remote mode is true")
-         end
       
          arc = ARC::MINARC_Client.new(@logger)
       
@@ -66,11 +51,6 @@ class FileStatus
          return arc.statusFileName(filename)
       
       else
-      
-         if @isDebugMode == true and @logger != nil then
-            @logger.debug("Remote mode is true")
-         end
-      
          aFile = queryInventoryByName(filename)
          if aFile == nil then
             return false
@@ -94,7 +74,6 @@ class FileStatus
          return false
       end
       
-      
       puts "Filename       - #{aFile.filename}"
       puts "uuid           - #{aFile.uuid}"
       puts "Type           - #{aFile.filetype}"
@@ -116,97 +95,7 @@ class FileStatus
 #       
    end
    #-------------------------------------------------------------
-
-
-   #-------------------------------------------------------------
-
-   def vayachocho_statusGlobal   
-
-      ret = require 'arc/MINARC_DatabaseModel'
-      ret = load("arc/MINARC_DatabaseModel.rb")
-
-#      puts
-#      puts ret
-#      puts
-
-      hResult = Hash.new
-      
-      arrFiles          = ArchivedFile.all   
-      numTotalFiles     = ArchivedFile.count
-      lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
-      lastHourCount     = lastHourFiles.count
-      lastArchiveDate   = ArchivedFile.last.archive_date
-      sizefile          = Filesize.from("#{arrFiles.sum(:size)} B").pretty
-
-      hResult[:total_size] = Filesize.from("#{arrFiles.sum(:size)} B").pretty      
-      
-      puts "Size of the files #{sizefile}"
-      puts
-      
-      hResult[:total_size_in_disk] = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      sizedisk = Filesize.from("#{arrFiles.sum(:size_in_disk)} B").pretty 
-      puts "Disk occupation #{sizedisk}"
-      puts
-
-      
-      hResult[:num_total_files]     = numTotalFiles
-      hResult[:num_files_last_hour] = lastHourCount
-      hResult[:last_date_archive]   = lastArchiveDate
-      
-      puts  
-      puts "Total archived #{numTotalFiles} files"
-
-      
-      if lastHourCount == 0 then
-         # ActiveRecord::Base.remove_connection
-         # puts "No files archived during period"
-         return hResult.to_json
-      end
-      
-      lastHourSizeO     = lastHourFiles.sum(:size_original)
-      lastHourSize      = lastHourFiles.sum(:size)
-      lastHourDisk      = lastHourFiles.sum(:size_in_disk)
-      
-      prettyHourSizeO   = Filesize.from("#{lastHourSizeO} B").pretty
-      prettyHourSize    = Filesize.from("#{lastHourSize} B").pretty
-      prettyHourDisk    = Filesize.from("#{lastHourDisk} B").pretty
-      
-      # Filesize.from("#{lastHourFiles.sum(:size)} B").pretty
-      
-      puts      
-      puts "Last update #{lastArchiveDate}"
-      
-      
-      puts
-      puts "New #{lastHourCount} files archived during last hour"
-      
-      
-      puts
-      puts "#{prettyHourSizeO} / #{prettyHourSize} / #{prettyHourDisk} "
-      
-      
-      
-      puts 
-            
-      arrTypes = ArchivedFile.select(:filetype).distinct
-            
-      arrTypes.each{|record|
-         # puts record.filetype
-         
-         arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
-         
-         puts "#{record.filetype} / #{arrFiles.count} files"
-         
-         # puts ArchivedFile.all.group(:filetype).count
-         
-      }
-      
-      puts
-      
-      # ActiveRecord::Base.remove_connection
-      return hResult.to_json
-      
-   end
+   
    #-------------------------------------------------------------
 
    # It now reports a hash json-wise
@@ -248,28 +137,11 @@ class FileStatus
       # ActiveRecord::Base.remove_connection
       
       return hResult
-      
-      puts arrFiles.sum(:size_in_disk)
-      
-      puts arrFiles.first.archive_date
-      puts arrFiles.last.archive_date
-      puts arrFiles.count
    end
    # -------------------------------------------------------------
 
    def statusGlobal   
-
-      # ret = require 'arc/MINARC_DatabaseModel'
-      # ret = load("arc/MINARC_DatabaseModel.rb")
-
-#      puts
-#      puts ret
-#      puts
-
-      require 'arc/MINARC_DatabaseModel'      
-         if @isDebugMode == true then
-            @logger.debug("Remote mode is false")
-         end
+      require 'arc/MINARC_DatabaseModel'
 
       hResult = Hash.new
       
@@ -319,30 +191,7 @@ class FileStatus
       hResult[:last_hour_size]            = prettyHourSize
       hResult[:last_hour_size_in_disk]    = prettyHourDisk
       
-      return hResult.to_json
-   
-         
-## comment by filetype            
-#      puts 
-#            
-#      arrTypes = ArchivedFile.select(:filetype).distinct
-#            
-#      arrTypes.each{|record|
-#         # puts record.filetype
-#         
-#         arrFiles = ArchivedFile.where(filetype: record.filetype).order('archive_date ASC')
-#         
-#         puts "#{record.filetype} / #{arrFiles.count} files"
-#         
-#         # puts ArchivedFile.all.group(:filetype).count
-#         
-#      }
-#      
-#      puts
-      
-      # ActiveRecord::Base.remove_connection
-      
-      
+      return hResult.to_json      
    end
 
 

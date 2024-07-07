@@ -1,19 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-#
-# === Ruby source for #FileDeleter class
-#
-# === Written by DEIMOS Space S.L. (bolf)
-#
-# === Mini Archive Component (MinArc)
-# 
-# Git: $Id: FileStatus.rb,v 1.8 2008/11/26 12:40:47 decdev Exp $
-#
-# module MINARC
-#
-#########################################################################
-
 require 'filesize'
 
 module ARC
@@ -49,7 +35,6 @@ class MINARC_Status
          return false
       end
       
-      
       puts "Filename       - #{aFile.filename}"
       puts "Type           - #{aFile.filetype}"
       puts "Path           - #{aFile.path}"
@@ -75,13 +60,6 @@ class MINARC_Status
 
    def statusGlobal   
 
-      # ret = require 'arc/MINARC_DatabaseModel'
-      # ret = load("arc/MINARC_DatabaseModel.rb")
-
-#      puts
-#      puts ret
-#      puts
-
       require 'arc/MINARC_DatabaseModel'
 
       hResult = Hash.new
@@ -90,9 +68,7 @@ class MINARC_Status
       numTotalFiles     = ArchivedFile.count
       lastHourFiles     = ArchivedFile.where('archive_date > ?', 1.hours.ago)
       lastHourCount     = lastHourFiles.count
-      puts "pedo"
       puts lastHourCount
-      puts "pedo"
       puts ArchivedFile.last
       puts
       puts ArchivedFile.last.archive_date

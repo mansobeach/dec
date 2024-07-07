@@ -1,19 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-##
-## === Ruby source for #FileArchiver class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Mini Archive Component (MinArc)
-## 
-## Git: $Id: MINARC_Client.rb,v 1.12 2008/09/24 16:09:19 decdev Exp $
-##
-## module MINARC
-##
-#########################################################################
-
 require 'benchmark'
 require 'json'
 

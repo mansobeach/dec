@@ -1,17 +1,5 @@
 #!/usr/bin/ruby
 
-#########################################################################
-#
-# Ruby source for MIRAS_L1C_BUFR_Handler class
-#
-# Written by DEIMOS Space S.L. (rell)
-#
-# CVS:
-#   $Id: MIRAS_L1C_BUFR_Handler.rb,v 1.4 2008/10/29 15:30:36 decdev Exp $
-#
-#########################################################################
-
-
 # This class allows minarc to handle MIRAS_L1C_BUFR files.
 # Example name : miras_20091224_182959_20091225_122959_smos_001_o_20091224_010000_l1c.bufr
 #                miras_20121119_200135_20121119_205805_smos_27176_t_20081024_112856_l1c.bufr

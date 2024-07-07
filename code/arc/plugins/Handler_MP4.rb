@@ -1,17 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-#
-# ===       
-#
-# === Written by Borja Lopez Fernandez
-#
-# === Casale & Beach
-# 
-#
-#
-#########################################################################
-
 # This class allows minarc to handle video mp4 files:
 # .mp4
 
@@ -81,11 +69,7 @@ class Handler_MP4
 
          # ------------------------------------------
          # Rename File      
-         cmd         = "mv #{full_path_name} #{@full_path_filename}"
-         puts
-         puts cmd
-         puts
-         
+         cmd         = "mv #{full_path_name} #{@full_path_filename}" 
          ret         = system(cmd)
          
          # ------------------------------------------
