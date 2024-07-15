@@ -322,6 +322,9 @@ private
 
             XPath.each(node, "s1auxsar:validity"){|validity|
                safe_metadata["beginningDateTime"] = validity.text
+               if @isDebugMode == true then
+                  @logger.debug("SAFE beginningDateTime => #{safe_metadata["beginningDateTime"]}")
+               end
             }
 
             XPath.each(node, "s1auxsar:generation"){|generation|

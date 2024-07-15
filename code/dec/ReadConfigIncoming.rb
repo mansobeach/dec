@@ -1,21 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### == Ruby source for #ReadConfigIncoming class          
-###
-### == Written by DEIMOS Space S.L. (bolf)
-###
-### == Data Exchange Component
-### 
-### Git: $Id: ReadConfigIncoming.rb,v 1.6 2008/04/04 14:01:51 decdev Exp $
-###
-### This class processes dec_incoming_files.xml config file
-### which contain the link between a file type and the DIMs that process it.
-### Moreover, the DIM In-Tray in which the file will be placed for later processing.
-###
-#########################################################################
-
 require 'date'
 require 'singleton'
 require 'rexml/document'
@@ -294,10 +278,14 @@ class ReadConfigIncoming
    ## -------------------------------------------------------------
    
    def getEntitiesSendingIncomingFileName(fileName)
-      arrEnt = Array.new
       @@arrIncomingFiles.each{|item|
          if File.fnmatch(item[:filetype], fileName) == true then
             return item[:fromList]
+         end
+         if item[:filetype].include?("%Q{") == true and item[:filetype].include?("require") == true and item[:filetype].include?(";") == true then
+            if File.fnmatch(eval(item[:filetype]), fileName) == true then
+               return item[:fromList]
+            end
          end
       }
    end
@@ -786,7 +774,7 @@ private
          |file|
          
          description = ""
-         filetype    = file.attributes["Type"]
+         filetype    = expandPathValue( file.attributes["Type"] )
          arrFromList = Array.new
             
          XPath.each(file, "Description"){

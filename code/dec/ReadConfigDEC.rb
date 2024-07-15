@@ -1,21 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #ReadConfigDEC class          
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Data Exchange Component -> Data Distributor Component
-### 
-### $Git: $Id: ReadConfigDEC.rb
-###
-### Module Data Exchange Component
-### This class processes dec_config.xml configuration file.
-### which contain all the information about the DEC configuration.
-###
-#########################################################################
-
 require 'singleton'
 require 'rexml/document'
 

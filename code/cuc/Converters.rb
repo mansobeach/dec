@@ -27,7 +27,7 @@ module Converters
    ## - 20120325                     => "%Y%m%d"   / Length 8
    ## - 2012  3 25                   => "%Y %m %d" / Length 10
    ## - 2017 JAN  1                  => "%Y %b %d" / Length 11
-   ## - 20120325T154814              => "%Y%m%dT%H%M%S" / Length 17            => XL_ASCII_CCSDSA_COMPACT
+   ## - 20120325T154814              => "%Y%m%dT%H%M%S" / Length 15            => XL_ASCII_CCSDSA_COMPACT
    ## - 2017-04-22T11:02:57.045757   => "%Y-%m-%dT%H:%M:%S.%6N" / Length 26    => XL_ASCII_CCSDSA_MICROSEC
    ## - 21-MAY-2015 14:00:01.516     => "%e-%b-%Y %H:%M:%S.%L"  / Length 24
    ## - 01-FEB-2016 02:20:40.59      => "%e-%b-%Y %H:%M:%S.%L"  / length 23

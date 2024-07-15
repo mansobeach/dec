@@ -24,6 +24,23 @@
       </Interface>
 
       <Interface>
+         <Name>S1_TODAY_IFREMER_4_AUX_WAV</Name>
+         <LocalInbox>/data/adgs/tmp/in_basket_if_s1_today_ifremer_4_aux_wav</LocalInbox>
+         <DownloadDirs>
+            <Directory DepthSearch="0">ifremer/cersat/projects/sentinel1/stokes_drift/</Directory>
+         </DownloadDirs>
+         <Switches>
+            <DeleteDownloaded>false</DeleteDownloaded>
+            <DeleteDuplicated>false</DeleteDuplicated>
+            <DeleteUnknown>false</DeleteUnknown>
+            <LocalDissemination>false</LocalDissemination>
+            <LogDuplicated>false</LogDuplicated>
+            <LogUnknown>false</LogUnknown>
+            <MD5>false</MD5>
+         </Switches>
+      </Interface>
+
+      <Interface>
          <Name>S1_IFREMER_4_AUX_WAV</Name>
          <LocalInbox>/data/adgs/tmp/in_basket_if_s1_ifremer_4_aux_wav</LocalInbox>
          <DownloadDirs>
@@ -198,6 +215,16 @@
          <Description>IGS ionex</Description>
          <FromList>
             <Interface>S1_CDDIS_4_AUX_TEC</Interface>
+         </FromList>
+      </File>
+
+      <!-- IFR_WW3-GLOBAL-30MIN_20240117T03_G2024-01-15T14.nc -->
+
+      <!-- <File Type="IFR_WW3-GLOBAL-30MIN_*G#{require 'date'; Date.today.strftime('%Y-%m-%d')}T*"> -->
+      <File Type="%Q{*G#{require 'date'; Date.today.strftime('%Y-%m')}*}">
+         <Description>WAVEWATCH III STOKES DRIFT</Description>
+         <FromList>
+            <Interface>S1_TODAY_IFREMER_4_AUX_WAV</Interface>
          </FromList>
       </File>
 

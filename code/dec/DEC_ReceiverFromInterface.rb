@@ -1,20 +1,5 @@
 #!/usr/bin/env ruby
 
-#########################################################################
-###
-### === Ruby source for #DEC_ReceiverFromInterface class
-###
-### === Written by DEIMOS Space S.L. (bolf)
-###
-### === Data Exchange Component
-###
-### Git: $Id: DEC_ReceiverFromInterface.rb,v 1.29 2008/11/27 13:59:32 decdev Exp $
-###
-### Module Data Exchange Component
-### This class polls a given Interface and gets all registered available files
-### via FTP, SFTP, WebDAV, HTTP, or LOCAL.
-###
-#########################################################################
 
 ### IPC for children process (overall volume downloaded)
 
@@ -2205,9 +2190,6 @@ private
          @logger.debug("DEC_ReceiverFromInterface::checkFileSource(#{fileName})  => #{@entity}")
          # @logger.debug(sources)
       end
-
-
-
       if sources == nil then
          if @isDebugMode == true then
             @logger.debug("\nNo File-Name matchs with #{fileName} in dec_incoming_files.xml !")

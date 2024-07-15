@@ -3,6 +3,7 @@
 ### ESA SAFE Format
 # https://earth.esa.int/eogateway/activities/safe-the-standard-archive-format-for-europe/safe-2.x-basic-information
 
+require 'date'
 require 'fileutils'
 require 'rexml/document'
 
@@ -222,6 +223,7 @@ class Formatter_SAFE
       xml_data_s1auxsar_auxProductType                   = xml_data_s1auxsar_standAloneProductInformation.add_element("s1auxsar:auxProductType")               
       xml_data_s1auxsar_auxProductType.text = type
       xml_data_s1auxsar_validity                         = xml_data_s1auxsar_standAloneProductInformation.add_element("s1auxsar:validity") 
+      xml_data_s1auxsar_validity.text = DateTime.strptime(@new_name.slice(13,15),"%Y%m%dT%H%M%S").strftime("%Y-%m-%dT%H:%M:%S.000000")
       xml_data_s1auxsar_generation                       = xml_data_s1auxsar_standAloneProductInformation.add_element("s1auxsar:generation")
       xml_data_s1auxsar_generation.text = "#{str_now}"
       xml_data_s1auxsar_instrumentConfigurationId        = xml_data_s1auxsar_standAloneProductInformation.add_element("s1auxsar:instrumentConfigurationId")

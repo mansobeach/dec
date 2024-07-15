@@ -1,21 +1,5 @@
 #!/usr/bin/env ruby
 
-##########################################################################
-##
-## === Ruby source for #EventManager class
-##
-## === Written by DEIMOS Space S.L. (bolf)
-##
-## === Data Exchange Component -> Common Transfer Component
-##
-## Git EventManager.rb,v $Id$ 1.4 2007/03/21 08:43:44 decdev Exp $
-##
-## === Module: Data Exchange Component // Class EventManager
-##
-## This class is in charge of processing different Events.
-##
-##########################################################################
-
 require 'open3'
 
 require 'dec/ReadInterfaceConfig'

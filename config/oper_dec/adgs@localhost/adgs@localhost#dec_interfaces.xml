@@ -50,7 +50,54 @@
 
 
  <!-- ================================================================ -->
-
+<Interface Name="S1_TODAY_IFREMER_4_AUX_WAV">
+  <Desc>S1_IFREMER_4_AUX_WAV / for S1 / incoming filtered by files generated today</Desc>
+  <TXRXParams>
+    <Enabled4Sending>false</Enabled4Sending>
+    <Enabled4Receiving>true</Enabled4Receiving>
+    <ImmediateRetries>3</ImmediateRetries>
+    <LoopRetries>2</LoopRetries>
+    <LoopDelay unit="s">300</LoopDelay>
+    <PollingInterval unit="s">20</PollingInterval>
+    <PollingSize>100000</PollingSize>
+    <ParallelDownload>4</ParallelDownload>
+  </TXRXParams>    
+  <Server>
+    <Protocol>FTP</Protocol>
+    <Hostname>ftp.ifremer.fr</Hostname>
+    <Port>21</Port>
+    <User>anonymous</User>
+    <Pass>guest</Pass>
+    <RegisterContentFlag>false</RegisterContentFlag>
+    <RetrieveContentFlag>true</RetrieveContentFlag>
+    <SecureFlag>false</SecureFlag>
+    <VerifyPeerSSL>false</VerifyPeerSSL>
+    <CompressFlag>false</CompressFlag>
+    <PassiveFlag>true</PassiveFlag>
+    <CleanUpFreq Unit="s">5</CleanUpFreq>
+  </Server>
+  <DeliverByMailTo>
+     <Address></Address>
+  </DeliverByMailTo>
+  <Notify>
+    <SendNotification>false</SendNotification>
+    <To>
+     <Address></Address>
+    </To>
+  </Notify>
+  <Events>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
+    <Event Name="OnReceiveOK"         executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
+    <Event Name="OnReceiveNewFilesOK" executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
+  </Events>
+  <ContactInfo>
+    <Name>Dr Who</Name>
+    <EMail>adgs@gmail.com</EMail>
+    <Tel>0039-800 454 432</Tel>
+    <Fax>0039-800 454 433</Fax>
+    <Address>not your business</Address>
+  </ContactInfo>
+</Interface> 
 
 <!-- ================================================================ -->
 
@@ -90,7 +137,9 @@
     </To>
   </Notify>
   <Events>
-    <Event Name="OnReceiveNewFile" executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
+    <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
+    <Event Name="OnReceiveOK"         executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
+    <Event Name="OnReceiveNewFilesOK" executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
   </Events>
   <ContactInfo>
     <Name>Dr Who</Name>
@@ -139,7 +188,9 @@
       </To>
     </Notify>
     <Events>
-      <Event Name="NewFile2Intray" executeCmd="echo %f %F" />
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
+      <Event Name="OnReceiveOK"         executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
     </Events>
     <ContactInfo>
       <Name>Dr Who</Name>
