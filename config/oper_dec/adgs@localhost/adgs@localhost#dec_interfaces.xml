@@ -38,6 +38,9 @@
     </To>
   </Notify>
   <Events>
+      <Event Name="OnReceiveNewFile"    executeCmd="auxConverter -m S1 -f &quot;%F&quot; -d /data/adgs/arc/intray"/>
+      <Event Name="OnReceiveOK"         executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
+      <Event Name="OnReceiveNewFilesOK" executeCmd="curl -k -v -u test:test --max-time 12000 --connect-timeout 60 --keepalive-time 12000 -L -f -s -X GET https://adgs_minarc:4567/dec/arc/requestArchive/*"/>
   </Events>
   <ContactInfo>
     <Name>Dr Who</Name>

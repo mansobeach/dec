@@ -1,15 +1,5 @@
 #!/usr/bin/env ruby -W0
 
-#########################################################################
-##
-## === Ruby source for #AUX_TestCases class foor ADGS
-##
-## === Written by DEIMOS Space S.L.
-##
-## === AUX Module
-## 
-##
-#########################################################################
 
 require 'rubygems'
 require 'test/unit'
@@ -23,6 +13,9 @@ require 'aux/AUX_Handler_IERS_Leap_Second'
 require 'aux/AUX_Handler_IGS_Broadcast_Ephemeris'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
 require 'aux/AUX_Handler_IERS_EOP_Daily'
+
+
+# rake -f build_aux.rake aux:install
 
 # Select a single test of the suite
 
@@ -67,6 +60,34 @@ class AUXTestCase < Test::Unit::TestCase
    def teardown
       @@logger.info("#{File.basename(__FILE__)}::#{__method__.to_s}")
    end
+
+   ## --------------------------------------------------------
+
+   # Convert OSISAF Ice coverage files into SAFE format
+   def test_s1_osisaf_4_aux_ice
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} START")
+
+      @@logger.debug("cp #{ENV['HOME']}/Projects/dec/code/aux/examples/osi-saf/ice_edge_nh_polstere-100_multi_202406121200.nc #{@@testDir}")
+      FileUtils.cp("#{ENV['HOME']}/Projects/dec/code/aux/examples/osi-saf/ice_edge_nh_polstere-100_multi_202406121200.nc", @@testDir)
+
+      cmd = "rm -rf /tmp/aux_out2/S1*.SAFE"
+      @@logger.debug(cmd)
+      system(cmd)
+
+      file_OSI_SAF_ICE = "#{@@testDir}/ice_edge_nh_polstere-100_multi_202406121200.nc"
+      cmd = "auxConverter -m S1 -f #{file_OSI_SAF_ICE} -d /tmp/aux_out2 -D"
+      @@logger.info(cmd)
+      assert(system(cmd), "convert OSI-SAFE Ice coverage model to S1")
+
+      arr = Dir["/tmp/aux_out2/S1__*AUX_ICE_*_G*"]
+      @@logger.info("#{arr.length} file converted")
+      assert_operator arr.length, :>, 0
+
+      @@logger.info("#{self.class.name.split('::').last}::#{__method__.to_s} END")
+   end
+
+   ## --------------------------------------------------------
+
    ## --------------------------------------------------------
 
    # Convert CDDIS IGS ionospheric model into SAFE format

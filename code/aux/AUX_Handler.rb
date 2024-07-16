@@ -37,6 +37,7 @@ require 'aux/AUX_Handler_NASA_EOSDIS_SRTMGL1_Tile'
 require 'aux/AUX_Handler_USGS_EROS_SRTMGL1_Tile'
 require 'aux/AUX_Handler_NASA_MSFC_ForecastSolarFlux'
 require 'aux/AUX_Handler_NOAA_RSGA_Daily'
+require 'aux/AUX_Handler_OSISAF_ICE'
 
 module AUX
 
@@ -106,10 +107,15 @@ private
       
       filename = File.basename(@full_path)
 
+      if File.fnmatch(AUX_Pattern_OSISAF_ICE, filename) == true then
+         @handler = AUX_Handler_OSISAF_ICE.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
+         return
+      end
+
       if File.fnmatch(AUX_Pattern_IFREMER_WAVEWATCH_III, filename) == true then
          @handler = AUX_Handler_IFREMER_WAVEWATCH_III.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
          return
-      end      
+      end
 
       if File.fnmatch(AUX_Pattern_NASA_CDDIS_IONEX, filename) == true then
          @handler = AUX_Handler_NASA_CDDIS_IONEX.new(@full_path, @target, @targetDir, @logger, @isDebugMode)
