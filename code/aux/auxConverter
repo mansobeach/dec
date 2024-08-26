@@ -70,7 +70,7 @@ def main
    end
 
    if @bShowVersion == true then
-      print("\nElecnor Deimos-Space ", File.basename($0), " Version: [#{AUX::VERSION}]", "\n\n")
+      print("\nDEC ", File.basename($0), " Version: [#{AUX::VERSION}]", "\n\n")
       hRecord = AUX::CHANGE_RECORD
       hRecord.each_pair{|key, value|
          puts "#{key} => #{value}"
@@ -147,7 +147,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)    
    
-   value = `#{"head -32 #{fullpathFile}"}`
+   value = `#{"head -23 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

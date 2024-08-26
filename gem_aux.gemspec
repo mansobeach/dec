@@ -5,7 +5,7 @@ include AUX
 Gem::Specification.new do |s|
   s.name        = 'aux'
   s.version     = "#{AUX::VERSION}"
-  s.licenses    = ['Nonstandard']
+  s.licenses    = ['MIT']
   s.summary     = "AUX component"
   s.description = "Auxiliary Data Gathering"
   s.authors     = ["Elecnor Deimos"]
@@ -31,9 +31,9 @@ Gem::Specification.new do |s|
                      'auxUnitTests_ADGS',
                      ]
 
-  s.homepage    = 'http://www.deimos-space.com'
+  s.homepage    = 'https://github.com/borjalopezfernandez/dec'
   
-  s.metadata    = { "source_code_uri" => "https://github.com/example/example" }
+  s.metadata    = { "source_code_uri" => "https://github.com/borjalopezfernandez/dec" }
   
   s.add_dependency('dotenv', '~> 3.1')
   s.add_dependency('filesize', '~> 0.1')
