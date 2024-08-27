@@ -10,17 +10,6 @@
 # 
 #
 
-#########################################################################
-#
-#
-# Written by DEIMOS Space S.L.
-#
-# Data Exchange Component -> 
-# 
-# git:
-#   decManageDB.rb,v $Date$ $Id$ 
-#
-#########################################################################
 
 require 'rubygems'
 require 'getoptlong'

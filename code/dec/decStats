@@ -14,20 +14,6 @@
 #     --version                  shows version number
 #
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2008 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-##
-## === Data Exchange Component
-##
-## Git: $Id: decStats,v 1.15 2015/09/25 16:55:04 decdev Exp $
-##
-#########################################################################
 
 require 'getoptlong'
 require 'json'
@@ -222,7 +208,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)   
    
-   value = `#{"head -22 #{fullpathFile}"}`
+   value = `#{"head -16 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

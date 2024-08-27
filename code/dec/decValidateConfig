@@ -56,20 +56,6 @@
 #  -v          shows version number
 #    
 # 
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2007 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-#
-# Data Exchange Component
-# 
-# Git: $Id$: decValidateConfig,v 
-#
-#########################################################################
 
 require 'getoptlong'
 
@@ -401,7 +387,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -62 #{fullpathFile}"}`
+   value = `#{"head -58 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

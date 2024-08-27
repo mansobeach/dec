@@ -28,20 +28,10 @@
 #     --Debug               shows Debug info during the execution
 #     --version             shows version number
 #
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2005 ESA - DEIMOS Space S.L.
 #
 
 #########################################################################
-###
-### === Data Exchange Component
-###
-### Git: $Id: decListener,v 1.8 2008/07/03 11:38:07 decdev Exp $
-###
-#########################################################################
+
 
 ## DEC Daemon process which listens to incoming files and dispatches them
 ## into the proper directories, depending on the configuration file
@@ -596,7 +586,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
 
-   value = `#{"head -36 #{fullpathFile}"}`
+   value = `#{"head -30 #{fullpathFile}"}`
 
    value.lines.drop(1).each{
       |line|

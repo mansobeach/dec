@@ -332,7 +332,7 @@ namespace :dec do
    desc "build DEC gem [user, host, suffix = s2 | s2odata]"
 
    task :build, [:user, :host, :suffix] => :load_config do |t, args|
-      args.with_defaults(:user => :borja, :host => :localhost, :suffix => "s2_test_pg_odata")
+      args.with_defaults(:user => "borja", :host => "localhost", :suffix => "s2_test_odata")
       puts "building gem dec #{args[:suffix]} with config #{args[:user]}@#{args[:host]}"
    
       if File.exist?("#{@rootConf}/#{args[:user]}@#{args[:host]}") == false then
@@ -387,6 +387,7 @@ namespace :dec do
          puts "building gem dec #{args[:suffix]} with flag DEC_PG"
          ENV['DEC_PG'] = "true"
       else
+         puts "discarding pg gem"
          ENV.delete('DEC_PG')
       end
             

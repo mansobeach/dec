@@ -41,20 +41,6 @@
 #     --Benchmark shows Benchmark info during the execution
 #     --version   shows version number
 # 
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2006 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-#
-# === Data Exchange Component
-#
-# $Git: $Id: decGetFromInterface,v 1.15 2015/09/25 16:55:04 decdev Exp $
-#
-#########################################################################
 
 require 'getoptlong'
 
@@ -534,7 +520,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -48 #{fullpathFile}"}`
+   value = `#{"head -42 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|

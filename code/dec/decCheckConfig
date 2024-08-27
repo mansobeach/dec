@@ -62,20 +62,6 @@
 #     -V    it performs the execution in Verbose mode
 #     -D    it performs the execution in Debug mode     
 # 
-# == Author
-# DEIMOS-Space S.L.
-#
-# == Copyright
-# Copyright (c) 2005 ESA - DEIMOS Space S.L.
-#
-
-#########################################################################
-#
-# Data Exchange Component
-# 
-# Git: $Id: decCheckConfig,v 1.7 2007/12/18 18:21:36 decdev Exp $
-#
-#########################################################################
 
 require 'rubygems'
 require 'getoptlong'
@@ -577,7 +563,7 @@ end
 def usage
    fullpathFile = File.expand_path(__FILE__)
    
-   value = `#{"head -70 #{fullpathFile}"}`
+   value = `#{"head -64 #{fullpathFile}"}`
       
    value.lines.drop(1).each{
       |line|
